@@ -50,6 +50,7 @@ import {
   ShapeNodeShape,
   Size
 } from '@yfiles/yfiles'
+
 import SampleData from './resources/sample'
 import { MapVisualCreator } from './MapVisualCreator'
 import { CityLabelStyle } from './CityLabelStyle'
@@ -59,25 +60,31 @@ import {
 } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * The graph component.
  */
 let graphComponent
+
 /**
  * Holds whether a layout is in progress.
  */
 let inLayout = false
+
 /**
  * Holds the available label candidates.
  */
 let labelCandidateModes = []
+
 /**
  * Holds the label styles
  */
 let labelStyle
 let cityLabelStyle
+
 let pinnedLabelStyle
 let pinnedCityLabelStyle
+
 /**
  * Runs the demo.
  */
@@ -86,15 +93,20 @@ async function run() {
   graphComponent = new GraphComponent('graphComponent')
   // initialize the node label properties
   initializeOptions()
+
   // set the default styles for nodes and labels
   initializeGraph()
+
   // create the input mode
   initializeInputMode()
+
   // create the sample graph
   await createSampleGraph()
+
   // wire up the UI
   initializeUI()
 }
+
 /**
  * Initialize the node label options.
  */
@@ -104,6 +116,7 @@ function initializeOptions() {
   threePositionsCardinal.addDiscreteCandidates(DiscreteNodeLabelPositions.SIDES, 5, 1.0)
   threePositionsCardinal.addDiscreteCandidates(DiscreteNodeLabelPositions.SIDES, 10, 0.9)
   threePositionsCardinal.addDiscreteCandidates(DiscreteNodeLabelPositions.SIDES, 15, 0.8)
+
   // A set of candidates that chooses from cardinal directions but prefers placing the label on top
   const cardinalPreferTop = new NodeLabelCandidates()
   cardinalPreferTop.addDiscreteCandidates(DiscreteNodeLabelPositions.TOP, 5, 1.0)
@@ -115,11 +128,13 @@ function initializeOptions() {
     5,
     0.8
   )
+
   // A set of candidates that prefers placing the label on top but chooses another position
   // if not possible
   const freePreferTopSideCandidates = new NodeLabelCandidates()
   freePreferTopSideCandidates.addDiscreteCandidates(DiscreteNodeLabelPositions.TOP, 5, 1.0)
   freePreferTopSideCandidates.addFreeCandidates(0.8)
+
   labelCandidateModes = [
     // Interior candidates
     new NodeLabelCandidates().addDiscreteCandidates(DiscreteNodeLabelPositions.INSIDE, 0),
@@ -132,6 +147,7 @@ function initializeOptions() {
     freePreferTopSideCandidates
   ]
 }
+
 /**
  * Initializes node and label styles that are applied when the graph is created.
  */
@@ -139,13 +155,16 @@ function initializeGraph() {
   const graph = graphComponent.graph
   // set the default style for nodes
   graph.nodeDefaults.style = createDemoShapeNodeStyle(ShapeNodeShape.ELLIPSE)
+
   // set the default size for nodes
   graph.nodeDefaults.size = new Size(10, 10)
+
   // set the default style for labels
   labelStyle = createDemoNodeLabelStyle()
   cityLabelStyle = new CityLabelStyle(labelStyle)
   pinnedLabelStyle = createDemoNodeLabelStyle('demo-green')
   pinnedCityLabelStyle = new CityLabelStyle(pinnedLabelStyle)
+
   graph.nodeDefaults.labels.style = cityLabelStyle
   graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.CENTER
   // add the background visual for the map
@@ -154,6 +173,7 @@ function initializeGraph() {
     new MapVisualCreator()
   )
 }
+
 /**
  * Creates the input mode.
  */
@@ -167,6 +187,7 @@ function initializeInputMode() {
     graphComponent.graph.addLabel(evt.item, 'City')
     await placeLabels()
   })
+
   /**
    * Pins the label on drag finished
    * @param evt
@@ -182,6 +203,7 @@ function initializeInputMode() {
         }
       })
   }
+
   /**
    * Unpins the label on click and runs the currently selected label layout
    * @param evt
@@ -196,11 +218,14 @@ function initializeInputMode() {
       }
     }
   }
+
   inputMode.moveUnselectedItemsInputMode.addEventListener('drag-finished', dragFinished)
   inputMode.moveSelectedItemsInputMode.addEventListener('drag-finished', dragFinished)
   inputMode.addEventListener('item-clicked', clickLabel)
+
   graphComponent.inputMode = inputMode
 }
+
 /**
  * Unpins all labels
  */
@@ -214,6 +239,7 @@ async function unpinLabels() {
   })
   await placeLabels()
 }
+
 /**
  * Configures the label model and runs the labeling algorithm.
  */
@@ -223,9 +249,7 @@ async function placeLabels() {
   }
   setUIDisabled(true)
   // configure the labeling algorithm
-  const labelingAlgorithm = new GenericLabeling({
-    scope: 'node-labels'
-  })
+  const labelingAlgorithm = new GenericLabeling({ scope: 'node-labels' })
   const labelCandidateComboBox = document.querySelector('#label-candidates')
   // select the label candidate set and configure the GenericLabelingData
   const labelCandidate = labelCandidateModes[labelCandidateComboBox.selectedIndex]
@@ -235,6 +259,7 @@ async function placeLabels() {
   labelingData.nodeLabelCandidates = labelCandidate
   // excludes pinned labels from the layout
   labelingData.scope.nodeLabels = (label) => label.tag != 'fixed'
+
   try {
     await new LayoutExecutor({
       graphComponent,
@@ -248,6 +273,7 @@ async function placeLabels() {
     setUIDisabled(false)
   }
 }
+
 /**
  * Changes the state of the UI's elements.
  * @param disabled True if the UI elements should be enabled, false otherwise
@@ -259,6 +285,7 @@ function setUIDisabled(disabled) {
   document.querySelector('#place-labels').disabled = disabled
   document.querySelector('#unpin-labels').disabled = disabled
 }
+
 /**
  * Wires up the UI.
  */
@@ -271,6 +298,7 @@ function initializeUI() {
     placeLabels
   )
 }
+
 /**
  * Creates the sample graph.
  */
@@ -284,11 +312,14 @@ async function createSampleGraph() {
     labels: ['label']
   })
   builder.buildGraph()
+
   // fit content
   await graphComponent.fitGraphBounds()
+
   // places the node labels
   await placeLabels()
 }
+
 async function changeFontSize(e) {
   // Check if the label size input is valid. Valid inputs are greater than zero and less than 50.
   const fontSizeElement = e.target
@@ -296,11 +327,15 @@ async function changeFontSize(e) {
   if (Number.isNaN(textSize) || textSize <= 0 || textSize > 50) {
     return alert('Label size should be greater than 0 and less than 50.')
   }
+
   const graph = graphComponent.graph
+
   labelStyle.textSize = textSize
   pinnedLabelStyle.textSize = textSize
+
   cityLabelStyle = new CityLabelStyle(labelStyle)
   pinnedCityLabelStyle = new CityLabelStyle(pinnedLabelStyle)
+
   graph.labels
     .filter((label) => label.owner instanceof INode)
     .forEach((label) => {
@@ -309,8 +344,10 @@ async function changeFontSize(e) {
         graph.setStyle(label, label.tag ? pinnedCityLabelStyle : cityLabelStyle)
       }
     })
+
   graph.nodeDefaults.labels.style = cityLabelStyle
   graphComponent.invalidate()
   await placeLabels()
 }
+
 run().then(finishLoading)

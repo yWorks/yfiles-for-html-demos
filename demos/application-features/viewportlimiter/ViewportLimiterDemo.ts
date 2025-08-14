@@ -148,10 +148,7 @@ function updateViewportLimiterSettings(graphComponent: GraphComponent) {
 function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   const graphBuilder = new GraphBuilder(graph)
 
-  graphBuilder.createNodesSource({
-    data: graphData.nodeList,
-    id: (item) => item.id
-  })
+  graphBuilder.createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,

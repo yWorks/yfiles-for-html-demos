@@ -256,9 +256,7 @@ function initializeUI(): void {
  * Initializes {@link GraphViewerInputMode} as input mode for this demo.
  */
 function initializeInputModes(): void {
-  const mode = new GraphViewerInputMode({
-    selectableItems: GraphItemTypes.NONE
-  })
+  const mode = new GraphViewerInputMode({ selectableItems: GraphItemTypes.NONE })
 
   // show enlarged nodes on hover
   mode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
@@ -378,27 +376,17 @@ function initializeStyles(): void {
 
   addedEdgeStyle = new PolylineEdgeStyle({
     stroke: '1.5px #DB3A34',
-    targetArrow: new Arrow({
-      fill: '#DB3A34',
-      stroke: '#DB3A34',
-      type: ArrowType.TRIANGLE
-    }),
+    targetArrow: new Arrow({ fill: '#DB3A34', stroke: '#DB3A34', type: ArrowType.TRIANGLE }),
     smoothingLength: 10
   })
 
   removedEdgeStyle = new PolylineEdgeStyle({
     stroke: '1.5px dashed #c1c1c1',
-    targetArrow: new Arrow({
-      fill: '#c1c1c1',
-      stroke: '#c1c1c1',
-      type: ArrowType.TRIANGLE
-    }),
+    targetArrow: new Arrow({ fill: '#c1c1c1', stroke: '#c1c1c1', type: ArrowType.TRIANGLE }),
     smoothingLength: 10
   })
 
-  nodeLabelParameter = new InteriorNodeLabelModel({
-    padding: 9
-  }).createParameter('center')
+  nodeLabelParameter = new InteriorNodeLabelModel({ padding: 9 }).createParameter('center')
 }
 
 /**
@@ -454,11 +442,7 @@ async function loadGraph(): Promise<void> {
   resetGraph()
 
   const builder = new GraphBuilder(graphComponent.graph)
-  builder.createNodesSource({
-    data: GraphData.nodes,
-    id: 'id',
-    labels: ['label']
-  })
+  builder.createNodesSource({ data: GraphData.nodes, id: 'id', labels: ['label'] })
   builder.createEdgesSource(GraphData.edges, 'from', 'to')
 
   const graph = builder.buildGraph()
@@ -847,10 +831,7 @@ function beginUndoEdit(
     () => new TagMementoSupport()
   )
 
-  return {
-    compoundEdit,
-    tagEdit
-  }
+  return { compoundEdit, tagEdit }
 }
 
 /**
@@ -913,9 +894,7 @@ class TagMementoSupport extends BaseClass(IMementoSupport) {
   getState(item: any): any {
     if (item instanceof INode) {
       const tag = item.tag
-      return {
-        highlight: tag.highlight
-      }
+      return { highlight: tag.highlight }
     } else {
       return {}
     }

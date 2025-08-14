@@ -45,6 +45,7 @@ import {
   SvgVisual,
   SvgVisualGroup
 } from '@yfiles/yfiles'
+
 /**
  * An {@link IHandleProvider} for nodes using a {@link RectangleNodeStyle} that provides
  * a single {@link CornerSizeHandle} to change the
@@ -65,6 +66,7 @@ export class CornerSizeHandleProvider extends BaseClass(IHandleProvider) {
     this.node = node
     this.delegateProvider = delegateProvider
   }
+
   /**
    * Returns the corner size handle, as well as all handles provided by the
    * `delegateProvider`.
@@ -80,6 +82,7 @@ export class CornerSizeHandleProvider extends BaseClass(IHandleProvider) {
     return IEnumerable.from(handles)
   }
 }
+
 /**
  * An {@link IHandle} for nodes with a {@link RectangleNodeStyle} to change the
  * {@link RectangleNodeStyle.cornerSize} interactively.
@@ -90,6 +93,7 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
   initialCornerSize = 0
   currentCornerSize = 0
   cornerRectRenderTreeElement = null
+
   /**
    * Initializes a new instance for the given node.
    *
@@ -100,24 +104,29 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
     this.node = node
     this.style = node.style
   }
+
   /** Returns the handle's location. */
   get location() {
     return this
   }
+
   /** Returns the handle's type. This is merely a visual difference, not a semantic one. */
   get type() {
     return HandleType.MOVE2
   }
+
   /** Returns the desired mouse pointer when interacting with the handle. */
   get cursor() {
     return Cursor.NS_RESIZE
   }
+
   /**
    * Gets an optional tag object associated with the handle.
    */
   get tag() {
     return null
   }
+
   /**
    * Initializes the drag gesture and adds a rectangle representing the top-left corner of the node
    * using the absolute {@link RectangleNodeStyle.cornerSize} to the view.
@@ -132,6 +141,7 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
       this
     )
   }
+
   /**
    * Calculates the new corner size, depending on the new mouse location and updates the node
    * style and corner visualization.
@@ -150,6 +160,7 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
     )
     this.setCornerSize(this.currentCornerSize)
   }
+
   /**
    * Sets the corner size for the new location and removes the corner visualization.
    *
@@ -163,6 +174,7 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
       context.canvasComponent?.renderTree.remove(this.cornerRectRenderTreeElement)
     }
   }
+
   /**
    * Resets the initial corner size and removes the corner visualization.
    *
@@ -175,6 +187,7 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
       context.canvasComponent?.renderTree.remove(this.cornerRectRenderTreeElement)
     }
   }
+
   /**
    * Returns the absolute corner size of the current node's style.
    *
@@ -190,6 +203,7 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
       : this.style.cornerSize
     return Math.min(this.getMaximumCornerSize(), cornerSize)
   }
+
   /**
    * Sets the {@link RectangleNodeStyle.cornerSize} considering whether the
    * {@link RectangleNodeStyle.scaleCornerSize corner size is scaled}.
@@ -202,6 +216,7 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
       this.style.cornerSize = cornerSize
     }
   }
+
   /**
    * Determines the maximum corner size based on the style's current settings.
    */
@@ -219,22 +234,29 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
       (corners & RectangleCorners.BOTTOM) == RectangleCorners.BOTTOM
         ? layout.width * 0.5
         : layout.width
+
     return Math.min(maxWidth, maxHeight)
   }
+
   /**
    * This implementation does nothing special when clicked.
    */
   handleClick(evt) {}
+
   // IPoint for the handle's location
+
   /** The handle's x coordinate. */
   get x() {
     return this.node.layout.x
   }
+
   /** The handle's y coordinate. */
   get y() {
     return this.node.layout.y + this.getCornerSize()
   }
+
   // IVisualCreator implementation for the rectangle overlay
+
   /**
    * Creates the rectangle overlay during the drag operation.
    */
@@ -247,6 +269,7 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
     group.add(new SvgVisual(rect))
     return this.updateVisual(context, group)
   }
+
   /**
    * Updates the rectangle overlay during the drag operation.
    */
@@ -254,12 +277,14 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
     group.transform = context.viewTransform
     const rectVisual = group.children.get(0)
     const rect = rectVisual.svgElement
+
     const topLeftView = context.worldToViewCoordinates(this.node.layout.topLeft)
     const cornerSizeView = this.getCornerSize() * context.zoom
     rect.x.baseVal.value = topLeftView.x
     rect.y.baseVal.value = topLeftView.y
     rect.width.baseVal.value = cornerSizeView
     rect.height.baseVal.value = cornerSizeView
+
     return group
   }
 }

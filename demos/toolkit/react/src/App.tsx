@@ -50,28 +50,13 @@ export interface GraphData {
 
 const INITIAL_GRAPH_DATA = {
   nodesSource: [
-    {
-      id: 0,
-      name: 'Node 0'
-    },
-    {
-      id: 1,
-      name: 'Node 1'
-    },
-    {
-      id: 2,
-      name: 'Node 2'
-    }
+    { id: 0, name: 'Node 0' },
+    { id: 1, name: 'Node 1' },
+    { id: 2, name: 'Node 2' }
   ],
   edgesSource: [
-    {
-      fromNode: 0,
-      toNode: 1
-    },
-    {
-      fromNode: 0,
-      toNode: 2
-    }
+    { fromNode: 0, toNode: 1 },
+    { fromNode: 0, toNode: 2 }
   ]
 }
 
@@ -82,10 +67,7 @@ function App() {
     const newIdx = graphData.nodesSource.reduce((maxId, item) => Math.max(maxId, item.id), 0) + 1
     const parentNodeIdx = Math.floor(Math.random() * graphData.nodesSource.length)
     setGraphData((prevGraphData) => {
-      const nodesSource = prevGraphData.nodesSource.concat({
-        id: newIdx,
-        name: `Node ${newIdx}`
-      })
+      const nodesSource = prevGraphData.nodesSource.concat({ id: newIdx, name: `Node ${newIdx}` })
 
       // Create an edge if the graph was not empty
       let edgesSource = prevGraphData.edgesSource
@@ -96,10 +78,7 @@ function App() {
         })
       }
 
-      return {
-        nodesSource,
-        edgesSource
-      }
+      return { nodesSource, edgesSource }
     })
   }, [graphData, setGraphData])
 
@@ -113,10 +92,7 @@ function App() {
       const newEdgesSource = prevGraphData.edgesSource.filter(
         (edge) => edge.fromNode !== nodeId && edge.toNode !== nodeId
       )
-      return {
-        nodesSource: newNodesSource,
-        edgesSource: newEdgesSource
-      }
+      return { nodesSource: newNodesSource, edgesSource: newEdgesSource }
     })
   }, [setGraphData])
 

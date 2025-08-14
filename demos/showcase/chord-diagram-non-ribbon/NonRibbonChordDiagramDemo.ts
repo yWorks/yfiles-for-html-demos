@@ -165,11 +165,7 @@ async function initializeGraph(graphComponent: GraphComponent): Promise<void> {
 
   nodesSource.nodeCreator.styleProvider = (data: any) => {
     const colorSet = colorSets[predefinedColorSets.get(data.tag?.department) || 'demo-palette-41']
-    return new ShapeNodeStyle({
-      shape: 'ellipse',
-      fill: colorSet.fill,
-      stroke: colorSet.stroke
-    })
+    return new ShapeNodeStyle({ shape: 'ellipse', fill: colorSet.fill, stroke: colorSet.stroke })
   }
 
   builder.createEdgesSource({

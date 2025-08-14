@@ -29,12 +29,14 @@
 // @ts-ignore - We have no proper types for preact, here
 import { h, render } from '../../preact-loader'
 import { NodeStyleBase, SvgVisual, Visual } from '@yfiles/yfiles'
+
 function dispose(context, removedVisual, dispose) {
   const gElement = removedVisual.svgElement
   // see https://github.com/preactjs/preact/issues/53#issuecomment-522328979
   render(null, gElement)
   return null
 }
+
 /**
  * A simple INodeStyle implementation that uses Preact Components/render functions
  * for rendering the node visualizations
@@ -61,13 +63,11 @@ export class PreactComponentNodeStyle extends NodeStyleBase {
     super()
     this.type = type
   }
+
   createProps(node) {
-    return {
-      width: node.layout.width,
-      height: node.layout.height,
-      tag: node.tag
-    }
+    return { width: node.layout.width, height: node.layout.height, tag: node.tag }
   }
+
   createVisual(context, node) {
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const props = this.createProps(node)
@@ -75,12 +75,16 @@ export class PreactComponentNodeStyle extends NodeStyleBase {
     render(element, gElement)
     SvgVisual.setTranslate(gElement, node.layout.x, node.layout.y)
     const svgVisual = SvgVisual.from(gElement, props)
+
     context.setDisposeCallback(svgVisual, dispose)
     return svgVisual
   }
+
   updateVisual(context, oldVisual, node) {
     const gElement = oldVisual.svgElement
+
     const props = this.createProps(node)
+
     const lastProps = oldVisual.tag
     if (
       lastProps.width !== props.width ||

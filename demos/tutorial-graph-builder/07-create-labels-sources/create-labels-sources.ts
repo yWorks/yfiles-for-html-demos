@@ -73,18 +73,8 @@ export function createNodeLabelsWithSources(graphBuilder: GraphBuilder): void {
 
 export function createEdgeLabelsWithProvider(graphBuilder: GraphBuilder): void {
   const edgeData = [
-    {
-      id: '0',
-      sourceId: '1',
-      targetId: '0',
-      ownership: 30
-    },
-    {
-      id: '1',
-      sourceId: '0',
-      targetId: '2',
-      ownership: 60
-    },
+    { id: '0', sourceId: '1', targetId: '0', ownership: 30 },
+    { id: '1', sourceId: '0', targetId: '2', ownership: 60 },
     { id: '2', sourceId: '4', targetId: '0', ownership: 5 },
     { id: '3', sourceId: '3', targetId: '0', ownership: 5 }
   ]

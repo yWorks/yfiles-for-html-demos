@@ -97,6 +97,7 @@ import {
   Visual,
   WebGLSupport
 } from '@yfiles/yfiles'
+
 /**
  * The gesture or state {@link ButtonInputMode} uses to decide for which {@link IModelItem}
  * {@link Button}s should be displayed.
@@ -109,6 +110,7 @@ export var ButtonTrigger
    * {@link ButtonInputMode.hideButtons hideButtons} have to be called programmatically.
    */
   ButtonTrigger[(ButtonTrigger['NONE'] = 0)] = 'NONE'
+
   /**
    * {@link Button}s are displayed for an {@link IModelItem} when hovering over it for at least
    * {@link ButtonInputMode.hoverTime hoverTime}.
@@ -116,16 +118,19 @@ export var ButtonTrigger
    * has passed, the buttons are removed again.
    */
   ButtonTrigger[(ButtonTrigger['HOVER'] = 1)] = 'HOVER'
+
   /**
    * {@link Button}s are displayed for the {@link GraphComponent.currentItem currentItem}.
    */
   ButtonTrigger[(ButtonTrigger['CURRENT_ITEM'] = 2)] = 'CURRENT_ITEM'
+
   /**
    * {@link Button}s are displayed for an {@link IModelItem} when right-clicking the item and
    * are removed on the next right-click.
    */
   ButtonTrigger[(ButtonTrigger['RIGHT_CLICK'] = 3)] = 'RIGHT_CLICK'
 })(ButtonTrigger || (ButtonTrigger = {}))
+
 /**
  * An {@link IInputMode} that can be used to display several {@link Button buttons} at an owning
  * {@link IModelItem} that trigger different actions for this owner.
@@ -157,6 +162,7 @@ export class ButtonInputMode extends InputModeBase {
   onPointerDownListener = this.onPointerDown.bind(this)
   onKeyDownListener = this.onKeyDown.bind(this)
   currentItemChangedListener = this.onCurrentItemChanged.bind(this)
+
   _cursor
   _buttonSize = new Size(25, 25)
   _hoverTime = 750
@@ -175,6 +181,7 @@ export class ButtonInputMode extends InputModeBase {
   })
   _lastTooltipTimeout = undefined
   _focusedButton = null
+
   /**
    * The cursor displayed when hovering over a {@link Button} when {@link Button.cursor} is not set.
    *
@@ -183,9 +190,11 @@ export class ButtonInputMode extends InputModeBase {
   get cursor() {
     return this._cursor
   }
+
   set cursor(value) {
     this._cursor = value
   }
+
   /**
    * The size used for a {@link Button} when no custom size is specified.
    *
@@ -194,9 +203,11 @@ export class ButtonInputMode extends InputModeBase {
   get buttonSize() {
     return this._buttonSize
   }
+
   set buttonSize(value) {
     this._buttonSize = value
   }
+
   /**
    * The time an {@link IModelItem} has to be hovered before {@link Button}s are
    * {@link setQueryButtonsListener queried} for it.
@@ -208,9 +219,11 @@ export class ButtonInputMode extends InputModeBase {
   get hoverTime() {
     return this._hoverTime
   }
+
   set hoverTime(value) {
     this._hoverTime = value
   }
+
   /**
    * The time before {@link Button}s for a hovered item are hidden again.
    *
@@ -221,9 +234,11 @@ export class ButtonInputMode extends InputModeBase {
   get hideTime() {
     return this._hideTime
   }
+
   set hideTime(value) {
     this._hideTime = value
   }
+
   /**
    * The time a {@link Button} has to be hovered before its {@link Button.tooltip tooltip} is
    * displayed.
@@ -233,9 +248,11 @@ export class ButtonInputMode extends InputModeBase {
   get hoverTooltipTime() {
     return this._hoverTooltipTime
   }
+
   set hoverTooltipTime(value) {
     this._hoverTooltipTime = value
   }
+
   /**
    * The gesture or state that is used to decide for which {@link IModelItem}
    * {@link Button}s should be displayed.
@@ -245,6 +262,7 @@ export class ButtonInputMode extends InputModeBase {
   get buttonTrigger() {
     return this._buttonTrigger
   }
+
   set buttonTrigger(value) {
     this.hideButtons()
     this._buttonTrigger = value
@@ -263,6 +281,7 @@ export class ButtonInputMode extends InputModeBase {
         break
     }
   }
+
   /**
    * The graph items that are considered by this input mode.
    *
@@ -271,9 +290,11 @@ export class ButtonInputMode extends InputModeBase {
   get validOwnerTypes() {
     return this._validOwnerTypes
   }
+
   set validOwnerTypes(value) {
     this._validOwnerTypes = value
   }
+
   /**
    * The style used to highlight the focused button.
    * Using the TAB key, the focus can be moved to the next button.
@@ -281,12 +302,15 @@ export class ButtonInputMode extends InputModeBase {
   get focusedButtonStyle() {
     return this.buttonLabelManager.renderer.focusedButtonStyle
   }
+
   set focusedButtonStyle(style) {
     this.buttonLabelManager.renderer.focusedButtonStyle = style
   }
+
   get graphComponent() {
     return this.parentInputModeContext?.canvasComponent
   }
+
   constructor() {
     super()
     this.priority = 0
@@ -295,15 +319,18 @@ export class ButtonInputMode extends InputModeBase {
     this._cursor = Cursor.POINTER
     this.tooltipMode.duration = TimeSpan.fromSeconds(5)
   }
+
   createButtonLabelCollectionModel() {
     const buttonLabelManager = new CollectionModelManager(Button)
     buttonLabelManager.renderer = new ButtonRenderer()
     buttonLabelManager.model = new ObservableCollection()
     return buttonLabelManager
   }
+
   get buttonLabels() {
     return this.buttonLabelManager.model
   }
+
   /**
    * Determines if buttons should be {@link QueryButtonsEvent queried} for a model item.
    *
@@ -314,6 +341,7 @@ export class ButtonInputMode extends InputModeBase {
     const itemType = GraphItemTypes.getItemType(item)
     return (this.validOwnerTypes & itemType) == itemType
   }
+
   /**
    * {@link hideButtons Hides} the current buttons and {@link setQueryButtonsListener queries} and
    * displays new {@link Button}s for the given item.
@@ -333,6 +361,7 @@ export class ButtonInputMode extends InputModeBase {
         this.buttons.forEach((button) => {
           this.buttonLabels.add(button)
         })
+
         if (ensureVisible) {
           const canvasContext = this.parentInputModeContext?.canvasComponent?.canvasContext
           // get the bounding rectangle around all the buttons in this set
@@ -351,10 +380,13 @@ export class ButtonInputMode extends InputModeBase {
       }
     }
   }
+
   isActive() {
     return this.controller && this.controller.active
   }
+
   clearPending = false
+
   tryHideButtons() {
     if (this.hoveredButton) {
       // don't clear buttons when currently hovering over them
@@ -363,6 +395,7 @@ export class ButtonInputMode extends InputModeBase {
       this.hideButtons()
     }
   }
+
   /**
    * {@link hideButtons Hides} all current buttons.
    */
@@ -372,10 +405,12 @@ export class ButtonInputMode extends InputModeBase {
     this.buttonOwner = null
     this.buttons = null
     this.buttonLabels.clear()
+
     if (this.hasMutex()) {
       this.releaseMutex()
     }
   }
+
   /**
    * Returns the {@link Button buttons} that shall be displayed for the item.
    *
@@ -391,6 +426,7 @@ export class ButtonInputMode extends InputModeBase {
     }
     return buttons
   }
+
   /**
    * Adds a listener that is queried for {@link Button}s for a provided
    * {@link QueryButtonsEvent.owner owner}.
@@ -399,6 +435,7 @@ export class ButtonInputMode extends InputModeBase {
   setQueryButtonsListener(listener) {
     this.queryButtonsListener = delegate.combine(listener, this.queryButtonsListener)
   }
+
   /**
    * Removes a previously {@link setQueryButtonsListener added} query buttons listener.
    * @param listener The listener to remove.
@@ -406,19 +443,18 @@ export class ButtonInputMode extends InputModeBase {
   removeQueryButtonsListener(listener) {
     this.queryButtonsListener = delegate.remove(listener, this.queryButtonsListener)
   }
+
   getHitButtons(context, location) {
     const graphComponent = context.canvasComponent
     return graphComponent.renderTree
-      .hitElementsAt({
-        context,
-        location,
-        root: this.buttonLabelManager.renderTreeGroup
-      })
+      .hitElementsAt({ context, location, root: this.buttonLabelManager.renderTreeGroup })
       .map((element) => element.tag)
   }
+
   getFirstHitButton(location) {
     return this.getHitButtons(this.parentInputModeContext, location).at(0) ?? null
   }
+
   install(context, controller) {
     super.install(context, controller)
     const graphComponent = context.canvasComponent
@@ -436,6 +472,7 @@ export class ButtonInputMode extends InputModeBase {
     this.setGraphListeners(graph)
     this.tooltipMode.install(context, controller)
   }
+
   setGraphListeners(graph) {
     graph.addEventListener('node-removed', this.itemRemovedListener)
     graph.addEventListener('edge-removed', this.itemRemovedListener)
@@ -443,6 +480,7 @@ export class ButtonInputMode extends InputModeBase {
     graph.addEventListener('port-removed', this.itemRemovedListener)
     graph.addEventListener('bend-removed', this.itemRemovedListener)
   }
+
   uninstall(context) {
     this.tooltipMode.uninstall(context)
     const graphComponent = context.canvasComponent
@@ -459,6 +497,7 @@ export class ButtonInputMode extends InputModeBase {
     graphComponent.renderTree.remove(this.buttonLabelManager.renderTreeGroup)
     super.uninstall(context)
   }
+
   removeGraphListener(graph) {
     graph.removeEventListener('node-removed', this.itemRemovedListener)
     graph.removeEventListener('edge-removed', this.itemRemovedListener)
@@ -466,6 +505,7 @@ export class ButtonInputMode extends InputModeBase {
     graph.removeEventListener('port-removed', this.itemRemovedListener)
     graph.removeEventListener('bend-removed', this.itemRemovedListener)
   }
+
   onPointerMove(evt) {
     const newButton = this.getFirstHitButton(evt.location)
     this.updateHoveredButton(newButton)
@@ -473,9 +513,11 @@ export class ButtonInputMode extends InputModeBase {
       this.updateHoveredItem(evt.location)
     }
   }
+
   onPointerDown(evt) {
     this.pointerDownButton = this.getFirstHitButton(evt.location)
   }
+
   onPointerDrag(evt) {
     const draggedButton = this.getFirstHitButton(evt.location)
     if (draggedButton && this.pointerDownButton === draggedButton) {
@@ -483,6 +525,7 @@ export class ButtonInputMode extends InputModeBase {
     }
     this.pointerDownButton = null
   }
+
   updateHoveredButton(newButton) {
     if (this.hoveredButton != newButton) {
       this.pointerDownButton = null
@@ -522,22 +565,26 @@ export class ButtonInputMode extends InputModeBase {
       }
     }
   }
+
   /**
    * Calculate the world location where the tooltip of the button shall be displayed.
    * @param button The button whose tooltip shall be displayed.
    */
   calculateTooltipLocation(button) {
     const tooltipWorldSize = this.calculateTooltipWorldSize(button.tooltip)
+
     // get the bounds of the button using the ButtonRenderer
     const buttonBounds = this.buttonLabelManager.renderer
       .getBoundsProvider(button)
       .getBounds(this.parentInputModeContext.canvasComponent.canvasContext)
+
     // horizontally the tooltip is centered with the button center
     const x = buttonBounds.centerX - tooltipWorldSize.width / 2
     // vertically the tooltip is on top of the button with an offset of 10 in view coordinates
     const y = buttonBounds.y - tooltipWorldSize.height - 10 / this.parentInputModeContext.zoom
     return new Point(x, y)
   }
+
   /**
    * Calculate the size of tooltip in world coordinates.
    * @param tooltip The tooltip content.
@@ -545,12 +592,14 @@ export class ButtonInputMode extends InputModeBase {
   calculateTooltipWorldSize(tooltip) {
     // measure the size of the tooltip in view coordinates
     const viewSize = ButtonInputMode.measureTooltipSize(tooltip)
+
     // convert the view coordinates into world coordinates
     const canvas = this.parentInputModeContext.canvasComponent
     const topLeft = canvas.viewToWorldCoordinates(Point.ORIGIN)
     const bottomRight = canvas.viewToWorldCoordinates(new Point(viewSize.width, viewSize.height))
     return new Size(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y)
   }
+
   /**
    * Measures the size of a {@link HTMLDivElement} element containing the provided HTML string.
    * @param htmlString The content to measure
@@ -562,11 +611,13 @@ export class ButtonInputMode extends InputModeBase {
     divElement.style.opacity = '0'
     divElement.innerHTML = htmlString
     document.body.appendChild(divElement)
+
     // measure bounds and remove the div element again
     const bounds = divElement.getBoundingClientRect()
     document.body.removeChild(divElement)
     return new Size(bounds.width, bounds.height)
   }
+
   updateHoveredItem(location) {
     const hitItem = this.getHitItem(location)
     if (hitItem != this.hoveredOwner) {
@@ -582,6 +633,7 @@ export class ButtonInputMode extends InputModeBase {
       }
     }
   }
+
   updateFocusedButton(increment) {
     if (!this.buttons) {
       return
@@ -598,11 +650,14 @@ export class ButtonInputMode extends InputModeBase {
       nextIndex = (nextIndex + increment + this.buttons.length) % this.buttons.length
       newButton = this.buttons[nextIndex]
     }
+
     this.focusedButton = newButton
   }
+
   clearFocusedButton() {
     this.focusedButton = null
   }
+
   /**
    * The button that is focused and can be triggered via {@link Key.ENTER} or {@link Key.SPACE}.
    * @param focusedButton The button to focus or `null` if no button shall be focused.
@@ -615,9 +670,11 @@ export class ButtonInputMode extends InputModeBase {
     }
     this.parentInputModeContext?.canvasComponent?.invalidate()
   }
+
   get focusedButton() {
     return this._focusedButton
   }
+
   onPointerClicked(evt) {
     const leftClick =
       (evt.pointerType === PointerType.TOUCH && evt.pointerId === 0) ||
@@ -641,6 +698,7 @@ export class ButtonInputMode extends InputModeBase {
       }
     }
   }
+
   onKeyDown(evt) {
     if (evt.key === 'Tab') {
       evt.preventDefault()
@@ -660,6 +718,7 @@ export class ButtonInputMode extends InputModeBase {
       this.triggerAction(this._focusedButton)
     }
   }
+
   triggerAction(button) {
     // before handling an action, reset the hovered button
     this.updateHoveredButton(null)
@@ -670,11 +729,13 @@ export class ButtonInputMode extends InputModeBase {
     }
     button.onAction(button)
   }
+
   getHitItem(location) {
     const context = this.parentInputModeContext
     const hitTester = context.lookup(IHitTester)
     const hitItem =
       hitTester?.enumerateHits(context, location).find(this.isValidItem.bind(this)) ?? null
+
     if (!(hitItem instanceof IEdge) || !this.checkForBends()) {
       return hitItem
     }
@@ -684,14 +745,17 @@ export class ButtonInputMode extends InputModeBase {
     )
     return hitBend ?? hitItem
   }
+
   checkForBends() {
     return (this.validOwnerTypes & GraphItemTypes.BEND) == GraphItemTypes.BEND
   }
+
   onItemRemoved(evt) {
     if (this.buttonOwner === evt.item) {
       this.hideButtons()
     }
   }
+
   onCurrentItemChanged(evt, component) {
     if (this.buttonTrigger === ButtonTrigger.CURRENT_ITEM) {
       if (component.currentItem === null || !this.isValidItem(component.currentItem)) {
@@ -702,6 +766,7 @@ export class ButtonInputMode extends InputModeBase {
     }
   }
 }
+
 /**
  * An event used by {@link ButtonInputMode} to query the {@link Button}s that shall be displayed
  * for a specified {@link owner}.
@@ -710,17 +775,20 @@ export class QueryButtonsEvent {
   _mode
   _owner
   _buttons
+
   constructor(mode, item, buttons) {
     this._mode = mode
     this._owner = item
     this._buttons = buttons
   }
+
   /**
    * The item {@link Button}s shall be {@link addButton added} for.
    */
   get owner() {
     return this._owner
   }
+
   /**
    * Creates and adds a new button for the {@link owner}.
    *
@@ -786,6 +854,7 @@ export class QueryButtonsEvent {
     return button
   }
 }
+
 /**
  * A button that is temporarily displayed at an owner {@link IModelItem} and can trigger an action
  * that relates to this item.
@@ -799,7 +868,9 @@ export class Button {
   _cursor
   _tooltip
   _focusable
+
   _label
+
   /**
    * Creates a new button for the {@link item}.
    *
@@ -827,6 +898,7 @@ export class Button {
     this._cursor = options.cursor || null
     this._tooltip = options.tooltip || ''
     this._focusable = options.focusable
+
     // determine the dummy owner to use for placing the _label
     if (this._owner instanceof ILabelOwner) {
       // for nodes, edges and ports the real owner can be used
@@ -844,6 +916,7 @@ export class Button {
     } else {
       throw new Error(`Unsupported owner type: ${this._owner}`)
     }
+
     this._label = new SimpleLabel({
       owner: this._dummyOwner,
       style: options.style,
@@ -852,6 +925,7 @@ export class Button {
       text: options.text || '',
       tag: options.tag
     })
+
     if (options.size.isEmpty) {
       // calculate preferred size
       this._label.preferredSize = this._label.style.renderer.getPreferredSize(
@@ -860,30 +934,35 @@ export class Button {
       )
     }
   }
+
   /**
    * The model item this button belongs to.
    */
   get owner() {
     return this._owner
   }
+
   /**
    * The style used for the button.
    */
   get style() {
     return this._label.style
   }
+
   /**
    * The size of the button.
    */
   get size() {
     return this._label.preferredSize
   }
+
   /**
    * An action that is triggered when clicking or dragging the button.
    */
   get onAction() {
     return this._onAction
   }
+
   /**
    * The text used to style the button.
    * This may be an empty string if {@link style} doesn't require a text.
@@ -891,6 +970,7 @@ export class Button {
   get text() {
     return this._label.text
   }
+
   /**
    * A layout parameter to place the button relative to the {@link owner}.
    * The button layout is calculated using a dummy label and this layout parameter.
@@ -902,18 +982,21 @@ export class Button {
   get layoutParameter() {
     return this._label.layoutParameter
   }
+
   /**
    * An action that is triggered when starting hovering over the button.
    */
   get onHoverOver() {
     return this._onHoverOver
   }
+
   /**
    * An action that is triggered when ending hovering over the button.
    */
   get onHoverOut() {
     return this._onHoverOut
   }
+
   /**
    * An optional tag that can be used to identify the button.
    * This tag is also set as {@link ILabel.tag} of the dummy label used to position and render the
@@ -922,18 +1005,21 @@ export class Button {
   get tag() {
     return this._label.tag
   }
+
   /**
    * An optional text that describes the action triggered by the button.
    */
   get tooltip() {
     return this._tooltip
   }
+
   /**
    * Whether the button can be focused.
    */
   get focusable() {
     return this._focusable
   }
+
   /**
    * The cursor used when hovering over this button.
    * When set to `null` (default), the {@link ButtonInputMode.cursor} is used instead.
@@ -941,6 +1027,7 @@ export class Button {
   get cursor() {
     return this._cursor
   }
+
   /**
    * A label internally used to position and render the button.
    */
@@ -948,6 +1035,7 @@ export class Button {
     return this._label
   }
 }
+
 /**
  * An {@link IObjectRenderer} for {@link Button}s used by the {@link ButtonInputMode}.
  */
@@ -968,10 +1056,13 @@ class ButtonRenderer extends BaseClass(
   dummyBends
   dummyBendsBackup
   dummyLabel
+
   focusedButton = null
   focusedButtonStyle
+
   label = new SimpleLabel()
   button = null
+
   constructor() {
     super()
     this.dummyLabelLayout = new OrientedRectangle()
@@ -988,17 +1079,22 @@ class ButtonRenderer extends BaseClass(
     this.dummyBends = []
     this.dummyBendsBackup = []
     this.previewEdge.bends = IListEnumerable.from(this.dummyBends)
+
     this.focusedButtonStyle = new FocusLabelStyle(Stroke.from('3px #FFCF00'))
   }
+
   initialize(renderTag) {
     this.button = renderTag
     this.label = this.button.label
   }
+
   //region IBoundsProvider
+
   getBoundsProvider(renderTag) {
     this.initialize(renderTag)
     return this
   }
+
   /**
    * Gets the bounds of the visual for the label in the given context.
    */
@@ -1006,12 +1102,16 @@ class ButtonRenderer extends BaseClass(
     this.updateDummyLabel(ctx)
     return this.dummyLabelBounds.bounds
   }
+
   //endregion
+
   //region IHitTestable
+
   getHitTestable(renderTag) {
     this.initialize(renderTag)
     return this
   }
+
   /**
    * Determines whether the visual representation of the label has been hit at the given location.
    */
@@ -1019,12 +1119,16 @@ class ButtonRenderer extends BaseClass(
     this.updateDummyLabel(ctx)
     return this.dummyLabelBounds.contains(p, 0.001)
   }
+
   //endregion
+
   //region IVisibilityTestable
+
   getVisibilityTestable(renderTag) {
     this.initialize(renderTag)
     return this
   }
+
   /**
    * Determines whether the visualization for the specified label is visible in the context.
    */
@@ -1032,30 +1136,40 @@ class ButtonRenderer extends BaseClass(
     this.updateDummyLabel(ctx)
     return this.getBounds(ctx).intersects(clip)
   }
+
   //endregion
+
   //region IVisualCreator
+
   getVisualCreator(renderTag) {
     this.initialize(renderTag)
     return this
   }
+
   /**
    * Creates the visual for the label.
    */
   createVisual(ctx) {
     this.updateDummyLabel(ctx)
+
     // creates the container for the visual and sets a transform for view coordinates
     const container = new SvgVisualGroup()
+
     const scale = getScaleForZoom(this.label, ctx.zoom)
     const dummyLabelCenter = this.dummyLabelBounds.center
     container.transform = new Matrix(scale, 0, 0, scale, dummyLabelCenter.x, dummyLabelCenter.y)
+
     const creator = this.label.style.renderer.getVisualCreator(this.dummyLabel, this.label.style)
+
     // pass inverse transform to nullify the scaling and translation on the context
     // therefore inner styles can use the context's methods without considering the current transform
     const inverseTransform = container.transform.clone()
     inverseTransform.invert()
     const innerContext = new DummyContext(ctx, scale * ctx.zoom, inverseTransform)
+
     // the wrapped style should always think it's rendering with the zoom level set in this.zoomThreshold
     const visual = creator.createVisual(innerContext)
+
     if (visual) {
       // add the created visual to the container
       container.children.add(visual)
@@ -1070,31 +1184,39 @@ class ButtonRenderer extends BaseClass(
     }
     return container
   }
+
   /**
    * Update the visual previously created by createVisual.
    */
   updateVisual(ctx, oldVisual) {
     this.updateDummyLabel(ctx)
+
     const container = oldVisual
     const visual = container.children.get(0)
     if (visual === null) {
       return this.createVisual(ctx)
     }
+
     const scale = getScaleForZoom(this.label, ctx.zoom)
     const dummyLabelCenter = this.dummyLabelBounds.center
+
     container.transform = new Matrix(scale, 0, 0, scale, dummyLabelCenter.x, dummyLabelCenter.y)
+
     // update the visual created by the inner style renderer
     const creator = this.label.style.renderer.getVisualCreator(this.dummyLabel, this.label.style)
+
     // pass inverse transform to nullify the scaling and translation on the context
     // therefore inner styles can use the context's methods without considering the current transform
     const inverseTransform = container.transform.clone()
     inverseTransform.invert()
     const innerContext = new DummyContext(ctx, scale * ctx.zoom, inverseTransform)
+
     const updatedVisual = creator.updateVisual(innerContext, visual)
     if (updatedVisual === null) {
       // nothing to display -> return nothing
       return null
     }
+
     if (updatedVisual !== visual) {
       container.remove(visual)
       container.children.insert(0, updatedVisual)
@@ -1122,10 +1244,14 @@ class ButtonRenderer extends BaseClass(
     } else if (container.children.size > 1) {
       container.children.removeAt(1)
     }
+
     return container
   }
+
   //endregion
+
   //region Utility methods to calculate the view-independent label bounds
+
   /**
    * Updates the internal label to match the given original label.
    */
@@ -1133,10 +1259,12 @@ class ButtonRenderer extends BaseClass(
     this.dummyLabel.style = this.label.style
     this.dummyLabel.tag = this.label.tag
     this.dummyLabel.text = this.label.text
+
     const originalLayout = this.label.layout
     this.dummyLabelLayout.setShape(originalLayout)
     this.dummyLabelLayout.setCenter(new Point(0, 0))
     this.dummyLabel.preferredSize = this.dummyLabelLayout.toSize()
+
     this.dummyLabel.owner = this.updateDummyLabelOwner(ctx)
     const viewBounds = this.label.layoutParameter.model.getGeometry(
       this.dummyLabel,
@@ -1144,15 +1272,20 @@ class ButtonRenderer extends BaseClass(
     )
     const worldCenter = this.calculateWorldCenter(ctx, viewBounds)
     this.dummyLabel.owner = this.label.owner
+
     const scale = getScaleForZoom(this.label, ctx.zoom)
+
     this.dummyLabelBounds.setShape(originalLayout)
     this.dummyLabelBounds.width = originalLayout.width * scale
     this.dummyLabelBounds.height = originalLayout.height * scale
     this.dummyLabelBounds.setCenter(worldCenter)
+
     this.updateDummyAngles()
   }
+
   updateDummyLabelOwner(ctx) {
     const canvas = ctx.canvasComponent
+
     const owner = this.button?.owner
     if (owner instanceof INode) {
       this.dummyNode.layout = this.getViewNodeLayout(owner, canvas)
@@ -1193,12 +1326,14 @@ class ButtonRenderer extends BaseClass(
       return this.dummyNode
     }
   }
+
   getViewNodeLayout(owner, canvas) {
     const ownerLayout = owner.layout
     const topLeftView = canvas.worldToViewCoordinates(ownerLayout.topLeft)
     const bottomRightView = canvas.worldToViewCoordinates(ownerLayout.bottomRight)
     return new Rect(topLeftView, bottomRightView)
   }
+
   updateDummyAngles() {
     const owner = this.button.owner
     if (owner instanceof ILabel) {
@@ -1207,6 +1342,7 @@ class ButtonRenderer extends BaseClass(
       setAngle(this.dummyLabelLayout, angle)
     }
   }
+
   calculateWorldCenter(ctx, viewBounds) {
     const canvas = ctx.canvasComponent
     const owner = this.button.owner
@@ -1222,12 +1358,16 @@ class ButtonRenderer extends BaseClass(
       return canvas.viewToWorldCoordinates(viewBounds.center)
     }
   }
+
   ensureDummyBends(count) {
     while (count > this.dummyBendsBackup.length) {
       this.dummyBendsBackup.push(new SimpleBend(this.previewEdge, Point.ORIGIN))
     }
   }
+
+  //endregion
 }
+
 /**
  * Determines the scale factor for the given label and zoom level.
  */
@@ -1235,27 +1375,33 @@ function getScaleForZoom(label, zoom) {
   // base implementation does nothing
   return 1 / zoom
 }
+
 function getAngle(r) {
   const angle = Math.atan2(-r.upX, -r.upY)
   return angle < 0 ? 2 * Math.PI + angle : angle
 }
+
 function setAngle(r, angle) {
   const center = r.center
   r.angle = angle
   r.setCenter(center)
 }
+
 const FULL_CIRCLE = 2 * Math.PI
+
 function normalizeAngle(angle) {
   while (angle > FULL_CIRCLE) {
     angle -= FULL_CIRCLE
   }
   return angle
 }
+
 function rotate(vector, angle) {
   const cos = Math.cos(angle)
   const sin = Math.sin(angle)
   return new Point(cos * vector.x + sin * vector.y, cos * vector.y - sin * vector.x)
 }
+
 class DummyContext extends BaseClass(IRenderContext) {
   innerContext
   $zoom
@@ -1263,61 +1409,79 @@ class DummyContext extends BaseClass(IRenderContext) {
   $viewTransform
   $intermediateTransform
   $projection
+
   constructor(innerContext, zoom, inverseTransform) {
     super()
     this.innerContext = innerContext
     this.$zoom = zoom
     this.$transform = inverseTransform
+
     // multiply all necessary transforms with the given inverse transform to nullify the outer transform
     this.$viewTransform = this.$transformMatrix(this.innerContext.viewTransform)
     this.$intermediateTransform = this.$transformMatrix(this.innerContext.intermediateTransform)
     this.$projection = this.$transformMatrix(this.innerContext.projection)
   }
+
   get webGLSupport() {
     return this.innerContext.webGLSupport
   }
+
   get canvasComponent() {
     return this.innerContext.canvasComponent
   }
+
   get clip() {
     return this.innerContext.clip
   }
+
   get viewTransform() {
     return this.$viewTransform
   }
+
   get intermediateTransform() {
     return this.$intermediateTransform
   }
+
   get projection() {
     return this.$projection
   }
+
   get defsElement() {
     return this.innerContext.defsElement
   }
+
   get svgDefsManager() {
     return this.innerContext.svgDefsManager
   }
+
   get zoom() {
     return this.$zoom
   }
+
   get hitTestRadius() {
     return this.innerContext.hitTestRadius
   }
+
   worldToViewCoordinates(worldPoint) {
     return this.$viewTransform.transform(worldPoint)
   }
+
   intermediateToViewCoordinates(intermediatePoint) {
     return this.$projection.transform(intermediatePoint)
   }
+
   worldToIntermediateCoordinates(worldPoint) {
     return this.$intermediateTransform.transform(worldPoint)
   }
+
   getDefsId(defsSupport) {
     return this.innerContext.getDefsId(defsSupport)
   }
+
   lookup(type) {
     return this.innerContext.lookup(type)
   }
+
   /**
    * Multiplies the given matrix with the inverse transform of the invariant label style.
    */
@@ -1327,6 +1491,7 @@ class DummyContext extends BaseClass(IRenderContext) {
     return transformed
   }
 }
+
 /**
  * A style implementation that draws nothing but a border for its associated label.
  */
@@ -1336,15 +1501,18 @@ class FocusLabelStyle extends LabelStyleBase {
     super()
     this.stroke = stroke
   }
+
   createVisual(context, label) {
     const labelBounds = label.layout.bounds
     const frame = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     this.stroke.applyTo(frame, context)
     frame.setAttribute('fill', 'none')
+
     frame.setAttribute('x', `${labelBounds.x}`)
     frame.setAttribute('y', `${labelBounds.y}`)
     frame.setAttribute('width', `${labelBounds.width}`)
     frame.setAttribute('height', `${labelBounds.height}`)
+
     return SvgVisual.from(frame, {
       x: labelBounds.x,
       y: labelBounds.y,
@@ -1352,6 +1520,7 @@ class FocusLabelStyle extends LabelStyleBase {
       height: labelBounds.height
     })
   }
+
   updateVisual(context, oldVisual, label) {
     const labelBounds = label.layout.bounds
     const frame = oldVisual.svgElement
@@ -1374,6 +1543,7 @@ class FocusLabelStyle extends LabelStyleBase {
     }
     return oldVisual
   }
+
   getPreferredSize(label) {
     return new Size(0, 0)
   }

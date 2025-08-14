@@ -53,6 +53,7 @@ export function createUrlIcon(ctx, url, imageSize, iconSize = null) {
     image.src = url
   })
 }
+
 /**
  * Creates an {@link ImageData} icon from a given Font Awesome class.
  * @param ctx The canvas context in which to render the icon.
@@ -64,6 +65,7 @@ export function createFontAwesomeIcon(ctx, fontAwesomeCssClass, iconSize = null)
   const faHelperElement = getHelperElement()
   // assign the Font Awesome class
   faHelperElement.setAttribute('class', fontAwesomeCssClass)
+
   // get the computed style to read the font-family, font-weight and text
   const computedStyle = window.getComputedStyle(faHelperElement)
   const beforeComputedStyle = window.getComputedStyle(faHelperElement, ':before')
@@ -72,8 +74,10 @@ export function createFontAwesomeIcon(ctx, fontAwesomeCssClass, iconSize = null)
   const propertyValue = beforeComputedStyle.getPropertyValue('content')
   // in some browsers, the character is enclosed by quotes
   const text = propertyValue[1] ?? propertyValue[0]
+
   const iconWidth = iconSize?.width || ctx.canvas.width
   const iconHeight = iconSize?.height || ctx.canvas.height
+
   // render the text into the canvas
   ctx.clearRect(0, 0, iconWidth, iconHeight)
   ctx.font = `${fontWeight} 100px ${fontFamily}`
@@ -81,8 +85,10 @@ export function createFontAwesomeIcon(ctx, fontAwesomeCssClass, iconSize = null)
   ctx.textBaseline = 'top'
   ctx.textAlign = 'center'
   ctx.fillText(text, 64, 14)
+
   return ctx.getImageData(0, 0, iconWidth, iconHeight)
 }
+
 /**
  * Gets or creates an <i> element that is used to pre-render the font awesome icon.
  */
@@ -97,6 +103,7 @@ function getHelperElement() {
   document.body.appendChild(newElement)
   return newElement
 }
+
 /**
  * Creates a rendering context intended for creating the {@link ImageData} with the createXyzIcon
  * functions of this file.
@@ -107,7 +114,5 @@ export function createCanvasContext(width, height) {
   const canvas = document.createElement('canvas')
   canvas.setAttribute('width', `${width}`)
   canvas.setAttribute('height', `${height}`)
-  return canvas.getContext('2d', {
-    willReadFrequently: true
-  })
+  return canvas.getContext('2d', { willReadFrequently: true })
 }

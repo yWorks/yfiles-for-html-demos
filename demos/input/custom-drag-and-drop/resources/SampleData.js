@@ -28,82 +28,18 @@
  ***************************************************************************/
 export default {
   nodes: [
-    {
-      id: 0,
-      layout: {
-        x: 211,
-        y: 278,
-        width: 50,
-        height: 50
-      }
-    },
-    {
-      id: 1,
-      layout: {
-        x: 192,
-        y: 452,
-        width: 50,
-        height: 50
-      }
-    },
-    {
-      id: 2,
-      layout: {
-        x: 490,
-        y: 245,
-        width: 50,
-        height: 50
-      }
-    },
-    {
-      id: 3,
-      layout: {
-        x: 711,
-        y: 458,
-        width: 50,
-        height: 50
-      }
-    },
-    {
-      id: 4,
-      layout: {
-        x: 425,
-        y: 643,
-        width: 50,
-        height: 50
-      }
-    }
+    { id: 0, layout: { x: 211, y: 278, width: 50, height: 50 } },
+    { id: 1, layout: { x: 192, y: 452, width: 50, height: 50 } },
+    { id: 2, layout: { x: 490, y: 245, width: 50, height: 50 } },
+    { id: 3, layout: { x: 711, y: 458, width: 50, height: 50 } },
+    { id: 4, layout: { x: 425, y: 643, width: 50, height: 50 } }
   ],
   edges: [
-    {
-      id: 0,
-      source: 1,
-      target: 4
-    },
-    {
-      id: 1,
-      source: 4,
-      target: 3
-    },
-    {
-      id: 2,
-      source: 3,
-      target: 2
-    },
-    {
-      id: 3,
-      source: 2,
-      target: 0
-    },
-    {
-      id: 4,
-      source: 0,
-      target: 1
-    },
-    {
-      id: 5,
-      source: 2,
-      target: 4
-    }
+    { id: 0, source: 1, target: 4 },
+    { id: 1, source: 4, target: 3 },
+    { id: 2, source: 3, target: 2 },
+    { id: 3, source: 2, target: 0 },
+    { id: 4, source: 0, target: 1 },
+    { id: 5, source: 2, target: 4 }
   ]
 }

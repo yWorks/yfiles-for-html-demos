@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { ObjectRendererBase, SvgVisual, SvgVisualGroup } from '@yfiles/yfiles'
+
 /**
  * An {@link GraphOverviewComponent#graphOverviewRenderer overview renderer} that uses item styles
  * to create an SVG visualization of the graph overview.
@@ -39,6 +40,7 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
   getNodeStyle = (node) => node.style
   getGroupNodeStyle = (node) => node.style
   getEdgeStyle = (edge) => edge.style
+
   /**
    * Gets the function that returns the overview style to use for any given edge.
    * By default, this function will return the {@link IEdge#style edge's style}.
@@ -46,6 +48,7 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
   get edgeStyle() {
     return this.getEdgeStyle
   }
+
   /**
    * Sets the function that returns the overview style to use for any given edge.
    * By default, this function will return the {@link IEdge#style edge's style}.
@@ -53,6 +56,7 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
   set edgeStyle(provider) {
     this.getEdgeStyle = provider
   }
+
   /**
    * Gets the function that returns the overview style to use for any given group node.
    * By default, this function will return the {@link INode#style node's style}.
@@ -60,6 +64,7 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
   get groupNodeStyle() {
     return this.getGroupNodeStyle
   }
+
   /**
    * Sets the function that returns the overview style to use for any given group node.
    * By default, this function will return the {@link INode#style node's style}.
@@ -67,6 +72,7 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
   set groupNodeStyle(provider) {
     this.getGroupNodeStyle = provider
   }
+
   /**
    * Gets the function that returns the overview style to use for any given non-group node.
    * By default, this function will return the {@link INode#style node's style}.
@@ -74,6 +80,7 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
   get nodeStyle() {
     return this.getNodeStyle
   }
+
   /**
    * Sets the function that returns the overview style to use for any given non-group node.
    * By default, this function will return the {@link INode#style node's style}.
@@ -81,6 +88,7 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
   set nodeStyle(provider) {
     this.getNodeStyle = provider
   }
+
   /**
    * Creates the overview visualization for the given graph.
    * This method creates a visual that includes only nodes and edges.
@@ -92,11 +100,13 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
     if (graph.nodes.size < 1) {
       return null
     }
+
     const container = new SvgVisualGroup()
     container.add(this.createEdgeVisuals(context, graph))
     container.add(this.createNodeVisuals(context, graph))
     return container
   }
+
   /**
    * Creates a composite visualization of all the edges in the given graph.
    */
@@ -112,6 +122,7 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
     }
     return container
   }
+
   /**
    * Creates a composite visualization of all the nodes in the given graph.
    */
@@ -128,6 +139,7 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
     }
     return container
   }
+
   /**
    * Updates the overview visualization for the given graph.
    * For each node or edge, this method will delegate updating the individual visual of the
@@ -138,6 +150,7 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
     if (graph.nodes.size < 1) {
       return null
     }
+
     if (oldVisual instanceof SvgVisualGroup && oldVisual.children.size === 2) {
       const edgesContainer = oldVisual.children.get(0)
       const nodesContainer = oldVisual.children.get(1)
@@ -149,6 +162,7 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
     }
     return this.createVisual(context, graph)
   }
+
   /**
    * Updates the composite visualization of all the edges in the given graph.
    */
@@ -158,6 +172,7 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
       return style.renderer.getVisualCreator(edge, style)
     })
   }
+
   /**
    * Updates the composite visualization of all the nodes in the given graph.
    */
@@ -174,17 +189,21 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
       }
     )
   }
+
   /**
    * Updates the visuals for all items in the given container
    */
   static updateVisuals(context, container, items, getVisualCreator) {
     const oldSize = container.creators.length
+
     let currentIndex = 0
     for (const node of items) {
       const visualCreator = getVisualCreator(node)
+
       if (currentIndex < oldSize) {
         // there is an old visual and an old visual creator
         // replace the old visual with an updated visual
+
         const newVisual =
           visualCreator === container.creators[currentIndex]
             ? visualCreator.updateVisual(context, container.visuals[currentIndex])
@@ -196,6 +215,7 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
       } else {
         // the number of items in the graph has increased
         // add the new visuals and the visual creators to the container
+
         const newVisual = visualCreator.createVisual(context)
         if (newVisual instanceof SvgVisual) {
           container.addPair(visualCreator, newVisual)
@@ -203,11 +223,13 @@ export class OverviewSvgRenderer extends ObjectRendererBase {
         }
       }
     }
+
     // if the number of items in the graph has decreased, remove the obsolete visuals and
     // visual creators from the container
     container.trim(currentIndex)
   }
 }
+
 /**
  * Custom visual container that stores the visual creator that created a given visual in addition
  * to the actual visuals.
@@ -216,9 +238,11 @@ class MyVisualGroup extends SvgVisual {
   creators = []
   visuals = []
   elements = []
+
   constructor() {
     super(document.createElementNS('http://www.w3.org/2000/svg', 'g'))
   }
+
   /**
    * Stores the given visual creator and the given visual.
    * The given visual has to have been created by the given visual creator.
@@ -230,6 +254,7 @@ class MyVisualGroup extends SvgVisual {
     this.svgElement.appendChild(childElement)
     this.elements.push(childElement)
   }
+
   /**
    * Sets the given visual creator and the given visual at the given index.
    * The given visual has to have been created by the given visual creator.
@@ -241,6 +266,7 @@ class MyVisualGroup extends SvgVisual {
     this.svgElement.replaceChild(childElement, this.elements[index])
     this.elements[index] = childElement
   }
+
   /**
    * Removes stored visual creators and visuals until this container stores at most the given
    * number of visual creators and visuals.

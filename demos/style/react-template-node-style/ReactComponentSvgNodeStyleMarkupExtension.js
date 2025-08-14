@@ -38,84 +38,110 @@ import {
   isReactComponentSvgLabelStyleEx,
   isReactComponentSvgNodeStyleEx
 } from './jsx-compiler'
+
 export class ReactComponentSvgNodeStyleMarkupExtension extends MarkupExtension {
   _jsx = ''
+
   get jsx() {
     return this._jsx
   }
+
   set jsx(value) {
     this._jsx = value
   }
+
   provideValue(serviceProvider) {
     return createReactComponentSvgNodeStyleFromJSX(this.jsx)
   }
 }
+
 export class ReactComponentHtmlNodeStyleMarkupExtension extends MarkupExtension {
   _jsx = ''
+
   get jsx() {
     return this._jsx
   }
+
   set jsx(value) {
     this._jsx = value
   }
+
   provideValue(serviceProvider) {
     return createReactComponentHtmlNodeStyleFromJSX(this.jsx)
   }
 }
+
 export class ReactComponentSvgLabelStyleMarkupExtension extends MarkupExtension {
   _jsx = ''
   _width = 0
   _height = 0
+
   get jsx() {
     return this._jsx
   }
+
   set jsx(value) {
     this._jsx = value
   }
+
   get width() {
     return this._width
   }
+
   set width(value) {
     this._width = value
   }
+
   get height() {
     return this._height
   }
+
   set height(value) {
     this._height = value
   }
+
   provideValue(serviceProvider) {
     return createReactComponentSvgLabelStyleFromJSX(this.jsx, [this.width, this.height])
   }
 }
+
 export class ReactComponentHtmlLabelStyleMarkupExtension extends MarkupExtension {
   _jsx = ''
   _width = 0
   _height = 0
+
   get jsx() {
     return this._jsx
   }
+
   set jsx(value) {
     this._jsx = value
   }
+
   get width() {
     return this._width
   }
+
   set width(value) {
     this._width = value
   }
+
   get height() {
     return this._height
   }
+
   set height(value) {
     this._height = value
   }
+
   provideValue(serviceProvider) {
     return createReactComponentHtmlLabelStyleFromJSX(this.jsx, [this.width, this.height])
   }
 }
+
 export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
   initMarkupExtensions()
+
   // enable deserialization of old React node styles
   graphmlHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/demos/yfiles-react-jsx-node-style/1.0',
@@ -142,11 +168,10 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
     'http://www.yworks.com/demos/yfiles-react-jsx-node-style/2.0',
     'react'
   )
+
   //Add property information for the extensions
   graphmlHandler.addTypeInformation(ReactComponentSvgNodeStyleMarkupExtension, {
-    properties: {
-      jsx: { default: null, type: String }
-    }
+    properties: { jsx: { default: null, type: String } }
   })
   graphmlHandler.addTypeInformation(ReactComponentSvgLabelStyleMarkupExtension, {
     properties: {
@@ -156,9 +181,7 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
     }
   })
   graphmlHandler.addTypeInformation(ReactComponentHtmlNodeStyleMarkupExtension, {
-    properties: {
-      jsx: { default: null, type: String }
-    }
+    properties: { jsx: { default: null, type: String } }
   })
   graphmlHandler.addTypeInformation(ReactComponentHtmlLabelStyleMarkupExtension, {
     properties: {
@@ -167,6 +190,7 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
       height: { default: 0, type: Number }
     }
   })
+
   graphmlHandler.addEventListener('handle-serialization', (evt) => {
     const item = evt.item
     if (isReactComponentStyleEx(item)) {
@@ -215,6 +239,7 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler) {
     }
   })
 }
+
 function initMarkupExtensions() {
   // We need to instantiate ReactComponentNodeStyleMarkupExtension once for GraphML IO to work properly
   return [

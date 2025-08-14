@@ -35,6 +35,7 @@ import {
   WebGLGraphModelManager
 } from '@yfiles/yfiles'
 import { useWebGLRendering } from './webgl-support'
+
 /**
  * Exports the image on the client. This will open a dialog with a preview and the option to save the image as PNG.
  */
@@ -54,6 +55,7 @@ export async function exportImageClientSide(
     renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
   )
 }
+
 /**
  * Exports the {@link IGraph} to a PNG image with the help of {@link SvgExport}.
  * The {@link SvgExport} exports an SVG element of a {@link GraphComponent}
@@ -71,11 +73,14 @@ export async function exportImage(
   // ... and assign it the same graph.
   exportComponent.graph = graphComponent.graph
   exportComponent.updateContentBounds()
+
   if (graphComponent.graphModelManager instanceof WebGLGraphModelManager) {
     useWebGLRendering(exportComponent)
   }
+
   // Determine the bounds of the exported area
   const targetRect = exportRect ?? exportComponent.contentBounds
+
   // Create the exporter class
   const exporter = new SvgExport({
     worldBounds: targetRect,
@@ -84,35 +89,44 @@ export async function exportImage(
     encodeImagesBase64: true,
     inlineSvgImages: true
   })
+
   // set cssStyleSheets to null so the SvgExport will automatically collect all style sheets
   exporter.cssStyleSheet = null
+
   // Export the component to svg
   const svgElement = await exporter.exportSvgAsync(
     exportComponent,
     renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
   )
+
   // Dispose of the component and remove its references to the graph
-  exportComponent.cleanUp()
   exportComponent.graph = new Graph()
+  exportComponent.cleanUp()
+
   return renderSvgToPng(svgElement, new Size(exporter.viewWidth, exporter.viewHeight), margins)
 }
+
 /**
  * Converts the given SVG element to a PNG image.
  */
 function renderSvgToPng(svgElement, size, margins) {
   const targetCanvas = document.createElement('canvas')
   const targetContext = targetCanvas.getContext('2d')
+
   const svgString = SvgExport.exportSvgString(svgElement)
   const svgUrl = SvgExport.encodeSvgDataUrl(svgString)
+
   return new Promise((resolve) => {
     // The SVG image is now used as the source of an HTML image element,
     // which is then rendered onto a Canvas element.
+
     // An image that gets the export SVG in the Data URL format
     const svgImage = new Image()
     svgImage.onload = () => {
       targetContext.clearRect(0, 0, targetCanvas.width, targetCanvas.height)
       targetCanvas.width = size.width + (margins.left + margins.right)
       targetCanvas.height = size.height + (margins.top + margins.bottom)
+
       targetContext.drawImage(svgImage, margins.left, margins.top)
       // When the svg image has been rendered to the Canvas,
       // the raster image can be exported from the Canvas.

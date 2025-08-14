@@ -44,9 +44,7 @@ import {
 /**
  * Augment the SvgVisual type with the data used to cache the rendering information
  */
-type Cache = {
-  generalPath: GeneralPath
-}
+type Cache = { generalPath: GeneralPath }
 type NonRibbonEdgeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 /**

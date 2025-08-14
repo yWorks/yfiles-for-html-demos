@@ -328,15 +328,7 @@ function circleData(node: INode): NodeData {
   // the radial coordinate for the node
   const nodeDist = nodeCenter.distanceTo(circleCenter)
 
-  return {
-    nodeCenter,
-    nodeRadiusX,
-    nodeRadiusY,
-    circleCenter,
-    startAngle,
-    endAngle,
-    nodeDist
-  }
+  return { nodeCenter, nodeRadiusX, nodeRadiusY, circleCenter, startAngle, endAngle, nodeDist }
 }
 
 type NodeData = {

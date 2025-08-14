@@ -33,9 +33,7 @@ const uriToBuffer = require('data-uri-to-buffer')
 async function exportPng(svg, w, h, margin) {
   const browser = await puppeteer.launch({ headless: 'new' })
   const page = await browser.newPage()
-  await page.goto(path.join(__dirname, 'index.html'), {
-    waitUntil: 'domcontentloaded'
-  })
+  await page.goto(path.join(__dirname, 'index.html'), { waitUntil: 'domcontentloaded' })
 
   let dataUrl = null
   try {

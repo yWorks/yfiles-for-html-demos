@@ -56,9 +56,7 @@ import { CustomPortStyle } from './05-hit-testing/CustomPortStyle'
 
 export function createSimpleGraph(graph: IGraph): void {
   const node1 = graph.createNode()
-  const node2 = graph.createNode({
-    layout: [100, 200, 30, 30]
-  })
+  const node2 = graph.createNode({ layout: [100, 200, 30, 30] })
 
   graph.createEdge({ source: node1, target: node2 })
 }

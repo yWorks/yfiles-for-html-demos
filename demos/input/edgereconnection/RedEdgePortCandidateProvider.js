@@ -36,6 +36,7 @@ import {
   List,
   PortCandidate
 } from '@yfiles/yfiles'
+
 /**
  * An {@link IEdgeReconnectionPortCandidateProvider} that uses candidates with a
  * dynamic NodeScaled port location model. It allows moving ports to any
@@ -45,6 +46,7 @@ export class RedEdgePortCandidateProvider extends BaseClass(
   IEdgeReconnectionPortCandidateProvider
 ) {
   edge
+
   /**
    * Creates a new instance of {@link RedEdgePortCandidateProvider}.
    * @param edge The given edge
@@ -53,6 +55,7 @@ export class RedEdgePortCandidateProvider extends BaseClass(
     super()
     this.edge = edge
   }
+
   /**
    * Returns only the current port as candidate, thus effectively disabling relocation.
    * @param context The context for which the candidates should be provided
@@ -63,6 +66,7 @@ export class RedEdgePortCandidateProvider extends BaseClass(
     candidates.add(new PortCandidate(this.edge.sourcePort))
     return candidates
   }
+
   /**
    * Returns no candidates, thus effectively disabling relocation.
    * @param context The context for which the candidates should be provided

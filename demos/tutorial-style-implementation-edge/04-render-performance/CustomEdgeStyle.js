@@ -27,35 +27,45 @@
  **
  ***************************************************************************/
 import { EdgeStyleBase, IArrow, SvgVisual } from '@yfiles/yfiles'
+
 export class CustomEdgeStyle extends EdgeStyleBase {
   createVisual(context, edge) {
     const generalPath = super.getPath(edge)
     const croppedGeneralPath = super.cropPath(edge, IArrow.NONE, IArrow.NONE, generalPath)
+
     const widePath = croppedGeneralPath.createSvgPath()
     widePath.setAttribute('fill', 'none')
     widePath.setAttribute('stroke', 'black')
     widePath.setAttribute('stroke-width', '4')
+
     const thinPath = croppedGeneralPath.createSvgPath()
     thinPath.setAttribute('fill', 'none')
     thinPath.setAttribute('stroke', 'white')
     thinPath.setAttribute('stroke-width', '2')
+
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     group.append(widePath, thinPath)
+
     // we use the factory method to create a properly typed SvgVisual
     return SvgVisual.from(group, { generalPath })
   }
+
   updateVisual(context, oldVisual, edge) {
     const cache = oldVisual.tag
     const oldGeneralPath = cache.generalPath
     const newGeneralPath = super.getPath(edge)
+
     if (!newGeneralPath.hasSameValue(oldGeneralPath)) {
       const croppedGeneralPath = super.cropPath(edge, IArrow.NONE, IArrow.NONE, newGeneralPath)
       const pathData = croppedGeneralPath.createSvgPathData()
+
       const group = oldVisual.svgElement
       const widePath = group.children[0]
       const thinPath = group.children[1]
+
       widePath.setAttribute('d', pathData)
       thinPath.setAttribute('d', pathData)
+
       cache.generalPath = newGeneralPath
     }
     return oldVisual

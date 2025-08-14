@@ -41,7 +41,7 @@ import {
 import {
   createDefaultHierarchicalLayout,
   createTabularGroupsHierarchicalLayout
-} from './HierarchicLayoutTabularGroups'
+} from './HierarchicalLayoutTabularGroups'
 import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'

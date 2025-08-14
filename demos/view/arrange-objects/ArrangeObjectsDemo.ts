@@ -74,11 +74,7 @@ async function run(): Promise<void> {
 function createSampleGraph(graph: IGraph): void {
   const data = SampleData
   const builder = new GraphBuilder(graph)
-  builder.createNodesSource({
-    data: data.nodes,
-    id: 'id',
-    layout: 'bounds'
-  })
+  builder.createNodesSource({ data: data.nodes, id: 'id', layout: 'bounds' })
   builder.buildGraph()
 }
 

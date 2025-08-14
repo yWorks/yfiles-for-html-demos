@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode } from '@yfiles/yfiles'
+
 export function configureDragAndDrop(graphComponent) {
   const nodeDropInputMode = graphComponent.inputMode.nodeDropInputMode
   nodeDropInputMode.enabled = true

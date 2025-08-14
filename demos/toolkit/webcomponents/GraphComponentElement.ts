@@ -73,8 +73,8 @@ if (window.customElements) {
 
       // if we reconnect - we clean up the old component.
       if (this._graphComponent) {
-        this._graphComponent.cleanUp()
         this._graphComponent.graph = new Graph()
+        this._graphComponent.cleanUp()
       }
 
       this._graphComponent = new GraphComponent()

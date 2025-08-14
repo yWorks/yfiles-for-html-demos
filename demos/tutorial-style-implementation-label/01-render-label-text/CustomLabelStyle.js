@@ -27,18 +27,23 @@
  **
  ***************************************************************************/
 import { LabelStyleBase, Size, SvgVisual } from '@yfiles/yfiles'
+
 export class CustomLabelStyle extends LabelStyleBase {
   createVisual(context, label) {
     // create an SVG text element that displays the label text
     const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text')
     textElement.textContent = label.text
+
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(textElement)
+
     // move the text down by the label height
     textElement.setAttribute('dy', String(label.layout.height))
+
     return new SvgVisual(textElement)
   }
+
   getPreferredSize(label) {
     return new Size(80, 14)
   }

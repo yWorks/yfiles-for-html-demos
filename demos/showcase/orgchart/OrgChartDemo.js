@@ -42,33 +42,45 @@ import { initializeGraphSearch } from './OrgChartGraphSearch'
 import { buildGraph, getEmployee } from './model/data-loading'
 import { createOrgChartNodeStyle } from './graph-style/orgchart-node-style'
 import { initializeInputMode, initializeInteractivity } from './input'
+
 let graphComponent = null
+
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the graph component and overview
   graphComponent = new GraphComponent('graphComponent')
   new GraphOverviewComponent('overviewComponent', graphComponent)
+
   // the orgchart graph supports expanding collapsing subtrees
   const orgChartGraph = new CollapsibleTree(graphComponent)
   graphComponent.graph = orgChartGraph.filteredGraph
+
   // populate the graph with the sample data and set default styles
   initializeGraph(orgChartGraph)
+
   // initializes basic interaction with the graph including the properties panel
   initializeInputMode(graphComponent, orgChartGraph)
+
   // prepares the graph component and the graph to interactively collapse/expand subtrees
   initializeInteractivity(graphComponent, orgChartGraph)
+
   // add a graph search
   initializeGraphSearch(graphComponent, orgChartGraph)
+
   // wire up the UI
   initializeUI(orgChartGraph)
+
   // apply a layout
   configureOrgChartLayout(orgChartGraph)
   orgChartGraph.applyInitialLayout()
 }
+
 // Configures a tree layout that considers assistants and node types.
 function configureOrgChartLayout(orgChartGraph) {
   orgChartGraph.isAssistantNode = (node) => getEmployee(node)?.assistant ?? false
   orgChartGraph.nodeTypesMapping = (node) => getEmployee(node)?.status ?? null
+
   // sort subtrees by a fixed order of the business units
   const businessUnitOrder = ['Engineering', 'Production', 'Accounting', 'Sales', 'Marketing']
   orgChartGraph.outEdgeComparison = () => {
@@ -91,6 +103,7 @@ function configureOrgChartLayout(orgChartGraph) {
     }
   }
 }
+
 /**
  * Creates and populates a new graph.
  */
@@ -98,21 +111,26 @@ function initializeGraph(orgChartGraph) {
   initializeDefaultStyle(orgChartGraph)
   buildGraph(orgChartGraph.completeGraph)
 }
+
 /**
  * Sets style defaults for nodes and edges.
  */
 function initializeDefaultStyle(orgChartGraph) {
   const nodeSize = new Size(285, 100)
+
   const graph = orgChartGraph.completeGraph
+
   graph.nodeDefaults.style = createOrgChartNodeStyle(graphComponent, nodeSize)
   graph.nodeDefaults.size = nodeSize
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '2px rgb(170, 170, 170)',
     targetArrow: IArrow.NONE
   })
+
   // Hide the default highlight in favor of the CSS highlighting from the template styles
   graph.decorator.nodes.highlightRenderer.hide()
 }
+
 /**
  * Wires up the UI.
  */
@@ -122,6 +140,7 @@ function initializeUI(orgChartGraph) {
   })
   document.getElementById('print-button').addEventListener('click', print)
 }
+
 /**
  * Prints the graph, separated in tiles.
  */
@@ -134,4 +153,5 @@ function print() {
   printingSupport.tileHeight = 595
   void printingSupport.print(graphComponent, undefined)
 }
+
 void run().then(finishLoading)

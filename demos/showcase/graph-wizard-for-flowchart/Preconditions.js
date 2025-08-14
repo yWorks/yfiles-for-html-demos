@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { IEdge, INode } from '@yfiles/yfiles'
+
 /**
  * Combines several {@link PreCondition} with a logic AND.
  * @param conditions The conditions to combine.
@@ -34,6 +35,7 @@ import { IEdge, INode } from '@yfiles/yfiles'
 export function checkAnd(conditions) {
   return (mode) => conditions.every((condition) => condition(mode))
 }
+
 /**
  * Combines several {@link PreCondition} with a logic OR.
  * @param conditions The conditions to combine.
@@ -41,6 +43,7 @@ export function checkAnd(conditions) {
 export function checkOr(conditions) {
   return (mode) => conditions.some((condition) => condition(mode))
 }
+
 /**
  * Negates a {@link PreCondition}.
  * @param condition The condition to negate.
@@ -48,6 +51,7 @@ export function checkOr(conditions) {
 export function checkNot(condition) {
   return (mode) => !condition(mode)
 }
+
 /**
  * Checks if the {@link GraphWizardInputMode.currentItem currentItem} is an {@link INode}.
  * @param mode The current {@link GraphWizardInputMode}.
@@ -55,6 +59,7 @@ export function checkNot(condition) {
 export function checkForNode(mode) {
   return mode.currentItem instanceof INode
 }
+
 /**
  * Checks if the {@link GraphWizardInputMode.currentItem currentItem} is an {@link IEdge}.
  * @param mode The current {@link GraphWizardInputMode}.
@@ -62,6 +67,7 @@ export function checkForNode(mode) {
 export function checkForEdge(mode) {
   return mode.currentItem instanceof IEdge
 }
+
 /**
  * Checks if the {@link GraphWizardInputMode.currentItem currentItem} is an {@link INode} and
  * has the specified {@link INode.style style}.
@@ -70,6 +76,7 @@ export function checkForEdge(mode) {
 export function checkForNodeStyle(styleClass) {
   return (mode) => mode.currentItem instanceof INode && mode.currentItem.style instanceof styleClass
 }
+
 /**
  * Checks if the {@link GraphWizardInputMode.currentItem currentItem} is an {@link IEdge} and
  * has the specified {@link IEdge.style style}.
@@ -78,6 +85,7 @@ export function checkForNodeStyle(styleClass) {
 export function checkForEdgeStyle(styleClass) {
   return (mode) => mode.currentItem instanceof IEdge && mode.currentItem.style instanceof styleClass
 }
+
 /**
  * Checks if no edge creation is currently {@link CreateEdgeInputMode.isCreationInProgress in progress}.
  * @param mode The current {@link GraphWizardInputMode}.
@@ -85,6 +93,7 @@ export function checkForEdgeStyle(styleClass) {
 export function checkNotCreatingEdge(mode) {
   return !mode.createEdgeMode.isCreationInProgress
 }
+
 /**
  * Checks if an edge creation is currently {@link CreateEdgeInputMode.isCreationInProgress in progress}.
  * @param mode The current {@link GraphWizardInputMode}.

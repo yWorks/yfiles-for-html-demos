@@ -33,14 +33,17 @@ import {
   Visual,
   VisualCachingPolicy
 } from '@yfiles/yfiles'
+
 import { createRoot } from 'react-dom/client'
 import { createElement } from 'react'
+
 /**
  * The default implementation just uses the props from the tag of the item to be rendered.
  * @param context
  * @param node
  */
 const defaultTagProvider = (context, node) => node.tag
+
 /**
  * Helper method that will be used by the below style to release React resources when the
  * node gets removed from the yFiles scene graph.
@@ -61,6 +64,7 @@ function unmountReact(context, removedVisual, dispose) {
   }
   return null
 }
+
 /**
  * A simple INodeStyle implementation that uses React Components/render functions
  * for rendering the node visualizations with SVG
@@ -95,6 +99,7 @@ export class ReactComponentSvgNodeStyle extends NodeStyleBase {
     this.type = type
     this.tagProvider = tagProvider
   }
+
   createProps(context, node) {
     return {
       width: node.layout.width,
@@ -106,6 +111,7 @@ export class ReactComponentSvgNodeStyle extends NodeStyleBase {
       tag: this.tagProvider(context, node)
     }
   }
+
   createVisual(context, node) {
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const props = this.createProps(context, node)
@@ -118,8 +124,10 @@ export class ReactComponentSvgNodeStyle extends NodeStyleBase {
     SvgVisual.setTranslate(gElement, node.layout.x, node.layout.y)
     return svgVisual
   }
+
   updateVisual(context, oldVisual, node) {
     const newProps = this.createProps(context, node)
+
     const cache = oldVisual.tag
     const oldProps = cache.props
     if (

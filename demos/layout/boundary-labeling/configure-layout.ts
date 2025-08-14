@@ -54,10 +54,7 @@ import { getPointData, isLabel, MultiPageNodeType } from './data-types'
 export function configureLayout(
   graph: IGraph,
   imageRect: Rect
-): {
-  layout: ILayoutAlgorithm
-  layoutData: LayoutData
-} {
+): { layout: ILayoutAlgorithm; layoutData: LayoutData } {
   // positions all label nodes at the position of their associated points
   resetLabelPositions(graph)
   // define the label models based on the position of the point
@@ -66,10 +63,7 @@ export function configureLayout(
   // some basic configuration for the organic layout
   // scope SUBSET is used because the locations of the points may not change i.e., the algorithm may
   // arrange only label nodes
-  const organicLayout = new OrganicLayout({
-    deterministic: true,
-    defaultMinimumNodeDistance: 5
-  })
+  const organicLayout = new OrganicLayout({ deterministic: true, defaultMinimumNodeDistance: 5 })
 
   // specifies desired edge lengths and the set of node to be arranged, i.e., the label nodes
   const organicLayoutData = new OrganicLayoutData({

@@ -41,6 +41,7 @@ import {
   TextRenderSupport
 } from '@yfiles/yfiles'
 import { getBucket } from './bucket-aggregation'
+
 /**
  * Applies a RecursiveGroupLayout with a LayoutGrid to the managed graph.
  */
@@ -49,11 +50,10 @@ export function applyTimelineLayout(graphComponent, styling, zoom, minZoom, maxZ
     coreLayout: new TabularLayout({
       layoutMode: TabularLayoutMode.FIXED_SIZE,
       nodeLabelPlacement: 'ignore',
-      defaultNodeDescriptor: new TabularLayoutNodeDescriptor({
-        verticalAlignment: 1
-      })
+      defaultNodeDescriptor: new TabularLayoutNodeDescriptor({ verticalAlignment: 1 })
     })
   })
+
   const grid = new LayoutGrid({ rowCount: 1, columnCount: 31 })
   const layoutData = new TabularLayoutData({
     freeNodeComparator: (a, b) => {
@@ -73,9 +73,11 @@ export function applyTimelineLayout(graphComponent, styling, zoom, minZoom, maxZ
     }
   })
   layoutData.layoutGridData.layoutGridCellDescriptors = () => grid.createDynamicCellDescriptor()
+
   recursiveGroupLayout.groupBoundsCalculator = ILayoutGroupBoundsCalculator.create(
     (graph, groupNode, children) => {
-      let groupBounds = graph.getBounds(children)
+      let groupBounds = graph.getBounds(children, [])
+
       const tag = groupNode.tag
       if (tag?.type === 'group' && tag.label != null) {
         const groupLabelSizeEven = TextRenderSupport.measureText(
@@ -98,17 +100,20 @@ export function applyTimelineLayout(graphComponent, styling, zoom, minZoom, maxZ
       return groupBounds
     }
   )
+
   const fontHeight = graphComponent.graph.nodeLabels.reduce((maxHeight, label) => {
     return Math.max(maxHeight, label.layout.bounds.height)
   }, 0)
   // calculate the maximum height for the bars by subtracting the height of the calendar labels and a small margin
   const maxHeight = graphComponent.size.height - (maxZoom - zoom + 1) * (fontHeight + 4) - 20
   const scaleBars = new BarScalingStage(maxHeight, zoom)
+
   graphComponent.graph.applyLayout(
     new SequentialLayout(scaleBars, recursiveGroupLayout),
     layoutData
   )
 }
+
 /**
  * A {@link ILayoutStage} that scales the height of the bars so that they fit into the graph
  * components bounds.
@@ -121,6 +126,7 @@ class BarScalingStage extends LayoutStageBase {
     this.maxHeight = maxHeight
     this.zoom = zoom
   }
+
   applyLayoutImpl(graph) {
     let maxValue = 0
     graph.nodes.forEach((node) => {

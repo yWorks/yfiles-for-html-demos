@@ -187,9 +187,7 @@ function addNodeArrowButton(
 function createNodeAndEdge(owner: INode, offset: Point): IEdge {
   return graphComponent.graph.createEdge(
     owner,
-    graphComponent.graph.createNodeAt({
-      location: owner.layout.center.add(offset)
-    })
+    graphComponent.graph.createNodeAt({ location: owner.layout.center.add(offset) })
   )
 }
 
@@ -208,11 +206,7 @@ function addEdgeColorButton(queryEvent: QueryButtonsEvent, fill: string, offset:
   )
 
   queryEvent.addButton({
-    style: new LabelStyle({
-      autoFlip: false,
-      backgroundFill: fill,
-      shape: 'rectangle'
-    }),
+    style: new LabelStyle({ autoFlip: false, backgroundFill: fill, shape: 'rectangle' }),
     onAction: () => {
       const edgeStyle = (queryEvent.owner as IEdge).style as PolylineEdgeStyle
       edgeStyle.stroke = '1.5px ' + fill
@@ -363,10 +357,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   const graphBuilder = new GraphBuilder(graph)
 
   graphBuilder
-    .createNodesSource({
-      data: graphData.nodeList,
-      id: (item) => item.id
-    })
+    .createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
     .nodeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder.createEdgesSource({

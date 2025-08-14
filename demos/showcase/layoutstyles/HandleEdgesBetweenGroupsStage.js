@@ -39,6 +39,7 @@ import {
   Mapper,
   TreeReductionStage
 } from '@yfiles/yfiles'
+
 /**
  * This stage temporarily removes edges that are incident to group nodes.
  *
@@ -69,6 +70,7 @@ export class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
     this.considerEdgeLabels = considerEdgeLabels
     this.markedEdgeRouter = markedEdgeRouter
   }
+
   /**
    * Removes all edges that are incident to group nodes and passes it to the core layout algorithm.
    * This stage removes some edges from the graph such that no edges incident to group nodes
@@ -79,12 +81,16 @@ export class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
     if (!this.coreLayout) {
       return
     }
+
     const groupingSupport = LayoutGraphGrouping.createReadOnlyView(graph)
+
     if (!LayoutGraphGrouping.isGrouped(graph)) {
       this.coreLayout.applyLayout(graph)
     } else {
       const hiddenEdgesMap = new Mapper()
+
       const edgeHider = new LayoutGraphHider(graph)
+
       let existHiddenEdges = false
       for (const edge of graph.edges) {
         if (groupingSupport.isGroupNode(edge.source) || groupingSupport.isGroupNode(edge.target)) {
@@ -95,16 +101,18 @@ export class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
           hiddenEdgesMap.set(edge, false)
         }
       }
+
       this.coreLayout.applyLayout(graph)
+
       if (existHiddenEdges) {
         edgeHider.unhideAll()
+
         // routes the marked edges
         this.routeMarkedEdges(graph, hiddenEdgesMap)
+
         if (this.considerEdgeLabels) {
           // place marked labels
-          const labeling = new GenericLabeling({
-            scope: 'edge-labels'
-          })
+          const labeling = new GenericLabeling({ scope: 'edge-labels' })
           const labelingData = labeling.createLayoutData(graph)
           // all labels of hidden edges should be marked
           labelingData.scope.edgeLabels = (edgeLabel) =>
@@ -114,6 +122,7 @@ export class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
       }
     }
   }
+
   /**
    * Routes all edges that are temporarily hidden by this stage.
    *
@@ -131,9 +140,11 @@ export class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
     if (this.markedEdgeRouter === null) {
       return
     }
+
     //temporarily add the selected edges to the layout context
     const contextStage = new ContextModificationStage(this.markedEdgeRouter)
     contextStage.addReplacementMap(LayoutKeys.ROUTE_EDGES_DATA_KEY, markedEdgesMap)
+
     contextStage.applyLayout(graph)
   }
 }

@@ -49,6 +49,7 @@ import {
 import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * Registers a callback function as a decorator that provides a customized
  * {@link IReshapeHandleProvider} for each node.
@@ -60,8 +61,10 @@ import { finishLoading } from '@yfiles/demo-resources/demo-page'
  */
 function registerReshapeHandleProvider(graph, boundaryRectangle) {
   const nodeDecorator = graph.decorator.nodes
+
   // deactivate reshape handling for the red node
   nodeDecorator.reshapeHandleProvider.hide((node) => node.tag === 'red')
+
   // return customized reshape handle provider for the orange, blue and green node
   nodeDecorator.reshapeHandleProvider.addFactory(
     (node) =>
@@ -74,9 +77,11 @@ function registerReshapeHandleProvider(graph, boundaryRectangle) {
     (node) => {
       // Obtain the tag from the node
       const nodeTag = node.tag
+
       // Create a default reshape handle provider for nodes
       const reshapeHandler = node.lookup(IReshapeHandler)
       let provider = new NodeReshapeHandleProvider(node, reshapeHandler, HandlePositions.BORDER)
+
       // Customize the handle provider depending on the node's color
       if (nodeTag === 'orange') {
         // Restrict the node bounds to the boundaryRectangle
@@ -103,12 +108,15 @@ function registerReshapeHandleProvider(graph, boundaryRectangle) {
     }
   )
 }
+
 let applicationState
+
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
+
   // Create a default editor input mode
   const graphEditorInputMode = new GraphEditorInputMode({
     // Just for user convenience: disable node, edge creation and clipboard operations,
@@ -117,11 +125,15 @@ async function run() {
     allowClipboardOperations: false,
     movableSelectedItems: GraphItemTypes.NONE
   })
-  applicationState = new ApplicationState(graphEditorInputMode, true)
+
+  applicationState = new ApplicationState(graphEditorInputMode, graph, true)
+
   // and enable the undo feature.
   graph.undoEngineEnabled = true
+
   // Finally, set the input mode to the graph component.
   graphComponent.inputMode = graphEditorInputMode
+
   // Create the rectangle that limits the movement of some nodes
   // and add it to the graphComponent.
   const boundaryRectangle = new MutableRectangle(20, 20, 480, 550)
@@ -131,9 +143,12 @@ async function run() {
     boundaryRectangle,
     new LimitingRectangleRenderer()
   )
+
   registerReshapeHandleProvider(graph, boundaryRectangle.toRect())
+
   createSampleGraph(graph)
 }
+
 /**
  * Creates the sample graph of this demo.
  * @param graph The input graph
@@ -159,14 +174,16 @@ function createSampleGraph(graph) {
     80,
     400,
     140,
-    50,
+    70,
     'demo-palette-510',
     'gold',
-    'Keep Aspect ratio\ndepending on state'
+    'Keep aspect ratio\ndepending on state:\n keep'
   )
+
   // clear undo after initial graph loading
   graph.undoEngine.clear()
 }
+
 /**
  * Creates a sample node for this demo.
  * @param graph The given graph
@@ -184,10 +201,8 @@ function createNode(graph, x, y, w, h, colorSet, tag, labelText) {
     style: createDemoNodeStyle(colorSet),
     tag: tag
   })
-  graph.addLabel({
-    owner: node,
-    text: labelText,
-    style: createDemoNodeLabelStyle(colorSet)
-  })
+
+  graph.addLabel({ owner: node, text: labelText, style: createDemoNodeLabelStyle(colorSet) })
 }
+
 run().then(finishLoading)

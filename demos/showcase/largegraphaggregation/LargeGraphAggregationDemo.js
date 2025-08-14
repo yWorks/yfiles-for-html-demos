@@ -84,30 +84,38 @@ import {
   TreeReductionStageData,
   ViewportAnimation
 } from '@yfiles/yfiles'
+
 import { AggregationHelper, AggregationNodeInfo } from './AggregationHelper'
 import {
   AggregationGraphWrapper,
   EdgeReplacementPolicy
 } from '@yfiles/demo-utils/AggregationGraphWrapper'
 import SampleGraph from './resources/SampleGraph'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
+
 // @ts-ignore Import via URL
 import { svg } from 'lit-html'
+
 let graphComponent = null
+
 /**
  * The original graph before aggregation.
  */
 let originalGraph = null
+
 /**
  * Encapsulates aggregation and separation methods.
  */
 let aggregationHelper = null
+
 let graphViewerInputMode = null
 let aggregationNodeStyle = null
 let hierarchyEdgeStyle = null
 let descendantLabelStyle = null
+
 /**
  * Bootstraps the demo.
  */
@@ -115,25 +123,36 @@ async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
   const overviewComponent = new GraphOverviewComponent('#overviewComponent', graphComponent)
+
   // initialize node click listener that toggles the aggregation status
   initializeToggleAggregation()
+
   // initialize navigation along edges connecting to outside the viewport
   initializeSmartNavigation()
+
   initializeHighlight()
+
   // bind actions to the buttons in the toolbar and option panel
   initializeUI()
+
   // disable UI
   await setUiDisabled(true)
+
   // loads an initial sample graph from file
   originalGraph = loadGraph(graphComponent.graph)
+
   initializeStyles()
+
   // run the smart aggregation algorithm with default settings and set graph to the graph component
   await runAggregationAndReplaceGraph(originalGraph)
+
   // notify UI
   onInfoPanelPropertiesChanged()
+
   // enable UI
   await setUiDisabled(false)
 }
+
 /**
  * Registers a listener to the {@link GraphViewerInputMode} 'item-clicked' event that toggles the
  * aggregation of a node, runs a layout and sets the current item.
@@ -143,40 +162,49 @@ function initializeToggleAggregation() {
     clickableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
     focusableItems: GraphItemTypes.NODE
   })
-  graphViewerInputMode.addEventListener('item-clicked', (evt) => {
+  graphViewerInputMode.addEventListener('item-clicked', async (evt) => {
     if (!(evt.item instanceof INode)) {
       return
     }
     // prevent default behavior, which would select nodes that are no longer in the graph
     evt.handled = true
-    toggleAggregationNode(evt.item)
+
+    await toggleAggregationNode(evt.item)
   })
   graphComponent.inputMode = graphViewerInputMode
-  graphComponent.addEventListener('key-up', (evt) => {
+
+  graphComponent.addEventListener('key-up', async (evt) => {
     if (evt.key === 'Enter') {
-      toggleAggregationNode(graphComponent.currentItem)
+      await toggleAggregationNode(graphComponent.currentItem)
     }
   })
   graphComponent.addEventListener('current-item-changed', () => {
     onInfoPanelPropertiesChanged()
   })
 }
+
 /**
  * Toggles the aggregation of a node, runs a layout and sets the current item.
  */
-function toggleAggregationNode(node) {
+async function toggleAggregationNode(node) {
   if (!aggregationHelper.aggregateGraph.isAggregationItem(node)) {
     // is an original node -> only set current item
     graphComponent.currentItem = node
     return
   }
+
   // toggle the aggregation
   const affectedNodes = aggregationHelper.toggleAggregation(node)
+
   // set the current item to the new aggregation node (which is the first in the list)
   graphComponent.currentItem = affectedNodes.first()
+
   // run layout
-  runLayoutOnHierarchyView(affectedNodes)
+  await setUiDisabled(true)
+  await runLayoutOnHierarchyView(affectedNodes)
+  await setUiDisabled(false)
 }
+
 /**
  * Initializes the input mode for this component.
  */
@@ -189,6 +217,7 @@ function initializeSmartNavigation() {
     }
   })
 }
+
 /**
  * Zooms to the suitable point.
  * @param edge The element that we clicked.
@@ -202,6 +231,7 @@ function zoomToLocation(edge, currentMouseClickLocation) {
   // Zooms to the new location of the mouse
   graphComponent.zoomToAnimated(graphComponent.zoom, location.subtract(offset))
 }
+
 /**
  * Gets the focus point.
  * @param edge The element that we clicked.
@@ -234,6 +264,7 @@ function getFocusPoint(edge) {
     }
   }
 }
+
 function initializeHighlight() {
   // we want to get reports of the mouse being hovered over nodes and edges
   // first enable queries
@@ -248,6 +279,7 @@ function initializeHighlight() {
     }
   )
 }
+
 function onHoveredItemChanged(sender, evt) {
   // first remove previous highlights
   graphComponent.highlights.clear()
@@ -277,6 +309,7 @@ function onHoveredItemChanged(sender, evt) {
     }
   }
 }
+
 function addHighlight(item) {
   if (
     (item instanceof INode && aggregationHelper.isOriginalNodeOrPlaceHolder(item)) ||
@@ -285,6 +318,7 @@ function addHighlight(item) {
     graphComponent.highlights.add(item)
   }
 }
+
 function initializeHighlightStyles() {
   // we want to create a non-default nice highlight styling
   // for the hover highlight, create semi transparent orange stroke first
@@ -293,16 +327,15 @@ function initializeHighlightStyles() {
     Color.fromRGBA(orangeRed.r, orangeRed.g, orangeRed.b, 0.85),
     3
   ).freeze()
+
   // now set the custom hover highlight styles for the nodes and edges
+
   // hide the default selection indicator
   graphComponent.graph.decorator.nodes.selectionRenderer.hide()
+
   // nodes should be given a rectangular orange rectangle highlight shape
   const highlightNodeStyle = new NodeStyleIndicatorRenderer({
-    nodeStyle: new ShapeNodeStyle({
-      shape: ShapeNodeShape.ELLIPSE,
-      stroke: orangePen,
-      fill: null
-    }),
+    nodeStyle: new ShapeNodeStyle({ shape: ShapeNodeShape.ELLIPSE, stroke: orangePen, fill: null }),
     margins: 5
   })
   graphComponent.graph.decorator.nodes.focusRenderer.addConstant(
@@ -315,11 +348,9 @@ function initializeHighlightStyles() {
       zoomPolicy: 'world-coordinates'
     })
   )
+
   // a similar style for the edges, however cropped by the highlight's insets
-  const dummyCroppingArrow = new Arrow({
-    type: ArrowType.NONE,
-    cropLength: 5
-  })
+  const dummyCroppingArrow = new Arrow({ type: ArrowType.NONE, cropLength: 5 })
   const highlightEdgeStyle = new EdgeStyleIndicatorRenderer({
     edgeStyle: new BezierEdgeStyle({
       stroke: orangePen,
@@ -330,23 +361,30 @@ function initializeHighlightStyles() {
   graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(highlightNodeStyle)
   graphComponent.graph.decorator.edges.highlightRenderer.addConstant(highlightEdgeStyle)
 }
+
 /**
  * Runs the smart {@link NodeAggregation} algorithm with the settings from the properties panel.
  */
 async function runAggregation() {
   await setUiDisabled(true)
+
   graphComponent.graph = new Graph()
   aggregationHelper.aggregateGraph.dispose()
   await runAggregationAndReplaceGraph(originalGraph)
+
   document.querySelector('#switch-view').innerText = 'Switch To Filtered View'
+
   await setUiDisabled(false)
+
   onInfoPanelPropertiesChanged()
 }
+
 /**
  * Switches between the view with hierarchy nodes and without and runs an appropriate layout.
  */
 async function switchView() {
   const switchViewButton = document.querySelector('#switch-view')
+  await setUiDisabled(true)
   if (graphComponent.graph instanceof AggregationGraphWrapper) {
     graphComponent.graph = createFilteredView()
     await runCircularLayout()
@@ -356,7 +394,9 @@ async function switchView() {
     await runLayoutOnHierarchyView()
     switchViewButton.innerText = 'Switch To Filtered View'
   }
+  await setUiDisabled(false)
 }
+
 /**
  * Creates a new {@link FilteredGraphWrapper} that shows the currently visible original nodes.
  * Nodes without currently visible edges are also filtered out.
@@ -372,16 +412,20 @@ function createFilteredView() {
     },
     () => true
   )
+
   // set the node layouts for a smooth transition
   for (const node of filteredGraph.nodes) {
     filteredGraph.setNodeLayout(node, aggregationHelper.getPlaceholder(node).layout.toRect())
   }
+
   // reset any rotated node labels
   for (const label of filteredGraph.nodeLabels) {
     filteredGraph.setLabelLayoutParameter(label, FreeNodeLabelModel.CENTER)
   }
+
   return filteredGraph
 }
+
 /**
  * Creates a new {@link AggregationGraphWrapper} and runs the aggregation algorithm.
  */
@@ -390,10 +434,13 @@ async function runAggregationAndReplaceGraph(originalGraph) {
   aggregateGraph.edgeReplacementPolicy = EdgeReplacementPolicy.NONE
   await applyAggregation(originalGraph, aggregateGraph)
   graphComponent.graph = aggregateGraph
+
   // initializes the highlight styles of the graphComponent's current graph
   initializeHighlightStyles()
+
   await runLayoutOnHierarchyView()
 }
+
 /**
  * Asynchronously runs the {@link NodeAggregation} algorithm with the settings from the properties panel.
  * Afterwards, the {@link NodeAggregationResult} is applied to the `aggregateGraph`.
@@ -402,6 +449,7 @@ async function applyAggregation(originalGraph, aggregateGraph) {
   return new Promise((resolve) => {
     const nodeAggregation = createConfiguredAggregation()
     const aggregationResult = nodeAggregation.run(originalGraph)
+
     aggregationHelper = new AggregationHelper(aggregationResult, aggregateGraph)
     aggregationHelper.aggregationNodeStyle = aggregationNodeStyle
     aggregationHelper.hierarchyEdgeStyle = hierarchyEdgeStyle
@@ -410,6 +458,7 @@ async function applyAggregation(originalGraph, aggregateGraph) {
     resolve()
   })
 }
+
 function createConfiguredAggregation() {
   const aggregationMode = document.querySelector('#aggregation-mode-select').value
   const stopDuration = document.querySelector('#maximum-duration-range').value
@@ -426,6 +475,7 @@ function createConfiguredAggregation() {
     nodesOnlyOnLeaves: false
   })
 }
+
 /**
  * Runs a layout on the hierarchy view.
  */
@@ -434,11 +484,13 @@ async function runLayoutOnHierarchyView(affectedNodes) {
     ? runRadialGroupLayout(affectedNodes)
     : runRadialTreeLayout(affectedNodes)
 }
+
 /**
  * Runs a {@link RadialTreeLayout} where the hierarchy edges are the tree edges and original edges are bundled.
  */
 async function runRadialTreeLayout(affectedNodes) {
   switchHierarchyEdgeVisibility(graphComponent.graph, true)
+
   // create the radial tree layout
   const layout = new RadialTreeLayout({
     nodeLabelPlacement: 'ray-like-leaves',
@@ -453,15 +505,14 @@ async function runRadialTreeLayout(affectedNodes) {
   const nonTreeEdges = graphComponent.graph.edges
     .filter((e) => !aggregationHelper.isHierarchyEdge(e))
     .toList()
+
   const treeReductionStageData = new TreeReductionStageData({
     nonTreeEdges: nonTreeEdges,
     edgeBundleDescriptors: (edge) => {
-      return new EdgeBundleDescriptor({
-        bundled: nonTreeEdges.includes(edge),
-        bezierFitting: true
-      })
+      return new EdgeBundleDescriptor({ bundled: nonTreeEdges.includes(edge), bezierFitting: true })
     }
   })
+
   // create a layout executor that also zooms to all nodes that were affected by the last operation
   const layoutExecutor = new ZoomToNodesLayoutExecutor(
     affectedNodes || IEnumerable.EMPTY,
@@ -474,12 +525,14 @@ async function runRadialTreeLayout(affectedNodes) {
   layoutExecutor.layoutData = treeReductionStageData
   await layoutExecutor.start()
 }
+
 async function runCircularLayout() {
   const circularLayout = new CircularLayout()
   const radialTreeLayoutData = new RadialTreeLayoutData()
   radialTreeLayoutData.interleavedNodes = () => true
   await graphComponent.applyLayoutAnimated(circularLayout, '0.5s', radialTreeLayoutData)
 }
+
 /**
  * Runs a {@link RadialGroupLayout} where the hierarchy edges are not shown but the hierarchy is
  * visualized by placing child nodes along the circular border of the parent node.
@@ -493,6 +546,7 @@ async function runCircularLayout() {
 async function runRadialGroupLayout(affectedNodes) {
   const graph = graphComponent.graph
   switchHierarchyEdgeVisibility(graph, false)
+
   // collect hierarchy tree nodes that have children, which must temporarily be modeled as a groups
   const innerTreeNodes = []
   const innerTreeNode2Descriptor = new Map()
@@ -502,10 +556,12 @@ async function runRadialGroupLayout(affectedNodes) {
       innerTreeNode2Descriptor.set(node, new TemporaryGroupDescriptor())
     }
   }
+
   // prepare the layout data for the TemporaryGroupNodeInsertionStage
   const tmpGroupStageData = new TemporaryGroupInsertionData()
   for (const treeNode of innerTreeNodes) {
     const descriptor = innerTreeNode2Descriptor.get(treeNode)
+
     // register a temporary group for each inner tree node...
     const temporaryGroup = tmpGroupStageData.temporaryGroups.add(descriptor)
     // ... members of the group are all the successor nodes
@@ -513,6 +569,7 @@ async function runRadialGroupLayout(affectedNodes) {
       .outEdgesAt(treeNode)
       .filter((e) => aggregationHelper.isHierarchyEdge(e))
       .map((e) => e.targetNode)
+
     // if the tree node has a parent too, then the parent descriptor must be setup as well
     const inEdge = graph
       .inEdgesAt(treeNode)
@@ -525,6 +582,7 @@ async function runRadialGroupLayout(affectedNodes) {
       }
     }
   }
+
   // create a mapper that maps from the inner tree node to the temporary group descriptor,
   // which is necessary that the custom layout stages know
   const innerNodesLayoutData = new GenericLayoutData()
@@ -536,6 +594,7 @@ async function runRadialGroupLayout(affectedNodes) {
     }
     return null
   }
+
   // create a layout executor that also zooms to all nodes that were affected by the last operation
   const layoutExecutor = new ZoomToNodesLayoutExecutor(
     affectedNodes || IEnumerable.EMPTY,
@@ -548,6 +607,7 @@ async function runRadialGroupLayout(affectedNodes) {
   layoutExecutor.layoutData = tmpGroupStageData.combineWith(innerNodesLayoutData)
   await layoutExecutor.start()
 }
+
 /**
  * A layout stage that configures and applies the {@link RadialGroupLayout} and uses further
  * stages to make the input suitable for it.
@@ -558,19 +618,20 @@ class CustomRadialGroupLayoutStage extends LayoutStageBase {
       // single node or no node: nothing to do for the layout
       return
     }
+
     // configure the radialGroupLayout group layout
     const radialGroup = new RadialGroupLayout({
       fromSketchMode: true,
       preferredRootSectorAngle: 360,
       nodeLabelPlacement: 'ray-like-leaves',
       // ... configure bundling
-      edgeBundling: {
-        defaultBundleDescriptor: { bundled: true, bezierFitting: true }
-      }
+      edgeBundling: { defaultBundleDescriptor: { bundled: true, bezierFitting: true } }
     })
+
     const radialGroupLayoutData = radialGroup.createLayoutData(graph)
     // ... configure the parent-child overlap ratio so that they are allowed to overlap a bit
     radialGroupLayoutData.parentOverlapRatios = () => 0.5
+
     // apply the radialGroupLayout group layout with temporary groups
     const layout = new TemporaryGroupInsertionStage(
       new TemporaryGroupCustomizationStage(radialGroup)
@@ -578,6 +639,7 @@ class CustomRadialGroupLayoutStage extends LayoutStageBase {
     graph.applyLayout(layout, radialGroupLayoutData)
   }
 }
+
 /**
  * A layout stage that prepares the temporary group nodes inserted by
  * {@link TemporaryGroupDescriptor} for the {@link RadialGroupLayout} algorithm.
@@ -588,7 +650,9 @@ class TemporaryGroupCustomizationStage extends LayoutStageBase {
     super(radialGroupLayout)
     this.radialGroupLayout = radialGroupLayout
   }
+
   static innerTreeNodesDataKey = new NodeDataKey('INNER_TREE_NODES')
+
   applyLayoutImpl(graph) {
     if (!this.coreLayout) {
       return
@@ -603,6 +667,7 @@ class TemporaryGroupCustomizationStage extends LayoutStageBase {
       TemporaryGroupInsertionStage.TEMPORARY_GROUP_DESCRIPTOR_DATA_KEY
     )
     const grouping = LayoutGraphGrouping.createReadOnlyView(graph)
+
     // collect the temporary group nodes inserted by TemporaryGroupNodeInsertionStage earlier
     // and the respective original tree node
     const temporaryGroups = graph.nodes
@@ -615,14 +680,17 @@ class TemporaryGroupCustomizationStage extends LayoutStageBase {
         return { group: tmpGroup, treeNode: originalTreeNode }
       })
       .toArray()
+
     // pre-processing: transfer data from original tree node to temporary group node
     for (const group of temporaryGroups) {
       const groupNode = group.group
       const treeNode = group.treeNode
+
       // transfer sketch (size and location) from the original tree node to the temporary group
       groupNode.layout.width = treeNode.layout.width
       groupNode.layout.height = treeNode.layout.height
       groupNode.layout.center = treeNode.layout.center
+
       // change edges such that they connect to the group node (if there are any)
       for (const edge of treeNode.edges.toArray()) {
         const atSource = edge.source == treeNode
@@ -630,23 +698,29 @@ class TemporaryGroupCustomizationStage extends LayoutStageBase {
         graph.changeEdge(edge, atSource ? groupNode : other, atSource ? other : groupNode)
       }
     }
+
     // now hide all the tree node, they are now modeled by the inserted temporary group nodes
     const treeNodeHider = new LayoutGraphHider(graph)
     for (const group of temporaryGroups) {
       treeNodeHider.hide(group.treeNode)
     }
+
     // apply the radial group layout
     this.coreLayout.applyLayout(graph)
+
     // un-hide all the hidden tree nodes
     treeNodeHider.unhideAll()
+
     // post-processing: transfer from temporary group node to original tree node
     for (const group of temporaryGroups) {
       const groupNode = group.group
       const treeNode = group.treeNode
+
       // transfer size and location
       treeNode.layout.width = groupNode.layout.width
       treeNode.layout.height = groupNode.layout.height
       treeNode.layout.center = groupNode.layout.center
+
       // change edges such that they again connect to the original tree nodes
       for (const edge of groupNode.edges.toArray()) {
         const atSource = edge.source == groupNode
@@ -656,6 +730,7 @@ class TemporaryGroupCustomizationStage extends LayoutStageBase {
     }
   }
 }
+
 /**
  * @yjs:keep = c
  */
@@ -664,8 +739,10 @@ function initializeStyles() {
     const fillColor =
       tag.aggregate.node?.tag.c ??
       (tag.isAggregated ? 'rgba(108,145,191,0.16)' : 'rgba(108,145,191,0.13)')
+
     const plus = 'M 0 -7 L 0 7 M -7 0 L 7 0'
     const minus = 'M -5 0 L 5 0'
+
     return svg`<ellipse cx='${layout.width * 0.5}' cy='${layout.height * 0.5}'
     rx='${layout.width * 0.5}' ry='${layout.height * 0.5}'
     stroke='${tag.aggregate.node ? '#696969' : 'rgba(0,0,0,0.45)'}'
@@ -677,15 +754,14 @@ function initializeStyles() {
   const outline = new GeneralPath()
   outline.appendEllipse(new Rect(0, 0, 1, 1), false)
   aggregationNodeStyle.normalizedOutline = outline
+
   hierarchyEdgeStyle = new BezierEdgeStyle({
     stroke: 'dashed #00000073',
     targetArrow: new Arrow({ type: ArrowType.OPEN, stroke: '#00000073' })
   })
-  descendantLabelStyle = new LabelStyle({
-    textFill: '#00000080',
-    textSize: 10
-  })
+  descendantLabelStyle = new LabelStyle({ textFill: '#00000080', textSize: 10 })
 }
+
 /**
  * Switches the visibility of hierarchy edges by setting either the default hierarchy edge
  * style or a void edge style that does not visualize the edge.
@@ -701,11 +777,13 @@ function switchHierarchyEdgeVisibility(graph, visible) {
     }
   }
 }
+
 /**
  * Enables/disables the UI.
  */
 function setUiDisabled(disabled) {
   return new Promise((resolve) => {
+    document.querySelector('#layout-style-select').disabled = disabled
     document.querySelector('#calculating-indicator').style.display = !disabled ? 'none' : 'block'
     document.querySelector('#aggregation-mode-select').disabled = disabled
     document.querySelector('#maximum-duration-range').disabled = disabled
@@ -713,6 +791,7 @@ function setUiDisabled(disabled) {
     document.querySelector('#maximum-cluster-size-range').disabled = disabled
     graphComponent.inputMode.waitInputMode.waiting = disabled
     document.querySelector('#run-aggregation').disabled = disabled
+
     // enable switching to filtered view only if there are some real edges in the graph
     // otherwise the graph in filtered view will be empty
     document.querySelector('#switch-view').disabled =
@@ -720,15 +799,18 @@ function setUiDisabled(disabled) {
       graphComponent.graph.nodes.every((node) =>
         aggregationHelper.aggregateGraph.isAggregationItem(node)
       )
+
     setTimeout(resolve, 0)
   })
 }
+
 /**
  * Creates an initial sample graph.
  */
 function loadGraph(graph) {
   // set default styles that are applied to the loaded graph
   graph.nodeDefaults.size = new Size(30, 30)
+
   const nodeStyle = new LitNodeStyle(
     ({ layout, tag }) => svg`<ellipse cx='${layout.width * 0.5}' cy='${layout.height * 0.5}'
     rx='${layout.width * 0.5}' ry='${layout.height * 0.5}'
@@ -738,24 +820,19 @@ function loadGraph(graph) {
   outline.appendEllipse(new Rect(0, 0, 1, 1), false)
   nodeStyle.normalizedOutline = outline
   graph.nodeDefaults.style = nodeStyle
-  graph.nodeDefaults.labels.style = new LabelStyle({
-    textFill: '#4b4b4b',
-    textSize: 10
-  })
-  graph.edgeDefaults.style = new BezierEdgeStyle({
-    stroke: '#696969'
-  })
+
+  graph.nodeDefaults.labels.style = new LabelStyle({ textFill: '#4b4b4b', textSize: 10 })
+  graph.edgeDefaults.style = new BezierEdgeStyle({ stroke: '#696969' })
   graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.CENTER
+
   // build the graph from json-data
   const graphBuilder = new GraphBuilder(graph)
-  graphBuilder.createNodesSource({
-    data: SampleGraph.nodes,
-    id: 'id',
-    labels: ['l']
-  })
+  graphBuilder.createNodesSource({ data: SampleGraph.nodes, id: 'id', labels: ['l'] })
   graphBuilder.createEdgesSource(SampleGraph.edges, 's', 't', 'id')
+
   return graphBuilder.buildGraph()
 }
+
 /**
  * Updates the info panels.
  */
@@ -770,6 +847,7 @@ function onInfoPanelPropertiesChanged() {
   const currentItemElement = document.querySelector('#current-item')
   currentItemElement.innerText = nodeName
   currentItemElement.style.display = nodeName !== '' ? 'block' : 'none'
+
   let aggregate = null
   if (aggregationHelper && graphComponent.currentItem instanceof INode) {
     aggregate = aggregationHelper.getAggregateForNode(graphComponent.currentItem)
@@ -780,30 +858,36 @@ function onInfoPanelPropertiesChanged() {
   descendantWeightSumElement.innerText = aggregate
     ? (aggregate.descendantWeightSum + Number.EPSILON).toFixed(2)
     : '0'
+
   // enable switching to filtered view only if there are some real edges in the graph
   // otherwise the graph in filtered view will be empty
   document.querySelector('#switch-view').disabled = graphComponent.graph.nodes.every((node) =>
     aggregationHelper.aggregateGraph.isAggregationItem(node)
   )
 }
+
 /**
  * A LayoutExecutor that modifies the viewport animation to zoom to a list of nodes.
  */
 class ZoomToNodesLayoutExecutor extends LayoutExecutor {
   nodes
+
   constructor(nodes, graphComponent, layout) {
     super(graphComponent, layout)
     this.nodes = nodes
   }
+
   createViewportAnimation(targetBounds) {
     if (this.nodes.size === 0) {
       return super.createViewportAnimation(targetBounds)
     }
+
     if (!this.nodes.every((node) => this.graph.contains(node))) {
       throw new Error('Cannot zoom to nodes that are not in the graph')
     }
     const layoutNodes = this.nodes.map((node) => this.adapter.getLayoutNode(node))
-    const bounds = this.adapter.layoutGraph.getBounds(layoutNodes)
+    const bounds = this.adapter.layoutGraph.getBounds(layoutNodes, [])
+
     const viewportAnimation = new ViewportAnimation(
       this.graphComponent,
       bounds,
@@ -814,6 +898,7 @@ class ZoomToNodesLayoutExecutor extends LayoutExecutor {
     return viewportAnimation
   }
 }
+
 /**
  * Binds the buttons in the toolbar to their functionality.
  */
@@ -834,4 +919,5 @@ function initializeUI() {
   document.querySelector('#switch-view').addEventListener('click', switchView)
   document.querySelector('#layout-style-select').addEventListener('change', runAggregation)
 }
+
 run().then(finishLoading)

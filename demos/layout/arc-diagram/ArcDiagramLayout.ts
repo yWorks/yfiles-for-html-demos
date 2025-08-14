@@ -193,9 +193,7 @@ function minimizeCrossings(graph: LayoutGraph, order: Array<number>): void {
   // run hierarchical layout's sequencing phase to calculate a node order with few crossings
   const hierarchicalLayout = new HierarchicalLayout({
     fromScratchLayeringStrategy: 'user-defined',
-    core: {
-      stopAfterSequencing: false
-    }
+    core: { stopAfterSequencing: false }
   })
   const hierarchicalLayoutData = hierarchicalLayout.createLayoutData(graph)
   hierarchicalLayoutData.givenLayersIndices = () => 0

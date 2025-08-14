@@ -68,9 +68,7 @@ export function initializeDefaultStyles(graphComponent: GraphComponent): void {
   // set a non-shared style for the nodes, so that each of them gets a color based on the
   // 'colorId' property stored in its data
   graph.nodeDefaults.shareStyleInstance = false
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    stroke: null
-  })
+  graph.nodeDefaults.style = new ShapeNodeStyle({ stroke: null })
 
   // set the default style for the node labels
   graph.nodeDefaults.labels.style = new LabelStyle({
@@ -94,9 +92,7 @@ export function initializeDefaultStyles(graphComponent: GraphComponent): void {
   // set a non-shared style for the labels, so that each of them gets a text color based on the
   // 'colorId' property stored in its owner property
   graph.edgeDefaults.labels.shareStyleInstance = false
-  graph.edgeDefaults.labels.style = new LabelStyle({
-    font: '14px Arial'
-  })
+  graph.edgeDefaults.labels.style = new LabelStyle({ font: '14px Arial' })
 
   // hide handles for edges
   graph.decorator.edges.handleProvider.hide()

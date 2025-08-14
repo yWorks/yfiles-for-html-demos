@@ -34,34 +34,41 @@ import {
   MutableRectangle,
   Point
 } from '@yfiles/yfiles'
+
 /**
  * A position handler that moves a given rectangle.
  */
 export class PositionHandler extends BaseClass(IPositionHandler) {
   rectangle
   offset
+
   constructor(rectangle) {
     super()
     this.rectangle = rectangle
     this.offset = new MutablePoint()
   }
+
   get location() {
     return this.rectangle.topLeft
   }
+
   initializeDrag(context) {
     const canvasComponent = context.canvasComponent
     const x = this.rectangle.x - canvasComponent.lastEventLocation.x
     const y = this.rectangle.y - canvasComponent.lastEventLocation.y
     this.offset.setLocation(x, y)
   }
+
   handleMove(context, originalLocation, newLocation) {
     const newX = newLocation.x + this.offset.x
     const newY = newLocation.y + this.offset.y
     this.rectangle.setLocation(new Point(newX, newY))
   }
+
   cancelDrag(context, originalLocation) {
     this.rectangle.setLocation(originalLocation)
   }
+
   dragFinished(context, originalLocation, newLocation) {
     const newX = newLocation.x + this.offset.x
     const newY = newLocation.y + this.offset.y

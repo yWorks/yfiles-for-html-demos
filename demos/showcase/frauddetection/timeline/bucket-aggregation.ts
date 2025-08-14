@@ -184,16 +184,7 @@ function createLeafBucket<TDataItem>(
   start: Date,
   end: Date
 ): Bucket<TDataItem> {
-  return {
-    type: 'leaf',
-    item,
-    start,
-    end,
-    label,
-    aggregatedValue: 1,
-    layer: 0,
-    indexInLayer: -1
-  }
+  return { type: 'leaf', item, start, end, label, aggregatedValue: 1, layer: 0, indexInLayer: -1 }
 }
 
 function collectLeafBuckets<TDataItem>(

@@ -57,10 +57,7 @@ export function scaleData(trail: Waypoint[]): Point[] {
 /**
  * Returns the maximum values of the x- and y-coordinates of the trail's points.
  */
-export function getMax(trail: Waypoint[]): {
-  maxX: number
-  maxY: number
-} {
+export function getMax(trail: Waypoint[]): { maxX: number; maxY: number } {
   const xCoords = trail.map((point) => point.x)
   const yCoords = trail.map((point) => point.y)
   const maxX = Math.max(...xCoords)

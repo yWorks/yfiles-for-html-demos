@@ -26,13 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { createHierarchicalLayoutConfiguration } from './HierarchicLayout'
+import { createHierarchicalLayoutConfiguration } from './HierarchicalLayout'
 import { GraphComponent, LayoutExecutor } from '@yfiles/yfiles'
+
 export async function runLayout(graphComponent) {
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   const { layout: hierarchicalLayout, layoutData: hierarchicalLayoutData } =
     createHierarchicalLayoutConfiguration()
+
   await graphComponent.applyLayoutAnimated(hierarchicalLayout, '1s', hierarchicalLayoutData)
 }

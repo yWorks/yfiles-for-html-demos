@@ -41,11 +41,11 @@ import {
   SimpleEdge
 } from '@yfiles/yfiles'
 import { WebGLProgramInfo } from './webgl-utils'
+
 let processItemVisual
-const dummyEdgeStyle = new PolylineEdgeStyle({
-  sourceArrow: IArrow.NONE,
-  targetArrow: IArrow.NONE
-})
+
+const dummyEdgeStyle = new PolylineEdgeStyle({ sourceArrow: IArrow.NONE, targetArrow: IArrow.NONE })
+
 /**
  * Installs a process item visual in the given canvas component.
  */
@@ -56,7 +56,9 @@ export function installProcessItemVisual(canvas) {
     processItemVisual,
     new ProcessItemRenderer()
   )
+  return processItemVisual
 }
+
 /**
  * Updates the time in the process item visual.
  * This is used to update the visuals over time.
@@ -66,8 +68,10 @@ export function updateTime(time) {
     processItemVisual.time = time
   }
 }
+
 /**
  * Adds an event item to the process item visual for the given edge and a specified timespan.
+ * @param caseId the id of the corresponding case
  * @param path the edge that the item should follow
  * @param reverse the direction in which the item should move
  * @param startTime the time when the item starts traversing the edge
@@ -75,11 +79,12 @@ export function updateTime(time) {
  * @param size the diameter of the item's circle
  * @param color a color value
  */
-export function addItem(path, reverse, startTime, endTime, size, color) {
+export function addItem(caseId, path, reverse, startTime, endTime, size, color) {
   if (processItemVisual) {
-    processItemVisual.addItem(path, reverse, startTime, endTime, size, color)
+    processItemVisual.addItem(caseId, path, reverse, startTime, endTime, size, color)
   }
 }
+
 function getGeneralPath(path) {
   const previewEdge = new SimpleEdge({
     sourcePort: path.sourcePort,
@@ -87,8 +92,10 @@ function getGeneralPath(path) {
     style: dummyEdgeStyle,
     bends: path.bends
   })
+
   return previewEdge.style.renderer.getPathGeometry(previewEdge, previewEdge.style).getPath()
 }
+
 class ProcessItemProgramInfo extends WebGLProgramInfo {
   toPositionData
   fromPositionData
@@ -100,6 +107,7 @@ class ProcessItemProgramInfo extends WebGLProgramInfo {
   samplerUniformLocation = null
   timeUniformLocation = null
   texture = null
+
   constructor(entryCount) {
     super(entryCount)
     this.toPositionData = this.createFloatBuffer('a_to', 2)
@@ -110,12 +118,15 @@ class ProcessItemProgramInfo extends WebGLProgramInfo {
     this.endTimeData = this.createFloatBuffer('a_endTime', 1)
     this.colorData = this.createFloatBuffer('a_color', 1)
   }
+
   init(gl, program) {
     super.init(gl, program)
     this.initRainbowTexture(gl)
+
     this.samplerUniformLocation = gl.getUniformLocation(program, 'u_Sampler')
     this.timeUniformLocation = gl.getUniformLocation(program, 'time')
   }
+
   initRainbowTexture(gl) {
     const texture = (this.texture = gl.createTexture())
     gl.bindTexture(gl.TEXTURE_2D, texture)
@@ -137,13 +148,16 @@ class ProcessItemProgramInfo extends WebGLProgramInfo {
       gl.UNSIGNED_BYTE,
       new Uint8Array(values)
     )
+
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
     return texture
   }
+
   enableRendering(renderContext, gl) {
     super.enableRendering(renderContext, gl)
+
     // Tell WebGL we want to affect texture unit 0
     gl.activeTexture(gl.TEXTURE0)
     // Bind the texture to texture unit 0
@@ -151,6 +165,7 @@ class ProcessItemProgramInfo extends WebGLProgramInfo {
     // Tell the shader we bound the texture to texture unit 0
     gl.uniform1i(this.samplerUniformLocation, 0)
   }
+
   render(renderContext, gl, time) {
     if (this.entryCount > 0) {
       this.enableRendering(renderContext, gl)
@@ -159,14 +174,17 @@ class ProcessItemProgramInfo extends WebGLProgramInfo {
       this.disableRendering(renderContext, gl)
     }
   }
+
   disableRendering(renderContext, gl) {
     super.disableRendering(renderContext, gl)
   }
+
   dispose(gl, program) {
     super.dispose(gl, program)
     gl.deleteTexture(this.texture)
   }
 }
+
 // language=GLSL
 const fragmentShader = `
 #ifdef GL_OES_standard_derivatives
@@ -195,6 +213,7 @@ void main()
   }
 #endif
 }`
+
 // language=GLSL
 const vertexShader = `
 uniform   float time;
@@ -238,6 +257,7 @@ void main() {
     gl_Position = vec4(-10.,-10.,-10.,1);
   }
 }`
+
 /**
  * A render visual that draws process items in a canvas using WebGL.
  */
@@ -247,6 +267,7 @@ export class ProcessItemVisual extends WebGLVisual {
   dirty
   $time
   timeDirty
+
   constructor() {
     super()
     this.timeDirty = true
@@ -255,30 +276,57 @@ export class ProcessItemVisual extends WebGLVisual {
     this.entryCount = 0
     this.dirty = false
   }
+
   set time(value) {
     this.$time = value
     this.timeDirty = true
   }
+
   get time() {
     return this.$time
   }
-  clearItems() {
-    this.dirty = true
-    this.entries.length = 0
-    this.entryCount = 0
+
+  /**
+   * Returns all entries that are located at the given location at the current time
+   */
+  getEntriesAtLocation(location) {
+    const currentVisibleEntries = this.entries.filter(
+      (entry) => entry.startTime < this.time && entry.endTime > this.time
+    )
+    const locationX = location.x
+    const locationY = location.y
+    return currentVisibleEntries.filter((entry) => {
+      // calculate the exact position of every entry at the current time
+      const timeRatio = (this.time - entry.startTime) / (entry.endTime - entry.startTime)
+      const x = entry.x0 + (entry.x1 - entry.x0) * timeRatio
+      const y = entry.y0 + (entry.y1 - entry.y0) * timeRatio
+      // filter out all entries that are within the mouse click area
+      return (
+        locationX > x - entry.size &&
+        locationX < x + entry.size &&
+        locationY > y - entry.size &&
+        locationY < y + entry.size
+      )
+    })
   }
-  addItem(path, reverse, startTime = 0, endTime = 1, size = 10, color = 0.5) {
+
+  addItem(caseId, path, reverse, startTime = 0, endTime = 1, size = 10, color = 0.5) {
     this.dirty = true
+
     const entries = this.entries
+
     function appendSegment(x0, y0, x1, y1) {
       if (reverse) {
         const dx = x0 - x1
         const dy = y0 - y1
         const length = Math.sqrt(dx * dx + dy * dy)
+
         const segmentStartTime = startTime + (endTime - startTime) * (runningTotal / totalLength)
         runningTotal -= length
         const segmentEndTime = startTime + (endTime - startTime) * (runningTotal / totalLength)
+
         entries.push({
+          caseId,
           color,
           startTime: segmentEndTime,
           endTime: segmentStartTime,
@@ -292,10 +340,13 @@ export class ProcessItemVisual extends WebGLVisual {
         const dx = x1 - x0
         const dy = y1 - y0
         const length = Math.sqrt(dx * dx + dy * dy)
+
         const segmentStartTime = startTime + (endTime - startTime) * (runningTotal / totalLength)
         runningTotal += length
         const segmentEndTime = startTime + (endTime - startTime) * (runningTotal / totalLength)
+
         entries.push({
+          caseId,
           color,
           startTime: segmentStartTime,
           endTime: segmentEndTime,
@@ -307,15 +358,21 @@ export class ProcessItemVisual extends WebGLVisual {
         })
       }
     }
+
     const generalPath = getGeneralPath(path)
+
     const totalLength = generalPath.getLength()
+
     const pathCursor = generalPath.createCursor()
     const coords = [0, 0, 0, 0, 0, 0]
+
     let runningTotal = reverse ? totalLength : 0
+
     let lastMoveX = 0
     let lastMoveY = 0
     let lastX = 0
     let lastY = 0
+
     while (pathCursor.moveNext()) {
       switch (pathCursor.getCurrent(coords)) {
         case PathType.LINE_TO:
@@ -337,6 +394,7 @@ export class ProcessItemVisual extends WebGLVisual {
       }
     }
   }
+
   /**
    * Paints onto the context using WebGL item styles.
    */
@@ -350,12 +408,15 @@ export class ProcessItemVisual extends WebGLVisual {
       if (program.info) {
         program.info.dispose(gl, program)
       }
+
       program.info = new ProcessItemProgramInfo(vertexCount)
       program.info.init(gl, program)
       this.updateData(program.info)
     }
+
     program.info.render(renderContext, gl, this.time)
   }
+
   updateData(programInfo) {
     const toPosition = programInfo.toPositionData.data
     const fromPosition = programInfo.fromPositionData.data
@@ -385,28 +446,31 @@ export class ProcessItemVisual extends WebGLVisual {
     this.dirty = false
     this.timeDirty = false
   }
-  get needsRepaint() {
-    return (this.entryCount > 0 && this.timeDirty) || (this.dirty && this.entries.length > 0)
-  }
 }
+
 class ProcessItemRenderer extends BaseClass(IObjectRenderer, IVisualCreator) {
   processItemVisual = null
   getBoundsProvider(_) {
     return IBoundsProvider.UNBOUNDED
   }
+
   getHitTestable(_) {
     return IHitTestable.NEVER
   }
+
   getVisibilityTestable(_) {
     return IVisibilityTestable.ALWAYS
   }
+
   getVisualCreator(renderTag) {
     this.processItemVisual = renderTag
     return this
   }
+
   createVisual(_) {
     return this.processItemVisual
   }
+
   updateVisual(_, __) {
     return this.processItemVisual
   }

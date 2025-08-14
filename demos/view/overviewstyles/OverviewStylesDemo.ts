@@ -95,9 +95,7 @@ async function run(): Promise<void> {
   // initialize the overview graph that uses the same GraphComponent styles.
   // If you want the overview to use the same styles as the GraphComponent, you can use a GraphComponent to display the overview.
   overviewGraphComponent = new GraphComponent('overviewGraphComponent')
-  overviewGraphComponent.inputMode = new OverviewInputMode({
-    canvasComponent: graphComponent
-  })
+  overviewGraphComponent.inputMode = new OverviewInputMode({ canvasComponent: graphComponent })
 
   // Apply default styling
   const graph = graphComponent.graph
@@ -121,9 +119,7 @@ async function run(): Promise<void> {
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
-    new TreeLayout({
-      defaultSubtreePlacer: new CompactSubtreePlacer()
-    })
+    new TreeLayout({ defaultSubtreePlacer: new CompactSubtreePlacer() })
   )
   void graphComponent.fitGraphBounds()
 

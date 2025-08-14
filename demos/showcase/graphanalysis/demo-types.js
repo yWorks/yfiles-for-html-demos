@@ -31,20 +31,25 @@
  */
 export function copyAndReplaceTag(item) {
   const oldTag = getTag(item)
+
   const newTag = { ...oldTag }
   newTag.components = []
   for (const component of oldTag.components) {
     newTag.components.push(component)
   }
+
   item.tag = newTag
+
   return newTag
 }
+
 /**
  * Retrieves the item's tag as a properly typed object.
  */
 export function getTag(item) {
   return item.tag
 }
+
 /**
  * Resets the components, centrality value, and the gradient value on the tag.
  */
@@ -54,6 +59,7 @@ export function resetResult(item) {
   delete tag.centrality
   delete tag.gradient
 }
+
 /**
  * Resets the type on the tag.
  */

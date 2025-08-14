@@ -121,8 +121,8 @@
 
     // Clean up the GraphComponent after the Svelte component is destroyed
     return () => {
-      graphComponent.cleanUp()
       graphComponent.graph = new Graph()
+      graphComponent.cleanUp()
     }
   })
 

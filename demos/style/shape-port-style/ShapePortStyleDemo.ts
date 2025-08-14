@@ -147,10 +147,7 @@ function initializeGraph(graph: IGraph): void {
         locationParameter: FreeNodePortLocationModel.LEFT,
         style: createShapePortStyle(portShape, colorSet)
       })
-      graph.createEdge({
-        sourcePort: lastNode!.ports.last()!,
-        targetPort: targetPort
-      })
+      graph.createEdge({ sourcePort: lastNode!.ports.last()!, targetPort: targetPort })
     }
     if (i % 4 !== 0) {
       graph.addPort({

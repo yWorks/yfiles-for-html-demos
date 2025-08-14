@@ -29,6 +29,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { PortStyleBase, Rect, SvgVisual } from '@yfiles/yfiles'
+
 /**
  * A basic port style that renders a circle.
  */
@@ -38,6 +39,7 @@ export class CustomPortStyle extends PortStyleBase {
     super()
     this.size = size
   }
+
   createVisual(context, port) {
     const ellipseElement = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     const { x, y } = port.location
@@ -51,15 +53,19 @@ export class CustomPortStyle extends PortStyleBase {
     ellipseElement.setAttribute('fill', color)
     ellipseElement.setAttribute('stroke', '#e6f8ff')
     ellipseElement.setAttribute('stroke-width', '1')
+
     const cache = { size: this.size, color }
+
     return SvgVisual.from(ellipseElement, cache)
   }
+
   updateVisual(context, oldVisual, port) {
     const { x, y } = port.location
     // get the ellipse element that needs updating from the old visual
     const ellipseElement = oldVisual.svgElement
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
+
     // get the graph from the render context
     const graph = context.canvasComponent.graph
     const color = this.getColor(graph, port)
@@ -67,23 +73,28 @@ export class CustomPortStyle extends PortStyleBase {
       ellipseElement.setAttribute('fill', color)
       cache.color = color
     }
+
     if (cache.size !== this.size) {
       const radius = this.size * 0.5
       ellipseElement.setAttribute('rx', String(radius))
       ellipseElement.setAttribute('ry', String(radius))
       cache.size = this.size
     }
+
     // move the visualization to the port location
     ellipseElement.setAttribute('cx', String(x))
     ellipseElement.setAttribute('cy', String(y))
+
     return oldVisual
   }
+
   /**
    * Gets the port's color from the tag or calculates it from the number of connected edges.
    */
   getColor(graph, port) {
     return port.tag?.color ?? this.calculateColorByDegree(graph, port)
   }
+
   /**
    * Calculates the node color based on the number of connected edges.
    * The color is blended between green (0 edges) and red (10+ edges).
@@ -95,6 +106,7 @@ export class CustomPortStyle extends PortStyleBase {
     const hue = (1 - ratio) * 100
     return `hsl(${hue}deg 100% 50%)`
   }
+
   getBounds(context, port) {
     const { x, y } = port.location
     const radius = this.size * 0.5

@@ -46,19 +46,12 @@ export type Activity = {
 /**
  * Type describing a task in business data.
  */
-export type Task = {
-  id: number
-  name: string
-}
+export type Task = { id: number; name: string }
 
 /**
  * Type describing the data of this Gantt chart containing of tasks and activities.
  */
-export type ChartData = {
-  originDate: string
-  tasks: Task[]
-  activities: Activity[]
-}
+export type ChartData = { originDate: string; tasks: Task[]; activities: Activity[] }
 
 /**
  * Type-safe getter for activity data stored in the node tag.

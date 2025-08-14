@@ -26,7 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import type { INode } from '@yfiles/yfiles'
 import { HierarchicalLayout, HierarchicalLayoutData } from '@yfiles/yfiles'
+
 /**
  * Creates a {@link HierarchicalLayout} and the respective {@link HierarchicalLayoutData} so
  * that all groups contained in the graph a treated as tabular group nodes.
@@ -34,18 +36,24 @@ import { HierarchicalLayout, HierarchicalLayoutData } from '@yfiles/yfiles'
  * @param childDistance the distance between tabular group child nodes
  * @returns the configured hierarchical layout algorithm
  */
-export function createTabularGroupsHierarchicalLayout(sorted = false, childDistance = 0) {
+export function createTabularGroupsHierarchicalLayout(
+  sorted = false,
+  childDistance = 0
+): { layout: HierarchicalLayout; layoutData: HierarchicalLayoutData } {
   const hl = new HierarchicalLayout({
     layoutOrientation: 'left-to-right',
     minimumLayerDistance: 50
   })
+
   // create a layout data
   const data = new HierarchicalLayoutData()
+
   // defines all groups to be tabular groups
   data.tabularGroups = () => true
+
   // configure order of tabular group children, if desired
   if (sorted) {
-    data.tabularGroupChildComparators.constant = (node1, node2) => {
+    data.tabularGroupChildComparators.constant = (node1: INode, node2: INode) => {
       const label1 = node1.labels.at(0)
       const label2 = node2.labels.at(0)
       if (label1 && label2) {
@@ -56,17 +64,17 @@ export function createTabularGroupsHierarchicalLayout(sorted = false, childDista
       return 0
     }
   }
+
   // specify the distance between tabular group child nodes
   hl.defaultNodeDescriptor.tabularGroupChildDistance = childDistance
+
   return { layout: hl, layoutData: data }
 }
+
 /**
  * Returns a {@link HierarchicalLayout} with a left-to-right layout orientation.
  * @returns the configured hierarchical layout algorithm
  */
-export function createDefaultHierarchicalLayout() {
-  return new HierarchicalLayout({
-    layoutOrientation: 'left-to-right',
-    minimumLayerDistance: 50
-  })
+export function createDefaultHierarchicalLayout(): HierarchicalLayout {
+  return new HierarchicalLayout({ layoutOrientation: 'left-to-right', minimumLayerDistance: 50 })
 }

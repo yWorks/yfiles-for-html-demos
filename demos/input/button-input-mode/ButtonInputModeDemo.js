@@ -56,19 +56,23 @@ import {
   ShapeNodeStyle,
   Size
 } from '@yfiles/yfiles'
+
 import { ButtonInputMode, ButtonTrigger, QueryButtonsEvent } from './ButtonInputMode'
 import { OffsetLabelModelWrapper } from './OffsetLabelModelWrapper'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import cutIcon from '@yfiles/demo-resources/icons/cut2-16.svg'
 import graphData from './graph-data.json'
+
 let graphComponent
 let buttonInputMode
+
 /**
  * Creates a {@link ButtonInputMode} and registers a listener to add buttons for nodes, edges, bend and labels.
  */
 function createButtonInputMode() {
   buttonInputMode = new ButtonInputMode()
+
   // the QueryButtonsEvent is dispatched for an owning IModelItem when buttons shall be displayed for it
   buttonInputMode.setQueryButtonsListener((queryEvent) => {
     if (queryEvent.owner instanceof INode) {
@@ -123,8 +127,10 @@ function createButtonInputMode() {
       })
     }
   })
+
   return buttonInputMode
 }
+
 /**
  * Adds an arrow button to an owner node that creates a new node and an edge to it.
  * @param queryEvent The {@link QueryButtonsEvent} to add the button to.
@@ -143,6 +149,7 @@ function addNodeArrowButton(
   tooltip
 ) {
   const tag = {}
+
   queryEvent.addButton({
     style: new IconLabelStyle({
       backgroundShape: ShapeNodeShape.TRIANGLE,
@@ -166,6 +173,7 @@ function addNodeArrowButton(
     tooltip: 'Create node ' + tooltip
   })
 }
+
 /**
  * Creates a new node and an edge between owner and the new node.
  * @param owner The node to start the new edge from.
@@ -174,11 +182,10 @@ function addNodeArrowButton(
 function createNodeAndEdge(owner, offset) {
   return graphComponent.graph.createEdge(
     owner,
-    graphComponent.graph.createNodeAt({
-      location: owner.layout.center.add(offset)
-    })
+    graphComponent.graph.createNodeAt({ location: owner.layout.center.add(offset) })
   )
 }
+
 /**
  * Adds a colored button to an owning edge that changes the stroke of the edge.
  * @param queryEvent The {@link QueryButtonsEvent} to add the button to.
@@ -192,12 +199,9 @@ function addEdgeColorButton(queryEvent, fill, offset) {
     0.5,
     EdgeSides.ABOVE_EDGE
   )
+
   queryEvent.addButton({
-    style: new LabelStyle({
-      autoFlip: false,
-      backgroundFill: fill,
-      shape: 'rectangle'
-    }),
+    style: new LabelStyle({ autoFlip: false, backgroundFill: fill, shape: 'rectangle' }),
     onAction: () => {
       const edgeStyle = queryEvent.owner.style
       edgeStyle.stroke = '1.5px ' + fill
@@ -209,6 +213,7 @@ function addEdgeColorButton(queryEvent, fill, offset) {
     tooltip: 'Change edge color'
   })
 }
+
 /**
  * Splits an edge at a specified bend.
  * @param bend The bend whose owning edges will be split.
@@ -229,11 +234,13 @@ function splitEdgeAt(bend) {
   })
   graph.remove(edge)
 }
+
 /**
  * Initializes the defaults for the styles in this demo.
  */
 function initGraphDefaults() {
   const graph = graphComponent.graph
+
   // configure defaults normal nodes and their labels
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: 'round-rectangle',
@@ -255,6 +262,7 @@ function initGraphDefaults() {
   })
   graph.edgeDefaults.shareStyleInstance = false
 }
+
 /**
  * Binds the buttons in the toolbar to their functionality.
  */
@@ -263,6 +271,7 @@ function initializeUI() {
     .querySelector('#button-trigger-combo-box')
     .addEventListener('change', () => onButtonTriggerChanged())
 }
+
 /**
  * Changes the trigger used by the ButtonInputMode to decide when to show the buttons for an IModelItem.
  */
@@ -281,18 +290,23 @@ function onButtonTriggerChanged() {
     default:
   }
 }
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
+
   // initializes the input mode
   initializeInteraction()
+
   // configures default styles for newly created graph elements
   initGraphDefaults()
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
@@ -303,43 +317,51 @@ async function run() {
     })
   )
   await graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
+
   // bind the toolbar buttons to their actions
   initializeUI()
 }
+
 /**
  * Initializes the input mode, i.e., configures the key gestures and adds the custom ButtonInputMode.
  */
 function initializeInteraction() {
   // remove the ENTER key from label editing
   resources.invariant.EditLabelKey = 'F2'
+
   // initialize graph component
   const graphEditorInputMode = new GraphEditorInputMode({
     focusableItems: GraphItemTypes.ALL,
     // disable edit on typing to not edit label with SPACE key
     allowEditLabelOnTyping: false
   })
+
   // add an input mode that adds buttons to nodes, edges, bends and labels
   graphEditorInputMode.add(createButtonInputMode())
+
   graphComponent.inputMode = graphEditorInputMode
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder
-    .createNodesSource({
-      data: graphData.nodeList,
-      id: (item) => item.id
-    })
+    .createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 run().then(finishLoading)

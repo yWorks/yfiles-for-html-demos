@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { GraphEditorInputMode, IEdge, INode, Reachability, ShortestPath } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to quickly configure and run the Reachability algorithm
  */
@@ -37,34 +38,42 @@ export function runReachabilityAlgorithm(graphComponent) {
   }
   // first reset the highlights
   graphComponent.highlights.clear()
+
   if (graphComponent.selection.nodes.size == 0) {
     graphComponent.selection.clear()
     graphComponent.selection.add(nodes.first())
   }
+
   // create, configure and run the algorithm in a single step
   // use the selected nodes as start nodes
   const startNodes = graphComponent.selection.nodes
+
   const reachability = new Reachability({
     startNodes: startNodes,
     directed: true // consider edge direction
   })
   const reachabilityResult = reachability.run(graphComponent.graph)
+
   // highlight the reachable nodes
   reachabilityResult.reachableNodes.forEach((n) => {
     graphComponent.highlights.add(n)
   })
 }
+
 /**
  * Demonstrates how to configure and run the ShortestPath algorithm.
  */
 export function runShortestPathAlgorithm(graphComponent) {
   // first reset the highlights
   graphComponent.highlights.clear()
+
   const graph = graphComponent.graph
+
   const nodes = graph.nodes.filter((node) => !graph.isGroupNode(node))
   if (nodes.size < 2) {
     return
   }
+
   // select source and sink node for the path finding algorithm
   // use the first two selected nodes if possible
   const graphSelection = graphComponent.selection
@@ -74,6 +83,7 @@ export function runShortestPathAlgorithm(graphComponent) {
   graphSelection.clear()
   nodeSelection.add(sourceNode)
   nodeSelection.add(sinkNode)
+
   const shortestPath = new ShortestPath({
     source: sourceNode,
     sink: sinkNode,
@@ -83,10 +93,12 @@ export function runShortestPathAlgorithm(graphComponent) {
       edge.sourceNode.layout.center.subtract(edge.targetNode.layout.center).vectorLength
   })
   const shortestPathResult = shortestPath.run(graph)
+
   const pathDistance = shortestPathResult.distance
   const pathNodes = shortestPathResult.path?.nodes ?? []
   const endNode = shortestPathResult.path?.end
   const pathEdges = shortestPathResult.edges
+
   if (!Number.isFinite(pathDistance)) {
     return
   }
@@ -97,6 +109,7 @@ export function runShortestPathAlgorithm(graphComponent) {
     .filter((edge) => pathEdges.contains(edge))
     // and we select all matching edges
     .forEach((edge) => graphComponent.highlights.add(edge))
+
   // finally, we use the explicit "path.end" field to show the distance as a tooltip above
   // the sink node
   endNode &&

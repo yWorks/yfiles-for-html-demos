@@ -29,21 +29,28 @@
 import { GraphComponent, GraphViewerInputMode, LayoutExecutor, License } from '@yfiles/yfiles'
 import { createLayoutConfiguration } from './Orthogonal'
 import { loadLayoutSampleGraph } from '@yfiles/demo-utils/LoadLayoutFeaturesSampleGraph'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
   // configures the graph to not be editable
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // loads basic graph to operate on
   await loadLayoutSampleGraph(graphComponent.graph, './sample.json')
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   // creates and configures the layout, also provides a data object that contains configuration for specific items in the graph
   const { layoutAlgorithm, layoutData } = createLayoutConfiguration(graphComponent.graph)
+
   // applies the layout to graph
   await graphComponent.applyLayoutAnimated(layoutAlgorithm, '0s', layoutData)
 }
+
 run().then(finishLoading)

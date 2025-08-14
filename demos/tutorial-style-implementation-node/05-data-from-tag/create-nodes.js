@@ -30,18 +30,12 @@
  * Creates the sample nodes for this tutorial step
  */
 export function createNodes(graph) {
-  graph.createNode({
-    layout: [0, 0, 100, 70],
-    tag: { color: '#b91c3b' },
-    labels: ['Red']
-  })
+  graph.createNode({ layout: [0, 0, 100, 70], tag: { color: '#b91c3b' }, labels: ['Red'] })
   graph.createNode({
     layout: [140, 0, 100, 70],
     tag: { color: '#9e7cb5', showBadge: true },
     labels: ['Purple with badge']
   })
-  graph.createNode({
-    layout: [70, 150, 100, 70],
-    labels: ['Without tag']
-  })
+
+  graph.createNode({ layout: [70, 150, 100, 70], labels: ['Without tag'] })
 }

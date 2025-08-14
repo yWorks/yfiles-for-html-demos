@@ -275,9 +275,7 @@ function createRadialTreeSample(): Sample {
 function createCompactDiskSample(): Sample {
   //create a compact disk layout with a little additional node distance (since the nodes
   // are not circles and this algorithm treats them as such)
-  const layout = new CompactDiskLayout({
-    minimumNodeDistance: 20
-  })
+  const layout = new CompactDiskLayout({ minimumNodeDistance: 20 })
 
   // the node types are specified as delegate on the nodeTypes property of the layout data
   const layoutData = new CompactDiskLayoutData({ nodeTypes: getNodeType })
@@ -352,9 +350,7 @@ async function loadSample(previewWithoutNodeTypes = false): Promise<void> {
     targetId: 'target',
     tag: null
   })
-  const defaultEdgeStyle = createDemoEdgeStyle({
-    showTargetArrow: sample.directed
-  })
+  const defaultEdgeStyle = createDemoEdgeStyle({ showTargetArrow: sample.directed })
   edgesSource.edgeCreator.defaults.style = defaultEdgeStyle
   builder.buildGraph()
 

@@ -41,29 +41,39 @@ import {
   Rect,
   Size
 } from '@yfiles/yfiles'
+
 import { RandomGraphGenerator } from '@yfiles/demo-utils/RandomGraphGenerator'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { constraintNodeStyle } from './style-templates'
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('graphComponent')
   initializeInputMode(graphComponent)
   initializeGraph(graphComponent.graph)
+
   createGraph(graphComponent.graph)
+
   await runLayout(graphComponent)
+
   initializeUI(graphComponent)
 }
+
 /**
  * @yjs:keep = constraints
  */
 async function runLayout(graphComponent) {
   // create a new layout algorithm
   const hierarchicalLayout = new HierarchicalLayout()
+
   // and layout data for it
   const hierarchicalLayoutData = new HierarchicalLayoutData()
+
   // this is the factory that we apply the constraints to
   const sequenceConstraints = hierarchicalLayoutData.sequenceConstraints
+
   // assign constraints for the nodes in the graph
   for (const node of graphComponent.graph.nodes) {
     const data = node.tag
@@ -77,9 +87,11 @@ async function runLayout(graphComponent) {
       }
     }
   }
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   // perform the layout operation
   setUIDisabled(true)
   try {
@@ -88,6 +100,7 @@ async function runLayout(graphComponent) {
     setUIDisabled(false)
   }
 }
+
 /**
  * Disables the HTML elements of the UI and the input mode.
  * @param disabled true if the elements should be disabled, false otherwise
@@ -98,6 +111,7 @@ function setUIDisabled(disabled) {
   document.querySelector('#disable-all-constraints').disabled = disabled
   document.querySelector('#layout').disabled = disabled
 }
+
 /**
  * Initializes the input mode for interaction.
  * @yjs:keep = constraints
@@ -108,6 +122,7 @@ function initializeInputMode(graphComponent) {
     labelEditableItems: GraphItemTypes.NONE,
     showHandleItems: GraphItemTypes.ALL ^ GraphItemTypes.NODE
   })
+
   // listener for the buttons on the nodes
   inputMode.addEventListener('item-clicked', (evt) => {
     if (evt.item instanceof INode) {
@@ -130,24 +145,29 @@ function initializeInputMode(graphComponent) {
       }
     }
   })
+
   graphComponent.inputMode = inputMode
 }
+
 /**
  * Initializes the graph instance setting default styles and creates a small sample graph.
  */
 function initializeGraph(graph) {
   // minimum size for nodes
   const size = new Size(60, 50)
+
   // set the style as the default for all new nodes
   graph.nodeDefaults.style = constraintNodeStyle
   graph.nodeDefaults.size = size
 }
+
 /**
  * Clears the existing graph and creates a new random graph
  */
 function createGraph(graph) {
   // remove all nodes and edges from the graph
   graph.clear()
+
   // create a new random graph
   new RandomGraphGenerator({
     $allowCycles: true,
@@ -158,11 +178,13 @@ function createGraph(graph) {
     nodeCreator: (graph) => createNodeCallback(null, graph, Point.ORIGIN, null)
   }).generate(graph)
 }
+
 /**
  * Binds actions to the buttons in the toolbar.
  */
 function initializeUI(graphComponent) {
   const graph = graphComponent.graph
+
   document.querySelector('#new-button').addEventListener('click', async () => {
     createGraph(graph)
     await runLayout(graphComponent)
@@ -177,6 +199,7 @@ function initializeUI(graphComponent) {
     .querySelector('#layout')
     .addEventListener('click', async () => await runLayout(graphComponent))
 }
+
 /**
  * Callback that actually creates the node and its business object.
  */
@@ -184,12 +207,10 @@ function createNodeCallback(_context, graph, location, _parent) {
   const bounds = Rect.fromCenter(location, graph.nodeDefaults.size)
   return graph.createNode({
     layout: bounds,
-    tag: {
-      value: Math.round(Math.random() * 7),
-      constraints: Math.random() < 0.9
-    }
+    tag: { value: Math.round(Math.random() * 7), constraints: Math.random() < 0.9 }
   })
 }
+
 /**
  * Enables or disables all constraints for the graph's nodes.
  * @yjs:keep = constraints
@@ -204,4 +225,5 @@ function setConstraintsEnabled(graphComponent, enabled) {
   }
   graphComponent.updateVisual()
 }
+
 run().then(finishLoading)

@@ -162,7 +162,9 @@ async function run(): Promise<void> {
 function createEditorMode(): IInputMode {
   const inputMode = new GraphEditorInputMode({
     allowUndoOperations: true,
-    focusableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.PORT
+    focusableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.PORT,
+    // items can be selected only if the graphML editor text is valid
+    selectablePredicate: () => editorSync.hasValidText()
   })
 
   // Add TableEditorMode to GEIM. We set the priority higher than for the handle input mode so that handles win if
@@ -182,53 +184,66 @@ function createEditorMode(): IInputMode {
   inputMode.availableCommands.remove(Command.CUT)
   inputMode.availableCommands.remove(Command.PASTE)
 
-  inputMode.keyboardInputMode.addCommandBinding(Command.UNDO, (evt) => {
-    const undoEngine = graphComponent.graph.undoEngine
-    if (undoEngine !== null && undoEngine.canUndo()) {
+  inputMode.keyboardInputMode.addCommandBinding(
+    Command.UNDO,
+    (evt) => {
       inputMode.undo()
       onGraphModified()
       evt.handled = true
+    },
+    (evt) => {
+      evt.canExecute = graphComponent.graph.undoEngine?.canUndo() ?? false
     }
-  })
+  )
 
-  inputMode.keyboardInputMode.addCommandBinding(Command.REDO, (evt) => {
-    const undoEngine = graphComponent.graph.undoEngine
-    if (undoEngine !== null && undoEngine.canRedo()) {
+  inputMode.keyboardInputMode.addCommandBinding(
+    Command.REDO,
+    (evt) => {
       inputMode.redo()
       onGraphModified()
       evt.handled = true
+    },
+    (evt) => {
+      evt.canExecute = graphComponent.graph.undoEngine?.canRedo() ?? false
     }
-  })
+  )
 
-  inputMode.keyboardInputMode.addCommandBinding(Command.CUT, (evt) => {
-    const clipboard = graphComponent.clipboard
-    const canExecute =
-      clipboard !== null &&
-      clipboard.copyItems !== GraphItemTypes.NONE &&
-      inputMode.allowClipboardOperations &&
-      graphComponent.selection.size > 0 &&
-      (GraphItemTypes.getItemTypes(graphComponent.selection) & inputMode.deletableItems) !== 0
-
-    if (canExecute) {
+  inputMode.keyboardInputMode.addCommandBinding(
+    Command.CUT,
+    (evt) => {
       inputMode.cut()
       onGraphModified()
       evt.handled = true
+    },
+    (evt) => {
+      const clipboard = graphComponent.clipboard
+      evt.canExecute =
+        clipboard !== null &&
+        clipboard.copyItems !== GraphItemTypes.NONE &&
+        inputMode.allowClipboardOperations &&
+        graphComponent.selection.size > 0 &&
+        (GraphItemTypes.getItemTypes(graphComponent.selection) & inputMode.deletableItems) !== 0
     }
-  })
-  inputMode.keyboardInputMode.addCommandBinding(Command.PASTE, (evt) => {
-    const clipboard = graphComponent.clipboard
-    if (clipboard !== null && inputMode.allowClipboardOperations && !clipboard.isEmpty) {
+  )
+  inputMode.keyboardInputMode.addCommandBinding(
+    Command.PASTE,
+    (evt) => {
       inputMode.paste()
       onGraphModified()
       evt.handled = true
+    },
+    (evt) => {
+      const clipboard = graphComponent.clipboard
+      evt.canExecute =
+        clipboard !== null && inputMode.allowClipboardOperations && !clipboard.isEmpty
     }
-  })
+  )
 
   return inputMode
 }
 
 /**
- * Creates a GraphMLIOHandler with event handlers for dynamic parsing of custom data, and for connecting the GraphML
+ * Creates a GraphMLIOHandler with event handlers for dynamic parsing of custom data and for connecting the GraphML
  * editor to write and parse events.
  */
 function createGraphMLIOHandler(): GraphMLIOHandler {
@@ -297,7 +312,7 @@ function initializeEditorSynchronization(): void {
 }
 
 /**
- * The GraphML editor's content has been modified: try to parse the new GraphML data, and update the view if
+ * The GraphML editor's content has been modified: try to parse the new GraphML data and update the view if
  * successful.
  * @param value The new editor content.
  */
@@ -368,12 +383,12 @@ function setItemId(viewItem: INode | IEdge, prefix: 'n' | 'e'): void {
 }
 
 /**
- * The graph has been modified by the user: trigger synchronization of the GraphML editor.
+ * The user has modified the graph: trigger synchronization of the GraphML editor.
  */
 function onGraphModified(inputMode?: MoveInputMode): void {
   let graphChanged = true
 
-  // Use a timeout, so we don't synchronize too often (e.g. for each node move event)
+  // Use a timeout, so we don't synchronize too often (e.g., for each node move event)
   setTimeout(async () => {
     if (graphChanged) {
       graphChanged = false
@@ -386,10 +401,7 @@ function onGraphModified(inputMode?: MoveInputMode): void {
         selectedMasterItem = getMasterItem(inputMode.affectedItems.first()!)
       }
       if (graphModifiedListener) {
-        graphModifiedListener({
-          graphml: str,
-          selectedItem: selectedMasterItem
-        })
+        graphModifiedListener({ graphml: str, selectedItem: selectedMasterItem })
       }
     }
   }, 100)
@@ -481,10 +493,11 @@ async function loadSampleGraph(graph: IGraph): Promise<void> {
   await graphMLIOHandler.readFromURL(graph, 'resources/sample-graph.graphml')
   // when done - fit the bounds
   await graphComponent.fitGraphBounds()
-  // Trigger synchronization of the GraphML editor
-  onGraphModified()
   // reconnect editor synchronization
   graphModifiedListener = editorSync.onGraphModified.bind(editorSync)
+  // Trigger synchronization of the GraphML editor
+  const str = await graphMLIOHandler.write(graphComponent.graph)
+  graphModifiedListener({ graphml: str, selectedItem: null })
 }
 
 /**

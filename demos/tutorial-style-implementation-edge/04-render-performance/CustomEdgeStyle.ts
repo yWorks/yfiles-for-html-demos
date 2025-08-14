@@ -40,9 +40,7 @@ import {
  * Augment the SvgVisual type with the data used to cache the rendering information
  */
 // the values we use to render the graphics
-type Cache = {
-  generalPath: GeneralPath
-}
+type Cache = { generalPath: GeneralPath }
 
 // the type of visual we create and update in CustomEdgeStyle
 type CustomEdgeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>

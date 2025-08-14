@@ -39,6 +39,7 @@ import {
   LabelSideReferences,
   LayoutData
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to configure {@link HierarchicalLayout} for automatic edge label placement.
  * @param graph The graph to be laid out
@@ -53,9 +54,11 @@ export function createFeatureLayoutConfiguration(graph) {
   // to support these cases, it is possible to turn off the aforementioned normalization
   // by uncommenting the following line:
   // ;(layout.labeling as LabelLayoutTranslator).autoFlipping = false
+
   // Integrated edge labeling produces very good results that are sensible for a lot of cases by
   // default. Additionally, the algorithm offers some control over how and where individual labels
   // should be placed. This is where preferred placement descriptors come into play.
+
   // moves a label as close to its owner edge's source node as possible
   // additionally, the corresponding label is placed on the left side of the edge
   const closeToSourceDesc = new EdgeLabelPreferredPlacement()
@@ -63,6 +66,7 @@ export function createFeatureLayoutConfiguration(graph) {
   closeToSourceDesc.sideReference = LabelSideReferences.ABSOLUTE_WITH_LEFT_ABOVE
   closeToSourceDesc.edgeSide = LabelEdgeSides.LEFT_OF_EDGE
   closeToSourceDesc.distanceToEdge = 4
+
   // moves a label as close to its owner edge's target node as possible
   // additionally, the corresponding label is placed on the right side of the edge *in relation
   // to the edge's direction* (i.e. for a bottom-to-top edge the label will be on the right side,
@@ -71,8 +75,10 @@ export function createFeatureLayoutConfiguration(graph) {
   closeToTargetDesc.placementAlongEdge = LabelAlongEdgePlacements.AT_TARGET_PORT
   closeToTargetDesc.edgeSide = LabelEdgeSides.RIGHT_OF_EDGE
   closeToTargetDesc.distanceToEdge = 4
+
   // default placement
   const defaultDesc = new EdgeLabelPreferredPlacement()
+
   // rotates a label such that its baseline is parallel to its owner edge's path
   // additionally, the label is placed close to its owner edge's target node and next to the edge
   const downwardsDesc = new EdgeLabelPreferredPlacement()
@@ -80,22 +86,26 @@ export function createFeatureLayoutConfiguration(graph) {
   downwardsDesc.placementAlongEdge = LabelAlongEdgePlacements.AT_TARGET
   downwardsDesc.edgeSide = LabelEdgeSides.LEFT_OF_EDGE
   downwardsDesc.distanceToEdge = 4
+
   // rotates a label such that its baseline is parallel to its owner edge's path
   // additionally, the label is placed next to the edge
   const parallelDesc = new EdgeLabelPreferredPlacement()
   parallelDesc.angleReference = LabelAngleReferences.RELATIVE_TO_EDGE_FLOW
   parallelDesc.edgeSide = LabelEdgeSides.LEFT_OF_EDGE
   parallelDesc.distanceToEdge = 4
+
   // rotates a label by a fixed angle
   // additionally, the label is placed next to the edge
   const rotatedDesc = new EdgeLabelPreferredPlacement()
   rotatedDesc.angle = Math.PI * 0.225
   rotatedDesc.edgeSide = LabelEdgeSides.LEFT_OF_EDGE
+
   // rotates a label upside down
   // note, the aforementioned rotation normalization has to be turned off for this descriptor to
   // produce the desired effect, see the autoFlipping line above
   const upsideDownDesc = new EdgeLabelPreferredPlacement()
   upsideDownDesc.angle = Math.PI
+
   // rotates a label such that its baseline is parallel to its owner edge's path
   // additionally, the label is rotated to point in the opposite direction of a downwardsDesc label
   // note, the aforementioned rotation normalization has to be turned off for this descriptor to
@@ -106,6 +116,7 @@ export function createFeatureLayoutConfiguration(graph) {
   upwardsDesc.placementAlongEdge = LabelAlongEdgePlacements.AT_TARGET
   upwardsDesc.edgeSide = LabelEdgeSides.RIGHT_OF_EDGE
   upwardsDesc.distanceToEdge = 4
+
   // create and configure layout data for the hierarchical layout algorithm
   const layoutData = new HierarchicalLayoutData()
   // register all the descriptors
@@ -129,12 +140,14 @@ export function createFeatureLayoutConfiguration(graph) {
         return defaultDesc
     }
   }
+
   // While preferred placement descriptors offer lots of configuration options, they cannot be used
   // to control the minimum distance of a label to the source or target node of its owner edge.
-  // However, node halos may be used towards this end. E.g. the halo defined here reserves enough
+  // However, node margins may be used towards this end. E.g. the halo defined here reserves enough
   // space above all nodes to prevent labels from overlapping the target arrows of their owner
   // edges. (Due to the simple structure of this demo's sample graph, all edges enter their
   // target nodes from above.)
   layoutData.nodeMargins = new Insets(15, 0, 0, 0)
+
   return { layout, layoutData }
 }

@@ -38,6 +38,7 @@ import {
   SnapLineSnapTypes,
   SnapReferenceVisualizationType
 } from '@yfiles/yfiles'
+
 /**
  * Wraps a given {@link ISnapReferenceProvider} and adds additional {@link OrthogonalSnapLine}s
  * for orthogonal labels of an {@link IModelItem}. For each orthogonal label there are
@@ -56,6 +57,7 @@ export class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapRefer
     this.item = item
     this.wrapped = wrapped
   }
+
   /**
    * Calls {@link ISnapReferenceProvider.addSnapReferences} of the wrapped provider and adds custom
    * {@link OrthogonalSnapLine}s for the given `item`.
@@ -65,10 +67,12 @@ export class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapRefer
    */
   addSnapReferences(context, args) {
     this.wrapped.addSnapReferences(context, args)
+
     if (this.item instanceof ILabelOwner) {
       this.addCustomSnapLines(args, this.item)
     }
   }
+
   /**
    * Adds custom snap lines for orthogonal labels
    * @param args The argument to use for adding snap lines.
@@ -82,6 +86,7 @@ export class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapRefer
       if (upX === 0 || upX === 1 || upX === -1) {
         // label is orthogonal
         const bounds = label.layout.bounds
+
         // add snap lines to the top, bottom, left and right border of the label
         //
         // snap line for the label's top border
@@ -97,6 +102,7 @@ export class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapRefer
           100
         )
         args.addSnapReference(snapLine)
+
         // snap line for the label's bottom border
         const bottomCenter = bounds.bottomLeft.add(new Point(label.layout.width / 2, 0))
         snapLine = new OrthogonalSnapLine(
@@ -110,6 +116,7 @@ export class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapRefer
           100
         )
         args.addSnapReference(snapLine)
+
         // snap line for the label's left border
         const leftCenter = bounds.topLeft.add(new Point(0, label.layout.height / 2))
         snapLine = new OrthogonalSnapLine(
@@ -123,6 +130,7 @@ export class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapRefer
           100
         )
         args.addSnapReference(snapLine)
+
         // snap line for the label's right border
         const rightCenter = bounds.topRight.add(new Point(0, label.layout.height / 2))
         snapLine = new OrthogonalSnapLine(

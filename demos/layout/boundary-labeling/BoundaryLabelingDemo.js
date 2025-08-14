@@ -47,23 +47,32 @@ import { ImageVisualCreator } from './ImageVisualCreator'
 import { configureLayout } from './configure-layout'
 import { MultiPageNodeType } from './data-types'
 import { pointsData } from './resources/points-data'
+
 const imageRect = new Rect(0, 0, 350, 477)
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('#graphComponent')
   // configure user interaction, disable selection and focus
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // assign the default style and size for the points
   initializeDefaultStyles(graphComponent.graph)
+
   // read the points from the dataset and creates the associated label nodes
   initializeGraph(graphComponent.graph)
+
   // adds the image to be annotated to the demo's graph component
   addBackgroundImage(graphComponent)
+
   // configure and run OrganicLayout with constraints for aligning points and their associated
   // labels
   void runLayout(graphComponent)
+
   initializeUI(graphComponent)
 }
+
 /**
  * Creates the graph from the given dataset.
  * For each data item in the dataset, a point node and an associated label node are created.
@@ -80,34 +89,36 @@ function initializeGraph(graph) {
       ),
       tag: { ...data, type: MultiPageNodeType.POINT }
     })
+
     // create the label node and define its tag based on the tag of the associated point
     const labelNode = graph.createNode({
       layout: point.layout,
       style: INodeStyle.VOID_NODE_STYLE,
       tag: { type: MultiPageNodeType.LABEL }
     })
+
     // add the label to the new label node and use a MarkupLabelStyle to support HTML tags
     graph.addLabel({
       owner: labelNode,
       text: data.label,
       layoutParameter: ExteriorNodeLabelModel.TOP
     })
+
     // ... create an edge between the point and the label node
     graph.createEdge(point, labelNode)
   }
 }
+
 /**
  * Configures the default node size and style as well as the default style for the edges for this demo.
  */
 function initializeDefaultStyles(graph) {
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    shape: 'rectangle',
-    fill: 'black'
-  })
+  graph.nodeDefaults.style = new ShapeNodeStyle({ shape: 'rectangle', fill: 'black' })
   graph.nodeDefaults.size = new Size(3, 3)
   graph.nodeDefaults.labels.style = getLabelStyle()
   graph.edgeDefaults.style = new PolylineEdgeStyle()
 }
+
 /**
  * Adds the image to the background group of the given graph component.
  */
@@ -117,6 +128,7 @@ function addBackgroundImage(graphComponent) {
     new ImageVisualCreator(imageRect)
   )
 }
+
 /**
  *  Configures and runs an OrganicLayout with the constraints for aligning points and their
  *  associated labels.
@@ -125,9 +137,11 @@ async function runLayout(graphComponent, animated = false) {
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   const { layout, layoutData } = configureLayout(graphComponent.graph, imageRect)
   await graphComponent.applyLayoutAnimated(layout, animated ? '0.2s' : '0s', layoutData)
 }
+
 /**
  * Binds the action to the toolbar slider.
  */
@@ -137,13 +151,16 @@ function initializeUI(graphComponent) {
     const fontSize = parseInt(fontSizeSlider.value)
     document.querySelector('#font-size-label').textContent = fontSize.toString()
     const graph = graphComponent.graph
+
     graph.labels.forEach((label) => {
       const oldFont = label.style.font
       graph.setStyle(label, getLabelStyle(new Font({ fontSize, fontWeight: oldFont.fontWeight })))
     })
+
     await runLayout(graphComponent, true)
   })
 }
+
 /**
  * Returns a new MarkupLabelStyle with the given font.
  */
@@ -157,4 +174,5 @@ function getLabelStyle(font = new Font({ fontSize: 12 })) {
     backgroundFill: 'white'
   })
 }
+
 void run().then(finishLoading)

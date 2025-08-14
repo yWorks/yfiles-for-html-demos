@@ -47,6 +47,7 @@ import {
   Mapper,
   Size
 } from '@yfiles/yfiles'
+
 import { PortCandidateBendHandle } from './PortCandidateBendHandle'
 import { LayerPositionHandler } from './LayerPositionHandler'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
@@ -54,6 +55,7 @@ import { LayerVisual } from './LayerVisual'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 /**
  * Sample that interactively demonstrates the usage of {@link HierarchicalLayout}.
  * This demo shows how to incrementally add nodes and edges and dynamically assign port candidates.
@@ -69,51 +71,60 @@ async function run() {
   newLayerMapper = new Mapper()
   incrementalNodes = new List()
   incrementalEdges = new List()
+
   // initialize the input mode
   initializeInputModes()
   // initialize the graph
   initializeGraph()
+
   // then build the graph with the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // calculate the initial layout
-  const hierarchicalLayout = new HierarchicalLayout({
-    groupLayeringPolicy: 'ignore-groups'
-  })
+  const hierarchicalLayout = new HierarchicalLayout({ groupLayeringPolicy: 'ignore-groups' })
   const layoutData = new HierarchicalLayoutData()
   graphComponent.graph.applyLayout(hierarchicalLayout, layoutData)
+
   // and update the layer visualization
   layerMapper = layoutData.layerIndicesResult
   layerVisual.updateLayers(graphComponent.graph, layerMapper)
+
   await graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Iterates through the given data set and creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-  graphBuilder.createNodesSource({
-    data: graphData.nodeList,
-    id: (item) => item.id
-  })
+
+  graphBuilder.createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 let graphComponent
+
 /**
  * Calls {@link createEditorMode} and registers the result as the {@link CanvasComponent.inputMode}.
  */
 function initializeInputModes() {
   // create the interaction mode
   graphComponent.inputMode = createEditorMode()
+
   // display the layers
   graphComponent.renderTree.createElement(graphComponent.renderTree.backgroundGroup, layerVisual)
 }
+
 /**
  * Creates the default input mode for the {@link GraphComponent} a
  * {@link GraphEditorInputMode}.
@@ -124,6 +135,7 @@ function createEditorMode() {
   // creating bends does not make sense because the routing is calculated
   // immediately after the creation.
   mode.createEdgeInputMode.allowCreateBend = false
+
   // register hooks whenever something is dragged or resized
   mode.handleInputMode.addEventListener('drag-finished', () => void updateLayout())
   mode.moveSelectedItemsInputMode.addEventListener('drag-finished', () => void updateLayout())
@@ -140,6 +152,7 @@ function createEditorMode() {
     incrementalEdges.add(evt.item)
     void updateLayout()
   })
+
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   mode.addEventListener('populate-item-context-menu', (evt) => {
     // see if it's a node but not a not empty group node
@@ -187,8 +200,10 @@ function createEditorMode() {
       ]
     }
   })
+
   return mode
 }
+
 /**
  * Core method that recalculates and updates the layout.
  */
@@ -199,42 +214,44 @@ async function updateLayout() {
   }
   layouting = true
   graphComponent.inputMode.enabled = false
+
   // update the layers for moved nodes
   updateMovedNodes()
+
   const layout = new HierarchicalLayout({
     groupLayeringPolicy: 'ignore-groups',
     fromSketchMode: true,
-    core: {
-      fixedElementsLayerAssigner: new GivenLayersAssigner()
-    }
+    core: { fixedElementsLayerAssigner: new GivenLayersAssigner() }
   })
+
   const layoutData = new HierarchicalLayoutData({
     givenLayersIndices: layerMapper,
-    ports: {
-      sourcePortCandidates,
-      targetPortCandidates
-    },
+    ports: { sourcePortCandidates, targetPortCandidates },
     // now pass the incremental nodes to the layout algorithm
     incrementalNodes,
     // the same for edges
     incrementalEdges
   })
+
   // apply the layout
   try {
     // Ensure that the LayoutExecutor class is not removed by build optimizers
     // It is needed for the 'applyLayoutAnimated' method in this demo.
     LayoutExecutor.ensure()
+
     await graphComponent.applyLayoutAnimated(layout, '1s', layoutData)
     layerMapper = layoutData.layerIndicesResult
     layerVisual.updateLayers(graphComponent.graph, layoutData.layerIndicesResult)
   } finally {
     layouting = false
     graphComponent.inputMode.enabled = true
+
     // forget the incremental nodes and edges for the next run
     incrementalNodes.clear()
     incrementalEdges.clear()
   }
 }
+
 /**
  * Updates the layers for moved nodes.
  */
@@ -262,6 +279,7 @@ function updateMovedNodes() {
     newLayerMapper.clear()
   }
 }
+
 /**
  * Initializes the graph instance setting default styles
  * and creating a small sample graph.
@@ -269,13 +287,16 @@ function updateMovedNodes() {
 function initializeGraph() {
   const graph = graphComponent.graph
   graph.nodeDefaults.size = new Size(60, 30)
+
   // set some nice defaults
   initDemoStyles(graph, { theme: 'demo-palette-21' })
+
   // create mappers for the layers
   layerMapper = new Mapper()
   // and the port candidates
   sourcePortCandidates = new Mapper()
   targetPortCandidates = new Mapper()
+
   // register a custom PositionHandler for the nodes.
   // this enables interactive layer reassignment with layer preview
   graph.decorator.nodes.positionHandler.addWrapperFactory(
@@ -283,6 +304,7 @@ function initializeGraph() {
     (node, positionHandler) =>
       new LayerPositionHandler(positionHandler, layerVisual, node, newLayerMapper)
   )
+
   // register custom handles for the first and last bends of an edge
   // this enables interactive port candidate assignment.
   graph.decorator.bends.handle.addWrapperFactory(
@@ -295,36 +317,45 @@ function initializeGraph() {
           : baseHandle
   )
 }
+
 /**
  * Visualizes the layers and manages layer regions and contains tests.
  */
 let layerVisual
+
 /**
  * holds for each node the layer
  */
 let layerMapper
+
 /**
  * whether a layout is currently running
  */
 let layouting = false
+
 /**
  * holds temporary layer reassignments that will be assigned during the next layout
  */
 let newLayerMapper
+
 /**
  * holds for each edge the port candidates for the source end
  */
 let sourcePortCandidates
+
 /**
  * holds for each edge the port candidates for the target end
  */
 let targetPortCandidates
+
 /**
  * holds a list of nodes to insert incrementally during the next layout
  */
 let incrementalNodes
+
 /**
  * holds a list of edges to reroute incrementally during the next layout
  */
 let incrementalEdges
+
 run().then(finishLoading)

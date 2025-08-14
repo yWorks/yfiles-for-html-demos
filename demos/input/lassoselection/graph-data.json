@@ -13,70 +13,18 @@
     { "id": 10 }
   ],
   "edgeList": [
-    {
-      "id": 0,
-      "source": 2,
-      "target": 1
-    },
-    {
-      "id": 1,
-      "source": 1,
-      "target": 0
-    },
-    {
-      "id": 2,
-      "source": 0,
-      "target": 3
-    },
-    {
-      "id": 3,
-      "source": 3,
-      "target": 2
-    },
-    {
-      "id": 4,
-      "source": 3,
-      "target": 1
-    },
-    {
-      "id": 5,
-      "source": 4,
-      "target": 3
-    },
-    {
-      "id": 6,
-      "source": 4,
-      "target": 5
-    },
-    {
-      "id": 7,
-      "source": 8,
-      "target": 4
-    },
-    {
-      "id": 8,
-      "source": 7,
-      "target": 8
-    },
-    {
-      "id": 9,
-      "source": 7,
-      "target": 6
-    },
-    {
-      "id": 10,
-      "source": 6,
-      "target": 5
-    },
-    {
-      "id": 11,
-      "source": 6,
-      "target": 9
-    },
-    {
-      "id": 12,
-      "source": 9,
-      "target": 10
-    }
+    { "id": 0, "source": 2, "target": 1 },
+    { "id": 1, "source": 1, "target": 0 },
+    { "id": 2, "source": 0, "target": 3 },
+    { "id": 3, "source": 3, "target": 2 },
+    { "id": 4, "source": 3, "target": 1 },
+    { "id": 5, "source": 4, "target": 3 },
+    { "id": 6, "source": 4, "target": 5 },
+    { "id": 7, "source": 8, "target": 4 },
+    { "id": 8, "source": 7, "target": 8 },
+    { "id": 9, "source": 7, "target": 6 },
+    { "id": 10, "source": 6, "target": 5 },
+    { "id": 11, "source": 6, "target": 9 },
+    { "id": 12, "source": 9, "target": 10 }
   ]
 }

@@ -38,46 +38,55 @@ import {
   Point,
   Size
 } from '@yfiles/yfiles'
+
 import GraphData from './resources/SampleData'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { ExpandCollapseNavigationHelper } from './ExpandCollapseNavigationHandler'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent = null
+
 /**
  * A demo that demonstrates how to automatically trigger a layout that clears or fills the space
  * when opening or closing groups.
  */
 async function run() {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('graphComponent')
   initializeGraph()
 }
+
 /**
  * Initializes input modes, folding and loads a sample graph.
  */
 function initializeGraph() {
   const inputMode = new GraphEditorInputMode()
   graphComponent.inputMode = inputMode
+
   // enable folding
   const foldingManager = new FoldingManager()
   const foldingView = foldingManager.createFoldingView()
   graphComponent.graph = foldingView.graph
+
   const navigationInputMode = inputMode.navigationInputMode
   new ExpandCollapseNavigationHelper(navigationInputMode)
+
   // Assign the default demo styles
   initDemoStyles(graphComponent.graph, { foldingEnabled: true })
+
   // managing the appearance of folder nodes
   foldingManager.folderNodeConverter = new FolderNodeConverter({
-    folderNodeDefaults: {
-      copyLabels: true,
-      size: new Size(110, 60)
-    }
+    folderNodeDefaults: { copyLabels: true, size: new Size(110, 60) }
   })
+
   // read sample graph
   buildGraph(graphComponent.graph)
+
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Creates and configures the {@link GraphBuilder}.
  * @param masterGraph The master graph of the {@link GraphComponent}
@@ -98,8 +107,10 @@ function createGraphBuilder(masterGraph) {
     parentId: 'parentGroup'
   })
   graphBuilder.createEdgesSource(GraphData.edgesSource, 'from', 'to')
+
   return graphBuilder
 }
+
 /**
  * Builds the graph using the JSON Data
  * After building the graph, a hierarchical layout is applied.
@@ -107,8 +118,10 @@ function createGraphBuilder(masterGraph) {
 function buildGraph(graph) {
   // Create the builder on the master graph
   const builder = createGraphBuilder(graph.foldingView.manager.masterGraph)
+
   // Build the master graph from the data
   builder.buildGraph()
+
   // Iterate the edge data and create the according bends and Ports
   graph.edges.forEach((edge) => {
     if (edge.tag.bends) {
@@ -119,20 +132,22 @@ function buildGraph(graph) {
     graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
     graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
   })
+
   // collapsing the groups whose tags are collapsed
   graph.foldingView.manager.masterGraph.nodes.toArray().forEach((node) => {
     if (node.tag.collapsed) {
       graph.foldingView.collapse(node)
     }
   })
+
   // applying  hierarchical layout with recursive edges
   const hierarchicalLayout = new HierarchicalLayout({
     fromSketchMode: true,
-    defaultEdgeDescriptor: {
-      recursiveEdgePolicy: 'directed'
-    }
+    defaultEdgeDescriptor: { recursiveEdgePolicy: 'directed' }
   })
+
   // apply a layout and move it to the top of the graph component
   graph.applyLayout(hierarchicalLayout)
 }
+
 run().then(finishLoading)

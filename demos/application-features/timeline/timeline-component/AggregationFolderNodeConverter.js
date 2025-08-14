@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { FolderNodeConverter, Rect } from '@yfiles/yfiles'
+
 /**
  * A simple folder node converter that maps the aggregated values of the folder to its height.
  */
@@ -34,12 +35,15 @@ export class AggregationFolderNodeConverter extends FolderNodeConverter {
   initializeFolderNodeLayout(state, foldingView, viewNode, masterNode) {
     this.updateLayout(state, masterNode)
   }
+
   updateFolderNodeState(state, foldingView, viewNode, masterNode) {
     super.updateFolderNodeState(state, foldingView, viewNode, masterNode)
     this.updateLayout(state, masterNode)
   }
+
   updateLayout(state, masterNode) {
     const aggregatedValue = masterNode.tag.aggregatedValue
+
     const width = this.folderNodeDefaults.size?.width ?? 20
     const height = Math.max(aggregatedValue, 1)
     state.layout = new Rect(

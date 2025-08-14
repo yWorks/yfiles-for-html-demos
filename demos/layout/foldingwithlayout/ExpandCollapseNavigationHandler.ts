@@ -85,9 +85,7 @@ export class ExpandCollapseNavigationHelper {
     navigationInputMode.addEventListener('group-collapsing', this.onGroupCollapsing.bind(this))
     navigationInputMode.addEventListener('group-collapsed', this.onGroupCollapsed.bind(this))
 
-    this.subgraphLayout = new HierarchicalLayout({
-      groupLayeringPolicy: 'ignore-groups'
-    })
+    this.subgraphLayout = new HierarchicalLayout({ groupLayeringPolicy: 'ignore-groups' })
 
     this.interEdgeRouter = new EdgeRouter()
   }
@@ -126,9 +124,7 @@ export class ExpandCollapseNavigationHelper {
 
     // Apply a nice layout to the subgraph.
     if (this.subgraphLayout != null) {
-      tempView.graph.applyLayout({
-        layout: this.subgraphLayout
-      })
+      tempView.graph.applyLayout({ layout: this.subgraphLayout })
     }
     tempView.localRoot = foldingView.localRoot
 
@@ -363,9 +359,7 @@ export class ExpandCollapseNavigationHelper {
    * groupNode must be cleared.
    */
   private static createClearAreaLayoutData(groupNode: INode): LayoutData {
-    return new ClearAreaLayoutData({
-      areaNodes: groupNode
-    })
+    return new ClearAreaLayoutData({ areaNodes: groupNode })
   }
 
   /**

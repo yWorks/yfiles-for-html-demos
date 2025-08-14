@@ -37,14 +37,19 @@ import {
   setDefaultLabelLayoutParameters
 } from '../common'
 import { enableDataBinding, setupContextMenu, setupTooltips } from './data-binding'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 setDefaultLabelLayoutParameters(graphComponent.graph)
+
 const graphEditorInputMode = configureInteraction(graphComponent)
 enableDataBinding(graphComponent, graphEditorInputMode)
 setupTooltips(graphEditorInputMode)
 setupContextMenu(graphComponent, graphEditorInputMode)
+
 createSampleGraph(graphComponent.graph)
+
 fitGraphBounds(graphComponent)
 finishLoading()

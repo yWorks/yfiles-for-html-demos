@@ -34,21 +34,25 @@ import {
   SnapLine,
   SnapReferenceVisualizationType
 } from '@yfiles/yfiles'
+
 /**
  * A circular snap reference around a given node with a given radius.
  */
 export class NodeSnapCircle extends SnapCircle {
   node
+
   constructor(node, center, radius, startAngle, endAngle, weight, tag) {
     super(center, radius, startAngle, endAngle, weight, GraphItemTypes.NODE, tag)
     this.node = node
   }
 }
+
 /**
  * A snap line that radiates out from a given node.
  */
 export class NodeSnapLine extends SnapLine {
   node
+
   constructor(node, visualizationType, coordinates, from, to, weight, snappableItems, tag) {
     super(
       visualizationType,
@@ -62,6 +66,7 @@ export class NodeSnapLine extends SnapLine {
     this.node = node
   }
 }
+
 /**
  * A snap line that radiates out from a parent node between two neighboring child nodes bisecting
  * the angle between those child nodes.
@@ -71,6 +76,7 @@ export class EqualAngleSnapLine extends SnapLine {
   firstSibling
   secondSibling
   centeredPoint
+
   constructor(
     parent,
     firstSibling,
@@ -85,6 +91,7 @@ export class EqualAngleSnapLine extends SnapLine {
     tag
   ) {
     super(visualizationType, coordinates, from, to, weight, snappableItems, tag)
+
     this.parent = parent
     this.firstSibling = firstSibling
     this.secondSibling = secondSibling

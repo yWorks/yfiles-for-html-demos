@@ -52,9 +52,7 @@ export type TemplateStyleCache<TModelItem extends IModelItem> = {
   cssClass: string | undefined
 }
 
-export type StringTemplateStyleOptions = {
-  svgContent: string
-} & Partial<{
+export type StringTemplateStyleOptions = { svgContent: string } & Partial<{
   cssClass: string
   normalizedOutline: GeneralPath
   styleTag: any
@@ -144,12 +142,7 @@ export function createSVG<TModelItem extends IModelItem>(
   arrange(groupElement)
 
   // create the visual and store our tag info
-  const svgVisual = SvgVisual.from(groupElement, {
-    templateContext,
-    update,
-    cleanup,
-    cssClass
-  })
+  const svgVisual = SvgVisual.from(groupElement, { templateContext, update, cleanup, cssClass })
 
   if (showIndicators) {
     if (templateContext.itemSelected) {

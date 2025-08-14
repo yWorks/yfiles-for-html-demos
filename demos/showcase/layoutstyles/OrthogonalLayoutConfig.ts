@@ -151,7 +151,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
         '#/api/OrthogonalLayout#OrthogonalLayout-property-qualityTimeRatio'
       ),
       new OptionGroupAttribute('LayoutGroup', 30),
-      new MinMaxAttribute(0, 1),
+      new MinMaxAttribute(0, 1, 0.01),
       new ComponentAttribute(Components.SLIDER),
       new TypeAttribute(Number)
     ],
@@ -273,7 +273,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
     minimumSegmentLengthItem: [
       new LabelAttribute(
         'Minimum Segment Length',
-        '#/api/OrthogonalLayoutEdgeDescriptor#OrthogonalLayoutEdgeDescriptor-property-minimumFirstSegmentLength'
+        '#/api/OrthogonalLayoutEdgeDescriptor#OrthogonalLayoutEdgeDescriptor-property-minimumSegmentLength'
       ),
       new OptionGroupAttribute('EdgesGroup', 20),
       new MinMaxAttribute(1, 100),
@@ -536,9 +536,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
   },
 
   createInterEdgeRouter() {
-    const innerEdgeRouter = new EdgeRouter({
-      minimumNodeToEdgeDistance: 0
-    })
+    const innerEdgeRouter = new EdgeRouter({ minimumNodeToEdgeDistance: 0 })
     innerEdgeRouter.defaultEdgeDescriptor.minimumEdgeDistance = 4
     return innerEdgeRouter
   },
@@ -586,6 +584,15 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
 
   /** @type {number} */
   gridSpacingItem: 1,
+
+  /** @type {number} */
+  qualityTimeRatioItem: 0.6,
+
+  /** @type {boolean} */
+  useExistingDrawingAsSketchItem: false,
+
+  /** @type {boolean} */
+  uniformPortAssignmentItem: false,
 
   /** @type {NodeLabelPlacement} */
   nodeLabelingItem: null,

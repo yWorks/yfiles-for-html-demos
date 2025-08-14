@@ -57,7 +57,9 @@ import {
   ViewportLimitingMode,
   ViewportLimitingPolicy
 } from '@yfiles/yfiles'
+
 import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
+
 // a list of colors that are assigned to the layers
 export const LayerColors = [
   createLayerColor('#FFC914', '#998953'),
@@ -76,24 +78,31 @@ export const LayerColors = [
   createLayerColor('#DC67CE', '#846180'),
   createLayerColor('#A367DC', '#736184')
 ]
+
 function createLayerColor(fillColor, strokeColor) {
   return { fill: Fill.from(fillColor), stroke: new Stroke(strokeColor, 1.5) }
 }
+
 /**
  * A panel that provides access to customize the subtree placers for each node.
  */
 export class SubtreePlacerPanel {
   graphComponent
   graph
+
   // initialize the preview component where the subtree placer settings are demonstrated on a small graph
   previewComponent = new GraphComponent('previewComponent')
+
   // initializes change listener handling
   changeListeners = []
+
   // create subtree placer configurations
   subtreePlacerConfigurations = new Map()
   currentSubtreePlacerConfiguration = null
+
   // a map which stores the specified subtree placer for each node
   subtreePlacers = new Mapper()
+
   /**
    * Creates a new instance of {@link SubtreePlacerPanel}.
    */
@@ -101,6 +110,7 @@ export class SubtreePlacerPanel {
     this.graphComponent = graphComponent
     this.graph = graphComponent.graph
     createPreviewGraph(this.previewComponent)
+
     // connect the UI elements of this panel that are not specific for one subtree placer
     bindActions(this)
     this.subtreePlacerConfigurations.set(
@@ -140,6 +150,7 @@ export class SubtreePlacerPanel {
       new MultipleSubtreePlacerConfiguration(this)
     )
   }
+
   /**
    * Updates the subtree placer map and preview graph.
    * This method is called when there are changes in the panel and notifies all registered change listeners.
@@ -155,6 +166,7 @@ export class SubtreePlacerPanel {
       this.updateChangeListeners()
     }
   }
+
   /**
    * Updates which subtree placer configuration is used in this panel and the layout of the preview graph.
    */
@@ -165,9 +177,11 @@ export class SubtreePlacerPanel {
     const rotationElement = document.querySelector('#rotation')
     const spacingElement = document.querySelector('#rotatable-spacing')
     const previewElement = document.querySelector('#previewComponent')
+
     if (this.currentSubtreePlacerConfiguration) {
       this.currentSubtreePlacerConfiguration.visible = false
     }
+
     if (selectedNodes.length === 0) {
       noSubtreePlacerElement.style.display = 'block'
       subtreePlacerElement.style.display = 'none'
@@ -182,6 +196,7 @@ export class SubtreePlacerPanel {
       subtreePlacerLabelElement.style.display = 'inline-block'
       previewElement.style.visibility = 'visible'
     }
+
     const subtreePlacers = selectedNodes.map((node) => {
       const placer = this.subtreePlacers.get(node)
       if (placer === null) {
@@ -192,6 +207,7 @@ export class SubtreePlacerPanel {
       }
       return placer
     })
+
     let referencePlacer = subtreePlacers[0]
     const referenceConfig = getConfigurationName(referencePlacer)
     //check that all subtree placers are of same instance - otherwise the MultipleSubtreePlacerConfiguration is used
@@ -200,13 +216,16 @@ export class SubtreePlacerPanel {
     }
     const configurationName = getConfigurationName(referencePlacer)
     document.querySelector('#select-subtree-placer').value = configurationName
+
     const configuration = this.subtreePlacerConfigurations.get(configurationName)
     configuration.adoptSettings(subtreePlacers)
+
     if (this.currentSubtreePlacerConfiguration) {
       this.currentSubtreePlacerConfiguration.visible = false
     }
     this.currentSubtreePlacerConfiguration = configuration
     this.currentSubtreePlacerConfiguration.visible = true
+
     if (configuration.rotatable) {
       rotationElement.style.display = 'block'
       spacingElement.style.display = 'block'
@@ -214,8 +233,11 @@ export class SubtreePlacerPanel {
       rotationElement.style.display = 'none'
       spacingElement.style.display = 'none'
     }
+
     previewElement.style.visibility = configuration.hasPreview ? 'visible' : 'hidden'
+
     this.currentSubtreePlacerConfiguration.updatePanel()
+
     // request some time to make sure that the panel has the correct size before starting the
     requestAnimationFrame(() =>
       requestAnimationFrame(
@@ -223,12 +245,14 @@ export class SubtreePlacerPanel {
       )
     )
   }
+
   /**
    * Adds the given listener to the list of listeners that are notified when the subtree placer settings change.
    */
   setChangeListener(listener) {
     this.changeListeners.push(listener)
   }
+
   /**
    * Removes the given listener to the list of listeners that are notified when the subtree placer settings change.
    */
@@ -238,6 +262,7 @@ export class SubtreePlacerPanel {
       this.changeListeners.splice(index, 1)
     }
   }
+
   /**
    * Notifies all registered change listeners.
    */
@@ -247,7 +272,9 @@ export class SubtreePlacerPanel {
     })
   }
 }
+
 let layoutRunning = false
+
 /**
  * Calculates a preview layout. This method is called when subtree placer settings are changed.
  */
@@ -261,12 +288,15 @@ async function runPreviewLayout(subtreePlacer, graphComponent) {
     subtreePlacers: subtreePlacer ?? new SingleLayerSubtreePlacer(),
     assistantNodes: (node) => node.tag && node.tag.assistant
   })
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   await graphComponent.applyLayoutAnimated(treeLayout, '0.2s', treeLayoutData)
   layoutRunning = false
 }
+
 /**
  * Wires up the UI elements that are not subtree placer specific.
  */
@@ -284,6 +314,7 @@ function bindActions(panel) {
     if (defaultPlacer) {
       panel.currentSubtreePlacerConfiguration.adoptSettings([defaultPlacer])
     }
+
     const rotationElement = document.querySelector('#rotation')
     const spacingElement = document.querySelector('#rotatable-spacing')
     if (panel.currentSubtreePlacerConfiguration.rotatable) {
@@ -295,6 +326,7 @@ function bindActions(panel) {
     }
     await panel.panelChanged()
   })
+
   const rotationLeft = document.querySelector('#rotation-left')
   rotationLeft.addEventListener('click', () => {
     panel.graphComponent.selection.nodes.forEach((node) => {
@@ -302,6 +334,7 @@ function bindActions(panel) {
     })
     panel.updateChangeListeners()
   })
+
   const rotationRight = document.querySelector('#rotation-right')
   rotationRight.addEventListener('click', () => {
     panel.graphComponent.selection.nodes.forEach((node) => {
@@ -309,6 +342,7 @@ function bindActions(panel) {
     })
     panel.updateChangeListeners()
   })
+
   const mirrorHorizontal = document.querySelector('#mirror-horizontal')
   mirrorHorizontal.addEventListener('click', () => {
     panel.graphComponent.selection.nodes.forEach((node) => {
@@ -316,6 +350,7 @@ function bindActions(panel) {
     })
     panel.updateChangeListeners()
   })
+
   const mirrorVertical = document.querySelector('#mirror-vertical')
   mirrorVertical.addEventListener('click', () => {
     panel.graphComponent.selection.nodes.forEach((node) => {
@@ -324,6 +359,7 @@ function bindActions(panel) {
     panel.updateChangeListeners()
   })
 }
+
 /**
  * Updates the transformation for subtree placers that support rotation.
  */
@@ -453,6 +489,7 @@ function updateTransformation(node, transform, panel) {
   }
   panel.subtreePlacers.set(node, rotatedSubtreePlacer)
 }
+
 /**
  * Returns the configuration name to retrieve the correct configuration for the given subtree placer.
  */
@@ -476,6 +513,7 @@ function getConfigurationName(subtreePlacer) {
   }
   return 'Multiple Values'
 }
+
 /**
  * Creates a small preview graph that demonstrates the subtree placer settings on a small sample.
  */
@@ -490,20 +528,15 @@ function createPreviewGraph(graphComponent) {
       stroke: rootLayerColor.stroke
     })
   })
-  graphComponent.graph.edgeDefaults.style = createDemoEdgeStyle({
-    colorSetName: 'demo-palette-22'
-  })
+
+  graphComponent.graph.edgeDefaults.style = createDemoEdgeStyle({ colorSetName: 'demo-palette-22' })
   for (let i = 0; i < 5; i++) {
     if (i > 0) {
       graph.createEdge(
         root,
         graph.createNode({
           layout: new Rect(0, 0, i < 4 ? 60 : 80, 30),
-          style: new ShapeNodeStyle({
-            shape: 'round-rectangle',
-            fill: 'gray',
-            stroke: 'white'
-          })
+          style: new ShapeNodeStyle({ shape: 'round-rectangle', fill: 'gray', stroke: 'white' })
         })
       )
     } else {
@@ -522,6 +555,7 @@ function createPreviewGraph(graphComponent) {
     }
   }
 }
+
 /**
  * Base class for a subtree placer configuration. It provides methods to retrieve a configured
  * {@link ISubtreePlacer} and manages the user input.
@@ -529,6 +563,7 @@ function createPreviewGraph(graphComponent) {
 class SubtreePlacerConfiguration {
   div
   _visible = false
+
   /**
    * Creates a new instance of {@link SubtreePlacerConfiguration}.
    */
@@ -540,6 +575,7 @@ class SubtreePlacerConfiguration {
     this.bindActions(panel)
     this.updatePanel()
   }
+
   /**
    * Returns whether the represented subtree placer is rotatable. This is used to determine if the
    * rotation/mirroring-buttons should be visible.
@@ -547,6 +583,7 @@ class SubtreePlacerConfiguration {
   get rotatable() {
     return false
   }
+
   /**
    * Returns whether there is a preview for the layout with the represented subtree placer. This
    * is used to determine if the preview element should be visible.
@@ -554,18 +591,21 @@ class SubtreePlacerConfiguration {
   get hasPreview() {
     return true
   }
+
   /**
    * Returns whether these subtree placer settings are currently active/visible.
    */
   get visible() {
     return this._visible
   }
+
   /**
    * Sets whether these subtree placer settings should be active/visible.
    * It also updates the description text.
    */
   set visible(visible) {
     this._visible = visible
+
     const description = document.querySelector('#subtree-placer-description')
     if (visible) {
       this.div.style.display = 'block'
@@ -575,6 +615,7 @@ class SubtreePlacerConfiguration {
       description.innerHTML = ''
     }
   }
+
   /**
    * Creates a configured {@link ISubtreePlacer} according to the current settings.
    * This method is called when the map of subtree placers is updated.
@@ -582,31 +623,37 @@ class SubtreePlacerConfiguration {
   createSubtreePlacer() {
     return null
   }
+
   /**
    * Updates the subtree placers of the selected nodes with the values in the panel.
    * Note that indeterminate properties in the panel should not be applied to the individual placer.
    */
   updateSubtreePlacers(selectedNodes, subtreePlacers) {}
+
   /**
    * Updates the configuration settings according to the given {@link ISubtreePlacer}.
    * This method is called when the configuration is changed or reset.
    */
   adoptSettings(subtreePlacers) {}
+
   /**
    * Updates the UI after the configuration changed.
    * @see {@link SubtreePlacerConfiguration.adoptSettings}
    */
   updatePanel() {}
+
   /**
    * Wires up the UI for this configuration.
    */
   bindActions(panel) {}
+
   /**
    * Returns the description text for this configuration.
    */
   getDescriptionText() {
     return ''
   }
+
   /**
    * Returns the subtree placer for this configuration with initial settings.
    */
@@ -614,6 +661,7 @@ class SubtreePlacerConfiguration {
     return null
   }
 }
+
 /**
  * Base class for all subtree placer configurations representing subtree placers that support subtree
  * transformation.
@@ -623,19 +671,23 @@ class RotatableSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
   spacing = 20
   indeterminateSpacing = false
   subtreeTransform
+
   constructor(div, subtreePlacer, panel) {
     super(div, subtreePlacer, panel)
     this.subtreeTransform = SubtreeTransform.NONE
   }
+
   /**
    * Returns true for all configurations based on this class.
    */
   get rotatable() {
     return true
   }
+
   updatePanel() {
     updateInput('spacing', this.spacing, this.indeterminateSpacing)
   }
+
   bindActions(panel) {
     const spacingElement = document.querySelector('#spacing')
     spacingElement.addEventListener('change', async () => {
@@ -653,6 +705,7 @@ class RotatableSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
     })
   }
 }
+
 class SingleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfiguration {
   routingStyle
   indeterminateRoutingStyle = false
@@ -660,6 +713,7 @@ class SingleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
   indeterminateRootAlignment = false
   minimumChannelSegmentDistance = 0
   indeterminateMinimumChannelSegmentDistance = false
+
   /**
    * Creates a new instance of {@link SingleLayerSubtreePlacerConfiguration}.
    */
@@ -672,6 +726,7 @@ class SingleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
     this.routingStyle = SingleLayerSubtreePlacerRoutingStyle.ORTHOGONAL
     this.rootAlignment = SingleLayerSubtreePlacerRootAlignment.CENTER
   }
+
   createSubtreePlacer() {
     return new SingleLayerSubtreePlacer({
       edgeRoutingStyle: this.routingStyle,
@@ -681,6 +736,7 @@ class SingleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
       rootAlignment: this.rootAlignment
     })
   }
+
   updateSubtreePlacers(selectedNodes, subtreePlacers) {
     for (const selectedNode of selectedNodes) {
       const subtreePlacer = subtreePlacers.get(selectedNode)
@@ -703,6 +759,7 @@ class SingleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
       }
     }
   }
+
   adoptSettings(subtreePlacers) {
     this.routingStyle = subtreePlacers[0].edgeRoutingStyle
     this.indeterminateRoutingStyle = false
@@ -712,6 +769,7 @@ class SingleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
     this.indeterminateMinimumChannelSegmentDistance = false
     this.rootAlignment = subtreePlacers[0].rootAlignment
     this.indeterminateRootAlignment = false
+
     if (subtreePlacers.length > 1) {
       for (const subtreePlacer of subtreePlacers) {
         if (this.routingStyle !== subtreePlacer.edgeRoutingStyle) {
@@ -728,10 +786,13 @@ class SingleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
         }
       }
     }
+
     this.updatePanel()
   }
+
   updatePanel() {
     super.updatePanel()
+
     const routingStyle = document.querySelector('#routing-style')
     if (this.indeterminateRoutingStyle) {
       routingStyle.selectedIndex = 0
@@ -752,11 +813,13 @@ class SingleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
           break
       }
     }
+
     updateInput(
       'minimum-channel-segment-distance',
       this.minimumChannelSegmentDistance,
       this.indeterminateMinimumChannelSegmentDistance
     )
+
     const rootAlignment = document.querySelector('#root-alignment')
     if (this.indeterminateRootAlignment) {
       rootAlignment.selectedIndex = 0
@@ -790,6 +853,7 @@ class SingleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
       }
     }
   }
+
   getDescriptionText() {
     return (
       '<h2>SingleLayerSubtreePlacer</h2>' +
@@ -797,8 +861,10 @@ class SingleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
       ' to change the orientation of the subtree, the edge routing style, and the alignment of the root node.</p>'
     )
   }
+
   bindActions(panel) {
     super.bindActions(panel)
+
     const routingStyle = document.querySelector('#routing-style')
     routingStyle.addEventListener('change', async () => {
       switch (routingStyle.selectedIndex) {
@@ -819,6 +885,7 @@ class SingleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
       this.indeterminateRoutingStyle = false
       await panel.panelChanged()
     })
+
     const minimumChannelSegmentDistance = document.querySelector(
       '#minimum-channel-segment-distance'
     )
@@ -833,6 +900,7 @@ class SingleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
     minimumChannelSegmentDistance.addEventListener('input', () => {
       minimumChannelSegmentDistanceLabel.innerHTML = minimumChannelSegmentDistance.value
     })
+
     const rootAlignment = document.querySelector('#root-alignment')
     rootAlignment.addEventListener('change', async () => {
       switch (rootAlignment.selectedIndex) {
@@ -866,10 +934,12 @@ class SingleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
       await panel.panelChanged()
     })
   }
+
   getDefaultSubtreePlacer() {
     return new SingleLayerSubtreePlacer()
   }
 }
+
 class BusSubtreePlacerConfiguration extends RotatableSubtreePlacerConfiguration {
   /**
    * Creates a new instance of BusSubtreePlacerConfiguration.
@@ -877,9 +947,11 @@ class BusSubtreePlacerConfiguration extends RotatableSubtreePlacerConfiguration 
   constructor(panel) {
     super(document.querySelector('#bus-subtree-placer-settings'), new BusSubtreePlacer(), panel)
   }
+
   createSubtreePlacer() {
     return new BusSubtreePlacer({ spacing: this.spacing })
   }
+
   updateSubtreePlacers(selectedNodes, subtreePlacers) {
     for (const selectedNode of selectedNodes) {
       const subtreePlacer = subtreePlacers.get(selectedNode)
@@ -892,32 +964,39 @@ class BusSubtreePlacerConfiguration extends RotatableSubtreePlacerConfiguration 
       }
     }
   }
+
   adoptSettings(subtreePlacers) {
     this.spacing = subtreePlacers[0].spacing
     this.indeterminateSpacing = false
     this.subtreeTransform = subtreePlacers[0].transformation
+
     for (const subtreePlacer of subtreePlacers) {
       if (this.spacing !== subtreePlacer.spacing) {
         this.indeterminateSpacing = true
       }
     }
+
     this.updatePanel()
   }
+
   getDescriptionText() {
     return (
       '<h2>BusSubtreePlacer</h2>' +
       '<p>This subtree placer arranges the child nodes evenly distributed in two lines to the left and right of the root node.</p>'
     )
   }
+
   getDefaultSubtreePlacer() {
     return new BusSubtreePlacer()
   }
 }
+
 class MultiLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfiguration {
   rootAlignment = MultiLayerSubtreePlacerRootAlignment.BUS_ALIGNED
   indeterminateRootAlignment = false
   busPlacement = BusPlacement.LEADING
   indeterminateBusPlacement = false
+
   /**
    * Creates a new instance of {@link MultiLayerSubtreePlacerConfiguration}.
    */
@@ -928,6 +1007,7 @@ class MultiLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigu
       panel
     )
   }
+
   createSubtreePlacer() {
     return new MultiLayerSubtreePlacer({
       spacing: this.spacing,
@@ -935,6 +1015,7 @@ class MultiLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigu
       busPlacement: this.busPlacement
     })
   }
+
   updateSubtreePlacers(selectedNodes, subtreePlacers) {
     for (const selectedNode of selectedNodes) {
       const subtreePlacer = subtreePlacers.get(selectedNode)
@@ -953,6 +1034,7 @@ class MultiLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigu
       }
     }
   }
+
   adoptSettings(subtreePlacers) {
     this.spacing = subtreePlacers[0].spacing
     this.indeterminateSpacing = false
@@ -961,6 +1043,7 @@ class MultiLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigu
     this.indeterminateRootAlignment = false
     this.busPlacement = subtreePlacers[0].busPlacement
     this.indeterminateBusPlacement = false
+
     for (const subtreePlacer of subtreePlacers) {
       if (this.spacing !== subtreePlacer.spacing) {
         this.indeterminateSpacing = true
@@ -972,8 +1055,10 @@ class MultiLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigu
         this.indeterminateBusPlacement = true
       }
     }
+
     this.updatePanel()
   }
+
   getDescriptionText() {
     return (
       '<h2>MultiLayerSubtreePlacer</h2>' +
@@ -981,8 +1066,10 @@ class MultiLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigu
       ' subtrees and offers options to change the alignment of the root node.</p>'
     )
   }
+
   updatePanel() {
     super.updatePanel()
+
     const rootAlignment = document.querySelector('#multi-layer-subtree-placer-alignment')
     if (this.indeterminateRootAlignment) {
       rootAlignment.selectedIndex = 0
@@ -1012,6 +1099,7 @@ class MultiLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigu
           break
       }
     }
+
     const busPlacement = document.querySelector('#multi-layer-subtree-placer-bus-placement')
     if (this.indeterminateBusPlacement) {
       busPlacement.selectedIndex = 0
@@ -1030,6 +1118,7 @@ class MultiLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigu
       }
     }
   }
+
   bindActions(panel) {
     super.bindActions(panel)
     const rootAlignment = document.querySelector('#multi-layer-subtree-placer-alignment')
@@ -1061,6 +1150,7 @@ class MultiLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigu
       this.indeterminateRootAlignment = false
       await panel.panelChanged()
     })
+
     const busPlacement = document.querySelector('#multi-layer-subtree-placer-bus-placement')
     busPlacement.addEventListener('change', async () => {
       switch (busPlacement.selectedIndex) {
@@ -1079,13 +1169,16 @@ class MultiLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigu
       await panel.panelChanged()
     })
   }
+
   getDefaultSubtreePlacer() {
     return new MultiLayerSubtreePlacer()
   }
 }
+
 class DoubleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfiguration {
   rootAlignment = SubtreeRootAlignment.CENTER
   indeterminateRootAlignment = false
+
   /**
    * Creates a new instance of {@link DoubleLayerSubtreePlacerConfiguration}.
    */
@@ -1096,12 +1189,14 @@ class DoubleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
       panel
     )
   }
+
   createSubtreePlacer() {
     return new DoubleLayerSubtreePlacer({
       spacing: this.spacing,
       rootAlignment: this.rootAlignment
     })
   }
+
   updateSubtreePlacers(selectedNodes, subtreePlacers) {
     for (const selectedNode of selectedNodes) {
       const subtreePlacer = subtreePlacers.get(selectedNode)
@@ -1117,12 +1212,14 @@ class DoubleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
       }
     }
   }
+
   adoptSettings(subtreePlacers) {
     this.spacing = subtreePlacers[0].spacing
     this.indeterminateSpacing = false
     this.subtreeTransform = subtreePlacers[0].transformation
     this.rootAlignment = subtreePlacers[0].rootAlignment
     this.indeterminateRootAlignment = false
+
     if (subtreePlacers.length > 1) {
       subtreePlacers.forEach((subtreePlacer) => {
         if (this.spacing !== subtreePlacer.spacing) {
@@ -1133,8 +1230,10 @@ class DoubleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
         }
       })
     }
+
     this.updatePanel()
   }
+
   getDescriptionText() {
     return (
       '<h2>DoubleLayerSubtreePlacer</h2>' +
@@ -1142,8 +1241,10 @@ class DoubleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
       ' subtrees and offers options to change the alignment of the root node.</p>'
     )
   }
+
   updatePanel() {
     super.updatePanel()
+
     const rootAlignment = document.querySelector('#double-layer-root-node-alignment')
     if (this.indeterminateRootAlignment) {
       rootAlignment.selectedIndex = 0
@@ -1174,6 +1275,7 @@ class DoubleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
       }
     }
   }
+
   bindActions(panel) {
     super.bindActions(panel)
     const rootAlignment = document.querySelector('#double-layer-root-node-alignment')
@@ -1206,15 +1308,18 @@ class DoubleLayerSubtreePlacerConfiguration extends RotatableSubtreePlacerConfig
       await panel.panelChanged()
     })
   }
+
   getDefaultSubtreePlacer() {
     return new DoubleLayerSubtreePlacer()
   }
 }
+
 class LeftRightSubtreePlacerConfiguration extends RotatableSubtreePlacerConfiguration {
   branchCount = 1
   indeterminateBranchCount = false
   placeLastOnBottom = true
   indeterminatePlaceLastOnBottom = false
+
   /**
    * Creates a new instance of LeftRightSubtreePlacerConfiguration.
    */
@@ -1225,6 +1330,7 @@ class LeftRightSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigur
       panel
     )
   }
+
   createSubtreePlacer() {
     return new LeftRightSubtreePlacer({
       spacing: this.spacing,
@@ -1232,6 +1338,7 @@ class LeftRightSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigur
       branchCount: this.branchCount
     })
   }
+
   updateSubtreePlacers(selectedNodes, subtreePlacers) {
     for (const selectedNode of selectedNodes) {
       const subtreePlacer = subtreePlacers.get(selectedNode)
@@ -1250,6 +1357,7 @@ class LeftRightSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigur
       }
     }
   }
+
   adoptSettings(subtreePlacers) {
     this.spacing = subtreePlacers[0].spacing
     this.indeterminateSpacing = false
@@ -1258,6 +1366,7 @@ class LeftRightSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigur
     this.indeterminatePlaceLastOnBottom = false
     this.branchCount = subtreePlacers[0].branchCount
     this.indeterminateBranchCount = false
+
     for (const subtreePlacer of subtreePlacers) {
       if (this.spacing !== subtreePlacer.spacing) {
         this.indeterminateSpacing = true
@@ -1269,21 +1378,26 @@ class LeftRightSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigur
         this.indeterminateBranchCount = true
       }
     }
+
     this.updatePanel()
   }
+
   getDescriptionText() {
     return (
       '<h2>LeftRightSubtreePlacer</h2>' +
       '<p>This subtree placer arranges the child nodes below their root node, left and right of the downward extending bus-like routing.</p>'
     )
   }
+
   updatePanel() {
     super.updatePanel()
+
     const lastOnBottom = document.querySelector('#last-on-bottom')
     lastOnBottom.checked = this.placeLastOnBottom
     lastOnBottom.indeterminate = this.indeterminatePlaceLastOnBottom
     updateInput('branchCount', this.branchCount, this.indeterminateBranchCount)
   }
+
   bindActions(panel) {
     super.bindActions(panel)
     const lastOnBottom = document.querySelector('#last-on-bottom')
@@ -1292,21 +1406,25 @@ class LeftRightSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigur
       this.indeterminatePlaceLastOnBottom = false
       await panel.panelChanged()
     })
+
     const branchCount = document.querySelector('#branch-count')
     branchCount.addEventListener('change', async () => {
       this.branchCount = Number.parseInt(branchCount.value)
       this.indeterminateBranchCount = false
       await panel.panelChanged()
     })
+
     const branchCountLabel = document.querySelector('#branch-count-label')
     branchCount.addEventListener('input', () => {
       branchCountLabel.innerHTML = branchCount.value
     })
   }
+
   getDefaultSubtreePlacer() {
     return new LeftRightSubtreePlacer()
   }
 }
+
 class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
   aspectRatio = 1
   indeterminateAspectRatio = false
@@ -1318,6 +1436,7 @@ class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
   indeterminateHorizontalDistance = false
   verticalDistance = 40
   indeterminateVerticalDistance = false
+
   /**
    * Creates a new instance of {@link AspectRatioSubtreePlacerConfiguration}.
    */
@@ -1328,6 +1447,7 @@ class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
       panel
     )
   }
+
   createSubtreePlacer() {
     return new AspectRatioSubtreePlacer({
       aspectRatio: this.aspectRatio,
@@ -1337,6 +1457,7 @@ class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
       childArrangement: ChildArrangementPolicy.VERTICAL
     })
   }
+
   updateSubtreePlacers(selectedNodes, subtreePlacers) {
     for (const selectedNode of selectedNodes) {
       const subtreePlacer = subtreePlacers.get(selectedNode)
@@ -1361,6 +1482,7 @@ class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
       }
     }
   }
+
   adoptSettings(subtreePlacers) {
     this.aspectRatio = subtreePlacers[0].aspectRatio
     this.indeterminateAspectRatio = false
@@ -1372,6 +1494,7 @@ class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
     this.indeterminateVerticalDistance = false
     this.childArrangement = subtreePlacers[0].childArrangement
     this.indeterminateHorizontal = false
+
     for (const subtreePlacer of subtreePlacers) {
       if (this.aspectRatio !== subtreePlacer.aspectRatio) {
         this.indeterminateAspectRatio = true
@@ -1389,16 +1512,20 @@ class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
         this.indeterminateHorizontal = true
       }
     }
+
     this.updatePanel()
   }
+
   getDescriptionText() {
     return (
       '<h2>AspectRatioSubtreePlacer</h2>' +
       '<p>This subtree placer arranges the child nodes such that a given aspect ratio is obeyed.</p>'
     )
   }
+
   updatePanel() {
     updateInput('aspect-ratio', this.aspectRatio, this.indeterminateAspectRatio)
+
     const fillStyle = document.querySelector('#child-alignment-policy')
     if (this.indeterminateChildAlignmentPolicy) {
       fillStyle.selectedIndex = 0
@@ -1419,6 +1546,7 @@ class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
           break
       }
     }
+
     updateInput(
       'aspect-ratio-horizontal-distance',
       this.horizontalDistance,
@@ -1429,6 +1557,7 @@ class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
       this.verticalDistance,
       this.indeterminateVerticalDistance
     )
+
     const childArrangement = document.querySelector('#horizontal')
     if (this.indeterminateHorizontal) {
       childArrangement.selectedIndex = 0
@@ -1444,6 +1573,7 @@ class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
       }
     }
   }
+
   bindActions(panel) {
     const aspectRatio = document.querySelector('#aspect-ratio')
     aspectRatio.addEventListener('change', async () => {
@@ -1455,6 +1585,7 @@ class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
     aspectRatio.addEventListener('input', () => {
       aspectRatioLabel.innerHTML = aspectRatio.value
     })
+
     const fillStyle = document.querySelector('#child-alignment-policy')
     fillStyle.addEventListener('change', async () => {
       switch (fillStyle.selectedIndex) {
@@ -1475,6 +1606,7 @@ class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
       this.indeterminateChildAlignmentPolicy = false
       await panel.panelChanged()
     })
+
     const horizontalDistance = document.querySelector('#aspect-ratio-horizontal-distance')
     horizontalDistance.addEventListener('change', async () => {
       this.horizontalDistance = Number.parseInt(horizontalDistance.value)
@@ -1487,6 +1619,7 @@ class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
     horizontalDistance.addEventListener('input', () => {
       horizontalDistanceLabel.innerHTML = horizontalDistance.value
     })
+
     const verticalDistance = document.querySelector('#aspect-ratio-vertical-distance')
     verticalDistance.addEventListener('change', async () => {
       this.verticalDistance = Number.parseInt(verticalDistance.value)
@@ -1497,6 +1630,7 @@ class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
     verticalDistance.addEventListener('input', () => {
       verticalDistanceLabel.innerHTML = verticalDistance.value
     })
+
     const childArrangement = document.querySelector('#horizontal')
     childArrangement.addEventListener('change', async () => {
       switch (childArrangement.selectedIndex) {
@@ -1512,13 +1646,16 @@ class AspectRatioSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
       await panel.panelChanged()
     })
   }
+
   getDefaultSubtreePlacer() {
     return new AspectRatioSubtreePlacer()
   }
 }
+
 class AssistantSubtreePlacerConfiguration extends RotatableSubtreePlacerConfiguration {
   childSubtreePlacer = new SingleLayerSubtreePlacer()
   indeterminateChildSubtreePlacer = false
+
   /**
    * Creates a new instance of {@link AssistantSubtreePlacerConfiguration}.
    */
@@ -1529,12 +1666,14 @@ class AssistantSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigur
       panel
     )
   }
+
   createSubtreePlacer() {
     return new AssistantSubtreePlacer({
       spacing: this.spacing,
       childSubtreePlacer: this.childSubtreePlacer
     })
   }
+
   updateSubtreePlacers(selectedNodes, subtreePlacers) {
     for (const selectedNode of selectedNodes) {
       const subtreePlacer = subtreePlacers.get(selectedNode)
@@ -1550,6 +1689,7 @@ class AssistantSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigur
       }
     }
   }
+
   adoptSettings(subtreePlacers) {
     this.spacing = subtreePlacers[0].spacing
     this.indeterminateSpacing = false
@@ -1569,6 +1709,7 @@ class AssistantSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigur
     })
     this.updatePanel()
   }
+
   getDescriptionText() {
     return (
       '<h2>AssistantSubtreePlacer</h2>' +
@@ -1577,8 +1718,10 @@ class AssistantSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigur
       ' below the assistant nodes using the child subtree placer.</p>'
     )
   }
+
   updatePanel() {
     super.updatePanel()
+
     const childSubtreePlacer = document.querySelector('#child-subtree-placer')
     if (this.indeterminateChildSubtreePlacer) {
       childSubtreePlacer.selectedIndex = 0
@@ -1594,6 +1737,7 @@ class AssistantSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigur
       childSubtreePlacer.selectedIndex = 5
     }
   }
+
   bindActions(panel) {
     super.bindActions(panel)
     const childSubtreePlacer = document.querySelector('#child-subtree-placer')
@@ -1620,10 +1764,12 @@ class AssistantSubtreePlacerConfiguration extends RotatableSubtreePlacerConfigur
       await panel.panelChanged()
     })
   }
+
   getDefaultSubtreePlacer() {
     return new AssistantSubtreePlacer()
   }
 }
+
 class CompactSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
   preferredAspectRatio = 1
   indeterminatePreferredAspectRatio = false
@@ -1635,6 +1781,7 @@ class CompactSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
   indeterminateMinimumFirstSegmentLength = false
   minimumLastSegmentLength = 10
   indeterminateMinimumLastSegmentLength = false
+
   /**
    * Creates a new instance of AspectRatioSubtreePlacerConfiguration.
    */
@@ -1645,6 +1792,7 @@ class CompactSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
       panel
     )
   }
+
   createSubtreePlacer() {
     return new CompactSubtreePlacer({
       preferredAspectRatio: this.preferredAspectRatio,
@@ -1654,6 +1802,7 @@ class CompactSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
       minimumLastSegmentLength: this.minimumLastSegmentLength
     })
   }
+
   updateSubtreePlacers(selectedNodes, subtreePlacers) {
     for (const selectedNode of selectedNodes) {
       const subtreePlacer = subtreePlacers.get(selectedNode)
@@ -1678,6 +1827,7 @@ class CompactSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
       }
     }
   }
+
   adoptSettings(subtreePlacers) {
     this.preferredAspectRatio = subtreePlacers[0].preferredAspectRatio
     this.indeterminatePreferredAspectRatio = false
@@ -1689,6 +1839,7 @@ class CompactSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
     this.indeterminateMinimumFirstSegmentLength = false
     this.minimumLastSegmentLength = subtreePlacers[0].minimumLastSegmentLength
     this.indeterminateMinimumLastSegmentLength = false
+
     for (const subtreePlacer of subtreePlacers) {
       if (this.preferredAspectRatio !== subtreePlacer.preferredAspectRatio) {
         this.indeterminatePreferredAspectRatio = true
@@ -1706,8 +1857,10 @@ class CompactSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
         this.indeterminateMinimumLastSegmentLength = true
       }
     }
+
     this.updatePanel()
   }
+
   getDescriptionText() {
     return (
       '<h2>CompactSubtreePlacer</h2>' +
@@ -1715,8 +1868,10 @@ class CompactSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
       'of the associated local root such that the overall result is compact with respect to a specified aspect ratio.</p>'
     )
   }
+
   updatePanel() {
     super.updatePanel()
+
     updateInput(
       'compact-preferred-aspect-ratio',
       this.preferredAspectRatio,
@@ -1743,6 +1898,7 @@ class CompactSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
       this.indeterminateMinimumLastSegmentLength
     )
   }
+
   bindActions(panel) {
     const preferredAspectRatio = document.querySelector('#compact-preferred-aspect-ratio')
     preferredAspectRatio.addEventListener('change', async () => {
@@ -1756,6 +1912,7 @@ class CompactSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
     preferredAspectRatio.addEventListener('input', async () => {
       preferredAspectRatioLabel.innerHTML = preferredAspectRatio.value
     })
+
     const verticalDistance = document.querySelector('#compact-vertical-distance')
     verticalDistance.addEventListener('change', async () => {
       this.verticalDistance = Number.parseInt(verticalDistance.value)
@@ -1766,6 +1923,7 @@ class CompactSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
     verticalDistance.addEventListener('input', async () => {
       verticalDistanceLabel.innerHTML = verticalDistance.value
     })
+
     const horizontalDistance = document.querySelector('#compact-horizontal-distance')
     horizontalDistance.addEventListener('change', async () => {
       this.horizontalDistance = Number.parseInt(horizontalDistance.value)
@@ -1776,6 +1934,7 @@ class CompactSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
     horizontalDistance.addEventListener('input', async () => {
       horizontalDistanceLabel.innerHTML = horizontalDistance.value
     })
+
     const minimumFirstSegmentLength = document.querySelector(
       '#compact-minimum-first-segment-length'
     )
@@ -1790,6 +1949,7 @@ class CompactSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
     minimumFirstSegmentLength.addEventListener('input', async () => {
       minimumFirstSegmentLengthLabel.innerHTML = minimumFirstSegmentLength.value
     })
+
     const minimumLastSegmentLength = document.querySelector('#compact-minimum-last-segment-length')
     minimumLastSegmentLength.addEventListener('change', async () => {
       this.minimumLastSegmentLength = Number.parseInt(minimumLastSegmentLength.value)
@@ -1803,10 +1963,12 @@ class CompactSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
       minimumLastSegmentLengthLabel.innerHTML = minimumLastSegmentLength.value
     })
   }
+
   getDefaultSubtreePlacer() {
     return new CompactSubtreePlacer()
   }
 }
+
 class MultipleSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
   /**
    * Creates a new instance of MultipleSubtreePlacerConfiguration.
@@ -1814,12 +1976,15 @@ class MultipleSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
   constructor(panel) {
     super(document.querySelector('#multiple-subtree-placer-settings'), null, panel)
   }
+
   get hasPreview() {
     return false
   }
+
   createSubtreePlacer() {
     return null
   }
+
   getDescriptionText() {
     return (
       '<h2>Multiple Values</h2>' +
@@ -1827,14 +1992,20 @@ class MultipleSubtreePlacerConfiguration extends SubtreePlacerConfiguration {
       '<code>SubtreePlacer</code> to all of these nodes, choose one form the selection box.</p>'
     )
   }
+
   adoptSettings(subtreePlacers) {}
+
   bindActions(panel) {}
+
   getDefaultSubtreePlacer() {
     return null
   }
+
   updateSubtreePlacers(selectedNodes, subtreePlacers) {}
+
   updatePanel() {}
 }
+
 /**
  * Convenience function changing the value of the {HTMLInputElement} found with the given id.
  * @param elemId the element id

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { IGraph, RadialGroupLayout, RadialGroupLayoutData } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to configure the {@link RadialGroupLayout} algorithm.
  * @param graph The graph to be laid out
@@ -42,14 +43,17 @@ export function createFeatureLayoutConfiguration(graph) {
     // increase the preferred root wedge to allow children on 200 degrees
     preferredRootSectorAngle: 200
   })
+
   // enable bundled edges and enable the fitting to bezier control points which in
   // conjunction with the BezierEdgeStyle generates smoother curves
   layout.edgeBundling.defaultBundleDescriptor.bundled = true
   layout.edgeBundling.defaultBundleDescriptor.bezierFitting = true
+
   // create the (optional) layout data and specify that parent and child nodes are allowed to
   // overlap a bit more than by default (0.2), so that the drawing becomes more compact,
   // expect for some nodes with a specific flag, we do not want to have overlaps at all
   const layoutData = new RadialGroupLayoutData()
   layoutData.parentOverlapRatios = (node) => (node.tag && node.tag.avoidParentOverlap ? 0 : 0.5)
+
   return { layout, layoutData }
 }

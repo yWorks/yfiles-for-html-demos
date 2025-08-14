@@ -84,10 +84,7 @@ function initializeFolding(graphComponent: GraphComponent): void {
 
   // managing the appearance of folder nodes
   foldingManager.folderNodeConverter = new FolderNodeConverter({
-    folderNodeDefaults: {
-      copyLabels: true,
-      size: new Size(110, 60)
-    }
+    folderNodeDefaults: { copyLabels: true, size: new Size(110, 60) }
   })
 }
 
@@ -106,9 +103,7 @@ function initializeOverviewComponent(graphComponent: GraphComponent): void {
  * @param fromSketchMode whether this is for the first run or the incremental run
  */
 function createHierarchicalLayout(fromSketchMode = false): HierarchicalLayout {
-  const hierarchicalLayout = new HierarchicalLayout({
-    fromSketchMode
-  })
+  const hierarchicalLayout = new HierarchicalLayout({ fromSketchMode })
   hierarchicalLayout.defaultEdgeDescriptor.recursiveEdgePolicy = 'directed'
   return hierarchicalLayout
 }
@@ -143,22 +138,14 @@ function buildGraph(graph: IGraph): void {
   const mainGraph = foldingView.manager.masterGraph
 
   const builder = new GraphBuilder(mainGraph)
-  builder.createNodesSource({
-    data: graphData.nodesSource,
-    id: 'id',
-    parentId: 'group'
-  })
+  builder.createNodesSource({ data: graphData.nodesSource, id: 'id', parentId: 'group' })
   builder.createGroupNodesSource({
     data: graphData.groupsSource,
     id: 'id',
     labels: ['label'],
     parentId: 'parentGroup'
   })
-  builder.createEdgesSource({
-    data: graphData.edgesSource,
-    sourceId: 'from',
-    targetId: 'to'
-  })
+  builder.createEdgesSource({ data: graphData.edgesSource, sourceId: 'from', targetId: 'to' })
 
   builder.buildGraph()
 

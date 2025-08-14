@@ -32,19 +32,11 @@ export const SampleData: SerializableGraphData = {
   nodes: [
     {
       position: [0, -46],
-      properties: {
-        variant: 'commonStatus',
-        label: 'Humidity',
-        status: 'humidity'
-      }
+      properties: { variant: 'commonStatus', label: 'Humidity', status: 'humidity' }
     },
     {
       position: [0, -121],
-      properties: {
-        variant: 'commonStatus',
-        label: 'Temperature',
-        status: 'temperature'
-      }
+      properties: { variant: 'commonStatus', label: 'Temperature', status: 'temperature' }
     },
     {
       position: [203.64501953125, -46],
@@ -67,10 +59,7 @@ export const SampleData: SerializableGraphData = {
     },
     {
       position: [883.3037109375, -46],
-      properties: {
-        variant: 'commonLinkOut',
-        label: 'Send Message'
-      }
+      properties: { variant: 'commonLinkOut', label: 'Send Message' }
     },
     {
       position: [191.576171875, -121],
@@ -111,31 +100,11 @@ export const SampleData: SerializableGraphData = {
     }
   ],
   edges: [
-    {
-      bends: [],
-      sourceNodeIndex: 0,
-      targetNodeIndex: 2
-    },
-    {
-      bends: [],
-      sourceNodeIndex: 2,
-      targetNodeIndex: 3
-    },
-    {
-      bends: [],
-      sourceNodeIndex: 3,
-      targetNodeIndex: 6
-    },
-    {
-      bends: [],
-      sourceNodeIndex: 1,
-      targetNodeIndex: 5
-    },
-    {
-      bends: [],
-      sourceNodeIndex: 6,
-      targetNodeIndex: 4
-    },
+    { bends: [], sourceNodeIndex: 0, targetNodeIndex: 2 },
+    { bends: [], sourceNodeIndex: 2, targetNodeIndex: 3 },
+    { bends: [], sourceNodeIndex: 3, targetNodeIndex: 6 },
+    { bends: [], sourceNodeIndex: 1, targetNodeIndex: 5 },
+    { bends: [], sourceNodeIndex: 6, targetNodeIndex: 4 },
     {
       bends: [
         [575, -105],
@@ -161,10 +130,6 @@ export const SampleData: SerializableGraphData = {
       sourceNodeIndex: 7,
       targetNodeIndex: 6
     },
-    {
-      bends: [],
-      sourceNodeIndex: 5,
-      targetNodeIndex: 7
-    }
+    { bends: [], sourceNodeIndex: 5, targetNodeIndex: 7 }
   ]
 }

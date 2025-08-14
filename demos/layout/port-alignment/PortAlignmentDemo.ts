@@ -160,10 +160,7 @@ export function buildGraph(): void {
 
   // define node and edge sources
   const builder = new GraphBuilder(graph)
-  builder.createNodesSource({
-    data: data.nodeList,
-    id: 'id'
-  })
+  builder.createNodesSource({ data: data.nodeList, id: 'id' })
   const edgesSource = builder.createEdgesSource({
     data: data.edgeList,
     id: 'id',

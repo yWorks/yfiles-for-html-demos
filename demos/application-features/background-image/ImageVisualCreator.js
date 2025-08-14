@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { BaseClass, IRenderContext, IVisualCreator, SvgVisual, Visual } from '@yfiles/yfiles'
+
 export class ImageVisualCreator extends BaseClass(IVisualCreator) {
   /**
    * Creates the visual for the background.
@@ -40,8 +41,10 @@ export class ImageVisualCreator extends BaseClass(IVisualCreator) {
     image.setAttribute('x', '-150')
     image.setAttribute('y', '-160')
     image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', 'ylogo.svg')
+
     return new SvgVisual(image)
   }
+
   /**
    * Updates the visual for the background.
    * @param context The context that describes where the visual will be used

@@ -76,11 +76,7 @@ async function buildGraph(graphComponent: GraphComponent): Promise<void> {
   const builder = new GraphBuilder(graph)
 
   // create the graph nodes
-  builder.createNodesSource({
-    data: electionData.parties,
-    id: 'id',
-    labels: ['name']
-  })
+  builder.createNodesSource({ data: electionData.parties, id: 'id', labels: ['name'] })
 
   // create the graph edges and assign the thickness to the edge's data
   builder.createEdgesSource({

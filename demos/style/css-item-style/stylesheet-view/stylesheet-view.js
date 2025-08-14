@@ -26,12 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { basicSetup, EditorView } from 'codemirror'
-import { css } from '@codemirror/lang-css'
-import { lintGutter } from '@codemirror/lint'
-import { getCssLinter } from '@yfiles/demo-resources/codeMirrorLinters'
-const cssLinter = getCssLinter()
+import { createCodemirrorEditor } from '@yfiles/demo-resources/codemirror-editor'
+
 let editor
+
 /**
  * Initializes a data view in the element with the given selector.
  * The data view displays a CSS Stylesheet in a CodeMirror editor.
@@ -39,32 +37,27 @@ let editor
 export async function createStylesheetView(selector) {
   const container = document.querySelector(selector)
   const dataContainer = document.createElement('div')
+
   container.appendChild(dataContainer)
+
   dataContainer.setAttribute('class', 'data-container')
-  editor = new EditorView({
-    parent: dataContainer,
-    extensions: [basicSetup, css(), lintGutter(), cssLinter]
-  })
+
+  editor = createCodemirrorEditor('css', dataContainer)
   let stylesheet = await fetchStylesheet()
+
   // remove the @license doc comment from the css file
   stylesheet = stylesheet.replace(/\/\*{2,}.*@license.*\*{2,}\/(\n|\r\n)/s, '')
-  editor.dispatch({
-    changes: {
-      from: 0,
-      to: editor.state.doc.length,
-      insert: stylesheet
-    }
-  })
+
+  editor.dispatch({ changes: { from: 0, to: editor.state.doc.length, insert: stylesheet } })
 }
+
 /**
  * Fetches the raw stylesheet data to display it in the demo.
  */
 async function fetchStylesheet() {
   const stylesheetUrl = './graph-item-styles.css'
   try {
-    const response = await fetch(stylesheetUrl, {
-      headers: { Accept: 'text/css' }
-    })
+    const response = await fetch(stylesheetUrl, { headers: { Accept: 'text/css' } })
     if (response.ok) {
       return response.text()
     } else {
@@ -74,6 +67,7 @@ async function fetchStylesheet() {
     return Promise.resolve(`Could not fetch ${stylesheetUrl}.\n${e}`)
   }
 }
+
 /**
  * Replaces the stylesheet for the item styles with the current content of the editor.
  */
@@ -81,6 +75,7 @@ export function replaceStylesheet() {
   removeStylesheet()
   addStylesheet()
 }
+
 /**
  * Removes the user stylesheet from the document.
  */
@@ -91,6 +86,7 @@ export function removeStylesheet() {
     head.removeChild(el)
   }
 }
+
 /**
  * Adds the contents of the CSS editor as a stylesheet in the document.
  */

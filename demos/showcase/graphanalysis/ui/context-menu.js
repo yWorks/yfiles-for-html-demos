@@ -30,6 +30,7 @@ import { IEdge, INode } from '@yfiles/yfiles'
 import { getCurrentAlgorithm } from './ui-utils'
 import { copyAndReplaceTag, getTag } from '../demo-types'
 import { applyAlgorithm } from '../algorithms/algorithms'
+
 /**
  * Initializes the context menu.
  */
@@ -38,17 +39,21 @@ export function initializeContextMenu(inputMode, graphComponent) {
     populateContextMenu(graphComponent, evt)
   )
 }
+
 /**
  * Populates the context menu based on the item the mouse hovers over.
  */
 function populateContextMenu(graphComponent, args) {
   updateSelection(graphComponent.selection, args.item)
+
   const currentAlgorithm = getCurrentAlgorithm()
+
   const needsStartNodes = currentAlgorithm.needsStartNodes ?? false
   const needsEndNodes = currentAlgorithm.needsEndNodes ?? false
   if (!needsStartNodes && !needsEndNodes) {
     return
   }
+
   // get the item which is located at the mouse position
   const hits = graphComponent.graphModelManager.hitElementsAt(args.queryLocation).toArray()
   // use the first hit node
@@ -57,10 +62,12 @@ function populateContextMenu(graphComponent, args) {
   if (hitNode) {
     selection.add(hitNode)
   }
+
   const selectedNodes = selection.nodes
   if (selectedNodes.size === 0) {
     return
   }
+
   const menuItems = []
   if (needsStartNodes) {
     menuItems.push({
@@ -73,6 +80,7 @@ function populateContextMenu(graphComponent, args) {
             delete tag.type
           }
         })
+
         if (!needsEndNodes) {
           // just mark one node
           const tag = copyAndReplaceTag(hitNode || selectedNodes.first())
@@ -83,6 +91,7 @@ function populateContextMenu(graphComponent, args) {
             tag.type = 'start'
           })
         }
+
         applyAlgorithm(graphComponent.graph)
         selectedNodes.clear()
       }
@@ -99,6 +108,7 @@ function populateContextMenu(graphComponent, args) {
             delete tag.type
           }
         })
+
         selectedNodes.forEach((node) => {
           const tag = copyAndReplaceTag(node)
           tag.type = 'end'
@@ -107,11 +117,13 @@ function populateContextMenu(graphComponent, args) {
       }
     })
   }
+
   // finally, if there is at least one menu item set them to the context menu
   if (menuItems.length > 0) {
     args.contextMenu = menuItems
   }
 }
+
 /**
  * Updates the selection when an item is right-clicked for a context menu.
  */

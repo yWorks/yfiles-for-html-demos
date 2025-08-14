@@ -34,8 +34,11 @@ import {
   ShapeNodeStyle
 } from '@yfiles/yfiles'
 import { GraphSearch } from '@yfiles/demo-utils/GraphSearch'
+
 let graphSearch
+
 const searchBox = document.querySelector('#searchBox')
+
 /**
  * Initializes the graph search object.
  */
@@ -50,6 +53,7 @@ export function initializeGraphSearch(graphComponent) {
   })
   GraphSearch.registerEventListener(searchBox, graphSearch, getNodeLabelsForAutoComplete())
 }
+
 /**
  * Empties the search box.
  */
@@ -58,12 +62,14 @@ export function resetGraphSearch() {
   searchBox.value = ''
   graphSearch.updateAutoCompleteSuggestions(searchBox, getNodeLabelsForAutoComplete())
 }
+
 function getNodeLabelsForAutoComplete() {
   return graphSearch.graphComponent.graph.nodeLabels
     .map((l) => l.text)
     .toSorted()
     .toArray()
 }
+
 class TreeOfLifeGraphSearch extends GraphSearch {
   /**
    * Returns whether the given node is a match when searching for the given label or id.

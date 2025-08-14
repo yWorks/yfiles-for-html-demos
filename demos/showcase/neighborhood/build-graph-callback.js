@@ -35,6 +35,7 @@ import {
   TraversalDirection
 } from '@yfiles/yfiles'
 import { NeighborhoodType } from './NeighborhoodType'
+
 /**
  * Returns the "build neighborhood graph" callback that is able to create neighborhood graphs
  * of the given type.
@@ -46,6 +47,7 @@ export function getBuildGraphCallback(type, distance) {
     ? getBuildFolderContentsCallback()
     : getBuildNeighborhoodCallback(getTraversalDirection(type), distance)
 }
+
 /**
  * Returns a "build neighborhood graph" callback that creates a graph with copies of the child
  * nodes of group nodes and folder nodes (i.e. collapsed group nodes).
@@ -53,6 +55,7 @@ export function getBuildGraphCallback(type, distance) {
 export function getBuildFolderContentsCallback() {
   return (view, nodes, callback) => buildFolderContents(view, nodes, callback)
 }
+
 /**
  * Returns a "build neighborhood graph" callback that creates a graph with copies of the neighbor
  * nodes that satisfy the given traversal direction and the given maximum graph distance.
@@ -62,16 +65,19 @@ export function getBuildFolderContentsCallback() {
 export function getBuildNeighborhoodCallback(direction, distance) {
   return (view, nodes, callback) => buildNeighborhood(view, nodes, callback, direction, distance)
 }
+
 /**
  * Copies the child nodes of group nodes and folder nodes in the given source nodes set
  * to the given neighborhood view's neighborhood graph.
  */
 function buildFolderContents(view, selectedSourceNodes, itemCopiedCallback) {
   const nodesToCopy = new Set()
+
   const foldingView = view.sourceGraph.foldingView
   if (!foldingView) {
     throw new Error('FOLDER_CONTENTS mode only works on a folding enabled graph.')
   }
+
   // Get descendants of root nodes.
   const masterGraph = foldingView.manager.masterGraph
   const groupingSupport = masterGraph.groupingSupport
@@ -80,6 +86,7 @@ function buildFolderContents(view, selectedSourceNodes, itemCopiedCallback) {
       nodesToCopy.add(descendant)
     })
   })
+
   // Use GraphCopier to copy the nodes inside the neighborhood into the NeighborhoodComponent's graph.
   const graphCopier = new GraphCopier()
   graphCopier.copy({
@@ -99,23 +106,28 @@ function buildFolderContents(view, selectedSourceNodes, itemCopiedCallback) {
     itemCopiedCallback
   })
 }
+
 /**
  * Copies the neighbor nodes of the given source nodes to the given neighborhood view's neighborhood graph.
  */
 function buildNeighborhood(view, selectedSourceNodes, itemCopiedCallback, direction, maxDistance) {
   const sourceGraph = view.sourceGraph
   const nodesToCopy = new Set()
+
   for (const node of selectedSourceNodes) {
     nodesToCopy.add(node)
   }
+
   const result = new Neighborhood({
     startNodes: selectedSourceNodes,
     maximumDistance: maxDistance,
     traversalDirection: direction
   }).run(sourceGraph)
+
   for (const node of result.neighbors) {
     nodesToCopy.add(node)
   }
+
   // Use GraphCopier to copy the nodes inside the neighborhood into the NeighborhoodComponent's graph.
   const graphCopier = new GraphCopier()
   graphCopier.copy({
@@ -125,6 +137,7 @@ function buildNeighborhood(view, selectedSourceNodes, itemCopiedCallback, direct
     itemCopiedCallback
   })
 }
+
 /**
  * Maps the given {@link NeighborhoodType} to the corresponding {@link TraversalDirection} that
  * is used by the {@link Neighborhood} algorithm in yFiles.

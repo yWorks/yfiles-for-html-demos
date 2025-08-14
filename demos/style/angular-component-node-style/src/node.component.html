@@ -1,6 +1,8 @@
 <mat-card class="node-card" [style.background-color]="color">
   <mat-card-header>
-    <img *ngIf="image" mat-card-avatar [src]="'assets/' + image" />
+    @if (image) {
+      <img mat-card-avatar [src]="'assets' + image" />
+    }
     <mat-card-title>{{ name }}</mat-card-title>
     <button mat-icon-button style="margin-left: auto">
       <mat-icon>more_vert</mat-icon>
@@ -14,17 +16,18 @@
   <mat-card-actions style="margin-top: auto">
     <button mat-icon-button><mat-icon>favorite</mat-icon></button>
     <button mat-icon-button><mat-icon>share</mat-icon></button>
-    <a
-      *ngIf="moreUrl"
-      [href]="moreUrl"
-      target="_blank"
-      mat-button
-      style="margin-left: auto"
-      (click)="$event.stopPropagation()"
-      (pointerdown)="$event.stopPropagation()"
-    >
-      Learn more
-      <mat-icon>open_in_new</mat-icon>
-    </a>
+    @if (moreUrl) {
+      <a
+        [href]="moreUrl"
+        target="_blank"
+        mat-button
+        style="margin-left: auto"
+        (click)="$event.stopPropagation()"
+        (pointerdown)="$event.stopPropagation()"
+      >
+        Learn more
+        <mat-icon>open_in_new</mat-icon>
+      </a>
+    }
   </mat-card-actions>
 </mat-card>

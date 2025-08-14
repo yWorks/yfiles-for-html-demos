@@ -146,12 +146,14 @@ import {
   Visual,
   yfiles
 } from '@yfiles/yfiles'
+
 /**
  * The usage of yfiles.lang.Enum here is only for GraphML compatibility, and shouldn't be needed
  * elsewhere. For enums in your own application, use either TypeScript enums or a simple keyed
  * object with constants.
  */
 const Enum = yfiles.lang.Enum
+
 /** Feature detection whether or not the browser supports active and passive event listeners. */
 let passiveSupported = false
 try {
@@ -165,16 +167,19 @@ try {
 } catch (ignored) {
   // ignore
 }
+
 /**
  * The namespace URI for yFiles BPMN extensions to GraphML.
  * This field has the constant value "http://www.yworks.com/xml/yfiles-bpmn/2.0"
  */
 export const YFILES_BPMN_NS = 'http://www.yworks.com/xml/yfiles-bpmn/2.0'
+
 /**
  * The default namespace prefix for {@link YFILES_BPMN_NS}.
  * This field has the constant value "bpmn"
  */
 export const YFILES_BPMN_PREFIX = 'bpmn'
+
 // /////////////////////////////////////////////////////////////////////
 // BPMN constants which determine the default behavior of this style //
 // /////////////////////////////////////////////////////////////////////
@@ -243,6 +248,7 @@ const BPMN_CONSTANTS_SIZES_CONVERSATION = new Size(
 )
 const BPMN_CONSTANTS_SIZES_DATA_OBJECT_TYPE = new Size(10, 8)
 const BPMN_CONSTANTS_SIZES_EVENT_PORT = new Size(20, 20)
+
 /**
  * Specifies if an Activity is an expanded or collapsed Sub-Process according to BPMN.
  * @see {@link ActivityNodeStyle}
@@ -272,6 +278,7 @@ export const SubState = Enum('SubState', {
    */
   DYNAMIC: 3
 })
+
 /**
  * Specifies the type of a Gateway according to BPMN.
  * @see {@link GatewayNodeStyle}
@@ -318,6 +325,7 @@ export const GatewayType = Enum('GatewayType', {
    */
   PARALLEL_EVENT_BASED: 7
 })
+
 /**
  * Specifies the type of an Event according to BPMN.
  * @see {@link EventNodeStyle}
@@ -389,6 +397,7 @@ export const EventType = Enum('EventType', {
    */
   TERMINATE: 12
 })
+
 /**
  * Specifies the type of an activity according to BPMN.
  * @see {@link ActivityNodeStyle}
@@ -420,16 +429,19 @@ export const ActivityType = Enum('ActivityType', {
    */
   CALL_ACTIVITY: 4
 })
+
 class ScalingLabelModel extends BaseClass(ILabelModel) {
   insets
   static _dummyLabel
   static _dummyNode
   static _stretchParameter
   static _stretchModel
+
   constructor(insets = Insets.EMPTY) {
     super()
     this.insets = insets
   }
+
   /**
    * Provides a {@link ILookup lookup context} for the given combination of label
    * and parameter.
@@ -442,6 +454,7 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
   getContext(label) {
     return ScalingLabelModel.STRETCH_MODEL.getContext(label)
   }
+
   /**
    * Calculates the geometry in form of an {@link IOrientedRectangle}
    * for a given label using the given model parameter.
@@ -458,10 +471,12 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
   getGeometry(label, parameter) {
     const scalingParameter = parameter
     const owner = label.owner instanceof INode ? label.owner : null
+
     if (owner) {
       const availableRect = owner.layout
       const horizontalInsets = this.insets.left + this.insets.right
       const verticalInsets = this.insets.top + this.insets.bottom
+
       // consider fix insets
       let x = availableRect.x + (availableRect.width > horizontalInsets ? this.insets.left : 0)
       let y = availableRect.y + (availableRect.height > verticalInsets ? this.insets.top : 0)
@@ -469,15 +484,18 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
         availableRect.width - (availableRect.width > horizontalInsets ? horizontalInsets : 0)
       let height =
         availableRect.height - (availableRect.height > verticalInsets ? verticalInsets : 0)
+
       // consider scaling insets
       const scalingInsets = scalingParameter.scalingInsets
       x += scalingInsets.left * width
       y += scalingInsets.top * height
       width *= 1 - scalingInsets.left - scalingInsets.right
       height *= 1 - scalingInsets.top - scalingInsets.bottom
+
       if (scalingParameter.keepRatio) {
         const fixRatio = scalingParameter.ratio
         const availableRatio = height > 0 && width > 0 ? width / height : 1
+
         if (fixRatio > availableRatio) {
           // keep width
           const cy = y + height * 0.5
@@ -489,6 +507,7 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
           x = cx - width * 0.5
         }
       }
+
       ScalingLabelModel.DUMMY_NODE.layout = new Rect(x, y, width, height)
       ScalingLabelModel.DUMMY_LABEL.preferredSize = label.preferredSize
       return ScalingLabelModel.STRETCH_MODEL.getGeometry(
@@ -498,6 +517,7 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
     }
     return IOrientedRectangle.EMPTY
   }
+
   /**
    * Creates a default parameter that can be used for this model.
    * @returns a parameter for this model instance
@@ -509,6 +529,7 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
     scalingParameter.scalingInsets = Insets.EMPTY
     return scalingParameter
   }
+
   createScaledParameter(scale) {
     if (scale <= 0 || scale > 1) {
       throw new Exception(`Argument '${scale}' not allowed. Valid values are in ]0; 1].`)
@@ -518,6 +539,7 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
     scalingParameter.scalingInsets = new Insets((1 - scale) / 2)
     return scalingParameter
   }
+
   createScaledParameterWithRatio(scale, ratio) {
     if (scale <= 0 || scale > 1) {
       throw new Exception(`Argument '${scale}' not allowed. Valid values are in ]0; 1].`)
@@ -532,12 +554,14 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
     scalingParameter.ratio = ratio
     return scalingParameter
   }
+
   static get STRETCH_MODEL() {
     return (
       ScalingLabelModel._stretchModel ||
       (ScalingLabelModel._stretchModel = new StretchNodeLabelModel({ padding: 0 }))
     )
   }
+
   static get STRETCH_PARAMETER() {
     return (
       ScalingLabelModel._stretchParameter ||
@@ -546,9 +570,11 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
       ))
     )
   }
+
   static get DUMMY_NODE() {
     return ScalingLabelModel._dummyNode || (ScalingLabelModel._dummyNode = new SimpleNode())
   }
+
   static get DUMMY_LABEL() {
     return (
       ScalingLabelModel._dummyLabel ||
@@ -560,17 +586,21 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
     )
   }
 }
+
 class ScalingLabelModelParameter extends BaseClass(ILabelModelParameter) {
   _model = null
   scalingInsets = null
   keepRatio = false
   ratio = 0
+
   get model() {
     return this._model
   }
+
   set model(value) {
     this._model = value
   }
+
   clone() {
     const scalingParameter = new ScalingLabelModelParameter()
     scalingParameter.model = this.model
@@ -579,6 +609,7 @@ class ScalingLabelModelParameter extends BaseClass(ILabelModelParameter) {
     return scalingParameter
   }
 }
+
 /**
  * Provides some existing ports as well as ports on the top, bottom, right and left center of the
  * visual bounds of a BPMN node. An existing port is provided if it either uses an
@@ -586,23 +617,28 @@ class ScalingLabelModelParameter extends BaseClass(ILabelModelParameter) {
  */
 export class BpmnPortCandidateProvider extends PortCandidateProviderBase {
   owner
+
   constructor(owner) {
     super()
     this.owner = owner
   }
+
   getPortCandidates(context) {
     const node = this.owner
     const portCandidates = new List()
+
     // provide existing ports as candidates only if they use EventPortStyle and have no edges attached to them.
     node.ports.forEach((port) => {
       if (port.style instanceof EventPortStyle && context.graph.edgesAt(port).size === 0) {
         portCandidates.add(new PortCandidate(port))
       }
     })
+
     portCandidates.add(new PortCandidate(node, FreeNodePortLocationModel.TOP))
     portCandidates.add(new PortCandidate(node, FreeNodePortLocationModel.BOTTOM))
     portCandidates.add(new PortCandidate(node, FreeNodePortLocationModel.LEFT))
     portCandidates.add(new PortCandidate(node, FreeNodePortLocationModel.RIGHT))
+
     if (
       !(context.inputMode instanceof CreateEdgeInputMode) ||
       context.canvasComponent.lastInputEvent.shiftKey
@@ -613,6 +649,7 @@ export class BpmnPortCandidateProvider extends PortCandidateProviderBase {
     return portCandidates
   }
 }
+
 /**
  * An {@link IReshapeHandleProvider} that restricts the available
  * handles provided by the wrapped handler to the ones in the four corners for nodes with
@@ -624,11 +661,13 @@ export class BpmnPortCandidateProvider extends PortCandidateProviderBase {
 export class BpmnReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
   wrappedHandler
   node
+
   constructor(wrappedHandler, node) {
     super()
     this.wrappedHandler = wrappedHandler
     this.node = node
   }
+
   /**
    * Returns the available handles provided by the wrapped handler
    * restricted to the ones in the four corners and sides for nodes with {@link GatewayNodeStyle},
@@ -653,6 +692,7 @@ export class BpmnReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
     }
     return this.wrappedHandler.getAvailableHandles(inputModeContext)
   }
+
   /**
    * Returns a custom handle that maintains the aspect ratio of the node with
    * {@link GatewayNodeStyle},
@@ -675,6 +715,7 @@ export class BpmnReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
     return this.wrappedHandler.getHandle(inputModeContext, position)
   }
 }
+
 /**
  * An implementation of {@link IHandle} that keeps the aspect ratio of a node intact when resizing.
  */
@@ -685,15 +726,18 @@ class AspectRatioHandle extends BaseClass(IHandle) {
   lastLocation = new Point(0, 0)
   ratio = 0
   originalSize = new Size(0, 0)
+
   constructor(handle, position, layout) {
     super()
     this.handle = handle
     this.position = position
     this.layout = layout
   }
+
   get location() {
     return this.handle.location
   }
+
   /**
    * Stores the initial location and aspect ratio for reference, and calls the base method.
    * @see Specified by {@link IDragHandler.initializeDrag}.
@@ -719,6 +763,7 @@ class AspectRatioHandle extends BaseClass(IHandle) {
         this.ratio = 0
     }
   }
+
   /**
    * Constrains the movement to maintain the aspect ratio. This is done
    * by calculating the constrained location for the given new location,
@@ -758,6 +803,7 @@ class AspectRatioHandle extends BaseClass(IHandle) {
         deltaDragY = deltaDragX / this.ratio
       }
     }
+
     newLocation = new Point(originalLocation.x + deltaDragX, originalLocation.y + deltaDragY)
     if (newLocation.equals(this.lastLocation)) {
       return
@@ -765,26 +811,33 @@ class AspectRatioHandle extends BaseClass(IHandle) {
     this.handle.handleMove(inputModeContext, originalLocation, newLocation)
     this.lastLocation = newLocation
   }
+
   cancelDrag(inputModeContext, originalLocation) {
     this.handle.cancelDrag(inputModeContext, originalLocation)
   }
+
   dragFinished(inputModeContext, originalLocation, newLocation) {
     this.handle.dragFinished(inputModeContext, originalLocation, this.lastLocation)
   }
+
   /**
    * This implementation does nothing special when clicked.
    */
   handleClick(evt) {}
+
   get type() {
     return this.handle.type
   }
+
   get cursor() {
     return this.handle.cursor
   }
+
   get tag() {
     return null
   }
 }
+
 // ///////////////////////////////////////////////////////////////////////////////
 // BPMN placement constants which determine the default behavior of this style //
 // ///////////////////////////////////////////////////////////////////////////////
@@ -827,6 +880,7 @@ const BPMN_CONSTANTS_PLACEMENTS_THICK_LINE = new StretchNodeLabelModel({
 const BPMN_CONSTANTS_PLACEMENTS_INSIDE_DOUBLE_LINE =
   ISLM_INSIDE_DOUBLE_LINE.createParameter('center')
 const BPMN_CONSTANTS_PLACEMENTS_POOL_NODE_MARKER = ILM2.createParameter('bottom')
+
 /**
  * Specifies the Loop Characteristic of an Activity or Choreography according to BPMN.
  * @see {@link ActivityNodeStyle}
@@ -861,6 +915,7 @@ export const LoopCharacteristic = Enum('LoopCharacteristic', {
    */
   SEQUENTIAL: 3
 })
+
 /**
  * Specifies the type of a task according to BPMN.
  * @see {@link ActivityNodeStyle}
@@ -912,6 +967,7 @@ export const TaskType = Enum('TaskType', {
    */
   EVENT_TRIGGERED: 8
 })
+
 /**
  * Base-class for {@link ILabelModelParameter}s that are used for label placement at nodes with
  * {@link ChoreographyNodeStyle}.
@@ -920,13 +976,16 @@ class ChoreographyParameter extends BaseClass(ILabelModelParameter) {
   get model() {
     return ChoreographyLabelModel.INSTANCE
   }
+
   clone() {
     return this
   }
+
   getGeometry(label, parameter) {
     return IOrientedRectangle.EMPTY
   }
 }
+
 /**
  * {@link ILabelModelParameter} to place participant labels at the participant bands of
  * {@link ChoreographyNodeStyle}.
@@ -934,8 +993,10 @@ class ChoreographyParameter extends BaseClass(ILabelModelParameter) {
 class ParticipantParameter extends ChoreographyParameter {
   static _placement
   static _interiorNodeLabelModel
+
   top
   index
+
   /**
    * Creates a new instance of {@link ParticipantParameter}.
    * @param top whether or not the label belongs to a top participant.
@@ -947,6 +1008,7 @@ class ParticipantParameter extends ChoreographyParameter {
     this.top = top
     this.index = index
   }
+
   /**
    * Creates a positioned rectangle that is placed on the according participant band.
    */
@@ -969,17 +1031,18 @@ class ParticipantParameter extends ChoreographyParameter {
     }
     return IOrientedRectangle.EMPTY
   }
+
   clone() {
     return new ParticipantParameter(this.top, this.index)
   }
+
   static get INTERIOR_LABEL_MODEL() {
     return (
       ParticipantParameter._interiorNodeLabelModel ||
-      (ParticipantParameter._interiorNodeLabelModel = new InteriorNodeLabelModel({
-        padding: 3
-      }))
+      (ParticipantParameter._interiorNodeLabelModel = new InteriorNodeLabelModel({ padding: 3 }))
     )
   }
+
   static get PLACEMENT() {
     return (
       ParticipantParameter._placement ||
@@ -988,6 +1051,7 @@ class ParticipantParameter extends ChoreographyParameter {
     )
   }
 }
+
 /**
  * A label model for nodes using a {@link ChoreographyNodeStyle} that position labels on the
  * participant or task name bands.
@@ -1000,6 +1064,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel) {
   static _dummyNode
   static _interiorLabel
   static _instance
+
   /**
    * Calculates the geometry in form of an {@link IOrientedRectangle}
    * for a given label using the given model parameter.
@@ -1025,6 +1090,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel) {
     }
     return IOrientedRectangle.EMPTY
   }
+
   /**
    * Returns {@link ChoreographyLabelModel.TASK_NAME_BAND} as default parameter.
    * @see Specified by {@link ILabelModel.createDefaultParameter}.
@@ -1032,6 +1098,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel) {
   createDefaultParameter() {
     return ChoreographyLabelModel.TASK_NAME_BAND
   }
+
   /**
    * Creates the parameter for the participant at the given position.
    * @param top Whether the index refers to {@link ChoreographyNodeStyle.topParticipants}
@@ -1042,6 +1109,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel) {
   createParticipantParameter(top, index) {
     return new ParticipantParameter(top, index)
   }
+
   /**
    * Provides a {@link ILookup lookup context} for the given combination of label
    * and parameter.
@@ -1054,6 +1122,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel) {
   getContext(label) {
     return new ChoreographyLabelModelLookup(label, this)
   }
+
   /**
    * Returns an enumerator over a set of possible {@link ILabelModelParameter}
    * instances that can be used for the given label and model.
@@ -1076,8 +1145,10 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel) {
       parameters.add(ChoreographyLabelModel.NORTH_MESSAGE)
       parameters.add(ChoreographyLabelModel.SOUTH_MESSAGE)
     }
+
     return parameters
   }
+
   /**
    * Finds the parameter for the next free location at a node with {@link ChoreographyNodeStyle}.
    * This function will traverse all valid positions in the following order until it finds a free
@@ -1095,9 +1166,11 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel) {
       const topParticipantCount = nodeStyle.topParticipants.size
       const bottomParticipantCount = nodeStyle.bottomParticipants.size
       const messageCount = 2
+
       const parameterTaken = new Array(
         taskNameBandCount + topParticipantCount + bottomParticipantCount + messageCount
       )
+
       // check which label positions are already taken
       node.labels.forEach((label) => {
         if (label.layoutParameter instanceof ChoreographyParameter) {
@@ -1105,6 +1178,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel) {
           const parameter = label.layoutParameter
           if (!(parameter instanceof TaskNameBandParameter)) {
             index++
+
             if (parameter instanceof ParticipantParameter) {
               const pp = parameter
               if (!pp.top) {
@@ -1121,6 +1195,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel) {
           parameterTaken[index] = true
         }
       })
+
       // get first label position that isn't taken already
       for (let i = 0; i < parameterTaken.length; i++) {
         if (!parameterTaken[i]) {
@@ -1144,23 +1219,27 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel) {
     }
     return null
   }
+
   static get INSTANCE() {
     return (
       ChoreographyLabelModel._instance ||
       (ChoreographyLabelModel._instance = new ChoreographyLabelModel())
     )
   }
+
   static get INTERIOR_LABEL_MODEL() {
     return (
       ChoreographyLabelModel._interiorLabel ||
       (ChoreographyLabelModel._interiorLabel = new InteriorNodeLabelModel())
     )
   }
+
   static get DUMMY_NODE() {
     return (
       ChoreographyLabelModel._dummyNode || (ChoreographyLabelModel._dummyNode = new SimpleNode())
     )
   }
+
   static get DUMMY_LABEL() {
     return (
       ChoreographyLabelModel._dummyLabel ||
@@ -1171,12 +1250,14 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel) {
       ))
     )
   }
+
   static get TASK_NAME_BAND() {
     return (
       ChoreographyLabelModel._taskNameBand ||
       (ChoreographyLabelModel._taskNameBand = new TaskNameBandParameter())
     )
   }
+
   /**
    * Returns a layout parameter that describes a position above/north of the node.
    */
@@ -1188,6 +1269,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel) {
     }
     return ChoreographyLabelModel._northMessage
   }
+
   /**
    * Returns a layout parameter that describes a position below/south of the node.
    */
@@ -1200,6 +1282,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel) {
     return ChoreographyLabelModel._southMessage
   }
 }
+
 class ChoreographyLabelModelLookup extends BaseClass(ILookup, ILabelModelParameterProvider) {
   label
   model
@@ -1208,16 +1291,19 @@ class ChoreographyLabelModelLookup extends BaseClass(ILookup, ILabelModelParamet
     this.label = label
     this.model = model
   }
+
   lookup(type) {
     if (type === ILabelModelParameterProvider) {
       return this
     }
     return InteriorNodeLabelModel.CENTER.model.getContext(this.label).lookup(type)
   }
+
   getParameters() {
     return this.model.getParameters(this.label)
   }
 }
+
 /**
  * {@link ILabelModelParameter} that places the label on the task name band in the center of the
  * node.
@@ -1233,28 +1319,34 @@ class TaskNameBandParameter extends ChoreographyParameter {
       InteriorNodeLabelModel.CENTER
     )
   }
+
   clone() {
     return new TaskNameBandParameter()
   }
 }
+
 /**
  * {@link ILabelModelParameter} that places the label above or below the node.
  */
 class MessageParameter extends ChoreographyParameter {
   static _southParameter
   static _northParameter
+
   north = false
+
   getGeometry(label) {
     const parameter = this.north
       ? MessageParameter.NORTH_PARAMETER
       : MessageParameter.SOUTH_PARAMETER
     return parameter.model.getGeometry(label, parameter)
   }
+
   clone() {
     const messageParameter = new MessageParameter()
     messageParameter.north = this.north
     return messageParameter
   }
+
   /**
    * Returns a preconfigured parameter instance that places the label above the node.
    */
@@ -1268,6 +1360,7 @@ class MessageParameter extends ChoreographyParameter {
     }
     return MessageParameter._northParameter
   }
+
   /**
    * Returns a preconfigured parameter instance that places the label below the node.
    */
@@ -1282,6 +1375,7 @@ class MessageParameter extends ChoreographyParameter {
     return MessageParameter._southParameter
   }
 }
+
 /**
  * An {@link NodeStyleBase} implementation used as base class for nodes styles representing BPMN
  * elements.
@@ -1292,18 +1386,21 @@ export class BpmnNodeStyle extends NodeStyleBase {
   icon = null
   // the counter of modifications
   modCount = 0
+
   /**
    * Gets the minimum node size for nodes using this style.
    */
   get minimumSize() {
     return this._minimumSize
   }
+
   /**
    * Sets the minimum node size for nodes using this style.
    */
   set minimumSize(value) {
     this._minimumSize = value
   }
+
   /**
    * Callback that creates the visual.
    * @param renderContext The render context.
@@ -1317,9 +1414,11 @@ export class BpmnNodeStyle extends NodeStyleBase {
     if (this.icon == null) {
       return null
     }
+
     const bounds = node.layout
     this.icon.setBounds(new Rect(Point.ORIGIN, bounds.toSize()))
     const visual = this.icon.createVisual(renderContext)
+
     const container = new SvgVisualGroup()
     if (visual != null) {
       container.add(visual)
@@ -1327,12 +1426,11 @@ export class BpmnNodeStyle extends NodeStyleBase {
     const transform = new Matrix()
     transform.translate(node.layout.topLeft)
     container.transform = transform
-    container['render-data-cache'] = {
-      modCount: this.modCount,
-      bounds: bounds.toRect()
-    }
+    container['render-data-cache'] = { modCount: this.modCount, bounds: bounds.toRect() }
+
     return container
   }
+
   /**
    * Callback that updates the visual previously created by {@link NodeStyleBase.createVisual}.
    * @param renderContext The render context.
@@ -1347,22 +1445,28 @@ export class BpmnNodeStyle extends NodeStyleBase {
     if (this.icon == null) {
       return null
     }
+
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
     if (container == null) {
       this.createVisual(renderContext, node)
     }
+
     const cache = container != null ? container['render-data-cache'] : null
     if (cache == null || cache.modCount !== this.modCount) {
       return this.createVisual(renderContext, node)
     }
+
     const newBounds = node.layout
+
     if (cache.bounds.equals(newBounds)) {
       // node bounds didn't change
       return oldVisual
     }
+
     if (!cache.bounds.size.equals(newBounds.toRect().size)) {
       const iconBounds = new Rect(0, 0, newBounds.width, newBounds.height)
       this.icon.setBounds(iconBounds)
+
       let oldIconVisual = null
       let newIconVisual
       if (container.children.size === 0) {
@@ -1371,6 +1475,7 @@ export class BpmnNodeStyle extends NodeStyleBase {
         oldIconVisual = container.children.first()
         newIconVisual = this.icon.updateVisual(renderContext, oldIconVisual)
       }
+
       // update visual
       if (oldIconVisual !== newIconVisual) {
         if (oldIconVisual != null) {
@@ -1381,17 +1486,22 @@ export class BpmnNodeStyle extends NodeStyleBase {
         }
       }
     }
+
     const transform = new Matrix()
     transform.translate(node.layout.topLeft)
     container.transform = transform
+
     cache.bounds = newBounds.toRect()
+
     return container
   }
+
   /**
    * Updates the {@link BpmnNodeStyle.icon}.
    * This method is called by {@link BpmnNodeStyle.createVisual}.
    */
   updateIcon(node) {}
+
   /**
    * Performs the {@link ILookup.lookup} operation for the
    * {@link INodeStyleRenderer.getContext} that has been queried from the
@@ -1411,21 +1521,25 @@ export class BpmnNodeStyle extends NodeStyleBase {
     return lookup
   }
 }
+
 /**
  * A participant of a Choreography that can be added to a {@link ChoreographyNodeStyle}.
  */
 export class Participant extends BaseClass(ICloneable) {
   _modCount = 0
   _multiInstance = false
+
   get modCount() {
     return this._modCount
   }
+
   /**
    * Gets if the participant contains multiple instances.
    */
   get multiInstance() {
     return this._multiInstance
   }
+
   /**
    * Sets if the participant contains multiple instances.
    */
@@ -1435,9 +1549,11 @@ export class Participant extends BaseClass(ICloneable) {
       this._multiInstance = value
     }
   }
+
   getSize() {
     return this.multiInstance ? 32 : 20
   }
+
   /**
    * Create a clone of this object.
    * @returns A clone of this object.
@@ -1449,6 +1565,7 @@ export class Participant extends BaseClass(ICloneable) {
     return newParticipant
   }
 }
+
 /**
  * An {@link IVisualCreator} that allows to set bounds for the visualization.
  * To use this class for the flyweight pattern, {@link Icon.setBounds} should be called before
@@ -1456,19 +1573,23 @@ export class Participant extends BaseClass(ICloneable) {
  */
 class Icon extends BaseClass(IVisualCreator) {
   bounds = new Rect(0, 0, 0, 0)
+
   /**
    * Sets the bounds the visual shall consider.
    */
   setBounds(bounds) {
     this.bounds = bounds
   }
+
   createVisual(context) {
     return null
   }
+
   updateVisual(context, oldVisual) {
     return null
   }
 }
+
 /**
  * An {@link Icon} that combines multiple icons in an horizontal line.
  */
@@ -1477,19 +1598,24 @@ class LineUpIcon extends Icon {
   innerIconSize
   gap
   combinedSize
+
   constructor(icons, innerIconSize, gap) {
     super()
     this.icons = icons
     this.innerIconSize = innerIconSize
     this.gap = gap
+
     const combinedWidth = icons.size * innerIconSize.width + (icons.size - 1) * gap
     this.combinedSize = new Size(combinedWidth, innerIconSize.height)
   }
+
   createVisual(context) {
     if (this.bounds == null) {
       return null
     }
+
     const container = new SvgVisualGroup()
+
     let offset = 0
     this.icons.forEach((pathIcon) => {
       pathIcon.setBounds(new Rect(offset, 0, this.innerIconSize.width, this.innerIconSize.height))
@@ -1498,37 +1624,38 @@ class LineUpIcon extends Icon {
       offset += this.innerIconSize.width + this.gap
     })
     const bound = this.bounds.toRect()
+
     const transform = new Matrix()
     transform.translate(new Point(bound.centerX - this.combinedSize.width * 0.5, bound.y))
     container.transform = transform
-    container['render-data-cache'] = {
-      location: bound.topLeft,
-      size: bound.size
-    }
+    container['render-data-cache'] = { location: bound.topLeft, size: bound.size }
+
     return container
   }
+
   updateVisual(context, oldVisual) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
     if (container == null || container.children.size !== this.icons.size) {
       return this.createVisual(context)
     }
+
     const cache = container['render-data-cache']
     if (!cache.location.equals(this.bounds.topLeft)) {
       const bound = this.bounds.toRect()
+
       const transform = new Matrix()
       transform.translate(new Point(bound.centerX - this.combinedSize.width * 0.5, bound.y))
       container.transform = transform
-      container['render-data-cache'] = {
-        location: bound.topLeft,
-        size: bound.size
-      }
+      container['render-data-cache'] = { location: bound.topLeft, size: bound.size }
     }
     return container
   }
+
   setBounds(bounds) {
     super.setBounds(Rect.fromCenter(bounds.center, this.combinedSize))
   }
 }
+
 /**
  * An {@link Icon} whose position is specified by an {@link ILabelModelParameter}.
  */
@@ -1537,6 +1664,7 @@ class PlacedIcon extends Icon {
   placementParameter
   dummyNode = new SimpleNode()
   dummyLabel
+
   constructor(innerIcon, placementParameter, minimumSize) {
     super()
     this.innerIcon = innerIcon
@@ -1545,12 +1673,15 @@ class PlacedIcon extends Icon {
     dummyLabel.preferredSize = minimumSize
     this.dummyLabel = dummyLabel
   }
+
   createVisual(context) {
     return this.innerIcon.createVisual(context)
   }
+
   updateVisual(context, oldVisual) {
     return this.innerIcon.updateVisual(context, oldVisual)
   }
+
   setBounds(bounds) {
     this.dummyNode.layout = bounds
     this.innerIcon.setBounds(
@@ -1558,6 +1689,7 @@ class PlacedIcon extends Icon {
     )
   }
 }
+
 /**
  * A {@link Icon} which displays a rectangle.
  */
@@ -1565,6 +1697,7 @@ class RectIcon extends Icon {
   cornerRadius = 0
   fill = null
   stroke = null
+
   createVisual(context) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.setAttribute('x', `${this.bounds.x}`)
@@ -1583,9 +1716,11 @@ class RectIcon extends Icon {
     )
     return new SvgVisual(rect)
   }
+
   updateVisual(context, oldVisual) {
     const rect = oldVisual.svgElement
     const oldCache = rect['render-data-cache']
+
     if (!oldCache.equals(this.bounds.width, this.bounds.height, this.stroke, this.fill)) {
       rect.setAttribute('width', `${this.bounds.width}`)
       rect.setAttribute('height', `${this.bounds.height}`)
@@ -1598,49 +1733,58 @@ class RectIcon extends Icon {
         this.fill
       )
     }
+
     return oldVisual
   }
+
   setBounds(bounds) {
     super.setBounds(bounds)
   }
 }
+
 /**
  * An {@link Icon} that combines multiple icons. This can be useful when creating complex images
  * like a timer.
  */
 class CombinedIcon extends Icon {
   icons
+
   constructor(icons) {
     super()
     this.icons = icons
   }
+
   createVisual(context) {
     if (this.bounds == null) {
       return null
     }
     const container = new SvgVisualGroup()
+
     const iconBounds = new Rect(Point.ORIGIN, this.bounds.toSize())
     this.icons.forEach((icon) => {
       icon.setBounds(iconBounds)
       const iconVisual = icon.createVisual(context)
       container.add(iconVisual)
     })
+
     const bound = this.bounds.toRect()
+
     const transform = new Matrix()
     transform.translate(bound.topLeft)
     container.transform = transform
-    container['render-data-cache'] = {
-      location: bound.topLeft,
-      size: bound.size
-    }
+    container['render-data-cache'] = { location: bound.topLeft, size: bound.size }
+
     return container
   }
+
   updateVisual(context, oldVisual) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
     if (container == null || container.children.size !== this.icons.size) {
       return this.createVisual(context)
     }
+
     const cache = container['render-data-cache']
+
     if (!cache.size.equals(this.bounds.size)) {
       // size changed -> we have to update the icons
       const iconBounds = new Rect(Point.ORIGIN, this.bounds.size.toSize())
@@ -1661,13 +1805,12 @@ class CombinedIcon extends Icon {
     const transform = new Matrix()
     transform.translate(bound.topLeft)
     container.transform = transform
-    container['render-data-cache'] = {
-      location: bound.topLeft,
-      size: bound.size
-    }
+    container['render-data-cache'] = { location: bound.topLeft, size: bound.size }
+
     return container
   }
 }
+
 /**
  * An {@link Icon} that displays an SVG path.
  */
@@ -1675,12 +1818,14 @@ class PathIcon extends Icon {
   fill = null
   stroke = null
   path = null
+
   createVisual(context) {
     if (!this.path) {
       return null
     }
     const matrix2D = new Matrix()
     matrix2D.scale(Math.max(0, this.bounds.width), Math.max(0, this.bounds.height))
+
     const svgPath = this.path.createSvgPath(matrix2D)
     Stroke.setStroke(this.stroke, svgPath, context)
     Fill.setFill(this.fill, svgPath, context)
@@ -1690,18 +1835,24 @@ class PathIcon extends Icon {
       this.stroke,
       this.fill
     )
+
     SvgVisual.setTranslate(svgPath, this.bounds.x, this.bounds.y)
+
     return new SvgVisual(svgPath)
   }
+
   updateVisual(context, oldVisual) {
     if (!this.path) {
       return null
     }
+
     const path = oldVisual.svgElement
     if (path == null) {
       return this.createVisual(context)
     }
+
     const oldCache = path['render-data-cache']
+
     if (!oldCache.stroke.equals(this.stroke)) {
       Stroke.setStroke(this.stroke, path, context)
       oldCache.stroke = this.stroke
@@ -1710,6 +1861,7 @@ class PathIcon extends Icon {
       Fill.setFill(this.fill, path, context)
       oldCache.fill = this.fill
     }
+
     if (oldCache.width !== this.bounds.width || oldCache.height !== this.bounds.width) {
       const matrix2D = new Matrix()
       matrix2D.scale(Math.max(0, this.bounds.width), Math.max(0, this.bounds.height))
@@ -1717,10 +1869,12 @@ class PathIcon extends Icon {
       oldCache.width = this.bounds.width
       oldCache.height = this.bounds.height
     }
+
     SvgVisual.setTranslate(path, this.bounds.x, this.bounds.y)
     return oldVisual
   }
 }
+
 /**
  * An {@link Icon} whose corner radius can be chosen for each corner individually.
  * This is useful for the outline of participants in {@link ChoreographyNodeStyle}.
@@ -1732,6 +1886,7 @@ class VariableRectIcon extends Icon {
   bottomRightRadius = 0
   fill = null
   stroke = null
+
   createVisual(context) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path.setAttribute(
@@ -1760,11 +1915,13 @@ class VariableRectIcon extends Icon {
     SvgVisual.setTranslate(path, this.bounds.x, this.bounds.y)
     return new SvgVisual(path)
   }
+
   updateVisual(context, oldVisual) {
     const path = oldVisual.svgElement
     if (!path) {
       return this.createVisual(context)
     }
+
     const oldCache = path['render-data-cache']
     const newCache = new PathIconState(
       this.bounds.width,
@@ -1772,6 +1929,7 @@ class VariableRectIcon extends Icon {
       this.stroke,
       this.fill
     )
+
     if (!oldCache.equals(newCache)) {
       path.setAttribute(
         'd',
@@ -1791,12 +1949,15 @@ class VariableRectIcon extends Icon {
       )
       Stroke.setStroke(this.stroke, path, context)
       Fill.setFill(this.fill, path, context)
+
       SvgVisual.setTranslate(path, this.bounds.x, this.bounds.y)
       path['render-data-cache'] = newCache
     }
+
     return oldVisual
   }
 }
+
 /**
  * Builder class to create {@link Icon}s.
  */
@@ -1804,27 +1965,35 @@ class IconBuilder {
   _path = null
   stroke = null
   fill = null
+
   constructor() {
     this.clear()
   }
+
   get path() {
     return this._path || (this._path = new GeneralPath())
   }
+
   set path(value) {
     this._path = value
   }
+
   moveTo(x, y) {
     this.path && this.path.moveTo(x, y)
   }
+
   lineTo(x, y) {
     this.path && this.path.lineTo(x, y)
   }
+
   quadTo(cx, cy, x, y) {
     this.path && this.path.quadTo(cx, cy, x, y)
   }
+
   cubicTo(c1x, c1y, c2x, c2y, x, y) {
     this.path && this.path.cubicTo(c1x, c1y, c2x, c2y, x, y)
   }
+
   arcTo(r, cx, cy, fromAngle, toAngle) {
     if (!this.path) {
       return
@@ -1843,19 +2012,24 @@ class IconBuilder {
       this.arcTo(r, cx, cy, start, toAngle)
       return
     }
+
     // calculate unrotated control points
     const x1 = r * Math.cos(a)
     const y1 = -r * Math.sin(a)
+
     const m = ((Math.sqrt(2) - 1) * 4) / 3
     const mTanA = m * Math.tan(a)
+
     const x2 = x1 - mTanA * y1
     const y2 = y1 + mTanA * x1
     const x3 = x2
     const y3 = -y2
+
     // rotate the control points by (fromAngle + a)
     const rot = fromAngle + a
     const sinRot = Math.sin(rot)
     const cosRot = Math.cos(rot)
+
     this.path.cubicTo(
       cx + x2 * cosRot - y2 * sinRot,
       cy + x2 * sinRot + y2 * cosRot,
@@ -1865,6 +2039,7 @@ class IconBuilder {
       cy + r * Math.sin(toAngle)
     )
   }
+
   createEllipseIcon() {
     if (!this.path) {
       return null
@@ -1872,38 +2047,46 @@ class IconBuilder {
     this.path.appendEllipse(new Rect(0, 0, 1, 1), false)
     return this.getPathIcon()
   }
+
   close() {
     if (!this.path) {
       return
     }
     this.path.close()
   }
+
   combineIcons(icons) {
     const icon = new CombinedIcon(icons)
     this.clear()
     return icon
   }
+
   createLineUpIcon(icons, innerIconSize, gap) {
     const icon = new LineUpIcon(icons, innerIconSize, gap)
     this.clear()
     return icon
   }
+
   getPathIcon() {
     const icon = new PathIcon()
     icon.path = this.path
     icon.stroke = this.stroke
     icon.fill = this.fill
+
     this.clear()
     return icon
   }
+
   createRectIcon(cornerRadius) {
     const rectIcon = new RectIcon()
     rectIcon.stroke = this.stroke
     rectIcon.fill = this.fill
     rectIcon.cornerRadius = cornerRadius
+
     this.clear()
     return rectIcon
   }
+
   createVariableRectIcon(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius) {
     const rectIcon = new VariableRectIcon()
     rectIcon.stroke = this.stroke
@@ -1912,31 +2095,37 @@ class IconBuilder {
     rectIcon.topRightRadius = topRightRadius
     rectIcon.bottomLeftRadius = bottomLeftRadius
     rectIcon.bottomRightRadius = bottomRightRadius
+
     this.clear()
     return rectIcon
   }
+
   clear() {
     this.stroke = Stroke.BLACK
     this.fill = Color.TRANSPARENT
     this.path = null
   }
 }
+
 /**
  * A class that combines an event type with a fill to be used as a key in a map.
  */
 class EventTypeWithFill {
   type
   filled
+
   constructor(type, filled) {
     this.type = type
     this.filled = filled
   }
+
   equals(obj) {
     if (!(obj instanceof EventTypeWithFill)) {
       return false
     }
     return obj.type === this.type && obj.filled === this.filled
   }
+
   hashCode() {
     let code
     switch (this.type) {
@@ -1986,6 +2175,7 @@ class EventTypeWithFill {
     return (code * 397) ^ (this.filled ? 1 : 0)
   }
 }
+
 /**
  * Specifies the type of a Conversation according to BPMN.
  * @see {@link ConversationNodeStyle}
@@ -2014,6 +2204,7 @@ export const ConversationType = Enum('ConversationType', {
    */
   CALLING_COLLABORATION: 3
 })
+
 /**
  * A class that stores the important information about a participant to be used as a key in a map.
  */
@@ -2021,11 +2212,13 @@ class ParticipantBandType {
   fill
   topRadius
   bottomRadius
+
   constructor(fill, topRadius, bottomRadius) {
     this.fill = fill
     this.topRadius = topRadius
     this.bottomRadius = bottomRadius
   }
+
   equals(obj) {
     if (!(obj instanceof ParticipantBandType)) {
       return false
@@ -2036,11 +2229,13 @@ class ParticipantBandType {
       obj.bottomRadius === this.bottomRadius
     )
   }
+
   hashCode() {
     const fill = this.fill
     return (fill.hashCode() * 397) ^ (this.topRadius * 397) ^ this.bottomRadius
   }
 }
+
 /**
  * A class that stores all important information for a plus icon to be used as key in a map.
  */
@@ -2048,22 +2243,26 @@ class PlusData {
   size
   stroke
   fill
+
   constructor(size, stroke, fill) {
     this.size = size
     this.stroke = stroke
     this.fill = fill
   }
+
   equals(obj) {
     if (!(obj instanceof PlusData)) {
       return false
     }
     return obj.size === this.size && obj.stroke === this.stroke && obj.fill === this.fill
   }
+
   hashCode() {
     const fillHC = this.fill != null ? this.fill.hashCode() : 1
     return (((this.size * 397) ^ this.stroke.hashCode()) * 397) ^ fillHC
   }
 }
+
 /**
  * Factory class providing icons according to the BPMN.
  */
@@ -2095,23 +2294,29 @@ class IconFactory {
   static _comparison
   static _filledComparison
   static _adHoc
+
   static createPlacedIcon(icon, placement, innerSize) {
     return new PlacedIcon(icon, placement, innerSize)
   }
+
   static createCombinedIcon(icons) {
     return IconFactory.BUILDER.combineIcons(icons)
   }
+
   static createLineUpIcon(icons, innerIconSize, gap) {
     return IconFactory.BUILDER.createLineUpIcon(icons, innerIconSize, gap)
   }
+
   static createActivity(type, background, outlineFill) {
     const hasDefaultColors =
       IconFactory.equalFill(background, BPMN_CONSTANTS_ACTIVITY_DEFAULT_BACKGROUND) &&
       IconFactory.equalFill(outlineFill, BPMN_CONSTANTS_ACTIVITY_DEFAULT_OUTLINE)
+
     let result = IconFactory.ACTIVITY_ICONS.get(type)
     if (hasDefaultColors && result) {
       return result
     }
+
     let outlineStroke
     switch (type) {
       case ActivityType.EVENT_SUB_PROCESS: {
@@ -2132,12 +2337,15 @@ class IconFactory {
         break
     }
     outlineStroke.freeze()
+
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = outlineStroke
     BUILDER.fill = background
+
     if (type === ActivityType.TRANSACTION) {
       const icons = new List()
       icons.add(BUILDER.createRectIcon(BPMN_CONSTANTS_ACTIVITY_CORNER_RADIUS))
+
       BUILDER.fill = background
       BUILDER.stroke = outlineStroke
       const rectIcon = BUILDER.createRectIcon(
@@ -2150,17 +2358,22 @@ class IconFactory {
     } else {
       result = BUILDER.createRectIcon(BPMN_CONSTANTS_ACTIVITY_CORNER_RADIUS)
     }
+
     if (hasDefaultColors) {
       IconFactory.ACTIVITY_ICONS.set(type, result)
     }
+
     return result
   }
+
   static createActivityTaskType(type, iconFill, background) {
     const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
     let result = IconFactory.TASK_ICONS.get(type)
     if (hasDefaultColor && result) {
       return result
     }
+
     const BUILDER = IconFactory.BUILDER
     let icons
     switch (type) {
@@ -2187,9 +2400,11 @@ class IconFactory {
           lineCap: LineCap.ROUND,
           lineJoin: LineJoin.ROUND
         }).freeze()
+
         iconFill = iconFill || Color.BLACK
         const color = iconFill
         BUILDER.fill = new Color(color.r, color.g, color.b, 255 * 0.17)
+
         // body + head
         icons = new List()
         BUILDER.moveTo(1, 1)
@@ -2205,6 +2420,7 @@ class IconFactory {
         BUILDER.quadTo(0.87, 0.5, 1, 0.701)
         BUILDER.close()
         icons.add(BUILDER.getPathIcon())
+
         // hair
         BUILDER.stroke = new Stroke({
           fill: iconFill,
@@ -2217,20 +2433,24 @@ class IconFactory {
         BUILDER.arcTo(0.224, 0.5, 0.224, (31.0 / 16.0) * Math.PI, Math.PI)
         BUILDER.close()
         icons.add(BUILDER.getPathIcon())
+
         BUILDER.stroke = new Stroke({
           fill: iconFill,
           lineCap: LineCap.ROUND,
           lineJoin: LineJoin.ROUND
         }).freeze()
+
         // arms
         BUILDER.moveTo(0.19, 1)
         BUILDER.lineTo(0.19, 0.816)
         BUILDER.moveTo(0.81, 1)
         BUILDER.lineTo(0.81, 0.816)
+
         // collar
         BUILDER.moveTo(0.316, 0.443)
         BUILDER.cubicTo(0.3, 0.672, 0.7, 0.672, 0.684, 0.443)
         icons.add(BUILDER.getPathIcon())
+
         result = BUILDER.combineIcons(icons)
         break
       }
@@ -2242,26 +2462,32 @@ class IconFactory {
         }).freeze()
         BUILDER.moveTo(0, 0.286)
         BUILDER.quadTo(0.037, 0.175, 0.147, 0.143)
+
         // thumb
         BUILDER.lineTo(0.584, 0.143)
         BUILDER.quadTo(0.602, 0.225, 0.451, 0.286)
         BUILDER.lineTo(0.265, 0.286)
+
         // index finger
         BUILDER.lineTo(0.95, 0.286)
         BUILDER.quadTo(1, 0.358, 0.95, 0.429)
         BUILDER.lineTo(0.472, 0.429)
+
         // middle finger
         BUILDER.lineTo(0.915, 0.429)
         BUILDER.quadTo(0.965, 0.5, 0.915, 0.571)
         BUILDER.lineTo(0.531, 0.571)
+
         // ring finger
         BUILDER.lineTo(0.879, 0.571)
         BUILDER.quadTo(0.929, 0.642, 0.879, 0.714)
         BUILDER.lineTo(0.502, 0.714)
+
         // pinkie
         BUILDER.lineTo(0.796, 0.714)
         BUILDER.quadTo(0.847, 0.786, 0.796, 0.857)
         BUILDER.lineTo(0.088, 0.857)
+
         BUILDER.quadTo(0.022, 0.833, 0, 0.759)
         BUILDER.close()
         result = BUILDER.getPathIcon()
@@ -2271,6 +2497,7 @@ class IconFactory {
         const headHeight = 0.192
         const rowHeight = 0.304
         const column1Width = 0.264
+
         icons = new List()
         iconFill = iconFill || Color.BLACK
         const darkColorFill = iconFill
@@ -2285,6 +2512,7 @@ class IconFactory {
         const stroke = new Stroke(iconFill).freeze()
         BUILDER.fill = darkFill
         BUILDER.stroke = stroke
+
         // outline
         BUILDER.moveTo(0, 0.1)
         BUILDER.lineTo(1, 0.1)
@@ -2292,6 +2520,7 @@ class IconFactory {
         BUILDER.lineTo(0, headHeight + 0.1)
         BUILDER.close()
         icons.add(BUILDER.getPathIcon())
+
         // rows outline
         BUILDER.fill = lightFill
         BUILDER.stroke = stroke
@@ -2301,14 +2530,17 @@ class IconFactory {
         BUILDER.lineTo(0, 0.9)
         BUILDER.close()
         icons.add(BUILDER.getPathIcon())
+
         // line between second and third row
         BUILDER.stroke = stroke
         BUILDER.moveTo(0, 0.1 + headHeight + rowHeight)
         BUILDER.lineTo(1, 0.1 + headHeight + rowHeight)
+
         // line between first and second column
         BUILDER.moveTo(column1Width, 0.1 + headHeight)
         BUILDER.lineTo(column1Width, 0.9)
         icons.add(BUILDER.getPathIcon())
+
         result = BUILDER.combineIcons(icons)
         break
       }
@@ -2324,6 +2556,7 @@ class IconFactory {
           lightColorFill.b,
           255 * 0.17
         )
+
         // top gear
         icons.add(createGear(0.4, 0.4, 0.4, stroke, darkFill))
         icons.add(
@@ -2336,6 +2569,7 @@ class IconFactory {
           )
         )
         icons.add(createGear(0.16, 0.4, 0.4, stroke, lightFill))
+
         // bottom gear
         icons.add(
           createGear(
@@ -2357,6 +2591,7 @@ class IconFactory {
           )
         )
         icons.add(createGear(0.16, 0.6, 0.6, stroke, lightFill))
+
         result = BUILDER.combineIcons(icons)
         break
       }
@@ -2366,6 +2601,7 @@ class IconFactory {
           lineCap: LineCap.ROUND,
           lineJoin: LineJoin.ROUND
         }).freeze()
+
         // outline
         const size = 0.5
         const curveEndX = 0.235
@@ -2373,6 +2609,7 @@ class IconFactory {
         const curveCenterX = curveEndX + (size - curveEndX) * 0.5
         const curveDeltaX = 0.5
         const curveDeltaY = size * 0.5
+
         BUILDER.moveTo(0.5 + size, 0.5 - size)
         BUILDER.cubicTo(
           0.5 + curveCenterX - curveDeltaX,
@@ -2392,11 +2629,13 @@ class IconFactory {
           0.5 - curveEndY
         )
         BUILDER.close()
+
         // inner lines
         const deltaY2 = size * 0.2
         const deltaX1 = 0.045
         const deltaX2 = 0.085
         const length = 0.3 * (size + curveEndX)
+
         BUILDER.moveTo(0.5 - length - deltaX2, 0.5 - 3 * deltaY2)
         BUILDER.lineTo(0.5 + length - deltaX2, 0.5 - 3 * deltaY2)
         BUILDER.moveTo(0.5 - length - deltaX1, 0.5 - deltaY2)
@@ -2416,20 +2655,26 @@ class IconFactory {
     if (hasDefaultColor) {
       IconFactory.TASK_ICONS.set(type, result)
     }
+
     return result
   }
+
   static createLoopCharacteristic(loopCharacteristic, iconFill) {
     const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
     let result = IconFactory.LOOP_TYPES.get(loopCharacteristic)
     if (hasDefaultColor && result) {
       return result
     }
+
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = new Stroke(iconFill).freeze()
+
     switch (loopCharacteristic) {
       case LoopCharacteristic.LOOP: {
         const fromAngle = 0.65 * Math.PI
         const toAngle = 2.4 * Math.PI
+
         const x = 0.5 + 0.5 * Math.cos(fromAngle)
         const y = 0.5 + 0.5 * Math.sin(fromAngle)
         BUILDER.moveTo(x, y)
@@ -2437,11 +2682,13 @@ class IconFactory {
         BUILDER.moveTo(x - 0.25, y + 0.05)
         BUILDER.lineTo(x, y)
         BUILDER.lineTo(x, y - 0.3)
+
         result = BUILDER.getPathIcon()
         break
       }
       case LoopCharacteristic.PARALLEL: {
         BUILDER.fill = iconFill
+
         for (let xOffset = 0; xOffset < 1; xOffset += 0.4) {
           BUILDER.moveTo(xOffset, 0)
           BUILDER.lineTo(xOffset + 0.2, 0)
@@ -2454,6 +2701,7 @@ class IconFactory {
       }
       case LoopCharacteristic.SEQUENTIAL: {
         BUILDER.fill = iconFill
+
         for (let yOffset = 0; yOffset < 1; yOffset += 0.4) {
           BUILDER.moveTo(0, yOffset)
           BUILDER.lineTo(0, yOffset + 0.2)
@@ -2468,32 +2716,41 @@ class IconFactory {
       default:
         break
     }
+
     if (hasDefaultColor) {
       IconFactory.LOOP_TYPES.set(loopCharacteristic, result)
     }
     return result
   }
+
   static createAdHoc(iconFill) {
     const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
     if (hasDefaultColor && IconFactory._adHoc) {
       return IconFactory._adHoc
     }
+
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = new Stroke(iconFill).freeze()
     BUILDER.fill = iconFill
+
     const fromAngle1 = (5.0 / 4.0) * Math.PI
     const toAngle1 = (7.0 / 4.0) * Math.PI
     const fromAngle2 = (1.0 / 4.0) * Math.PI
     const toAngle2 = (3.0 / 4.0) * Math.PI
+
     const smallR = 0.25 / (1 - Math.sqrt(1.5 - Math.sqrt(2)))
     const co = smallR * IconFactory.RADIUS_TO_CORNER_OFFSET
     const dy = 0.1
+
     const c1x = smallR - co
     const c1y = 0.35 + smallR
     const x1 = c1x + smallR * Math.cos(fromAngle1)
     const y1 = c1y + smallR * Math.sin(fromAngle1)
+
     const c2x = c1x + (2 * smallR - 2 * co)
     const c2y = c1y - 2 * smallR + 2 * co
+
     const x2 = c2x + smallR * Math.cos(fromAngle2)
     const y2 = c2y + smallR * Math.sin(fromAngle2)
     BUILDER.moveTo(x1, y1 + dy)
@@ -2504,14 +2761,17 @@ class IconFactory {
     BUILDER.arcTo(smallR, c2x, c2y + dy, fromAngle2, toAngle2)
     BUILDER.arcTo(smallR, c1x, c1y + dy, toAngle1, fromAngle1)
     BUILDER.close()
+
     const icon = BUILDER.getPathIcon()
     if (hasDefaultColor) {
       IconFactory._adHoc = icon
     }
     return icon
   }
+
   static createCompensation(filled, iconFill) {
     const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
     if (hasDefaultColor) {
       if (filled && IconFactory._filledComparison) {
         return IconFactory._filledComparison
@@ -2520,9 +2780,11 @@ class IconFactory {
         return IconFactory._comparison
       }
     }
+
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = new Stroke(iconFill).freeze()
     BUILDER.fill = filled ? iconFill : Color.TRANSPARENT
+
     const sqrt3inv = 1 / Math.sqrt(3)
     const halfSqurt3 = sqrt3inv / 2
     const xOff = 0.5 / (2 * sqrt3inv)
@@ -2534,6 +2796,7 @@ class IconFactory {
     BUILDER.lineTo(xOff, 0.5)
     BUILDER.lineTo(xOff, 0.5 + halfSqurt3)
     BUILDER.close()
+
     const icon = BUILDER.getPathIcon()
     if (hasDefaultColor) {
       if (filled) {
@@ -2542,17 +2805,22 @@ class IconFactory {
         IconFactory._comparison = icon
       }
     }
+
     return icon
   }
+
   static createStaticSubState(subState, iconFill) {
     const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
     let result = IconFactory.SUB_STATES.get(subState)
     if (hasDefaultColor && result) {
       return result
     }
+
     const iconStroke = new Stroke(iconFill).freeze()
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = iconStroke
+
     switch (subState) {
       case SubState.EXPANDED: {
         const icons = new List()
@@ -2582,21 +2850,27 @@ class IconFactory {
       default:
         break
     }
+
     if (hasDefaultColor) {
       IconFactory.SUB_STATES.set(subState, result)
     }
+
     return result
   }
+
   static createDynamicSubState(node, iconFill) {
     return new CollapseButtonIcon(node, iconFill)
   }
+
   static createGateway(background, outline) {
     const hasDefaultColors =
       IconFactory.equalFill(background, BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND) &&
       IconFactory.equalFill(outline, BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE)
+
     if (hasDefaultColors && IconFactory._gateway) {
       return IconFactory._gateway
     }
+
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = new Stroke(outline).freeze()
     BUILDER.fill = background
@@ -2611,14 +2885,18 @@ class IconFactory {
     }
     return gatewayIcon
   }
+
   static createGatewayType(type, fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
     let result = IconFactory.GATEWAY_TYPES.get(type)
     if (hasDefaultColor && result) {
       return result
     }
+
     const stroke = new Stroke(fill).freeze()
     const thickStroke = new Stroke(fill, 3).freeze()
+
     const BUILDER = IconFactory.BUILDER
     switch (type) {
       case GatewayType.EXCLUSIVE_WITHOUT_MARKER: {
@@ -2631,10 +2909,13 @@ class IconFactory {
         const cornerOffY = 0.5 - 0.5 * Math.sin(Math.PI / 4)
         const cornerOffX = cornerOffY + 0.1
         const xOff = 0.06
+
         const x1 = cornerOffX
         const x2 = cornerOffX + 2 * xOff
+
         const y1 = cornerOffY
         const y2 = 0.5 - (0.5 * xOff - cornerOffY * xOff) / (0.5 - cornerOffX - xOff)
+
         BUILDER.moveTo(x1, y1)
         BUILDER.lineTo(x2, y1)
         BUILDER.lineTo(0.5, y2)
@@ -2665,6 +2946,7 @@ class IconFactory {
         const icons = new List()
         BUILDER.stroke = stroke
         icons.add(BUILDER.createEllipseIcon())
+
         if (type === GatewayType.EVENT_BASED) {
           BUILDER.stroke = stroke
           const innerCircleIcon = BUILDER.createEllipseIcon()
@@ -2676,6 +2958,7 @@ class IconFactory {
             )
           )
         }
+
         BUILDER.stroke = stroke
         const polygon = List.fromArray(IconFactory.createPolygon(5, 0.5, 0))
         BUILDER.moveTo(polygon.get(0).x, polygon.get(0).y)
@@ -2713,6 +2996,7 @@ class IconFactory {
         const width = Math.sqrt(0.5 - 0.5 * Math.cos(Math.PI / 12))
         const rInner = width * Math.sqrt(1 + Math.sqrt(2) / 2)
         const inner = IconFactory.createPolygon(8, rInner, Math.PI / 8)
+
         BUILDER.moveTo(outer[0].x, outer[0].y)
         for (let i = 0; i < 8; i++) {
           BUILDER.lineTo(outer[3 * i].x, outer[3 * i].y)
@@ -2726,19 +3010,24 @@ class IconFactory {
       default:
         break
     }
+
     if (hasDefaultColor) {
       IconFactory.GATEWAY_TYPES.set(type, result)
     }
+
     return result
   }
+
   static createEvent(characteristic, background, outline) {
     const hasDefaultColors =
       IconFactory.equalFill(background, BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND) &&
       IconFactory.equalFill(outline, BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE)
+
     let result = IconFactory.EVENT_CHARACTERISTICS.get(characteristic)
     if (hasDefaultColors && result) {
       return result
     }
+
     const BUILDER = IconFactory.BUILDER
     let stroke
     switch (characteristic) {
@@ -2747,10 +3036,7 @@ class IconFactory {
         stroke = new Stroke(outline || Color.GREEN)
         break
       case EventCharacteristic.SUB_PROCESS_NON_INTERRUPTING:
-        stroke = new Stroke({
-          fill: outline || Color.GREEN,
-          dashStyle: DashStyle.DASH
-        })
+        stroke = new Stroke({ fill: outline || Color.GREEN, dashStyle: DashStyle.DASH })
         break
       case EventCharacteristic.CATCHING:
       case EventCharacteristic.BOUNDARY_INTERRUPTING:
@@ -2758,10 +3044,7 @@ class IconFactory {
         stroke = new Stroke(outline || Color.GOLDENROD)
         break
       case EventCharacteristic.BOUNDARY_NON_INTERRUPTING:
-        stroke = new Stroke({
-          fill: outline || Color.GOLDENROD,
-          dashStyle: DashStyle.DASH
-        })
+        stroke = new Stroke({ fill: outline || Color.GOLDENROD, dashStyle: DashStyle.DASH })
         break
       case EventCharacteristic.END:
         stroke = new Stroke(outline || Color.RED, 3)
@@ -2770,9 +3053,11 @@ class IconFactory {
         stroke = new Stroke()
         break
     }
+
     BUILDER.stroke = stroke.freeze()
     BUILDER.fill = background
     const ellipseIcon = BUILDER.createEllipseIcon()
+
     switch (characteristic) {
       case EventCharacteristic.CATCHING:
       case EventCharacteristic.BOUNDARY_INTERRUPTING:
@@ -2780,6 +3065,7 @@ class IconFactory {
       case EventCharacteristic.THROWING: {
         const icons = new List()
         icons.add(ellipseIcon)
+
         BUILDER.stroke = stroke
         BUILDER.fill = background
         const innerEllipseIcon = BUILDER.createEllipseIcon()
@@ -2797,20 +3083,26 @@ class IconFactory {
         result = ellipseIcon
         break
     }
+
     if (hasDefaultColors) {
       IconFactory.EVENT_CHARACTERISTICS.set(characteristic, result)
     }
+
     return result
   }
+
   static createEventType(type, filled, fill, background) {
     const hasDefaultColors =
       IconFactory.equalFill(fill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR) &&
       IconFactory.equalFill(background, BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND)
+
     const eventTypeWithFill = new EventTypeWithFill(type, filled)
     let result = IconFactory.EVENT_TYPES.get(eventTypeWithFill)
+
     if (hasDefaultColors && result) {
       return result
     }
+
     const stroke = new Stroke(fill).freeze()
     const roundStroke = new Stroke({
       fill: fill,
@@ -2822,9 +3114,11 @@ class IconFactory {
       lineJoin: LineJoin.ROUND,
       lineCap: LineCap.ROUND
     }).freeze()
+
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = stroke
     BUILDER.fill = filled ? fill : Color.TRANSPARENT
+
     let /** List.<Icon> */ icons
     switch (type) {
       case EventType.MESSAGE: {
@@ -2876,6 +3170,7 @@ class IconFactory {
         BUILDER.lineTo(0.217, 0.853)
         BUILDER.close()
         icons.add(BUILDER.getPathIcon())
+
         BUILDER.stroke = filled ? backgroundRoundStroke : roundStroke
         for (let i = 0; i < 4; i++) {
           const y = 0.235 + i * 0.177
@@ -2903,6 +3198,7 @@ class IconFactory {
         const y1 = 0.354
         const y2 = 0.049
         const y3 = 0.26
+
         BUILDER.moveTo(0.5 + x1, 0.5 - y1)
         BUILDER.lineTo(0.5 + x2, 0.5 + y2)
         BUILDER.lineTo(0.5 - x3, 0.5 - y3)
@@ -2966,11 +3262,14 @@ class IconFactory {
       default:
         break
     }
+
     if (hasDefaultColors) {
       IconFactory.EVENT_TYPES.set(eventTypeWithFill, result)
     }
+
     return result
   }
+
   static createMessage(stroke, fill, inverted = false) {
     const BUILDER = IconFactory.BUILDER
     const icons = new List()
@@ -2983,6 +3282,7 @@ class IconFactory {
       BUILDER.lineTo(0, 1)
       BUILDER.close()
       icons.add(BUILDER.getPathIcon())
+
       BUILDER.stroke = stroke
       BUILDER.moveTo(0, 0)
       BUILDER.lineTo(0.5, 0.5)
@@ -2997,6 +3297,7 @@ class IconFactory {
       BUILDER.lineTo(0.5, 0.45)
       BUILDER.close()
       icons.add(BUILDER.getPathIcon())
+
       BUILDER.fill = fill
       BUILDER.stroke = null
       BUILDER.moveTo(0, 0.1)
@@ -3009,11 +3310,13 @@ class IconFactory {
     }
     return BUILDER.combineIcons(icons)
   }
+
   static createChoreography(type, outline) {
     const hasDefaultColor = IconFactory.equalFill(
       outline,
       BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE
     )
+
     if (hasDefaultColor) {
       if (type === ChoreographyType.TASK && IconFactory._choreographyTask) {
         return IconFactory._choreographyTask
@@ -3022,8 +3325,10 @@ class IconFactory {
         return IconFactory._choreographyCall
       }
     }
+
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = new Stroke(outline, type === ChoreographyType.TASK ? 1 : 3).freeze()
+
     // Needs all four arguments instead of one because the path is drawn differently in both cases
     // on some platforms ...
     const icon = BUILDER.createVariableRectIcon(
@@ -3032,6 +3337,7 @@ class IconFactory {
       BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS,
       BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS
     )
+
     if (hasDefaultColor) {
       if (type === ChoreographyType.TASK) {
         IconFactory._choreographyTask = icon
@@ -3042,50 +3348,64 @@ class IconFactory {
     }
     return icon
   }
+
   static createChoreographyParticipant(outline, background, topRadius, bottomRadius) {
     const hasDefaultColors =
       IconFactory.equalFill(outline, BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE) &&
       (IconFactory.equalFill(background, BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_INITIATING_COLOR) ||
         IconFactory.equalFill(background, BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR))
+
     const participantBandType = new ParticipantBandType(background, topRadius, bottomRadius)
     let result = IconFactory.PARTICIPANT_BANDS.get(participantBandType)
     if (hasDefaultColors && result) {
       return result
     }
+
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = new Stroke(outline).freeze()
     BUILDER.fill = background
     result = BUILDER.createVariableRectIcon(topRadius, topRadius, bottomRadius, bottomRadius)
+
     if (hasDefaultColors) {
       IconFactory.PARTICIPANT_BANDS.set(participantBandType, result)
     }
+
     return result
   }
+
   static createChoreographyTaskBand(fill) {
     const hasDefaultColor = IconFactory.equalFill(
       fill,
       BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND
     )
+
     if (hasDefaultColor && IconFactory._taskBand) {
       return IconFactory._taskBand
     }
+
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = Stroke.TRANSPARENT
     BUILDER.fill = fill
+
     const icon = BUILDER.createRectIcon(0)
+
     if (hasDefaultColor) {
       IconFactory._taskBand = icon
     }
+
     return icon
   }
+
   static createConversation(type, background, outline) {
     const hasDefaultColors =
       IconFactory.equalFill(background, BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND) &&
       IconFactory.equalFill(outline, BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE)
+
     let result = IconFactory.CONVERSATIONS.get(type)
     if (hasDefaultColors && result) {
       return result
     }
+
     const BUILDER = IconFactory.BUILDER
     switch (type) {
       default:
@@ -3101,6 +3421,7 @@ class IconFactory {
       }
     }
     BUILDER.fill = background
+
     BUILDER.moveTo(0, 0.5)
     BUILDER.lineTo(0.25, 0)
     BUILDER.lineTo(0.75, 0)
@@ -3109,13 +3430,17 @@ class IconFactory {
     BUILDER.lineTo(0.25, 1)
     BUILDER.close()
     result = BUILDER.getPathIcon()
+
     if (hasDefaultColors) {
       IconFactory.CONVERSATIONS.set(type, result)
     }
+
     return result
   }
+
   static createConversationMarker(type, fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
     if (
       hasDefaultColor &&
       IconFactory._conversationSubState &&
@@ -3124,6 +3449,7 @@ class IconFactory {
     ) {
       return IconFactory._conversationSubState
     }
+
     switch (type) {
       case ConversationType.SUB_CONVERSATION:
       case ConversationType.CALLING_COLLABORATION: {
@@ -3137,23 +3463,30 @@ class IconFactory {
         return null
     }
   }
+
   static createDataObject(background, outline) {
     const hasDefaultColors =
       IconFactory.equalFill(background, BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND) &&
       IconFactory.equalFill(outline, BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE)
+
     if (hasDefaultColors && IconFactory._dataObject) {
       return IconFactory._dataObject
     }
+
     const icon = new DataObjectIcon()
     icon.stroke = new Stroke(outline).freeze()
     icon.fill = background
+
     if (hasDefaultColors) {
       IconFactory._dataObject = icon
     }
+
     return icon
   }
+
   static createDataObjectType(type, fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
     if (hasDefaultColor) {
       if (type === DataObjectType.INPUT && IconFactory._dataObjectInputType) {
         return IconFactory._dataObjectInputType
@@ -3162,6 +3495,7 @@ class IconFactory {
         return IconFactory._dataObjectOutputType
       }
     }
+
     let icon
     switch (type) {
       case DataObjectType.INPUT:
@@ -3181,23 +3515,28 @@ class IconFactory {
         return null
     }
   }
+
   static createAnnotation(left, background, outline) {
     const hasDefaultColors =
       IconFactory.equalFill(background, BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND) &&
       IconFactory.equalFill(outline, BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE)
+
     if (hasDefaultColors && left && IconFactory._leftAnnotation) {
       return IconFactory._leftAnnotation
     }
     if (hasDefaultColors && !left && IconFactory._rightAnnotation) {
       return IconFactory._rightAnnotation
     }
+
     const stroke = new Stroke(outline).freeze()
+
     const icons = new List()
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = Stroke.TRANSPARENT
     BUILDER.fill = background
     icons.add(BUILDER.createRectIcon(0))
     BUILDER.stroke = stroke
+
     if (left) {
       BUILDER.moveTo(0.1, 0)
       BUILDER.lineTo(0, 0)
@@ -3211,6 +3550,7 @@ class IconFactory {
     }
     icons.add(BUILDER.getPathIcon())
     const icon = BUILDER.combineIcons(icons)
+
     if (hasDefaultColors) {
       if (left) {
         IconFactory._leftAnnotation = icon
@@ -3220,20 +3560,26 @@ class IconFactory {
     }
     return icon
   }
+
   static createDataStore(background, outline) {
     const hasDefaultColors =
       IconFactory.equalFill(background, BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND) &&
       IconFactory.equalFill(outline, BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE)
+
     if (hasDefaultColors && IconFactory._dataStore) {
       return IconFactory._dataStore
     }
+
     const stroke = new Stroke(outline).freeze()
+
     const halfEllipseHeight = 0.125
     const ringOffset = 0.07
+
     const icons = new List()
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = stroke
     BUILDER.fill = background
+
     BUILDER.moveTo(0, halfEllipseHeight)
     BUILDER.lineTo(0, 1 - halfEllipseHeight)
     BUILDER.cubicTo(0, 1, 1, 1, 1, 1 - halfEllipseHeight)
@@ -3241,6 +3587,7 @@ class IconFactory {
     BUILDER.cubicTo(1, 0, 0, 0, 0, halfEllipseHeight)
     BUILDER.close()
     icons.add(BUILDER.getPathIcon())
+
     BUILDER.stroke = stroke
     let ellipseCenterY = halfEllipseHeight
     for (let i = 0; i < 3; i++) {
@@ -3256,18 +3603,24 @@ class IconFactory {
       ellipseCenterY += ringOffset
     }
     icons.add(BUILDER.getPathIcon())
+
     const icon = BUILDER.combineIcons(icons)
+
     if (hasDefaultColors) {
       IconFactory._dataStore = icon
     }
+
     return icon
   }
+
   static createArrowIcon(type, fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
     let result = IconFactory.ARROWS.get(type)
     if (hasDefaultColor && result) {
       return result
     }
+
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = new Stroke({
       fill: fill,
@@ -3321,6 +3674,7 @@ class IconFactory {
     }
     return result
   }
+
   static createLine(stroke, x1, y1, x2, y2) {
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = stroke
@@ -3328,57 +3682,73 @@ class IconFactory {
     BUILDER.lineTo(x2, y2)
     return BUILDER.getPathIcon()
   }
+
   static createPolygon(sideCount, radius, rotation) {
     const result = new Array(sideCount)
     const delta = (Math.PI * 2.0) / sideCount
+
     for (let i = 0; i < sideCount; i++) {
       const angle = delta * i + rotation
       result[i] = new Point(radius * Math.sin(angle) + 0.5, -radius * Math.cos(angle) + 0.5)
     }
     return result
   }
+
   static get RADIUS_TO_CORNER_OFFSET() {
     return (
       IconFactory._radiusToCornerOffset ||
       (IconFactory._radiusToCornerOffset = Math.sqrt(1.5 - Math.sqrt(2)))
     )
   }
+
   static get TASK_ICONS() {
     return IconFactory._taskIcons || (IconFactory._taskIcons = new HashMap())
   }
+
   static get LOOP_TYPES() {
     return IconFactory._loopTypes || (IconFactory._loopTypes = new HashMap())
   }
+
   static get SUB_STATES() {
     return IconFactory._subStates || (IconFactory._subStates = new HashMap())
   }
+
   static get GATEWAY_TYPES() {
     return IconFactory._gatewayTypes || (IconFactory._gatewayTypes = new HashMap())
   }
+
   static get EVENT_CHARACTERISTICS() {
     return IconFactory._eventCharacteristics || (IconFactory._eventCharacteristics = new HashMap())
   }
+
   static get EVENT_TYPES() {
     return IconFactory._eventTypes || (IconFactory._eventTypes = new HashMap())
   }
+
   static get PLUS_ICONS() {
     return IconFactory._plusIcons || (IconFactory._plusIcons = new HashMap())
   }
+
   static get PARTICIPANT_BANDS() {
     return IconFactory._participantBands || (IconFactory._participantBands = new HashMap())
   }
+
   static get CONVERSATIONS() {
     return IconFactory._conversations || (IconFactory._conversations = new HashMap())
   }
+
   static get ARROWS() {
     return IconFactory._arrows || (IconFactory._arrows = new HashMap())
   }
+
   static get ACTIVITY_ICONS() {
     return IconFactory._activityIcons || (IconFactory._activityIcons = new HashMap())
   }
+
   static get BUILDER() {
     return IconFactory._builder || (IconFactory._builder = new IconBuilder())
   }
+
   /**
    * Compares two {@link Fill}s for the same color value
    */
@@ -3388,9 +3758,11 @@ class IconFactory {
     } else if ((!fill1 && fill2) || (fill1 && !fill2)) {
       return false
     }
+
     if (!(Object.getPrototypeOf(fill1) === Object.getPrototypeOf(fill2))) {
       return false
     }
+
     if (fill1 instanceof Color && fill2 instanceof Color) {
       return IconFactory.equalColor(fill1, fill2)
     } else if (fill1 instanceof LinearGradient && fill2 instanceof LinearGradient) {
@@ -3398,8 +3770,10 @@ class IconFactory {
     } else if (fill1 instanceof RadialGradient && fill2 instanceof RadialGradient) {
       return IconFactory.equalRadialGradient(fill1, fill2)
     }
+
     return false
   }
+
   /**
    * Compares two {@link Color}s for the same color value
    */
@@ -3415,6 +3789,7 @@ class IconFactory {
     }
     return color1.equals(color2)
   }
+
   /**
    * Compares two {@link LinearGradient}s for value equality
    */
@@ -3428,6 +3803,7 @@ class IconFactory {
     )
     return sameEndPoint && sameStartPoint && sameSpreadMethod && sameGradientStops
   }
+
   /**
    * Compares two {@link RadialGradient}s for value equality
    */
@@ -3450,6 +3826,7 @@ class IconFactory {
       sameGradientStops
     )
   }
+
   /**
    * Compares whether both {@link GradientStop} lists are the same
    */
@@ -3457,6 +3834,7 @@ class IconFactory {
     if (stops1.size !== stops2.size) {
       return false
     }
+
     let sameStops = true
     stops1.forEach((stop1, idx) => {
       const stop2 = stops2.at(idx)
@@ -3464,8 +3842,10 @@ class IconFactory {
       const sameOffset = stop1.offset === stop2.offset
       sameStops = sameStops && sameColor && sameOffset
     })
+
     return sameStops
   }
+
   /**
    * Compares two {@link Stroke}s for the same fill value
    */
@@ -3482,11 +3862,13 @@ class IconFactory {
     return IconFactory.equalFill(stroke1.fill, stroke2.fill)
   }
 }
+
 function createGear(radius, centerX, centerY, stroke, fill) {
   const BUILDER = IconFactory.BUILDER
   BUILDER.stroke = stroke
   BUILDER.fill = fill
   const smallR = 0.7 * radius
+
   let angle = (-2 * Math.PI) / 48
   BUILDER.moveTo(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle))
   for (let i = 0; i < 8; i++) {
@@ -3502,9 +3884,11 @@ function createGear(radius, centerX, centerY, stroke, fill) {
     )
     angle += Math.PI / 4
   }
+
   BUILDER.close()
   return BUILDER.getPathIcon()
 }
+
 function createPlusIcon(size, stroke, fill) {
   const BUILDER = IconFactory.BUILDER
   const plusData = new PlusData(size, stroke, fill)
@@ -3532,6 +3916,7 @@ function createPlusIcon(size, stroke, fill) {
   }
   return result
 }
+
 /**
  * An augmented {@link IList} which keeps a modification counter and provides the height of
  * the participants that are stored within.
@@ -3539,9 +3924,11 @@ function createPlusIcon(size, stroke, fill) {
 class ParticipantList extends BaseClass(IList) {
   innerList = new List()
   _modCount = 0
+
   get modCount() {
     return this._modCount + this.getParticipantModCount()
   }
+
   getHeight() {
     let height = 0
     this.innerList.forEach((participant) => {
@@ -3549,6 +3936,7 @@ class ParticipantList extends BaseClass(IList) {
     })
     return height
   }
+
   getParticipantModCount() {
     let participantCount = 0
     this.innerList.forEach((participant) => {
@@ -3556,51 +3944,65 @@ class ParticipantList extends BaseClass(IList) {
     })
     return participantCount
   }
+
   getEnumerator() {
     return this.innerList.getEnumerator()
   }
+
   add(item) {
     this._modCount++
     this.innerList.add(item)
   }
+
   clear() {
     this._modCount += this.getParticipantModCount() + 1
     this.innerList.clear()
   }
+
   includes(item) {
     return this.innerList.includes(item)
   }
+
   copyTo(array, arrayIndex) {
     this.innerList.copyTo(array, arrayIndex)
   }
+
   remove(item) {
     this._modCount += item.modCount + 1
     return this.innerList.remove(item)
   }
+
   get size() {
     return this.innerList.size
   }
+
   get isReadOnly() {
     return this.innerList.isReadOnly
   }
+
   indexOf(item) {
     return this.innerList.indexOf(item)
   }
+
   insert(index, item) {
     this._modCount++
     this.innerList.insert(index, item)
   }
+
   removeAt(index) {
     this._modCount += this.innerList.get(index).modCount + 1
     this.innerList.removeAt(index)
   }
+
   get(index) {
     return this.innerList.get(index)
   }
+
   set(index, value) {
     this.innerList.set(index, value)
   }
 }
+
 /**
  * An {@link INodeStyle} implementation representing an Choreography according to the BPMN.
  */
@@ -3634,18 +4036,21 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   _type = null
   outlineIcon = null
   loopIcon = null
+
   constructor() {
     super()
     this.messageOutline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
     this.type = ChoreographyType.TASK
     this.minimumSize = new Size(30, 30)
   }
+
   /**
    * Gets the choreography type of this style.
    */
   get type() {
     return this._type
   }
+
   /**
    * Sets the choreography type of this style.
    */
@@ -3656,12 +4061,14 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       this.updateOutlineIcon()
     }
   }
+
   /**
    * Gets the loop characteristic of this style.
    */
   get loopCharacteristic() {
     return this._loopCharacteristic
   }
+
   /**
    * Sets the loop characteristic of this style.
    */
@@ -3672,12 +4079,14 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       this.updateLoopIcon()
     }
   }
+
   /**
    * Gets the sub state of this style.
    */
   get subState() {
     return this._subState
   }
+
   /**
    * Sets the sub state of this style.
    */
@@ -3688,12 +4097,14 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       this.updateTaskBandIcon()
     }
   }
+
   /**
    * Gets whether the initiating message icon is displayed.
    */
   get initiatingMessage() {
     return this._initiatingMessage
   }
+
   /**
    * Sets whether the initiating message icon is displayed.
    */
@@ -3703,12 +4114,14 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       this._initiatingMessage = value
     }
   }
+
   /**
    * Gets whether the response message icon is displayed.
    */
   get responseMessage() {
     return this._responseMessage
   }
+
   /**
    * Sets whether the response message icon is displayed.
    */
@@ -3718,6 +4131,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       this._responseMessage = value
     }
   }
+
   /**
    * Gets whether the initiating message icon or the response message icon is displayed on top of
    * the node while the other one is at the bottom side. Whether the initiating and response
@@ -3728,6 +4142,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   get initiatingAtTop() {
     return this._initiatingAtTop
   }
+
   /**
    * Sets whether the initiating message icon or the response message icon is displayed on top of
    * the node while the other one is at the bottom side. Whether the initiating and response
@@ -3743,24 +4158,28 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       }
     }
   }
+
   /**
    * Gets the list of {@link Participant}s at the top of the node, ordered from top to bottom.
    */
   get topParticipants() {
     return this._topParticipants
   }
+
   /**
    * Gets the list of {@link Participant}s at the bottom of the node, ordered from bottom to top.
    */
   get bottomParticipants() {
     return this._bottomParticipants
   }
+
   /**
    * Gets the background color of the choreography.
    */
   get background() {
     return this._background
   }
+
   /**
    * Sets the background color of the choreography.
    */
@@ -3771,12 +4190,14 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       this.updateTaskBandIcon()
     }
   }
+
   /**
    * Gets the outline color of the choreography.
    */
   get outline() {
     return this._outline
   }
+
   /**
    * Sets the outline color of the choreography.
    */
@@ -3787,12 +4208,14 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       this.updateOutlineIcon()
     }
   }
+
   /**
    * Gets the primary color for icons and markers.
    */
   get iconColor() {
     return this._iconColor
   }
+
   /**
    * Sets the primary color for icons and markers.
    */
@@ -3805,12 +4228,14 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       this.updateTaskBandIcon()
     }
   }
+
   /**
    * Gets the color for initiating participants and messages.
    */
   get initiatingColor() {
     return this._initiatingColor
   }
+
   /**
    * Sets the color for initiating participants and messages.
    */
@@ -3820,12 +4245,14 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       this._initiatingColor = value
     }
   }
+
   /**
    * Gets the primary color for responding participants and messages.
    */
   get responseColor() {
     return this._responseColor
   }
+
   /**
    * Sets the primary color for responding participants and messages.
    */
@@ -3835,12 +4262,14 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       this._responseColor = value
     }
   }
+
   /**
    * Gets the outline color for messages.
    */
   get messageOutline() {
     return this._messageOutline
   }
+
   /**
    * Sets the outline color for messages.
    * This also influences the color of the line to the message.
@@ -3860,6 +4289,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       this.updateResponseMessageIcon()
     }
   }
+
   /**
    * Gets the insets for the task name band of the given item.
    * These insets are extended by the sizes of the participant bands on top and bottom side
@@ -3871,6 +4301,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   get insets() {
     return this._insets
   }
+
   /**
    * Sets the insets for the task name band of the given item.
    * These insets are extended by the sizes of the participant bands on top and bottom side
@@ -3881,21 +4312,25 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   set insets(value) {
     this._insets = value
   }
+
   get showTopMessage() {
     return (
       (this.initiatingMessage && this.initiatingAtTop) ||
       (this.responseMessage && !this.initiatingAtTop)
     )
   }
+
   get showBottomMessage() {
     return (
       (this.initiatingMessage && !this.initiatingAtTop) ||
       (this.responseMessage && this.initiatingAtTop)
     )
   }
+
   get messageStroke() {
     return this._messageStroke
   }
+
   updateOutlineIcon() {
     this.outlineIcon = IconFactory.createChoreography(this._type, this.outline)
     if (this._type === ChoreographyType.CALL) {
@@ -3906,12 +4341,15 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       )
     }
   }
+
   updateTaskBandIcon() {
     this._taskBandBackgroundIcon = IconFactory.createChoreographyTaskBand(this.background)
   }
+
   updateMessageLineIcon() {
     this._messageLineIcon = IconFactory.createLine(this._messageLineStroke, 0.5, 0, 0.5, 1)
   }
+
   updateInitiatingMessageIcon() {
     this._initiatingMessageIcon = IconFactory.createMessage(
       this._messageStroke,
@@ -3921,6 +4359,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     this.updateTopInitiatingMessageIcon()
     this.updateBottomInitiatingMessageIcon()
   }
+
   updateTopInitiatingMessageIcon() {
     this._topInitiatingMessageIcon = IconFactory.createCombinedIcon(
       new List(
@@ -3939,6 +4378,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       )
     )
   }
+
   updateBottomInitiatingMessageIcon() {
     this._bottomInitiatingMessageIcon = IconFactory.createCombinedIcon(
       new List(
@@ -3957,12 +4397,14 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       )
     )
   }
+
   updateResponseMessageIcon() {
     this._responseMessageIcon = IconFactory.createMessage(this._messageStroke, this.responseColor)
     this.updateMessageLineIcon()
     this.updateTopResponseMessageIcon()
     this.updateBottomResponseMessageIcon()
   }
+
   updateTopResponseMessageIcon() {
     this._topResponseMessageIcon = IconFactory.createCombinedIcon(
       new List(
@@ -3981,6 +4423,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       )
     )
   }
+
   updateBottomResponseMessageIcon() {
     this._bottomResponseMessageIcon = IconFactory.createCombinedIcon(
       new List(
@@ -3999,6 +4442,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       )
     )
   }
+
   updateMultiInstanceIcon() {
     this._multiInstanceIcon = IconFactory.createPlacedIcon(
       IconFactory.createLoopCharacteristic(LoopCharacteristic.PARALLEL, this.iconColor),
@@ -4006,9 +4450,11 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       BPMN_CONSTANTS_SIZES_MARKER
     )
   }
+
   updateLoopIcon() {
     this.loopIcon = IconFactory.createLoopCharacteristic(this.loopCharacteristic, this.iconColor)
   }
+
   /**
    * Callback that creates the visual.
    * @param renderContext The render context.
@@ -4019,10 +4465,12 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   createVisual(renderContext, node) {
     const bounds = node.layout.toRect()
     const container = new SvgVisualGroup()
+
     // outline
     this.outlineIcon.setBounds(new Rect(Point.ORIGIN, bounds.size))
     const outlineVisual = this.outlineIcon.createVisual(renderContext)
     container.add(outlineVisual)
+
     // task band
     const taskBandContainer = new SvgVisualGroup()
     const bandIcon = this.createTaskBandIcon(node)
@@ -4031,6 +4479,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     taskBandContainer.add(bandIconVisual)
     taskBandContainer['render-data-cache'] = bandIcon
     container.children.add(taskBandContainer)
+
     const tpi = new List()
     // top participants
     let topOffset = 0
@@ -4045,6 +4494,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       topOffset += height
       first = false
     })
+
     const bpi = new List()
     // bottom participants
     let bottomOffset = bounds.height
@@ -4059,6 +4509,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       container.add(participantIconVisual)
       first = false
     })
+
     // messages
     if (this.initiatingMessage) {
       this.updateInitiatingMessageIcon()
@@ -4078,6 +4529,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       const responseMessageIconVisual = responseMessageIcon.createVisual(renderContext)
       container.add(responseMessageIconVisual)
     }
+
     const transform = new Matrix()
     transform.translate(node.layout.topLeft)
     container.transform = transform
@@ -4089,6 +4541,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     }
     return container
   }
+
   /**
    * Callback that updates the visual previously created by {@link NodeStyleBase.createVisual}.
    * @param renderContext The render context.
@@ -4109,22 +4562,27 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       return this.createVisual(renderContext, node)
     }
     const newBounds = node.layout.toRect()
+
     if (cache.bounds.width !== newBounds.width || cache.bounds.height !== newBounds.height) {
       // update icon bounds
       let childIndex = 0
+
       // outline
       this.outlineIcon.setBounds(new Rect(Point.ORIGIN, newBounds.size))
       updateChildVisual(container, childIndex++, this.outlineIcon, renderContext)
+
       // task band
       const taskBandContainer = container.children.at(childIndex++)
       if (taskBandContainer instanceof SvgVisualGroup) {
         const taskBandIcon = taskBandContainer['render-data-cache']
         const taskBandBounds = this.getRelativeTaskNameBandBounds(node)
+
         if (taskBandIcon && taskBandContainer.children.size === 1) {
           taskBandIcon.setBounds(taskBandBounds)
           updateChildVisual(taskBandContainer, 0, taskBandIcon, renderContext)
         }
       }
+
       // top participants
       let topOffset = 0
       for (let i = 0; i < this._topParticipants.size; i++) {
@@ -4135,6 +4593,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
         updateChildVisual(container, childIndex++, participantIcon, renderContext)
         topOffset += height
       }
+
       // bottom participants
       let bottomOffset = newBounds.height
       for (let i = 0; i < this._bottomParticipants.size; i++) {
@@ -4145,6 +4604,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
         participantIcon.setBounds(new Rect(0, bottomOffset, newBounds.width, height))
         updateChildVisual(container, childIndex++, participantIcon, renderContext)
       }
+
       // messages
       if (this.initiatingMessage) {
         const initiatingMessageIcon = this.initiatingAtTop
@@ -4161,6 +4621,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
         updateChildVisual(container, childIndex++, responseMessageIcon, renderContext)
       }
     }
+
     const transform = new Matrix()
     transform.translate(node.layout.topLeft)
     container.transform = transform
@@ -4172,6 +4633,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     }
     return container
   }
+
   /**
    * Creates the {@link Icon} which visualizes the task band at the center of a
    * {@link ChoreographyNodeStyle}
@@ -4187,6 +4649,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
           ? IconFactory.createDynamicSubState(node, this.iconColor)
           : IconFactory.createStaticSubState(this.subState, this.iconColor)
     }
+
     let markerIcon = null
     if (this.loopIcon && subStateIcon) {
       markerIcon = IconFactory.createLineUpIcon(
@@ -4211,12 +4674,14 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     }
     return this._taskBandBackgroundIcon
   }
+
   /**
    * Creates the {@link Icon} which visualizes a participant band at the top or bottom of a {@link
    * ChoreographyNodeStyle}
    */
   createParticipantIcon(participant, top, isFirst) {
     const isInitializing = isFirst && top !== !this.initiatingAtTop
+
     const radius = BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS
     let icon = IconFactory.createChoreographyParticipant(
       this.outline,
@@ -4232,6 +4697,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     }
     return icon
   }
+
   /**
    * Returns the participant at the specified location.
    * @param node The node whose bounds shall be used.
@@ -4241,6 +4707,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     if (!node.layout.contains(location)) {
       return null
     }
+
     let relativeY = location.subtract(node.layout.topLeft).y
     if (relativeY < this.topParticipants.getHeight()) {
       for (let i = 0; i < this.topParticipants.size; i++) {
@@ -4262,8 +4729,10 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
         yFromBottom -= size
       }
     }
+
     return null
   }
+
   /**
    * Returns the bounds of the specified participant band.
    * @param owner The node whose bounds shall be used.
@@ -4298,6 +4767,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     }
     return this.getTaskNameBandBounds(owner)
   }
+
   /**
    * Returns the bounds of the task name band.
    * @param owner The node whose bounds shall be used.
@@ -4305,6 +4775,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   getTaskNameBandBounds(owner) {
     return this.getRelativeTaskNameBandBounds(owner).getTranslated(owner.layout.topLeft)
   }
+
   /**
    * Returns the bounds of the task name band for a node at the origin location (0,0).
    */
@@ -4317,6 +4788,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       Math.max(0, owner.layout.height - topHeight - this._bottomParticipants.getHeight())
     )
   }
+
   /**
    * Gets the outline of the visual style.
    * This implementation yields `null` to indicate that
@@ -4329,6 +4801,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   getOutline(node) {
     const sns = ChoreographyNodeStyle.NODE_STYLE
     const path = sns.renderer.getShapeGeometry(node, sns).getOutline() ?? new GeneralPath()
+
     if (this.showTopMessage) {
       const topBoxSize = BPMN_CONSTANTS_SIZES_MESSAGE
       const cx = node.layout.center.x
@@ -4341,6 +4814,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       path.lineTo(cx - topBoxSize.width * 0.5, topBoxMaxY)
       path.close()
     }
+
     if (this.showBottomMessage) {
       const bottomBoxSize = BPMN_CONSTANTS_SIZES_MESSAGE
       const cx = node.layout.center.x
@@ -4353,8 +4827,10 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       path.lineTo(cx - bottomBoxSize.width * 0.5, bottomBoxY)
       path.close()
     }
+
     return path
   }
+
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
    * This method is called in response to a {@link IHitTestable.isHit}
@@ -4396,6 +4872,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
         return true
       }
     }
+
     if (this.showBottomMessage) {
       const bottomBoxSize = BPMN_CONSTANTS_SIZES_MESSAGE
       const cx = node.layout.center.x
@@ -4420,6 +4897,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     }
     return false
   }
+
   /**
    * Gets the bounds of the visual for the node in the given context.
    * This method is called in response to a {@link IBoundsProvider.getBounds}
@@ -4451,8 +4929,10 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
         )
       )
     }
+
     return bounds
   }
+
   /**
    * Performs the {@link ILookup.lookup} operation for
    * the {@link INodeStyleRenderer.getContext}
@@ -4477,6 +4957,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     }
     return super.lookup(node, type)
   }
+
   /**
    * Create a clone of this object.
    * @returns A clone of this object.
@@ -4498,6 +4979,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     clone.outline = this.outline
     clone.background = this.background
     clone.messageOutline = this.messageOutline
+
     this.topParticipants.forEach((participant) => {
       clone.topParticipants.add(participant.clone())
     })
@@ -4506,6 +4988,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     })
     return clone
   }
+
   static get NODE_STYLE() {
     if (!ChoreographyNodeStyle._nodeStyle) {
       ChoreographyNodeStyle._nodeStyle = new RectangleNodeStyle({
@@ -4516,28 +4999,34 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     }
     return ChoreographyNodeStyle._nodeStyle
   }
+
   static get MESSAGE_DISTANCE() {
     return 15
   }
 }
+
 /**
  * Uses the style insets extended by the size of the participant bands.
  */
 class ChoreographyInsetsProvider extends BaseClass(IGroupPaddingProvider) {
   style
+
   constructor(style) {
     super()
     this.style = style
   }
+
   getPadding() {
     const topInsets = this.style.topParticipants.getHeight()
     let bottomInsets = this.style.bottomParticipants.getHeight()
+
     bottomInsets +=
       this.style.loopCharacteristic !== LoopCharacteristic.NONE ||
       this.style.subState !== SubState.NONE
         ? BPMN_CONSTANTS_SIZES_MARKER.height +
           BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_MARKER.model.padding.bottom
         : 0
+
     return new Insets(
       this.style.insets.top + topInsets,
       this.style.insets.right,
@@ -4546,6 +5035,7 @@ class ChoreographyInsetsProvider extends BaseClass(IGroupPaddingProvider) {
     )
   }
 }
+
 /**
  * A label helper which provides the next free location and the according style for a label added
  * to a node with
@@ -4554,14 +5044,17 @@ class ChoreographyInsetsProvider extends BaseClass(IGroupPaddingProvider) {
  */
 class ChoreographyEditLabelHelper extends EditLabelHelper {
   node
+
   constructor(node) {
     super()
     this.node = node
   }
+
   getLabelParameter(inputModeContext) {
     const parameter = ChoreographyLabelModel.INSTANCE.findNextParameter(this.node)
     return parameter || ExteriorNodeLabelModel.LEFT
   }
+
   getLabelStyle(inputModeContext, owner) {
     const parameter = ChoreographyLabelModel.INSTANCE.findNextParameter(this.node)
     if (
@@ -4572,11 +5065,13 @@ class ChoreographyEditLabelHelper extends EditLabelHelper {
     }
     return inputModeContext.canvasComponent.graph.nodeDefaults.labels.style
   }
+
   onLabelEditing(inputModeContext, event) {
     // override default behavior
     // super.onLabelEditing would choose the first label if present but we want to edit the selected label
   }
 }
+
 function updateChildVisual(container, index, icon, context) {
   const oldPathVisual = container.children.at(index)
   let newPathVisual = icon.updateVisual(context, oldPathVisual)
@@ -4586,6 +5081,7 @@ function updateChildVisual(container, index, icon, context) {
     container.children.insert(index, newPathVisual)
   }
 }
+
 /**
  * A label style for message labels of nodes using a {@link ChoreographyNodeStyle}.
  * To place labels with this style, {@link ChoreographyLabelModel.NORTH_MESSAGE}
@@ -4596,14 +5092,17 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
   static _connectorStyle
   static _defaultTextPlacement
   static _renderer
+
   _messageStyle = new BpmnNodeStyle()
   _delegateStyle
+
   /**
    * Creates a new instance.
    */
   constructor() {
     super()
     this._messageStyle.minimumSize = BPMN_CONSTANTS_SIZES_MESSAGE
+
     const connectedIconLabelStyle = new ConnectedIconLabelStyle()
     connectedIconLabelStyle.iconSize = BPMN_CONSTANTS_SIZES_MESSAGE
     connectedIconLabelStyle.iconStyle = this._messageStyle
@@ -4614,6 +5113,7 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
     this._delegateStyle = connectedIconLabelStyle
     this.textPlacement = ChoreographyMessageLabelStyle.DEFAULT_TEXT_PLACEMENT
   }
+
   /**
    * Gets where the text is placed relative to the message icon.
    * The label model parameter has to support {@link INode}s.
@@ -4621,6 +5121,7 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
   get textPlacement() {
     return this.delegateStyle != null ? this.delegateStyle.textPlacement : null
   }
+
   /**
    * Sets where the text is placed relative to the message icon.
    * The label model parameter has to support {@link INode}s.
@@ -4630,12 +5131,15 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
       this.delegateStyle.textPlacement = value
     }
   }
+
   get delegateStyle() {
     return this._delegateStyle
   }
+
   get messageStyle() {
     return this._messageStyle
   }
+
   /**
    * Create a clone of this object.
    * @returns A clone of this object.
@@ -4644,6 +5148,7 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
   clone() {
     return new ChoreographyMessageLabelStyle()
   }
+
   /**
    * Gets the renderer implementation that can be queried for implementations
    * that provide details about the visual appearance and visual behavior
@@ -4659,21 +5164,22 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
   get renderer() {
     return ChoreographyMessageLabelStyle.RENDERER
   }
+
   static get RENDERER() {
     return (
       ChoreographyMessageLabelStyle._renderer ||
       (ChoreographyMessageLabelStyle._renderer = new ChoreographyMessageLabelStyleRenderer())
     )
   }
+
   static get DEFAULT_TEXT_PLACEMENT() {
     if (!ChoreographyMessageLabelStyle._defaultTextPlacement) {
-      const model = new ExteriorNodeLabelModel({
-        margins: 5
-      })
+      const model = new ExteriorNodeLabelModel({ margins: 5 })
       ChoreographyMessageLabelStyle._defaultTextPlacement = model.createParameter('left')
     }
     return ChoreographyMessageLabelStyle._defaultTextPlacement
   }
+
   static get CONNECTOR_STYLE() {
     if (!ChoreographyMessageLabelStyle._connectorStyle) {
       const style = new BpmnEdgeStyle()
@@ -4682,6 +5188,7 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
     }
     return ChoreographyMessageLabelStyle._connectorStyle
   }
+
   static get TEXT_STYLE() {
     return (
       ChoreographyMessageLabelStyle._textStyle ||
@@ -4689,6 +5196,7 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
     )
   }
 }
+
 /**
  * An {@link ILabelStyleRenderer} implementation used by {@link ChoreographyMessageLabelStyle}.
  */
@@ -4699,11 +5207,13 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
   responseMessage = false
   _messageColor = null
   _messageOutline = null
+
   getCurrentStyle(item, style) {
     if (!(style instanceof ChoreographyMessageLabelStyle)) {
       return ILabelStyle.VOID_LABEL_STYLE
     }
     const labelStyle = style
+
     this.north = true
     this._messageColor = BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR
     this._messageOutline = null
@@ -4711,6 +5221,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     if (item.owner instanceof INode) {
       const node = item.owner
       this.north = item.layout.center.y < node.layout.center.y
+
       if (node.style instanceof ChoreographyNodeStyle) {
         this.responseMessage = node.style.initiatingAtTop !== this.north
         this._messageColor = this.responseMessage
@@ -4719,9 +5230,11 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
         this._messageOutline = node.style.messageStroke
       }
     }
+
     if (!this._messageOutline) {
       this._messageOutline = new Stroke(BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE).freeze()
     }
+
     const delegateStyle = labelStyle.delegateStyle
     delegateStyle.iconStyle = labelStyle.messageStyle
     labelStyle.messageStyle.icon = IconFactory.createMessage(
@@ -4736,6 +5249,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
       : FreeNodePortLocationModel.BOTTOM
     return delegateStyle
   }
+
   /**
    * Gets an implementation of the {@link IVisualCreator} interface that can
    * handle the provided item and its associated style.
@@ -4754,6 +5268,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     this.style = style
     return this
   }
+
   /**
    * Gets an implementation of the {@link IBoundsProvider} interface that can
    * handle the provided item and its associated style.
@@ -4770,6 +5285,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     const delegateStyle = this.getCurrentStyle(item, style)
     return delegateStyle.renderer.getBoundsProvider(item, delegateStyle)
   }
+
   /**
    * Gets an implementation of the {@link IVisibilityTestable} interface that can
    * handle the provided item and its associated style.
@@ -4786,6 +5302,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     const delegateStyle = this.getCurrentStyle(item, style)
     return delegateStyle.renderer.getVisibilityTestable(item, delegateStyle)
   }
+
   /**
    * Gets an implementation of the {@link IHitTestable} interface that can
    * handle the provided item and its associated style.
@@ -4803,6 +5320,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     const delegateStyle = this.getCurrentStyle(item, style)
     return delegateStyle.renderer.getHitTestable(item, delegateStyle)
   }
+
   /**
    * Gets an implementation of the {@link IMarqueeTestable} interface that can
    * handle the provided item and its associated style.
@@ -4819,6 +5337,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     const delegateStyle = this.getCurrentStyle(item, style)
     return delegateStyle.renderer.getMarqueeTestable(item, delegateStyle)
   }
+
   /**
    * Gets an implementation of the ILassoTestable interface that can handle the provided label and
    * its associated style.
@@ -4827,6 +5346,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     const delegateStyle = this.getCurrentStyle(label, style)
     return delegateStyle.renderer.getLassoTestable(label, delegateStyle)
   }
+
   /**
    * Gets a temporary context instance that can be used to query additional information
    * for the item's style.
@@ -4843,6 +5363,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     const delegateStyle = this.getCurrentStyle(item, style)
     return delegateStyle.renderer.getContext(item, delegateStyle)
   }
+
   /**
    * Calculates the {@link ILabel.preferredSize preferred size}
    * of a given label using the associated style.
@@ -4857,6 +5378,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     const delegateStyle = this.getCurrentStyle(label, style)
     return delegateStyle.renderer.getPreferredSize(label, delegateStyle)
   }
+
   /**
    * This method is called by the framework to create a {@link Visual}
    * that will be included into the {@link IRenderContext}.
@@ -4877,6 +5399,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     container['render-data-cache'] = this.createRenderData()
     return container
   }
+
   /**
    * This method updates or replaces a previously created {@link Visual} for inclusion
    * in the {@link IRenderContext}.
@@ -4915,6 +5438,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     }
     return container
   }
+
   /**
    * Returns an object that contains all information necessary to determine whether a visual needs
    * to be updated.
@@ -4928,12 +5452,14 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     return renderData
   }
 }
+
 class RenderData {
   textPlacement = null
   north = false
   responseMessage = false
   messageColor = null
   messageOutline = null
+
   equals(obj) {
     if (!(obj instanceof RenderData)) {
       return false
@@ -4945,6 +5471,7 @@ class RenderData {
       IconFactory.equalStroke(this.messageOutline, obj.messageOutline)
     )
   }
+
   hashCode() {
     const placement = this.textPlacement
     let result = placement ? placement.hashCode() : 0
@@ -4953,6 +5480,7 @@ class RenderData {
     return result
   }
 }
+
 /**
  * An {@link PolylineEdgeStyle} implementation representing a connection according to the BPMN.
  */
@@ -4963,23 +5491,27 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   static _associationArrow
   static _defaultSourceArrow
   static _defaultTargetArrow
+
   _type = BpmnEdgeType.SEQUENCE_FLOW
   _smoothing = 20
   _sourceArrow = null
   _targetArrow = null
   _innerStroke = null
   _stroke = null
+
   constructor() {
     super()
     this.color = BPMN_CONSTANTS_EDGE_DEFAULT_COLOR
     this.innerColor = BPMN_CONSTANTS_EDGE_DEFAULT_INNER_COLOR
   }
+
   /**
    * Gets the edge type of this style.
    */
   get type() {
     return this._type
   }
+
   /**
    * Sets the edge type of this style.
    */
@@ -4988,12 +5520,14 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
     this.updateStroke(this.color)
     this.updateArrow(value)
   }
+
   /**
    * Gets the stroke color of the edge.
    */
   get color() {
     return this._stroke ? this._stroke.fill : null
   }
+
   /**
    * Sets the stroke color of the edge.
    */
@@ -5003,6 +5537,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
       this.updateArrow(this.type)
     }
   }
+
   /**
    * Gets the inner stroke color of the edge when {@link BpmnEdgeStyle.type} is
    * {@link BpmnEdgeType.CONVERSATION}.
@@ -5010,6 +5545,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   get innerColor() {
     return this._innerStroke ? this._innerStroke.fill : null
   }
+
   /**
    * Sets the inner stroke color of the edge when {@link BpmnEdgeStyle.type} is
    * {@link BpmnEdgeType.CONVERSATION}.
@@ -5022,6 +5558,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
       this._innerStroke = stroke
     }
   }
+
   /**
    * Create a clone of this object.
    * @returns A clone of this object.
@@ -5035,6 +5572,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
     bpmnEdgeStyle.smoothing = this.smoothing
     return bpmnEdgeStyle
   }
+
   /**
    * Gets the visual arrow at the source end of edges that use this style.
    * Arrow instances may be shared between multiple style instances.
@@ -5042,6 +5580,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   get sourceArrow() {
     return this._sourceArrow
   }
+
   /**
    * Gets the visual arrow at the target end of edges that use this style.
    * Arrow instances may be shared between multiple style instances.
@@ -5049,6 +5588,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   get targetArrow() {
     return this._targetArrow
   }
+
   /**
    * Gets the smoothing length used for creating smooth bends.
    * A value of `0.0d` will disable smoothing.
@@ -5057,6 +5597,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   get smoothing() {
     return this._smoothing
   }
+
   /**
    * Sets the smoothing length used for creating smooth bends.
    * A value of `0.0d` will disable smoothing.
@@ -5065,6 +5606,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   set smoothing(value) {
     this._smoothing = value
   }
+
   updateStroke(fill) {
     let result
     switch (this.type) {
@@ -5084,22 +5626,16 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
         })
         break
       case BpmnEdgeType.MESSAGE_FLOW:
-        result = new Stroke({
-          fill: fill ?? 'black',
-          dashStyle: DashStyle.DASH
-        })
+        result = new Stroke({ fill: fill ?? 'black', dashStyle: DashStyle.DASH })
         break
       case BpmnEdgeType.CONVERSATION:
-        result = new Stroke({
-          fill: fill ?? 'black',
-          thickness: 3,
-          lineJoin: LineJoin.ROUND
-        })
+        result = new Stroke({ fill: fill ?? 'black', thickness: 3, lineJoin: LineJoin.ROUND })
         break
     }
     result.freeze()
     this._stroke = result
   }
+
   updateArrow(type) {
     const color = this.color
     switch (type) {
@@ -5138,6 +5674,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
         break
     }
   }
+
   /**
    * This method is called by the framework to create a {@link Visual}
    * that will be included into the {@link IRenderContext}.
@@ -5151,18 +5688,22 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
    */
   createVisual(context, edge) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     const smoothedPath = this.getPath(edge)
     const path = smoothedPath.createSvgPath()
     Stroke.setStroke(this._stroke, path, context)
     path.setAttribute('fill', 'none')
     container.appendChild(path)
+
     if (this.type === BpmnEdgeType.CONVERSATION) {
       const doubleLineCenterPath = smoothedPath.createSvgPath()
       Stroke.setStroke(this._innerStroke, doubleLineCenterPath, context)
       doubleLineCenterPath.setAttribute('fill', 'none')
       container.appendChild(doubleLineCenterPath)
     }
+
     super.addArrows(context, container, edge, smoothedPath, this.sourceArrow, this.targetArrow)
+
     return SvgVisual.from(container, {
       type: this.type,
       color: this.color,
@@ -5170,12 +5711,14 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
       path: smoothedPath
     })
   }
+
   getPath(edge) {
     const path = super.getPath(edge)
     return super
       .cropPath(edge, this.sourceArrow, this.targetArrow, path)
       .createSmoothedPath(this.smoothing)
   }
+
   /**
    * This method updates or replaces a previously created {@link Visual} for inclusion
    * in the {@link IRenderContext}.
@@ -5198,8 +5741,10 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   updateVisual(context, oldVisual, edge) {
     const container = oldVisual.svgElement
     const cache = oldVisual.tag
+
     const oldPath = cache.path
     const newPath = this.getPath(edge)
+
     if (oldPath !== newPath) {
       container.firstElementChild.setAttribute('d', newPath.createSvgPathData())
       if (container.childElementCount === 2) {
@@ -5207,6 +5752,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
       }
       cache.path = newPath
     }
+
     if (
       cache.type !== this.type ||
       cache.color !== this.color ||
@@ -5214,6 +5760,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
     ) {
       const path = container.firstElementChild
       Stroke.setStroke(this._stroke, path, context)
+
       if (this.type === BpmnEdgeType.CONVERSATION) {
         const doubleLineCenterPath = newPath.createSvgPath()
         Stroke.setStroke(this._innerStroke, doubleLineCenterPath, context)
@@ -5221,18 +5768,23 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
       } else if (cache.type === BpmnEdgeType.CONVERSATION) {
         container.removeChild(container.lastElementChild)
       }
+
       if (this.type !== BpmnEdgeType.CONVERSATION && cache.color !== this.color) {
         this.updateArrow(this.type)
         super.updateArrows(context, container, edge, newPath, IArrow.NONE, IArrow.NONE)
         super.updateArrows(context, container, edge, newPath, this.sourceArrow, this.targetArrow)
       }
+
       cache.type = this.type
       cache.color = this.color
       cache.innerColor = this.innerColor
     }
+
     super.updateArrows(context, container, edge, newPath, this.sourceArrow, this.targetArrow)
+
     return oldVisual
   }
+
   /**
    * Performs the {@link ILookup.lookup} operation.
    * @param edge The edge to use for the context lookup.
@@ -5246,6 +5798,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
     }
     return super.lookup(edge, type)
   }
+
   static getDefaultTargetArrow(fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, Color.BLACK)
     if (hasDefaultColor && BpmnEdgeStyle._defaultTargetArrow) {
@@ -5260,6 +5813,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
     }
     return iconArrow
   }
+
   static getDefaultSourceArrow(fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, Color.BLACK)
     if (hasDefaultColor && BpmnEdgeStyle._defaultSourceArrow) {
@@ -5274,6 +5828,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
     }
     return iconArrow
   }
+
   static getAssociationArrow(fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, Color.BLACK)
     if (hasDefaultColor && BpmnEdgeStyle._associationArrow) {
@@ -5288,6 +5843,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
     }
     return iconArrow
   }
+
   static getConditionalSourceArrow(fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, Color.BLACK)
     if (hasDefaultColor && BpmnEdgeStyle._conditionalSourceArrow) {
@@ -5304,6 +5860,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
     }
     return iconArrow
   }
+
   static getMessageTargetArrow(fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, Color.BLACK)
     if (hasDefaultColor && BpmnEdgeStyle._messageTargetArrow) {
@@ -5318,6 +5875,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
     }
     return iconArrow
   }
+
   static getMessageSourceArrow(fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, Color.BLACK)
     if (hasDefaultColor && BpmnEdgeStyle._messageSourceArrow) {
@@ -5333,15 +5891,18 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
     return iconArrow
   }
 }
+
 /**
  * Uses the style insets extended by the size of the participant bands.
  */
 class ActivityInsetsProvider extends BaseClass(IGroupPaddingProvider) {
   style
+
   constructor(style) {
     super()
     this.style = style
   }
+
   getPadding() {
     const left =
       this.style.taskType !== TaskType.ABSTRACT
@@ -5364,11 +5925,13 @@ class ActivityInsetsProvider extends BaseClass(IGroupPaddingProvider) {
     )
   }
 }
+
 /**
  * An {@link INodeStyle} implementation representing an Activity according to the BPMN.
  */
 export class ActivityNodeStyle extends BpmnNodeStyle {
   static _nodeStyle
+
   _taskType = TaskType.ABSTRACT
   _triggerEventType = EventType.MESSAGE
   _triggerEventCharacteristic = EventCharacteristic.SUB_PROCESS_INTERRUPTING
@@ -5387,17 +5950,20 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
   _compensation = false
   _compensationIcon = null
   _activityType = ActivityType.TASK
+
   constructor() {
     super()
     this.activityType = ActivityType.TASK
     this.minimumSize = new Size(40, 30)
   }
+
   /**
    * Gets the activity type for this style.
    */
   get activityType() {
     return this._activityType
   }
+
   /**
    * Sets the activity type for this style.
    */
@@ -5408,12 +5974,14 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       this.updateActivityIcon()
     }
   }
+
   /**
    * Gets the task type for this style.
    */
   get taskType() {
     return this._taskType
   }
+
   /**
    * Sets the task type for this style.
    */
@@ -5424,12 +5992,14 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       this.updateTaskIcon()
     }
   }
+
   /**
    * Gets the event type that is used for the task type {@link TaskType.EVENT_TRIGGERED}.
    */
   get triggerEventType() {
     return this._triggerEventType
   }
+
   /**
    * Sets the event type that is used for the task type {@link TaskType.EVENT_TRIGGERED}.
    */
@@ -5442,12 +6012,14 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       }
     }
   }
+
   /**
    * Gets the event characteristic that is used for the task type {@link TaskType.EVENT_TRIGGERED}.
    */
   get triggerEventCharacteristic() {
     return this._triggerEventCharacteristic
   }
+
   /**
    * Sets the event characteristic that is used for the task type {@link TaskType.EVENT_TRIGGERED}.
    */
@@ -5460,12 +6032,14 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       }
     }
   }
+
   /**
    * Gets the loop characteristic of this style.
    */
   get loopCharacteristic() {
     return this._loopCharacteristic
   }
+
   /**
    * Sets the loop characteristic of this style.
    */
@@ -5476,12 +6050,14 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       this.updateLoopIcon()
     }
   }
+
   /**
    * Gets the sub state of this style.
    */
   get subState() {
     return this._subState
   }
+
   /**
    * Sets the sub state of this style.
    */
@@ -5491,12 +6067,14 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       this._subState = value
     }
   }
+
   /**
    * Gets whether this style represents an Ad Hoc Activity.
    */
   get adHoc() {
     return this._adHoc
   }
+
   /**
    * Sets whether this style represents an Ad Hoc Activity.
    */
@@ -5507,12 +6085,14 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       this.updateAdHocIcon()
     }
   }
+
   /**
    * Gets whether this style represents a Compensation Activity.
    */
   get compensation() {
     return this._compensation
   }
+
   /**
    * Sets whether this style represents a Compensation Activity.
    */
@@ -5523,6 +6103,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       this.updateCompensationIcon()
     }
   }
+
   /**
    * Gets the insets for the node.
    * These insets are extended at the left and bottom side if markers are active
@@ -5534,6 +6115,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
   get insets() {
     return this._insets
   }
+
   /**
    * Sets the insets for the node.
    * These insets are extended at the left and bottom side if markers are active
@@ -5545,12 +6127,14 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
   set insets(insets) {
     this._insets = insets
   }
+
   /**
    * Gets the background color of the activity.
    */
   get background() {
     return this._background
   }
+
   /**
    * Sets the background color of the activity.
    */
@@ -5562,12 +6146,14 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       this.updateTaskIcon()
     }
   }
+
   /**
    * Gets the outline color of the activity.
    */
   get outline() {
     return this._outline
   }
+
   /**
    * Sets the outline color of the activity.
    */
@@ -5578,12 +6164,14 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       this.updateActivityIcon()
     }
   }
+
   /**
    * Gets the primary color for icons and markers.
    */
   get iconColor() {
     return this._iconColor
   }
+
   /**
    * Sets the primary color for icons and markers.
    */
@@ -5597,6 +6185,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       this.updateCompensationIcon()
     }
   }
+
   /**
    * Gets the outline color for event icons if {@link ActivityNodeStyle.taskType} is
    * {@link EventType.EVENT_TRIGGERED}. If this is set to null, the outline color is automatic,
@@ -5605,6 +6194,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
   get eventOutline() {
     return this._eventOutline
   }
+
   /**
    * Sets the outline color for the event icon.
    */
@@ -5615,6 +6205,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       this.updateTaskIcon()
     }
   }
+
   updateActivityIcon() {
     this._activityIcon = IconFactory.createActivity(
       this._activityType,
@@ -5622,6 +6213,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       this.outline
     )
   }
+
   updateTaskIcon() {
     if (this.taskType === TaskType.EVENT_TRIGGERED) {
       const eventNodeStyle = new EventNodeStyle()
@@ -5630,6 +6222,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       eventNodeStyle.background = this.background
       eventNodeStyle.outline = this.eventOutline
       eventNodeStyle.iconColor = this.iconColor
+
       eventNodeStyle.updateIcon()
       this._taskIcon = eventNodeStyle.icon
     } else {
@@ -5647,23 +6240,29 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       )
     }
   }
+
   updateAdHocIcon() {
     this._adHocIcon = this.adHoc ? IconFactory.createAdHoc(this.iconColor) : null
   }
+
   updateCompensationIcon() {
     this._compensationIcon = this.compensation
       ? IconFactory.createCompensation(false, this.iconColor)
       : null
   }
+
   updateLoopIcon() {
     this._loopIcon = IconFactory.createLoopCharacteristic(this.loopCharacteristic, this.iconColor)
   }
+
   /** @inheritDoc */
   updateIcon(node) {
     this.icon = this.createIcon(node)
   }
+
   createIcon(node) {
     let minimumWidth = 10.0
+
     const icons = new List()
     if (this._activityIcon) {
       icons.add(this._activityIcon)
@@ -5671,6 +6270,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
     if (this._taskIcon) {
       icons.add(this._taskIcon)
     }
+
     const lineUpIcons = new List()
     if (this._loopIcon) {
       minimumWidth += BPMN_CONSTANTS_SIZES_MARKER.width + 5
@@ -5702,6 +6302,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
         )
       )
     }
+
     this.minimumSize = new Size(Math.max(minimumWidth, 40), 40)
     if (icons.size > 1) {
       return IconFactory.createCombinedIcon(icons)
@@ -5710,6 +6311,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
     }
     return null
   }
+
   /**
    * Gets the outline of the visual style.
    * @param node The node to which this style instance is assigned.
@@ -5724,6 +6326,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       5
     )
   }
+
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
    * @param canvasContext The canvas context.
@@ -5737,6 +6340,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       .getHitTestable(node, ActivityNodeStyle.NODE_STYLE)
       .isHit(canvasContext, p)
   }
+
   /**
    * Performs the {@link ILookup.lookup} operation.
    * @param node The node to use for the context lookup.
@@ -5749,6 +6353,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
     }
     return super.lookup(node, type)
   }
+
   static createRoundRectPath(x, y, width, height, radius) {
     const roundRect = new GeneralPath(10)
     roundRect.clear()
@@ -5765,6 +6370,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
     roundRect.close()
     return roundRect
   }
+
   static get NODE_STYLE() {
     if (!ActivityNodeStyle._nodeStyle) {
       ActivityNodeStyle._nodeStyle = new RectangleNodeStyle({
@@ -5776,6 +6382,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
     return ActivityNodeStyle._nodeStyle
   }
 }
+
 /**
  * Specifies the arrow types of an edge can have according to BPMN.
  */
@@ -5789,6 +6396,7 @@ const BpmnArrowType = Enum('BpmnArrowType', {
   MESSAGE_TARGET: 6,
   ASSOCIATION: 7
 })
+
 /**
  * Specifies the type of an edge according to BPMN.
  * @see {@link BpmnEdgeStyle}
@@ -5835,6 +6443,7 @@ export const BpmnEdgeType = Enum('BpmnEdgeType', {
    */
   CONVERSATION: 7
 })
+
 /**
  * Custom stripe style that alternates the visualizations for the leaf nodes and uses a different
  * style for all parent stripes.
@@ -5843,42 +6452,49 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
   _evenLeafDescriptor = null
   _parentDescriptor = null
   _oddLeafDescriptor = null
+
   /**
    * Visualization for all leaf stripes that have an even index.
    */
   get evenLeafDescriptor() {
     return this._evenLeafDescriptor
   }
+
   /**
    * Visualization for all leaf stripes that have an even index.
    */
   set evenLeafDescriptor(value) {
     this._evenLeafDescriptor = value
   }
+
   /**
    * Visualization for all stripes that are not leaves.
    */
   get parentDescriptor() {
     return this._parentDescriptor
   }
+
   /**
    * Visualization for all stripes that are not leaves.
    */
   set parentDescriptor(value) {
     this._parentDescriptor = value
   }
+
   /**
    * Visualization for all leaf stripes that have an odd index.
    */
   get oddLeafDescriptor() {
     return this._oddLeafDescriptor
   }
+
   /**
    * Visualization for all leaf stripes that have an odd index.
    */
   set oddLeafDescriptor(value) {
     this._oddLeafDescriptor = value
   }
+
   /**
    * Callback that creates the visual.
    * @param renderContext The render context.
@@ -5893,6 +6509,7 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
       const container = new SvgVisualGroup()
       let stripeInsets
       let descriptor
+
       // Depending on the stripe type, we need to consider horizontal or vertical insets
       if (stripe instanceof IColumn) {
         const column = stripe
@@ -5901,7 +6518,9 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
         const row = stripe
         stripeInsets = new Insets(0, row.padding.right, 0, row.padding.left)
       }
+
       let actualBorderThickness
+
       if (stripe.childStripes.size > 0) {
         // Parent stripe - use the parent descriptor
         descriptor = this.parentDescriptor
@@ -5925,6 +6544,7 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
           actualBorderThickness = descriptor.borderThickness
         }
       }
+
       const border = new BorderVisual()
       border.insets = stripeInsets
       border.backgroundFill = descriptor.backgroundFill
@@ -5933,6 +6553,7 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
       container.add(
         border.createVisual(renderContext, new Rect(0, 0, layout.width, layout.height), node)
       )
+
       const transform = new Matrix()
       transform.translate(node.layout.topLeft)
       container.transform = transform
@@ -5941,6 +6562,7 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
     }
     return null
   }
+
   /**
    * Callback that updates the visual previously created by {@link NodeStyleBase.createVisual}.
    * This method is called in response to a {@link IVisualCreator.updateVisual}
@@ -5967,7 +6589,9 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
         const row = stripe
         stripeInsets = new Insets(0, row.padding.right, 0, row.padding.left)
       }
+
       let actualBorderThickness
+
       if (stripe.childStripes.size > 0) {
         descriptor = this.parentDescriptor
         actualBorderThickness = descriptor.borderThickness
@@ -5987,33 +6611,40 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
           actualBorderThickness = descriptor.borderThickness
         }
       }
+
       // get the data with which the oldvisual was created
       const oldCache = oldVisual['render-data-cache']
       // get the data for the new visual
       const newCache = this.createRenderDataCache(descriptor, stripe, stripeInsets)
+
       // check if something changed except for the location of the node
       if (!newCache.equals(newCache, oldCache)) {
         // something changed - just re-render the visual
         return this.createVisual(renderContext, node)
       }
+
       const border = new BorderVisual()
       border.insets = newCache.insets
       border.backgroundFill = newCache.descriptor.backgroundFill
       border.insetFill = newCache.descriptor.insetFill
       border.stroke = new Stroke(newCache.descriptor.borderFill, actualBorderThickness.top)
+
       const children = oldVisual.children
       const child = children.get(0)
       children.set(
         0,
         border.updateVisual(renderContext, child, new Rect(0, 0, layout.width, layout.height), node)
       )
+
       const transform = new Matrix()
       transform.translate(node.layout.topLeft)
       oldVisual.transform = transform
+
       return oldVisual
     }
     return null
   }
+
   createRenderDataCache(descriptor, stripe, insets) {
     return {
       descriptor,
@@ -6029,6 +6660,7 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
     }
   }
 }
+
 /**
  * A visual representing a border with a variable thickness
  * that can be different for each side.
@@ -6040,8 +6672,10 @@ class BorderVisual extends Visual {
   _insetFill = null
   _stroke = null
   _insets = Insets.EMPTY
+
   createVisual(context, bounds, data) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     const backgroundRectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     backgroundRectangle.setAttribute('x', '0')
     backgroundRectangle.setAttribute('y', '0')
@@ -6090,6 +6724,7 @@ class BorderVisual extends Visual {
     Stroke.setStroke(this.stroke, borderRectangle, context)
     borderRectangle.setAttribute('fill', 'none')
     container.appendChild(borderRectangle)
+
     SvgVisual.setTranslate(container, bounds.x, bounds.y)
     container['render-data-cache'] = {
       bounds: bounds.toRect(),
@@ -6098,13 +6733,17 @@ class BorderVisual extends Visual {
       backgroundFill: this.backgroundFill ? this.backgroundFill.clone() : null,
       insetFill: this.insetFill ? this.insetFill.clone() : null
     }
+
     return new SvgVisual(container)
   }
+
   updateVisual(context, oldVisual, bounds, data) {
     const container = oldVisual.svgElement
+
     if (!container || container.childElementCount !== 6) {
       this.createVisual(context, bounds, data)
     }
+
     const cache = container['render-data-cache']
     if (cache.backgroundFill !== this.backgroundFill) {
       Fill.setFill(this.backgroundFill, container.childNodes[0], context)
@@ -6121,6 +6760,7 @@ class BorderVisual extends Visual {
       Stroke.setStroke(this.stroke, container.childNodes[5], context)
       cache.stroke = this.stroke
     }
+
     const insets = this.insets
     if (!cache.insets.equals(insets) || !cache.bounds.equals(bounds)) {
       const backgroundRectangle = container.childNodes[0]
@@ -6153,54 +6793,65 @@ class BorderVisual extends Visual {
       borderRectangle.setAttribute('y', '0')
       borderRectangle.setAttribute('width', `${bounds.width}`)
       borderRectangle.setAttribute('height', `${bounds.height}`)
+
       cache.insets = insets
       cache.bounds = bounds.toRect()
     }
+
     SvgVisual.setTranslate(container, bounds.x, bounds.y)
+
     return new SvgVisual(container)
   }
+
   /**
    * Returns the fill for inside the rectangle.
    */
   get backgroundFill() {
     return this._backgroundFill
   }
+
   /**
    * Specifies the fill for inside the rectangle.
    */
   set backgroundFill(fill) {
     this._backgroundFill = fill
   }
+
   /**
    * Returns the stroke for the outline of the rectangle.
    */
   get stroke() {
     return this._stroke
   }
+
   /**
    * Specifies the stroke for the outline of the rectangle.
    */
   set stroke(stroke) {
     this._stroke = stroke
   }
+
   /**
    * Returns the fill for inside the insets.
    */
   get insetFill() {
     return this._insetFill
   }
+
   /**
    * Specifies the fill for inside the insets.
    */
   set insetFill(fill) {
     this._insetFill = fill
   }
+
   /**
    * Returns the border's thickness.
    */
   get insets() {
     return this._insets
   }
+
   /**
    * Sets the border's thickness.
    */
@@ -6208,6 +6859,7 @@ class BorderVisual extends Visual {
     this._insets = insets
   }
 }
+
 /**
  * An {@link INodeStyle} implementation representing an Annotation according to the BPMN.
  */
@@ -6216,6 +6868,7 @@ export class AnnotationNodeStyle extends BpmnNodeStyle {
   _outline = BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE
   _left = false
   icon
+
   /**
    * Creates a new instance.
    */
@@ -6225,12 +6878,14 @@ export class AnnotationNodeStyle extends BpmnNodeStyle {
     this.left = true
     this.minimumSize = new Size(30, 10)
   }
+
   /**
    * Gets the background color of the annotation.
    */
   get background() {
     return this._background
   }
+
   /**
    * Sets the background color of the annotation.
    */
@@ -6240,12 +6895,14 @@ export class AnnotationNodeStyle extends BpmnNodeStyle {
       this._background = value
     }
   }
+
   /**
    * Gets the outline color of the annotation.
    */
   get outline() {
     return this._outline
   }
+
   /**
    * Sets the outline color of the annotation.
    */
@@ -6255,12 +6912,14 @@ export class AnnotationNodeStyle extends BpmnNodeStyle {
       this._outline = value
     }
   }
+
   /**
    * Gets a value indicating whether the bracket of the open rectangle is shown on the left side.
    */
   get left() {
     return this._left
   }
+
   /**
    * Sets a value indicating whether the bracket of the open rectangle is shown on the left side.
    */
@@ -6270,11 +6929,13 @@ export class AnnotationNodeStyle extends BpmnNodeStyle {
       this._left = value
     }
   }
+
   /** @inheritDoc */
   updateIcon() {
     this.icon = IconFactory.createAnnotation(this.left, this.background, this.outline)
   }
 }
+
 /**
  * An {@link ILabelStyle} implementation combining an text label, an icon and a connecting line
  * between the icon and the label owner.
@@ -6284,6 +6945,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
   static _dummyForLabelOwner
   static _dummyTextLabel
   static _labelAsNode
+
   textPlacement = null
   labelConnectorLocation = null
   nodeConnectorLocation = null
@@ -6291,6 +6953,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
   iconStyle = null
   textStyle = null
   connectorStyle = null
+
   /**
    * Create a clone of this object.
    * @returns A clone of this object.
@@ -6306,6 +6969,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     clone.connectorStyle = this.connectorStyle
     return clone
   }
+
   /**
    * Creates a new visual for the label.
    * @param context The context that describes where the visual will be used.
@@ -6318,6 +6982,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
   createVisual(context, label) {
     this.configure(context, label)
     const container = new SvgVisualGroup()
+
     let iconVisual = null
     if (this.iconStyle) {
       const labelAsNode = ConnectedIconLabelStyle.LABEL_AS_NODE
@@ -6328,6 +6993,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     container.add(
       iconVisual || new SvgVisual(document.createElementNS('http://www.w3.org/2000/svg', 'g'))
     )
+
     let textVisual = null
     if (this.textStyle && this.textPlacement) {
       const dummyTextLabel = ConnectedIconLabelStyle.DUMMY_TEXT_LABEL
@@ -6338,6 +7004,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     container.add(
       textVisual || new SvgVisual(document.createElementNS('http://www.w3.org/2000/svg', 'g'))
     )
+
     let connectorVisual = null
     if (this.connectorStyle) {
       const previewEdge = ConnectedIconLabelStyle.DUMMY_EDGE
@@ -6348,8 +7015,10 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     container.add(
       connectorVisual || new SvgVisual(document.createElementNS('http://www.w3.org/2000/svg', 'g'))
     )
+
     return container
   }
+
   /**
    * Calculates the preferred size given the current state of the renderer.
    * @returns The size as suggested by this renderer.
@@ -6357,6 +7026,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
   getPreferredSize(label) {
     return !this.iconSize.isEmpty ? this.iconSize : label.preferredSize
   }
+
   /**
    * This method updates or replaces a previously created {@link Visual}.
    * The {@link CanvasComponent} uses this method to give implementations a chance to
@@ -6377,6 +7047,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     if (container == null || container.children.size !== 3) {
       return this.createVisual(context, label)
     }
+
     const oldIconVisual = container.children.get(0)
     let newIconVisual = null
     if (this.iconStyle != null) {
@@ -6388,6 +7059,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     if (oldIconVisual !== newIconVisual) {
       container.children.set(0, newIconVisual || new SvgVisualGroup())
     }
+
     const oldTextVisual = container.children.get(1)
     let newTextVisual = null
     if (this.textStyle != null && this.textPlacement != null) {
@@ -6399,6 +7071,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     if (oldTextVisual !== newTextVisual) {
       container.children.set(1, newTextVisual || new SvgVisualGroup())
     }
+
     const oldConnectorVisual = container.children.get(2)
     let newConnectorVisual = null
     if (this.connectorStyle != null) {
@@ -6410,19 +7083,23 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     if (oldConnectorVisual !== newConnectorVisual) {
       container.children.set(2, newConnectorVisual || new SvgVisualGroup())
     }
+
     return container
   }
+
   /**
    * Prepares this instance for subsequent calls after the style and item have been initialized.
    */
   configure(context, label) {
     ConnectedIconLabelStyle.LABEL_AS_NODE.style = this.iconStyle
     ConnectedIconLabelStyle.LABEL_AS_NODE.layout = label.layout.bounds
+
     if (label.owner instanceof INode) {
       const nodeOwner = label.owner
       ConnectedIconLabelStyle.DUMMY_FOR_LABEL_OWNER.style = nodeOwner.style
       ConnectedIconLabelStyle.DUMMY_FOR_LABEL_OWNER.layout = nodeOwner.layout
     }
+
     ConnectedIconLabelStyle.DUMMY_TEXT_LABEL.style = this.textStyle
     ConnectedIconLabelStyle.DUMMY_TEXT_LABEL.layoutParameter = this.textPlacement
     ConnectedIconLabelStyle.DUMMY_TEXT_LABEL.text = label.text
@@ -6435,6 +7112,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     ConnectedIconLabelStyle.DUMMY_EDGE.targetPort.locationParameter = this.nodeConnectorLocation
     ConnectedIconLabelStyle.DUMMY_EDGE.style = this.connectorStyle
   }
+
   /**
    * Determines if something has been hit at the given coordinates
    * in the world coordinate system.
@@ -6454,6 +7132,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
         .isHit(context, location)
     )
   }
+
   /**
    * This callback returns `true` if the corresponding
    * item is considered to intersect the given rectangular box.
@@ -6470,6 +7149,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     this.configure(context, label)
     return box.intersects(this.getBounds(context, label).getEnlarged(context.hitTestRadius))
   }
+
   /**
    * Returns a tight rectangular area where the whole rendering
    * would fit into.
@@ -6493,6 +7173,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
         .getBounds(context)
     )
   }
+
   /**
    * Determines whether an element might intersect the visible region for a given context.
    * @param context The context to determine the visibility for.
@@ -6512,12 +7193,14 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     }
     return clip.intersects(label.layout.bounds)
   }
+
   static get LABEL_AS_NODE() {
     return (
       ConnectedIconLabelStyle._labelAsNode ||
       (ConnectedIconLabelStyle._labelAsNode = new SimpleNode())
     )
   }
+
   static get DUMMY_TEXT_LABEL() {
     if (!ConnectedIconLabelStyle._dummyTextLabel) {
       const simpleLabel = new SimpleLabel(
@@ -6533,12 +7216,14 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     }
     return ConnectedIconLabelStyle._dummyTextLabel
   }
+
   static get DUMMY_FOR_LABEL_OWNER() {
     return (
       ConnectedIconLabelStyle._dummyForLabelOwner ||
       (ConnectedIconLabelStyle._dummyForLabelOwner = new SimpleNode())
     )
   }
+
   static get DUMMY_EDGE() {
     if (!ConnectedIconLabelStyle._dummyEdge) {
       const sourcePort = new SimplePort(
@@ -6558,17 +7243,20 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     return ConnectedIconLabelStyle._dummyEdge
   }
 }
+
 /**
  * A label style for annotations according to BPMN.
  */
 export class AnnotationLabelStyle extends LabelStyleBase {
   static _textStyle
+
   _leftAnnotationStyle = new AnnotationNodeStyle()
   _rightAnnotationStyle = new AnnotationNodeStyle()
   _connectorStyle = new BpmnEdgeStyle()
   _delegateStyle
   _insets = 5.0
   left = false
+
   constructor() {
     super()
     this._rightAnnotationStyle.left = false
@@ -6582,30 +7270,36 @@ export class AnnotationLabelStyle extends LabelStyleBase {
     connectedIconLabelStyle.nodeConnectorLocation = FreeNodePortLocationModel.CENTER
     this._delegateStyle = connectedIconLabelStyle
   }
+
   /**
    * Gets the insets around the text.
    */
   get insets() {
     return this._insets
   }
+
   /**
    * Sets the insets around the text.
    */
   set insets(value) {
     this._insets = value
   }
+
   get delegateStyle() {
     return this._delegateStyle
   }
+
   set delegateStyle(value) {
     this._delegateStyle = value
   }
+
   /**
    * Gets the background color of the annotation.
    */
   get background() {
     return this._leftAnnotationStyle.background
   }
+
   /**
    * Sets the background color of the annotation.
    */
@@ -6615,12 +7309,14 @@ export class AnnotationLabelStyle extends LabelStyleBase {
       this._rightAnnotationStyle.background = value
     }
   }
+
   /**
    * Gets the outline color of the annotation.
    */
   get outline() {
     return this._leftAnnotationStyle.outline
   }
+
   /**
    * Sets the outline color of the annotation.
    * This also influences the color of the line to the annotated element.
@@ -6632,6 +7328,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
       this._connectorStyle.color = value
     }
   }
+
   /**
    * Create a clone of this object.
    * @returns A clone of this object.
@@ -6640,6 +7337,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
   clone() {
     const style = new AnnotationLabelStyle()
     style._connectorStyle = this._connectorStyle.clone()
+
     const connectedIconLabelStyle = new ConnectedIconLabelStyle()
     connectedIconLabelStyle.iconStyle = this._leftAnnotationStyle.clone()
     connectedIconLabelStyle.textStyle = AnnotationLabelStyle.TEXT_STYLE
@@ -6648,11 +7346,13 @@ export class AnnotationLabelStyle extends LabelStyleBase {
     connectedIconLabelStyle.labelConnectorLocation = FreeNodePortLocationModel.LEFT
     connectedIconLabelStyle.nodeConnectorLocation = FreeNodePortLocationModel.CENTER
     style.delegateStyle = connectedIconLabelStyle
+
     style.insets = this.insets
     style.outline = this.outline
     style.background = this.background
     return style
   }
+
   static get TEXT_STYLE() {
     return (
       AnnotationLabelStyle._textStyle ||
@@ -6662,12 +7362,15 @@ export class AnnotationLabelStyle extends LabelStyleBase {
       }))
     )
   }
+
   getCurrentStyle(item) {
     if (!(item.owner instanceof INode)) {
       return ILabelStyle.VOID_LABEL_STYLE
     }
     const nodeOwner = item.owner
+
     this.left = item.layout.center.x > nodeOwner.layout.center.x
+
     const delegateStyle = this.delegateStyle
     delegateStyle.iconStyle = this.left ? this._leftAnnotationStyle : this._rightAnnotationStyle
     delegateStyle.labelConnectorLocation = this.left
@@ -6675,6 +7378,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
       : FreeNodePortLocationModel.RIGHT
     return delegateStyle
   }
+
   /**
    * Returns the bounds of the visual for the label.
    * @param context The rendering context.
@@ -6685,6 +7389,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
     const delegateStyle = this.getCurrentStyle(label)
     return delegateStyle.renderer.getBoundsProvider(label, delegateStyle).getBounds(context)
   }
+
   /**
    * Returns whether or not the label is currently visible.
    * @param context The rendering context.
@@ -6698,6 +7403,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
       .getVisibilityTestable(label, delegateStyle)
       .isVisible(context, rectangle)
   }
+
   /**
    * Returns whether or not the given location lies inside the label.
    * @param context The input mode context.
@@ -6709,6 +7415,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
     const delegateStyle = this.getCurrentStyle(label)
     return delegateStyle.renderer.getHitTestable(label, delegateStyle).isHit(context, location)
   }
+
   /**
    * Calculates the {@link ILabel.preferredSize preferred size}
    * of a given label using the associated style.
@@ -6725,6 +7432,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
       2 * this.insets + preferredTextSize.height
     )
   }
+
   /**
    * This method is called by the framework to create a {@link Visual}
    * that will be included into the {@link IRenderContext}.
@@ -6744,8 +7452,10 @@ export class AnnotationLabelStyle extends LabelStyleBase {
       delegateStyle.renderer.getVisualCreator(label, delegateStyle).createVisual(context)
     )
     container['render-data-cache'] = this.createRenderData()
+
     return container
   }
+
   /**
    * This method updates or replaces a previously created {@link Visual} for inclusion
    * in the {@link IRenderContext}.
@@ -6786,6 +7496,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
     container['render-data-cache'] = newCache
     return container
   }
+
   createRenderData() {
     return {
       left: this.left,
@@ -6793,6 +7504,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
       equals: (self, other) => self.left === other.left && self.insets === other.insets
     }
   }
+
   lookup(label, type) {
     // Create an IEditLabelHelper that does nothing except to prevent other helpers from kicking in
     if (type === IEditLabelHelper && label.owner && label.owner instanceof INode) {
@@ -6801,6 +7513,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
           // We should never enter here - calling an IEditLabelHelper for a non-existing label
           evt.handled = false
         }
+
         onLabelEditing(context, evt) {
           // We just claim we have handled the label to prevent the UML node style handler from
           // kicking in without actually configuring anything
@@ -6811,6 +7524,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
     return super.lookup(label, type)
   }
 }
+
 /**
  * Helper class that can be used as StyleTag to bundle common visualization parameters for stripes.
  */
@@ -6819,59 +7533,69 @@ export class StripeDescriptor {
   _insetFill
   _borderFill
   _borderThickness = new Insets(1)
+
   constructor() {
     this._backgroundFill = Color.TRANSPARENT
     this._insetFill = Color.TRANSPARENT
     this._borderFill = Color.BLACK
   }
+
   /**
    * The background fill for a stripe.
    */
   get backgroundFill() {
     return this._backgroundFill
   }
+
   /**
    * The background fill for a stripe.
    */
   set backgroundFill(value) {
     this._backgroundFill = value
   }
+
   /**
    * The inset fill for a stripe.
    */
   get insetFill() {
     return this._insetFill
   }
+
   /**
    * The inset fill for a stripe.
    */
   set insetFill(value) {
     this._insetFill = value
   }
+
   /**
    * The border fill for a stripe.
    */
   get borderFill() {
     return this._borderFill
   }
+
   /**
    * The border fill for a stripe.
    */
   set borderFill(value) {
     this._borderFill = value
   }
+
   /**
    * The border thickness for a stripe.
    */
   get borderThickness() {
     return this._borderThickness
   }
+
   /**
    * The border thickness for a stripe.
    */
   set borderThickness(value) {
     this._borderThickness = value
   }
+
   equals(obj) {
     if (!(obj instanceof StripeDescriptor)) {
       return false
@@ -6883,6 +7607,7 @@ export class StripeDescriptor {
       obj._borderThickness.equals(this._borderThickness)
     )
   }
+
   hashCode() {
     let result = this._backgroundFill != null ? this._backgroundFill.hashCode() : 0
     result = (result * 397) ^ (this._insetFill != null ? this._insetFill.hashCode() : 0)
@@ -6891,6 +7616,7 @@ export class StripeDescriptor {
     return result
   }
 }
+
 /**
  * An {@link INodeStyle} implementation representing a Pool according to the BPMN.
  * The main visualization is delegated to {@link PoolNodeStyle.tableNodeStyle}.
@@ -6901,6 +7627,7 @@ export class PoolNodeStyle extends NodeStyleBase {
   _tableNodeStyle = null
   _iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
   _multipleInstanceIcon = null
+
   /**
    * Creates a new instance for an oriented pool.
    * @param vertical Whether or not the style represents a vertical pool.
@@ -6910,24 +7637,28 @@ export class PoolNodeStyle extends NodeStyleBase {
     this.vertical = vertical || false
     this.updateIcon()
   }
+
   /**
    * Gets whether or not this pool represents a multiple instance participant.
    */
   get multipleInstance() {
     return this._multipleInstance
   }
+
   /**
    * Sets whether or not this pool represents a multiple instance participant.
    */
   set multipleInstance(value) {
     this._multipleInstance = value
   }
+
   /**
    * Gets the color for the icon.
    */
   get iconColor() {
     return this._iconColor
   }
+
   /**
    * Sets the color for the icon.
    */
@@ -6937,6 +7668,7 @@ export class PoolNodeStyle extends NodeStyleBase {
       this.updateIcon()
     }
   }
+
   /**
    * Gets the {@link TableNodeStyle} the visualization is delegated to.
    */
@@ -6946,12 +7678,14 @@ export class PoolNodeStyle extends NodeStyleBase {
     }
     return this._tableNodeStyle
   }
+
   /**
    * Sets the {@link TableNodeStyle} the visualization is delegated to.
    */
   set tableNodeStyle(value) {
     this._tableNodeStyle = value
   }
+
   updateIcon() {
     const multipleIcon = IconFactory.createLoopCharacteristic(
       LoopCharacteristic.PARALLEL,
@@ -6963,6 +7697,7 @@ export class PoolNodeStyle extends NodeStyleBase {
       BPMN_CONSTANTS_SIZES_MARKER
     )
   }
+
   /**
    * This method is called by the framework to create a {@link Visual}
    * that will be included into the {@link IRenderContext}.
@@ -6989,6 +7724,7 @@ export class PoolNodeStyle extends NodeStyleBase {
     }
     return container
   }
+
   /**
    * This method updates or replaces a previously created {@link Visual} for inclusion
    * in the {@link IRenderContext}.
@@ -7014,6 +7750,7 @@ export class PoolNodeStyle extends NodeStyleBase {
     if (container == null || container.children.size === 0) {
       return this.createVisual(renderContext, node)
     }
+
     const oldTableVisual = container.children.first()
     const newTableVisual = this.tableNodeStyle.renderer
       .getVisualCreator(node, this.tableNodeStyle)
@@ -7022,6 +7759,7 @@ export class PoolNodeStyle extends NodeStyleBase {
       container.children.remove(oldTableVisual)
       container.children.insert(0, newTableVisual)
     }
+
     const oldMultipleVisual = container.children.size > 1 ? container.children.at(-1) : undefined
     if (this.multipleInstance) {
       if (oldMultipleVisual == null) {
@@ -7047,6 +7785,7 @@ export class PoolNodeStyle extends NodeStyleBase {
     }
     return container
   }
+
   /**
    * Returns an instance that implements the given type or `null`.
    * @param node the node
@@ -7058,6 +7797,7 @@ export class PoolNodeStyle extends NodeStyleBase {
     if (type === IEditLabelHelper) {
       return new PoolNodeEditLabelHelper(this)
     }
+
     const context = this.tableNodeStyle.renderer.getContext(node, this.tableNodeStyle)
     if (context) {
       const value = context.lookup(type)
@@ -7065,8 +7805,10 @@ export class PoolNodeStyle extends NodeStyleBase {
         return value
       }
     }
+
     return super.lookup(node, type)
   }
+
   /**
    * Create a clone of this object.
    * @returns A clone of this object.
@@ -7080,12 +7822,15 @@ export class PoolNodeStyle extends NodeStyleBase {
     return clone
   }
 }
+
 class PoolNodeEditLabelHelper extends EditLabelHelper {
   style
+
   constructor(style) {
     super()
     this.style = style
   }
+
   getLabelParameter(inputModeContext) {
     if (this.style.tableNodeStyle.tableRenderingOrder === TableRenderingOrder.COLUMNS_FIRST) {
       return PoolHeaderLabelModel.NORTH
@@ -7093,6 +7838,7 @@ class PoolNodeEditLabelHelper extends EditLabelHelper {
     return PoolHeaderLabelModel.WEST
   }
 }
+
 /**
  * Creates a {@link TableNodeStyle} that is used in {@link PoolNodeStyle}.
  */
@@ -7100,6 +7846,7 @@ function createDefaultTableNodeStyle(vertical) {
   // create a new table
   const table = new Table()
   const tableNodeStyle = new TableNodeStyle()
+
   // we'd like to use a special stripe style
   const alternatingLeafStripeStyle = new AlternatingLeafStripeStyle()
   const evenLeafDescriptor = new StripeDescriptor()
@@ -7114,43 +7861,52 @@ function createDefaultTableNodeStyle(vertical) {
   parentDescriptor.backgroundFill = BPMN_CONSTANTS_DEFAULT_POOL_NODE_PARENT_BACKGROUND
   parentDescriptor.insetFill = BPMN_CONSTANTS_DEFAULT_POOL_NODE_PARENT_INSET
   alternatingLeafStripeStyle.parentDescriptor = parentDescriptor
+
   if (vertical) {
     table.padding = [20, 0, 0, 0]
+
     // set the column defaults
     table.columnDefaults.padding = [20, 0, 0, 0]
     table.columnDefaults.labels.style = new LabelStyle({
       horizontalTextAlignment: HorizontalTextAlignment.CENTER,
       verticalTextAlignment: VerticalTextAlignment.CENTER
     })
+
     table.columnDefaults.labels.layoutParameter = StretchStripeLabelModel.TOP
     table.columnDefaults.style = alternatingLeafStripeStyle
     table.columnDefaults.minimumSize = 50
     tableNodeStyle.tableRenderingOrder = TableRenderingOrder.COLUMNS_FIRST
   } else {
     table.padding = [0, 0, 0, 20]
+
     // set the row defaults
     table.rowDefaults.padding = [0, 0, 0, 20]
     table.rowDefaults.labels.style = new LabelStyle({
       horizontalTextAlignment: HorizontalTextAlignment.CENTER,
       verticalTextAlignment: VerticalTextAlignment.CENTER
     })
+
     table.rowDefaults.labels.layoutParameter = StretchStripeLabelModel.LEFT
     table.rowDefaults.style = alternatingLeafStripeStyle
     table.rowDefaults.minimumSize = 50
     tableNodeStyle.tableRenderingOrder = TableRenderingOrder.ROWS_FIRST
   }
+
   const backgroundStyle = new ShapeNodeStyle()
   backgroundStyle.fill = BPMN_CONSTANTS_DEFAULT_POOL_NODE_BACKGROUND
   tableNodeStyle.backgroundStyle = backgroundStyle
+
   tableNodeStyle.table = table
   return tableNodeStyle
 }
+
 /**
  * A label model for nodes using a {@link PoolNodeStyle} that position labels inside the
  * {@link ITable.padding table padding}.
  */
 export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelParameterProvider) {
   static _instance
+
   /**
    * Calculates the geometry in form of an {@link IOrientedRectangle}
    * for a given label using the given model parameter.
@@ -7169,11 +7925,13 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
     if (php == null || owner == null) {
       return IOrientedRectangle.EMPTY
     }
+
     const table = ITable.getTable(owner)
     if (!table) {
       return new OrientedRectangle()
     }
     const insets = !table.padding.equals(Insets.EMPTY) ? table.padding : Insets.EMPTY
+
     const orientedRectangle = new OrientedRectangle()
     orientedRectangle.dynamicSize = label.preferredSize
     switch (php.side) {
@@ -7213,8 +7971,10 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
         )
         break
     }
+
     return orientedRectangle
   }
+
   /**
    * Creates a default parameter that can be used for this model.
    * @returns a parameter for this model instance
@@ -7223,6 +7983,7 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
   createDefaultParameter() {
     return POOL_HEADER_LABEL_MODEL_PARAMETER_WEST
   }
+
   /**
    * Provides a {@link ILookup lookup context} for the given combination of label
    * and parameter.
@@ -7235,6 +7996,7 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
   getContext(label) {
     return ILookup.EMPTY
   }
+
   /**
    * Returns an enumerator over a set of possible {@link ILabelModelParameter}
    * instances that can be used for the given label and model.
@@ -7245,18 +8007,23 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
   getParameters() {
     return POOL_HEADER_LABEL_MODEL_PARAMETERS
   }
+
   static get NORTH() {
     return POOL_HEADER_LABEL_MODEL_PARAMETER_NORTH
   }
+
   static get EAST() {
     return POOL_HEADER_LABEL_MODEL_PARAMETER_EAST
   }
+
   static get SOUTH() {
     return POOL_HEADER_LABEL_MODEL_PARAMETER_SOUTH
   }
+
   static get WEST() {
     return POOL_HEADER_LABEL_MODEL_PARAMETER_WEST
   }
+
   static get INSTANCE() {
     return (
       PoolHeaderLabelModel._instance ||
@@ -7264,22 +8031,28 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
     )
   }
 }
+
 class PoolHeaderLabelModelParameter extends BaseClass(ILabelModelParameter) {
   _side
+
   constructor(side) {
     super()
     this._side = side || 0
   }
+
   get side() {
     return this._side
   }
+
   get model() {
     return PoolHeaderLabelModel.INSTANCE
   }
+
   clone() {
     return this
   }
 }
+
 const POOL_HEADER_LABEL_MODEL_PARAMETER_NORTH = new PoolHeaderLabelModelParameter(0)
 const POOL_HEADER_LABEL_MODEL_PARAMETER_EAST = new PoolHeaderLabelModelParameter(1)
 const POOL_HEADER_LABEL_MODEL_PARAMETER_SOUTH = new PoolHeaderLabelModelParameter(2)
@@ -7290,6 +8063,7 @@ const POOL_HEADER_LABEL_MODEL_PARAMETERS = List.fromArray([
   POOL_HEADER_LABEL_MODEL_PARAMETER_SOUTH,
   POOL_HEADER_LABEL_MODEL_PARAMETER_WEST
 ])
+
 /**
  * An {@link IArrow} implementation using an {@link Icon} for the visualization.
  */
@@ -7300,12 +8074,14 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   _length = 0
   _cropLength = 0
   bounds = Size.ZERO
+
   constructor(icon) {
     super()
     this.anchor = Point.ORIGIN
     this.direction = Point.ORIGIN
     this.icon = icon
   }
+
   /**
    * Returns the length of the arrow, i.e. the distance from the arrow's tip to
    * the position where the visual representation of the edge's path should begin.
@@ -7314,6 +8090,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   get length() {
     return this._length
   }
+
   /**
    * Sets the length of the arrow, i.e. the distance from the arrow's tip to
    * the position where the visual representation of the edge's path should begin.
@@ -7322,6 +8099,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   set length(value) {
     this._length = value
   }
+
   /**
    * Gets the cropping length associated with this instance.
    * This value is used by {@link IEdgeStyle}s to let the
@@ -7331,6 +8109,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   get cropLength() {
     return this._cropLength
   }
+
   /**
    * Sets the cropping length associated with this instance.
    * This value is used by {@link IEdgeStyle}s to let the
@@ -7340,6 +8119,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   set cropLength(value) {
     this._cropLength = value
   }
+
   /**
    * Gets an {@link IBoundsProvider} implementation that can yield
    * this arrow's bounds if painted at the given location using the
@@ -7359,11 +8139,13 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
     this.direction = direction
     return this
   }
+
   getVisualCreator(edge, atSource, anchor, direction) {
     this.anchor = anchor
     this.direction = direction
     return this
   }
+
   /**
    * This method is called by the framework to create a
    * that will be included into the {@link IRenderContext}.
@@ -7379,6 +8161,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
     const canvasContainer = new SvgVisualGroup()
     const iconVisual = this.icon.createVisual(context)
     canvasContainer.add(iconVisual)
+
     // Rotate arrow and move it to correct position
     canvasContainer.transform = new Matrix(
       this.direction.x,
@@ -7388,8 +8171,10 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
       this.anchor.x,
       this.anchor.y
     )
+
     return canvasContainer
   }
+
   /**
    * This method updates or replaces a previously created  for inclusion
    * in the {@link IRenderContext}.
@@ -7423,6 +8208,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
     }
     return this.createVisual(context)
   }
+
   /**
    * Returns the bounds of the arrow for the current flyweight configuration.
    * @see Specified by {@link IBoundsProvider.getBounds}.
@@ -7435,10 +8221,12 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
       this.bounds.height
     )
   }
+
   get cropAtPort() {
     return false
   }
 }
+
 /**
  * An {@link ILabelStyle} implementation representing a Message according to the BPMN.
  */
@@ -7449,6 +8237,7 @@ export class MessageLabelStyle extends LabelStyleBase {
   _outline = null
   _messagePen = null
   _adapter
+
   constructor() {
     super()
     const stroke = new Stroke(BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE).freeze()
@@ -7463,12 +8252,14 @@ export class MessageLabelStyle extends LabelStyleBase {
     this._adapter = new NodeStyleLabelStyleAdapter(bpmnNodeStyle, labelStyle)
     this.outline = BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE
   }
+
   /**
    * Gets whether this message is initiating.
    */
   get isInitiating() {
     return this._isInitiating
   }
+
   /**
    * Sets whether this message is initiating.
    */
@@ -7478,12 +8269,14 @@ export class MessageLabelStyle extends LabelStyleBase {
       this.updateIcon()
     }
   }
+
   /**
    * Gets the outline color of the message.
    */
   get outline() {
     return this._outline
   }
+
   /**
    * Sets the outline color of the message.
    */
@@ -7494,12 +8287,14 @@ export class MessageLabelStyle extends LabelStyleBase {
       this.updateIcon()
     }
   }
+
   /**
    * Gets the color for an initiating message.
    */
   get initiatingColor() {
     return this._initiatingColor
   }
+
   /**
    * Sets the color for an initiating message.
    */
@@ -7511,12 +8306,14 @@ export class MessageLabelStyle extends LabelStyleBase {
       }
     }
   }
+
   /**
    * Gets the color for a response message.
    */
   get responseColor() {
     return this._responseColor
   }
+
   /**
    * Sets the color for a response message.
    */
@@ -7528,6 +8325,7 @@ export class MessageLabelStyle extends LabelStyleBase {
       }
     }
   }
+
   updateIcon() {
     const nodeStyle = this._adapter.nodeStyle
     nodeStyle.icon = IconFactory.createMessage(
@@ -7536,31 +8334,39 @@ export class MessageLabelStyle extends LabelStyleBase {
     )
     nodeStyle.modCount++
   }
+
   createVisual(context, label) {
     return this._adapter.renderer.getVisualCreator(label, this._adapter).createVisual(context)
   }
+
   updateVisual(context, oldVisual, label) {
     return this._adapter.renderer
       .getVisualCreator(label, this._adapter)
       .updateVisual(context, oldVisual)
   }
+
   getBounds(context, label) {
     return this._adapter.renderer.getBoundsProvider(label, this._adapter).getBounds(context)
   }
+
   isVisible(context, rectangle, label) {
     return this._adapter.renderer
       .getVisibilityTestable(label, this._adapter)
       .isVisible(context, rectangle)
   }
+
   isHit(context, location, label) {
     return this._adapter.renderer.getHitTestable(label, this._adapter).isHit(context, location)
   }
+
   lookup(label, type) {
     return this._adapter.renderer.getContext(label, this._adapter).lookup(type)
   }
+
   getPreferredSize(label) {
     return this._adapter.renderer.getPreferredSize(label, this._adapter)
   }
+
   /**
    * Create a clone of this object.
    * @returns A clone of this object.
@@ -7575,6 +8381,7 @@ export class MessageLabelStyle extends LabelStyleBase {
     return messageLabelStyle
   }
 }
+
 /**
  * An {@link INodeStyle} implementation representing a Data Store according to the BPMN.
  */
@@ -7582,6 +8389,7 @@ export class DataStoreNodeStyle extends BpmnNodeStyle {
   _background = BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND
   _outline = BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE
   icon
+
   /**
    * Creates a new instance.
    */
@@ -7590,12 +8398,14 @@ export class DataStoreNodeStyle extends BpmnNodeStyle {
     this.icon = IconFactory.createDataStore(this._background, this._outline)
     this.minimumSize = new Size(30, 20)
   }
+
   /**
    * Gets the background color of the data store.
    */
   get background() {
     return this._background
   }
+
   /**
    * Sets the background color of the data store.
    */
@@ -7605,12 +8415,14 @@ export class DataStoreNodeStyle extends BpmnNodeStyle {
       this._background = value
     }
   }
+
   /**
    * Gets the outline color of the data store.
    */
   get outline() {
     return this._outline
   }
+
   /**
    * Sets the outline color of the data store.
    */
@@ -7620,10 +8432,12 @@ export class DataStoreNodeStyle extends BpmnNodeStyle {
       this._outline = value
     }
   }
+
   /** @inheritDoc */
   updateIcon() {
     this.icon = IconFactory.createDataStore(this.background, this.outline)
   }
+
   /**
    * Gets the outline of the visual style.
    * This implementation yields `null` to indicate that
@@ -7636,12 +8450,14 @@ export class DataStoreNodeStyle extends BpmnNodeStyle {
   getOutline(node) {
     const halfEllipseHeight = 0.125
     const path = new GeneralPath()
+
     path.moveTo(0, halfEllipseHeight)
     path.lineTo(0, 1 - halfEllipseHeight)
     path.cubicTo(0, 1, 1, 1, 1, 1 - halfEllipseHeight)
     path.lineTo(1, halfEllipseHeight)
     path.cubicTo(1, 0, 0, 0, 0, halfEllipseHeight)
     path.close()
+
     const transform = new Matrix()
     transform.translate(node.layout.topLeft)
     transform.scale(node.layout.width, node.layout.height)
@@ -7649,6 +8465,7 @@ export class DataStoreNodeStyle extends BpmnNodeStyle {
     return path
   }
 }
+
 /**
  * An {@link INodeStyle} implementation representing a Data Object according to the BPMN.
  */
@@ -7661,6 +8478,7 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
   collectionIcon = null
   dataIcon = null
   typeIcon = null
+
   /**
    * Creates a new instance.
    */
@@ -7669,12 +8487,14 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
     this.type = DataObjectType.NONE
     this.minimumSize = new Size(25, 30)
   }
+
   /**
    * Gets whether this is a Collection Data Object.
    */
   get collection() {
     return this._collection
   }
+
   /**
    * Sets whether this is a Collection Data Object.
    */
@@ -7684,12 +8504,14 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
       this._collection = value
     }
   }
+
   /**
    * Gets the data object type for this style.
    */
   get type() {
     return this._type
   }
+
   /**
    * Sets the data object type for this style.
    */
@@ -7700,12 +8522,14 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
       this.updateTypeIcon()
     }
   }
+
   /**
    * Gets the background color of the data object.
    */
   get background() {
     return this._background
   }
+
   /**
    * Sets the background color of the data object.
    */
@@ -7716,12 +8540,14 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
       this.updateDataIcon()
     }
   }
+
   /**
    * Gets the outline color of the data object.
    */
   get outline() {
     return this._outline
   }
+
   /**
    * Sets the outline color of the data object.
    */
@@ -7732,12 +8558,14 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
       this.updateDataIcon()
     }
   }
+
   /**
    * Gets the color for the icon.
    */
   get iconColor() {
     return this._iconColor
   }
+
   /**
    * Sets the color for the icon.
    */
@@ -7749,6 +8577,7 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
       this.updateCollectionIcon()
     }
   }
+
   updateCollectionIcon() {
     this.collectionIcon = IconFactory.createPlacedIcon(
       IconFactory.createLoopCharacteristic(LoopCharacteristic.PARALLEL, this.iconColor),
@@ -7756,6 +8585,7 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
       BPMN_CONSTANTS_SIZES_MARKER
     )
   }
+
   updateTypeIcon() {
     this.typeIcon = IconFactory.createDataObjectType(this.type, this.iconColor)
     if (this.typeIcon) {
@@ -7766,9 +8596,11 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
       )
     }
   }
+
   updateDataIcon() {
     this.dataIcon = IconFactory.createDataObject(this.background, this.outline)
   }
+
   /**
    * Updates the {@link BpmnNodeStyle.icon}.
    * This method is called by {@link BpmnNodeStyle.createVisual}.
@@ -7780,8 +8612,10 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
     if (!this.collectionIcon) {
       this.updateCollectionIcon()
     }
+
     const icons = new List()
     icons.add(this.dataIcon)
+
     if (this.collection) {
       icons.add(this.collectionIcon)
     }
@@ -7794,6 +8628,7 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
       this.icon = this.dataIcon
     }
   }
+
   /**
    * Gets the outline of the visual style.
    * This implementation yields `null` to indicate that
@@ -7805,6 +8640,7 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
    */
   getOutline(node) {
     const cornerSize = Math.min(node.layout.width, node.layout.height) * 0.4
+
     const path = new GeneralPath()
     path.moveTo(0, 0)
     path.lineTo(node.layout.width - cornerSize, 0)
@@ -7812,12 +8648,14 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
     path.lineTo(node.layout.width, node.layout.height)
     path.lineTo(0, node.layout.height)
     path.close()
+
     const transform = new Matrix()
     transform.translate(node.layout.topLeft)
     path.transform(transform)
     return path
   }
 }
+
 /**
  * An {@link INodeStyle} implementation representing a Conversation according to the BPMN.
  */
@@ -7826,6 +8664,7 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
   _background = BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND
   _outline = BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE
   _iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+
   /**
    * Creates a new instance.
    */
@@ -7834,12 +8673,14 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
     this.type = ConversationType.CONVERSATION
     this.minimumSize = BPMN_CONSTANTS_SIZES_CONVERSATION
   }
+
   /**
    * Gets the conversation type for this style.
    */
   get type() {
     return this._type
   }
+
   /**
    * Sets the conversation type for this style.
    */
@@ -7849,12 +8690,14 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
       this._type = value
     }
   }
+
   /**
    * Gets the background color of the conversation.
    */
   get background() {
     return this._background
   }
+
   /**
    * Sets the background color of the conversation.
    */
@@ -7864,12 +8707,14 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
       this._background = value
     }
   }
+
   /**
    * Gets the outline color of the conversation.
    */
   get outline() {
     return this._outline
   }
+
   /**
    * Sets the outline color of the conversation.
    */
@@ -7879,12 +8724,14 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
       this._outline = value
     }
   }
+
   /**
    * Gets the primary color for icons and markers.
    */
   get iconColor() {
     return this._iconColor
   }
+
   /**
    * Sets the primary color for icons and markers.
    */
@@ -7894,10 +8741,12 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
       this._iconColor = value
     }
   }
+
   /** @inheritDoc */
   updateIcon() {
     let typeIcon = IconFactory.createConversation(this._type, this.background, this.outline)
     let markerIcon = IconFactory.createConversationMarker(this._type, this.iconColor)
+
     if (markerIcon) {
       markerIcon = IconFactory.createPlacedIcon(
         markerIcon,
@@ -7906,12 +8755,14 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
       )
       typeIcon = IconFactory.createCombinedIcon(List.fromArray([typeIcon, markerIcon]))
     }
+
     this.icon = IconFactory.createPlacedIcon(
       typeIcon,
       BPMN_CONSTANTS_PLACEMENTS_CONVERSATION,
       BPMN_CONSTANTS_SIZES_CONVERSATION
     )
   }
+
   /**
    * Gets the outline of the visual style.
    * This implementation yields `null` to indicate that
@@ -7941,6 +8792,7 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
     path.lineTo(0.75, 1)
     path.lineTo(0.25, 1)
     path.close()
+
     const transform = new Matrix()
     transform.translate(bounds.topLeft)
     transform.scale(bounds.width, bounds.height)
@@ -7948,6 +8800,7 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
     return path
   }
 }
+
 /**
  * An {@link INodeStyle} implementation representing an Event according to the BPMN.
  */
@@ -7960,18 +8813,21 @@ export class EventNodeStyle extends BpmnNodeStyle {
   typeIcon = null
   fillTypeIcon = false
   _type = null
+
   constructor() {
     super()
     this.type = EventType.PLAIN
     this.characteristic = EventCharacteristic.START
     this.minimumSize = new Size(20, 20)
   }
+
   /**
    * Gets the event type for this style.
    */
   get type() {
     return this._type
   }
+
   /**
    * Sets the event type for this style.
    */
@@ -7982,12 +8838,14 @@ export class EventNodeStyle extends BpmnNodeStyle {
       this.createTypeIcon()
     }
   }
+
   /**
    * Gets the event characteristic for this style.
    */
   get characteristic() {
     return this._characteristic
   }
+
   /**
    * Sets the event characteristic for this style.
    */
@@ -7998,12 +8856,14 @@ export class EventNodeStyle extends BpmnNodeStyle {
       this.createEventIcon()
     }
   }
+
   /**
    * Gets the background color of the event.
    */
   get background() {
     return this._background
   }
+
   /**
    * Sets the background color of the event.
    */
@@ -8014,12 +8874,14 @@ export class EventNodeStyle extends BpmnNodeStyle {
       this.createEventIcon()
     }
   }
+
   /**
    * Gets the outline color of the event icon.
    */
   get outline() {
     return this._outline
   }
+
   /**
    * Sets the outline color of the event icon.
    * If this is set to null, the outline color is automatic, based on the
@@ -8032,12 +8894,14 @@ export class EventNodeStyle extends BpmnNodeStyle {
       this.createEventIcon()
     }
   }
+
   /**
    * Gets the primary color for icons and markers.
    */
   get iconColor() {
     return this._iconColor
   }
+
   /**
    * Sets the primary color for icons and markers.
    */
@@ -8048,6 +8912,7 @@ export class EventNodeStyle extends BpmnNodeStyle {
       this.createTypeIcon()
     }
   }
+
   createTypeIcon() {
     this.typeIcon = IconFactory.createEventType(
       this.type,
@@ -8063,6 +8928,7 @@ export class EventNodeStyle extends BpmnNodeStyle {
       )
     }
   }
+
   createEventIcon() {
     this.eventIcon = IconFactory.createEvent(this.characteristic, this.background, this.outline)
     this.eventIcon = IconFactory.createPlacedIcon(
@@ -8078,6 +8944,7 @@ export class EventNodeStyle extends BpmnNodeStyle {
       this.createTypeIcon()
     }
   }
+
   /**
    * Updates the {@link BpmnNodeStyle.icon}.
    * This method is called by {@link BpmnNodeStyle.createVisual}.
@@ -8094,12 +8961,15 @@ export class EventNodeStyle extends BpmnNodeStyle {
       this.icon = this.eventIcon
     }
   }
+
   createVisual(context, node) {
     return super.createVisual(context, node)
   }
+
   updateVisual(context, oldVisual, node) {
     return super.updateVisual(context, oldVisual, node)
   }
+
   /**
    * Gets the outline of the visual style.
    * This implementation yields `null` to indicate that
@@ -8117,10 +8987,12 @@ export class EventNodeStyle extends BpmnNodeStyle {
       size,
       size
     )
+
     const path = new GeneralPath()
     path.appendEllipse(bounds, false)
     return path
   }
+
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
    * This method is called in response to a {@link IHitTestable.isHit}
@@ -8143,12 +9015,14 @@ export class EventNodeStyle extends BpmnNodeStyle {
     return GeometryUtilities.ellipseContains(bounds, p, canvasContext.hitTestRadius)
   }
 }
+
 /**
  * An {@link INodeStyle} implementation representing an Group Node according to the BPMN.
  */
 export class GroupNodeStyle extends BaseClass(INodeStyle) {
   _insets = new Insets(15)
   _renderer = new GroupNodeStyleRenderer()
+
   /**
    * Gets the insets for the node.
    * These insets are returned via an {@link IGroupPaddingProvider} if such an instance is queried
@@ -8160,6 +9034,7 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
   get insets() {
     return this._insets
   }
+
   /**
    * Sets the insets for the node.
    * These insets are returned via an {@link IGroupPaddingProvider} if such an instance is queried
@@ -8170,12 +9045,14 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
   set insets(insets) {
     this._insets = insets
   }
+
   /**
    * Gets the background color of the group.
    */
   get background() {
     return this._renderer.nodeStyle.fill
   }
+
   /**
    * Sets the background color of the group.
    */
@@ -8184,12 +9061,14 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
       this._renderer.nodeStyle.fill = value
     }
   }
+
   /**
    * Gets the outline color of the group.
    */
   get outline() {
     return this._renderer.nodeStyle.stroke.fill
   }
+
   /**
    * Sets the outline color of the group.
    */
@@ -8198,6 +9077,7 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
       this._renderer.nodeStyle.stroke = this.getPen(value)
     }
   }
+
   getPen(outline) {
     return new Stroke({
       fill: outline ?? 'black',
@@ -8205,6 +9085,7 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
       lineCap: LineCap.ROUND
     }).freeze()
   }
+
   /**
    * Create a clone of this object.
    * @returns A clone of this object.
@@ -8217,6 +9098,7 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
     groupNodeStyle.outline = this.outline
     return groupNodeStyle
   }
+
   /**
    * Gets the renderer implementation that can be queried for implementations
    * that provide details about the visual appearance and visual behavior
@@ -8233,6 +9115,7 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
     return this._renderer
   }
 }
+
 /**
  * An {@link INodeStyleRenderer} implementation used by {@link GroupNodeStyle}.
  */
@@ -8240,6 +9123,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
   lastNode = null
   lastStyle = null
   _nodeStyle
+
   constructor() {
     super()
     const groupOutline = new Stroke({
@@ -8253,12 +9137,14 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
       fill: BPMN_CONSTANTS_GROUP_DEFAULT_BACKGROUND
     })
   }
+
   /**
    * The ShapeNodeStyle that is used internally to render this group style.
    */
   get nodeStyle() {
     return this._nodeStyle
   }
+
   /**
    * Gets an implementation of the {@link IVisualCreator} interface that can
    * handle the provided item and its associated style.
@@ -8275,6 +9161,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
   getVisualCreator(node, style) {
     return this._nodeStyle.renderer.getVisualCreator(node, this._nodeStyle)
   }
+
   /**
    * Gets an implementation of the {@link IBoundsProvider} interface that can
    * handle the provided item and its associated style.
@@ -8290,6 +9177,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
   getBoundsProvider(node, style) {
     return this._nodeStyle.renderer.getBoundsProvider(node, this._nodeStyle)
   }
+
   /**
    * Gets an implementation of the {@link IVisibilityTestable} interface that can
    * handle the provided item and its associated style.
@@ -8305,6 +9193,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
   getVisibilityTestable(node, style) {
     return this._nodeStyle.renderer.getVisibilityTestable(node, this._nodeStyle)
   }
+
   /**
    * Gets an implementation of the {@link IHitTestable} interface that can
    * handle the provided item and its associated style.
@@ -8321,6 +9210,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
   getHitTestable(node, style) {
     return this._nodeStyle.renderer.getHitTestable(node, this._nodeStyle)
   }
+
   /**
    * Gets an implementation of the {@link IMarqueeTestable} interface that can
    * handle the provided item and its associated style.
@@ -8335,6 +9225,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
   getMarqueeTestable(node, style) {
     return this._nodeStyle.renderer.getMarqueeTestable(node, this._nodeStyle)
   }
+
   /**
    * Gets an implementation of the ILassoTestable interface that can handle the provided
    * node and its associated style.
@@ -8342,6 +9233,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
   getLassoTestable(node, style) {
     return this._nodeStyle.renderer.getLassoTestable(node, this._nodeStyle)
   }
+
   /**
    * Gets a temporary context instance that can be used to query additional information
    * for the item's style.
@@ -8359,6 +9251,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
     this.lastStyle = style instanceof GroupNodeStyle ? style : null
     return this
   }
+
   /**
    * Gets an implementation of the {@link IShapeGeometry} interface that can
    * handle the provided node and its associated style.
@@ -8374,6 +9267,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
   getShapeGeometry(node, style) {
     return this._nodeStyle.renderer.getShapeGeometry(node, this._nodeStyle)
   }
+
   /**
    * Returns an instance that implements the given type or `null`.
    * Typically, this method will be called in order to obtain a different view or
@@ -8397,15 +9291,18 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
     return lookup != null ? lookup.lookup(type) : null
   }
 }
+
 /**
  * Uses the style insets extended by the size of the participant bands.
  */
 class GroupInsetsProvider extends BaseClass(IGroupPaddingProvider) {
   style
+
   constructor(style) {
     super()
     this.style = style
   }
+
   /**
    * Returns the padding from {@link GroupNodeStyle} for the given node to include the size of the
    * participant bands.
@@ -8414,6 +9311,7 @@ class GroupInsetsProvider extends BaseClass(IGroupPaddingProvider) {
     return this.style.insets
   }
 }
+
 /**
  * An {@link INodeStyle} implementation representing a Gateway according to the BPMN.
  */
@@ -8424,17 +9322,20 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
   _background = BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND
   gatewayIcon = null
   typeIcon = null
+
   constructor() {
     super()
     this.type = GatewayType.EXCLUSIVE_WITHOUT_MARKER
     this.minimumSize = new Size(20, 20)
   }
+
   /**
    * Gets the gateway type for this style.
    */
   get type() {
     return this._type
   }
+
   /**
    * Sets the gateway type for this style.
    */
@@ -8445,12 +9346,14 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
       this.updateTypeIcon()
     }
   }
+
   /**
    * Gets the background color of the gateway.
    */
   get background() {
     return this._background
   }
+
   /**
    * Sets the background color of the gateway.
    */
@@ -8461,12 +9364,14 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
       this.updateGatewayIcon()
     }
   }
+
   /**
    * Gets the outline color of the gateway.
    */
   get outline() {
     return this._outline
   }
+
   /**
    * Sets the outline color of the gateway.
    */
@@ -8477,12 +9382,14 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
       this.updateGatewayIcon()
     }
   }
+
   /**
    * Gets the color for the icon.
    */
   get iconColor() {
     return this._iconColor
   }
+
   /**
    * Sets the color for the icon.
    */
@@ -8493,6 +9400,7 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
       this.updateTypeIcon()
     }
   }
+
   updateGatewayIcon() {
     this.gatewayIcon = IconFactory.createPlacedIcon(
       IconFactory.createGateway(this.background, this.outline),
@@ -8500,6 +9408,7 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
       Size.EMPTY
     )
   }
+
   updateTypeIcon() {
     this.typeIcon = IconFactory.createGatewayType(this.type, this.iconColor)
     if (this.typeIcon != null) {
@@ -8510,6 +9419,7 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
       )
     }
   }
+
   /**
    * Updates the {@link BpmnNodeStyle.icon}.
    * This method is called by {@link BpmnNodeStyle.createVisual}.
@@ -8523,6 +9433,7 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
         ? IconFactory.createCombinedIcon(List.fromArray([this.gatewayIcon, this.typeIcon]))
         : this.gatewayIcon
   }
+
   /**
    * Gets the outline of the visual style.
    * This implementation yields `null` to indicate that
@@ -8540,6 +9451,7 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
       size,
       size
     )
+
     const path = new GeneralPath()
     path.moveTo(bounds.x, bounds.centerY)
     // <
@@ -8552,12 +9464,15 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
     path.close()
     return path
   }
+
   createVisual(context, node) {
     return super.createVisual(context, node)
   }
+
   updateVisual(context, oldVisual, node) {
     return super.updateVisual(context, oldVisual, node)
   }
+
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
    * This method is called in response to a {@link IHitTestable.isHit}
@@ -8574,11 +9489,13 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
       return false
     }
     const size = Math.min(node.layout.width, node.layout.height)
+
     const distVector = node.layout.center.subtract(p)
     const dist = Math.abs(distVector.x) + Math.abs(distVector.y)
     return dist < size * 0.5 + canvasContext.hitTestRadius
   }
 }
+
 /**
  * An {@link IPortStyle} implementation representing an Event attached to an Activity boundary
  * according to the BPMN.
@@ -8586,6 +9503,7 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
 export class EventPortStyle extends BaseClass(IPortStyle) {
   _nodeStyle
   _renderSize
+
   /**
    * Creates a new instance.
    */
@@ -8597,48 +9515,56 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
     this._nodeStyle = eventNodeStyle
     this._renderSize = BPMN_CONSTANTS_SIZES_EVENT_PORT
   }
+
   /**
    * Gets the event type for this style.
    */
   get type() {
     return this._nodeStyle.type
   }
+
   /**
    * Sets the event type for this style.
    */
   set type(value) {
     this._nodeStyle.type = value
   }
+
   /**
    * Gets the event characteristic for this style.
    */
   get characteristic() {
     return this._nodeStyle.characteristic
   }
+
   /**
    * Sets the event characteristic for this style.
    */
   set characteristic(value) {
     this._nodeStyle.characteristic = value
   }
+
   /**
    * Gets the size the port style is rendered with.
    */
   get renderSize() {
     return this._renderSize
   }
+
   /**
    * Sets the size the port style is rendered with.
    */
   set renderSize(value) {
     this._renderSize = value
   }
+
   /**
    * Gets the background color of the event.
    */
   get background() {
     return this._nodeStyle.background
   }
+
   /**
    * Sets the background color of the event.
    */
@@ -8647,12 +9573,14 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
       this._nodeStyle.background = value
     }
   }
+
   /**
    * Gets the outline color of the event.
    */
   get outline() {
     return this._nodeStyle.outline
   }
+
   /**
    * Sets the outline color of the event.
    * If this is set to null, the outline color is automatic, based on the
@@ -8663,12 +9591,14 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
       this._nodeStyle.outline = value
     }
   }
+
   /**
    * Gets the primary color for icons and markers.
    */
   get iconColor() {
     return this._nodeStyle.iconColor
   }
+
   /**
    * Sets the primary color for icons and markers.
    */
@@ -8677,9 +9607,11 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
       this._nodeStyle.iconColor = value
     }
   }
+
   get eventNodeStyle() {
     return this._nodeStyle
   }
+
   /**
    * Create a clone of this object.
    * @returns A clone of this object.
@@ -8691,6 +9623,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
     clone._nodeStyle = this.eventNodeStyle.clone()
     return clone
   }
+
   /**
    * Gets the renderer implementation that can be queried for implementations
    * that provide details about the visual appearance and visual behavior
@@ -8701,17 +9634,21 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
     return EventPortStyleRenderer.INSTANCE
   }
 }
+
 /**
  * Renderer used by {@link EventPortStyle}.
  */
 class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
   static _instance
+
   _adapter
   fallbackLookup = null
+
   constructor() {
     super()
     this._adapter = new NodeStylePortStyleAdapter()
   }
+
   /**
    * Gets an implementation of the {@link IVisualCreator} interface that can
    * handle the provided item and its associated style.
@@ -8728,6 +9665,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
     const adapter = this.getConfiguredAdapter(style)
     return adapter.renderer.getVisualCreator(port, adapter)
   }
+
   /**
    * Gets an implementation of the {@link IBoundsProvider} interface that can
    * handle the provided item and its associated style.
@@ -8743,6 +9681,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
     const adapter = this.getConfiguredAdapter(style)
     return adapter.renderer.getBoundsProvider(port, adapter)
   }
+
   /**
    * Gets an implementation of the {@link IVisibilityTestable} interface that can
    * handle the provided item and its associated style.
@@ -8758,6 +9697,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
     const adapter = this.getConfiguredAdapter(style)
     return adapter.renderer.getVisibilityTestable(port, adapter)
   }
+
   /**
    * Gets an implementation of the {@link IHitTestable} interface that can
    * handle the provided item and its associated style.
@@ -8774,6 +9714,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
     const adapter = this.getConfiguredAdapter(style)
     return adapter.renderer.getHitTestable(port, adapter)
   }
+
   /**
    * Gets an implementation of the {@link IMarqueeTestable} interface that can
    * handle the provided item and its associated style.
@@ -8789,6 +9730,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
     const adapter = this.getConfiguredAdapter(style)
     return adapter.renderer.getMarqueeTestable(port, adapter)
   }
+
   /**
    * Gets an implementation of the ILassoTestable interface that can handle the provided port
    * and its associated style.
@@ -8797,6 +9739,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
     const adapter = this.getConfiguredAdapter(style)
     return adapter.renderer.getLassoTestable(port, adapter)
   }
+
   /**
    * Gets a temporary context instance that can be used to query additional information
    * for the item's style.
@@ -8812,6 +9755,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
     this.fallbackLookup = adapter.renderer.getContext(port, adapter)
     return this
   }
+
   /**
    * Returns an instance that implements the given type or `null`.
    * Typically, this method will be called in order to obtain a different view or
@@ -8833,12 +9777,14 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
     }
     return this.fallbackLookup ? this.fallbackLookup.lookup(type) : null
   }
+
   getConfiguredAdapter(style) {
     const adapter = this._adapter
     adapter.nodeStyle = style.eventNodeStyle
     adapter.renderSize = style.renderSize
     return adapter
   }
+
   static get INSTANCE() {
     return (
       EventPortStyleRenderer._instance ||
@@ -8846,15 +9792,18 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
     )
   }
 }
+
 /**
  * {@link EdgePathCropper} instance that crops the edge at the circular port bounds.
  */
 class EventPortEdgeIntersectionCalculator extends EdgePathCropper {
   static _calculatorInstance
+
   constructor() {
     super()
     this.cropAtPort = true
   }
+
   /**
    * Returns the geometry of the port retrieved from {@link EventPortStyle}.
    * @param port The port at which the edge should be cropped.
@@ -8866,6 +9815,7 @@ class EventPortEdgeIntersectionCalculator extends EdgePathCropper {
     }
     return null
   }
+
   static get CalculatorInstance() {
     return (
       EventPortEdgeIntersectionCalculator._calculatorInstance ||
@@ -8874,6 +9824,7 @@ class EventPortEdgeIntersectionCalculator extends EdgePathCropper {
     )
   }
 }
+
 /**
  * A toggle button that uses different {@link Visual}s for the two toggle states.
  */
@@ -8883,12 +9834,15 @@ class VisualToggleButton extends SvgVisual {
   // The visual used if the button is not checked.
   uncheckedVisual = null
   _checked = false
+
   constructor() {
     super(window.document.createElementNS('http://www.w3.org/2000/svg', 'g'))
   }
+
   get checked() {
     return this._checked
   }
+
   set checked(value) {
     if (this.checkedVisual && this.uncheckedVisual) {
       const noChildren = this.svgElement.childElementCount < 1
@@ -8902,6 +9856,7 @@ class VisualToggleButton extends SvgVisual {
       this._checked = value
     }
   }
+
   setChild(newChild) {
     if (this.svgElement.childElementCount >= 1) {
       this.svgElement.removeChild(this.svgElement.firstElementChild)
@@ -8911,11 +9866,14 @@ class VisualToggleButton extends SvgVisual {
     }
   }
 }
+
 class DataObjectIcon extends Icon {
   fill = null
   stroke = null
+
   createVisual(context) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     const boundsWidth = this.bounds.width
     const boundsHeight = this.bounds.height
     const cornerSize = Math.min(boundsWidth, boundsHeight) * 0.4
@@ -8932,6 +9890,7 @@ class DataObjectIcon extends Icon {
     Stroke.setStroke(this.stroke, path1, context)
     Fill.setFill(this.fill, path1, context)
     container.appendChild(path1)
+
     const path2 = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path2.setAttribute(
       'd',
@@ -8948,14 +9907,19 @@ class DataObjectIcon extends Icon {
       this.stroke,
       this.fill
     )
+
     SvgVisual.setTranslate(container, this.bounds.x, this.bounds.y)
+
     return new SvgVisual(container)
   }
+
   updateVisual(context, oldVisual) {
     const container = oldVisual.svgElement
     const cache = container['render-data-cache']
+
     const path1 = container.firstElementChild
     const path2 = container.lastElementChild
+
     if (cache.width !== this.bounds.width || cache.height !== this.bounds.height) {
       const cornerSize = Math.min(this.bounds.width, this.bounds.height) * 0.4
       path1.setAttribute(
@@ -8974,24 +9938,30 @@ class DataObjectIcon extends Icon {
          L ${this.bounds.width} ${cornerSize}`
       )
     }
+
     if (cache.stroke !== this.stroke) {
       Stroke.setStroke(this.stroke, path1, context)
       Stroke.setStroke(this.stroke, path2, context)
     }
+
     if (cache.fill !== this.fill) {
       Fill.setFill(this.fill, path1, context)
       Fill.setFill(this.fill, path2, context)
     }
+
     container['render-data-cache'] = new PathIconState(
       this.bounds.width,
       this.bounds.height,
       this.stroke,
       this.fill
     )
+
     SvgVisual.setTranslate(container, this.bounds.x, this.bounds.y)
+
     return new SvgVisual(container)
   }
 }
+
 class CollapseButtonIcon extends Icon {
   node
   iconFill
@@ -8999,6 +9969,7 @@ class CollapseButtonIcon extends Icon {
   expandedIcon
   touchEndRegistered = false
   onTouchEndDelegate = null
+
   constructor(node, iconFill) {
     super()
     this.node = node
@@ -9006,6 +9977,7 @@ class CollapseButtonIcon extends Icon {
     this.collapsedIcon = IconFactory.createStaticSubState(SubState.COLLAPSED, iconFill)
     this.expandedIcon = IconFactory.createStaticSubState(SubState.EXPANDED, iconFill)
   }
+
   createVisual(context) {
     this.collapsedIcon.setBounds(new Rect(Point.ORIGIN, this.bounds.size))
     this.expandedIcon.setBounds(new Rect(Point.ORIGIN, this.bounds.size))
@@ -9017,11 +9989,14 @@ class CollapseButtonIcon extends Icon {
     )
     const container = new SvgVisualGroup()
     container.add(new SvgVisual(button.svgElement))
+
     const transform = new Matrix()
     transform.translate(this.bounds.toRect().topLeft)
     container.transform = transform
+
     return container
   }
+
   updateVisual(context, oldVisual) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
     if (
@@ -9030,25 +10005,33 @@ class CollapseButtonIcon extends Icon {
     ) {
       return this.createVisual(context)
     }
+
     this.collapsedIcon.setBounds(new Rect(Point.ORIGIN, this.bounds.size))
     this.expandedIcon.setBounds(new Rect(Point.ORIGIN, this.bounds.size))
+
     const button = container.children.get(0)
     button.checkedVisual = this.collapsedIcon.updateVisual(context, button.checkedVisual)
     button.uncheckedVisual = this.expandedIcon.updateVisual(context, button.uncheckedVisual)
+
     const transform = new Matrix()
     transform.translate(this.bounds.toRect().topLeft)
     container.transform = transform
+
     button.checked = !isExpanded(context, this.node)
     return container
   }
+
   createButton(context, item, collapsedVisual, expandedVisual) {
     const button = new VisualToggleButton()
     button.checkedVisual = collapsedVisual
     button.uncheckedVisual = expandedVisual
     button.checked = !isExpanded(context, this.node)
+
     this.addToggleGroupStateCommand(button, context)
+
     return button
   }
+
   /**
    * Adds the toggle group state command to the given button visual.
    * This method adds event listeners for click and tap events to
@@ -9092,6 +10075,7 @@ class CollapseButtonIcon extends Icon {
       passiveSupported ? { passive: false } : false
     )
   }
+
   onTouchEnd(button, currentItem, context) {
     button.svgElement.removeEventListener(
       'touchend',
@@ -9102,9 +10086,11 @@ class CollapseButtonIcon extends Icon {
     toggleExpansionState(currentItem, context)
   }
 }
+
 function isExpanded(context, item) {
   let expanded = true
   const canvas = context != null ? context.canvasComponent : null
+
   if (canvas != null) {
     const graph = canvas.graph
     const foldedGraph = graph.foldingView
@@ -9114,6 +10100,7 @@ function isExpanded(context, item) {
   }
   return expanded
 }
+
 /**
  * Toggles the state of a group/folder node.
  * @param currentNode The group whose state should be toggled.
@@ -9134,6 +10121,7 @@ function toggleExpansionState(currentNode, context) {
     }
   }
 }
+
 /**
  * A class that contains all information to determine whether or not a {@link PathIcon} needs to be
  * updated.
@@ -9143,18 +10131,21 @@ class PathIconState {
   height
   stroke
   fill
+
   constructor(width, height, stroke, fill) {
     this.width = width
     this.height = height
     this.stroke = stroke
     this.fill = fill
   }
+
   equals(width, height, stroke, fill) {
     return (
       this.width === width && this.height === height && this.stroke === stroke && this.fill === fill
     )
   }
 }
+
 /**
  * Specifies the type of a Choreography according to BPMN.
  * @see {@link ChoreographyNodeStyle}
@@ -9171,6 +10162,7 @@ export const ChoreographyType = Enum('ChoreographyType', {
    */
   CALL: 1
 })
+
 /**
  * Specifies the characteristic of an event.
  * @see {@link EventNodeStyle}
@@ -9221,6 +10213,7 @@ export const EventCharacteristic = Enum('EventCharacteristic', {
    */
   END: 7
 })
+
 /**
  * Specifies the type of a Data Object according to BPMN.
  * @see {@link DataObjectNodeStyle}
@@ -9242,36 +10235,47 @@ export const DataObjectType = Enum('DataObjectType', {
    */
   OUTPUT: 2
 })
+
 // The following extensions are needed for (de-)serialization.
+
 export class PoolNodeStyleExtension extends MarkupExtension {
   _vertical = false
   _multipleInstance = false
   _tableNodeStyle = null
   _iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+
   get vertical() {
     return this._vertical
   }
+
   set vertical(value) {
     this._vertical = value
   }
+
   get multipleInstance() {
     return this._multipleInstance
   }
+
   set multipleInstance(value) {
     this._multipleInstance = value
   }
+
   get tableNodeStyle() {
     return this._tableNodeStyle
   }
+
   set tableNodeStyle(value) {
     this._tableNodeStyle = value
   }
+
   get iconColor() {
     return this._iconColor
   }
+
   set iconColor(value) {
     this._iconColor = value
   }
+
   provideValue(serviceProvider) {
     const style = new PoolNodeStyle(this.vertical)
     style.multipleInstance = this.multipleInstance
@@ -9280,28 +10284,36 @@ export class PoolNodeStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class AlternatingLeafStripeStyleExtension extends MarkupExtension {
   _evenLeafDescriptor = null
   _parentDescriptor = null
   _oddLeafDescriptor = null
+
   get evenLeafDescriptor() {
     return this._evenLeafDescriptor
   }
+
   set evenLeafDescriptor(value) {
     this._evenLeafDescriptor = value
   }
+
   get parentDescriptor() {
     return this._parentDescriptor
   }
+
   set parentDescriptor(value) {
     this._parentDescriptor = value
   }
+
   get oddLeafDescriptor() {
     return this._oddLeafDescriptor
   }
+
   set oddLeafDescriptor(value) {
     this._oddLeafDescriptor = value
   }
+
   provideValue(serviceProvider) {
     const style = new AlternatingLeafStripeStyle()
     style.evenLeafDescriptor = this.evenLeafDescriptor
@@ -9310,35 +10322,45 @@ export class AlternatingLeafStripeStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class StripeDescriptorExtension extends MarkupExtension {
   _backgroundFill = Color.TRANSPARENT
   _insetFill = Color.TRANSPARENT
   _borderFill = Color.BLACK
   _borderThickness = new Insets(1)
+
   get backgroundFill() {
     return this._backgroundFill
   }
+
   set backgroundFill(value) {
     this._backgroundFill = value
   }
+
   get insetFill() {
     return this._insetFill
   }
+
   set insetFill(value) {
     this._insetFill = value
   }
+
   get borderFill() {
     return this._borderFill
   }
+
   set borderFill(value) {
     this._borderFill = value
   }
+
   get borderThickness() {
     return this._borderThickness
   }
+
   set borderThickness(value) {
     this._borderThickness = value
   }
+
   provideValue(serviceProvider) {
     const descriptor = new StripeDescriptor()
     descriptor.backgroundFill = this.backgroundFill
@@ -9348,6 +10370,7 @@ export class StripeDescriptorExtension extends MarkupExtension {
     return descriptor
   }
 }
+
 export class ActivityNodeStyleExtension extends MarkupExtension {
   _activityType = ActivityType.TASK
   _taskType = TaskType.ABSTRACT
@@ -9363,90 +10386,119 @@ export class ActivityNodeStyleExtension extends MarkupExtension {
   _outline = BPMN_CONSTANTS_ACTIVITY_DEFAULT_OUTLINE
   _iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
   _eventOutline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
+
   get activityType() {
     return this._activityType
   }
+
   set activityType(value) {
     this._activityType = value
   }
+
   get taskType() {
     return this._taskType
   }
+
   set taskType(value) {
     this._taskType = value
   }
+
   get triggerEventType() {
     return this._triggerEventType
   }
+
   set triggerEventType(value) {
     this._triggerEventType = value
   }
+
   get triggerEventCharacteristic() {
     return this._triggerEventCharacteristic
   }
+
   set triggerEventCharacteristic(value) {
     this._triggerEventCharacteristic = value
   }
+
   get loopCharacteristic() {
     return this._loopCharacteristic
   }
+
   set loopCharacteristic(value) {
     this._loopCharacteristic = value
   }
+
   get subState() {
     return this._subState
   }
+
   set subState(value) {
     this._subState = value
   }
+
   get insets() {
     return this._insets
   }
+
   set insets(value) {
     this._insets = value
   }
+
   get adHoc() {
     return this._adHoc
   }
+
   set adHoc(value) {
     this._adHoc = value
   }
+
   get compensation() {
     return this._compensation
   }
+
   set compensation(value) {
     this._compensation = value
   }
+
   get minimumSize() {
     return this._minimumSize
   }
+
   set minimumSize(value) {
     this._minimumSize = value
   }
+
   get background() {
     return this._background
   }
+
   set background(value) {
     this._background = value
   }
+
   get outline() {
     return this._outline
   }
+
   set outline(value) {
     this._outline = value
   }
+
   get iconColor() {
     return this._iconColor
   }
+
   set iconColor(value) {
     this._iconColor = value
   }
+
   get eventOutline() {
     return this._eventOutline
   }
+
   set eventOutline(value) {
     this._eventOutline = value
   }
+
   provideValue(serviceProvider) {
     const style = new ActivityNodeStyle()
     style.activityType = this.activityType
@@ -9466,28 +10518,36 @@ export class ActivityNodeStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class AnnotationNodeStyleExtension extends MarkupExtension {
   _left = true
   _background = BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND
   _outline = BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE
+
   get left() {
     return this._left
   }
+
   set left(value) {
     this._left = value
   }
+
   get background() {
     return this._background
   }
+
   set background(value) {
     this._background = value
   }
+
   get outline() {
     return this._outline
   }
+
   set outline(value) {
     this._outline = value
   }
+
   provideValue(serviceProvider) {
     const style = new AnnotationNodeStyle()
     style.left = this.left
@@ -9496,35 +10556,45 @@ export class AnnotationNodeStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class ConversationNodeStyleExtension extends MarkupExtension {
   _type = ConversationType.CONVERSATION
   _background = BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND
   _outline = BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE
   _iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+
   get type() {
     return this._type
   }
+
   set type(value) {
     this._type = value
   }
+
   get background() {
     return this._background
   }
+
   set background(value) {
     this._background = value
   }
+
   get outline() {
     return this._outline
   }
+
   set outline(value) {
     this._outline = value
   }
+
   get iconColor() {
     return this._iconColor
   }
+
   set iconColor(value) {
     this._iconColor = value
   }
+
   provideValue(serviceProvider) {
     const style = new ConversationNodeStyle()
     style.type = this.type
@@ -9534,6 +10604,7 @@ export class ConversationNodeStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class ChoreographyNodeStyleExtension extends MarkupExtension {
   _topParticipants = new List()
   _bottomParticipants = new List()
@@ -9551,102 +10622,135 @@ export class ChoreographyNodeStyleExtension extends MarkupExtension {
   _initiatingColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_INITIATING_COLOR
   _responseColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
   _messageOutline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
+
   get loopCharacteristic() {
     return this._loopCharacteristic
   }
+
   set loopCharacteristic(value) {
     this._loopCharacteristic = value
   }
+
   get subState() {
     return this._subState
   }
+
   set subState(value) {
     this._subState = value
   }
+
   get topParticipants() {
     return this._topParticipants
   }
+
   set topParticipants(value) {
     this._topParticipants = value
   }
+
   get bottomParticipants() {
     return this._bottomParticipants
   }
+
   set bottomParticipants(value) {
     this._bottomParticipants = value
   }
+
   get initiatingMessage() {
     return this._initiatingMessage
   }
+
   set initiatingMessage(value) {
     this._initiatingMessage = value
   }
+
   get responseMessage() {
     return this._responseMessage
   }
+
   set responseMessage(value) {
     this._responseMessage = value
   }
+
   get initiatingAtTop() {
     return this._initiatingAtTop
   }
+
   set initiatingAtTop(value) {
     this._initiatingAtTop = value
   }
+
   get insets() {
     return this._insets
   }
+
   set insets(value) {
     this._insets = value
   }
+
   get type() {
     return this._type
   }
+
   set type(value) {
     this._type = value
   }
+
   get minimumSize() {
     return this._minimumSize
   }
+
   set minimumSize(value) {
     this._minimumSize = value
   }
+
   get background() {
     return this._background
   }
+
   set background(value) {
     this._background = value
   }
+
   get outline() {
     return this._outline
   }
+
   set outline(value) {
     this._outline = value
   }
+
   get iconColor() {
     return this._iconColor
   }
+
   set iconColor(value) {
     this._iconColor = value
   }
+
   get initiatingColor() {
     return this._initiatingColor
   }
+
   set initiatingColor(value) {
     this._initiatingColor = value
   }
+
   get responseColor() {
     return this._responseColor
   }
+
   set responseColor(value) {
     this._responseColor = value
   }
+
   get messageOutline() {
     return this._messageOutline
   }
+
   set messageOutline(value) {
     this._messageOutline = value
   }
+
   provideValue(serviceProvider) {
     const style = new ChoreographyNodeStyle()
     style.loopCharacteristic = this.loopCharacteristic
@@ -9672,6 +10776,7 @@ export class ChoreographyNodeStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class LegacyChoreographyNodeStyleExtension extends MarkupExtension {
   _topParticipants = new List()
   _bottomParticipants = new List()
@@ -9689,102 +10794,135 @@ export class LegacyChoreographyNodeStyleExtension extends MarkupExtension {
   _initiatingColor = Color.LIGHT_GRAY
   _responseColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
   _messageOutline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
+
   get loopCharacteristic() {
     return this._loopCharacteristic
   }
+
   set loopCharacteristic(value) {
     this._loopCharacteristic = value
   }
+
   get subState() {
     return this._subState
   }
+
   set subState(value) {
     this._subState = value
   }
+
   get topParticipants() {
     return this._topParticipants
   }
+
   set topParticipants(value) {
     this._topParticipants = value
   }
+
   get bottomParticipants() {
     return this._bottomParticipants
   }
+
   set bottomParticipants(value) {
     this._bottomParticipants = value
   }
+
   get initiatingMessage() {
     return this._initiatingMessage
   }
+
   set initiatingMessage(value) {
     this._initiatingMessage = value
   }
+
   get responseMessage() {
     return this._responseMessage
   }
+
   set responseMessage(value) {
     this._responseMessage = value
   }
+
   get initiatingAtTop() {
     return this._initiatingAtTop
   }
+
   set initiatingAtTop(value) {
     this._initiatingAtTop = value
   }
+
   get insets() {
     return this._insets
   }
+
   set insets(value) {
     this._insets = value
   }
+
   get type() {
     return this._type
   }
+
   set type(value) {
     this._type = value
   }
+
   get minimumSize() {
     return this._minimumSize
   }
+
   set minimumSize(value) {
     this._minimumSize = value
   }
+
   get background() {
     return this._background
   }
+
   set background(value) {
     this._background = value
   }
+
   get outline() {
     return this._outline
   }
+
   set outline(value) {
     this._outline = value
   }
+
   get iconColor() {
     return this._iconColor
   }
+
   set iconColor(value) {
     this._iconColor = value
   }
+
   get initiatingColor() {
     return this._initiatingColor
   }
+
   set initiatingColor(value) {
     this._initiatingColor = value
   }
+
   get responseColor() {
     return this._responseColor
   }
+
   set responseColor(value) {
     this._responseColor = value
   }
+
   get messageOutline() {
     return this._messageOutline
   }
+
   set messageOutline(value) {
     this._messageOutline = value
   }
+
   provideValue(serviceProvider) {
     const style = new ChoreographyNodeStyle()
     style.loopCharacteristic = this.loopCharacteristic
@@ -9810,20 +10948,25 @@ export class LegacyChoreographyNodeStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class ParticipantExtension extends MarkupExtension {
   _multiInstance = false
+
   get multiInstance() {
     return this._multiInstance
   }
+
   set multiInstance(value) {
     this._multiInstance = value
   }
+
   provideValue(serviceProvider) {
     const participant = new Participant()
     participant.multiInstance = this.multiInstance
     return participant
   }
 }
+
 export class DataObjectNodeStyleExtension extends MarkupExtension {
   _minimumSize = Size.EMPTY
   _collection = false
@@ -9831,42 +10974,55 @@ export class DataObjectNodeStyleExtension extends MarkupExtension {
   _background = BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND
   _outline = BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE
   _iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+
   get minimumSize() {
     return this._minimumSize
   }
+
   set minimumSize(value) {
     this._minimumSize = value
   }
+
   get collection() {
     return this._collection
   }
+
   set collection(value) {
     this._collection = value
   }
+
   get type() {
     return this._type
   }
+
   set type(value) {
     this._type = value
   }
+
   get background() {
     return this._background
   }
+
   set background(value) {
     this._background = value
   }
+
   get outline() {
     return this._outline
   }
+
   set outline(value) {
     this._outline = value
   }
+
   get iconColor() {
     return this._iconColor
   }
+
   set iconColor(value) {
     this._iconColor = value
   }
+
   provideValue(serviceProvider) {
     const style = new DataObjectNodeStyle()
     style.minimumSize = this.minimumSize
@@ -9878,28 +11034,36 @@ export class DataObjectNodeStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class DataStoreNodeStyleExtension extends MarkupExtension {
   _minimumSize = Size.EMPTY
   _background = BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND
   _outline = BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE
+
   get minimumSize() {
     return this._minimumSize
   }
+
   set minimumSize(value) {
     this._minimumSize = value
   }
+
   get background() {
     return this._background
   }
+
   set background(value) {
     this._background = value
   }
+
   get outline() {
     return this._outline
   }
+
   set outline(value) {
     this._outline = value
   }
+
   provideValue(serviceProvider) {
     const style = new DataStoreNodeStyle()
     style.minimumSize = this.minimumSize
@@ -9908,6 +11072,7 @@ export class DataStoreNodeStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class EventNodeStyleExtension extends MarkupExtension {
   _type = EventType.PLAIN
   _characteristic = EventCharacteristic.START
@@ -9915,42 +11080,55 @@ export class EventNodeStyleExtension extends MarkupExtension {
   _background = BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND
   _outline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
   _iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+
   get type() {
     return this._type
   }
+
   set type(value) {
     this._type = value
   }
+
   get characteristic() {
     return this._characteristic
   }
+
   set characteristic(value) {
     this._characteristic = value
   }
+
   get minimumSize() {
     return this._minimumSize
   }
+
   set minimumSize(value) {
     this._minimumSize = value
   }
+
   get background() {
     return this._background
   }
+
   set background(value) {
     this._background = value
   }
+
   get outline() {
     return this._outline
   }
+
   set outline(value) {
     this._outline = value
   }
+
   get iconColor() {
     return this._iconColor
   }
+
   set iconColor(value) {
     this._iconColor = value
   }
+
   provideValue(serviceProvider) {
     const style = new EventNodeStyle()
     style.type = this.type
@@ -9962,42 +11140,54 @@ export class EventNodeStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class GatewayNodeStyleExtension extends MarkupExtension {
   _type = GatewayType.EXCLUSIVE_WITHOUT_MARKER
   _minimumSize = Size.EMPTY
   _background = BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND
   _outline = BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE
   _iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+
   get type() {
     return this._type
   }
+
   set type(value) {
     this._type = value
   }
+
   get minimumSize() {
     return this._minimumSize
   }
+
   set minimumSize(value) {
     this._minimumSize = value
   }
+
   get background() {
     return this._background
   }
+
   set background(value) {
     this._background = value
   }
+
   get outline() {
     return this._outline
   }
+
   set outline(value) {
     this._outline = value
   }
+
   get iconColor() {
     return this._iconColor
   }
+
   set iconColor(value) {
     this._iconColor = value
   }
+
   provideValue(serviceProvider) {
     const style = new GatewayNodeStyle()
     style.type = this.type
@@ -10008,28 +11198,36 @@ export class GatewayNodeStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class GroupNodeStyleExtension extends MarkupExtension {
   _insets = new Insets(15)
   _background = BPMN_CONSTANTS_GROUP_DEFAULT_BACKGROUND
   _outline = BPMN_CONSTANTS_GROUP_DEFAULT_OUTLINE
+
   get insets() {
     return this._insets
   }
+
   set insets(value) {
     this._insets = value
   }
+
   get background() {
     return this._background
   }
+
   set background(value) {
     this._background = value
   }
+
   get outline() {
     return this._outline
   }
+
   set outline(value) {
     this._outline = value
   }
+
   provideValue(serviceProvider) {
     const style = new GroupNodeStyle()
     style.insets = this.insets
@@ -10038,35 +11236,45 @@ export class GroupNodeStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class BpmnEdgeStyleExtension extends MarkupExtension {
   _type = BpmnEdgeType.SEQUENCE_FLOW
   _smoothing = 20
   _color = BPMN_CONSTANTS_EDGE_DEFAULT_COLOR
   _innerColor = BPMN_CONSTANTS_EDGE_DEFAULT_INNER_COLOR
+
   get type() {
     return this._type
   }
+
   set type(value) {
     this._type = value
   }
+
   get smoothing() {
     return this._smoothing
   }
+
   set smoothing(value) {
     this._smoothing = value
   }
+
   get color() {
     return this._color
   }
+
   set color(value) {
     this._color = value
   }
+
   get innerColor() {
     return this._innerColor
   }
+
   set innerColor(value) {
     this._innerColor = value
   }
+
   provideValue(serviceProvider) {
     const style = new BpmnEdgeStyle()
     style.type = this.type
@@ -10076,6 +11284,7 @@ export class BpmnEdgeStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class EventPortStyleExtension extends MarkupExtension {
   _type = EventType.COMPENSATION
   _characteristic = EventCharacteristic.BOUNDARY_INTERRUPTING
@@ -10083,42 +11292,55 @@ export class EventPortStyleExtension extends MarkupExtension {
   _background = BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND
   _outline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
   _iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+
   get type() {
     return this._type
   }
+
   set type(value) {
     this._type = value
   }
+
   get characteristic() {
     return this._characteristic
   }
+
   set characteristic(value) {
     this._characteristic = value
   }
+
   get renderSize() {
     return this._renderSize
   }
+
   set renderSize(value) {
     this._renderSize = value
   }
+
   get background() {
     return this._background
   }
+
   set background(value) {
     this._background = value
   }
+
   get outline() {
     return this._outline
   }
+
   set outline(value) {
     this._outline = value
   }
+
   get iconColor() {
     return this._iconColor
   }
+
   set iconColor(value) {
     this._iconColor = value
   }
+
   provideValue(serviceProvider) {
     const style = new EventPortStyle()
     style.characteristic = this.characteristic
@@ -10130,28 +11352,36 @@ export class EventPortStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class AnnotationLabelStyleExtension extends MarkupExtension {
   _insets = 5
   _background = BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND
   _outline = BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE
+
   get insets() {
     return this._insets
   }
+
   set insets(value) {
     this._insets = value
   }
+
   get background() {
     return this._background
   }
+
   set background(value) {
     this._background = value
   }
+
   get outline() {
     return this._outline
   }
+
   set outline(value) {
     this._outline = value
   }
+
   provideValue(serviceProvider) {
     const style = new AnnotationLabelStyle()
     style.insets = this.insets
@@ -10160,35 +11390,45 @@ export class AnnotationLabelStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class MessageLabelStyleExtension extends MarkupExtension {
   _isInitiating = true
   _outline = BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE
   _initiatingColor = BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR
   _responseColor = BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR
+
   get isInitiating() {
     return this._isInitiating
   }
+
   set isInitiating(value) {
     this._isInitiating = value
   }
+
   get outline() {
     return this._outline
   }
+
   set outline(value) {
     this._outline = value
   }
+
   get initiatingColor() {
     return this._initiatingColor
   }
+
   set initiatingColor(value) {
     this._initiatingColor = value
   }
+
   get responseColor() {
     return this._responseColor
   }
+
   set responseColor(value) {
     this._responseColor = value
   }
+
   provideValue(serviceProvider) {
     const style = new MessageLabelStyle()
     style.isInitiating = this.isInitiating
@@ -10198,95 +11438,122 @@ export class MessageLabelStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 export class PoolHeaderLabelModelExtension extends MarkupExtension {
   static get INSTANCE() {
     return new PoolHeaderLabelModel()
   }
+
   static get NORTH() {
     return PoolHeaderLabelModel.NORTH
   }
+
   static get EAST() {
     return PoolHeaderLabelModel.EAST
   }
+
   static get SOUTH() {
     return PoolHeaderLabelModel.SOUTH
   }
+
   static get WEST() {
     return PoolHeaderLabelModel.WEST
   }
+
   provideValue(serviceProvider) {
     return new PoolHeaderLabelModel()
   }
 }
+
 export class ChoreographyLabelModelExtension extends MarkupExtension {
   static get INSTANCE() {
     return new ChoreographyLabelModel()
   }
+
   static get TASK_NAME_BAND() {
     return ChoreographyLabelModel.TASK_NAME_BAND
   }
+
   static get NORTH_MESSAGE() {
     return ChoreographyLabelModel.NORTH_MESSAGE
   }
+
   static get SOUTH_MESSAGE() {
     return ChoreographyLabelModel.SOUTH_MESSAGE
   }
+
   provideValue(serviceProvider) {
     return new ChoreographyLabelModel()
   }
 }
+
 export class ParticipantParameterExtension extends MarkupExtension {
   _top = false
   _index = 0
+
   get top() {
     return this._top
   }
+
   set top(value) {
     this._top = value
   }
+
   get index() {
     return this._index
   }
+
   set index(value) {
     this._index = value
   }
+
   provideValue(serviceProvider) {
     return new ParticipantParameter(this.top, this.index)
   }
 }
+
 export class TaskNameBandParameterExtension extends MarkupExtension {
   provideValue(serviceProvider) {
     return new TaskNameBandParameter()
   }
 }
+
 export class MessageParameterExtension extends MarkupExtension {
   _north = false
+
   get north() {
     return this._north
   }
+
   set north(value) {
     this._north = value
   }
+
   provideValue(serviceProvider) {
     const parameter = new MessageParameter()
     parameter.north = this.north
     return parameter
   }
 }
+
 export class ChoreographyMessageLabelStyleExtension extends MarkupExtension {
   _textPlacement = null
+
   get textPlacement() {
     return this._textPlacement
   }
+
   set textPlacement(value) {
     this._textPlacement = value
   }
+
   provideValue(serviceProvider) {
     const style = new ChoreographyMessageLabelStyle()
     style.textPlacement = this.textPlacement
     return style
   }
 }
+
 const IO_SUPPORT = {
   SubState,
   GatewayType,
@@ -10343,6 +11610,7 @@ const IO_SUPPORT = {
   MessageParameterExtension,
   ChoreographyMessageLabelStyleExtension
 }
+
 /**
  * The markup extensions to support styles that have been serialized with an older
  * BPMN Namespace "http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0".
@@ -10353,12 +11621,15 @@ const IO_SUPPORT = {
  */
 export const LegacyBpmnExtensions = Object.assign({}, IO_SUPPORT)
 LegacyBpmnExtensions.ChoreographyNodeStyleExtension = LegacyChoreographyNodeStyleExtension
+
 /**
  /**
  * The markup extensions for this BPMN style implementation.
  */
 export default IO_SUPPORT
+
 /* Custom type registration for GraphML */
+
 export function registerBpmnTypeInformation(graphmlHandler) {
   graphmlHandler.addTypeInformation(ChoreographyParameter, {
     singletonContainers: [ChoreographyLabelModel]
@@ -10518,9 +11789,7 @@ export function registerBpmnTypeInformation(graphmlHandler) {
     }
   })
   graphmlHandler.addTypeInformation(ChoreographyMessageLabelStyleExtension, {
-    properties: {
-      textPlacement: { default: null, type: ILabelModelParameter }
-    }
+    properties: { textPlacement: { default: null, type: ILabelModelParameter } }
   })
   graphmlHandler.addTypeInformation(ChoreographyNodeStyle, {
     extension: (item) => {
@@ -10571,6 +11840,7 @@ export function registerBpmnTypeInformation(graphmlHandler) {
       messageOutline: { default: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE, type: Fill }
     }
   })
+
   graphmlHandler.addTypeInformation(LegacyChoreographyNodeStyleExtension, {
     properties: {
       loopCharacteristic: { default: LoopCharacteristic.NONE, type: LoopCharacteristic },
@@ -10599,9 +11869,7 @@ export function registerBpmnTypeInformation(graphmlHandler) {
     }
   })
   graphmlHandler.addTypeInformation(ParticipantExtension, {
-    properties: {
-      multiInstance: { default: false, type: Boolean }
-    }
+    properties: { multiInstance: { default: false, type: Boolean } }
   })
   graphmlHandler.addTypeInformation(DataObjectNodeStyle, {
     extension: (item) => {
@@ -10811,9 +12079,6 @@ export function registerBpmnTypeInformation(graphmlHandler) {
     }
   })
   graphmlHandler.addTypeInformation(ParticipantParameterExtension, {
-    properties: {
-      top: { type: Boolean },
-      index: { type: Number }
-    }
+    properties: { top: { type: Boolean }, index: { type: Number } }
   })
 }

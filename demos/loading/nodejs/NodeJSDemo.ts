@@ -74,9 +74,7 @@ async function runNodeJSLayout() {
     // send the data blob to the Node.js server
     const request = await fetch('http://localhost:3001/layout', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8'
-      },
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       body: JSON.stringify(data)
     })
     // resolve with the data of the resulting graph that was returned from the server

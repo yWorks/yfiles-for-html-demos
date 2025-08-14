@@ -170,12 +170,7 @@ function createPaletteEntry(graph: IGraph): HTMLElement {
 
 type NodeData = {
   id: number
-  layout: {
-    x: number
-    y: number
-    width: number
-    height: number
-  }
+  layout: { x: number; y: number; width: number; height: number }
   label: string
   parent?: number
 }
@@ -184,18 +179,11 @@ type EdgeData = {
   id: number
   source: number
   target: number
-  label: {
-    text: string
-    ratio: number
-  }
+  label: { text: string; ratio: number }
   bends?: { x: number; y: number }[]
 }
 
-type GraphData = {
-  nodes: NodeData[]
-  groups: NodeData[]
-  edges: EdgeData[]
-}
+type GraphData = { nodes: NodeData[]; groups: NodeData[]; edges: EdgeData[] }
 
 /**
  * Builds a graph from the given graph data.
@@ -263,8 +251,8 @@ function toSvg(graph: IGraph): string {
   const svg = svgExport.exportSvg(exportComponent)
 
   // Dispose of the component and remove its references to the graph
-  exportComponent.cleanUp()
   exportComponent.graph = new Graph()
+  exportComponent.cleanUp()
 
   const svgString = SvgExport.exportSvgString(svg)
   return SvgExport.encodeSvgDataUrl(svgString)

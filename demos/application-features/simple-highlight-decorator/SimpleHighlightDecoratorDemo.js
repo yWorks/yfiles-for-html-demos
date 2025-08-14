@@ -48,55 +48,69 @@ import {
   ShapeNodeStyle,
   Size
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // create graph component
   const graphComponent = new GraphComponent('#graphComponent')
   const inputMode = new GraphEditorInputMode()
   graphComponent.inputMode = inputMode
+
   // configures default styles for newly created graph elements
   initTutorialDefaults(graphComponent.graph)
+
   // enable mouse hover effects for nodes
   configureHoverHighlight(graphComponent, inputMode)
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
   await graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder.createNodesSource({
     data: graphData.nodeList.filter((item) => !item.isGroup),
     id: (item) => item.id,
     parentId: (item) => item.parentId
   })
+
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Registers highlight styles for the nodes and edges of the given graph.
  *
@@ -107,6 +121,7 @@ function configureHoverHighlight(graphComponent, inputMode) {
   // enable hover effects for nodes and edges
   inputMode.itemHoverInputMode.enabled = true
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
+
   // specify the hover effect: highlight a node or an edge whenever the mouse hovers over the
   // respective node or edge
   inputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
@@ -117,6 +132,7 @@ function configureHoverHighlight(graphComponent, inputMode) {
       highlights.add(item)
     }
   })
+
   const nodeHighlightingStyle = new NodeStyleIndicatorRenderer({
     nodeStyle: new ShapeNodeStyle({
       shape: 'rectangle',
@@ -126,6 +142,7 @@ function configureHoverHighlight(graphComponent, inputMode) {
     // the padding from the actual node to its highlight visualization
     margins: 4
   })
+
   const edgeHighlightStyle = new EdgeStyleIndicatorRenderer({
     edgeStyle: new PolylineEdgeStyle({
       targetArrow: new Arrow({
@@ -139,6 +156,7 @@ function configureHoverHighlight(graphComponent, inputMode) {
   graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(nodeHighlightingStyle)
   graphComponent.graph.decorator.edges.highlightRenderer.addConstant(edgeHighlightStyle)
 }
+
 /**
  * Initializes the defaults for the styles in this tutorial.
  *
@@ -147,6 +165,7 @@ function configureHoverHighlight(graphComponent, inputMode) {
 function initTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
   initDemoStyles(graph)
+
   // set the style, label and label parameter for group nodes
   // set the style, label and label parameter for group nodes
   graph.groupNodeDefaults.style = new GroupNodeStyle({
@@ -158,8 +177,10 @@ function initTutorialDefaults(graph) {
     horizontalTextAlignment: 'left',
     textFill: '#eee'
   })
+
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
+
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
     margins: 5
   }).createParameter('bottom')
@@ -168,4 +189,5 @@ function initTutorialDefaults(graph) {
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
+
 run().then(finishLoading)

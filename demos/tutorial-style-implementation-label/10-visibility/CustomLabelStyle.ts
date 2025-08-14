@@ -45,10 +45,7 @@ import {
   TextRenderSupport
 } from '@yfiles/yfiles'
 
-const font: Font = new Font({
-  fontFamily: 'Arial',
-  fontSize: 12
-})
+const font: Font = new Font({ fontFamily: 'Arial', fontSize: 12 })
 const padding = 3
 const tailWidth = 20
 const tailHeight = 50
@@ -56,11 +53,7 @@ const tailHeight = 50
 /**
  * Augment the SvgVisual type with the data used to cache the rendering information
  */
-type Cache = {
-  width: number
-  height: number
-  text: string
-}
+type Cache = { width: number; height: number; text: string }
 
 type CustomLabelStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 

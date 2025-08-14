@@ -27,41 +27,44 @@
  **
  ***************************************************************************/
 import { Font, LabelStyleBase, Size, SvgVisual, TextRenderSupport } from '@yfiles/yfiles'
-const font = new Font({
-  fontFamily: 'Arial',
-  fontSize: 12
-})
+
+const font = new Font({ fontFamily: 'Arial', fontSize: 12 })
 const padding = 3
+
 export class CustomLabelStyle extends LabelStyleBase {
   createVisual(context, label) {
     // create an SVG text element that displays the label text
     const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+
     const labelSize = label.layout.toSize()
     TextRenderSupport.addText(textElement, label.text, font)
+
     textElement.setAttribute('transform', `translate(${padding} ${padding})`)
+
     // add a background shape
     const backgroundPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     backgroundPathElement.setAttribute('d', this.createBackgroundShapeData(labelSize))
     backgroundPathElement.setAttribute('stroke', '#aaa')
     backgroundPathElement.setAttribute('fill', '#fffecd')
+
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     gElement.appendChild(backgroundPathElement)
     gElement.appendChild(textElement)
+
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(gElement)
-    const cache = {
-      width: labelSize.width,
-      height: labelSize.height,
-      text: label.text
-    }
+
+    const cache = { width: labelSize.width, height: labelSize.height, text: label.text }
     return SvgVisual.from(gElement, cache)
   }
+
   updateVisual(context, oldVisual, label) {
     const gElement = oldVisual.svgElement
     const labelSize = label.layout.toSize()
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
+
     // check if the label size or text has changed
     if (
       labelSize.width !== cache.width ||
@@ -77,22 +80,27 @@ export class CustomLabelStyle extends LabelStyleBase {
       if (textElement instanceof SVGTextElement) {
         TextRenderSupport.addText(textElement, label.text, font)
       }
+
       // update the cache with the new values
       cache.width = labelSize.width
       cache.height = labelSize.height
       cache.text = label.text
     }
+
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(gElement)
+
     return oldVisual
   }
+
   getPreferredSize(label) {
     // measure the label text using the font
     const { width, height } = TextRenderSupport.measureText(label.text, font)
     // return the measured size plus a small padding
     return new Size(width + padding + padding, height + padding + padding)
   }
+
   /**
    * Creates a simple "speech balloon" shape.
    */

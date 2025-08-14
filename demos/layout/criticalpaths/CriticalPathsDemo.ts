@@ -164,10 +164,7 @@ function configureHierarchicalLayout(): {
   layoutData: HierarchicalLayoutData
 } {
   const layout = new HierarchicalLayout({
-    defaultEdgeDescriptor: {
-      minimumFirstSegmentLength: 30,
-      minimumLastSegmentLength: 30
-    }
+    defaultEdgeDescriptor: { minimumFirstSegmentLength: 30, minimumLastSegmentLength: 30 }
   })
 
   const layoutData = new HierarchicalLayoutData({
@@ -179,10 +176,7 @@ function configureHierarchicalLayout(): {
     edgeCrossingCosts: (edge) => (edge.tag ? (edge.tag.priority as number) + 1 || 1 : 1)
   })
 
-  return {
-    layout,
-    layoutData
-  }
+  return { layout, layoutData }
 }
 
 /**
@@ -200,10 +194,7 @@ function configureTreeLayout(): { layout: TreeLayout; layoutData: TreeLayoutData
     criticalEdgePriorities: (edge) => (edge.tag ? edge.tag.priority || 0 : 0)
   })
 
-  return {
-    layout,
-    layoutData
-  }
+  return { layout, layoutData }
 }
 
 /**

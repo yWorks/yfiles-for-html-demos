@@ -5,11 +5,7 @@
   "projects": {
     "angular-cli": {
       "projectType": "application",
-      "schematics": {
-        "@schematics/angular:application": {
-          "strict": true
-        }
-      },
+      "schematics": { "@schematics/angular:application": { "strict": true } },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -17,13 +13,11 @@
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
-            "customWebpackConfig": {
-              "path": "./extra-webpack.config.js"
-            },
+            "customWebpackConfig": { "path": "./extra-webpack.config.js" },
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": ["zone.js"],
             "tsConfig": "src/tsconfig.json",
             "assets": ["src/assets"],
             "styles": ["@yfiles/demo-resources/style/demo.css", "src/styles.css"],
@@ -55,25 +49,17 @@
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
           "configurations": {
-            "production": {
-              "buildTarget": "angular-cli:build:production"
-            },
-            "development": {
-              "buildTarget": "angular-cli:build:development"
-            }
+            "production": { "buildTarget": "angular-cli:build:production" },
+            "development": { "buildTarget": "angular-cli:build:development" }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "buildTarget": "angular-cli:build"
-          }
+          "builder": "@angular/build:extract-i18n",
+          "options": { "buildTarget": "angular-cli:build" }
         }
       }
     }
   },
-  "cli": {
-    "analytics": false
-  }
+  "cli": { "analytics": false }
 }

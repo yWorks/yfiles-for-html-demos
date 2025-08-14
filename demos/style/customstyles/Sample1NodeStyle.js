@@ -48,8 +48,10 @@ import {
   Size,
   SvgVisual
 } from '@yfiles/yfiles'
+
 import { Sample1EdgeStyle } from './Sample1EdgeStyle'
 import { SVGNS, XLINKNS } from './Namespaces'
+
 /**
  * A custom implementation of an {@link INodeStyle}
  * that uses the convenience class {@link NodeStyleBase}
@@ -57,7 +59,9 @@ import { SVGNS, XLINKNS } from './Namespaces'
  */
 export class Sample1NodeStyle extends NodeStyleBase {
   static _fillCounter
+
   nodeColor = 'rgba(0,130,180,1)'
+
   /**
    * Counts the number of gradient fills used to generate a unique id.
    */
@@ -66,6 +70,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
     Sample1NodeStyle._fillCounter = tmp + 1
     return Sample1NodeStyle._fillCounter
   }
+
   /**
    * Determines the color to use for filling the node.
    * This implementation uses the {@link Sample1NodeStyle.nodeColor} property unless
@@ -79,6 +84,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
     // each node, or use the value from this instance.
     return typeof node.tag === 'string' ? node.tag : this.nodeColor
   }
+
   /**
    * Creates the visual for a node.
    * @see Overrides {@link NodeStyleBase.createVisual}
@@ -96,6 +102,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
     return visual
   }
+
   /**
    * Re-renders the node using the old visual for performance reasons.
    * @see Overrides {@link NodeStyleBase.updateVisual}
@@ -106,6 +113,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
     const oldCache = oldVisual.tag
     // get the data for the new visual
     const newCache = this.createRenderDataCache(node)
+
     // check if something changed except for the location of the node
     if (!newCache.equals(oldCache)) {
       // something changed - re-render the visual
@@ -120,6 +128,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
     return oldVisual
   }
+
   /**
    * Actually creates the visual appearance of a node given the values provided by
    * {@link NodeRenderDataCache}. This renders the node and the edges to the labels and adds the
@@ -130,15 +139,19 @@ export class Sample1NodeStyle extends NodeStyleBase {
   static render(context, visual, node) {
     const container = visual.svgElement
     const cache = visual.tag
+
     // Create Defs section in container
     const defs = document.createElementNS(SVGNS, 'defs')
     container.appendChild(defs)
+
     // draw the drop shadow
     Sample1NodeStyle.drawShadow(context, container, cache.size)
     // draw edges to node labels
     Sample1NodeStyle.renderLabelEdges(context, visual, node)
+
     const color = cache.color
     const nodeSize = cache.size
+
     const ellipse = document.createElementNS(SVGNS, 'ellipse')
     const w = nodeSize.width * 0.5
     const h = nodeSize.height * 0.5
@@ -146,9 +159,11 @@ export class Sample1NodeStyle extends NodeStyleBase {
     ellipse.cy.baseVal.value = h
     ellipse.rx.baseVal.value = w
     ellipse.ry.baseVal.value = h
+
     // max and min needed for reflection effect calculation
     const max = Math.max(nodeSize.width, nodeSize.height)
     const min = Math.min(nodeSize.width, nodeSize.height)
+
     if (nodeSize.width > 0 && nodeSize.height > 0) {
       // Create Background gradient from specified background color
       const gradient = document.createElementNS(SVGNS, 'linearGradient')
@@ -166,6 +181,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
       stop2.setAttribute('offset', '0.6')
       gradient.appendChild(stop1)
       gradient.appendChild(stop2)
+
       // creates the gradient id
       const fillId = `Sample1NodeStyle_fill${Sample1NodeStyle.fillCounter}`
       // assigns the id
@@ -175,6 +191,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
       // sets the fill reference in the ellipse
       ellipse.setAttribute('fill', `url(#${fillId})`)
     }
+
     // Create light reflection effects
     const reflection1 = document.createElementNS(SVGNS, 'ellipse')
     const reflection1Size = min / 20
@@ -190,6 +207,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
     reflection2.rx.baseVal.value = reflection2Size
     reflection2.ry.baseVal.value = reflection2Size
     reflection2.setAttribute('fill', '#f0f8ff')
+
     const reflection3Path = new GeneralPath()
     const startPoint = new MutablePoint(nodeSize.width / 2.5, (nodeSize.height / 10) * 9)
     const endPoint = new MutablePoint((nodeSize.width / 10) * 9, nodeSize.height / 2.5)
@@ -203,11 +221,15 @@ export class Sample1NodeStyle extends NodeStyleBase {
     )
     const ctrlPoint3 = new MutablePoint(ctrlPoint1.x, ctrlPoint1.y - nodeSize.height / 10)
     const ctrlPoint4 = new MutablePoint(ctrlPoint2.x - nodeSize.width / 10, ctrlPoint2.y)
+
     reflection3Path.moveTo(startPoint)
     reflection3Path.cubicTo(ctrlPoint1, ctrlPoint2, endPoint)
     reflection3Path.cubicTo(ctrlPoint4, ctrlPoint3, startPoint)
+
     const reflection3 = reflection3Path.createSvgPath()
+
     reflection3.setAttribute('fill', '#f0f8ff')
+
     // place the reflections
     reflection1.setAttribute('transform', `translate(${nodeSize.width / 5} ${nodeSize.height / 5})`)
     reflection2.setAttribute(
@@ -220,6 +242,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
     container.appendChild(reflection1)
     container.appendChild(reflection3)
   }
+
   /**
    * Draws the pre-rendered drop-shadow image at the given size.
    */
@@ -228,8 +251,10 @@ export class Sample1NodeStyle extends NodeStyleBase {
     const tileSize2 = 16
     const offsetY = 2
     const offsetX = 2
+
     const xScaleFactor = size.width / tileSize
     const yScaleFactor = size.height / tileSize
+
     // add the drop shadow to the global defs section, if necessary, and get the id
     const defsId = context.getDefsId(dropShadowDefsCreator)
     const use = document.createElementNS(SVGNS, 'use')
@@ -240,6 +265,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
     )
     container.appendChild(use)
   }
+
   /**
    * Draws the edge-like connectors from a node to its labels.
    */
@@ -247,27 +273,35 @@ export class Sample1NodeStyle extends NodeStyleBase {
     if (node.labels.size === 0) {
       return
     }
+
     const cache = visual.tag
+
     // Create a SimpleEdge which will be used as a dumCustom for the rendering
     const simpleEdge = new SimpleEdge()
     // Assign the style
     const edgeStyle = new Sample1EdgeStyle()
     edgeStyle.pathThickness = 2
     simpleEdge.style = edgeStyle
+
     // Create a SimpleNode which provides the source port for the edge but won't be drawn itself
     const sourceDumCustomNode = new SimpleNode()
     sourceDumCustomNode.layout = new Rect(0, 0, node.layout.width, node.layout.height)
     sourceDumCustomNode.style = node.style
+
     // Set source port to the port of the node using a dumCustom node that is located at the origin.
     simpleEdge.sourcePort = new SimplePort(sourceDumCustomNode, FreeNodePortLocationModel.CENTER)
+
     // Create a SimpleNode which provides the target port for the edge but won't be drawn itself
     const targetDumCustomNode = new SimpleNode()
+
     // Create port on targetDumCustomNode for the label target
     simpleEdge.targetPort = new SimplePort(targetDumCustomNode, FreeNodePortLocationModel.CENTER)
+
     // Render one edge for each label
     for (const labelLocation of cache.labelLocations) {
       // move the dumCustom node to the location of the label
       targetDumCustomNode.layout = new Rect(labelLocation.x, labelLocation.y, 0, 0)
+
       // now create the visual using the style interface:
       const renderer = simpleEdge.style.renderer
       const creator = renderer.getVisualCreator(simpleEdge, simpleEdge.style)
@@ -277,6 +311,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
       }
     }
   }
+
   /**
    * Creates an object containing all necessary data to create a visual for the node.
    */
@@ -289,6 +324,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
     })
     return new NodeRenderDataCache(this.getNodeColor(node), node.layout.toSize(), labelLocations)
   }
+
   /**
    * Gets the outline of the node, an ellipse in this case.
    * This allows for correct edge path intersection calculation, among others.
@@ -299,6 +335,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
     outline.appendEllipse(node.layout, false)
     return outline
   }
+
   /**
    * Get the bounding box of the node.
    * This is used for bounding box calculations and includes the visual shadow.
@@ -307,6 +344,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
   getBounds(context, node) {
     return new Rect(node.layout.x, node.layout.y, node.layout.width + 3, node.layout.height + 3)
   }
+
   /**
    * Overridden to take the connection lines to the label into account.
    * Otherwise, label intersection lines might not be painted if the node is outside the
@@ -321,6 +359,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
     clip = clip.getEnlarged(10)
     return node.labels.some((label) => clip.intersectsLine(node.layout.center, label.layout.center))
   }
+
   /**
    * Hit test which considers HitTestRadius specified in CanvasContext.
    * @returns True if p is inside node.
@@ -329,6 +368,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
   isHit(context, location, node) {
     return GeometryUtilities.ellipseContains(node.layout.toRect(), location, context.hitTestRadius)
   }
+
   /**
    * Checks if a node is inside a certain box. Considers HitTestRadius.
    * @returns True if the box intersects the elliptical shape of the node. Also true if box lies completely
@@ -340,11 +380,14 @@ export class Sample1NodeStyle extends NodeStyleBase {
     if (!super.isInBox(context, box, node)) {
       return false
     }
+
     const eps = context.hitTestRadius
+
     const outline = this.getOutline(node)
     if (outline === null) {
       return false
     }
+
     if (outline.pathIntersects(box, eps)) {
       return true
     }
@@ -353,6 +396,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
     }
     return box.contains(node.layout.topLeft) && box.contains(node.layout.bottomRight)
   }
+
   /**
    * Exact geometric check whether a point p lies inside the node. This is important for intersection calculation,
    * among others.
@@ -362,6 +406,7 @@ export class Sample1NodeStyle extends NodeStyleBase {
     return GeometryUtilities.ellipseContains(node.layout.toRect(), location, 0)
   }
 }
+
 class NodeRenderDataCache {
   color
   size
@@ -371,6 +416,7 @@ class NodeRenderDataCache {
     this.size = size
     this.labelLocations = labelLocations
   }
+
   equals(other) {
     return (
       !!other &&
@@ -379,6 +425,7 @@ class NodeRenderDataCache {
       NodeRenderDataCache.arraysEquals(this.labelLocations, other.labelLocations)
     )
   }
+
   static arraysEquals(a1, a2) {
     if (a1 === a2) {
       return true
@@ -386,6 +433,7 @@ class NodeRenderDataCache {
     if (a1.length !== a2.length) {
       return false
     }
+
     for (let i = 0; i < a1.length; ++i) {
       if (!a1[i].equals(a2[i])) {
         return false
@@ -394,7 +442,9 @@ class NodeRenderDataCache {
     return true
   }
 }
+
 const dropShadowDefsCreator = createDropShadow()
+
 function createDropShadow() {
   // This instance is needed in order to support automatic cleanup of the global defs section.
   // In order to improve performance in some browsers, elements needed more than once can be
@@ -408,10 +458,13 @@ function createDropShadow() {
   // defined interface to deal with.
   return ISvgDefsCreator.create({
     createDefsElement: () => createDropShadowElement(),
+
     accept: (context, node, id) => ISvgDefsCreator.isUseReference(node, id),
+
     updateDefsElement: () => {}
   })
 }
+
 function createDropShadowElement() {
   // pre-render the node's drop shadow using HTML canvas rendering
   const canvas = document.createElement('canvas')
@@ -425,12 +478,15 @@ function createDropShadowElement() {
   context.closePath()
   context.filter = 'blur(2px)'
   context.fill()
+
   // put the drop-shadow in an SVG image element
   const image = document.createElementNS(SVGNS, 'image')
   image.setAttribute('width', '64')
   image.setAttribute('height', '64')
   image.setAttributeNS(XLINKNS, 'xlink:href', canvas.toDataURL('image/png'))
+
   // switch off pointer events on the drop shadow
   image.setAttribute('style', 'pointer-events: none')
+
   return image
 }

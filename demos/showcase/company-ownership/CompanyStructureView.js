@@ -54,11 +54,13 @@ import { createLayout, createLayoutData } from './configure-layout'
 import { TogglePortButtonSupport } from './TogglePortButtonSupport'
 import { addSmartClickNavigation } from './configure-click-navigation'
 import { modifyGraph } from './prepare-smooth-animation'
+
 /**
  * Returns whether the edge is a hierarchy edge.
  * @param edge The edge to be checked
  */
 const isHierarchyEdge = (edge) => getRelationship(edge).type === EdgeTypeEnum.Hierarchy
+
 /**
  * Returns the ownership percentage for the given edge.
  * @param edge The edge to be checked
@@ -71,6 +73,7 @@ const ownershipPercentage = (edge) => {
     return 0
   }
 }
+
 /**
  * Checks whether the given node should be visible.
  * @param node The node to be checked
@@ -92,6 +95,7 @@ const setVisible = (node, visible) => {
 const collapseInput = (node, collapse) => {
   getCompany(node).inputCollapsed = collapse
 }
+
 /**
  * Checks whether the node has collapsed neighbors (from the outgoing edges)
  */
@@ -104,20 +108,24 @@ const isOutputCollapsed = (node) => getCompany(node).outputCollapsed
 const collapseOutput = (node, collapse) => {
   getCompany(node).outputCollapsed = collapse
 }
+
 /**
  * Sets whether the edge is a dominant edge.
  */
 const setDominantHierarchyEdge = (edge, dominant) => {
   getRelationship(edge).isDominantHierarchyEdge = dominant
 }
+
 /**
  * Returns the node id needed for the sorting the nodes during the layout.
  */
 const getNodeId = (node) => 'node-' + getCompany(node).id.toString()
+
 /**
  * Returns the edge id needed for the sorting the edges during the layout.
  */
 const getEdgeId = (edge) => getRelationship(edge).id.toString()
+
 /**
  * Central class of the application that manages the graph component and the handling of the data.
  */
@@ -126,14 +134,19 @@ export class CompanyStructureView {
   builder
   nodeClickListener = null
   edgeClickListener = null
+
   /**
    * Returns the edge types.
    */
   currentEdgeTypes = new Set([EdgeTypeEnum.Hierarchy, EdgeTypeEnum.Relation])
+
   toggleButtonSupport = new TogglePortButtonSupport()
+
   completeGraph
   useShapeNodeStyle = true
+
   layoutRunning = false
+
   constructor(cssSelector) {
     const graphComponent = (this.graphComponent = new GraphComponent(cssSelector))
     enableBridgeRendering(graphComponent)
@@ -145,9 +158,11 @@ export class CompanyStructureView {
           : isVisible(node)
     )
     this.configureInputMode()
+
     // enable the tooltips
     enableTooltips(graphComponent)
   }
+
   /**
    * Initializes tooltips, highlighting and user interaction.
    */
@@ -164,9 +179,11 @@ export class CompanyStructureView {
     // configure the item click listener
     this.enableItemClicking(viewerInputMode, graphComponent)
     graphComponent.inputMode = viewerInputMode
+
     // enable the smart click navigation to bring to focus the clicked edge
     addSmartClickNavigation(graphComponent)
   }
+
   /**
    * Configure the item click listener for the graph elements.
    * @param viewerInputMode The given input mode
@@ -186,6 +203,7 @@ export class CompanyStructureView {
       }
     })
   }
+
   /**
    * Limits the interactive movement of the graphComponent's viewport.
    * @param graphComponent The given graphComponent
@@ -194,6 +212,7 @@ export class CompanyStructureView {
     graphComponent.viewportLimiter.policy = ViewportLimitingPolicy.TOWARDS_LIMIT
     graphComponent.maximumZoom = 3
   }
+
   /**
    * Loads the graph from the JSON file.
    * @param src The JSON file
@@ -202,6 +221,7 @@ export class CompanyStructureView {
     const graphData = await this.loadGraphData(src)
     this.buildGraphFromData(graphData)
   }
+
   /**
    * Builds the graph using the GraphBuilder, creates the FilteredGraphWrapper and the ports.
    * @param graphData The given graphData
@@ -214,9 +234,13 @@ export class CompanyStructureView {
       this.nodeFilter.bind(this),
       this.edgeFilter.bind(this)
     )
+
     this.builder = builder
+
     builder.buildGraph()
+
     this.graphHasChanged()
+
     // add buttons on each outgoing port location that allow collapsing subtrees
     this.addToggleButtonPorts(
       this.completeGraph,
@@ -225,6 +249,7 @@ export class CompanyStructureView {
       this.collapse.bind(this)
     )
   }
+
   /**
    * Creates the port buttons for each node and binds the corresponding expand/collapse commands.
    * @param graph The given graph
@@ -241,6 +266,7 @@ export class CompanyStructureView {
       }
     })
   }
+
   /**
    * Expands the given node either based on the incoming or based on the outgoing edges.
    * @param node The node to be expanded
@@ -254,6 +280,7 @@ export class CompanyStructureView {
     }
     await this.adjustVisibility()
   }
+
   /**
    * Collapsed the given node either based on the incoming or based on the outgoing edges.
    * @param node The node to be expanded
@@ -267,6 +294,7 @@ export class CompanyStructureView {
     }
     await this.adjustVisibility()
   }
+
   /**
    * Adjusts the visibility of the nodes.
    */
@@ -275,6 +303,7 @@ export class CompanyStructureView {
     modifyGraph((graph) => graph.nodePredicateChanged(), this.graphComponent.graph)
     await this.layout()
   }
+
   /**
    * Calculates the hierarchy tree only using the hierarchy edges.
    * @param graph The given graph
@@ -288,6 +317,7 @@ export class CompanyStructureView {
       setDominantHierarchyEdge(e, treeResult.edges.contains(e))
     })
   }
+
   /**
    * Calculates the visibility of the nodes of the given graph.
    * @param graph The given graph
@@ -303,6 +333,7 @@ export class CompanyStructureView {
       })
     }
   }
+
   /**
    * Returns whether a node should be visible or not.
    * A node is visible if it has no parent or if at least one of its parents is visible.
@@ -316,18 +347,21 @@ export class CompanyStructureView {
         .some((parent) => !isOutputCollapsed(parent) && this.shouldBeShown(graph, parent))
     )
   }
+
   /**
    * Returns true if the edge type belongs to the current set of edge types, false otherwise.
    */
   edgeTypeFilter(item) {
     return this.currentEdgeTypes.has(item.type)
   }
+
   /**
    * Determines whether an edge should be visible or not based on the current edge filter.
    */
   edgeFilter(item) {
     return this.edgeTypeFilter(item)
   }
+
   /**
    * Returns true if the node should be filtered, false otherwise.
    * In this use case, it returns always true, but can be adjusted to support node filters.
@@ -335,6 +369,7 @@ export class CompanyStructureView {
   nodeFilter(item) {
     return true
   }
+
   /**
    * Creates the GraphBuilder that will build the graph.
    * @param graph The given graph
@@ -346,17 +381,20 @@ export class CompanyStructureView {
   createGraphBuilder(graph, graphData, nodePredicate, edgePredicate) {
     const builder = new GraphBuilder(graph)
     const filteredNodes = graphData.nodes.filter(nodePredicate)
+
     const nodeSource = builder.createNodesSource({
       data: filteredNodes,
       id: (dataItem) => dataItem.id,
       style: (dataItem) => getNodeStyle(dataItem, this.useShapeNodeStyle),
       layout: () => getNodeLayout(this.useShapeNodeStyle)
     })
+
     // whenever the node changes in the future, we want to update the tag, too
     nodeSource.nodeCreator.addEventListener('node-updated', (evt) => {
       nodeSource.nodeCreator.updateTag(evt.graph, evt.item, evt.dataItem)
       nodeSource.nodeCreator.updateLabels(evt.graph, evt.item, evt.dataItem)
     })
+
     // adds the node labels if the shape node style is selected
     if (this.useShapeNodeStyle) {
       const nameLabel = nodeSource.nodeCreator.createLabelBinding({
@@ -364,10 +402,12 @@ export class CompanyStructureView {
         defaults: nameLabelDefaults,
         preferredSize: () => labelSizeDefaults
       })
+
       nameLabel.addEventListener('label-updated', (evt) => {
         nameLabel.updateText(evt.graph, evt.item, evt.dataItem)
       })
     }
+
     const filteredEdges = graphData.edges.filter(edgePredicate)
     const edgeSource = builder.createEdgesSource({
       data: filteredEdges,
@@ -376,6 +416,7 @@ export class CompanyStructureView {
       targetId: (data) => data.targetId,
       style: getEdgeStyle
     })
+
     const edgeLabel = edgeSource.edgeCreator.createLabelBinding({
       text: (dataItem) =>
         dataItem.type === EdgeTypeEnum.Hierarchy ? `${dataItem.ownership}` : null,
@@ -387,8 +428,10 @@ export class CompanyStructureView {
     edgeLabel.addEventListener('label-updated', (evt) =>
       edgeLabel.updateText(evt.graph, evt.item, evt.dataItem)
     )
+
     return builder
   }
+
   /**
    * Loads the graph data from the JSON file.
    */
@@ -396,6 +439,7 @@ export class CompanyStructureView {
     const result = await fetch(data)
     return await result.json()
   }
+
   /**
    * Applies the layout to the given graph.
    * @param animate True if the layout should be animated, false otherwise
@@ -405,8 +449,10 @@ export class CompanyStructureView {
       return Promise.resolve()
     }
     this.layoutRunning = true
+
     const layout = createLayout()
     const layoutData = createLayoutData(isHierarchyEdge, getNodeId)
+
     // run the layout
     await new LayoutExecutor({
       layoutData,
@@ -419,8 +465,10 @@ export class CompanyStructureView {
       nodeComparator: (n1, n2) => getNodeId(n2).localeCompare(getNodeId(n1)),
       edgeComparator: (e1, e2) => getEdgeId(e2).localeCompare(getEdgeId(e1))
     }).start()
+
     this.layoutRunning = false
   }
+
   /**
    * Updates the visibility of the graph if something has changed.
    */
@@ -429,6 +477,7 @@ export class CompanyStructureView {
     this.updateVisibility(this.completeGraph)
     this.graphComponent.graph.nodePredicateChanged()
   }
+
   /**
    * Updates the graph if something has changed.
    */
@@ -437,8 +486,10 @@ export class CompanyStructureView {
       this.builder.updateGraph()
       this.graphHasChanged()
     }, this.builder.graph)
+
     await this.layout()
   }
+
   /**
    * Adds the click listener for the nodes.
    * @param listener The listener to be added
@@ -446,6 +497,7 @@ export class CompanyStructureView {
   setNodeClickedListener(listener) {
     this.nodeClickListener = delegate.combine(listener, this.nodeClickListener)
   }
+
   /**
    * Adds the click listener for the edges.
    * @param listener The listener to be added

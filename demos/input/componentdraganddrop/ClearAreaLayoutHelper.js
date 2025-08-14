@@ -46,6 +46,7 @@ import {
   Point,
   Rect
 } from '@yfiles/yfiles'
+
 /**
  * Performs layout and animation during the drag and drop operation.
  */
@@ -54,40 +55,49 @@ export class ClearAreaLayoutHelper {
    * We use the same {@link LayoutGraphAdapter} for one drag gesture.
    */
   executor
+
   /**
    * The control that displays the graph.
    */
   graphComponent
+
   /**
    * The location of the last drag. Used to move the outline to the current mouse location.
    */
   oldLocation
+
   /**
    * The original layout before the drag and drop operation has been started.
    */
   resetToOriginalGraphStageData
+
   /**
    * The location of the current drag.
    */
   location
+
   /**
    * The component that has been created by the drag and drop operation.
    */
   component
+
   /**
    * The {@link ILayoutAlgorithm} that makes space for the dropped component.
    */
   clearAreaLayout = null
+
   /**
    * Components that should not be modified by the layout.
    */
   keepComponents
+
   /**
    * The graph that is displayed.
    */
   get graph() {
     return this.graphComponent.graph
   }
+
   /**
    * Initializes the helper.
    * @param graphComponent The control that displays the graph.
@@ -99,12 +109,15 @@ export class ClearAreaLayoutHelper {
     this.oldLocation = this.getCenter(component)
     this.component = component
     this.keepComponents = keepComponents
+
     this.location = this.oldLocation
+
     this.layoutIsRunning = false
     this.layoutPending = false
     this.canceled = false
     this.finished = false
   }
+
   /**
    * Returns the center of the {@link ClearAreaLayoutHelper.graph}.
    */
@@ -112,6 +125,7 @@ export class ClearAreaLayoutHelper {
     const bounds = this.getRect(nodes)
     return bounds.center
   }
+
   /**
    * Returns the rectangle enclosing the given nodes.
    */
@@ -122,11 +136,13 @@ export class ClearAreaLayoutHelper {
     })
     return bounds
   }
+
   /**
    * Creates a {@link GivenCoordinatesLayoutData} that store the layout of nodes and edges.
    */
   createGivenCoordinateStageData() {
     const givenCoordinatesStageData = new GivenCoordinatesLayoutData()
+
     // store the initial coordinates and sizes of all nodes and bends not related to the current component
     this.graph.nodes
       .filter((node) => !this.component.includes(node))
@@ -144,6 +160,7 @@ export class ClearAreaLayoutHelper {
       })
     return givenCoordinatesStageData
   }
+
   /**
    * Gets the edge path including the source and target ports.
    */
@@ -156,6 +173,7 @@ export class ClearAreaLayoutHelper {
     points.add(edge.targetPort.location.toPoint())
     return points
   }
+
   /**
    * A {@link LayoutExecutor} that is used during the drag and drop operation.
    * First, all nodes and edges are pushed back into place before the drag started. Then space
@@ -166,15 +184,18 @@ export class ClearAreaLayoutHelper {
     const clearAreaLayout = new ClearAreaLayout({
       clearAreaStrategy: ClearAreaStrategy.PRESERVE_SHAPES
     })
+
     clearAreaLayout.configureAreaOutline(this.component, 10)
     const layout = new GivenCoordinatesLayout(clearAreaLayout)
     this.clearAreaLayout = clearAreaLayout
+
     const layoutData = new CompositeLayoutData(
       this.resetToOriginalGraphStageData,
       new ClearAreaLayoutData({
         componentIds: (node) => (this.keepComponents ? node.tag.component : null)
       })
     )
+
     return new LayoutExecutor({
       graphComponent: this.graphComponent,
       graph: new FilteredGraphWrapper(
@@ -188,6 +209,7 @@ export class ClearAreaLayoutHelper {
       animateViewport: false
     })
   }
+
   /**
    * A {@link LayoutExecutor} that is used after the drag and drop operation has been
    * canceled.
@@ -201,6 +223,7 @@ export class ClearAreaLayoutHelper {
       animationDuration: '150ms'
     })
   }
+
   /**
    * A {@link LayoutExecutor} that is used after the drag and drop operation is finished.
    * All nodes and edges are pushed back into place before the drag started. Then space is made
@@ -208,10 +231,9 @@ export class ClearAreaLayoutHelper {
    */
   createFinishedLayoutExecutor() {
     const layout = new GivenCoordinatesLayout(
-      new ClearAreaLayout({
-        clearAreaStrategy: ClearAreaStrategy.PRESERVE_SHAPES
-      })
+      new ClearAreaLayout({ clearAreaStrategy: ClearAreaStrategy.PRESERVE_SHAPES })
     )
+
     const layoutData = new CompositeLayoutData(this.resetToOriginalGraphStageData)
     layoutData.items.add(
       new ClearAreaLayoutData({
@@ -219,6 +241,7 @@ export class ClearAreaLayoutHelper {
         componentIds: (node) => (this.keepComponents ? node.tag.component : null)
       })
     )
+
     return new LayoutExecutor({
       graphComponent: this.graphComponent,
       layout,
@@ -226,22 +249,27 @@ export class ClearAreaLayoutHelper {
       animationDuration: '150ms'
     })
   }
+
   /**
    * A lock which prevents re-entrant layout execution.
    */
   layoutIsRunning
+
   /**
    * Indicates whether a layout run has been requested while running a layout calculation.
    */
   layoutPending
+
   /**
    * Indicates that the executor has been canceled and the original layout should be restored.
    */
   canceled
+
   /**
    * Indicates that the final layout should be calculated.
    */
   finished
+
   /**
    * Starts a layout calculation if none is already running.
    */
@@ -253,6 +281,7 @@ export class ClearAreaLayoutHelper {
     }
     this.runLayoutCore()
   }
+
   async runLayoutCore() {
     do {
       // prevent other layouts from running
@@ -276,6 +305,7 @@ export class ClearAreaLayoutHelper {
       // repeat if another layout has been requested in the meantime
     } while (this.layoutPending)
   }
+
   /**
    * Prepares the layout execution.
    */
@@ -283,6 +313,7 @@ export class ClearAreaLayoutHelper {
     this.resetToOriginalGraphStageData = this.createGivenCoordinateStageData()
     this.executor = this.createDraggingLayoutExecutor()
   }
+
   /**
    * Cancels the current layout calculation.
    */
@@ -291,6 +322,7 @@ export class ClearAreaLayoutHelper {
     this.canceled = true
     this.runLayout()
   }
+
   /**
    * Finishes the current layout calculation.
    */
@@ -299,6 +331,7 @@ export class ClearAreaLayoutHelper {
     this.finished = true
     this.runLayout()
   }
+
   /**
    * Moves the {@link ClearAreaLayout.areaOutline} to the current drag location.
    */

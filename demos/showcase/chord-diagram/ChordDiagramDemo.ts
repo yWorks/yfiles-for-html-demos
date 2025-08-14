@@ -182,11 +182,7 @@ function createSampleGraph(graph: IGraph): void {
     id: 'id',
     layout: (data) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
-  builder.createEdgesSource({
-    data: SampleData.edges,
-    sourceId: 'from',
-    targetId: 'to'
-  })
+  builder.createEdgesSource({ data: SampleData.edges, sourceId: 'from', targetId: 'to' })
 
   builder.buildGraph()
 

@@ -96,10 +96,7 @@ class NodeTemplateContext extends TemplateContext<INode> {
 }
 
 export type StringTemplateNodeStyleOptions = StringTemplateStyleOptions &
-  Partial<{
-    minimumSize: Size | SizeConvertible
-    insets: Insets | InsetsConvertible
-  }>
+  Partial<{ minimumSize: Size | SizeConvertible; insets: Insets | InsetsConvertible }>
 
 export class StringTemplateNodeStyle extends NodeStyleBase<TemplateNodeStyleVisual> {
   static CONVERTERS: typeof converters = converters
@@ -150,10 +147,9 @@ export class StringTemplateNodeStyle extends NodeStyleBase<TemplateNodeStyleVisu
    * This mimics the old yFiles 2.x API
    * @param obj
    */
-  static makeObservable<T>(obj: T): T &
-    IPropertyObservable & {
-      firePropertyChanged: (propertyName: string) => void
-    } {
+  static makeObservable<T>(
+    obj: T
+  ): T & IPropertyObservable & { firePropertyChanged: (propertyName: string) => void } {
     makeObservable(obj)
     return obj
   }

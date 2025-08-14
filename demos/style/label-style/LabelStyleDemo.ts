@@ -159,9 +159,7 @@ function createSampleNodeLabels(graph: IGraph) {
  * @param graph The graph to add edge labels to.
  */
 function createSampleEdgeLabels(graph: IGraph) {
-  const edgeLabelModel = new SmartEdgeLabelModel({
-    angle: Math.PI / 2
-  })
+  const edgeLabelModel = new SmartEdgeLabelModel({ angle: Math.PI / 2 })
 
   graph.edgeDefaults.labels.layoutParameter = edgeLabelModel.createParameterFromSource(0)
 

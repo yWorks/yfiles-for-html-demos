@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { IGraph, INode, Point } from '@yfiles/yfiles'
 import { createInGraph, validateNodeTag } from '../FlowNode/FlowNode'
+
 /**
  * A simple, minimal data structure that can be used for storing a FlowNode in JSON
  * and then re-create it in the graph.
@@ -35,6 +36,7 @@ import { createInGraph, validateNodeTag } from '../FlowNode/FlowNode'
 export class NodeData {
   position
   properties
+
   /**
    * Creates NodeData from an actual node. We exclude the validator function,
    * if present as it cannot be serialized, and it will be automatically set
@@ -48,11 +50,9 @@ export class NodeData {
     const properties = Object.fromEntries(
       Object.entries(tag).filter(([key]) => !keysToFilter.includes(key))
     )
-    return new NodeData({
-      properties,
-      position: [layout.x, layout.y]
-    })
+    return new NodeData({ properties, position: [layout.x, layout.y] })
   }
+
   /**
    * Converts an arbitrary piece of data to NodeData after validation.
    */
@@ -60,6 +60,7 @@ export class NodeData {
     NodeData.validate(data)
     return new NodeData(data)
   }
+
   /**
    * Checks if an arbitrary piece of data (as it comes from a JSON source)
    * conforms to the format required by NodeData.
@@ -77,10 +78,12 @@ export class NodeData {
     }
     throw new Error('Malformed node data')
   }
+
   constructor({ properties, position }) {
     this.position = position
     this.properties = properties
   }
+
   /**
    * Converts node data to an actual graph node.
    */
@@ -90,19 +93,14 @@ export class NodeData {
       variant: this.properties.variant,
       position: new Point(...this.position)
     })
-    node.tag = {
-      ...node.tag,
-      ...this.properties
-    }
+    node.tag = { ...node.tag, ...this.properties }
     return node
   }
+
   /**
    * Converts node data to a serializable format.
    */
   toJSONData() {
-    return {
-      position: this.position,
-      properties: this.properties
-    }
+    return { position: this.position, properties: this.properties }
   }
 }

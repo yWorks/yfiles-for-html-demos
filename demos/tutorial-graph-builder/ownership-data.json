@@ -1,23 +1,8 @@
 {
   "nodesSource": [
-    {
-      "id": "0",
-      "name": "Investment Capital",
-      "type": "Corporation",
-      "currency": "USD"
-    },
-    {
-      "id": "1",
-      "name": "Limited Trust",
-      "type": "Trust",
-      "currency": "USD"
-    },
-    {
-      "id": "2",
-      "name": "Capital",
-      "type": "Branch",
-      "currency": "USD"
-    },
+    { "id": "0", "name": "Investment Capital", "type": "Corporation", "currency": "USD" },
+    { "id": "1", "name": "Limited Trust", "type": "Trust", "currency": "USD" },
+    { "id": "2", "name": "Capital", "type": "Branch", "currency": "USD" },
     {
       "id": "3",
       "name": "International Group",
@@ -25,12 +10,7 @@
       "currency": "EUR",
       "jurisdiction": ["Germany"]
     },
-    {
-      "id": "4",
-      "name": "Monster Inc",
-      "type": "Corporation",
-      "currency": "EUR"
-    },
+    { "id": "4", "name": "Monster Inc", "type": "Corporation", "currency": "EUR" },
     {
       "id": "5",
       "name": "Micro Group",
@@ -38,53 +18,15 @@
       "currency": "EUR",
       "jurisdiction": ["Spain"]
     },
-    {
-      "id": "6",
-      "name": "Melissa Barner",
-      "type": "PE_Risk",
-      "currency": "EUR"
-    }
+    { "id": "6", "name": "Melissa Barner", "type": "PE_Risk", "currency": "EUR" }
   ],
   "edgesSource": [
-    {
-      "id": "0",
-      "sourceId": "4",
-      "targetId": "2"
-    },
-    {
-      "id": "1",
-      "sourceId": "5",
-      "targetId": "0",
-      "ownership": 40
-    },
-    {
-      "id": "2",
-      "sourceId": "0",
-      "targetId": "2"
-    },
-    {
-      "id": "3",
-      "sourceId": "6",
-      "targetId": "3",
-      "ownership": 30
-    },
-    {
-      "id": "4",
-      "sourceId": "3",
-      "targetId": "2",
-      "ownership": 60
-    },
-    {
-      "id": "5",
-      "sourceId": "3",
-      "targetId": "1",
-      "ownership": 51
-    },
-    {
-      "id": "6",
-      "sourceId": "1",
-      "targetId": "2",
-      "ownership": 30
-    }
+    { "id": "0", "sourceId": "4", "targetId": "2" },
+    { "id": "1", "sourceId": "5", "targetId": "0", "ownership": 40 },
+    { "id": "2", "sourceId": "0", "targetId": "2" },
+    { "id": "3", "sourceId": "6", "targetId": "3", "ownership": 30 },
+    { "id": "4", "sourceId": "3", "targetId": "2", "ownership": 60 },
+    { "id": "5", "sourceId": "3", "targetId": "1", "ownership": 51 },
+    { "id": "6", "sourceId": "1", "targetId": "2", "ownership": 30 }
   ]
 }

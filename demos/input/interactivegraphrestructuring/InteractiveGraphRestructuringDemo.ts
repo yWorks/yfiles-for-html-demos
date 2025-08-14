@@ -107,10 +107,7 @@ function initializeInputMode(): void {
     marqueeSelectionInputMode: { enabled: false },
     moveViewportInputMode: { beginRecognizer: EventRecognizers.MOUSE_DRAG },
     // enable the ItemHoverInputMode and let it handle edges and nodes
-    itemHoverInputMode: {
-      enabled: true,
-      hoverItems: GraphItemTypes.NODE
-    }
+    itemHoverInputMode: { enabled: true, hoverItems: GraphItemTypes.NODE }
   })
   graphComponent.inputMode = mode
 

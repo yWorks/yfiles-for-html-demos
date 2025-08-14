@@ -27,18 +27,22 @@
  **
  ***************************************************************************/
 import { EdgeStyleBase, IArrow, SvgVisual } from '@yfiles/yfiles'
+
 export class CustomEdgeStyle extends EdgeStyleBase {
   createVisual(context, edge) {
     const generalPath = super.getPath(edge)
     const croppedGeneralPath = super.cropPath(edge, IArrow.NONE, IArrow.NONE, generalPath)
+
     const widePath = croppedGeneralPath.createSvgPath()
     widePath.setAttribute('fill', 'none')
     widePath.setAttribute('stroke', 'black')
     widePath.setAttribute('stroke-width', '4')
+
     const thinPath = croppedGeneralPath.createSvgPath()
     thinPath.setAttribute('fill', 'none')
     thinPath.setAttribute('stroke', 'white')
     thinPath.setAttribute('stroke-width', '2')
+
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     group.append(widePath, thinPath)
     return new SvgVisual(group)

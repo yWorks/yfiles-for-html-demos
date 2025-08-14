@@ -52,6 +52,7 @@ import {
   Stroke,
   ViewportLimitingPolicy
 } from '@yfiles/yfiles'
+
 import { PropertiesView } from './PropertiesView'
 import OrgChartData from './resources/OrgChartData'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
@@ -64,15 +65,20 @@ import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
 import { StringTemplateNodeStyle } from '@yfiles/demo-utils/template-styles/StringTemplateNodeStyle'
 import { StringTemplateLabelStyle } from '@yfiles/demo-utils/template-styles/StringTemplateLabelStyle'
 import { StringTemplatePortStyle } from '@yfiles/demo-utils/template-styles/StringTemplatePortStyle'
+
 async function run() {
   License.value = await fetchLicense()
+
   // set up the binding converters for the TemplateNodeStyle used to visualize the demo's nodes
   initConverters()
+
   const graphComponent = new GraphComponent('graphComponent')
   // initialize the default styles for nodes, edges, labels, and ports
   configureStyles(graphComponent.graph)
+
   initialize(graphComponent)
 }
+
 /**
  * Configures default styles for nodes, edges, labels, and ports.
  * Even though it is not possible to create new items in this demo, the default styles are
@@ -83,6 +89,7 @@ function configureStyles(graph) {
   const outlinePath = new GeneralPath()
   // the path is interpreted as normalized - spanning from 0/0 to 1/1
   outlinePath.appendEllipse(new Rect(0, 0, 1, 1), true)
+
   // create the node style
   // use a minimum size so the nodes cannot be made smaller
   graph.nodeDefaults.style = new StringTemplateNodeStyle({
@@ -90,6 +97,7 @@ function configureStyles(graph) {
     minimumSize: [100, 100],
     normalizedOutline: outlinePath
   })
+
   // use a PolylineEdgeStyle instance with a dotted stroke for edges
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: new Stroke({
@@ -101,15 +109,18 @@ function configureStyles(graph) {
     sourceArrow: new Arrow(ArrowType.NONE),
     targetArrow: new Arrow(ArrowType.NONE)
   })
+
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     sideOfEdge: EdgeSides.ABOVE_EDGE,
     distance: 5
   }).createRatioParameter(0.5)
+
   // create the edge label style
   graph.edgeDefaults.labels.style = new StringTemplateLabelStyle({
     svgContent: orgchartLabelTemplate,
     preferredSize: [100, 30]
   })
+
   // create the port style
   graph.nodeDefaults.ports.style = new StringTemplatePortStyle({
     svgContent: orgchartPortTemplate,
@@ -117,6 +128,7 @@ function configureStyles(graph) {
     normalizedOutline: outlinePath
   })
 }
+
 /**
  * Initializes the converter functions used in the bindings.
  */
@@ -140,6 +152,7 @@ function initConverters() {
         return 'rgb(229,233,240)'
     }
   }
+
   // convert a status to a color
   StringTemplateNodeStyle.CONVERTERS.statusColor = (val) => {
     switch (val) {
@@ -152,12 +165,16 @@ function initConverters() {
         return 'rgb(231,93,82)'
     }
   }
+
   // convert the icon identifier to the image path
   StringTemplateNodeStyle.CONVERTERS.icon = (val) => `./resources/${val}.svg`
+
   // convert a node size to a font size
   StringTemplateNodeStyle.CONVERTERS.fontSize = (val) => (val / 10) | 0
+
   // convert a boolean to a visibility value
   StringTemplateNodeStyle.CONVERTERS.visibility = (val) => (val ? 'visible' : 'hidden')
+
   // A converter that does simple calculations, consisting of numbers, +, -, / and * as well as parentheses.
   // The parameter must contain the calculation expression. $v is replaced by the bound value.
   // This converter is used in the node template to calculate positions and sizes of elements based on the node size.
@@ -174,14 +191,19 @@ function initConverters() {
     return -1
   }
 }
+
 function initialize(graphComponent) {
   // initialize the graph
   initializeGraph(graphComponent)
+
   // create the graph items
   createGraph(graphComponent.graph)
+
   createPropertiesPanel(graphComponent)
+
   runLayout(graphComponent)
 }
+
 /**
  * Customizes the graph - in this case, the default node size is set and the default decoration for
  * selection and focus is removed.
@@ -189,20 +211,25 @@ function initialize(graphComponent) {
 function initializeGraph(graphComponent) {
   const graph = graphComponent.graph
   graph.nodeDefaults.size = new Size(100, 100)
+
   // remove the default selection and focus decoration
   graph.decorator.nodes.selectionRenderer.hide()
   graph.decorator.nodes.focusRenderer.hide()
 }
+
 /**
  * Creates the initial sample graph.
  */
 function createGraph(graph) {
   // make each data item observable to be able to update the template style bindings
   const dataSource = OrgChartData.map((data) => StringTemplateNodeStyle.makeObservable(data))
+
   // use AdjacencyGraphBuilder to automatically create a graph from the data
   const adjacencyGraphBuilder = new AdjacencyGraphBuilder(graph)
+
   // stores the nodes of the graph
   const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(dataSource, 'email')
+
   // configure the successor nodes
   const edgeCreator = new EdgeCreator({
     // use the same edge defaults as in the graph
@@ -217,11 +244,14 @@ function createGraph(graph) {
     }
   })
   adjacencyNodesSource.addSuccessorIds((data) => data.subordinates, edgeCreator)
+
   // create the graph from the given data
   adjacencyGraphBuilder.buildGraph()
+
   // adjust the node sizes to match their hierarchy level
   adjustNodeSizes(graph)
 }
+
 /**
  * Calculates the tree level of each node. Nodes higher up in the hierarchy are enlarged
  * accordingly.
@@ -229,8 +259,10 @@ function createGraph(graph) {
 function adjustNodeSizes(graph) {
   // calculate the tree hierarchy levels using a BFS algorithm
   const rootNodes = graph.nodes.filter((node) => graph.inDegree(node) === 0)
+
   const bfs = new Bfs({ coreNodes: rootNodes })
   const result = bfs.run(graph)
+
   // adjust the size of each node
   const baseSize = graph.nodeDefaults.size
   const growthFactor = 0.3
@@ -243,6 +275,7 @@ function adjustNodeSizes(graph) {
     graph.setNodeLayout(node, new Rect(node.layout.topLeft, size))
   })
 }
+
 /**
  * Creates a panel that displays detailed information for the employee that is represented
  * by the given graph component's current item.
@@ -252,11 +285,13 @@ function createPropertiesPanel(graphComponent) {
   // the properties of the selected employee.
   const propertiesViewElement = document.getElementById('propertiesView')
   const propertiesView = new PropertiesView(propertiesViewElement)
+
   // add a listener for the properties view
   graphComponent.addEventListener('current-item-changed', () => {
     propertiesView.showProperties(graphComponent.currentItem)
   })
 }
+
 /**
  * Arranges the graph of the given graph component.
  */
@@ -266,6 +301,7 @@ function runLayout(graphComponent) {
     minimumEdgeLength: 100,
     allowOverlaps: true
   })
+
   // calculate the initial layout
   graphComponent.graph.applyLayout(layout)
   // move the ports from the node center to outside the node
@@ -274,6 +310,7 @@ function runLayout(graphComponent) {
   limitViewport(graphComponent)
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Moves the ports from the node center to outside the node.
  */
@@ -289,12 +326,14 @@ function adjustPorts(graph) {
       targetPort,
       targetPort.locationParameter
     )
+
     const v = targetPortLocation.subtract(sourcePortLocation).normalized
     const v2 = new Point(-v.x, -v.y)
     adjustPort(graph, sourcePort, v)
     adjustPort(graph, targetPort, v2)
   })
 }
+
 /**
  * Moves a port on the given vector outside its owner node.
  * @param graph The graph displayed in this demo.
@@ -305,6 +344,7 @@ function adjustPort(graph, port, vector) {
   const node = port.owner
   const r = node.layout.width * 0.5
   const offset = 20
+
   graph.setPortLocationParameter(
     port,
     FreeNodePortLocationModel.INSTANCE.createParameterForRatios(
@@ -313,6 +353,7 @@ function adjustPort(graph, port, vector) {
     )
   )
 }
+
 /**
  * Configures a ViewportLimiter that ensures the explorable region does not exceed the graph size.
  */
@@ -322,4 +363,5 @@ function limitViewport(graphComponent) {
   limiter.bounds = graphComponent.contentBounds
   limiter.policy = ViewportLimitingPolicy.TOWARDS_LIMIT
 }
+
 run().then(finishLoading)

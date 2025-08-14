@@ -40,8 +40,8 @@ import {
   WebGLSelectionIndicatorManager
 } from '@yfiles/yfiles'
 import { getEdgeType, getEntityData, isFraud } from '../entity-data'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 import { edgeStyleMapping, nodeStyleMapping } from './graph-styles'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 import { createCanvasContext } from '@yfiles/demo-utils/IconCreation'
 
 let nodeStyles: Record<string, WebGLImageNodeStyle>
@@ -205,9 +205,7 @@ function createWebGLEdgeStyles(): Record<string, WebGLPolylineEdgeStyle> {
       stroke: `5px ${edgeStyleMapping[record]}`
     })
 
-    webglEdgeStyles[record + ' Fraud'] = new WebGLPolylineEdgeStyle({
-      stroke: `5px #ff6c00`
-    })
+    webglEdgeStyles[record + ' Fraud'] = new WebGLPolylineEdgeStyle({ stroke: `5px #ff6c00` })
   }
   return webglEdgeStyles
 }

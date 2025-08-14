@@ -44,6 +44,7 @@ import {
   PointerEventArgs,
   Rect
 } from '@yfiles/yfiles'
+
 /**
  * An {@link IReshapeHandleProvider} that doesn't provide any handles.
  */
@@ -57,6 +58,7 @@ export class EmptyReshapeHandleProvider extends BaseClass(IReshapeHandleProvider
   getAvailableHandles(inputModeContext) {
     return HandlePositions.NONE
   }
+
   /**
    * This method is never called since getAvailableHandles returns no valid position.
    * @param inputModeContext The context for which the handles are queried
@@ -69,6 +71,7 @@ export class EmptyReshapeHandleProvider extends BaseClass(IReshapeHandleProvider
     return null
   }
 }
+
 /**
  * This input mode handles dragging events on nodes and edges.
  * Dragging events at the area visualizing the flow at a node increase/decrease the node supply or
@@ -83,8 +86,10 @@ export class NetworkFlowInputMode extends InputModeBase {
   initialSupply
   oldTag
   eventListeners = new Map()
+
   dragFinishedListener
   dragStartedListener
+
   constructor() {
     super()
     this.graphComponent = null
@@ -96,11 +101,13 @@ export class NetworkFlowInputMode extends InputModeBase {
     this.dragFinishedListener = null
     this.dragStartedListener = null
     this.oldTag = null
+
     this.eventListeners.set('pointer-move', (evt) => this.onMouseMove(evt.location))
     this.eventListeners.set('pointer-down', (evt) => this.onMouseDown(evt.location, evt.buttons))
     this.eventListeners.set('pointer-up', (evt) => this.onMouseUp(evt.location))
     this.eventListeners.set('pointer-drag', (evt) => this.onMouseDrag(evt.location))
   }
+
   /**
    * Installs this input mode into a CanvasComponent using the provided IInputModeContext.
    * @param context The context to install this mode into
@@ -115,6 +122,7 @@ export class NetworkFlowInputMode extends InputModeBase {
     }
     this.state = 'start'
   }
+
   /**
    * Occurs when the mouse has been moved in world coordinates.
    * @param location The event location in world coordinates
@@ -128,6 +136,7 @@ export class NetworkFlowInputMode extends InputModeBase {
       this.controller.preferredCursor = null
     }
   }
+
   /**
    * Checks whether the mouse hover occurred on a valid position. Valid positions are the edges and
    * the area of a node that represents the flow supply/demand (if the flow can be adjusted like in
@@ -140,7 +149,9 @@ export class NetworkFlowInputMode extends InputModeBase {
       this.parentInputModeContext,
       location
     )
+
     this.hitItem = hits.at(0)
+
     if (this.hitItem instanceof INode) {
       if (this.hitItem.tag.adjustable) {
         const layout = this.hitItem.layout
@@ -156,6 +167,7 @@ export class NetworkFlowInputMode extends InputModeBase {
     this.hitItem = null
     return false
   }
+
   /**
    * Occurs when a mouse button has been pressed.
    * @param location The event location in world coordinates
@@ -167,6 +179,7 @@ export class NetworkFlowInputMode extends InputModeBase {
       this.initialLocation = location
     }
   }
+
   /**
    * Occurs when the mouse is being moved while at least one of the mouse buttons is pressed.
    * @param location The event location in world coordinates
@@ -180,15 +193,18 @@ export class NetworkFlowInputMode extends InputModeBase {
       if (this.dragStartedListener) {
         this.dragStartedListener(this.hitItem)
       }
+
       if (this.hitItem instanceof INode) {
         this.initialSupply = this.hitItem.tag.supply
       } else if (this.hitItem instanceof IEdge) {
         this.initialCapacity = this.hitItem.tag.capacity
       }
+
       this.oldTag = Object.assign({}, this.hitItem.tag)
     }
     if (this.state === 'drag' && this.hitItem) {
       const delta = this.initialLocation.y - location.y
+
       if (this.hitItem instanceof INode) {
         const flow = this.hitItem.tag.flow / this.hitItem.layout.height
         this.hitItem.tag.supply = Math.min(
@@ -198,6 +214,7 @@ export class NetworkFlowInputMode extends InputModeBase {
       } else if (this.hitItem instanceof IEdge) {
         const tag = this.hitItem.tag
         tag.capacity = Math.round(Math.max(0, this.initialCapacity + delta))
+
         const label = this.hitItem.labels.get(0)
         if (label != null) {
           this.graphComponent.graph.setLabelText(label, `${tag.flow} / ${tag.capacity}`)
@@ -206,6 +223,7 @@ export class NetworkFlowInputMode extends InputModeBase {
       this.graphComponent.invalidate()
     }
   }
+
   /**
    * Occurs when the mouse button has been released.
    * @param location The event location in world coordinates
@@ -213,6 +231,7 @@ export class NetworkFlowInputMode extends InputModeBase {
   onMouseUp(location) {
     if (this.controller.active && this.state === 'drag') {
       super.releaseMutex()
+
       // drag has finished, fire the event
       if (this.dragFinishedListener) {
         this.dragFinishedListener(this.hitItem, this.oldTag)
@@ -232,6 +251,7 @@ export class NetworkFlowInputMode extends InputModeBase {
       }
     }
   }
+
   /**
    * Adds a listener that fires an event whenever the dragging of a node/edge has finished.
    * @param listener The given listener
@@ -239,6 +259,7 @@ export class NetworkFlowInputMode extends InputModeBase {
   addDragFinished(listener) {
     this.dragFinishedListener = listener
   }
+
   /**
    * Removes the listener that fires an event whenever the dragging of a node/edge has finished.
    * @param listener The given listener
@@ -248,6 +269,7 @@ export class NetworkFlowInputMode extends InputModeBase {
       this.dragFinishedListener = null
     }
   }
+
   /**
    * Adds a listener that fires an event whenever the dragging of a node/edge has started.
    * @param listener The given listener
@@ -255,6 +277,7 @@ export class NetworkFlowInputMode extends InputModeBase {
   setDragStartedListener(listener) {
     this.dragStartedListener = listener
   }
+
   /**
    * Removes the listener that fires an event whenever the dragging of a node/edge has started.
    * @param listener The given listener
@@ -264,6 +287,7 @@ export class NetworkFlowInputMode extends InputModeBase {
       this.dragStartedListener = null
     }
   }
+
   /**
    * Uninstalls this mode from the canvas.
    * @param context The context to remove this mode from.

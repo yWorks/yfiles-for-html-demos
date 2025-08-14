@@ -55,9 +55,11 @@ import {
 } from '@yfiles/yfiles'
 import { colorSets as cs } from './demo-colors'
 export const colorSets = cs
+
 export function isColorSetName(arg) {
   return arg in colorSets
 }
+
 /**
  * Initializes graph defaults with nicely configured built-in yFiles styles.
  *
@@ -81,16 +83,19 @@ export function initDemoStyles(
   if (typeof theme === 'string') {
     theme = { node: theme, edge: theme, group: theme }
   }
+
   theme.node = theme.node || 'demo-orange'
   theme.nodeLabel = theme.nodeLabel || theme.node
   theme.edge = theme.edge || theme.node || 'demo-orange'
   theme.edgeLabel = theme.edgeLabel || theme.edge
   theme.group = theme.group || 'demo-palette-12'
   theme.groupLabel = theme.groupLabel || theme.group
+
   graph.nodeDefaults.style = shape
     ? createDemoShapeNodeStyle(shape, theme.node)
     : createDemoNodeStyle(theme.node)
   graph.nodeDefaults.labels.style = createDemoNodeLabelStyle(theme.nodeLabel)
+
   graph.groupNodeDefaults.style = createDemoGroupStyle({
     colorSetName: theme.group,
     foldingEnabled
@@ -98,12 +103,14 @@ export function initDemoStyles(
   graph.groupNodeDefaults.labels.style = createDemoGroupLabelStyle(theme.groupLabel)
   graph.groupNodeDefaults.labels.layoutParameter =
     new GroupNodeLabelModel().createTabBackgroundParameter()
+
   graph.edgeDefaults.style = createDemoEdgeStyle({ colorSetName: theme.edge, orthogonalEditing })
   graph.decorator.ports.edgePathCropper.addConstant(
     new EdgePathCropper({ cropAtPort: false, extraCropLength })
   )
   graph.edgeDefaults.labels.style = createDemoEdgeLabelStyle(theme.edgeLabel)
 }
+
 /**
  * Creates a new rectangular node style whose colors match the given well-known CSS style.
  */
@@ -115,6 +122,7 @@ export function createDemoNodeStyle(colorSetName = 'demo-orange') {
     cornerSize: 3.5
   })
 }
+
 /**
  * Creates a new node style with the given shape whose colors match the given well-known CSS style.
  */
@@ -125,6 +133,7 @@ export function createDemoShapeNodeStyle(shape, colorSetName = 'demo-orange') {
     stroke: `1.5px ${colorSets[colorSetName].stroke}`
   })
 }
+
 /**
  * Creates a new polyline edge style whose colors match the given well-known CSS style.
  */
@@ -140,6 +149,7 @@ export function createDemoEdgeStyle({
     orthogonalEditing
   })
 }
+
 /**
  * Creates a new node label style whose colors match the given well-known CSS style.
  */
@@ -153,6 +163,7 @@ export function createDemoNodeLabelStyle(colorSetName = 'demo-orange') {
   labelStyle.padding = [2, 4, 1, 4]
   return labelStyle
 }
+
 /**
  * Creates a new edge label style whose colors match the given well-known CSS style.
  */
@@ -166,6 +177,7 @@ export function createDemoEdgeLabelStyle(colorSetName = 'demo-orange') {
   labelStyle.padding = [2, 4, 1, 4]
   return labelStyle
 }
+
 /**
  * Creates a new group label style whose colors match the given well-known CSS style.
  */
@@ -177,6 +189,7 @@ export function createDemoGroupLabelStyle(colorSetName = 'demo-palette-12') {
     textFill: colorSets[colorSetName].nodeLabelFill
   })
 }
+
 /**
  * Creates a new group node style whose colors match the given well-known CSS style.
  */
@@ -198,6 +211,7 @@ export function createDemoGroupStyle({ colorSetName = 'demo-palette-12', folding
     hitTransparentContentArea: true
   })
 }
+
 /**
  * The class provides functionality for custom style of overview control.
  */
@@ -222,6 +236,7 @@ export class DemoStyleOverviewRenderer extends BaseClass(IObjectRenderer) {
     })
   }
 }
+
 class CanvasVisual extends HtmlCanvasVisual {
   render(renderContext, ctx) {
     const graph = renderContext.canvasComponent.graph
@@ -236,11 +251,13 @@ class CanvasVisual extends HtmlCanvasVisual {
       this.paintEdge(renderContext, ctx, edge)
     })
   }
+
   paintNode(renderContext, ctx, node) {
     ctx.fillStyle = 'rgb(128, 128, 128)'
     const layout = node.layout
     ctx.fillRect(layout.x, layout.y, layout.width, layout.height)
   }
+
   paintGroupNode(renderContext, ctx, node) {
     ctx.fillStyle = 'rgb(211, 211, 211)'
     ctx.strokeStyle = 'rgb(211, 211, 211)'
@@ -250,8 +267,10 @@ class CanvasVisual extends HtmlCanvasVisual {
     ctx.fillRect(x, y, width, 22)
     ctx.lineWidth = 1
   }
+
   paintEdge(renderContext, ctx, edge) {
     ctx.strokeStyle = 'rgb(0,0,0)'
+
     ctx.beginPath()
     let location = edge.sourcePort.location
     ctx.moveTo(location.x, location.y)

@@ -318,19 +318,13 @@
           .replace('Tutorial: ', '<span class="accordion-tutorial-prefix">Tutorial: </span>')
           .replace(' Implementation', '')
       }
-      const accordionItem = createAccordionItem({
-        title: categoryName,
-        identifier: demo.category
-      })
+      const accordionItem = createAccordionItem({ title: categoryName, identifier: demo.category })
       accordionItems.push(accordionItem)
       document.querySelector('.demo-browser-sidebar').appendChild(accordionItem)
       element = document.querySelector('.demo-items-' + demo.category)
       // insert demo-header
       if (!demo.category.match(/tutorial-.*/)) {
-        const demoHeader = createDemoHeader({
-          title: categoryName,
-          identifier: demo.category
-        })
+        const demoHeader = createDemoHeader({ title: categoryName, identifier: demo.category })
         const nonTutorialGrid = document.querySelector('#demo-descriptions')
         document.querySelector('.demo-grid').insertBefore(demoHeader, nonTutorialGrid)
       }

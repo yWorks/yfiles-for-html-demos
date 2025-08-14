@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { CustomEdgeStyle } from './CustomEdgeStyle'
 import { Point, ShapeNodeStyle } from '@yfiles/yfiles'
+
 /**
  * Creates the sample edges for this tutorial step
  */
@@ -37,29 +38,21 @@ export function createEdges(graph) {
     fill: '#0b7189',
     stroke: '#042d37'
   })
-  const node1 = graph.createNode({
-    layout: [50, 0, 30, 30]
-  })
-  const node2 = graph.createNode({
-    layout: [100, 100, 30, 30]
-  })
-  const node3 = graph.createNode({
-    layout: [0, 200, 30, 30]
-  })
+  const node1 = graph.createNode({ layout: [50, 0, 30, 30] })
+  const node2 = graph.createNode({ layout: [100, 100, 30, 30] })
+  const node3 = graph.createNode({ layout: [0, 200, 30, 30] })
+
   const style1 = new CustomEdgeStyle(1)
   const style2 = new CustomEdgeStyle(3)
   const style3 = new CustomEdgeStyle(5)
+
   const edge1 = graph.createEdge({
     source: node1,
     target: node2,
     style: style1,
     bends: [new Point(115, 60)]
   })
-  const edge2 = graph.createEdge({
-    source: node2,
-    target: node3,
-    style: style2
-  })
+  const edge2 = graph.createEdge({ source: node2, target: node3, style: style2 })
   const edge3 = graph.createEdge({
     source: node3,
     target: node1,

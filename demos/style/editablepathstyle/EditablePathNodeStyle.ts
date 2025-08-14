@@ -125,9 +125,7 @@ export class EditablePathNodeStyle extends NodeStyleBase {
       })
     } else {
       this.$path = createDefaultPath()
-      this.$pathStyle = new GeneralPathNodeStyle({
-        path: this.$path
-      })
+      this.$pathStyle = new GeneralPathNodeStyle({ path: this.$path })
     }
   }
 
@@ -330,8 +328,8 @@ export class EditablePathNodeStyle extends NodeStyleBase {
     let index = 0
     while (cursor.moveNext()) {
       const type = cursor.getCurrent(coords)
-      const handleType = HandleType.CUSTOM1 | HandleType.MOVE
-      const innerHandleType = HandleType.CUSTOM2 | HandleType.MOVE
+      const handleType = HandleType.MOVE
+      const innerHandleType = HandleType.MOVE2
       switch (type) {
         case PathType.CLOSE:
           break

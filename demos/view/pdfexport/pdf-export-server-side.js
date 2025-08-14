@@ -28,10 +28,12 @@
  ***************************************************************************/
 import { Insets, SvgExport } from '@yfiles/yfiles'
 import { exportSvg, requestServerExport } from './server-side-export'
+
 /**
  * Server URL for server-side export.
  */
 export const NODE_SERVER_URL = 'http://localhost:3001'
+
 /**
  * Exports the image on the server. This will open a file dialog to download the image as PDF.
  */

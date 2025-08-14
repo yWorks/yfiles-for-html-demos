@@ -47,9 +47,7 @@ License.value = await fetchLicense()
 
 const graphComponent = new GraphComponent('#graphComponent')
 const graph = graphComponent.graph
-graph.nodeDefaults.style = new ShapeNodeStyle({
-  shape: 'triangle'
-})
+graph.nodeDefaults.style = new ShapeNodeStyle({ shape: 'triangle' })
 
 const data = await getData<Data>()
 

@@ -38,28 +38,35 @@ import {
   ShapeNodeStyle,
   Size
 } from '@yfiles/yfiles'
+
 /**
  * Creates the graph from the trekking dataset.
  * For each data item in the dataset, a waypoint node and an associated label node is created.
  */
 export function initializeGraph(graphComponent) {
   const graph = graphComponent.graph
+
   // use the default node size as size for waypoint nodes
   const { width, height } = graph.nodeDefaults.size
+
   // get the min/max values from the dataset to be able to scale the data
   const { maxX, maxY } = getMax(nodeData.trail)
+
   for (const data of nodeData.waypoints) {
     const xPos = scalePoint(data.x, maxX, SCALED_MAX_X)
     const yPos = -scalePoint(data.y, maxY, SCALED_MAX_Y)
+
     const waypoint = graph.createNode({
       layout: new Rect(xPos - width * 0.5, yPos - height * 0.5, width, height),
       tag: { ...data, type: MultiPageNodeType.WAYPOINT }
     })
+
     // create the label node and define its tag based on the tag of the associated waypoint
     const labelNode = graph.createNode({
       tag: { ...data, type: MultiPageNodeType.LABEL },
       layout: new Rect(0, 0, labelNodeSize.width, labelNodeSize.height)
     })
+
     // set the style of the label node and ...
     graph.setStyle(
       labelNode,
@@ -89,6 +96,7 @@ export function initializeGraph(graphComponent) {
         new LabelStyle({ font: '16px sans-serif', textFill: '#336699' })
       )
     }
+
     // ... create an edge between the waypoint and the label node
     graph.createEdge(waypoint, labelNode, leaderEdgeStyle)
   }

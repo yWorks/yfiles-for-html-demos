@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { ICanvasContext, ISvgDefsCreator, Matrix } from '@yfiles/yfiles'
 import { SVGNS } from './Namespaces'
+
 function createGradient() {
   const gradient = document.createElementNS(SVGNS, 'linearGradient')
   gradient.setAttribute('x1', '0')
@@ -47,26 +48,36 @@ function createGradient() {
   gradient.appendChild(stop1)
   gradient.appendChild(stop2)
   gradient.appendChild(stop3)
+
   // set gradient units to userSpaceOnUse in order to be interpreted globally
   gradient.setAttribute('gradientUnits', 'userSpaceOnUse')
+
   return gradient
 }
+
 // create the gradient element
 const gradient = createGradient()
+
 const defsCreator = ISvgDefsCreator.create({
   createDefsElement: (context) => gradient,
+
   accept: (context, node, id) =>
     node instanceof Element &&
     node.localName === 'path' &&
     node.hasAttribute('stroke') &&
     node.getAttribute('stroke') === `url(#${id})`,
+
   updateDefsElement: (context, oldElement) => {}
 })
+
 let animationFrameId = -1
+
 const startGradientAnimation = () => {
   let offset = 0
   const ANIMATION_SPEED = 0.05
+
   let previousTime = null
+
   const frameRequestCallback = (timestamp) => {
     // calculate the time since the last animation frame
     if (previousTime == null) {
@@ -94,6 +105,7 @@ const startGradientAnimation = () => {
   // start the animation
   animationFrameId = window.requestAnimationFrame(frameRequestCallback)
 }
+
 export default {
   applyToElement: (context, element) => {
     const gradientId = context.getDefsId(defsCreator)

@@ -44,43 +44,57 @@ import {
   Size,
   StyleIndicatorZoomPolicy
 } from '@yfiles/yfiles'
+
 import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent
+
 let selectionNodeStyle
-let currentSelectionNodeStyle
+
+let useCustomNodeSelectionIndicator = true
+
 let selectionEdgeStyle
-let currentSelectionEdgeStyle
+
+let useCustomEdgeSelectionIndicator = true
+
 let selectionLabelStyle
-let currentSelectionLabelStyle
+
+let useCustomLabelSelectionIndicator = true
+
 let zoomModeComboBox
-let nodesSelected = true
-let edgesSelected = true
-let labelsSelected = true
+
 /**
  * Runs the demo.
  */
 async function run() {
   License.value = await fetchLicense()
-  // initialize UI's elements
+  // initialize UI elements
   init()
+
   // initialize the style decoration
   initializeDecoration()
+
   // initialize default graph styles, the graph and input modes
   initializeGraph()
+
   // initializes the zoom mode decoration
   updateZoomModeDecoration()
+
   initializeUI()
 }
+
 /**
- * Initializes the UI's elements.
+ * Initializes the UI elements.
  */
 function init() {
   graphComponent = new GraphComponent('graphComponent')
   zoomModeComboBox = document.querySelector('#zoom-mode')
+
   // initialize the helper UI
   const items = ['Mixed', 'Zoom with Graph', 'Always the Same Size', 'No Downscaling']
+
   items.forEach((name) => {
     const option = document.createElement('option')
     option.text = name
@@ -88,55 +102,62 @@ function init() {
   })
   zoomModeComboBox.selectedIndex = 0
 }
+
 /**
  * Initializes the styles for the graph nodes, edges, labels.
  */
 function initializeGraph() {
   const graph = graphComponent.graph
+
   graph.nodeDefaults.style = createDemoNodeStyle()
   graph.nodeDefaults.size = new Size(50, 30)
+
   // defaults for labels
   const simpleLabelStyle = new LabelStyle({
     backgroundFill: '#FFC398',
     textFill: '#662b00',
     padding: [3, 5, 3, 5]
   })
+
   // nodes...
   graph.nodeDefaults.labels.style = simpleLabelStyle
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
     margins: 15
   }).createParameter('top')
+
   graph.edgeDefaults.style = createDemoEdgeStyle()
   graph.edgeDefaults.labels.style = simpleLabelStyle
+
   // labels
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel().createRatioParameter()
+
   // create a simple sample graph
   const n1 = graph.createNode({ layout: new Rect(0, 0, 50, 30), labels: ['Node 1'] })
   const n2 = graph.createNode({ layout: new Rect(250, 20, 50, 30), labels: ['Node 2'] })
-  graph.createEdge({
-    source: n1,
-    target: n2,
-    bends: [new Point(100, 35)],
-    labels: ['Edge Label']
-  })
+
+  graph.createEdge({ source: n1, target: n2, bends: [new Point(100, 35)], labels: ['Edge Label'] })
+
   // center the graph on the screen
   void graphComponent.fitGraphBounds()
+
   // select all elements to show the effect
   selectAllNodes()
   selectAllEdges()
   selectAllLabels()
+
   // initialize the input mode to enable editing
   graphComponent.inputMode = new GraphEditorInputMode({
     // and selecting nodes, edges, and labels at once with the marquee
     marqueeSelectableItems: GraphItemTypes.LABEL_OWNER | GraphItemTypes.LABEL
   })
 }
+
 /**
  * Initializes the selection decorations.
  */
 function initializeDecoration() {
   // for nodes...
-  currentSelectionNodeStyle = selectionNodeStyle = new NodeStyleIndicatorRenderer({
+  selectionNodeStyle = new NodeStyleIndicatorRenderer({
     // we choose a shape node style
     nodeStyle: new ShapeNodeStyle({
       shape: 'round-rectangle',
@@ -146,15 +167,15 @@ function initializeDecoration() {
     // with a margin for the decoration
     margins: 8
   })
-  // for edges..
+
+  // for edges...
   // just a thick polyline edge style
-  currentSelectionEdgeStyle = selectionEdgeStyle = new EdgeStyleIndicatorRenderer({
-    edgeStyle: new PolylineEdgeStyle({
-      stroke: '3px #01BAFF'
-    })
+  selectionEdgeStyle = new EdgeStyleIndicatorRenderer({
+    edgeStyle: new PolylineEdgeStyle({ stroke: '3px #01BAFF' })
   })
+
   // ... and for labels
-  currentSelectionLabelStyle = selectionLabelStyle = new LabelStyleIndicatorRenderer({
+  selectionLabelStyle = new LabelStyleIndicatorRenderer({
     // we use a node style with a rounded rectangle adapted as a label style, and we declare a margin for the
     // decoration
     labelStyle: new LabelStyle({
@@ -164,18 +185,21 @@ function initializeDecoration() {
     }),
     margins: 5
   })
-  graphComponent.graph.decorator.nodes.selectionRenderer.addWrapperFactory(
-    (_, original) => currentSelectionNodeStyle ?? original
+
+  graphComponent.graph.decorator.nodes.selectionRenderer.addWrapperFactory((_, original) =>
+    useCustomNodeSelectionIndicator ? selectionNodeStyle : original
   )
-  graphComponent.graph.decorator.edges.selectionRenderer.addWrapperFactory(
-    (_, original) => currentSelectionEdgeStyle ?? original
+  graphComponent.graph.decorator.edges.selectionRenderer.addWrapperFactory((_, original) =>
+    useCustomEdgeSelectionIndicator ? selectionEdgeStyle : original
   )
-  graphComponent.graph.decorator.labels.selectionRenderer.addWrapperFactory(
-    (_, original) => currentSelectionLabelStyle ?? original
+  graphComponent.graph.decorator.labels.selectionRenderer.addWrapperFactory((_, original) =>
+    useCustomLabelSelectionIndicator ? selectionLabelStyle : original
   )
+
   // hide focus indication
   graphComponent.graph.decorator.nodes.focusRenderer.hide()
 }
+
 /**
  * Sets, removes and updates the custom selection decoration for nodes,
  * edges, and labels according to the current settings.
@@ -188,28 +212,36 @@ function updateZoomModeDecoration() {
     StyleIndicatorZoomPolicy.NO_DOWNSCALING
   ]
   const selectedZoomMode = zoomModes[zoomModeComboBox.selectedIndex]
+
   selectionNodeStyle.zoomPolicy = selectedZoomMode
   selectionEdgeStyle.zoomPolicy = selectedZoomMode
   selectionLabelStyle.zoomPolicy = selectedZoomMode
 }
+
 function selectAllNodes() {
   const nodeSelection = graphComponent.selection.nodes
+  nodeSelection.clear()
   graphComponent.graph.nodes.forEach((node) => {
     nodeSelection.add(node)
   })
 }
+
 function selectAllEdges() {
   const edgeSelection = graphComponent.selection.edges
+  edgeSelection.clear()
   graphComponent.graph.edges.forEach((edge) => {
     edgeSelection.add(edge)
   })
 }
+
 function selectAllLabels() {
   const labelSelection = graphComponent.selection.labels
+  labelSelection.clear()
   graphComponent.graph.labels.forEach((label) => {
     labelSelection.add(label)
   })
 }
+
 /**
  * Wires up the UI.
  */
@@ -223,31 +255,34 @@ function initializeUI() {
   document
     .querySelector('#label-button')
     .addEventListener('change', (evt) => customLabelDecorationChanged(evt.target.checked))
+
   document.querySelector('#zoom-mode').addEventListener('change', zoomModeChanged)
 }
+
 function customNodeDecorationChanged(value) {
-  nodesSelected = value
-  currentSelectionNodeStyle = value ? selectionNodeStyle : null
+  useCustomNodeSelectionIndicator = value
+
   // de-select and re-select all nodes to refresh the selection visualization
-  graphComponent.selection.nodes.clear()
   selectAllNodes()
 }
+
 function customEdgeDecorationChanged(value) {
-  edgesSelected = value
-  currentSelectionEdgeStyle = value ? selectionEdgeStyle : null
+  useCustomEdgeSelectionIndicator = value
+
   // de-select and re-select all edges to refresh the selection visualization
-  graphComponent.selection.edges.clear()
   selectAllEdges()
 }
+
 function customLabelDecorationChanged(value) {
-  labelsSelected = value
-  currentSelectionLabelStyle = value ? selectionLabelStyle : null
+  useCustomLabelSelectionIndicator = value
+
   // deselect and re-select all labels to refresh the selection visualization
-  graphComponent.selection.labels.clear()
   selectAllLabels()
 }
+
 function zoomModeChanged() {
   updateZoomModeDecoration()
   graphComponent.invalidate()
 }
+
 run().then(finishLoading)

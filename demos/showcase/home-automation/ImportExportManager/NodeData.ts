@@ -62,10 +62,7 @@ export class NodeData {
     const properties = Object.fromEntries(
       Object.entries(tag).filter(([key]) => !keysToFilter.includes(key))
     ) as FlowNodeProperties
-    return new NodeData({
-      properties,
-      position: [layout.x, layout.y]
-    })
+    return new NodeData({ properties, position: [layout.x, layout.y] })
   }
 
   /**
@@ -108,10 +105,7 @@ export class NodeData {
       variant: this.properties.variant as FlowNodeVariant,
       position: new Point(...this.position)
     }) as INode
-    node.tag = {
-      ...node.tag,
-      ...this.properties
-    }
+    node.tag = { ...node.tag, ...this.properties }
     return node
   }
 
@@ -119,9 +113,6 @@ export class NodeData {
    * Converts node data to a serializable format.
    */
   toJSONData(): SerializableNodeData {
-    return {
-      position: this.position,
-      properties: this.properties
-    }
+    return { position: this.position, properties: this.properties }
   }
 }

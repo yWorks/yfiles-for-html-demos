@@ -34,14 +34,17 @@ import {
   TimeSpan
 } from '@yfiles/yfiles'
 import { isFlowNode } from '../FlowNode/FlowNode'
+
 export function initializeTooltips(graphComponent) {
   // Assume input mode has already been initialized because of order of operations in the main run function
   const inputMode = graphComponent.inputMode
+
   const toolTipInputMode = inputMode.toolTipInputMode
   toolTipInputMode.toolTipLocationOffset = new Point(10, 10)
   // Increase time it takes for tooltip to appear and the time before it disappears
   toolTipInputMode.delay = TimeSpan.fromMilliseconds(300)
   toolTipInputMode.duration = TimeSpan.fromSeconds(20)
+
   inputMode.toolTipItems = GraphItemTypes.NODE
   inputMode.addEventListener('query-item-tool-tip', (eventArgs) => {
     if (eventArgs.handled) {
@@ -53,17 +56,21 @@ export function initializeTooltips(graphComponent) {
     if (!isFlowNode(item)) {
       return
     }
+
     // If validation messages is empty we don't have anything to show in the tooltip
     const validation = item.tag.validate(item.tag)
     if (!validation.validationMessages.length) {
       return
     }
+
     // Use a rich HTML element as tooltip content. Alternatively, a plain string would do as well.
     eventArgs.toolTip = createValidationTooltipContent(validation.validationMessages)
+
     // Indicate that the tooltip content has been set.
     eventArgs.handled = true
   })
 }
+
 /**
  * The tooltip may either be a plain string or it can also be a rich HTML element. In this case, we
  * show the latter. We use validationMessages returned by node's validation method and show them as a list in the
@@ -74,13 +81,16 @@ function createValidationTooltipContent(validationMessages) {
   // build the tooltip container
   const tooltip = document.createElement('div')
   tooltip.classList.add('tooltip')
+
   // const lineMark = document.createElement('div')
   // lineMark.classList.add('tooltip__line-mark')
   // tooltip.appendChild(lineMark)
+
   // Append the static title and append it to tooltip container
   const title = document.createElement('h4')
   title.innerHTML = 'There seems to be a problem with one or more properties:'
   tooltip.appendChild(title)
+
   // Create list of messages and append it to tooltip container
   const ul = document.createElement('ul')
   validationMessages.forEach((message) => {
@@ -89,5 +99,6 @@ function createValidationTooltipContent(validationMessages) {
     ul.appendChild(li)
   })
   tooltip.appendChild(ul)
+
   return tooltip
 }

@@ -88,7 +88,7 @@ import { TopLevelGroupToSwimlaneStage } from './TopLevelGroupToSwimlaneStage'
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-export const HierarchicalLayoutConfig = (Class as any)('HierarchicLayoutConfig', {
+export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig', {
   $extends: LayoutConfiguration,
 
   _meta: {
@@ -268,7 +268,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicLayoutConfig',
     ],
     edgeRoutingItem: [
       new LabelAttribute(
-        'Edge Routing Style',
+        'Routing Style',
         '#/api/HierarchicalLayoutEdgeDescriptor#HierarchicalLayoutEdgeDescriptor-property-routingStyleDescriptor'
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 10),
@@ -388,7 +388,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicLayoutConfig',
     ],
     recursiveEdgeStyleItem: [
       new LabelAttribute(
-        'Recursive Edge Routing Style',
+        'Recursive Edge Routing Policy',
         '#/api/HierarchicalLayoutEdgeDescriptor#HierarchicalLayoutEdgeDescriptor-property-recursiveEdgePolicy'
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 150),
@@ -509,7 +509,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicLayoutConfig',
         'Maximum Size',
         '#/api/FromSketchLayerAssigner#FromSketchLayerAssigner-property-maximumNodeSize'
       ),
-      new MinMaxAttribute(0, 100),
+      new MinMaxAttribute(0, 1000),
       new ComponentAttribute(Components.SLIDER),
       new TypeAttribute(Number)
     ],
@@ -819,6 +819,8 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicLayoutConfig',
     if (!fromSketch) {
       layout.groupLayeringPolicy = this.groupLayeringPolicyItem
       layout.groupAlignmentPolicy = this.groupAlignmentItem
+    } else {
+      layout.groupLayeringPolicy = GroupLayeringPolicy.RECURSIVE_COMPACT
     }
 
     // append the stage only if the graph does not already contain table nodes

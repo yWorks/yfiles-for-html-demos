@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { CircularLayout, HierarchicalLayout, OrganicLayout } from '@yfiles/yfiles'
+
 /**
  * Applies different layouts to each of the group layers.
  *
@@ -39,10 +40,12 @@ import { CircularLayout, HierarchicalLayout, OrganicLayout } from '@yfiles/yfile
 export function applyDeepZoomLayout(foldingView) {
   const foldingManager = foldingView.manager
   const masterGraph = foldingManager.masterGraph
+
   const queue = [[foldingView.localRoot, 0]]
   while (queue.length > 0) {
     const [root, layer] = queue.shift()
     applyLayout(foldingManager, root, layer)
+
     const childGroups = masterGraph
       .getChildren(root)
       .filter((child) => masterGraph.isGroupNode(child))
@@ -51,15 +54,18 @@ export function applyDeepZoomLayout(foldingView) {
     }
   }
 }
+
 function applyLayout(foldingManager, root, layer) {
   // create a temporary view of the graph inside the given root with all child groups collapsed
   const localFoldingView = foldingManager.createFoldingView({ root, isExpanded: () => false })
   localFoldingView.graph.applyLayout(getLayoutForLayer(layer))
   localFoldingView.dispose()
 }
+
 function getLayoutForLayer(layer) {
   return layouts[layer] ?? hierarchicalLayout
 }
+
 const hierarchicalLayout = new HierarchicalLayout()
 const organicLayout = new OrganicLayout({ defaultMinimumNodeDistance: 80 })
 const circularLayout = new CircularLayout()

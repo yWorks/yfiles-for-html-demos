@@ -35,182 +35,46 @@
  */
 export const hobbies = {
   concepts: [
-    {
-      id: 0,
-      text: 'hobbies'
-    },
-    {
-      id: 1,
-      text: 'games'
-    },
-    {
-      id: 2,
-      text: 'computer'
-    },
-    {
-      id: 3,
-      text: 'the settlers of catan'
-    },
-    {
-      id: 4,
-      text: 'cops and robbers'
-    },
-    {
-      id: 5,
-      text: 'books'
-    },
-    {
-      id: 6,
-      text: 'thriller'
-    },
-    {
-      id: 7,
-      text: 'science-fiction'
-    },
-    {
-      id: 8,
-      text: 'fantasy'
-    },
-    {
-      id: 9,
-      text: 'collecting'
-    },
-    {
-      id: 10,
-      text: 'stamps'
-    },
-    {
-      id: 11,
-      text: 'sport'
-    },
-    {
-      id: 12,
-      text: 'climbing'
-    },
-    {
-      id: 13,
-      text: 'ice'
-    },
-    {
-      id: 14,
-      text: 'rock'
-    },
-    {
-      id: 15,
-      text: 'soccer'
-    },
-    {
-      id: 16,
-      text: 'dancing'
-    },
-    {
-      id: 17,
-      text: 'diy'
-    },
-    {
-      id: 18,
-      text: 'cars'
-    },
-    {
-      id: 19,
-      text: 'planes'
-    }
+    { id: 0, text: 'hobbies' },
+    { id: 1, text: 'games' },
+    { id: 2, text: 'computer' },
+    { id: 3, text: 'the settlers of catan' },
+    { id: 4, text: 'cops and robbers' },
+    { id: 5, text: 'books' },
+    { id: 6, text: 'thriller' },
+    { id: 7, text: 'science-fiction' },
+    { id: 8, text: 'fantasy' },
+    { id: 9, text: 'collecting' },
+    { id: 10, text: 'stamps' },
+    { id: 11, text: 'sport' },
+    { id: 12, text: 'climbing' },
+    { id: 13, text: 'ice' },
+    { id: 14, text: 'rock' },
+    { id: 15, text: 'soccer' },
+    { id: 16, text: 'dancing' },
+    { id: 17, text: 'diy' },
+    { id: 18, text: 'cars' },
+    { id: 19, text: 'planes' }
   ],
   connections: [
-    {
-      from: 0,
-      to: 1,
-      type: 'association'
-    },
-    {
-      from: 1,
-      to: 2,
-      type: 'association'
-    },
-    {
-      from: 1,
-      to: 3,
-      type: 'association'
-    },
-    {
-      from: 1,
-      to: 4,
-      type: 'association'
-    },
-    {
-      from: 0,
-      to: 5,
-      type: 'association'
-    },
-    {
-      from: 5,
-      to: 6,
-      type: 'association'
-    },
-    {
-      from: 5,
-      to: 7,
-      type: 'association'
-    },
-    {
-      from: 5,
-      to: 8,
-      type: 'association'
-    },
-    {
-      from: 0,
-      to: 9,
-      type: 'association'
-    },
-    {
-      from: 9,
-      to: 10,
-      type: 'association'
-    },
-    {
-      from: 0,
-      to: 11,
-      type: 'association'
-    },
-    {
-      from: 11,
-      to: 12,
-      type: 'association'
-    },
-    {
-      from: 12,
-      to: 13,
-      type: 'association'
-    },
-    {
-      from: 12,
-      to: 14,
-      type: 'association'
-    },
-    {
-      from: 11,
-      to: 15,
-      type: 'association'
-    },
-    {
-      from: 11,
-      to: 16,
-      type: 'association'
-    },
-    {
-      from: 0,
-      to: 17,
-      type: 'association'
-    },
-    {
-      from: 17,
-      to: 18,
-      type: 'association'
-    },
-    {
-      from: 17,
-      to: 19,
-      type: 'association'
-    }
+    { from: 0, to: 1, type: 'association' },
+    { from: 1, to: 2, type: 'association' },
+    { from: 1, to: 3, type: 'association' },
+    { from: 1, to: 4, type: 'association' },
+    { from: 0, to: 5, type: 'association' },
+    { from: 5, to: 6, type: 'association' },
+    { from: 5, to: 7, type: 'association' },
+    { from: 5, to: 8, type: 'association' },
+    { from: 0, to: 9, type: 'association' },
+    { from: 9, to: 10, type: 'association' },
+    { from: 0, to: 11, type: 'association' },
+    { from: 11, to: 12, type: 'association' },
+    { from: 12, to: 13, type: 'association' },
+    { from: 12, to: 14, type: 'association' },
+    { from: 11, to: 15, type: 'association' },
+    { from: 11, to: 16, type: 'association' },
+    { from: 0, to: 17, type: 'association' },
+    { from: 17, to: 18, type: 'association' },
+    { from: 17, to: 19, type: 'association' }
   ]
 }

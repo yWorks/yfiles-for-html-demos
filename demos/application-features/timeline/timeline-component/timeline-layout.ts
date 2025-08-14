@@ -59,9 +59,7 @@ export function applyTimelineLayout<TDataItem>(
     coreLayout: new TabularLayout({
       layoutMode: TabularLayoutMode.FIXED_SIZE,
       nodeLabelPlacement: 'ignore',
-      defaultNodeDescriptor: new TabularLayoutNodeDescriptor({
-        verticalAlignment: 1
-      })
+      defaultNodeDescriptor: new TabularLayoutNodeDescriptor({ verticalAlignment: 1 })
     })
   })
 
@@ -87,7 +85,7 @@ export function applyTimelineLayout<TDataItem>(
 
   recursiveGroupLayout.groupBoundsCalculator = ILayoutGroupBoundsCalculator.create(
     (graph, groupNode, children) => {
-      let groupBounds = graph.getBounds(children)
+      let groupBounds = graph.getBounds(children, [])
 
       const tag = groupNode.tag as Bucket<TDataItem> | null
       if (tag?.type === 'group' && tag.label != null) {

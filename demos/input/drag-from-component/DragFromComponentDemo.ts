@@ -213,12 +213,7 @@ function addDroppedItemToList(node: INode, list: HTMLDivElement): void {
  * Initializes the defaults for the styles in this demo.
  */
 function initDefaultStyles(graph: IGraph): void {
-  initDemoStyles(graph, {
-    theme: {
-      node: 'demo-orange',
-      edge: 'demo-orange'
-    }
-  })
+  initDemoStyles(graph, { theme: { node: 'demo-orange', edge: 'demo-orange' } })
 
   graph.nodeDefaults.size = new Size(70, 50)
   graph.nodeDefaults.shareStyleInstance = false

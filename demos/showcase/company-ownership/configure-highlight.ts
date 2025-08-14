@@ -68,11 +68,7 @@ export function enableHoverHighlights(
         ? highlightShapes.get(getCompany(node).nodeType)
         : ShapeNodeShape.RECTANGLE
     return new NodeStyleIndicatorRenderer({
-      nodeStyle: new ShapeNodeStyle({
-        stroke: '2px #ab2346',
-        fill: 'none',
-        shape
-      }),
+      nodeStyle: new ShapeNodeStyle({ stroke: '2px #ab2346', fill: 'none', shape }),
       zoomPolicy: StyleIndicatorZoomPolicy.WORLD_COORDINATES,
       margins: 2
     })
@@ -84,11 +80,7 @@ export function enableHoverHighlights(
       new EdgeStyleIndicatorRenderer({
         edgeStyle: new PolylineEdgeStyle({
           stroke: '3px #ab2346',
-          targetArrow: new Arrow({
-            type: 'triangle',
-            stroke: '3px #ab2346',
-            fill: '#ab2346'
-          }),
+          targetArrow: new Arrow({ type: 'triangle', stroke: '3px #ab2346', fill: '#ab2346' }),
           smoothingLength: getRelationship(edge).type === 'Hierarchy' ? 5 : 100
         }),
         zoomPolicy: StyleIndicatorZoomPolicy.WORLD_COORDINATES

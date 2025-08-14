@@ -29,11 +29,7 @@
 // @ts-ignore - We have no proper types for preact, here
 import { html } from '../../preact-loader'
 
-export type NodeTemplateProps<TTag> = {
-  width: number
-  height: number
-  tag: TTag
-}
+export type NodeTemplateProps<TTag> = { width: number; height: number; tag: TTag }
 
 const NodeTemplate = ({
   width,

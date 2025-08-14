@@ -40,6 +40,7 @@ function createErrorDialog({ title, message }) {
   `
   const parser = new DOMParser()
   const dialog = parser.parseFromString(htmlString, 'text/html').body.firstChild
+
   if (dialog instanceof HTMLElement) {
     const dismissButton = dialog.querySelector('button')
     if (!(dismissButton instanceof HTMLButtonElement)) {
@@ -50,6 +51,7 @@ function createErrorDialog({ title, message }) {
     throw new Error('Could not create error dialog')
   }
 }
+
 export function showErrorDialog(options) {
   const { dialog, dismissButton } = createErrorDialog(options)
   document.body.appendChild(dialog)

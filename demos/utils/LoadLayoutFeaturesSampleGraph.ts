@@ -138,11 +138,7 @@ function getGroupLabelStyle(): ILabelStyle {
 
 function getGroupNodeStyle(data: any): INodeStyle {
   const fill = data && data.fill ? data.fill : '#0B7189'
-  return new GroupNodeStyle({
-    tabFill: fill,
-    stroke: `2px solid ${fill}`,
-    tabPosition: 'top'
-  })
+  return new GroupNodeStyle({ tabFill: fill, stroke: `2px solid ${fill}`, tabPosition: 'top' })
 }
 
 function getNodeStyle(data: any): INodeStyle {

@@ -48,568 +48,242 @@ export default {
     { id: 23, group: 'group6', layout: { x: 216, y: 834, width: 30, height: 30 } }
   ],
   edgesSource: [
-    {
-      from: 0,
-      to: 1,
-      sourcePort: {
-        x: 203,
-        y: 30
-      },
-      targetPort: {
-        x: 203,
-        y: 50
-      }
-    },
+    { from: 0, to: 1, sourcePort: { x: 203, y: 30 }, targetPort: { x: 203, y: 50 } },
     {
       from: 1,
       to: 3,
-      sourcePort: {
-        x: 203,
-        y: 80
-      },
-      targetPort: {
-        x: 203,
-        y: 112
-      },
-      tag: {
-        from: '01',
-        to: '10',
-        sourcePort: {
-          x: 315,
-          y: 80
-        },
-        targetPort: {
-          x: 315,
-          y: 112
-        }
-      }
+      sourcePort: { x: 203, y: 80 },
+      targetPort: { x: 203, y: 112 },
+      tag: { from: '01', to: '10', sourcePort: { x: 315, y: 80 }, targetPort: { x: 315, y: 112 } }
     },
     {
       from: 3,
       to: 4,
-      sourcePort: {
-        x: 193,
-        y: 142
-      },
-      targetPort: {
-        x: 108.5,
-        y: 167
-      },
+      sourcePort: { x: 193, y: 142 },
+      targetPort: { x: 108.5, y: 167 },
       bends: [
-        {
-          x: 193,
-          y: 152
-        },
-        {
-          x: 108.5,
-          y: 152
-        }
+        { x: 193, y: 152 },
+        { x: 108.5, y: 152 }
       ]
     },
     {
       from: 3,
       to: 18,
-      sourcePort: {
-        x: 203,
-        y: 142
-      },
-      targetPort: {
-        x: 194,
-        y: 702
-      },
+      sourcePort: { x: 203, y: 142 },
+      targetPort: { x: 194, y: 702 },
       bends: [
-        {
-          x: 203,
-          y: 665
-        },
-        {
-          x: 194,
-          y: 665
-        }
+        { x: 203, y: 665 },
+        { x: 194, y: 665 }
       ]
     },
     {
       from: 3,
       to: 5,
-      sourcePort: {
-        x: 213,
-        y: 142
-      },
-      targetPort: {
-        x: 117,
-        y: 927
-      },
+      sourcePort: { x: 213, y: 142 },
+      targetPort: { x: 117, y: 927 },
       bends: [
-        {
-          x: 213,
-          y: 152
-        },
-        {
-          x: 279,
-          y: 152
-        },
-        {
-          x: 279,
-          y: 912
-        },
-        {
-          x: 117,
-          y: 912
-        }
+        { x: 213, y: 152 },
+        { x: 279, y: 152 },
+        { x: 279, y: 912 },
+        { x: 117, y: 912 }
       ]
     },
-    {
-      from: 4,
-      to: 7,
-      sourcePort: {
-        x: 108.5,
-        y: 197
-      },
-      targetPort: {
-        x: 108.5,
-        y: 229
-      }
-    },
+    { from: 4, to: 7, sourcePort: { x: 108.5, y: 197 }, targetPort: { x: 108.5, y: 229 } },
     {
       from: 7,
       to: 8,
-      sourcePort: {
-        x: 98.5,
-        y: 259
-      },
-      targetPort: {
-        x: 55.5,
-        y: 616
-      },
+      sourcePort: { x: 98.5, y: 259 },
+      targetPort: { x: 55.5, y: 616 },
       bends: [
-        {
-          x: 98.5,
-          y: 269
-        },
-        {
-          x: 53,
-          y: 269
-        },
-        {
-          x: 53,
-          y: 592
-        },
-        {
-          x: 55.5,
-          y: 592
-        }
+        { x: 98.5, y: 269 },
+        { x: 53, y: 269 },
+        { x: 53, y: 592 },
+        { x: 55.5, y: 592 }
       ]
     },
-    {
-      from: 7,
-      to: 11,
-      sourcePort: {
-        x: 108.5,
-        y: 259
-      },
-      targetPort: {
-        x: 108.5,
-        y: 306
-      }
-    },
+    { from: 7, to: 11, sourcePort: { x: 108.5, y: 259 }, targetPort: { x: 108.5, y: 306 } },
     {
       from: 8,
       to: 5,
-      sourcePort: {
-        x: 63,
-        y: 646
-      },
-      targetPort: {
-        x: 97,
-        y: 927
-      },
+      sourcePort: { x: 63, y: 646 },
+      targetPort: { x: 97, y: 927 },
       bends: [
-        {
-          x: 63,
-          y: 892
-        },
-        {
-          x: 97,
-          y: 892
-        }
+        { x: 63, y: 892 },
+        { x: 97, y: 892 }
       ]
     },
     {
       from: 9,
       to: 5,
-      sourcePort: {
-        x: 33,
-        y: 259
-      },
-      targetPort: {
-        x: 92,
-        y: 927
-      },
+      sourcePort: { x: 33, y: 259 },
+      targetPort: { x: 92, y: 927 },
       bends: [
-        {
-          x: 33,
-          y: 902
-        },
-        {
-          x: 92,
-          y: 902
-        }
+        { x: 33, y: 902 },
+        { x: 92, y: 902 }
       ]
     },
     {
       from: 11,
       to: 12,
-      sourcePort: {
-        x: 101,
-        y: 336
-      },
-      targetPort: {
-        x: 91,
-        y: 552
-      },
+      sourcePort: { x: 101, y: 336 },
+      targetPort: { x: 91, y: 552 },
       bends: [
-        {
-          x: 101,
-          y: 346
-        },
-        {
-          x: 77,
-          y: 346
-        },
-        {
-          x: 77,
-          y: 537
-        },
-        {
-          x: 91,
-          y: 537
-        }
+        { x: 101, y: 346 },
+        { x: 77, y: 346 },
+        { x: 77, y: 537 },
+        { x: 91, y: 537 }
       ]
     },
     {
       from: 11,
       to: 14,
-      sourcePort: {
-        x: 116,
-        y: 336
-      },
-      targetPort: {
-        x: 116,
-        y: 383
-      },
+      sourcePort: { x: 116, y: 336 },
+      targetPort: { x: 116, y: 383 },
       tag: {
         from: '30',
         to: '40',
-        sourcePort: {
-          x: 327.5,
-          y: 341
-        },
-        targetPort: {
-          x: 327.5,
-          y: 388
-        }
+        sourcePort: { x: 327.5, y: 341 },
+        targetPort: { x: 327.5, y: 388 }
       }
     },
     {
       from: 12,
       to: 8,
-      sourcePort: {
-        x: 101,
-        y: 582
-      },
-      targetPort: {
-        x: 70.5,
-        y: 616
-      },
+      sourcePort: { x: 101, y: 582 },
+      targetPort: { x: 70.5, y: 616 },
       bends: [
-        {
-          x: 101,
-          y: 601
-        },
-        {
-          x: 70.5,
-          y: 601
-        }
+        { x: 101, y: 601 },
+        { x: 70.5, y: 601 }
       ]
     },
     {
       from: 14,
       to: 15,
-      sourcePort: {
-        x: 123.5,
-        y: 413
-      },
-      targetPort: {
-        x: 131,
-        y: 438
-      },
+      sourcePort: { x: 123.5, y: 413 },
+      targetPort: { x: 131, y: 438 },
       bends: [
-        {
-          x: 123.5,
-          y: 423
-        },
-        {
-          x: 131,
-          y: 423
-        }
+        { x: 123.5, y: 423 },
+        { x: 131, y: 423 }
       ]
     },
     {
       from: 14,
       to: 12,
-      sourcePort: {
-        x: 108.5,
-        y: 413
-      },
-      targetPort: {
-        x: 101,
-        y: 552
-      },
+      sourcePort: { x: 108.5, y: 413 },
+      targetPort: { x: 101, y: 552 },
       bends: [
-        {
-          x: 108.5,
-          y: 423
-        },
-        {
-          x: 101,
-          y: 423
-        }
+        { x: 108.5, y: 423 },
+        { x: 101, y: 423 }
       ]
     },
     {
       from: 15,
       to: 16,
-      sourcePort: {
-        x: 131,
-        y: 468
-      },
-      targetPort: {
-        x: 131,
-        y: 488
-      },
+      sourcePort: { x: 131, y: 468 },
+      targetPort: { x: 131, y: 488 },
       tag: {
         from: '41',
         to: '42',
-        sourcePort: {
-          x: 342.5,
-          y: 495
-        },
-        targetPort: {
-          x: 342.5,
-          y: 520
-        }
+        sourcePort: { x: 342.5, y: 495 },
+        targetPort: { x: 342.5, y: 520 }
       }
     },
     {
       from: 16,
       to: 12,
-      sourcePort: {
-        x: 131,
-        y: 518
-      },
-      targetPort: {
-        x: 111,
-        y: 552
-      },
+      sourcePort: { x: 131, y: 518 },
+      targetPort: { x: 111, y: 552 },
       bends: [
-        {
-          x: 131,
-          y: 537
-        },
-        {
-          x: 111,
-          y: 537
-        }
+        { x: 131, y: 537 },
+        { x: 111, y: 537 }
       ]
     },
     {
       from: 18,
       to: 21,
-      sourcePort: {
-        x: 194,
-        y: 732
-      },
-      targetPort: {
-        x: 194,
-        y: 779
-      },
+      sourcePort: { x: 194, y: 732 },
+      targetPort: { x: 194, y: 779 },
       tag: {
         from: '50',
         to: '60',
-        sourcePort: {
-          x: 112.5,
-          y: 418
-        },
-        targetPort: {
-          x: 112.5,
-          y: 465
-        }
+        sourcePort: { x: 112.5, y: 418 },
+        targetPort: { x: 112.5, y: 465 }
       }
     },
     {
       from: 18,
       to: 19,
-      sourcePort: {
-        x: 179,
-        y: 732
-      },
-      targetPort: {
-        x: 102,
-        y: 834
-      },
+      sourcePort: { x: 179, y: 732 },
+      targetPort: { x: 102, y: 834 },
       bends: [
-        {
-          x: 179,
-          y: 742
-        },
-        {
-          x: 102,
-          y: 742
-        }
+        { x: 179, y: 742 },
+        { x: 102, y: 742 }
       ]
     },
     {
       from: 19,
       to: 5,
-      sourcePort: {
-        x: 102,
-        y: 864
-      },
-      targetPort: {
-        x: 102,
-        y: 927
-      },
+      sourcePort: { x: 102, y: 864 },
+      targetPort: { x: 102, y: 927 },
       tag: {
         from: '51',
         to: '12',
-        sourcePort: {
-          x: 35,
-          y: 550
-        },
-        targetPort: {
-          x: 155,
-          y: 732
-        },
+        sourcePort: { x: 35, y: 550 },
+        targetPort: { x: 155, y: 732 },
         bends: [
-          {
-            x: 35,
-            y: 683
-          },
-          {
-            x: 155,
-            y: 683
-          }
+          { x: 35, y: 683 },
+          { x: 155, y: 683 }
         ]
       }
     },
     {
       from: 21,
       to: 22,
-      sourcePort: {
-        x: 186.5,
-        y: 809
-      },
-      targetPort: {
-        x: 171,
-        y: 834
-      },
+      sourcePort: { x: 186.5, y: 809 },
+      targetPort: { x: 171, y: 834 },
       bends: [
-        {
-          x: 186.5,
-          y: 819
-        },
-        {
-          x: 171,
-          y: 819
-        }
+        { x: 186.5, y: 819 },
+        { x: 171, y: 819 }
       ]
     },
     {
       from: 21,
       to: 23,
-      sourcePort: {
-        x: 201.5,
-        y: 809
-      },
-      targetPort: {
-        x: 231,
-        y: 834
-      },
+      sourcePort: { x: 201.5, y: 809 },
+      targetPort: { x: 231, y: 834 },
       bends: [
-        {
-          x: 201.5,
-          y: 819
-        },
-        {
-          x: 231,
-          y: 819
-        }
+        { x: 201.5, y: 819 },
+        { x: 231, y: 819 }
       ]
     },
     {
       from: 22,
       to: 5,
-      sourcePort: {
-        x: 171,
-        y: 864
-      },
-      targetPort: {
-        x: 107,
-        y: 927
-      },
+      sourcePort: { x: 171, y: 864 },
+      targetPort: { x: 107, y: 927 },
       bends: [
-        {
-          x: 171,
-          y: 892
-        },
-        {
-          x: 107,
-          y: 892
-        }
+        { x: 171, y: 892 },
+        { x: 107, y: 892 }
       ]
     },
     {
       from: 23,
       to: 5,
-      sourcePort: {
-        x: 231,
-        y: 864
-      },
-      targetPort: {
-        x: 112,
-        y: 927
-      },
+      sourcePort: { x: 231, y: 864 },
+      targetPort: { x: 112, y: 927 },
       bends: [
-        {
-          x: 231,
-          y: 902
-        },
-        {
-          x: 112,
-          y: 902
-        }
+        { x: 231, y: 902 },
+        { x: 112, y: 902 }
       ]
     },
     {
       from: 7,
       to: 18,
-      sourcePort: {
-        x: 118.5,
-        y: 259
-      },
-      targetPort: {
-        x: 179,
-        y: 702
-      },
+      sourcePort: { x: 118.5, y: 259 },
+      targetPort: { x: 179, y: 702 },
       bends: [
-        {
-          x: 118.5,
-          y: 269
-        },
-        {
-          x: 179,
-          y: 269
-        }
+        { x: 118.5, y: 269 },
+        { x: 179, y: 269 }
       ]
     }
   ],

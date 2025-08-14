@@ -26,6 +26,4 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-export const environment = {
-  production: true
-}
+export const environment = { production: true }

@@ -29,6 +29,7 @@
 import { GeneralPath, GeometryUtilities, NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 import { getEntityData, isFraud } from '../entity-data'
 import { nodeStyleMapping } from './graph-styles'
+
 /**
  * A simple node style that visualizes a circular node with an icon.
  */
@@ -40,8 +41,11 @@ export class EntityNodeStyle extends NodeStyleBase {
     const { x, y, width, height } = node.layout
     const halfWidth = width * 0.5
     const halfHeight = height * 0.5
+
     const entity = getEntityData(node)
+
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     // create circular base
     const ellipse = window.document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     ellipse.setAttribute('cx', String(halfWidth))
@@ -51,6 +55,7 @@ export class EntityNodeStyle extends NodeStyleBase {
     ellipse.setAttribute('stroke-width', isFraud(node) ? '3' : '2')
     this.updateStrokeAndFill(ellipse, entity)
     g.appendChild(ellipse)
+
     // add image
     const iconWidth = width * 0.6
     const iconHeight = height * 0.6
@@ -65,29 +70,35 @@ export class EntityNodeStyle extends NodeStyleBase {
     image.setAttribute('x', String(halfWidth - iconWidth * 0.5))
     image.setAttribute('y', String(halfHeight - iconHeight * 0.5))
     g.appendChild(image)
+
     // set the location
     SvgVisual.setTranslate(g, x, y)
+
     // store information with the visual on how we created it
     return SvgVisual.from(g, { fraud: entity.fraud ?? false })
   }
+
   /**
    * Re-renders the node using the old visual for performance reasons.
    */
   updateVisual(_context, oldVisual, node) {
     // get relevant data that might have changed
     const oldCache = oldVisual.tag
+
     const g = oldVisual.svgElement
     const entity = getEntityData(node)
     // update node color depending on the fraud state
     if (entity.fraud !== oldCache.fraud) {
       this.updateStrokeAndFill(g.firstElementChild, entity)
     }
+
     // update location
     const { x, y } = node.layout
     SvgVisual.setTranslate(g, x, y)
     oldVisual.tag = { fraud: entity.fraud ?? false }
     return oldVisual
   }
+
   /**
    * Gets the outline of the node, an ellipse in this case.
    * This allows the correct intersection calculation for edge paths, among others.
@@ -97,6 +108,7 @@ export class EntityNodeStyle extends NodeStyleBase {
     outline.appendEllipse(node.layout.toRect(), false)
     return outline
   }
+
   /**
    * Checks if a point hits the node's bounds. Considers HitTestRadius.
    */
@@ -107,6 +119,7 @@ export class EntityNodeStyle extends NodeStyleBase {
       canvasContext.hitTestRadius
     )
   }
+
   /**
    * Checks if a node is inside a certain box. Considers HitTestRadius.
    */
@@ -127,19 +140,21 @@ export class EntityNodeStyle extends NodeStyleBase {
       box.contains(node.layout.toRect().topLeft) && box.contains(node.layout.toRect().bottomRight)
     )
   }
+
   /**
    * Exact geometric check whether a point lies inside the circular node.
    */
   isInside(node, point) {
     return GeometryUtilities.ellipseContains(node.layout.toRect(), point, 0)
   }
+
   /**
    * Updates the stroke and fill of the given element based on the type the associated node.
    */
   updateStrokeAndFill(ellipse, entity) {
     const type = entity.type
     const style = nodeStyleMapping[type]
-    ellipse.setAttribute('fill', entity.fraud ?? false ? '#ff6c00' : style.fill)
-    ellipse.setAttribute('stroke', entity.fraud ?? false ? 'slateblue' : style.stroke)
+    ellipse.setAttribute('fill', (entity.fraud ?? false) ? '#ff6c00' : style.fill)
+    ellipse.setAttribute('stroke', (entity.fraud ?? false) ? 'slateblue' : style.stroke)
   }
 }

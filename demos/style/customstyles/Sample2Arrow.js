@@ -42,6 +42,7 @@ import {
   Visual
 } from '@yfiles/yfiles'
 import { isColorSetName } from '@yfiles/demo-resources/demo-styles'
+
 /**
  * A custom demo arrow style whose colors match the given well-known CSS rule.
  */
@@ -50,10 +51,12 @@ export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
   anchor = null
   direction = null
   arrowFigure = null
+
   constructor(cssClass) {
     super()
     this.cssClass = cssClass
   }
+
   /**
    * Returns the length of the arrow, i.e. the distance from the arrow's tip to
    * the position where the visual representation of the edge's path should begin.
@@ -62,6 +65,7 @@ export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
   get length() {
     return 5.5
   }
+
   /**
    * Gets the cropping length associated with this instance.
    * This value is used by edge styles to let the
@@ -71,6 +75,7 @@ export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
   get cropLength() {
     return 1
   }
+
   /**
    * Returns a configured visual creator.
    */
@@ -79,6 +84,7 @@ export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
     this.direction = direction
     return this
   }
+
   /**
    * Gets an {@link IBoundsProvider} implementation that can yield
    * this arrow's bounds if painted at the given location using the
@@ -98,6 +104,7 @@ export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
     this.direction = direction
     return this
   }
+
   /**
    * This method is called by the framework to create a visual
    * that will be included into the {@link IRenderContext}.
@@ -115,26 +122,28 @@ export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
       this.arrowFigure.lineTo(new Point(-7.5, 2.5))
       this.arrowFigure.close()
     }
+
     const path = window.document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path.setAttribute('d', this.arrowFigure.createSvgPathData())
     path.setAttribute('fill', '#662b00')
+
     if (this.cssClass) {
       const attribute = isColorSetName(this.cssClass)
         ? `${this.cssClass}-edge-arrow`
         : this.cssClass
       path.setAttribute('class', attribute)
     }
+
     // Rotate arrow and move it to correct position
     path.setAttribute(
       'transform',
       `matrix(${this.direction.x} ${this.direction.y} ${-this.direction.y} ${this.direction.x} ${this.anchor.x} ${this.anchor.y})`
     )
-    path['data-renderDataCache'] = {
-      direction: this.direction,
-      anchor: this.anchor
-    }
+    path['data-renderDataCache'] = { direction: this.direction, anchor: this.anchor }
+
     return new SvgVisual(path)
   }
+
   /**
    * This method updates or replaces a previously created visual for inclusion
    * in the {@link IRenderContext}.
@@ -155,14 +164,17 @@ export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
   updateVisual(ctx, oldVisual) {
     const path = oldVisual.svgElement
     const cache = path['data-renderDataCache']
+
     if (this.direction !== cache.direction || this.anchor !== cache.anchor) {
       path.setAttribute(
         'transform',
         `matrix(${this.direction.x} ${this.direction.y} ${-this.direction.y} ${this.direction.x} ${this.anchor.x} ${this.anchor.y})`
       )
     }
+
     return oldVisual
   }
+
   /**
    * Returns the bounds of the arrow for the current flyweight configuration.
    * @see Specified by {@link IBoundsProvider.getBounds}.
@@ -170,18 +182,23 @@ export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
   getBounds(ctx) {
     return new Rect(this.anchor.x - 8, this.anchor.y - 8, 32, 32)
   }
+
   get cropAtPort() {
     return false
   }
 }
+
 export class Sample2ArrowExtension extends MarkupExtension {
   _cssClass = ''
+
   get cssClass() {
     return this._cssClass
   }
+
   set cssClass(value) {
     this._cssClass = value
   }
+
   provideValue(serviceProvider) {
     const arrow = new Sample2Arrow()
     arrow.cssClass = this.cssClass

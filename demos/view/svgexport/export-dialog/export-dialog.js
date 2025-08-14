@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import './export-dialog.css'
+
 /**
  * Initializes the export dialog.
  * @param heading The heading of the dialog.
@@ -45,14 +46,17 @@ export function initializeExportDialog(heading, saveCallback) {
   </div>
 </div>`
   dialog.style.display = 'none'
+
   const saveButton = document.querySelector('#save-button')
   const closeButton = document.querySelector('#close-button')
   const exportButton = document.querySelector('#export-button')
   const previewContainer = document.querySelector('#preview-container')
+
   saveButton.addEventListener('click', () => {
     const previewElement = previewContainer.children.item(0)
     saveCallback(previewElement)
   })
+
   closeButton.addEventListener('click', (_) => {
     // Hide the popup
     dialog.style.display = 'none'
@@ -62,15 +66,18 @@ export function initializeExportDialog(heading, saveCallback) {
     exportButton.disabled = false
   })
 }
+
 /**
  * Shows the export dialog.
  */
 export function showExportDialog(previewElement) {
   const previewContainer = document.querySelector('#preview-container')
   previewContainer.appendChild(previewElement)
+
   const dialog = document.querySelector('#export-dialog')
   dialog.style.display = 'block'
 }
+
 /**
  * Hides the export dialog.
  */

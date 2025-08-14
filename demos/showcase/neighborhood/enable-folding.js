@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { FoldingManager, GraphComponent, GraphInputMode } from '@yfiles/yfiles'
+
 /**
  * Enable folding - change the GraphComponent's graph to a managed view
  * that provides the actual collapse/expand state.
@@ -36,6 +37,7 @@ export function enableFolding(graphComponent, inputMode) {
   const foldingManager = new FoldingManager()
   // replace the displayed graph with a managed view
   graphComponent.graph = foldingManager.createFoldingView().graph
+
   // allow collapse/expand of folder nodes
   const navigationInputMode = inputMode.navigationInputMode
   navigationInputMode.allowCollapseGroup = true

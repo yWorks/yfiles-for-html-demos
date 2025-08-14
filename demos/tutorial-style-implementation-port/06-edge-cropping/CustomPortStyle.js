@@ -41,6 +41,7 @@ import {
   Rect,
   SvgVisual
 } from '@yfiles/yfiles'
+
 /**
  * A basic port style that renders a circle.
  */
@@ -50,6 +51,7 @@ export class CustomPortStyle extends PortStyleBase {
     super()
     this.size = size
   }
+
   createVisual(context, port) {
     const ellipseElement = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     const { x, y } = port.location
@@ -62,37 +64,46 @@ export class CustomPortStyle extends PortStyleBase {
     ellipseElement.setAttribute('fill', color)
     ellipseElement.setAttribute('stroke', '#e6f8ff')
     ellipseElement.setAttribute('stroke-width', '1')
+
     const cache = { size: this.size, color }
+
     return SvgVisual.from(ellipseElement, cache)
   }
+
   updateVisual(context, oldVisual, port) {
     const { x, y } = port.location
     // get the ellipse element that needs updating from the old visual
     const ellipseElement = oldVisual.svgElement
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
+
     const color = port.tag.color ?? '#6c9f44'
     if (cache.color !== color) {
       ellipseElement.setAttribute('fill', color)
       cache.color = color
     }
+
     if (cache.size !== this.size) {
       const radius = this.size * 0.5
       ellipseElement.setAttribute('rx', String(radius))
       ellipseElement.setAttribute('ry', String(radius))
       cache.size = this.size
     }
+
     // move the visualization to the port location
     ellipseElement.setAttribute('cx', String(x))
     ellipseElement.setAttribute('cy', String(y))
+
     return oldVisual
   }
+
   isHit(context, location, port) {
     // get the ellipse bounds
     const bounds = this.getBounds(context, port)
     // use a convenience function to check if the location is inside the ellipse
     return GeometryUtilities.ellipseContains(bounds, location, context.hitTestRadius)
   }
+
   lookup(port, type) {
     if (type === IShapeGeometry) {
       // calculate the port bounds for edge cropping
@@ -102,11 +113,13 @@ export class CustomPortStyle extends PortStyleBase {
         getIntersection(inner, outer) {
           return GeometryUtilities.getEllipseLineIntersection(bounds, inner, outer)
         }
+
         getOutline() {
           const path = new GeneralPath()
           path.appendEllipse(bounds, false)
           return path
         }
+
         isInside(location) {
           return GeometryUtilities.ellipseContains(bounds, location, 0)
         }
@@ -124,9 +137,11 @@ export class CustomPortStyle extends PortStyleBase {
     }
     return super.lookup(port, type)
   }
+
   getBounds(context, port) {
     return this.getPortBounds(port)
   }
+
   /**
    * Calculates the port's bounds.
    */

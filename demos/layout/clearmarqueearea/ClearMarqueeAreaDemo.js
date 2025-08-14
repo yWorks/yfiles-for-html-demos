@@ -52,25 +52,34 @@ import {
   Rect,
   SvgVisual
 } from '@yfiles/yfiles'
+
 import SampleData from './resources/SampleData'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
 import { createDemoGroupStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent = null
+
 let layoutHelper = null
+
 let componentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
+
 let clearAreaStrategy = ClearAreaStrategy.PRESERVE_SHAPES
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
   initializeInputModes()
   initDemoStyles(graphComponent.graph)
   loadGraph('hierarchical')
+
   graphComponent.graph.undoEngine.clear()
+
   // bind the buttons to their actions
   initializeUI()
 }
+
 /**
  * Registers the {@link GraphEditorInputMode} as the {@link CanvasComponent.inputMode}
  * and initializes the marquee input mode that clears the area of the marquee rectangle.
@@ -78,8 +87,10 @@ async function run() {
 function initializeInputModes() {
   // enable undo/redo support
   graphComponent.graph.undoEngineEnabled = true
+
   // create an input mode to edit graphs
   const editMode = new GraphEditorInputMode()
+
   // create an input mode to clear the area of a marquee rectangle
   // using the right mouse button
   const marqueeClearInputMode = new MarqueeSelectionInputMode({
@@ -99,16 +110,20 @@ function initializeInputModes() {
       (evt instanceof PointerEventArgs && evt.eventType === PointerEventType.DRAG_CAPTURE_LOST),
     useViewCoordinates: false
   })
+
   // handle dragging the marquee
   marqueeClearInputMode.addEventListener('drag-starting', onDragStarting)
   marqueeClearInputMode.addEventListener('dragged', onDragged)
   marqueeClearInputMode.addEventListener('drag-canceled', onDragCanceled)
   marqueeClearInputMode.addEventListener('drag-finished', onDragFinished)
+
   // add this mode to the edit mode
   editMode.add(marqueeClearInputMode)
+
   // and install the edit mode into the canvas
   graphComponent.inputMode = editMode
 }
+
 /**
  * A renderer for the blue marquee rectangle.
  */
@@ -118,13 +133,16 @@ class ClearRectangleRenderer extends ObjectRendererBase {
     rect.setAttribute('fill', 'rgba(0,187,255,0.65)')
     rect.setAttribute('stroke', 'rgba(77,131,153,0.65)')
     rect.setAttribute('stroke-width', '1.5')
+
     ClearRectangleRenderer.setBounds(rect, renderTag.selectionRectangle)
     return new SvgVisual(rect)
   }
+
   updateVisual(context, oldVisual, renderTag) {
     ClearRectangleRenderer.setBounds(oldVisual.svgElement, renderTag.selectionRectangle)
     return oldVisual
   }
+
   static setBounds(rect, bounds) {
     rect.setAttribute('x', String(bounds.x))
     rect.setAttribute('y', String(bounds.y))
@@ -132,6 +150,7 @@ class ClearRectangleRenderer extends ObjectRendererBase {
     rect.setAttribute('height', String(bounds.height))
   }
 }
+
 /**
  * The marquee rectangle is upon to be dragged.
  */
@@ -146,6 +165,7 @@ function onDragStarting(e) {
   )
   layoutHelper.initializeLayout()
 }
+
 /**
  * The marquee rectangle is currently dragged. For each drag a new layout is calculated and applied
  * if the previous one is completed.
@@ -154,6 +174,7 @@ function onDragged(e) {
   layoutHelper.clearRectangle = e.rectangle
   layoutHelper.runLayout()
 }
+
 /**
  * Dragging the marquee rectangle has been canceled so the state before the gesture must be restored.
  */
@@ -161,6 +182,7 @@ function onDragCanceled(e) {
   layoutHelper.clearRectangle = e.rectangle
   layoutHelper.cancelLayout()
 }
+
 /**
  * Dragging the marquee rectangle has been finished so
  * we execute the layout with the final rectangle.
@@ -169,6 +191,7 @@ function onDragFinished(e) {
   layoutHelper.clearRectangle = e.rectangle
   layoutHelper.stopLayout()
 }
+
 /**
  * Returns the group node at the given location. If there is no group node, `null` is returned.
  */
@@ -176,14 +199,17 @@ function getHitGroupNode(context, location) {
   const hits = context.lookup(IHitTester).enumerateHits(context, location, GraphItemTypes.NODE)
   return hits.find((n) => graphComponent.graph.isGroupNode(n))
 }
+
 /**
  * Loads the sample graph associated with the given name
  */
 function loadGraph(sampleName) {
   // @ts-ignore We don't have proper types for the sample data
   const data = SampleData[sampleName]
+
   const graph = graphComponent.graph
   graph.clear()
+
   const defaultNodeSize = graph.nodeDefaults.size
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
@@ -196,6 +222,7 @@ function loadGraph(sampleName) {
   // set hitTransparentContentArea to false so group nodes are properly hit in getHitGroupNode
   groupStyle.hitTransparentContentArea = false
   graph.groupNodeDefaults.style = groupStyle
+
   if (data.groups) {
     const nodesSource = builder.createGroupNodesSource({
       data: data.groups,
@@ -205,7 +232,9 @@ function loadGraph(sampleName) {
     })
   }
   builder.createEdgesSource(data.edges, 'source', 'target', 'id')
+
   builder.buildGraph()
+
   graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
       graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
@@ -217,8 +246,10 @@ function loadGraph(sampleName) {
       graph.addBend(edge, bend)
     })
   })
+
   graphComponent.fitGraphBounds()
 }
+
 /**
  * Registers actions for the items in the toolbar.
  */
@@ -229,6 +260,7 @@ function initializeUI() {
     const selectedOption = sampleGraphs.options[selectedIndex]
     loadGraph(selectedOption.value)
   })
+
   const assignmentStrategies = document.querySelector('#component-assignment-strategies')
   assignmentStrategies.addEventListener('change', () => {
     const selectedOption = assignmentStrategies.options[assignmentStrategies.selectedIndex]
@@ -244,6 +276,7 @@ function initializeUI() {
         break
     }
   })
+
   const clearAreaStrategies = document.querySelector('#clear-area-strategies')
   clearAreaStrategies.addEventListener('change', () => {
     const selectedOption = clearAreaStrategies.options[clearAreaStrategies.selectedIndex]
@@ -266,4 +299,5 @@ function initializeUI() {
     }
   })
 }
+
 run().then(finishLoading)

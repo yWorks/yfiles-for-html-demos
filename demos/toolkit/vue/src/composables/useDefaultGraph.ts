@@ -71,11 +71,7 @@ export function useDefaultGraph(getGraphComponent: () => GraphComponent) {
     // configure the style of the edges
     graph.edgeDefaults.style = new PolylineEdgeStyle({
       stroke: '#662F01',
-      targetArrow: new Arrow({
-        type: 'triangle',
-        stroke: '#662F01',
-        fill: '#662F01'
-      })
+      targetArrow: new Arrow({ type: 'triangle', stroke: '#662F01', fill: '#662F01' })
     })
   }
 
@@ -86,42 +82,18 @@ export function useDefaultGraph(getGraphComponent: () => GraphComponent) {
     const graph = graphComponent.graph
 
     graph.clear()
-    const node1 = graph.createNode({
-      layout: new Rect(241, 273, 130, 70),
-      labels: ['Hobbies']
-    })
-    const node2 = graph.createNode({
-      layout: new Rect(309, 126, 70, 40),
-      labels: ['Games']
-    })
-    const node3 = graph.createNode({
-      layout: new Rect(435, 318, 70, 40),
-      labels: ['Sport']
-    })
-    const node4 = graph.createNode({
-      layout: new Rect(249, 451, 70, 40),
-      labels: ['Books']
-    })
-    const node5 = graph.createNode({
-      layout: new Rect(116, 323, 70, 40),
-      labels: ['Diy']
-    })
-    const node6 = graph.createNode({
-      layout: new Rect(157, 187, 70, 40),
-      labels: ['Collecting']
-    })
-    const node7 = graph.createNode({
-      layout: new Rect(232, 579, 70, 40),
-      labels: ['Fantasy']
-    })
+    const node1 = graph.createNode({ layout: new Rect(241, 273, 130, 70), labels: ['Hobbies'] })
+    const node2 = graph.createNode({ layout: new Rect(309, 126, 70, 40), labels: ['Games'] })
+    const node3 = graph.createNode({ layout: new Rect(435, 318, 70, 40), labels: ['Sport'] })
+    const node4 = graph.createNode({ layout: new Rect(249, 451, 70, 40), labels: ['Books'] })
+    const node5 = graph.createNode({ layout: new Rect(116, 323, 70, 40), labels: ['Diy'] })
+    const node6 = graph.createNode({ layout: new Rect(157, 187, 70, 40), labels: ['Collecting'] })
+    const node7 = graph.createNode({ layout: new Rect(232, 579, 70, 40), labels: ['Fantasy'] })
     const node8 = graph.createNode({
       layout: new Rect(343, 530, 130, 40),
       labels: ['Science Fiction']
     })
-    const node9 = graph.createNode({
-      layout: new Rect(137, 503, 70, 40),
-      labels: ['Thriller']
-    })
+    const node9 = graph.createNode({ layout: new Rect(137, 503, 70, 40), labels: ['Thriller'] })
     const node10 = graph.createNode({
       layout: new Rect(201, 30, 130, 40),
       labels: ['Cops and Robbers']
@@ -130,42 +102,15 @@ export function useDefaultGraph(getGraphComponent: () => GraphComponent) {
       layout: new Rect(422, 85, 130, 40),
       labels: ['The Settlers of Catan']
     })
-    const node12 = graph.createNode({
-      layout: new Rect(341, 0, 70, 40),
-      labels: ['Computer']
-    })
-    const node13 = graph.createNode({
-      layout: new Rect(61, 109, 70, 40),
-      labels: ['Stamps']
-    })
-    const node14 = graph.createNode({
-      layout: new Rect(463, 435, 70, 40),
-      labels: ['Dancing']
-    })
-    const node15 = graph.createNode({
-      layout: new Rect(568, 349, 70, 40),
-      labels: ['Climbing']
-    })
-    const node16 = graph.createNode({
-      layout: new Rect(508, 222, 70, 40),
-      labels: ['Soccer']
-    })
-    const node17 = graph.createNode({
-      layout: new Rect(654, 442, 70, 40),
-      labels: ['Rock']
-    })
-    const node18 = graph.createNode({
-      layout: new Rect(679, 294, 70, 40),
-      labels: ['Ice']
-    })
-    const node19 = graph.createNode({
-      layout: new Rect(0, 272, 70, 40),
-      labels: ['Planes']
-    })
-    const node20 = graph.createNode({
-      layout: new Rect(16, 403, 70, 40),
-      labels: ['Cars']
-    })
+    const node12 = graph.createNode({ layout: new Rect(341, 0, 70, 40), labels: ['Computer'] })
+    const node13 = graph.createNode({ layout: new Rect(61, 109, 70, 40), labels: ['Stamps'] })
+    const node14 = graph.createNode({ layout: new Rect(463, 435, 70, 40), labels: ['Dancing'] })
+    const node15 = graph.createNode({ layout: new Rect(568, 349, 70, 40), labels: ['Climbing'] })
+    const node16 = graph.createNode({ layout: new Rect(508, 222, 70, 40), labels: ['Soccer'] })
+    const node17 = graph.createNode({ layout: new Rect(654, 442, 70, 40), labels: ['Rock'] })
+    const node18 = graph.createNode({ layout: new Rect(679, 294, 70, 40), labels: ['Ice'] })
+    const node19 = graph.createNode({ layout: new Rect(0, 272, 70, 40), labels: ['Planes'] })
+    const node20 = graph.createNode({ layout: new Rect(16, 403, 70, 40), labels: ['Cars'] })
 
     graph.createEdge(node1, node2)
     graph.createEdge(node1, node3)
@@ -190,7 +135,5 @@ export function useDefaultGraph(getGraphComponent: () => GraphComponent) {
     graphComponent.fitGraphBounds()
   }
 
-  return {
-    create
-  }
+  return { create }
 }

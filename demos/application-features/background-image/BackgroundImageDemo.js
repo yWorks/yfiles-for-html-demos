@@ -43,65 +43,83 @@ import {
   License,
   Size
 } from '@yfiles/yfiles'
+
 import { RectangleVisualCreator } from './RectangleVisualCreator'
 import { ImageVisualCreator } from './ImageVisualCreator'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 // Ensure that the LayoutExecutor class is not removed by build optimizers
 // It is needed for the 'applyLayoutAnimated' method in this demo.
 LayoutExecutor.ensure()
+
 /**
  * Application Features - Add an image or colored rectangle to the background of the graph
  */
 let graphComponent = null
+
 /**
  * The canvas object that stores the background visualization. This can be used to remove the background image.
  */
 let background = null
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
+
   const graph = graphComponent.graph
+
   // configures default styles for newly created graph elements
   initializeGraph(graph)
+
   // build the graph from the given data set
   buildGraph(graph, graphData)
+
   // layout and center the graph
   graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
   await graphComponent.fitGraphBounds()
+
   // enable now the undo engine to prevent undoing of the graph creation
   graph.undoEngineEnabled = true
+
   // set initial background
   displayImage()
+
   // bind the buttons to their functionality
   initializeUI()
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder.createNodesSource({
     data: graphData.nodeList.filter((item) => !item.isGroup),
     id: (item) => item.id,
     parentId: (item) => item.parentId
   })
+
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Creates the image and puts it in the background of the graph.
  */
@@ -114,6 +132,7 @@ function displayImage() {
   // create the image and display it
   background = renderTree.createElement(renderTree.backgroundGroup, new ImageVisualCreator())
 }
+
 /**
  * Creates a colored rectangle and puts it in the background of the graph.
  */
@@ -126,6 +145,7 @@ function displayRectangle() {
   // create the rectangle and display it
   background = renderTree.createElement(renderTree.backgroundGroup, new RectangleVisualCreator())
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  *
@@ -134,9 +154,11 @@ function displayRectangle() {
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
+
   // set the style, label and label parameter for group nodes
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: 'darkgray',
+    tabWidth: 60,
     tabPosition: 'top-trailing',
     contentAreaFill: 'white'
   })
@@ -145,6 +167,7 @@ function initializeGraph(graph) {
     textFill: 'black'
   })
   graph.groupNodeDefaults.labels.layoutParameter = new GroupNodeLabelModel().createTabParameter()
+
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
@@ -155,12 +178,14 @@ function initializeGraph(graph) {
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
+
 /**
  * Binds the buttons in the toolbar to their functionality.
  */
 function initializeUI() {
   const imageButton = document.querySelector('#image')
   const rectangleButton = document.querySelector('#rectangle')
+
   imageButton.addEventListener('click', () => {
     // display Image in the background
     displayImage()
@@ -169,6 +194,7 @@ function initializeUI() {
     // disabled the image button
     imageButton.disabled = true
   })
+
   rectangleButton.addEventListener('click', () => {
     // display colored rectangle in the background
     displayRectangle()
@@ -178,4 +204,5 @@ function initializeUI() {
     imageButton.disabled = false
   })
 }
+
 run().then(finishLoading)

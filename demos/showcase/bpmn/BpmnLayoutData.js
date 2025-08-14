@@ -49,6 +49,7 @@ import {
   Mapper,
   PortSides
 } from '@yfiles/yfiles'
+
 import {
   ActivityNodeStyle,
   ActivityType,
@@ -63,10 +64,12 @@ import {
   PoolNodeStyle
 } from './bpmn-view'
 import { BpmnLabelProfitModel, BpmnLayout } from './BpmnLayout'
+
 export class BpmnLayoutData {
   _minimumEdgeLength = 20
   _startNodesFirst = false
   _compactMessageFlowLayering = false
+
   /**
    * Gets whether start nodes are pulled to the leftmost or topmost layer.
    * Defaults to false.
@@ -74,6 +77,7 @@ export class BpmnLayoutData {
   get startNodesFirst() {
     return this._startNodesFirst
   }
+
   /**
    * Sets whether start nodes are pulled to the leftmost or topmost layer.
    * Defaults to false.
@@ -81,6 +85,7 @@ export class BpmnLayoutData {
   set startNodesFirst(first) {
     this._startNodesFirst = first
   }
+
   /**
    * Gets whether message flows have only weak impact on the layering.
    * Having weak impact, message flows are more likely to be back edges. This often results in more compact layouts.
@@ -89,6 +94,7 @@ export class BpmnLayoutData {
   get compactMessageFlowLayering() {
     return this._compactMessageFlowLayering
   }
+
   /**
    * Sets whether message flows have only weak impact on the layering.
    * Having weak impact, message flows are more likely to be back edges. This often results in more compact layouts.
@@ -97,6 +103,7 @@ export class BpmnLayoutData {
   set compactMessageFlowLayering(compact) {
     this._compactMessageFlowLayering = compact
   }
+
   /**
    * Gets the minimum length of edges.
    * Defaults to 20.0.
@@ -104,6 +111,7 @@ export class BpmnLayoutData {
   get minimumEdgeLength() {
     return this._minimumEdgeLength
   }
+
   /**
    * Sets the minimum length of edges.
    * Defaults to 20.0.
@@ -111,31 +119,40 @@ export class BpmnLayoutData {
   set minimumEdgeLength(length) {
     this._minimumEdgeLength = length
   }
+
   create(graph, selection, layoutScope) {
     const data = new GenericLayoutData()
     const hierarchicalLayoutData = new HierarchicalLayoutData()
     const labelingData = new GenericLabelingData()
+
     // check if only selected elements should be laid out
     const layoutOnlySelection = layoutScope === 'SELECTED_ELEMENTS'
+
     // mark 'flow' edges, i.e. sequence flows, default flows and conditional flows
     data.addItemCollection(BpmnLayout.SEQUENCE_FLOW_EDGES_DATA_KEY).predicate = isSequenceFlow
+
     // mark boundary interrupting edges for the BalancingPortOptimizer
     data.addItemCollection(BpmnLayout.BOUNDARY_INTERRUPTING_EDGES_DATA_KEY).predicate = (edge) =>
       edge.sourcePort.style instanceof EventPortStyle
+
     // mark conversations, events and gateways so their port locations are adjusted
     data.addItemCollection(BpmnLayout.ADJUST_PORT_LOCATION_NODES_DATA_KEY).predicate = (node) =>
       node.style instanceof ConversationNodeStyle ||
       node.style instanceof EventNodeStyle ||
       node.style instanceof GatewayNodeStyle
+
     // add Insets around nodes with event ports or specific exterior labels, so the layout keeps space for the
     // event ports and labels as well
     addNodeMargins(hierarchicalLayoutData, graph, selection, layoutOnlySelection)
+
     // add PreferredPlacementDescriptors for labels on sequence, default or conditional flows to place them at source
     // side
     addEdgeLabelPlacementDescriptors(labelingData)
+
     // add a custom profits for BPMN labels
     labelingData.nodeLabelCandidateProcessors.mapperFunction = (_) =>
       BpmnLabelProfitModel.nodeLabelProfitDelegate
+
     // mark nodes, edges and labels as either fixed or affected by the layout and configure port candidates
     markFixedAndAffectedItems(
       data,
@@ -144,9 +161,11 @@ export class BpmnLayoutData {
       selection,
       layoutOnlySelection
     )
+
     // mark associations and message flows as undirected so they have less impact on layering
     hierarchicalLayoutData.edgeDirectedness = (edge) =>
       isMessageFlow(edge) || isAssociation(edge) ? 0 : 1
+
     // add layer constraints for start events, sub processes and message flows
     addLayerConstraints(
       graph,
@@ -154,12 +173,15 @@ export class BpmnLayoutData {
       this.startNodesFirst,
       this.compactMessageFlowLayering
     )
+
     // add EdgeLayoutDescriptor to specify minimum edge length for edges
     addMinimumEdgeLength(hierarchicalLayoutData, this.minimumEdgeLength)
+
     // applies hierarchical layout configurations
     return data.combineWith(hierarchicalLayoutData).combineWith(labelingData)
   }
 }
+
 const addLayerConstraints = (
   graph,
   hierarchicalLayoutData,
@@ -168,6 +190,7 @@ const addLayerConstraints = (
 ) => {
   // use layer constraints via HierarchicalLayoutData
   const layerConstraints = hierarchicalLayoutData.layerConstraints
+
   graph.edges.forEach((edge) => {
     if (isMessageFlow(edge) && !compactMessageFlowLayering) {
       // message flow layering compaction is disabled, we add a 'weak' same layer constraint, i.e. source node shall
@@ -185,6 +208,7 @@ const addLayerConstraints = (
       }
     }
   })
+
   // if start events should be pulled to the first layer, add PlaceNodeAtTop constraint.
   if (startNodesFirst) {
     graph.nodes.forEach((node) => {
@@ -199,12 +223,14 @@ const addLayerConstraints = (
     })
   }
 }
+
 /**
  * Adds a layer constraint which keeps the source node of the edge above the target node.
  */
 function addAboveLayerConstraint(layerConstraints, edge, graph) {
   const sourceNode = edge.sourceNode
   const targetNode = edge.targetNode
+
   const sourceNodes = []
   const targetNodes = []
   collectLeafNodes(graph, sourceNode, sourceNodes)
@@ -215,6 +241,7 @@ function addAboveLayerConstraint(layerConstraints, edge, graph) {
     })
   })
 }
+
 /**
  * Fills the given leaf-nodes list recursively.
  */
@@ -228,6 +255,7 @@ function collectLeafNodes(graph, node, leafNodes) {
     leafNodes.push(node)
   }
 }
+
 /**
  * Adds a minimum length for each edge to make enough room for their labels.
  */
@@ -244,6 +272,7 @@ function addMinimumEdgeLength(hierarchicalLayoutData, minimumEdgeLength) {
     if (edge.labels.size > 1) {
       minLength += (edge.labels.size - 1) * minLabelToLabelDistance
     }
+
     return new HierarchicalLayoutEdgeDescriptor({
       minimumLength: Math.max(minLength, minimumEdgeLength),
       minimumFirstSegmentLength: 20,
@@ -251,6 +280,7 @@ function addMinimumEdgeLength(hierarchicalLayoutData, minimumEdgeLength) {
     })
   }
 }
+
 /**
  * Determines whether the given node represents a sub-process.
  */
@@ -261,12 +291,14 @@ function isSubprocess(node) {
       node.style.activityType === ActivityType.EVENT_SUB_PROCESS)
   )
 }
+
 /**
  * Determines whether the given edge represents a message flow.
  */
 function isMessageFlow(edge) {
   return edge.style instanceof BpmnEdgeStyle && edge.style.type === BpmnEdgeType.MESSAGE_FLOW
 }
+
 /**
  * Determines whether the given edge represents a sequence flow.
  */
@@ -281,6 +313,7 @@ function isSequenceFlow(edge) {
     bpmnEdgeStyle.type === BpmnEdgeType.CONDITIONAL_FLOW
   )
 }
+
 /**
  * Determines whether the given edge represents an association.
  */
@@ -295,8 +328,9 @@ function isAssociation(edge) {
     bpmnEdgeStyle.type === BpmnEdgeType.DIRECTED_ASSOCIATION
   )
 }
+
 /**
- * Adds node halos to reserve some space for labels.
+ * Adds node margins to reserve some space for labels.
  */
 function addNodeMargins(data, graph, selection, layoutOnlySelection) {
   const nodeMargins = new Mapper()
@@ -305,7 +339,8 @@ function addNodeMargins(data, graph, selection, layoutOnlySelection) {
     let left = 0.0
     let bottom = 0.0
     let right = 0.0
-    // for each port with an EventPortStyle extend the node halo to cover the ports render size
+
+    // for each port with an EventPortStyle extend the node margin to cover the ports render size
     node.ports.forEach((port) => {
       if (port.style instanceof EventPortStyle) {
         const eventPortStyle = port.style
@@ -317,6 +352,7 @@ function addNodeMargins(data, graph, selection, layoutOnlySelection) {
         right = Math.max(right, location.x + renderSize.width / 2 - node.layout.maxX)
       }
     })
+
     // for each node without incoming or outgoing edges reserve space for laid out exterior labels
     if (graph.inDegree(node) === 0 || graph.outDegree(node) === 0) {
       const margin = 15
@@ -334,10 +370,12 @@ function addNodeMargins(data, graph, selection, layoutOnlySelection) {
         }
       })
     }
+
     nodeMargins.set(node, new Insets(top, right, bottom, left))
   })
   data.nodeMargins = nodeMargins
 }
+
 /**
  * Checks whether the given label is considered for the layout.
  */
@@ -358,6 +396,7 @@ function isNodeLabelAffected(graph, selection, label, layoutOnlySelection) {
   }
   return false
 }
+
 /**
  * Adds preferred placement for each edge.
  */
@@ -384,6 +423,7 @@ function addEdgeLabelPlacementDescriptors(labelingData) {
     return defaultDescriptor
   }
 }
+
 /**
  * Marks which items are fixed or affected.
  */
@@ -401,19 +441,24 @@ function markFixedAndAffectedItems(
         selection.includes(edge.sourceNode) ||
         selection.includes(edge.targetNode)
     )
+
     data.addItemMapping(LayoutKeys.ROUTE_EDGES_DATA_KEY).mapper = affectedEdges
+
     // fix ports of unselected edges and edges at event ports
     hierarchicalLayoutData.ports.sourcePortCandidates = (edge) =>
       !affectedEdges.get(edge) || edge.sourcePort.style instanceof EventPortStyle
         ? new EdgePortCandidates().addFreeCandidate(getSide(edge, true))
         : null
+
     hierarchicalLayoutData.ports.targetPortCandidates = (edge) =>
       !affectedEdges.get(edge)
         ? new EdgePortCandidates().addFreeCandidate(getSide(edge, false))
         : null
+
     // give core layout hints that selected nodes and edges should be incremental
     hierarchicalLayoutData.incrementalNodes = (item) => selection.includes(item)
     hierarchicalLayoutData.incrementalEdges = (edge) => affectedEdges.get(edge) ?? false
+
     labelingData.scope.nodeLabels = (label) => {
       const node = label.owner
       const isInnerLabel = node.layout.contains(label.layout.center)
@@ -421,6 +466,7 @@ function markFixedAndAffectedItems(
       const isChoreography = node.style instanceof ChoreographyNodeStyle
       return !isInnerLabel && !isPool && !isChoreography && selection.includes(node)
     }
+
     labelingData.scope.edgeLabels = (label) => affectedEdges.get(label.owner) ?? false
   } else {
     // fix source port of edges at event ports
@@ -428,6 +474,7 @@ function markFixedAndAffectedItems(
       edge.sourcePort.style instanceof EventPortStyle
         ? new EdgePortCandidates().addFreeCandidate(getSide(edge, true))
         : null
+
     labelingData.scope.nodeLabels = (label) => {
       const node = label.owner
       const isInnerLabel = node.layout.contains(label.layout.center)
@@ -435,9 +482,11 @@ function markFixedAndAffectedItems(
       const isChoreography = node.style instanceof ChoreographyNodeStyle
       return !isInnerLabel && !isPool && !isChoreography
     }
+
     labelingData.scope.edgeLabels = () => true
   }
 }
+
 /**
  * Returns at which side of its source/target an edge should connect.
  */
@@ -448,20 +497,24 @@ function getSide(edge, atSource) {
   }
   const node = port.owner
   const relPortLocation = port.location.subtract(node.layout.center)
+
   // calculate relative port position scaled by the node size
   const sdx = relPortLocation.x / (node.layout.width / 2)
   const sdy = relPortLocation.y / (node.layout.height / 2)
+
   if (Math.abs(sdx) > Math.abs(sdy)) {
     // left or right
     return sdx < 0 ? PortSides.LEFT : PortSides.RIGHT
   } else if (Math.abs(sdx) < Math.abs(sdy)) {
     return sdy < 0 ? PortSides.TOP : PortSides.BOTTOM
   }
+
   // port is somewhere at the diagonals of the node bounds
   // so we can't decide the port side based on the port location
   // better use the attached segment to decide on the port side
   return getSideFromSegment(edge, atSource)
 }
+
 /**
  * Returns at which side of its source an edge should connect considering the first/last segment.
  */
@@ -469,13 +522,16 @@ function getSideFromSegment(edge, atSource) {
   const port = atSource ? edge.sourcePort : edge.targetPort
   const opposite = atSource ? edge.targetPort : edge.sourcePort
   const from = port.location
+
   const bend = edge.bends.at(atSource ? 0 : -1)
   const to = bend?.location ?? opposite.location
+
   const dx = to.x - from.x
   const dy = to.y - from.y
   if (Math.abs(dx) > Math.abs(dy)) {
     // right or left
     return dx < 0 ? PortSides.LEFT : PortSides.RIGHT
   }
+
   return dy < 0 ? PortSides.TOP : PortSides.BOTTOM
 }

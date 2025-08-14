@@ -247,11 +247,7 @@ function getRandomColor(): string {
 function newEdgeStyle(color: string): PolylineEdgeStyle {
   return new PolylineEdgeStyle({
     stroke: `2px solid ${color}`,
-    targetArrow: new Arrow({
-      type: 'stealth',
-      fill: color,
-      cropLength: 1
-    })
+    targetArrow: new Arrow({ type: 'stealth', fill: color, cropLength: 1 })
   })
 }
 
@@ -273,11 +269,7 @@ function newNodeStyle(color: string): ShapeNodeStyle {
  */
 function newPortStyle(color: string): IPortStyle {
   if (document.querySelector<HTMLInputElement>('#toggle-port-visualization')!.checked) {
-    return new ShapePortStyle({
-      shape: 'ellipse',
-      fill: defaultColor,
-      stroke: color
-    })
+    return new ShapePortStyle({ shape: 'ellipse', fill: defaultColor, stroke: color })
   } else {
     return IPortStyle.VOID_PORT_STYLE
   }
@@ -302,11 +294,7 @@ function addDirectionalPorts(graph: IGraph, node: INode, portStyle: IPortStyle):
  */
 function createNode(graph: IGraph, location: Point, color: string): INode {
   color = color || getRandomColor()
-  const node = graph.createNodeAt({
-    location,
-    tag: color,
-    style: newNodeStyle(color)
-  })
+  const node = graph.createNodeAt({ location, tag: color, style: newNodeStyle(color) })
   addDirectionalPorts(graph, node, newPortStyle(color))
   return node
 }

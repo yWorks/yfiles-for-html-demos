@@ -28,138 +28,30 @@
  ***************************************************************************/
 export default {
   nodes: [
-    {
-      id: 0,
-      label: ['a'],
-      x: 0,
-      y: 0,
-      color: '#363020'
-    },
-    {
-      id: 1,
-      label: ['b'],
-      x: 0,
-      y: 100,
-      color: '#605C4E'
-    },
-    {
-      id: 2,
-      label: ['c'],
-      x: 0,
-      y: 200,
-      color: '#A49966'
-    },
-    {
-      id: 3,
-      label: ['d'],
-      x: 0,
-      y: 300,
-      color: '#C7C7A6'
-    },
-    {
-      id: 4,
-      label: ['e'],
-      x: 0,
-      y: 300,
-      color: '#EAFFDA'
-    },
-    {
-      id: 5,
-      label: ['f'],
-      x: 0,
-      y: 300,
-      color: '#A4778B'
-    },
-    {
-      id: 6,
-      label: ['g'],
-      x: 0,
-      y: 300,
-      color: '#AA4586'
-    },
-    {
-      id: 7,
-      label: ['h'],
-      x: 0,
-      y: 300,
-      color: '#177E89'
-    },
-    {
-      id: 8,
-      label: ['i'],
-      x: 0,
-      y: 300,
-      color: '#8c0202'
-    },
-    {
-      id: 9,
-      label: ['j'],
-      x: 0,
-      y: 300,
-      color: '#ff5400'
-    }
+    { id: 0, label: ['a'], x: 0, y: 0, color: '#363020' },
+    { id: 1, label: ['b'], x: 0, y: 100, color: '#605C4E' },
+    { id: 2, label: ['c'], x: 0, y: 200, color: '#A49966' },
+    { id: 3, label: ['d'], x: 0, y: 300, color: '#C7C7A6' },
+    { id: 4, label: ['e'], x: 0, y: 300, color: '#EAFFDA' },
+    { id: 5, label: ['f'], x: 0, y: 300, color: '#A4778B' },
+    { id: 6, label: ['g'], x: 0, y: 300, color: '#AA4586' },
+    { id: 7, label: ['h'], x: 0, y: 300, color: '#177E89' },
+    { id: 8, label: ['i'], x: 0, y: 300, color: '#8c0202' },
+    { id: 9, label: ['j'], x: 0, y: 300, color: '#ff5400' }
   ],
 
   edges: [
-    {
-      from: 0,
-      to: 1,
-      thickness: 30
-    },
-    {
-      from: 0,
-      to: 2,
-      thickness: 20
-    },
-    {
-      from: 0,
-      to: 3,
-      thickness: 10
-    },
-    {
-      from: 1,
-      to: 2,
-      thickness: 15
-    },
-    {
-      from: 1,
-      to: 3,
-      thickness: 25
-    },
-    {
-      from: 2,
-      to: 3,
-      thickness: 12
-    },
-    {
-      from: 3,
-      to: 4,
-      thickness: 12
-    },
-    {
-      from: 3,
-      to: 6,
-      thickness: 12
-    },
-    {
-      from: 6,
-      to: 7,
-      thickness: 12
-    },
-    {
-      from: 1,
-      to: 5,
-      thickness: 12
-    },
-    {
-      from: 3,
-      to: 8,
-      thickness: 19
-    },
-    {
-      from: 3,
-      to: 9,
-      thickness: 17
-    }
+    { from: 0, to: 1, thickness: 30 },
+    { from: 0, to: 2, thickness: 20 },
+    { from: 0, to: 3, thickness: 10 },
+    { from: 1, to: 2, thickness: 15 },
+    { from: 1, to: 3, thickness: 25 },
+    { from: 2, to: 3, thickness: 12 },
+    { from: 3, to: 4, thickness: 12 },
+    { from: 3, to: 6, thickness: 12 },
+    { from: 6, to: 7, thickness: 12 },
+    { from: 1, to: 5, thickness: 12 },
+    { from: 3, to: 8, thickness: 19 },
+    { from: 3, to: 9, thickness: 17 }
   ]
 }

@@ -38,7 +38,9 @@ import {
 import { getArcHeight } from './map-styles'
 import { LatLng } from 'leaflet'
 import { getAirportData } from './data-types'
+
 let lastClickedNode
+
 /**
  * Registers listeners to graph changes and clicks to update the highlighted of the shortest paths.
  */
@@ -47,6 +49,7 @@ export function initializeShortestPaths(graphComponent, map) {
   inputMode.addEventListener('item-clicked', (evt) => {
     updateShortestPathHighlight(evt.item, graphComponent, map)
   })
+
   graphComponent.graph.addEventListener('node-removed', (evt) => {
     const removed = graphComponent.highlights.remove(evt.item)
     if (removed) {
@@ -61,8 +64,10 @@ export function initializeShortestPaths(graphComponent, map) {
   graphComponent.graph.addEventListener('label-removed', (evt) => {
     graphComponent.highlights.remove(evt.item)
   })
+
   initializeHighlights(graphComponent)
 }
+
 /**
  * Configures the highlight style for the nodes that belong to the shortest path and their
  * associated labels along with the shortest path itself.
@@ -86,22 +91,22 @@ function initializeHighlights(graphComponent) {
       margins: 0
     })
   )
+
   // use highlightDecorator for edges as we want to use different arc heights for individual edges
   graphComponent.graph.decorator.edges.highlightRenderer.addFactory(
     (edge) =>
       new EdgeStyleIndicatorRenderer({
-        edgeStyle: new ArcEdgeStyle({
-          stroke: '5px dashed #db3a34',
-          height: getArcHeight(edge)
-        })
+        edgeStyle: new ArcEdgeStyle({ stroke: '5px dashed #db3a34', height: getArcHeight(edge) })
       })
   )
 }
+
 /**
  * Highlights the shortest path between the current clickNode and the last clicked node.
  */
 function updateShortestPathHighlight(clickedNode, graphComponent, map) {
   const graph = graphComponent.graph
+
   const highlights = graphComponent.highlights
   if (lastClickedNode && graph.contains(lastClickedNode)) {
     const start = lastClickedNode
@@ -117,8 +122,10 @@ function updateShortestPathHighlight(clickedNode, graphComponent, map) {
       },
       directed: false
     })
+
     // highlight the shortest path
     highlights.clear()
+
     const result = algorithm.run(graph)
     result.edges.forEach((edge) => {
       // highlight the edge, its source/target nodes and their associated labels

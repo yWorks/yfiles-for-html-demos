@@ -251,11 +251,7 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
   static hexToRgb(hex: string): RGB {
     const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
     return rgb
-      ? {
-          r: parseInt(rgb[1], 16),
-          g: parseInt(rgb[2], 16),
-          b: parseInt(rgb[3], 16)
-        }
+      ? { r: parseInt(rgb[1], 16), g: parseInt(rgb[2], 16), b: parseInt(rgb[3], 16) }
       : { r: 255, g: 255, b: 255 }
   }
 }

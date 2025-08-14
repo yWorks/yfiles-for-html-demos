@@ -92,10 +92,7 @@ async function run(): Promise<void> {
 function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   const graphBuilder = new GraphBuilder(graph)
 
-  graphBuilder.createNodesSource({
-    data: graphData.nodeList,
-    id: (item) => item.id
-  })
+  graphBuilder.createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
@@ -127,20 +124,13 @@ function createEditorMode(): GraphEditorInputMode {
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
     marqueeSelectableItems: GraphItemTypes.NODE,
     // make only the selected elements movable
-    moveUnselectedItemsInputMode: {
-      enabled: false
-    },
+    moveUnselectedItemsInputMode: { enabled: false },
     clickSelectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
     clickableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
     showHandleItems: GraphItemTypes.NONE,
     allowAddLabel: false,
-    createEdgeInputMode: {
-      allowCreateBend: false,
-      allowSelfLoops: false
-    },
-    createBendInputMode: {
-      enabled: false
-    }
+    createEdgeInputMode: { allowCreateBend: false, allowSelfLoops: false },
+    createBendInputMode: { enabled: false }
   })
 }
 

@@ -60,9 +60,11 @@ import {
   roundRectIsHit,
   toSvgColorString
 } from './node-style-utils'
+
 export class BevelNodeStyle extends DelegatingNodeStyle {
   impl = new BevelNodeStyleImpl()
   wrappedStyle
+
   constructor(options) {
     super()
     this.wrappedStyle = this.impl
@@ -73,39 +75,51 @@ export class BevelNodeStyle extends DelegatingNodeStyle {
       this.radius = options.radius ?? 10
     }
   }
+
   get inset() {
     return this.impl.inset
   }
+
   set inset(value) {
     this.impl.inset = value
   }
+
   get radius() {
     return this.impl.radius
   }
+
   set radius(value) {
     this.impl.radius = value
   }
+
   get color() {
     return this.impl.color
   }
+
   set color(value) {
     this.impl.color = value
   }
+
   _drawShadow = false
+
   get drawShadow() {
     return this._drawShadow
   }
+
   set drawShadow(value) {
     this._drawShadow = value
+
     if (value) {
       this.wrappedStyle = new ShadowNodeStyleDecorator(this.impl)
     } else {
       this.wrappedStyle = this.impl
     }
   }
+
   getStyle(node) {
     return this.wrappedStyle
   }
+
   clone() {
     return new BevelNodeStyle({
       color: this.color,
@@ -115,44 +129,58 @@ export class BevelNodeStyle extends DelegatingNodeStyle {
     })
   }
 }
+
 class BevelNodeStyleImpl extends BaseClass(INodeStyle) {
   _renderer = new BevelNodeStyleRenderer()
+
   constructor() {
     super()
   }
+
   _inset = 3
+
   // Getter and Setter for Inset
   get inset() {
     return this._inset
   }
+
   set inset(value) {
     this._inset = value
   }
+
   _radius = 10
+
   // Getter and Setter for Radius
   get radius() {
     return this._radius
   }
+
   set radius(value) {
     this._radius = value
   }
+
   _color = Color.BLACK
+
   // Getter and Setter for Color
   get color() {
     return this._color
   }
+
   set color(value) {
     this._color = value
   }
+
   // Getter for Renderer (readonly)
   get renderer() {
     return this._renderer
   }
+
   // Clone method
   clone() {
     return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
   }
 }
+
 class BevelNodeStyleRenderer extends BaseClass(
   INodeStyleRenderer,
   IShapeGeometry,
@@ -165,32 +193,43 @@ class BevelNodeStyleRenderer extends BaseClass(
   ILassoTestable
 ) {
   outline = null
+
   get layout() {
     return this.node.layout
   }
+
   _style
+
   get style() {
     return this._style
   }
+
   set style(value) {
     this._style = value
   }
+
   _node
+
   get node() {
     return this._node
   }
+
   set node(value) {
     this._node = value
   }
+
   get color() {
     return this.style.color
   }
+
   get inset() {
     return this.style.inset
   }
+
   get radius() {
     return this.style.radius
   }
+
   static createUpperRoundRectPath(roundRect, x, y, width, height, radius) {
     roundRect.clear()
     const arcX = Math.min(width * 0.5, radius)
@@ -204,6 +243,7 @@ class BevelNodeStyleRenderer extends BaseClass(
     roundRect.close()
     return roundRect
   }
+
   static createLowerRoundRectPath(roundRect, x, y, width, height, radius) {
     roundRect.clear()
     const arcX = Math.min(width * 0.5, radius)
@@ -217,6 +257,7 @@ class BevelNodeStyleRenderer extends BaseClass(
     roundRect.close()
     return roundRect
   }
+
   getVisualCreator(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -228,6 +269,7 @@ class BevelNodeStyleRenderer extends BaseClass(
       return IVisualCreator.VOID_VISUAL_CREATOR
     }
   }
+
   getBoundsProvider(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -239,6 +281,7 @@ class BevelNodeStyleRenderer extends BaseClass(
       return IBoundsProvider.EMPTY
     }
   }
+
   getHitTestable(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -250,6 +293,7 @@ class BevelNodeStyleRenderer extends BaseClass(
       return IHitTestable.NEVER
     }
   }
+
   getMarqueeTestable(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -261,6 +305,7 @@ class BevelNodeStyleRenderer extends BaseClass(
       return IMarqueeTestable.NEVER
     }
   }
+
   getVisibilityTestable(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -271,6 +316,7 @@ class BevelNodeStyleRenderer extends BaseClass(
       return IVisibilityTestable.NEVER
     }
   }
+
   getContext(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -281,16 +327,20 @@ class BevelNodeStyleRenderer extends BaseClass(
       return ILookup.EMPTY
     }
   }
+
   isInBox(context, rectangle) {
     const rect = this.layout
     return rectangle.intersects(Rect.from(rect))
   }
+
   isVisible(context, rectangle) {
     return rectangle.intersects(Rect.from(this.layout))
   }
+
   getBounds(context) {
     return Rect.from(this.layout)
   }
+
   getShapeGeometry(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -302,6 +352,7 @@ class BevelNodeStyleRenderer extends BaseClass(
       return IShapeGeometry.VOID_SHAPE_GEOMETRY
     }
   }
+
   createVisual(context) {
     return new BevelNodeStyleVisual().render(
       this.color,
@@ -311,6 +362,7 @@ class BevelNodeStyleRenderer extends BaseClass(
       context
     )
   }
+
   updateVisual(context, oldVisual) {
     const visual = oldVisual
     if (visual) {
@@ -319,15 +371,19 @@ class BevelNodeStyleRenderer extends BaseClass(
       return this.createVisual(context)
     }
   }
+
   getIntersection(inner, outer) {
     return findLineIntersectionWithRoundRect(inner, outer, this.layout, this.radius)
   }
+
   isInside(location) {
     return roundRectContains(location, this.layout, this.radius)
   }
+
   isHit(context, location) {
     return roundRectIsHit(location, this.layout, this.radius, context.hitTestRadius)
   }
+
   getOutline() {
     if (this.outline) {
       return this.outline
@@ -342,6 +398,7 @@ class BevelNodeStyleRenderer extends BaseClass(
       ))
     }
   }
+
   lookup(type) {
     if (type === IGroupPaddingProvider) {
       return new MyGroupPaddingProvider(this.style)
@@ -351,6 +408,7 @@ class BevelNodeStyleRenderer extends BaseClass(
     }
     return null
   }
+
   getLassoTestable(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -362,22 +420,27 @@ class BevelNodeStyleRenderer extends BaseClass(
       return ILassoTestable.NEVER
     }
   }
+
   isInPath(context, lassoPath) {
     const outline = this.getOutline()
     return lassoPath.areaIntersects(outline, context.hitTestRadius)
   }
+
   configure() {
     this.outline = null
   }
 }
+
 class BevelNodeStyleVisual extends SvgVisualGroup {
   color
   layout = new MutableRectangle()
   radius
   inset
+
   constructor() {
     super()
   }
+
   render(color, inset, rectangle, radius, context) {
     const container = this.svgElement
     this.color = color
@@ -389,12 +452,14 @@ class BevelNodeStyleVisual extends SvgVisualGroup {
     this.svgElement.setAttribute('transform', `translate(${rectangle.x}, ${rectangle.y})`)
     return this
   }
+
   update(color, inset, rectangle, radius, context) {
     const colorChanged = color !== this.color
     const radiusChanged = this.radius !== radius
     const insetChanged = this.inset !== inset
     const layoutChanged =
       this.layout.width !== rectangle.width || this.layout.height !== rectangle.height
+
     if (colorChanged || radiusChanged || insetChanged || layoutChanged) {
       this.color = color
       this.radius = radius
@@ -412,21 +477,26 @@ class BevelNodeStyleVisual extends SvgVisualGroup {
         context
       )
     }
+
     this.svgElement.setAttribute('transform', `translate(${rectangle.x}, ${rectangle.y})`)
     return this
   }
+
   paint(layout, color, inset, radius, context) {
     const container = this.svgElement
     while (container.hasChildNodes()) {
       container.removeChild(container.firstChild)
     }
+
     const layoutWidth = layout.width
     const layoutHeight = layout.height
+
     const roundedRectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     roundedRectangle.setAttribute('width', layoutWidth.toString())
     roundedRectangle.setAttribute('height', layoutHeight.toString())
     roundedRectangle.setAttribute('rx', radius.toString())
     roundedRectangle.setAttribute('ry', radius.toString())
+
     const brush = this.createFill(color)
     const gradient = brush.toSvgGradient()
     const gradientId = context.canvasComponent.svgDefsManager.generateUniqueDefsId()
@@ -434,7 +504,9 @@ class BevelNodeStyleVisual extends SvgVisualGroup {
     roundedRectangle.setAttribute('fill', `url(#${gradientId})`)
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
     defs.appendChild(gradient)
+
     const strokeColor = mixColors(color, Color.WHITE, 0.15)
+
     const strokedRectangle1 = this.createStrokedRectangle(
       layoutWidth,
       layoutHeight,
@@ -451,11 +523,13 @@ class BevelNodeStyleVisual extends SvgVisualGroup {
       toSvgColorString(color),
       1
     )
+
     container.appendChild(roundedRectangle)
     container.appendChild(strokedRectangle1)
     container.appendChild(strokedRectangle2)
     container.appendChild(defs)
   }
+
   createFill(color) {
     const gradientStops = [
       new GradientStop(mixColors(Color.WHITE, color, 0.75), 0),
@@ -463,14 +537,17 @@ class BevelNodeStyleVisual extends SvgVisualGroup {
       new GradientStop(color, 0.5),
       new GradientStop(color, 1)
     ]
+
     const fill = new LinearGradient({
       gradientStops,
       startPoint: new Point(0, 0),
       endPoint: new Point(0, 1)
     })
     fill.freeze()
+
     return fill
   }
+
   updateCore(
     layout,
     color,
@@ -483,16 +560,20 @@ class BevelNodeStyleVisual extends SvgVisualGroup {
     context
   ) {
     const container = this.svgElement
+
     if (container.childNodes.length !== 4) {
       this.paint(layout, color, inset, radius, context)
       return
     }
+
     const layoutWidth = layout.width
     const layoutHeight = layout.height
+
     const roundedRectangle = container.childNodes[0]
     const strokedRectangle1 = container.childNodes[1]
     const strokedRectangle2 = container.childNodes[2]
     const defs = container.childNodes[3]
+
     if (colorChanged) {
       while (defs.hasChildNodes()) {
         defs.removeChild(defs.firstChild)
@@ -506,26 +587,31 @@ class BevelNodeStyleVisual extends SvgVisualGroup {
       const strokeFill = toSvgColorString(mixColors(color, Color.WHITE, 0.15))
       strokedRectangle1.setAttribute('stroke', strokeFill)
     }
+
     if (insetChanged) {
       strokedRectangle1.setAttribute('x', inset.toString())
       strokedRectangle1.setAttribute('y', inset.toString())
       strokedRectangle2.setAttribute('x', inset.toString())
       strokedRectangle2.setAttribute('y', inset.toString())
     }
+
     if (radiusChanged) {
       roundedRectangle.setAttribute('rx', radius.toString())
       roundedRectangle.setAttribute('ry', radius.toString())
     }
+
     if (layoutChanged) {
       roundedRectangle.setAttribute('width', layoutWidth.toString())
       roundedRectangle.setAttribute('height', layoutHeight.toString())
     }
+
     if (insetChanged || layoutChanged) {
       strokedRectangle1.setAttribute('width', Math.max(0, layoutWidth - inset - inset).toString())
       strokedRectangle1.setAttribute('height', Math.max(0, layoutHeight - inset - inset).toString())
       strokedRectangle2.setAttribute('width', Math.max(0, layoutWidth - inset - inset).toString())
       strokedRectangle2.setAttribute('height', Math.max(0, layoutHeight - inset - inset).toString())
     }
+
     if (insetChanged || radiusChanged) {
       const arcRadius = Math.max(0, radius - inset)
       strokedRectangle1.setAttribute('rx', arcRadius.toString())
@@ -534,12 +620,14 @@ class BevelNodeStyleVisual extends SvgVisualGroup {
       strokedRectangle2.setAttribute('ry', arcRadius.toString())
     }
   }
+
   createStrokedRectangle(layoutWidth, layoutHeight, inset, radius, strokeColor, strokeWidth) {
     const strokedRectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     strokedRectangle.setAttribute('x', inset.toString())
     strokedRectangle.setAttribute('y', inset.toString())
     strokedRectangle.setAttribute('width', Math.max(0, layoutWidth - 2 * inset).toString())
     strokedRectangle.setAttribute('height', Math.max(0, layoutHeight - 2 * inset).toString())
+
     const arcRadius = Math.max(0, radius - inset)
     strokedRectangle.setAttribute('rx', arcRadius.toString())
     strokedRectangle.setAttribute('ry', arcRadius.toString())
@@ -549,29 +637,37 @@ class BevelNodeStyleVisual extends SvgVisualGroup {
     return strokedRectangle
   }
 }
+
 class MySizeProvider extends BaseClass(INodeSizeConstraintProvider) {
   style
+
   constructor(style) {
     super()
     this.style = style
   }
+
   getMinimumSize() {
     const value = this.style.radius * 2 + 2
     return new Size(value, value)
   }
+
   getMaximumSize() {
     return Size.INFINITE
   }
+
   getMinimumEnclosedArea() {
     return Rect.EMPTY
   }
 }
+
 class MyGroupPaddingProvider extends BaseClass(IGroupPaddingProvider) {
   style
+
   constructor(style) {
     super()
     this.style = style
   }
+
   getPadding() {
     const value = this.style.radius + 1
     return new Insets(value)

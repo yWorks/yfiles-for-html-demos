@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { AlignmentStage } from '@yfiles/yfiles'
+
 /**
  * Creates a new instance of the {@link AlignmentStage} layout algorithm with the given settings.
  */
@@ -38,6 +39,7 @@ export function createConfiguredLayoutAlgorithm(settings) {
     separateStripes: settings.separateStripes
   })
 }
+
 /**
  * Creates a new instance of {@link LayoutSettings} with the default values of the
  * {@link AlignmentStage} layout algorithm.

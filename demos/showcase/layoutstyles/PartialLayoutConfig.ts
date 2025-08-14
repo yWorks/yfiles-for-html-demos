@@ -56,7 +56,7 @@ import {
 } from '@yfiles/demo-resources/demo-option-editor'
 
 export enum SubgraphLayouts {
-  HIERARCHIC,
+  HIERARCHICAL,
   ORGANIC,
   CIRCULAR,
   ORTHOGONAL,
@@ -82,7 +82,7 @@ export const PartialLayoutConfig = (Class as any)('PartialLayoutConfig', {
     ],
     routingToSubgraphItem: [
       new LabelAttribute(
-        'Edge Routing Style',
+        'Routing Style',
         '#/api/PartialLayout#PartialLayout-property-edgeRoutingStyle'
       ),
       new OptionGroupAttribute('LayoutGroup', 10),
@@ -111,12 +111,12 @@ export const PartialLayoutConfig = (Class as any)('PartialLayoutConfig', {
     ],
     subgraphLayoutItem: [
       new LabelAttribute(
-        'Subgraph Layouter',
+        'Subgraph Layout',
         '#/api/PartialLayout#PartialLayout-property-coreLayout'
       ),
       new OptionGroupAttribute('LayoutGroup', 30),
       new EnumValuesAttribute([
-        ['Hierarchical', SubgraphLayouts.HIERARCHIC],
+        ['Hierarchical', SubgraphLayouts.HIERARCHICAL],
         ['Organic', SubgraphLayouts.ORGANIC],
         ['Circular', SubgraphLayouts.CIRCULAR],
         ['Orthogonal', SubgraphLayouts.ORTHOGONAL],
@@ -188,7 +188,7 @@ export const PartialLayoutConfig = (Class as any)('PartialLayoutConfig', {
     LayoutConfiguration.call(this)
     this.routingToSubgraphItem = PartialLayoutRoutingStyle.AUTOMATIC
     this.componentAssignmentStrategyItem = ComponentAssignmentStrategy.CONNECTED
-    this.subgraphLayoutItem = SubgraphLayouts.HIERARCHIC
+    this.subgraphLayoutItem = SubgraphLayouts.HIERARCHICAL
     this.subgraphPlacementItem = SubgraphPlacement.FROM_SKETCH
     this.minNodeDistItem = 30
     this.orientationItem = PartialLayoutOrientation.AUTO_DETECT
@@ -215,7 +215,7 @@ export const PartialLayoutConfig = (Class as any)('PartialLayoutConfig', {
     let subgraphLayout = null
     if (this.componentAssignmentStrategyItem !== ComponentAssignmentStrategy.SINGLE) {
       switch (this.subgraphLayoutItem) {
-        case SubgraphLayouts.HIERARCHIC:
+        case SubgraphLayouts.HIERARCHICAL:
           subgraphLayout = new HierarchicalLayout()
           break
         case SubgraphLayouts.ORGANIC:

@@ -40,6 +40,7 @@ const MONTHS = [
   'November',
   'December'
 ]
+
 /**
  * Yields all "days" in the given interval.
  * @yields {LabeledTimeInterval}
@@ -47,6 +48,7 @@ const MONTHS = [
 export function* days(start, end) {
   const floor = new Date(start.getFullYear(), start.getMonth(), start.getDate())
   const ceiling = new Date(end.getFullYear(), end.getMonth(), end.getDate() + 1)
+
   for (let currentDate = new Date(floor); currentDate < ceiling; ) {
     const start = new Date(currentDate)
     currentDate.setDate(currentDate.getDate() + 1)
@@ -54,6 +56,7 @@ export function* days(start, end) {
     yield [start, end, String(start.getDate())]
   }
 }
+
 /**
  * Yields all "weeks" in the given interval.
  * @yields {LabeledTimeInterval}
@@ -61,6 +64,7 @@ export function* days(start, end) {
 export function* weeks(start, end) {
   const floor = new Date(start.getFullYear(), start.getMonth(), 1)
   const ceiling = new Date(end.getFullYear(), end.getMonth() + 1, 1)
+
   let week = 1
   for (let currentDate = new Date(floor); currentDate < ceiling; ) {
     const start = new Date(currentDate)
@@ -78,6 +82,7 @@ export function* weeks(start, end) {
     week++
   }
 }
+
 /**
  * Yields all "months" in the given interval.
  * @yields {LabeledTimeInterval}
@@ -85,6 +90,7 @@ export function* weeks(start, end) {
 export function* months(start, end) {
   const floor = new Date(start.getFullYear(), start.getMonth(), 1)
   const ceiling = new Date(end.getFullYear(), end.getMonth() + 1, 1)
+
   for (let currentDate = new Date(floor); currentDate < ceiling; ) {
     const start = new Date(currentDate)
     currentDate.setMonth(currentDate.getMonth() + 1)
@@ -92,6 +98,7 @@ export function* months(start, end) {
     yield [start, end, MONTHS[start.getMonth()]]
   }
 }
+
 /**
  * Yields all "years" in the given interval.
  * @yields {LabeledTimeInterval}
@@ -99,6 +106,7 @@ export function* months(start, end) {
 export function* years(start, end) {
   const floor = new Date(start.getFullYear(), 0, 1)
   const ceiling = new Date(end.getFullYear() + 1, 0, 1)
+
   for (let currentDate = new Date(floor); currentDate < ceiling; ) {
     const start = new Date(currentDate)
     currentDate.setFullYear(currentDate.getFullYear() + 1)
@@ -106,12 +114,15 @@ export function* years(start, end) {
     yield [start, end, String(start.getFullYear())]
   }
 }
+
 export function* allTime(start, end) {
   yield [start ?? new Date(Date.UTC(0, 0)), end ?? new Date(Date.UTC(5000, 0)), 'All Time']
 }
+
 export function intervalsIntersect(start1, end1, start2, end2) {
   return !(end1 <= start2 || start1 >= end2)
 }
+
 export function timeframeEquals([start1, end1], [start2, end2]) {
   return start1.getTime() === start2.getTime() && end1.getTime() === end2.getTime()
 }

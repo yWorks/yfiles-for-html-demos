@@ -121,7 +121,8 @@ export function isStartEvent(graph: LayoutGraph, node: LayoutNode): boolean {
 }
 
 export function isUndefined(graph: LayoutGraph, edge: LayoutEdge): boolean {
-  return getEdgeType(graph, edge) === MultiPageEdgeType.Invalid
+  const type = getEdgeType(graph, edge)
+  return !type || type === MultiPageEdgeType.Invalid
 }
 
 export function isRegularEdge(graph: LayoutGraph, edge: LayoutEdge): boolean {

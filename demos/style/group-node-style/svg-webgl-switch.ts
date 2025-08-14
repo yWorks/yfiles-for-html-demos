@@ -35,8 +35,7 @@ import {
   WebGLGraphModelManagerRenderMode,
   WebGLSelectionIndicatorManager
 } from '@yfiles/yfiles'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
-import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'
+import { addNavigationButtons, BrowserDetection } from '@yfiles/demo-resources/demo-page'
 
 let changeListener: EventListener
 

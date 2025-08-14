@@ -52,10 +52,7 @@ export function useGraphSearch(getGraphComponent: () => GraphComponent) {
   function register(): void {
     graphSearch = new GraphSearch(graphComponent)
     graphSearch.highlightRenderer = new NodeStyleIndicatorRenderer({
-      nodeStyle: new ShapeNodeStyle({
-        stroke: new Stroke(0x03, 0xa9, 0xf4, 220, 3),
-        fill: null
-      }),
+      nodeStyle: new ShapeNodeStyle({ stroke: new Stroke(0x03, 0xa9, 0xf4, 220, 3), fill: null }),
       margins: 3,
       zoomPolicy: StyleIndicatorZoomPolicy.MIXED
     })
@@ -81,8 +78,5 @@ export function useGraphSearch(getGraphComponent: () => GraphComponent) {
     graphSearch.updateSearch(query)
   }
 
-  return {
-    register,
-    onSearchQueryChange
-  }
+  return { register, onSearchQueryChange }
 }

@@ -138,10 +138,7 @@ async function createSmallSampleGraph(graphComponent: GraphComponent): Promise<I
 
     // Create node with icon from SVG file
     graph.setStyle(
-      graph.createNodeAt({
-        labels: ['Icon from SVG file'],
-        location: new Point(150 * i, 0)
-      }),
+      graph.createNodeAt({ labels: ['Icon from SVG file'], location: new Point(150 * i, 0) }),
       new WebGLImageNodeStyle({
         image: svgFileIcon,
         imageColor: 'white',
@@ -154,10 +151,7 @@ async function createSmallSampleGraph(graphComponent: GraphComponent): Promise<I
 
     // Create node with icon from SVG data URI
     graph.setStyle(
-      graph.createNodeAt({
-        labels: ['Icon from SVG data URI'],
-        location: new Point(150 * i, 100)
-      }),
+      graph.createNodeAt({ labels: ['Icon from SVG data URI'], location: new Point(150 * i, 100) }),
       new WebGLImageNodeStyle({
         image: svgDataURIIcon,
         imageColor: 'white',
@@ -171,10 +165,7 @@ async function createSmallSampleGraph(graphComponent: GraphComponent): Promise<I
 
     // Create node with Font Awesome icon
     graph.setStyle(
-      graph.createNodeAt({
-        labels: ['Icon from Font Awesome'],
-        location: new Point(150 * i, 200)
-      }),
+      graph.createNodeAt({ labels: ['Icon from Font Awesome'], location: new Point(150 * i, 200) }),
       new WebGLImageNodeStyle({
         image: fontAwesomeIcon,
         imageColor: 'white',
@@ -187,10 +178,7 @@ async function createSmallSampleGraph(graphComponent: GraphComponent): Promise<I
 
     // Create node with icon from PNG file
     graph.setStyle(
-      graph.createNodeAt({
-        labels: ['Icon from PNG file'],
-        location: new Point(150 * i, 300)
-      }),
+      graph.createNodeAt({ labels: ['Icon from PNG file'], location: new Point(150 * i, 300) }),
       new WebGLImageNodeStyle({
         image: pngIcon,
         backgroundFill: Color.TRANSPARENT,
@@ -200,10 +188,7 @@ async function createSmallSampleGraph(graphComponent: GraphComponent): Promise<I
 
     // Create node with icon and fill/background color
     graph.setStyle(
-      graph.createNodeAt({
-        labels: ['Icon with Fill Color'],
-        location: new Point(150 * i, 400)
-      }),
+      graph.createNodeAt({ labels: ['Icon with Fill Color'], location: new Point(150 * i, 400) }),
       new WebGLImageNodeStyle({
         image: svgFileIconGear,
         imageColor: color,
@@ -296,9 +281,7 @@ function initializeFastRendering(graphComponent: GraphComponent) {
  * Configures the interaction behaviour
  */
 function configureInteraction(graphComponent: GraphComponent) {
-  const graphEditorInputMode = new GraphEditorInputMode({
-    allowCreateEdge: false
-  })
+  const graphEditorInputMode = new GraphEditorInputMode({ allowCreateEdge: false })
 
   // Disable moving of individual edge segments
   graphComponent.graph.decorator.edges.positionHandler.hide()

@@ -61,9 +61,11 @@ import { SubgraphLayouts } from '../PartialLayoutConfig'
 import { BusMembership, PortSide } from '../PolylineEdgeRouterConfig'
 import { SubtreePlacer } from '../TreeLayoutConfig'
 import { CircularPartitioningPolicy } from '../CircularLayoutConfig'
+
 export function isSeparator(entry) {
   return typeof entry.separator !== 'undefined'
 }
+
 export const LayoutStyles = [
   {
     layout: 'Hierarchical',
@@ -128,11 +130,7 @@ export const LayoutStyles = [
       'organic-clustered'
     ],
     samples: [
-      {
-        sample: 'generic-organic',
-        label: 'Default',
-        defaultPreset: 'default'
-      },
+      { sample: 'generic-organic', label: 'Default', defaultPreset: 'default' },
       {
         sample: 'mesh',
         label: 'Mesh',
@@ -160,11 +158,7 @@ export const LayoutStyles = [
     layout: 'Orthogonal',
     presets: ['default', 'orthogonal-with-substructures'],
     samples: [
-      {
-        sample: 'orthogonal',
-        label: 'Default',
-        defaultPreset: 'default'
-      },
+      { sample: 'orthogonal', label: 'Default', defaultPreset: 'default' },
       {
         sample: 'orthogonal-with-substructures',
         label: 'Substructures',
@@ -247,11 +241,7 @@ export const LayoutStyles = [
       'compact-disk-recursive-groups'
     ],
     samples: [
-      {
-        sample: 'compact-disk',
-        label: 'Default',
-        defaultPreset: 'default'
-      },
+      { sample: 'compact-disk', label: 'Default', defaultPreset: 'default' },
       {
         sample: 'compact-disk-with-edges',
         label: 'With Edges',
@@ -304,11 +294,7 @@ export const LayoutStyles = [
         defaultPreset: 'default',
         invalidPresets: ['edge-router-with-buses']
       },
-      {
-        sample: 'edge-router-with-buses',
-        label: 'Buses',
-        defaultPreset: 'edge-router-with-buses'
-      },
+      { sample: 'edge-router-with-buses', label: 'Buses', defaultPreset: 'edge-router-with-buses' },
       { sample: 'network-plan', label: 'Network Plan', defaultPreset: 'edge-router-with-buses' },
       {
         sample: 'activity-diagram',
@@ -348,15 +334,11 @@ export const LayoutStyles = [
         defaultPreset: 'labeling-nodes',
         invalidPresets: ['labeling-edges-sides', 'labeling-edges-parallel']
       },
-      {
-        sample: 'node-and-edge-labels',
-        label: 'Metro Map 2',
-        defaultPreset: 'labeling-both'
-      },
+      { sample: 'node-and-edge-labels', label: 'Metro Map 2', defaultPreset: 'labeling-both' },
       {
         sample: 'edge-labels',
         label: 'Edge Labels',
-        defaultPreset: 'labeling-edges-sides',
+        defaultPreset: 'default',
         invalidPresets: ['labeling-nodes']
       }
     ]
@@ -403,6 +385,7 @@ export const LayoutStyles = [
     ]
   }
 ]
+
 export const Presets = {
   'hierarchical-with-buses': {
     description:
@@ -411,10 +394,9 @@ export const Presets = {
       ' shared bus segment that connects to the common root node. In this demo, the buses' +
       ' are automatically determined such that child nodes without further connections form a bus.</p>',
     label: 'Buses',
-    settings: {
-      automaticBusRoutingEnabledItem: true
-    }
+    settings: { automaticBusRoutingEnabledItem: true }
   },
+
   'hierarchical-with-curves': {
     description:
       '<p>Enables curved routing, symmetric u-turns for curves and adjust the minimum slope setting to' +
@@ -427,6 +409,7 @@ export const Presets = {
       minimumSlopeItem: 0.1
     }
   },
+
   'hierarchical-with-subcomponents': {
     description:
       '<p>Enables the sub-component feature which makes it possible to arrange defined' +
@@ -438,10 +421,9 @@ export const Presets = {
       '<li>Those with label "TL" are handled by a tree layout algorithm.</li' +
       '</ul>',
     label: 'Sub-Components',
-    settings: {
-      subComponentsItem: true
-    }
+    settings: { subComponentsItem: true }
   },
+
   'hierarchical-flowchart': {
     description:
       '<p>Suitable settings for a top-to-bottom flowchart with curved edges and integrated edge labeling.' +
@@ -454,6 +436,7 @@ export const Presets = {
       highlightCriticalPath: true
     }
   },
+
   'hierarchical-incremental': {
     description:
       '<p>Arranges selected elements while keeping relative positions of elements that are not selected.</p>',
@@ -464,6 +447,7 @@ export const Presets = {
       useDrawingAsSketchItem: true
     }
   },
+
   'organic-with-substructures': {
     description:
       '<p>Enables the substructure features. Chains, cycles, stars and parallel structures are ' +
@@ -478,6 +462,7 @@ export const Presets = {
       treeSubstructureItem: OrganicLayoutTreeSubstructureStyle.RADIAL_TREE
     }
   },
+
   'organic-group-substructures': {
     description:
       '<p>Preconfigures the group substructure feature. Clusters are interpreted as groups that are' +
@@ -490,6 +475,7 @@ export const Presets = {
       clusterAsGroupSubstructureItem: true
     }
   },
+
   'organic-clustered': {
     description:
       '<p>Enables an automatic clustering of nodes and increases the quality settings of' +
@@ -501,6 +487,7 @@ export const Presets = {
       clusteringPolicyItem: OrganicLayoutClusteringPolicy.LOUVAIN_MODULARITY
     }
   },
+
   'orthogonal-with-substructures': {
     description:
       '<p>Enables the substructure features. Chains, cycles and trees are automatically detected and ' +
@@ -518,6 +505,7 @@ export const Presets = {
       treeSubstructureOrientationItem: SubstructureOrientation.AUTO_DETECT
     }
   },
+
   'single-cycle-bundled': {
     description:
       '<p>Uses a single-cycle style and edge bundling to bundle together edges and ' +
@@ -528,26 +516,26 @@ export const Presets = {
       edgeBundlingItem: true
     }
   },
+
   'circular-with-substructures': {
     description:
       '<p>Enables the substructure feature. Star structures are ' +
       'automatically detected and handled in a specific way. This makes it much easier to detect such ' +
       'structures in the underlying data.</p>',
     label: 'Substructures',
-    settings: {
-      starSubstructureItem: CircularLayoutStarSubstructureStyle.RADIAL
-    }
+    settings: { starSubstructureItem: CircularLayoutStarSubstructureStyle.RADIAL }
   },
+
   'partial-with-hierarchical': {
     description: '<p>Incorporate new elements into a hierarchical layout using PartialLayout.</p>',
-    label: 'Partial with Hierarchic',
+    label: 'Partial with Hierarchical',
     settings: {
       alignNodesItem: true,
       componentAssignmentStrategyItem: ComponentAssignmentStrategy.CONNECTED,
       minNodeDistItem: 5,
       orientationItem: PartialLayoutOrientation.TOP_TO_BOTTOM,
       routingToSubgraphItem: PartialLayoutRoutingStyle.ORTHOGONAL,
-      subgraphLayoutItem: SubgraphLayouts.HIERARCHIC,
+      subgraphLayoutItem: SubgraphLayouts.HIERARCHICAL,
       subgraphPlacementItem: SubgraphPlacement.BARYCENTER
     }
   },
@@ -590,6 +578,7 @@ export const Presets = {
       subgraphPlacementItem: SubgraphPlacement.BARYCENTER
     }
   },
+
   'edge-router-left-right-flow': {
     description:
       '<p>The edges connect at the left or right node side and, futhermore, the algorithm' +
@@ -601,16 +590,15 @@ export const Presets = {
       routingStyleItem: EdgeRouterRoutingStyle.OCTILINEAR
     }
   },
+
   'edge-router-single-bus': {
     description:
       '<p>All edges are routed on a single, common bus that must consist of ' +
       'only a single backbone segment.</p>',
     label: 'Single Bus',
-    settings: {
-      busMembershipItem: BusMembership.SINGLE,
-      allowMultipleBackboneSegmentsItem: false
-    }
+    settings: { busMembershipItem: BusMembership.SINGLE, allowMultipleBackboneSegmentsItem: false }
   },
+
   'edge-router-with-buses': {
     description:
       '<p>Enables bus routing and derives the bus membership of an edge from a custom' +
@@ -618,59 +606,48 @@ export const Presets = {
       ' "Buses" sample graph. In that sample, the color of the edges reflect the data tag and thus' +
       ' the bus membership of an edge.</p>',
     label: 'Custom Buses',
-    settings: {
-      busMembershipItem: BusMembership.TAG
-    }
+    settings: { busMembershipItem: BusMembership.TAG }
   },
+
   'edge-router-with-curves': {
     description: '<p>Edges are routed as smooth curves.</p>',
     label: 'Curves',
-    settings: {
-      routingStyleItem: EdgeRouterRoutingStyle.CURVED
-    }
+    settings: { routingStyleItem: EdgeRouterRoutingStyle.CURVED }
   },
+
   'tree-multiparent': {
     description: '<p>Considers multiple parents for tree nodes.</p>',
     label: 'Multi-parent',
-    settings: {
-      allowMultiParentsItem: true,
-      spacingItem: 50
-    }
+    settings: { allowMultiParentsItem: true, spacingItem: 50 }
   },
+
   'tree-mindmap': {
     description:
       '<p>Suitable configuration for a mindmap-like diagram. This preset configures a DelegatingSubtreePlacer' +
       ' that delegates to two layered placers with different orientations, one arranging the subtree' +
       ' from left to right and the other from right to left.</p>',
     label: 'Mindmap',
-    settings: {
-      subtreePlacerItem: SubtreePlacer.SINGLE_SPLIT_LAYERED,
-      spacingItem: 50
-    }
+    settings: { subtreePlacerItem: SubtreePlacer.SINGLE_SPLIT_LAYERED, spacingItem: 50 }
   },
+
   scale3: {
     description: '<p>Scales the graph by 3.</p>',
     label: 'Scale x3',
-    settings: {
-      operationItem: OperationType.SCALE,
-      scaleFactorItem: 3
-    }
+    settings: { operationItem: OperationType.SCALE, scaleFactorItem: 3 }
   },
+
   mirrorY: {
     description: '<p>Mirrors the diagram at the y-axis.</p>',
     label: 'Mirror Vertically',
-    settings: {
-      operationItem: OperationType.MIRROR_Y_AXIS
-    }
+    settings: { operationItem: OperationType.MIRROR_Y_AXIS }
   },
+
   rotate45: {
     description: '<p>Rotates the graph by 45 degrees.</p>',
     label: 'Rotate 45°',
-    settings: {
-      operationItem: OperationType.ROTATE,
-      rotationAngleItem: 45
-    }
+    settings: { operationItem: OperationType.ROTATE, rotationAngleItem: 45 }
   },
+
   'labeling-edges-sides': {
     description:
       '<p>Places the edge labels and configures the PreferredPlacementDescriptor such that ' +
@@ -683,6 +660,7 @@ export const Presets = {
       labelPlacementSideOfEdgeItem: LabelPlacementSideOfEdge.LEFT_OR_RIGHT
     }
   },
+
   'labeling-edges-parallel': {
     description:
       '<p>Places the edge labels and configures the PreferredPlacementDescriptor such that ' +
@@ -696,6 +674,7 @@ export const Presets = {
       labelPlacementAlongEdgeItem: LabelPlacementAlongEdge.ANYWHERE
     }
   },
+
   'labeling-both': {
     description:
       '<p>Places the node and edge labels and configures the PreferredPlacementDescriptor such that ' +
@@ -709,15 +688,14 @@ export const Presets = {
       labelPlacementAlongEdgeItem: LabelPlacementAlongEdge.ANYWHERE
     }
   },
+
   'labeling-nodes': {
     description:
       '<p>Places the node labels, avoiding overlaps with other elements. Ignores edge labels.</p>',
     label: 'Node Labels',
-    settings: {
-      placeNodeLabelsItem: true,
-      placeEdgeLabelsItem: false
-    }
+    settings: { placeNodeLabelsItem: true, placeEdgeLabelsItem: false }
   },
+
   'radial-tree-with-rays': {
     description: '<p>Places node label in a ray-like fashion pointing away from the root node.</p>',
     label: 'Ray-like label placement',
@@ -728,23 +706,21 @@ export const Presets = {
       preferredChildSectorAngle: 100
     }
   },
+
   'print-format': {
     description:
       '<p>Arranges components in US Letter landscape format that works well for printing.</p>',
     label: 'Print Format',
-    settings: {
-      aspectRatioItem: 1.3,
-      useScreenRatioItem: false
-    }
+    settings: { aspectRatioItem: 1.3, useScreenRatioItem: false }
   },
+
   compact: {
     description:
       '<p>This preset utilizes the compact subtree placer and places all nodes that are marked with <code>assistant</code> in their tag alongside the main branch as assistantNodes.</p>',
     label: 'Compact',
-    settings: {
-      subtreePlacerItem: SubtreePlacer.COMPACT
-    }
+    settings: { subtreePlacerItem: SubtreePlacer.COMPACT }
   },
+
   dendrogram: {
     description:
       '<p>This preset utilizes the dendrogram layout style that is most suitable for displaying ' +
@@ -760,32 +736,29 @@ export const Presets = {
       minimumNodeToNodeDistanceItem: 5
     }
   },
+
   'compact-disk-edges': {
     description:
       '<p>This preset utilizes the minimum node distance ' +
       'to make space between nodes and, thus, make the edges visible.</p>',
     label: 'With Edges',
-    settings: {
-      minimumNodeDistanceItem: 30
-    }
+    settings: { minimumNodeDistanceItem: 30 }
   },
+
   'compact-disk-with-rays': {
     description: '<p>Places node labels in a ray-like fashion pointing away from the disk.</p>',
     label: 'Ray-like label placement',
-    settings: {
-      nodeLabelingStyleItem: RadialNodeLabelPlacement.RAY_LIKE_LEAVES
-    }
+    settings: { nodeLabelingStyleItem: RadialNodeLabelPlacement.RAY_LIKE_LEAVES }
   },
+
   'compact-disk-recursive-groups': {
     description:
       '<p>Uses RecursiveGroupLayout to run the compact disk layout algorithm for each group node ' +
       'separately. The topmost level of the hierarchy is arranged with OrganicLayout.</p>',
     label: 'Recursive Groups',
-    settings: {
-      layoutGroupsItem: 1,
-      minimumNodeDistanceItem: 15
-    }
+    settings: { layoutGroupsItem: 1, minimumNodeDistanceItem: 15 }
   },
+
   default: {
     description: '<p>Resets the layout settings to their defaults.</p>',
     label: 'Default',

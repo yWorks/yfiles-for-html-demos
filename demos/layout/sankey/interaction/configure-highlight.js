@@ -39,6 +39,7 @@ import {
 } from '@yfiles/yfiles'
 import { getEdgeColor, getLabelColor } from '../styles-support'
 import { getVoterShift } from '../data-types'
+
 /**
  * Configures the edge and label highlighting for this demo.
  */
@@ -70,6 +71,7 @@ export function initializeHighlight(graphComponent) {
         zoomPolicy: StyleIndicatorZoomPolicy.WORLD_COORDINATES
       })
   )
+
   // initialize the input mode so that the highlight occurs when an edge or an edge label is being hovered
   const mode = graphComponent.inputMode
   mode.itemHoverInputMode.enabled = true
@@ -78,6 +80,7 @@ export function initializeHighlight(graphComponent) {
     // remove all previous highlighting
     const highlights = graphComponent.highlights
     highlights.clear()
+
     const item = evt.item
     if (item instanceof IEdge) {
       // when an edge is being hovered, highlight first the edge and then its associated labels,
@@ -93,11 +96,13 @@ export function initializeHighlight(graphComponent) {
       highlights.add(item)
     }
   })
+
   // when a label text changes or a label is added to an edge, clear all previous highlighting for
   // cosmetic reasons
   mode.editLabelInputMode.addEventListener('label-edited', async () => {
     graphComponent.highlights.clear()
   })
+
   mode.addEventListener('label-added', async () => {
     graphComponent.highlights.clear()
   })

@@ -86,11 +86,7 @@ function createGraph(graphComponent: GraphComponent, map: LeafletMap): void {
 
   // read the graph from the data
   const builder = new GraphBuilder(graph)
-  builder.createNodesSource({
-    data: flightData.airports,
-    id: 'iata',
-    labels: ['name']
-  })
+  builder.createNodesSource({ data: flightData.airports, id: 'iata', labels: ['name'] })
   builder.createEdgesSource(flightData.connections, 'from', 'to')
 
   builder.buildGraph()

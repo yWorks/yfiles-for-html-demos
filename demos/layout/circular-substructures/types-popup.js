@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { NodeTypePanel } from '@yfiles/demo-utils/NodeTypePanel'
 import { colorSets, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+
 /**
  * The color sets for the eight different node types.
  */
@@ -41,12 +42,14 @@ export const nodeTypeColors = [
   'demo-palette-12',
   'demo-palette-14'
 ]
+
 /**
  * Gets the type of the given node by querying it from the node's tag.
  */
 export function getNodeType(node) {
   return node.tag?.type ?? 0
 }
+
 /**
  * Sets the type for the given node by updating the node's tag and the according style.
  * This function is invoked when the type of node is changed via the type panel.
@@ -55,6 +58,7 @@ export function setNodeType(node, type) {
   // set a new tag and style so that this change is easily undo-able
   node.tag = { type: type }
 }
+
 /**
  * Initializes the context menu for changing a node's type.
  */
@@ -65,6 +69,7 @@ export function initializeTypePanel(graphComponent) {
     setNodeType(node, newType)
     graph.setStyle(node, createDemoNodeStyle(nodeTypeColors[newType]))
   }
+
   // update the nodes whose types will be changed on selection change events
   graphComponent.selection.addEventListener(
     'item-added',
@@ -73,5 +78,6 @@ export function initializeTypePanel(graphComponent) {
         .filter((n) => !graph.isGroupNode(n))
         .toArray())
   )
+
   return typePanel
 }

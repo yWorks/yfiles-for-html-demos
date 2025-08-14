@@ -34,6 +34,7 @@ import {
   GraphEditorInputMode,
   HandlePositions,
   HandleType,
+  IGraph,
   IHandle,
   IInputModeContext,
   INode,
@@ -83,10 +84,10 @@ class ClickableNodeReshapeHandlerHandle extends BaseClass(IHandle) {
   }
 
   /**
-   * Modifies the wrapped {@link IHandle.type} by combining it with {@link HandleType.MOVE3}.
+   * Changes the wrapped round handles to quadratic ones to visualize the state.
    */
   get type(): HandleType {
-    return this.state.keepAspectRatio ? (this.wrapped.type |= HandleType.MOVE3) : this.wrapped.type
+    return this.state.keepAspectRatio ? HandleType.CUSTOM2 : this.wrapped.type
   }
 
   get tag(): any {
@@ -123,16 +124,30 @@ export class ApplicationState {
   }
 
   private readonly graphEditorInputMode: GraphEditorInputMode
+  private graph: IGraph
 
   private _keepAspectRatio = false
 
-  constructor(graphEditorInputMode: GraphEditorInputMode, keepAspectRatio: boolean) {
+  constructor(graphEditorInputMode: GraphEditorInputMode, graph: IGraph, keepAspectRatio: boolean) {
     this.graphEditorInputMode = graphEditorInputMode
+    this.graph = graph
     this._keepAspectRatio = keepAspectRatio
   }
 
   public toggleAspectRatio(): void {
     this._keepAspectRatio = !this._keepAspectRatio
     this.graphEditorInputMode.requeryHandles()
+    this.updateLabel()
+  }
+
+  private updateLabel() {
+    const goldNode = this.graph.nodes.find((n) => n.tag === 'gold')
+    if (goldNode) {
+      const label = goldNode.labels.first()
+      if (label) {
+        const stateString = this._keepAspectRatio ? 'keep' : "don't keep"
+        this.graph.setLabelText(label, label.text.replace(/:\n.*/, `:\n ${stateString}`))
+      }
+    }
   }
 }

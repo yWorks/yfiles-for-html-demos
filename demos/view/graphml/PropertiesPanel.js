@@ -29,6 +29,7 @@
 import { HashMap, IEdge, IModelItem, INode, IPort, KeyScope, KeyType, List } from '@yfiles/yfiles'
 import { GraphMLProperty } from './GraphMLProperty'
 import { PropertiesPanelUI } from './PropertiesPanelUI'
+
 /**
  * A panel that displays custom data associated with the graph and the current item.
  */
@@ -38,8 +39,10 @@ export class PropertiesPanel {
   _currentItem = null
   ui
   somethingChangedListener = () => {}
+
   constructor(div) {
     this.ui = new PropertiesPanelUI(div)
+
     // register the callback that is called when a new item property has been added
     this.ui.itemPropertyAddedCallback = (name, value) => {
       const scope = this.getCurrentItemScope()
@@ -70,6 +73,7 @@ export class PropertiesPanel {
       this.onSomethingChanged()
     }
   }
+
   /**
    * Gets the graph and item properties.
    */
@@ -79,6 +83,7 @@ export class PropertiesPanel {
     list.addRange(this.graphMap.keys)
     return list
   }
+
   /**
    * Adds a new item property with the given name, type and scope.
    */
@@ -87,9 +92,11 @@ export class PropertiesPanel {
     property.name = propertyName
     property.type = type
     property.keyScope = keyScope
+
     this.itemMap.set(property, new HashMap())
     return property
   }
+
   /**
    * Adds a new graph property with the given name and type.
    */
@@ -98,9 +105,11 @@ export class PropertiesPanel {
     property.name = propertyName
     property.type = type
     property.keyScope = KeyScope.GRAPH
+
     this.graphMap.set(property, null)
     return property
   }
+
   /**
    * Gets the value for a given item and property.
    */
@@ -111,6 +120,7 @@ export class PropertiesPanel {
     }
     return null
   }
+
   /**
    * Sets the property value for a given item.
    */
@@ -120,6 +130,7 @@ export class PropertiesPanel {
       propertiesMap.set(item, value)
     }
   }
+
   /**
    * Gets the graph value for the given property.
    */
@@ -129,12 +140,14 @@ export class PropertiesPanel {
     }
     return null
   }
+
   /**
    * Sets the graph value for the given property.
    */
   setGraphProperty(property, value) {
     this.graphMap.set(property, value)
   }
+
   /**
    * Clears the current properties.
    */
@@ -143,9 +156,11 @@ export class PropertiesPanel {
     this.graphMap.clear()
     this.ui.clearAllProperties()
   }
+
   get currentItem() {
     return this._currentItem
   }
+
   /**
    * Sets the item that is currently being displayed.
    */
@@ -153,6 +168,7 @@ export class PropertiesPanel {
     this.ui.setCurrentItemVisibility(!!currentItem)
     this.ui.clearItemProperties()
     this._currentItem = currentItem
+
     if (currentItem) {
       this.itemMap.keys.forEach((property) => {
         if (PropertiesPanel.suitsScope(currentItem, property.keyScope)) {
@@ -161,6 +177,7 @@ export class PropertiesPanel {
       })
     }
   }
+
   /**
    * Displays the graph properties in the UI after all properties have been added.
    */
@@ -169,6 +186,7 @@ export class PropertiesPanel {
       this.ui.addGraphProperty(property, this.graphMap.get(property))
     })
   }
+
   /**
    * Parses the string value for the given key type.
    * @param newVal The value to parse
@@ -191,6 +209,7 @@ export class PropertiesPanel {
         return newVal
     }
   }
+
   /**
    * Gets the scope that fits the current item.
    */
@@ -206,6 +225,7 @@ export class PropertiesPanel {
     }
     return null
   }
+
   /**
    * Checks if the given item suits the given scope.
    */
@@ -223,6 +243,7 @@ export class PropertiesPanel {
         return false
     }
   }
+
   /**
    * Called when data has changed.
    * @param listener the listener which gets notified when something changed.
@@ -230,12 +251,14 @@ export class PropertiesPanel {
   setSomethingChangedListener(listener) {
     this.somethingChangedListener = listener
   }
+
   /**
    * Called when data has changed.
    */
   removeSomethingChangedListener() {
     this.somethingChangedListener = () => {}
   }
+
   /**
    * Notifies the listener if there is one that something changed.
    */

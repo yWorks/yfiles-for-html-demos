@@ -71,14 +71,8 @@ describe('Wdio Demo', () => {
     it('an edge should be created', async () => {
       expect(await WdioDemoPage.edgeCount).toEqual(0)
 
-      const startLocation = {
-        x: 900,
-        y: 500
-      }
-      const endLocation = {
-        x: 1100,
-        y: 500
-      }
+      const startLocation = { x: 900, y: 500 }
+      const endLocation = { x: 1100, y: 500 }
 
       // create two nodes
       await new MouseAction().clickAt(startLocation).clickAt(endLocation).perform()
@@ -99,22 +93,10 @@ describe('Wdio Demo', () => {
 
   describe('When clicking while creating an edge', () => {
     it('bends should be created', async () => {
-      const startLocation = {
-        x: 900,
-        y: 500
-      }
-      const bend1Location = {
-        x: 900,
-        y: 600
-      }
-      const bend2Location = {
-        x: 1100,
-        y: 600
-      }
-      const endLocation = {
-        x: 1100,
-        y: 500
-      }
+      const startLocation = { x: 900, y: 500 }
+      const bend1Location = { x: 900, y: 600 }
+      const bend2Location = { x: 1100, y: 600 }
+      const endLocation = { x: 1100, y: 500 }
 
       // create two nodes
       await new MouseAction().clickAt(startLocation).clickAt(endLocation).perform()

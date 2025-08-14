@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { PortStyleBase, Rect, SvgVisual } from '@yfiles/yfiles'
+
 export class CollapseExpandPortStyle extends PortStyleBase {
   renderSize
   isCollapsed
@@ -35,10 +36,12 @@ export class CollapseExpandPortStyle extends PortStyleBase {
     this.renderSize = renderSize
     this.isCollapsed = isCollapsed
   }
+
   createVisual(_context, port) {
     const halfWidth = this.renderSize.width * 0.5
     const halfHeight = this.renderSize.height * 0.5
     const collapsed = this.isCollapsed(port)
+
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const portElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     portElement.classList.add('port')
@@ -64,11 +67,12 @@ export class CollapseExpandPortStyle extends PortStyleBase {
     verticalLine.setAttribute('x2', '0')
     verticalLine.setAttribute('y2', '1')
     portElement.appendChild(verticalLine)
+
     SvgVisual.setTranslate(container, port.location.x, port.location.y)
-    return SvgVisual.from(container, {
-      collapsed: collapsed
-    })
+
+    return SvgVisual.from(container, { collapsed: collapsed })
   }
+
   updateVisual(_context, oldVisual, port) {
     const container = oldVisual.svgElement
     const collapsed = this.isCollapsed(port)
@@ -82,6 +86,7 @@ export class CollapseExpandPortStyle extends PortStyleBase {
     SvgVisual.setTranslate(container, port.location.x, port.location.y)
     return oldVisual
   }
+
   getBounds(_context, port) {
     const { width, height } = this.renderSize
     return new Rect(port.location.x - width * 0.5, port.location.y - height * 0.5, width, height)

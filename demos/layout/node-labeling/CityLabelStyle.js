@@ -44,6 +44,7 @@ import {
   SvgVisual,
   SvgVisualGroup
 } from '@yfiles/yfiles'
+
 /**
  * This class is an example for a custom style based on the {@link LabelStyleBase}.
  * For each label, an edge is created that connects the label to its owner node.
@@ -52,10 +53,12 @@ export class CityLabelStyle extends LabelStyleBase {
   connectorEdgeStyle = new PolylineEdgeStyle({ stroke: '#662b00' })
   ownerPortLocation = FreeNodePortLocationModel.CENTER
   labelPortLocation = FreeNodePortLocationModel.CENTER
+
   /**
    * The style that will be used for the label rendering
    */
   innerLabelStyle
+
   /**
    * Initializes a new instance of CityLabelStyle.
    */
@@ -63,6 +66,7 @@ export class CityLabelStyle extends LabelStyleBase {
     super()
     this.innerLabelStyle = innerLabelStyle
   }
+
   /**
    * Creates the visual for a label to be drawn.
    * @param context The render context
@@ -72,6 +76,7 @@ export class CityLabelStyle extends LabelStyleBase {
   createVisual(context, label) {
     // create a visual group
     const group = new SvgVisualGroup()
+
     const connectorEdge = this.createConnectorEdge(label)
     const connectorVisual = this.connectorEdgeStyle.renderer
       .getVisualCreator(connectorEdge, this.connectorEdgeStyle)
@@ -79,14 +84,17 @@ export class CityLabelStyle extends LabelStyleBase {
     if (connectorVisual) {
       group.add(connectorVisual)
     }
+
     const labelVisual = this.innerLabelStyle.renderer
       .getVisualCreator(label, this.innerLabelStyle)
       .createVisual(context)
     if (labelVisual) {
       group.add(labelVisual)
     }
+
     return group
   }
+
   /**
    * Re-renders the label using the old visual for performance reasons.
    * @param context The render context
@@ -105,14 +113,17 @@ export class CityLabelStyle extends LabelStyleBase {
     if (connectorVisual) {
       oldVisual.children.set(0, connectorVisual)
     }
+
     const labelVisual = this.innerLabelStyle.renderer
       .getVisualCreator(label, this.innerLabelStyle)
       .updateVisual(context, oldVisual.children.get(1))
     if (labelVisual) {
       oldVisual.children.set(1, labelVisual)
     }
+
     return oldVisual
   }
+
   /**
    * Creates the edge that connects the label with its owner node.
    * @param label The given label
@@ -123,12 +134,14 @@ export class CityLabelStyle extends LabelStyleBase {
     const labelNodeDummy = new SimpleNode()
     labelNodeDummy.layout = label.layout.bounds
     labelNodeDummy.style = new ShapeNodeStyle()
+
     const simpleEdge = new SimpleEdge()
     simpleEdge.style = this.connectorEdgeStyle
     simpleEdge.sourcePort = new SimplePort(labelNodeDummy, this.labelPortLocation)
     simpleEdge.targetPort = new SimplePort(label.owner, this.ownerPortLocation)
     return simpleEdge
   }
+
   /**
    * Returns the preferred size of the given label.
    * @param label The given label
@@ -137,6 +150,7 @@ export class CityLabelStyle extends LabelStyleBase {
   getPreferredSize(label) {
     return this.innerLabelStyle.renderer.getPreferredSize(label, this.innerLabelStyle)
   }
+
   /**
    * Determines whether the visualization for the specified label is visible in the context.
    * @param context The canvas context
@@ -151,6 +165,7 @@ export class CityLabelStyle extends LabelStyleBase {
     if (isInnerLabelVisible) {
       return true
     }
+
     const connectorEdge = this.createConnectorEdge(label)
     return this.connectorEdgeStyle.renderer
       .getVisibilityTestable(connectorEdge, this.connectorEdgeStyle)

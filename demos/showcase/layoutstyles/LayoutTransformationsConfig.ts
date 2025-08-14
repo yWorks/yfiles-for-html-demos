@@ -29,7 +29,9 @@
 import {
   Class,
   GraphComponent,
+  HierarchicalLayoutData,
   ILayoutAlgorithm,
+  LayoutData,
   LayoutTransformations,
   SubgraphLayoutStage
 } from '@yfiles/yfiles'
@@ -60,17 +62,17 @@ export const LayoutTransformationsConfig = (Class as any)('LayoutTransformations
     ],
     RotateGroup: [
       new LabelAttribute('Rotate'),
-      new OptionGroupAttribute('GeneralGroup', 20),
+      new OptionGroupAttribute('GeneralGroup', 30),
       new TypeAttribute(OptionGroup)
     ],
     ScaleGroup: [
       new LabelAttribute('Scale'),
-      new OptionGroupAttribute('GeneralGroup', 30),
+      new OptionGroupAttribute('GeneralGroup', 40),
       new TypeAttribute(OptionGroup)
     ],
     TranslateGroup: [
       new LabelAttribute('Translate'),
-      new OptionGroupAttribute('GeneralGroup', 40),
+      new OptionGroupAttribute('GeneralGroup', 50),
       new TypeAttribute(OptionGroup)
     ],
     descriptionText: [
@@ -171,11 +173,10 @@ export const LayoutTransformationsConfig = (Class as any)('LayoutTransformations
 
   /**
    * Creates and configures a layout.
-   * @param graphComponent The {@link GraphComponent} to apply the
-   *   configuration on.
+   * @param _graphComponent The {@link GraphComponent} to apply the configuration on.
    * @returns The configured layout algorithm.
    */
-  createConfiguredLayout: function (graphComponent: GraphComponent): ILayoutAlgorithm {
+  createConfiguredLayout: function (_graphComponent: GraphComponent): ILayoutAlgorithm {
     let stage
     switch (this.operationItem) {
       case OperationType.MIRROR_X_AXIS:
@@ -207,6 +208,19 @@ export const LayoutTransformationsConfig = (Class as any)('LayoutTransformations
     }
 
     return this.actOnSelectionOnlyItem ? new SubgraphLayoutStage(stage) : stage!
+  },
+
+  /**
+   * Creates and configures the layout data.
+   * @returns The configured layout data.
+   */
+  createConfiguredLayoutData: function (
+    graphComponent: GraphComponent,
+    _layout: ILayoutAlgorithm
+  ): LayoutData {
+    return this.actOnSelectionOnlyItem
+      ? this.createSubgraphLayoutData(graphComponent)
+      : new HierarchicalLayoutData()
   },
 
   /** @type {OptionGroup} */

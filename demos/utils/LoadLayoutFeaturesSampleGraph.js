@@ -47,13 +47,16 @@ import {
   Stroke,
   VerticalTextAlignment
 } from '@yfiles/yfiles'
+
 /**
  * @yjs:keep = nodeList,edgeList
  */
 export async function loadLayoutSampleGraph(graph, fileName) {
   const response = await fetch(fileName)
   const data = await response.json()
+
   initStyles(graph)
+
   const builder = new GraphBuilder(graph)
   const nodesSource = builder.createNodesSource({
     data: data.nodeList.filter((node) => !node.isGroup),
@@ -68,14 +71,18 @@ export async function loadLayoutSampleGraph(graph, fileName) {
     tag: 'tag',
     layout: 'layout'
   })
+
   const nodeCreator = nodesSource.nodeCreator
   nodeCreator.styleProvider = (data) => getNodeStyle(data)
+
   const nodeLabelCreator = nodeCreator.createLabelsSource((data) => data.labels || []).labelCreator
   nodeLabelCreator.textProvider = (data) => data.text
   nodeLabelCreator.layoutParameterProvider = () => InteriorNodeLabelModel.CENTER
   nodeLabelCreator.styleProvider = (data) => getLabelStyle(2.5, data)
+
   const groupCreator = groupSource.nodeCreator
   groupCreator.styleProvider = (data) => getGroupNodeStyle(data)
+
   const groupLabelCreator = groupCreator.createLabelsSource(
     (data) => data.labels || []
   ).labelCreator
@@ -83,6 +90,7 @@ export async function loadLayoutSampleGraph(graph, fileName) {
   groupLabelCreator.layoutParameterProvider = () =>
     new GroupNodeLabelModel().createTabBackgroundParameter()
   groupLabelCreator.styleProvider = () => getGroupLabelStyle()
+
   const edgesSource = builder.createEdgesSource({
     data: data.edgeList,
     id: 'id',
@@ -93,12 +101,15 @@ export async function loadLayoutSampleGraph(graph, fileName) {
   })
   const edgeCreator = edgesSource.edgeCreator
   edgeCreator.styleProvider = (data) => getEdgeStyle(data)
+
   const edgeLabelCreator = edgeCreator.createLabelsSource((data) => data.labels || []).labelCreator
   edgeLabelCreator.textProvider = (data) => data.text || ''
   edgeLabelCreator.layoutParameterProvider = () => new FreeEdgeLabelModel().createParameter()
   edgeLabelCreator.styleProvider = (data) => getLabelStyle(2.0, data)
+
   builder.buildGraph()
 }
+
 function initStyles(graph) {
   graph.nodeDefaults.style = getNodeStyle(null)
   graph.edgeDefaults.style = getEdgeStyle(null)
@@ -112,6 +123,7 @@ function initStyles(graph) {
   graph.groupNodeDefaults.labels.layoutParameter =
     new GroupNodeLabelModel().createTabBackgroundParameter()
 }
+
 function getGroupLabelStyle() {
   return new LabelStyle({
     verticalTextAlignment: 'center',
@@ -119,14 +131,12 @@ function getGroupLabelStyle() {
     textFill: '#9CC5CF'
   })
 }
+
 function getGroupNodeStyle(data) {
   const fill = data && data.fill ? data.fill : '#0B7189'
-  return new GroupNodeStyle({
-    tabFill: fill,
-    stroke: `2px solid ${fill}`,
-    tabPosition: 'top'
-  })
+  return new GroupNodeStyle({ tabFill: fill, stroke: `2px solid ${fill}`, tabPosition: 'top' })
 }
+
 function getNodeStyle(data) {
   return new ShapeNodeStyle({
     shape: data && data.shape ? data.shape : 'round-rectangle',
@@ -134,6 +144,7 @@ function getNodeStyle(data) {
     stroke: data && data.stroke ? data.stroke : '1.5px #662b00'
   })
 }
+
 function getEdgeStyle(data) {
   const stroke = Stroke.from((data && data.stroke) || '1.5px #662b00')
   return new PolylineEdgeStyle({
@@ -142,6 +153,7 @@ function getEdgeStyle(data) {
     targetArrow: getArrow(data ? data.targetArrow : null, stroke)
   })
 }
+
 function getArrow(dataArrow, stroke) {
   if (!dataArrow) {
     return IArrow.NONE
@@ -154,6 +166,7 @@ function getArrow(dataArrow, stroke) {
   //custom arrow from json data, use it directly
   return IArrow.from(dataArrow)
 }
+
 function getLabelStyle(rounding, data) {
   const labelStyle = new LabelStyle()
   labelStyle.shape = LabelShape.ROUND_RECTANGLE

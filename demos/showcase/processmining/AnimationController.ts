@@ -33,7 +33,7 @@ import { Animator, GraphComponent, TimeSpan } from '@yfiles/yfiles'
  * It handles the state of the animation and updates the progress via a callback function.
  */
 export class AnimationController {
-  animator: Animator
+  private readonly animator: Animator
   running: boolean
   setProgress: (value: number) => void
 
@@ -59,30 +59,26 @@ export class AnimationController {
 
   /**
    * Starts the animation.
+   * @param startTime start time in seconds to determine the duration of the animation
    */
-  async runAnimation(): Promise<void> {
-    if (!this.running) {
-      await this.animator.animate(this.setProgress, this.maxTime)
-      this.running = false
-    }
-  }
-
-  /**
-   * Restarts the animation.
-   */
-  async restartAnimation(): Promise<void> {
-    if (this.animator) {
-      this.animator.stop()
-      this.animator.paused = false
-    }
+  async startAnimation(startTime: number) {
+    if (!this.animator) return
+    this.animator.stop()
+    this.running = true
+    const duration = TimeSpan.fromSeconds(this.maxTime.totalSeconds - startTime)
+    await this.animator.animate((progress) => {
+      const currentTime = startTime + (this.maxTime.totalSeconds - startTime) * progress
+      this.setProgress(currentTime)
+    }, duration)
     this.running = false
-    await this.runAnimation()
   }
 
   /**
-   * Pauses the animation.
+   * Stops the animation.
    */
-  pauseAnimation(): void {
-    this.animator.paused = !this.animator.paused
+  stopAnimation() {
+    if (!this.animator) return
+    this.animator.stop()
+    this.running = false
   }
 }

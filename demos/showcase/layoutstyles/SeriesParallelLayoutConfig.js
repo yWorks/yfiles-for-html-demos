@@ -39,7 +39,9 @@ import {
   SeriesParallelLayoutRoutingStyle,
   StraightLineEdgeRouter
 } from '@yfiles/yfiles'
+
 import { LayoutConfiguration } from './LayoutConfiguration'
+
 import {
   ComponentAttribute,
   Components,
@@ -50,17 +52,20 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
+
 var NonSeriesParallelRoutingStyle
 ;(function (NonSeriesParallelRoutingStyle) {
   NonSeriesParallelRoutingStyle[(NonSeriesParallelRoutingStyle['ORTHOGONAL'] = 0)] = 'ORTHOGONAL'
   NonSeriesParallelRoutingStyle[(NonSeriesParallelRoutingStyle['ORGANIC'] = 1)] = 'ORGANIC'
   NonSeriesParallelRoutingStyle[(NonSeriesParallelRoutingStyle['STRAIGHT'] = 2)] = 'STRAIGHT'
 })(NonSeriesParallelRoutingStyle || (NonSeriesParallelRoutingStyle = {}))
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     generalGroup: [
       new LabelAttribute('General'),
@@ -269,11 +274,13 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
       new TypeAttribute(Number)
     ]
   },
+
   constructor: function () {
     // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
     const layout = new SeriesParallelLayout()
     const edgeDescriptor = layout.defaultEdgeDescriptor
+
     this.orientationItem = LayoutOrientation.TOP_TO_BOTTOM
     this.parallelSubgraphAlignmentItem = 0.5
     this.useDrawingAsSketchItem = layout.fromSketchMode
@@ -282,6 +289,7 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
     this.minimumEdgeDistanceItem = 15
     this.considerNodeLabelsItem = true
     this.placeEdgeLabelsItem = true
+
     this.portStyleItem = SeriesParallelLayoutPortAssignmentMode.CENTER
     this.routingStyleItem = SeriesParallelLayoutRoutingStyle.ORTHOGONAL
     this.preferredOctilinearSegmentLengthItem = layout.preferredOctilinearSegmentLength
@@ -293,6 +301,7 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
     this.minimumEdgeLengthItem = 20
     this.title = 'Series-Parallel Layout'
   },
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the configuration on.
@@ -300,6 +309,7 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
    */
   createConfiguredLayout: function (graphComponent) {
     const layout = new SeriesParallelLayout()
+
     layout.layoutOrientation = this.orientationItem
     layout.parallelSubgraphAlignment = this.parallelSubgraphAlignmentItem
     layout.fromSketchMode = this.useDrawingAsSketchItem
@@ -308,8 +318,10 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
     layout.minimumEdgeDistance = this.minimumEdgeDistanceItem
     layout.nodeLabelPlacement = this.considerNodeLabelsItem ? 'consider' : 'ignore'
     layout.edgeLabelPlacement = this.placeEdgeLabelsItem ? 'integrated' : 'ignore'
+
     const portAssignment = layout.defaultPortAssigner
     portAssignment.mode = this.portStyleItem
+
     layout.edgeRoutingStyle = this.routingStyleItem
     if (this.routingStyleItem === SeriesParallelLayoutRoutingStyle.OCTILINEAR) {
       layout.preferredOctilinearSegmentLength = this.preferredOctilinearSegmentLengthItem
@@ -317,85 +329,111 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
       layout.minimumPolylineSegmentLength = this.minimumPolylineSegmentLengthItem
       layout.minimumSlope = this.minimumSlopeItem
     }
+
     if (this.routingStyleNonSeriesParallelItem === NonSeriesParallelRoutingStyle.ORTHOGONAL) {
-      layout.nonSeriesParallelEdgeRouter = new EdgeRouter({
-        rerouting: true
-      })
+      layout.nonSeriesParallelEdgeRouter = new EdgeRouter({ rerouting: true })
     } else if (this.routingStyleNonSeriesParallelItem === NonSeriesParallelRoutingStyle.ORGANIC) {
       layout.nonSeriesParallelEdgeRouter = new OrganicEdgeRouter()
     } else if (this.routingStyleNonSeriesParallelItem === NonSeriesParallelRoutingStyle.STRAIGHT) {
       layout.nonSeriesParallelEdgeRouter = new StraightLineEdgeRouter()
     }
+
     const edgeDescriptor = layout.defaultEdgeDescriptor
     edgeDescriptor.minimumFirstSegmentLength = this.minimumFirstSegmentLengthItem
     edgeDescriptor.minimumLastSegmentLength = this.minimumLastSegmentLengthItem
     edgeDescriptor.minimumLength = this.minimumEdgeLengthItem
+
     return layout
   },
+
   /** @type {OptionGroup} */
   generalGroup: null,
+
   /** @type {OptionGroup} */
   edgesGroup: null,
+
   /** @type {string} */
   descriptionText: {
     get: function () {
       return '<p>The series-parallel layout algorithm highlights the main direction or flow of a graph, similar to the hierarchical style. In comparison, this algorithm is usually faster but can be used only on special graphs, namely series-parallel graphs.</p>'
     }
   },
+
   /** @type {LayoutOrientation} */
   orientationItem: null,
+
   /** @type {number} */
   parallelSubgraphAlignmentItem: 0,
+
   /** @type {boolean} */
   useDrawingAsSketchItem: false,
+
   /** @type {OptionGroup} */
   distanceGroup: null,
+
   /** @type {number} */
   minimumNodeToNodeDistanceItem: 0,
+
   /** @type {number} */
   minimumNodeToEdgeDistanceItem: 0,
+
   /** @type {number} */
   minimumEdgeDistanceItem: 0,
+
   /** @type {OptionGroup} */
   labelingGroup: null,
+
   /** @type {boolean} */
   considerNodeLabelsItem: false,
+
   /** @type {boolean} */
   placeEdgeLabelsItem: false,
+
   /** @type {SeriesParallelLayoutPortAssignmentMode} */
   portStyleItem: null,
+
   /** @type {SeriesParallelLayoutRoutingStyle} */
   routingStyleItem: null,
+
   /** @type {number} */
   preferredOctilinearSegmentLengthItem: 0,
+
   /** @type {boolean} */
   shouldDisablePreferredOctilinearSegmentLengthItem: {
     get: function () {
       return this.routingStyleItem !== SeriesParallelLayoutRoutingStyle.OCTILINEAR
     }
   },
+
   /** @type {number} */
   minimumPolylineSegmentLengthItem: 0,
+
   /** @type {boolean} */
   shouldDisableMinimumPolylineSegmentLengthItem: {
     get: function () {
       return this.routingStyleItem !== SeriesParallelLayoutRoutingStyle.POLYLINE
     }
   },
+
   /** @type {number} */
   minimumSlopeItem: 0,
+
   /** @type {boolean} */
   shouldDisableMinimumSlopeItem: {
     get: function () {
       return this.routingStyleItem !== SeriesParallelLayoutRoutingStyle.POLYLINE
     }
   },
+
   /** @type {string} */
   routingStyleNonSeriesParallelItem: null,
+
   /** @type {number} */
   minimumFirstSegmentLengthItem: 0,
+
   /** @type {number} */
   minimumLastSegmentLengthItem: 0,
+
   /** @type {number} */
   minimumEdgeLengthItem: 0
 })

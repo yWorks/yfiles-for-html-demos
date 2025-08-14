@@ -252,10 +252,7 @@ function initializeUndoEngine(graph: IGraph): void {
  * calculations to serve as obstacles for edge path routing (thereby simulating the maze).
  */
 function createSampleGraph(graph: IGraph): void {
-  const mazeNodeStyle = new ShapeNodeStyle({
-    fill: '#242265',
-    stroke: null
-  })
+  const mazeNodeStyle = new ShapeNodeStyle({ fill: '#242265', stroke: null })
 
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({

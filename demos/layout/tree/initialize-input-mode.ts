@@ -59,13 +59,9 @@ export function initializesInputMode(
     selectableItems: 'node',
     deletableItems: 'node',
     focusableItems: 'none',
-    createEdgeInputMode: {
-      priority: 45
-    },
+    createEdgeInputMode: { priority: 45 },
     // forbid moving unselected items
-    moveUnselectedItemsInputMode: {
-      enabled: false
-    }
+    moveUnselectedItemsInputMode: { enabled: false }
   })
 
   // always delete the whole subtree
@@ -111,11 +107,7 @@ export function initializesInputMode(
       node.tag.assistant = !node.tag.assistant
       const nodeStyle = node.style.clone()
       ;(nodeStyle as ShapeNodeStyle).stroke = node.tag.assistant
-        ? new Stroke({
-            fill: 'black',
-            thickness: 2,
-            dashStyle: 'dash'
-          })
+        ? new Stroke({ fill: 'black', thickness: 2, dashStyle: 'dash' })
         : null
       graphComponent.graph.setStyle(node, nodeStyle)
       await layoutCallback(false)

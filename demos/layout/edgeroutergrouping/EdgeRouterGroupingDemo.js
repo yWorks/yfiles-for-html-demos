@@ -60,12 +60,16 @@ import {
   SvgVisualGroup,
   Visual
 } from '@yfiles/yfiles'
+
 import SampleData from './resources/SampleData'
 import { createDemoNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent
+
 let portGroupMode = false
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
@@ -73,14 +77,17 @@ async function run() {
   createSampleGraph()
   initializeUI()
 }
+
 /**
  * Applies the {@link EdgeRouter} to the current graph including the edge/port group information in
  * the edges' tags.
  */
 async function runEdgeRouter() {
   setUIDisabled(true)
+
   const layout = new EdgeRouter()
   const layoutData = new EdgeRouterData()
+
   if (portGroupMode) {
     layoutData.ports.sourcePortGroupIds = (edge) =>
       edge.tag && edge.tag.sourceGroupId ? edge.tag.sourceGroupId : null
@@ -92,12 +99,15 @@ async function runEdgeRouter() {
     layoutData.targetGroupIds = (edge) =>
       edge.tag && edge.tag.targetGroupId ? edge.tag.targetGroupId : null
   }
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   await graphComponent.applyLayoutAnimated(layout, '700ms', layoutData)
   setUIDisabled(false)
 }
+
 function createSampleGraph() {
   const graph = graphComponent.graph
   graph.clear()
@@ -106,24 +116,24 @@ function createSampleGraph() {
   graph.nodeDefaults.size = [50, 30]
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '3px #BBBBBB',
-    targetArrow: new Arrow({
-      fill: '#BBBBBB',
-      type: ArrowType.TRIANGLE
-    }),
+    targetArrow: new Arrow({ fill: '#BBBBBB', type: ArrowType.TRIANGLE }),
     smoothingLength: 15
   })
   graph.edgeDefaults.shareStyleInstance = false
+
   graph.decorator.edges.selectionRenderer.addConstant(
     new EdgeStyleIndicatorRenderer({
       edgeStyle: new HighlightEdgeStyle(),
       zoomPolicy: 'world-coordinates'
     })
   )
+
   const bridgeManager = new BridgeManager({
     canvasComponent: graphComponent,
     defaultBridgeCrossingStyle: BridgeCrossingStyle.GAP
   })
   bridgeManager.addObstacleProvider(new GraphObstacleProvider())
+
   const defaultNodeSize = graph.nodeDefaults.size
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
@@ -131,19 +141,20 @@ function createSampleGraph() {
     id: 'id',
     layout: (data) =>
       new Rect(data.location.x, data.location.y, defaultNodeSize.width, defaultNodeSize.height),
-    tag: (data) => ({
-      id: data.id
-    })
+    tag: (data) => ({ id: data.id })
   })
   builder.createEdgesSource(SampleData.edges, 'from', 'to', 'id')
   builder.buildGraph()
+
   graph.edges.forEach((edge) => {
     edge.tag = edge.tag.groupIds
     updateStyles(edge)
   })
+
   graphComponent.fitGraphBounds()
   runEdgeRouter()
 }
+
 /**
  * Updates the selection when an item is right-clicked for a context menu.
  */
@@ -163,16 +174,14 @@ function updateSelection(item) {
     }
   }
 }
+
 /**
  * Groups the given edges according to the type. In case 'override' is true, a new tag is set.
  */
 function groupEdges(type, edges, override) {
   const id = Date.now()
   edges.forEach((edge) => {
-    const tag = {
-      sourceGroupId: undefined,
-      targetGroupId: undefined
-    }
+    const tag = { sourceGroupId: undefined, targetGroupId: undefined }
     switch (type) {
       case 'source':
         tag.sourceGroupId = `s ${id} ${hashCode(edge.sourceNode)}`
@@ -186,6 +195,7 @@ function groupEdges(type, edges, override) {
         break
       default:
     }
+
     if (!edge.tag || override || type === 'ungroup') {
       edge.tag = tag
     } else {
@@ -194,14 +204,17 @@ function groupEdges(type, edges, override) {
     }
     updateStyles(edge)
   })
+
   runEdgeRouter()
 }
+
 /**
  * Returns the hash code of the given node.
  */
 function hashCode(node) {
   return node.hashCode()
 }
+
 /**
  * Updates the styles to distinguish the different types of edge/port grouping.
  */
@@ -210,6 +223,7 @@ function updateStyles(edge) {
   if (!tag) {
     return // the ungrouped edge default
   }
+
   let color = '#BBBBBB'
   if (portGroupMode) {
     if (tag.sourceGroupId && tag.targetGroupId) {
@@ -226,6 +240,7 @@ function updateStyles(edge) {
   } else if (tag.targetGroupId) {
     color = '#483D8B'
   }
+
   const portStyle = new ShapePortStyle({
     shape: ShapeNodeShape.ELLIPSE,
     fill: color,
@@ -242,6 +257,7 @@ function updateStyles(edge) {
   } else {
     graphComponent.graph.setStyle(edge.targetPort, IPortStyle.VOID_PORT_STYLE)
   }
+
   graphComponent.graph.setStyle(
     edge,
     new PolylineEdgeStyle({
@@ -256,6 +272,7 @@ function updateStyles(edge) {
     })
   )
 }
+
 /**
  * Sets a {@link GraphEditorInputMode} and initializes the context menu.
  */
@@ -263,9 +280,11 @@ function configureInteraction() {
   const inputMode = new GraphEditorInputMode({
     selectableItems: GraphItemTypes.EDGE | GraphItemTypes.NODE
   })
+
   inputMode.addEventListener('populate-item-context-menu', (evt) => populateContextMenu(evt))
   graphComponent.inputMode = inputMode
 }
+
 /**
  * Adds menu items to the context menu depending on what type of graph element was hit.
  */
@@ -273,12 +292,14 @@ function populateContextMenu(args) {
   if (args.handled) {
     return
   }
+
   let item = args.item
   const selection = graphComponent.selection
   if (!item && selection.edges.size > 0) {
     item = selection.edges.first()
   }
   updateSelection(item)
+
   const menuItems = []
   if (item instanceof IEdge) {
     const selectedEdges = selection.edges.toArray()
@@ -409,6 +430,7 @@ function populateContextMenu(args) {
     args.contextMenu = menuItems
   }
 }
+
 /**
  * Binds the various actions to the buttons in the toolbar.
  */
@@ -424,6 +446,7 @@ function initializeUI() {
     await runEdgeRouter()
   })
 }
+
 /**
  * Disables the HTML elements of the UI.
  * @param disabled true if the element should be disabled, false otherwise
@@ -434,6 +457,7 @@ function setUIDisabled(disabled) {
   document.querySelector('#toggle-port-group-mode').disabled = disabled
   graphComponent.inputMode.enabled = !disabled
 }
+
 /**
  * An edge style to draw the selection highlight 'below' the edge.
  */
@@ -469,10 +493,13 @@ class HighlightEdgeStyle extends EdgeStyleBase {
     )
     highlight.appendChild(highlightPath)
     highlight.setAttribute('opacity', '0.75')
+
     const highlightVisual = new SvgVisual(highlight)
     visualGroup.add(highlightVisual)
     visualGroup.add(style.renderer.getVisualCreator(edge, style).createVisual(context))
+
     return visualGroup
   }
 }
+
 run().then(finishLoading)

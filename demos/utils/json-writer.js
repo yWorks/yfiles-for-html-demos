@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { serializeLabelModelParameter } from './label-model-serialization'
+
 /**
  * A configuration options object that writes layout information for nodes, edges, and labels.
  */
@@ -39,6 +40,7 @@ export function getDefaultWriterOptions() {
     nodeLabels: (data, node) => {
       data.labels = node.labels.toArray().map((label) => createLabelData(label, 'parameter'))
     },
+
     edgeBends: (data, edge) => {
       data.bends = edge.bends.toArray().map((bend) => toPoint(bend.location))
     },
@@ -51,6 +53,7 @@ export function getDefaultWriterOptions() {
     }
   }
 }
+
 /**
  * Stores the {@link graph} as JSON object with the provided {@link options configuration object}.
  * This implementation always writes the structure of the graph, i.e., its nodes, groups, and edges.
@@ -68,16 +71,16 @@ export function toJSON(graph, options) {
       .map((edge) => createEdgeData(edge, graph, nodeIdProvider, actualOptions))
   }
 }
+
 function createNodeData(node, graph, nodeIdProvider, options) {
-  const nodeData = {
-    id: nodeIdProvider(node)
-  }
+  const nodeData = { id: nodeIdProvider(node) }
   if (graph.isGroupNode(node)) {
     nodeData.isGroup = true
   }
   if (graph.getParent(node) !== null) {
     nodeData.parentId = nodeIdProvider(graph.getParent(node))
   }
+
   if (options.nodeLayout) {
     options.nodeLayout(nodeData, node, graph)
   }
@@ -87,15 +90,19 @@ function createNodeData(node, graph, nodeIdProvider, options) {
   if (options.nodeTag && node.tag != null) {
     options.nodeTag(nodeData, node, graph)
   }
+
   options.nodeDataCreated?.(nodeData, node, graph)
+
   return nodeData
 }
+
 function createEdgeData(edge, graph, nodeIdProvider, options) {
   /* @yjs:keep = source,target */
   const edgeData = {
     source: nodeIdProvider(edge.sourceNode),
     target: nodeIdProvider(edge.targetNode)
   }
+
   if (options.edgePortLocations) {
     options.edgePortLocations(edgeData, edge, graph)
   }
@@ -108,9 +115,12 @@ function createEdgeData(edge, graph, nodeIdProvider, options) {
   if (options.edgeTag && edge.tag != null) {
     options.edgeTag(edgeData, edge, graph)
   }
+
   options.edgeDataCreated?.(edgeData, edge, graph)
+
   return edgeData
 }
+
 /**
  * Creates the JSON label data for the given {@link label}.
  * @param label - The label to convert to data.
@@ -133,12 +143,14 @@ export function createLabelData(label, details = 'none') {
         layoutParameter: serializeLabelModelParameter(label.layoutParameter)
       }
 }
+
 /**
  * Converts the given {@link pointLike} to {@link JSONPoint}.
  */
 function toPoint(pointLike) {
   return [pointLike.x, pointLike.y]
 }
+
 /**
  * Creates an ID provider for nodes that simply enumerates the nodes.
  */

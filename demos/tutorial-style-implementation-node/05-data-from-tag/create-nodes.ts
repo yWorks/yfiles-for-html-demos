@@ -43,8 +43,5 @@ export function createNodes(graph: IGraph): void {
     labels: ['Purple with badge']
   })
 
-  graph.createNode({
-    layout: [70, 150, 100, 70],
-    labels: ['Without tag']
-  })
+  graph.createNode({ layout: [70, 150, 100, 70], labels: ['Without tag'] })
 }

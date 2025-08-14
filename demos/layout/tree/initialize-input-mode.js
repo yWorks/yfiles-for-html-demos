@@ -37,6 +37,7 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 import { LayerColors, SubtreePlacerPanel } from './SubtreePlacerPanel'
+
 /**
  * Initializes interactive behavior
  */
@@ -53,14 +54,11 @@ export function initializesInputMode(graphComponent, subtreePlacerPanel, layoutC
     selectableItems: 'node',
     deletableItems: 'node',
     focusableItems: 'none',
-    createEdgeInputMode: {
-      priority: 45
-    },
+    createEdgeInputMode: { priority: 45 },
     // forbid moving unselected items
-    moveUnselectedItemsInputMode: {
-      enabled: false
-    }
+    moveUnselectedItemsInputMode: { enabled: false }
   })
+
   // always delete the whole subtree
   inputMode.addEventListener('deleting-selection', (evt) => {
     const selectedNodes = evt.selection
@@ -79,6 +77,7 @@ export function initializesInputMode(graphComponent, subtreePlacerPanel, layoutC
   })
   // update the layout and the settings panel when nodes are deleted
   inputMode.addEventListener('deleted-selection', async () => await layoutCallback(false))
+
   // run a layout every time a node/bend is dragged or a node is resized
   inputMode.moveSelectedItemsInputMode.addEventListener(
     'drag-finished',
@@ -88,12 +87,14 @@ export function initializesInputMode(graphComponent, subtreePlacerPanel, layoutC
     'drag-finished',
     async () => await layoutCallback(false)
   )
+
   // update the settings panel when selection changed to be able to edit its subtree placer
   inputMode.addEventListener(
     'multi-selection-finished',
     async (evt) =>
       await subtreePlacerPanel.onNodeSelectionChanged(evt.selection.ofType(INode).toArray())
   )
+
   // toggle the assistant marking for the double-clicked node
   inputMode.addEventListener('item-double-clicked', async (evt) => {
     if (evt.item instanceof INode) {
@@ -101,16 +102,13 @@ export function initializesInputMode(graphComponent, subtreePlacerPanel, layoutC
       node.tag.assistant = !node.tag.assistant
       const nodeStyle = node.style.clone()
       nodeStyle.stroke = node.tag.assistant
-        ? new Stroke({
-            fill: 'black',
-            thickness: 2,
-            dashStyle: 'dash'
-          })
+        ? new Stroke({ fill: 'black', thickness: 2, dashStyle: 'dash' })
         : null
       graphComponent.graph.setStyle(node, nodeStyle)
       await layoutCallback(false)
     }
   })
+
   // labels may influence the order of child nodes, if they are changed a new layout should be calculated
   inputMode.addEventListener('label-added', async (evt) => {
     if (!Number.isNaN(Number(evt.item.text))) {
@@ -122,20 +120,25 @@ export function initializesInputMode(graphComponent, subtreePlacerPanel, layoutC
       await layoutCallback(false)
     }
   })
+
   configureEdgeCreation(inputMode.createEdgeInputMode, graphComponent, layoutCallback)
+
   // assign the input mode to the graph component
   graphComponent.inputMode = inputMode
 }
+
 /**
  * Finds all nodes in the subtree rooted by the selected node and collects them in the given array.
  */
 function collectSubtreeNodes(graphComponent, selectedNode, nodesToDelete) {
   nodesToDelete.push(selectedNode)
+
   graphComponent.graph.outEdgesAt(selectedNode).forEach((outEdge) => {
     const target = outEdge.targetNode
     collectSubtreeNodes(graphComponent, target, nodesToDelete)
   })
 }
+
 /**
  * Modify edge creation to always create a new target node.
  */
@@ -144,6 +147,7 @@ function configureEdgeCreation(createEdgeInputMode, graphComponent, layoutCallba
   createEdgeInputMode.endHitTestable = IHitTestable.NEVER
   // any location is a valid target location
   createEdgeInputMode.prematureEndHitTestable = IHitTestable.ALWAYS
+
   // ignore port candidates and don't show highlights:
   // we don't want to connect to existing nodes
   createEdgeInputMode.forceSnapToCandidate = false
@@ -152,6 +156,7 @@ function configureEdgeCreation(createEdgeInputMode, graphComponent, layoutCallba
   createEdgeInputMode.allowSelfLoops = false
   createEdgeInputMode.startOverCandidateOnly = false
   graphComponent.graph.decorator.nodes.highlightRenderer.hide()
+
   // display the new target node during edge creation
   // provide the default size
   createEdgeInputMode.previewGraph.nodeDefaults.size = graphComponent.graph.nodeDefaults.size
@@ -169,6 +174,7 @@ function configureEdgeCreation(createEdgeInputMode, graphComponent, layoutCallba
     })
     createEdgeInputMode.previewGraph.setStyle(endNode, style)
   })
+
   // let the EdgeCreator create a new target node and connect the new edge to it
   createEdgeInputMode.edgeCreator = (
     context,
@@ -189,9 +195,11 @@ function configureEdgeCreation(createEdgeInputMode, graphComponent, layoutCallba
     // create the edge from the source port candidate to the new node
     return graph.createEdge(sourcePortCandidate.createPort(context), targetPort, previewEdge.style)
   }
+
   // update layout and settings panel when an edge was created
   createEdgeInputMode.addEventListener('edge-created', async () => await layoutCallback(false))
 }
+
 function getLayer(graphComponent, n) {
   let layer = 0
   let node = n

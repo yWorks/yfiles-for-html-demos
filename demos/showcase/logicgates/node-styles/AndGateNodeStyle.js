@@ -37,6 +37,7 @@ import {
   setAttribute
 } from './GateNodeStyle'
 import { LogicGateType } from '../LogicGateType'
+
 /**
  * Node style implementation which renders an AND or NAND gate.
  */
@@ -53,6 +54,7 @@ export class AndGateNodeStyle extends GateNodeStyle {
     this.strokeColor = strokeColor
     this.labelColor = labelColor
   }
+
   /**
    * Creates the Svg elements and adds them to the container.
    * @param container The svg element
@@ -62,38 +64,49 @@ export class AndGateNodeStyle extends GateNodeStyle {
   render(container, cache, node) {
     // store information with the visual on how we created it
     container['data-cache'] = cache
+
     // the size of node
     const size = cache.size
     const width = size.width
     const height = size.height
+
     const isNegated = this.gateType === LogicGateType.NAND
+
     const x1 = width * 0.15
     const x2 = width * 0.6
     const y1 = height * 0.25
     const y2 = height * 0.5
     const y3 = height * 0.75
+
     const firstPoint = new Point(x2, 0)
     const endPoint = new Point(x2, height)
     const c1 = new Point(firstPoint.x + width * 0.3, firstPoint.y + height * 0.1)
     const c2 = new Point(endPoint.x + width * 0.3, endPoint.y - height * 0.1)
     const extremaX = getPointOnCurve(0.5, firstPoint, endPoint, c1, c2)
+
     this.renderMainPart(container, x1, x2, height, c1, c2, endPoint)
     this.renderOutputPort(isNegated, extremaX, width, y2, node, container)
     this.renderInputPorts(y1, x1, y3, node, container)
+
     if (isNegated) {
       appendEllipse(container, extremaX + width * 0.03, height * 0.5, width * 0.03, width * 0.03)
     }
+
     this.renderLabel(node, isNegated, container)
   }
+
   renderMainPart(container, x1, x2, height, c1, c2, endPoint) {
     const generalPath = new GeneralPath()
     generalPath.moveTo(new Point(x1, 0))
     generalPath.lineTo(new Point(x2, 0))
+
     generalPath.cubicTo(c1, c2, endPoint)
+
     generalPath.lineTo(new Point(x1, height))
     generalPath.close()
     createPath(container, generalPath, this.fillColor, this.strokeColor)
   }
+
   renderOutputPort(isNegated, extremaX, width, y2, node, container) {
     const outputPortPath = new GeneralPath()
     outputPortPath.moveTo(new Point(isNegated ? extremaX + 2 * width * 0.03 : extremaX, y2))
@@ -103,6 +116,7 @@ export class AndGateNodeStyle extends GateNodeStyle {
       : 'black'
     createPath(container, outputPortPath, 'none', outputStroke)
   }
+
   renderInputPorts(y1, x1, y3, node, container) {
     const inputPortPath = new GeneralPath()
     inputPortPath.moveTo(new Point(0, y1))
@@ -114,20 +128,18 @@ export class AndGateNodeStyle extends GateNodeStyle {
       : 'black'
     createPath(container, inputPortPath, 'none', inputStroke)
   }
+
   renderLabel(node, isNegated, container) {
     const fontSize = Math.floor(node.layout.height * 0.25)
     const textContent = isNegated ? 'NAND' : 'AND'
     const text = createText(textContent, fontSize, this.labelColor)
     const textSize = TextRenderSupport.measureText(
       text.textContent ?? '',
-      new Font({
-        fontFamily: 'Arial',
-        fontSize,
-        fontWeight: 'bold'
-      })
+      new Font({ fontFamily: 'Arial', fontSize, fontWeight: 'bold' })
     )
     setAttribute(text, 'x', (node.layout.width - textSize.width) * 0.45)
     setAttribute(text, 'y', (node.layout.height - textSize.height) * 0.8)
+
     container.appendChild(text)
   }
 }

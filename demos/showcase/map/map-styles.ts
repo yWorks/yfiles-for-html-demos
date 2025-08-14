@@ -67,20 +67,14 @@ function createMapNodeStyle(): ImageNodeStyle {
   outline.cubicTo(0.882, 0.164, 0.711, 0, 0.5, 0)
   outline.close()
 
-  return new ImageNodeStyle({
-    href: 'resources/airport-drop.svg',
-    normalizedOutline: outline
-  })
+  return new ImageNodeStyle({ href: 'resources/airport-drop.svg', normalizedOutline: outline })
 }
 
 /**
  * Creates a default style for connections between airports.
  */
 function createMapEdgeStyle(): ArcEdgeStyle {
-  return new ArcEdgeStyle({
-    stroke: '5px dashed #242265',
-    height: 100
-  })
+  return new ArcEdgeStyle({ stroke: '5px dashed #242265', height: 100 })
 }
 
 /**

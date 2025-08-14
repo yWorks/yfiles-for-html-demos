@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { PolylineEdgeStyle, ShapeNodeStyle, Size } from '@yfiles/yfiles'
+
 export function initializeStyles(graph) {
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: 'ellipse',
@@ -35,14 +36,17 @@ export function initializeStyles(graph) {
   })
   graph.nodeDefaults.size = new Size(5, 5)
 }
+
 /**
  * Style for the edges that connect the waypoints with the associated label nodes.
  */
 export const leaderEdgeStyle = new PolylineEdgeStyle({ stroke: '1px dashed #662b00' })
+
 /**
  * The size of the label nodes
  */
 export const labelNodeSize = new Size(130, 50)
+
 /**
  * Returns the icon that will be used in the template string instead of text associated
  * with the given waypoint.

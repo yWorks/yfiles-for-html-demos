@@ -32,6 +32,7 @@
 export function getBucket(node) {
   return node.tag
 }
+
 /**
  * Extracts the business data items from the group node.
  * Each bucket is a group node that eventually contains leaf nodes in the graph model that actually hold the business
@@ -40,6 +41,7 @@ export function getBucket(node) {
 export function getItemsFromBucket(bucketNode) {
   return getLeaves(getBucket(bucketNode))
 }
+
 /**
  * Aggregates buckets from the given data items.
  * @param items The items that need to be sorted in buckets
@@ -49,13 +51,16 @@ export function getItemsFromBucket(bucketNode) {
 export function aggregateBuckets(items, getTimeEntry, granularities) {
   let currentLevel = collectLeafBuckets(items, getTimeEntry)
   const allNonLeafBuckets = []
+
   let layer = 1
   for (const granularity of granularities) {
     currentLevel = aggregateBucketsCore(currentLevel, granularity, allNonLeafBuckets, layer)
     layer++
   }
+
   return allNonLeafBuckets
 }
+
 /**
  * Aggregates the buckets for a specific detail level.
  */
@@ -63,8 +68,10 @@ function aggregateBucketsCore(buckets, iterateTimeSlices, allBuckets, layer) {
   if (buckets.length === 0) {
     return []
   }
+
   const minDate = buckets[0].start
   const maxDate = buckets[buckets.length - 1].end
+
   const newBuckets = []
   const activeBuckets = new Set()
   let bucketIndex = 0
@@ -74,6 +81,7 @@ function aggregateBucketsCore(buckets, iterateTimeSlices, allBuckets, layer) {
       const entry = buckets[bucketIndex]
       activeBuckets.add(entry)
     }
+
     for (const bucket of Array.from(activeBuckets)) {
       if (start <= bucket.start && bucket.end <= end) {
         childBuckets.push(bucket)
@@ -81,6 +89,7 @@ function aggregateBucketsCore(buckets, iterateTimeSlices, allBuckets, layer) {
         activeBuckets.delete(bucket)
       }
     }
+
     const bucket = {
       type: 'group',
       start,
@@ -98,14 +107,18 @@ function aggregateBucketsCore(buckets, iterateTimeSlices, allBuckets, layer) {
       aggregatedValue += child.aggregatedValue
     })
     bucket.aggregatedValue = aggregatedValue
+
     newBuckets.push(bucket)
     allBuckets.push(bucket)
   }
+
   for (let i = 0; i < newBuckets.length; i++) {
     newBuckets[i].indexInLayer = i
   }
+
   return newBuckets
 }
+
 function createIntervalBuckets(item, start, end) {
   const buckets = []
   let currentDate = new Date(start)
@@ -117,18 +130,11 @@ function createIntervalBuckets(item, start, end) {
   }
   return buckets
 }
+
 function createLeafBucket(item, label, start, end) {
-  return {
-    type: 'leaf',
-    item,
-    start,
-    end,
-    label,
-    aggregatedValue: 1,
-    layer: 0,
-    indexInLayer: -1
-  }
+  return { type: 'leaf', item, start, end, label, aggregatedValue: 1, layer: 0, indexInLayer: -1 }
 }
+
 function collectLeafBuckets(items, getTimeEntry) {
   const entries = items.flatMap((item) => {
     const timeEntry = getTimeEntry(item)
@@ -149,12 +155,14 @@ function collectLeafBuckets(items, getTimeEntry) {
     }
     return []
   })
+
   entries.sort((a, b) => a.start.getTime() - b.start.getTime())
   for (let i = 0; i < entries.length; i++) {
     entries[i].indexInLayer = i
   }
   return entries
 }
+
 /**
  * Obtains all leaf items in the given bucket.
  */

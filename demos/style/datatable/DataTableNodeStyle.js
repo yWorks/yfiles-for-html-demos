@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { HtmlVisual, NodeStyleBase } from '@yfiles/yfiles'
 import { DataTableRenderSupport, RenderDataCache } from './DataTableRenderSupport'
+
 /**
  * A node style to display data in a tabular fashion.
  * This style uses the {@link HtmlVisual}s to
@@ -35,6 +36,7 @@ import { DataTableRenderSupport, RenderDataCache } from './DataTableRenderSuppor
  */
 export class DataTableNodeStyle extends NodeStyleBase {
   renderSupport = new DataTableRenderSupport()
+
   createVisual(context, node) {
     // Cache the necessary data for rendering of the node
     const cache = new RenderDataCache(node.tag)
@@ -47,17 +49,21 @@ export class DataTableNodeStyle extends NodeStyleBase {
     HtmlVisual.setLayout(visual.element, node.layout)
     return visual
   }
+
   updateVisual(context, oldVisual, node) {
     this.updateContent(context, node, oldVisual)
     HtmlVisual.setLayout(oldVisual.element, node.layout)
     return oldVisual
   }
+
   createContent(context, visual) {
     const div = visual.element
     const cache = visual.tag
+
     // show scroll bars when node is smaller than the HTML table
     div.style.overflow = 'auto'
     div.classList.add('thin-scrollbars')
+
     // Prevent event propagation for the mousewheel event, otherwise it will be captured by the graph
     // component, which calls preventDefault on it.
     const stopPropagationOptions = { capture: true, passive: true }
@@ -68,15 +74,19 @@ export class DataTableNodeStyle extends NodeStyleBase {
         stopPropagationOptions
       )
     }
+
     // Render the node
     this.renderSupport.render(div, cache, 'data-table-node')
   }
+
   updateContent(context, node, visual) {
     const container = visual.element
+
     // Get the data with which the oldvisual was created
     const oldCache = visual.tag
     // Get the data for the new visual
     const newCache = new RenderDataCache(node.tag)
+
     // The data changed, create a new visual
     if (!newCache.equals(oldCache)) {
       while (container.lastChild) {
@@ -85,8 +95,10 @@ export class DataTableNodeStyle extends NodeStyleBase {
       }
       this.renderSupport.render(container, newCache, 'data-table-node')
     }
+
     visual.tag = newCache
   }
+
   /**
    * Detects whether the given element has the need for a scrollbar, i.e., it shows as scrollbar
    * in overflow: auto mode.
@@ -96,6 +108,7 @@ export class DataTableNodeStyle extends NodeStyleBase {
     const isHorizontalScrollbar = element.scrollWidth > element.clientWidth
     return isHorizontalScrollbar || isVerticalScrollbar
   }
+
   /**
    * Returns an event listener that stops event propagation if the element can be scrolled itself.
    */

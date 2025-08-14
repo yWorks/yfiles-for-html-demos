@@ -122,11 +122,7 @@ function createGraph(): void {
   })
 
   // create the edges
-  builder.createEdgesSource({
-    data: sampleData.edges,
-    sourceId: 'source',
-    targetId: 'target'
-  })
+  builder.createEdgesSource({ data: sampleData.edges, sourceId: 'source', targetId: 'target' })
 
   // create the graph
   builder.buildGraph()

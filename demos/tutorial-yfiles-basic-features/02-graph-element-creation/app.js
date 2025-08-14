@@ -31,8 +31,12 @@ import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { graphElementCreation } from './graph-element-creation'
 import { initializeTutorialDefaults } from '../common'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
+
 graphElementCreation(graphComponent.graph)
+
 finishLoading()

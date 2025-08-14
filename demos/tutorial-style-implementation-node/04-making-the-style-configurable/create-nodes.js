@@ -27,27 +27,22 @@
  **
  ***************************************************************************/
 import { CustomNodeStyle } from './CustomNodeStyle'
+
 /**
  * Creates the sample nodes for this tutorial step
  */
 export function createNodes(graph) {
   // the color can be specified in the constructor
   const styleWithRedFill = new CustomNodeStyle('#b91c3b')
+
   // the fill color can also be changed later using the property on the style class
   const styleWithPurpleFill = new CustomNodeStyle('grey')
   styleWithPurpleFill.fillColor = '#9e7cb5'
+
   // not specifying the fill color will use the default color
   const styleWithDefaultFill = new CustomNodeStyle()
-  graph.createNode({
-    layout: [0, 0, 100, 70],
-    style: styleWithRedFill
-  })
-  graph.createNode({
-    layout: [140, 0, 100, 70],
-    style: styleWithPurpleFill
-  })
-  graph.createNode({
-    layout: [70, 150, 100, 70],
-    style: styleWithDefaultFill
-  })
+
+  graph.createNode({ layout: [0, 0, 100, 70], style: styleWithRedFill })
+  graph.createNode({ layout: [140, 0, 100, 70], style: styleWithPurpleFill })
+  graph.createNode({ layout: [70, 150, 100, 70], style: styleWithDefaultFill })
 }

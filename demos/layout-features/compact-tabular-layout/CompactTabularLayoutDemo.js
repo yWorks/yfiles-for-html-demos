@@ -31,25 +31,33 @@ import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { loadLayoutSampleGraph } from '@yfiles/demo-utils/LoadLayoutFeaturesSampleGraph'
 import { createFeatureLayoutConfiguration } from './CompactTabularLayout'
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // load the graph and run the layout
   await loadLayoutSampleGraph(graphComponent.graph, './sample.json')
   await runLayout(graphComponent)
+
   initializeUI(graphComponent)
 }
+
 async function runLayout(graphComponent) {
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   const { layout, layoutData } = createFeatureLayoutConfiguration(graphComponent.graph)
   await graphComponent.applyLayoutAnimated(layout, '0.5s', layoutData)
 }
+
 function initializeUI(graphComponent) {
   document.querySelector('#use-aspect-ratio').addEventListener('click', async () => {
     await runLayout(graphComponent)
   })
 }
+
 await run().then(finishLoading)

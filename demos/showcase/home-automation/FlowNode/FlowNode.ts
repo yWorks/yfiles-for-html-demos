@@ -77,11 +77,7 @@ export type FlowNodeProperties = {
 
 export type FlowNode = Omit<INode, 'tag'> & { tag: FlowNodeProperties }
 
-type FlowNodeInGraphOptions = {
-  variant: FlowNodeVariant
-  position: Point
-  graph: IGraph
-}
+type FlowNodeInGraphOptions = { variant: FlowNodeVariant; position: Point; graph: IGraph }
 
 /**
  * Properties that should never appear in the tag editor
@@ -119,18 +115,14 @@ export function configureFlowNodes({ graph, selection }: GraphComponent): void {
           owner: node,
           style: portStyle,
           locationParameter: FreeNodePortLocationModel.LEFT,
-          tag: {
-            side: 'left'
-          } as FlowNodePortProperties
+          tag: { side: 'left' } as FlowNodePortProperties
         })
       hasRightPort &&
         graph.addPort({
           owner: node,
           style: portStyle,
           locationParameter: FreeNodePortLocationModel.RIGHT,
-          tag: {
-            side: 'right'
-          } as FlowNodePortProperties
+          tag: { side: 'right' } as FlowNodePortProperties
         })
     }
     const label = node.tag.label
@@ -175,12 +167,7 @@ export function createFlowNode(variant: FlowNodeVariant): FlowNode {
   const properties = { ...flowNodeProperties[variant] }
   return new SimpleNode({
     style: new FlowNodeStyle(),
-    layout: {
-      width: FlowNodeStyle.defaultWidth,
-      height: FlowNodeStyle.defaultHeight,
-      x: 0,
-      y: 0
-    },
+    layout: { width: FlowNodeStyle.defaultWidth, height: FlowNodeStyle.defaultHeight, x: 0, y: 0 },
     tag: properties
   })
 }

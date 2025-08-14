@@ -42,6 +42,7 @@ import {
   WebGLShapeNodeStyle
 } from '@yfiles/yfiles'
 import { createLitNodeStyleFromSource } from '@yfiles/demo-utils/LitNodeStyle'
+
 const nodeStyleTemplate = `({ layout, tag, selected, zoom }) => {
   function formatPosition(position, maxLength) {
     if (!position || position.length <= maxLength) {
@@ -91,14 +92,19 @@ const nodeStyleTemplate = `({ layout, tag, selected, zoom }) => {
     \`}
   </g>
 \`}`
+
 export class OrgChartDemoConfiguration extends DemoConfiguration {
   graphResourcePath = 'resources/orgchart.json'
+
   svgThreshold = 0.25
+
   webGLGroupNodeStyle = new WebGLShapeNodeStyle('rectangle', '#bbb')
   litNodeStyle = createLitNodeStyleFromSource(nodeStyleTemplate)
+
   edgeStyleProvider = (_edge, graph) => {
     return graph.edgeDefaults.getStyleInstance()
   }
+
   nodeStyleProvider = (node, graph) => {
     if (graph.isGroupNode(node)) {
       return this.webGLGroupNodeStyle
@@ -109,32 +115,30 @@ export class OrgChartDemoConfiguration extends DemoConfiguration {
       new WebGLShapeNodeStyle(WebGLShapeNodeShape.RECTANGLE, color)
     )
   }
+
   nodeCreator = null
+
   async initializeStyleDefaults(graph) {
     return new Promise((resolve) => {
       // use the Vue2NodeStyle to display the nodes through a svg template
       // in this svg template you can see three styles in three zoom levels
       graph.nodeDefaults.style = createLitNodeStyleFromSource(nodeStyleTemplate)
       graph.nodeDefaults.size = new Size(285, 100)
+
       const edgeColor = 'rgb(100,100,100)'
       graph.edgeDefaults.style = new PolylineEdgeStyle({
         stroke: `2px ${edgeColor}`,
-        targetArrow: new Arrow({
-          type: 'triangle',
-          stroke: edgeColor,
-          fill: edgeColor
-        }),
+        targetArrow: new Arrow({ type: 'triangle', stroke: edgeColor, fill: edgeColor }),
         smoothingLength: 10
       })
       resolve()
     })
   }
+
   createNode(graph, _id, layout, nodeData) {
-    return graph.createNode({
-      layout: layout,
-      tag: nodeData.tag
-    })
+    return graph.createNode({ layout: layout, tag: nodeData.tag })
   }
+
   getColor(status) {
     switch (status) {
       case 'present':

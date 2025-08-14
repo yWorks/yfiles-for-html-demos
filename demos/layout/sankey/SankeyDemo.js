@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { GraphBuilder, GraphComponent, License } from '@yfiles/yfiles'
+
 import { electionData } from './resources/samples'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
@@ -37,38 +38,45 @@ import { initializeHighlight } from './interaction/configure-highlight'
 import { getThickness } from './edge-thickness'
 import { updateStylesAndLayout } from './sankey-layout'
 import { allowOnlyVerticalNodeMovement } from './interaction/constrain-node-movement'
+
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('graphComponent')
   // set default styles for nodes, edges and edge labels
   initializeDefaultStyles(graphComponent)
+
   // initializes and configures the interaction for this demo
   configureInteraction(graphComponent)
+
   // constrain the node movement only along the y-axis
   allowOnlyVerticalNodeMovement(graphComponent.graph)
+
   // sets the highlighting style for the edges and edge labels, and
   // configures the highlighting behavior
   initializeHighlight(graphComponent)
+
   // adds a popup on node click that allows changing the node's color
   initializeNodePopup(graphComponent)
+
   // enables the undo engine to revert graph changes
   graphComponent.graph.undoEngineEnabled = true
+
   // builds the graph from the given dataset
   await buildGraph(graphComponent)
+
   initializeUI(graphComponent)
 }
+
 /**
  * Creates the sample graph.
  */
 async function buildGraph(graphComponent) {
   const graph = graphComponent.graph
   const builder = new GraphBuilder(graph)
+
   // create the graph nodes
-  builder.createNodesSource({
-    data: electionData.parties,
-    id: 'id',
-    labels: ['name']
-  })
+  builder.createNodesSource({ data: electionData.parties, id: 'id', labels: ['name'] })
+
   // create the graph edges and assign the thickness to the edge's data
   builder.createEdgesSource({
     data: electionData.voterShift,
@@ -79,12 +87,16 @@ async function buildGraph(graphComponent) {
       return { ...data, thickness: getThickness(data.voters) }
     }
   })
+
   builder.buildGraph()
+
   // update the node and edge style based on the desired colors and thickness and run a layout
   await updateStylesAndLayout(graphComponent, false)
+
   // clear the undo engine
   graphComponent.graph.undoEngine.clear()
 }
+
 /**
  * Binds actions to the toolbar elements.
  */
@@ -97,4 +109,5 @@ function initializeUI(graphComponent) {
     graphComponent.invalidate()
   })
 }
+
 void run().then(finishLoading)

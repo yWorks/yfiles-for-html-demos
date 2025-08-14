@@ -47,11 +47,7 @@ import { assertIsFlowNode, type FlowNodeProperties } from './FlowNode'
 
 type SvgVisualWithCache = TaggedSvgVisual<
   SVGGElement,
-  {
-    label: string
-    hasErrorIndicator: boolean
-    layoutWidth: number
-  }
+  { label: string; hasErrorIndicator: boolean; layoutWidth: number }
 >
 
 type SvgComponents = {
@@ -360,11 +356,7 @@ export class FlowNodeStyle extends NodeStyleBase<SvgVisualWithCache> {
       svg.wrapper.appendChild(dummyPort)
     }
 
-    return SvgVisual.from(svg.wrapper, {
-      label,
-      layoutWidth,
-      hasErrorIndicator: false
-    })
+    return SvgVisual.from(svg.wrapper, { label, layoutWidth, hasErrorIndicator: false })
   }
 
   protected updateVisual(

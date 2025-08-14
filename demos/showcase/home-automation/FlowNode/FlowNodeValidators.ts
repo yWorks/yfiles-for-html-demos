@@ -29,10 +29,7 @@
 import { type FlowNodeProperties, type FlowNodeValidation } from './FlowNode'
 
 export function defaultFlowNodeValidationFn(_: FlowNodeProperties): FlowNodeValidation {
-  return {
-    invalidProperties: [],
-    validationMessages: []
-  }
+  return { invalidProperties: [], validationMessages: [] }
 }
 
 export function validateStorageReadWriteNode(args: FlowNodeProperties): FlowNodeValidation {
@@ -42,10 +39,7 @@ export function validateStorageReadWriteNode(args: FlowNodeProperties): FlowNode
     invalidProperties.push('fileName')
     validationMessages.push('File name is not defined')
   }
-  return {
-    invalidProperties,
-    validationMessages
-  }
+  return { invalidProperties, validationMessages }
 }
 
 export function validateParserCsvNode(args: FlowNodeProperties): FlowNodeValidation {
@@ -59,10 +53,7 @@ export function validateParserCsvNode(args: FlowNodeProperties): FlowNodeValidat
     invalidProperties.push('newLine')
     validationMessages.push('New line symbol is not defined')
   }
-  return {
-    invalidProperties,
-    validationMessages
-  }
+  return { invalidProperties, validationMessages }
 }
 
 export function validateParserJsonNode(args: FlowNodeProperties): FlowNodeValidation {
@@ -72,10 +63,7 @@ export function validateParserJsonNode(args: FlowNodeProperties): FlowNodeValida
     invalidProperties.push('property')
     validationMessages.push('Property value is not defined')
   }
-  return {
-    invalidProperties,
-    validationMessages
-  }
+  return { invalidProperties, validationMessages }
 }
 
 export function validateParserXmlNode(args: FlowNodeProperties): FlowNodeValidation {
@@ -85,10 +73,7 @@ export function validateParserXmlNode(args: FlowNodeProperties): FlowNodeValidat
     invalidProperties.push('property')
     validationMessages.push('Property value is not defined')
   }
-  return {
-    invalidProperties,
-    validationMessages
-  }
+  return { invalidProperties, validationMessages }
 }
 
 export function validateNetworkTcpNode(args: FlowNodeProperties): FlowNodeValidation {
@@ -98,10 +83,7 @@ export function validateNetworkTcpNode(args: FlowNodeProperties): FlowNodeValida
     invalidProperties.push('server')
     validationMessages.push('Server is not defined')
   }
-  return {
-    invalidProperties,
-    validationMessages
-  }
+  return { invalidProperties, validationMessages }
 }
 
 export function validateFunctionFunctionNode(args: FlowNodeProperties): FlowNodeValidation {
@@ -111,10 +93,7 @@ export function validateFunctionFunctionNode(args: FlowNodeProperties): FlowNode
     invalidProperties.push('function')
     validationMessages.push('No function to execute')
   }
-  return {
-    invalidProperties,
-    validationMessages
-  }
+  return { invalidProperties, validationMessages }
 }
 
 export function validateFunctionDelayNode(args: FlowNodeProperties): FlowNodeValidation {
@@ -128,8 +107,5 @@ export function validateFunctionDelayNode(args: FlowNodeProperties): FlowNodeVal
     invalidProperties.push('timeoutUnits')
     validationMessages.push('Timeout units are not defined')
   }
-  return {
-    invalidProperties,
-    validationMessages
-  }
+  return { invalidProperties, validationMessages }
 }

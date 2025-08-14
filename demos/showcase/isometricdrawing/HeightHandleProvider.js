@@ -36,6 +36,7 @@ import {
   List
 } from '@yfiles/yfiles'
 import { HeightHandle } from './HeightHandle'
+
 /**
  * An {@link IHandleProvider} implementation that
  * adds a {@link HeightHandle} to a node's available handles.
@@ -44,12 +45,14 @@ export class HeightHandleProvider extends BaseClass(IHandleProvider) {
   node
   delegateHandler
   minimumHeight
+
   constructor(node, delegateHandler, minimumHeight) {
     super()
     this.node = node
     this.delegateHandler = delegateHandler
     this.minimumHeight = minimumHeight
   }
+
   getHandles(context) {
     const result = new List()
     if (this.delegateHandler) {

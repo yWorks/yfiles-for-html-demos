@@ -260,7 +260,7 @@ export const RadialTreeLayoutConfig = (Class as any)('RadialTreeLayoutConfig', {
       ),
       new OptionGroupAttribute('EdgePropertiesGroup', 10),
       new EnumValuesAttribute([
-        ['None', EdgeLabelPlacement.IGNORE],
+        ['Ignore', EdgeLabelPlacement.IGNORE],
         ['Integrated', EdgeLabelPlacement.INTEGRATED],
         ['Generic', EdgeLabelPlacement.GENERIC]
       ]),

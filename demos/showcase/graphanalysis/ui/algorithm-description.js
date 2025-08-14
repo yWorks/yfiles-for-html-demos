@@ -27,14 +27,17 @@
  **
  ***************************************************************************/
 import { getCurrentAlgorithm } from './ui-utils'
+
 /**
  * Updates the description text based on the selected algorithm.
  */
 export function updateDescriptionText() {
   const algorithmDescriptionContainer = document.querySelector('#algorithm-description-container')
   algorithmDescriptionContainer.classList.remove('highlight-description')
+
   const algorithmDescription = document.querySelector('#algorithm-description')
   algorithmDescription.innerHTML = getCurrentAlgorithm().description
+
   // highlight the description once
   setTimeout(() => {
     algorithmDescriptionContainer.classList.add('highlight-description')

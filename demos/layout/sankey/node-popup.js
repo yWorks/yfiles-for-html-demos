@@ -31,21 +31,26 @@ import { HTMLPopupSupport } from './HTMLPopupSupport'
 import { colors, updateNodeColor } from './styles-support'
 import { TagChangeUndoUnit } from './interaction/TagChangeUndoUnit'
 import { getPoliticalParty } from './data-types'
+
 // we use font-awesome icons for the contextual toolbar in this demo
 import '@fortawesome/fontawesome-free/js/all.min.js'
+
 let nodePopup
+
 /**
  * Creates a node popup that allows for changing the color of a node and its adjacent edges.
  */
 export function initializeNodePopup(graphComponent) {
   // creates the HTML elements for the node popup
   createNodePopup(graphComponent)
+
   // creates the HTML panel that will display the node popup
   nodePopup = new HTMLPopupSupport(
     graphComponent,
     document.getElementById('contextualToolbar'),
     ExteriorNodeLabelModel.RIGHT
   )
+
   const inputMode = graphComponent.inputMode
   // configures the input mode to show the popup when a node is clicked
   inputMode.addEventListener('item-clicked', (evt) => {
@@ -54,15 +59,18 @@ export function initializeNodePopup(graphComponent) {
       nodePopup.currentItem = evt.item
     }
   })
+
   // when a node drag operation starts, hide the popup
   inputMode.moveUnselectedItemsInputMode.addEventListener('drag-started', () => {
     hidePopup(graphComponent)
   })
+
   // when a click on empty space occurs, hide the popup
   inputMode.addEventListener('canvas-clicked', () => {
     hidePopup(graphComponent)
   })
 }
+
 /**
  * Creates the HTML element for the node popup and registers the required listener to the
  * button component.
@@ -73,12 +81,14 @@ function createNodePopup(graphComponent) {
     .getElementById('color-picker')
     .addEventListener('click', (evt) => showPickerContainer(graphComponent, evt.target))
 }
+
 /**
  * Creates the div container for the color picker.
  * Adds the necessary buttons and registers the listeners for the change of the color.
  */
 function createColorPicker(graphComponent) {
   const colorContainer = document.querySelector('#color-picker-colors')
+
   const darkColors = colors.map((c) => c.dark)
   for (const color of darkColors) {
     const colorButton = document.createElement('button')
@@ -101,6 +111,7 @@ function createColorPicker(graphComponent) {
               const oldData = { ...getPoliticalParty(node) }
               const newData = getPoliticalParty(node)
               newData.colorId = colorId
+
               // create an undo unit so that the color change can be reverted, if needed
               const tagUndoUnit = new TagChangeUndoUnit(
                 'Color changed',
@@ -112,9 +123,11 @@ function createColorPicker(graphComponent) {
               )
               // add the undo unit to the graph's undo engine
               graph.undoEngine.addUnit(tagUndoUnit)
+
               // update the color of the node and its adjacent edges
               updateNodeColor(node, graph)
             })
+
           // force an update to use the new color
           graphComponent.invalidate()
         }
@@ -123,6 +136,7 @@ function createColorPicker(graphComponent) {
     )
   }
 }
+
 /**
  * Hides the popup element along with its component.
  */
@@ -131,6 +145,7 @@ export function hidePopup(graphComponent) {
   nodePopup.currentItem = null
   graphComponent.focus()
 }
+
 /**
  * Shows the color picker associated with the pressed button.
  * Before showing the color-picker, hides any previously opened picker and calculates the position
@@ -139,12 +154,15 @@ export function hidePopup(graphComponent) {
 export function showPickerContainer(graphComponent, toggleButton) {
   const pickerContainer = document.getElementById(toggleButton.getAttribute('data-container-id'))
   const show = toggleButton.checked
+
   if (!show) {
     hideAllPickerContainer()
     return
   }
+
   // hide all picker containers except for the one that should be toggled
   hideAllPickerContainer(toggleButton, pickerContainer)
+
   // position the container above/below the toggle button
   pickerContainer.style.display = 'block'
   const labelElement = document.querySelector(`label[for="${toggleButton.id}"]`)
@@ -165,11 +183,13 @@ export function showPickerContainer(graphComponent, toggleButton) {
     pickerContainer.style.top = `-${pickerClientRect.height + 12}px`
     pickerContainer.classList.remove('bottom')
   }
+
   // timeout the fading animation to make sure that the element is visible
   setTimeout(() => {
     pickerContainer.style.opacity = '1'
   }, 0)
 }
+
 /**
  * Resets the picker container.
  * Hides all pickers except the given one, if exists and unchecks all buttons.
@@ -182,6 +202,7 @@ export function hideAllPickerContainer(exceptToggleButton, exceptContainer) {
       btn.checked = false
     }
   }
+
   const pickerContainers = document.querySelectorAll('.picker-container')
   for (let i = 0; i < pickerContainers.length; i++) {
     const container = pickerContainers[i]

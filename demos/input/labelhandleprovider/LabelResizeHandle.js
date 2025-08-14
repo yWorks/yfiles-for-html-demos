@@ -46,6 +46,7 @@ import {
   Size
 } from '@yfiles/yfiles'
 import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectangleRendererBase'
+
 /**
  * A custom {@link IHandle} implementation that allows resizing a label.
  */
@@ -57,6 +58,7 @@ export class LabelResizeHandle extends BaseClass(IHandle) {
   emulate = false
   dummyPreferredSize = null
   dummyLocation = null
+
   /**
    * Creates a new instance of {@link LabelResizeHandle}.
    * @param label The label this handle is for
@@ -67,27 +69,32 @@ export class LabelResizeHandle extends BaseClass(IHandle) {
     this.label = label
     this.symmetricResize = symmetricResize
   }
+
   /**
    * Gets the type of the handle.
    */
   get type() {
     return HandleType.RESIZE
   }
+
   get tag() {
     return null
   }
+
   /**
    * Returns the handle's cursor.
    */
   get cursor() {
     return Cursor.EW_RESIZE
   }
+
   /**
    * Returns the handle's location.
    */
   get location() {
     return this.handleLocation
   }
+
   /**
    * Invoked when dragging is about to start.
    * @param context The context to retrieve information
@@ -102,6 +109,7 @@ export class LabelResizeHandle extends BaseClass(IHandle) {
       this.createSizeIndicator(canvasComponent)
     }
   }
+
   /**
    * Creates the indicator that shows the size of the label during drag.
    */
@@ -113,6 +121,7 @@ export class LabelResizeHandle extends BaseClass(IHandle) {
       renderer
     )
   }
+
   /**
    * Invoked when an element has been dragged and its position should be updated.
    * @param context The context to retrieve information
@@ -124,10 +133,13 @@ export class LabelResizeHandle extends BaseClass(IHandle) {
     const layout = this.label.layout
     // the normal (orthogonal) vector of the 'up' vector
     const upNormal = new Point(-layout.upY, layout.upX)
+
     // calculate the total distance the handle has been moved in this drag gesture
     let delta = upNormal.scalarProduct(newLocation.subtract(originalLocation))
+
     // max with minus half the label size - because the label width can't shrink below zero
     delta = Math.max(delta, -layout.width * (this.symmetricResize ? 0.5 : 1))
+
     // add one or two times delta to the width to expand the label right and left
     const newWidth = layout.width + delta * (this.symmetricResize ? 2 : 1)
     this.dummyPreferredSize = new Size(newWidth, this.dummyPreferredSize.height)
@@ -136,6 +148,7 @@ export class LabelResizeHandle extends BaseClass(IHandle) {
       this.symmetricResize ? new Point(upNormal.x * delta, upNormal.y * delta) : new Point(0, 0)
     )
   }
+
   /**
    * Invoked when dragging has canceled.
    * @param context The context to retrieve information
@@ -151,6 +164,7 @@ export class LabelResizeHandle extends BaseClass(IHandle) {
     }
     this.sizeIndicator = null
   }
+
   /**
    * Invoked when dragging has finished.
    * @param context The context to retrieve information
@@ -163,6 +177,7 @@ export class LabelResizeHandle extends BaseClass(IHandle) {
     if (graph !== null) {
       // assign the new size
       graph.setLabelPreferredSize(this.label, this.dummyPreferredSize)
+
       // Use the layout of the resize rectangle to find a new labelLayoutParameter. This ensures
       // that the resize rectangle which acts as user feedback is in sync with the actual
       // labelLayoutParameter that is assigned to the label.
@@ -175,6 +190,7 @@ export class LabelResizeHandle extends BaseClass(IHandle) {
     }
     this.cancelDrag(context, originalLocation)
   }
+
   /**
    * Returns the current label layout.
    */
@@ -199,11 +215,13 @@ export class LabelResizeHandle extends BaseClass(IHandle) {
       labelLayout.upY
     )
   }
+
   /**
    * This implementation does nothing special when clicked.
    */
   handleClick(evt) {}
 }
+
 /**
  * Represents the new resize point for the given handler.
  */
@@ -217,6 +235,7 @@ class LabelResizeHandleLivePoint extends BaseClass(IPoint) {
     super()
     this.handle = handle
   }
+
   /**
    * Returns the x-coordinate of the location of the handle from the anchor, the size and the
    * orientation.
@@ -225,6 +244,7 @@ class LabelResizeHandleLivePoint extends BaseClass(IPoint) {
     const { anchor, up, preferredSize } = this.getPositionInfo()
     return anchor.x + (up.x * preferredSize.height * 0.5 - up.y * preferredSize.width)
   }
+
   /**
    * Returns the y-coordinate of the location of the handle from the anchor, the size and the
    * orientation.
@@ -233,6 +253,7 @@ class LabelResizeHandleLivePoint extends BaseClass(IPoint) {
     const { anchor, up, preferredSize } = this.getPositionInfo()
     return anchor.y + (up.y * preferredSize.height * 0.5 + up.x * preferredSize.width)
   }
+
   /**
    * Prepares all relevant information needed to calculate the position of the handle.
    */
@@ -246,6 +267,7 @@ class LabelResizeHandleLivePoint extends BaseClass(IPoint) {
     return { anchor, up, preferredSize }
   }
 }
+
 class LabelResizeRectangleRenderer extends OrientedRectangleRendererBase {
   createIndicatorElement(_context, size, _renderTag) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -256,11 +278,13 @@ class LabelResizeRectangleRenderer extends OrientedRectangleRendererBase {
     rect.setAttribute('fill', 'none')
     return rect
   }
+
   updateIndicatorElement(_context, size, _renderTag, oldSvgElement) {
     oldSvgElement.setAttribute('width', size.width.toString())
     oldSvgElement.setAttribute('height', size.height.toString())
     return oldSvgElement
   }
+
   getLayout(_renderTag) {
     const handleLocation = _renderTag.dummyLocation
     const handleSize = _renderTag.dummyPreferredSize

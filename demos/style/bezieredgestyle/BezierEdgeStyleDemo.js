@@ -55,7 +55,9 @@ import { BezierCreateEdgeInputMode } from './BezierCreateEdgeInputMode'
 import { SampleCircle, SampleLabels } from './resources/SampleGraphs'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent = null
+
 /**
  * Configuration object for managing the demo settings
  */
@@ -66,23 +68,24 @@ const config = {
   autoSnapping: true,
   enableEditing: true
 }
+
 const bezierEdgeSegmentLabelModel = new BezierEdgeSegmentLabelModel({ autoSnapping: true })
 const bezierPathLabelModel = new BezierEdgePathLabelModel({ autoSnapping: true })
 const bezierEdgeStyle = new BezierEdgeStyle({
   stroke: '3px #4169E1',
-  targetArrow: new Arrow({
-    fill: '#4169E1',
-    stroke: '#4169E1',
-    type: ArrowType.TRIANGLE
-  })
+  targetArrow: new Arrow({ fill: '#4169E1', stroke: '#4169E1', type: ArrowType.TRIANGLE })
 })
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = createEditorMode()
+
   initializeGraph()
+
   initializeUI()
 }
+
 /**
  * Creates the default input mode for the GraphComponent, a {@link GraphEditorInputMode}.
  * a new GraphEditorInputMode instance and configures snapping and orthogonal edge editing
@@ -90,14 +93,17 @@ async function run() {
 function createEditorMode() {
   return new BezierGraphEditorInputMode(config)
 }
+
 /**
  * Initializes the graph instance setting default styles
  * and creating a small sample graph.
  */
 function initializeGraph() {
   const graph = graphComponent.graph
+
   // We need to provide our own handles for bezier edge bends:
   registerBezierDecorators()
+
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: ShapeNodeShape.ELLIPSE,
     fill: 'lightgray',
@@ -111,9 +117,12 @@ function initializeGraph() {
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
   })
   graph.edgeDefaults.labels.layoutParameter = bezierPathLabelModel.createParameter(0.5)
+
   loadSample(SampleCircle)
+
   graph.undoEngineEnabled = true
 }
+
 function registerBezierDecorators() {
   const graph = graphComponent.graph
   graph.decorator.bends.handle.hide(
@@ -122,6 +131,7 @@ function registerBezierDecorators() {
       b.owner.style instanceof BezierEdgeStyle &&
       b.owner.bends.size % 3 === 2
   )
+
   graph.decorator.bends.handle.addWrapperFactory(
     (b) =>
       config.enableEditing &&
@@ -142,38 +152,41 @@ function registerBezierDecorators() {
       }
     }
   )
+
   // Override the default for bezier edges
   graph.decorator.edges.bendCreator.addWrapperFactory(
     (edge) => config.enableEditing && edge.style instanceof BezierEdgeStyle,
     (edge, originalBendCreator) =>
       originalBendCreator != null ? new BezierBendCreator(edge, originalBendCreator) : null
   )
+
   // And always show bend handles
   graph.decorator.edges.handleProvider.addWrapperFactory(
     (edge) => config.enableEditing && edge.style instanceof BezierEdgeStyle,
     (edge, coreImpl) => new BezierEdgeHandleProvider(edge, coreImpl)
   )
+
   graph.decorator.edges.selectionRenderer.addWrapperFactory(
     (e) => e.style instanceof BezierEdgeStyle,
     (_, coreImpl) => new BezierSelectionStyle(coreImpl)
   )
+
   // since removing bends also affects our handles, we need to let the input mode
   // requery the handles to get the fresh ones.
   function requeryHandles() {
     graphComponent.inputMode.requeryHandles()
   }
+
   graph.addEventListener('bend-removed', requeryHandles)
   graph.addEventListener('bend-added', requeryHandles)
 }
+
 function loadSample(sample) {
   graphComponent.graph.clear()
   const builder = new GraphBuilder(graphComponent.graph)
-  builder.createNodesSource({
-    data: sample.nodes,
-    id: 'id',
-    layout: 'layout'
-  })
+  builder.createNodesSource({ data: sample.nodes, id: 'id', layout: 'layout' })
   const edgeCreator = builder.createEdgesSource(sample.edges, 'source', 'target', 'id').edgeCreator
+
   if (sample === SampleLabels) {
     // add label with the according label models from the sample data
     const labelCreator = edgeCreator.createLabelsSource((data) => data.labels).labelCreator
@@ -199,6 +212,7 @@ function loadSample(sample) {
     }
   }
   const graph = builder.buildGraph()
+
   // add label with the according label models from the sample data
   graph.edges.forEach((edge) => {
     if (edge.tag.bends) {
@@ -207,9 +221,12 @@ function loadSample(sample) {
       })
     }
   })
+
   void graphComponent.fitGraphBounds()
+
   graph.undoEngine?.clear()
 }
+
 function initializeUI() {
   document.querySelector('#bezier-editing').addEventListener('click', () => {
     config.enableEditing = !config.enableEditing
@@ -239,6 +256,7 @@ function initializeUI() {
       }
     }
   })
+
   document.querySelector('#auto-rotation').addEventListener('click', () => {
     config.autoRotation = !config.autoRotation
     bezierEdgeSegmentLabelModel.autoRotation = config.autoRotation
@@ -266,6 +284,7 @@ function initializeUI() {
       graphComponent.updateVisual()
     }
   })
+
   document.querySelector('#sample-select').addEventListener('change', (evt) => {
     const value = evt.target.value
     if (value === 'circle') {
@@ -275,4 +294,5 @@ function initializeUI() {
     }
   })
 }
+
 run().then(finishLoading)

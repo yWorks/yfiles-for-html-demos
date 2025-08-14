@@ -41,6 +41,7 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 import { NonRibbonEdgeStyle } from './NonRibbonEdgeStyle'
+
 /**
  * Creates the highlight manager for this demo and determines which items have to be highlighted
  * @param graphComponent The given graphComponent
@@ -50,21 +51,19 @@ export function configureHighlight(graphComponent) {
   decorator.nodes.highlightRenderer.addFactory((node) => {
     const style = node.style
     return new NodeStyleIndicatorRenderer({
-      nodeStyle: new ShapeNodeStyle({
-        shape: style.shape,
-        fill: style.fill,
-        stroke: style.stroke
-      }),
+      nodeStyle: new ShapeNodeStyle({ shape: style.shape, fill: style.fill, stroke: style.stroke }),
       zoomPolicy: 'world-coordinates',
       margins: 2
     })
   })
+
   decorator.edges.highlightRenderer.addConstant(
     new EdgeStyleIndicatorRenderer({
       edgeStyle: new NonRibbonEdgeStyle(5),
       zoomPolicy: 'world-coordinates'
     })
   )
+
   decorator.labels.highlightRenderer.addFactory((label) => {
     const style = label.style
     return new LabelStyleIndicatorRenderer({
@@ -80,6 +79,7 @@ export function configureHighlight(graphComponent) {
       zoomPolicy: 'world-coordinates'
     })
   })
+
   const inputMode = graphComponent.inputMode
   inputMode.itemHoverInputMode.hoverItems =
     GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
@@ -110,6 +110,7 @@ export function configureHighlight(graphComponent) {
       nodesToHighlight.add(item.sourceNode)
       nodesToHighlight.add(item.targetNode)
     }
+
     // highlight the necessary nodes and their labels on top
     for (const node of nodesToHighlight) {
       highlights.add(node)

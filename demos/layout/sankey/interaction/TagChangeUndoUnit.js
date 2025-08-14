@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { BaseClass, IUndoUnit } from '@yfiles/yfiles'
+
 /**
  * This class provides undo/redo for an operation for changing tag data.
  * Since information about node/edge color and edge thickness is stored in the item's tag, it is
@@ -39,6 +40,7 @@ export class TagChangeUndoUnit extends BaseClass(IUndoUnit) {
   undoRedoCallback
   _undoName
   _redoName
+
   /**
    * Creates a new instance of TagChangeUndoUnit.
    * @param undoName Name of the undo operation.
@@ -57,12 +59,15 @@ export class TagChangeUndoUnit extends BaseClass(IUndoUnit) {
     this._undoName = undoName
     this._redoName = redoName
   }
+
   get undoName() {
     return this._undoName
   }
+
   get redoName() {
     return this._redoName
   }
+
   /**
    * Undoes the work that is represented by this unit.
    */
@@ -70,6 +75,7 @@ export class TagChangeUndoUnit extends BaseClass(IUndoUnit) {
     this.item.tag = this.oldTag
     this.undoRedoCallback?.()
   }
+
   /**
    * Redoes the work that is represented by this unit.
    */
@@ -77,10 +83,13 @@ export class TagChangeUndoUnit extends BaseClass(IUndoUnit) {
     this.item.tag = this.newTag
     this.undoRedoCallback?.()
   }
+
   dispose() {}
+
   tryMergeUnit(_unit) {
     return false
   }
+
   tryReplaceUnit(_unit) {
     return false
   }

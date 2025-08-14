@@ -62,16 +62,18 @@ import {
   StyleIndicatorZoomPolicy,
   WebGLGraphModelManager
 } from '@yfiles/yfiles'
+
 import { SectorVisual } from './SectorVisual'
 import { getGlobalRoot, getSubtree, highlightSubtree } from './SubtreeSupport'
 import { initializeGraphSearch, resetGraphSearch } from './TreeOfLifeSearch'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 import {
   addNavigationButtons,
+  BrowserDetection,
   finishLoading,
   showLoadingIndicator
 } from '@yfiles/demo-resources/demo-page'
+
 const palettes = [
   {
     primary: '#407271',
@@ -102,27 +104,42 @@ const palettes = [
     text: '#662F01'
   }
 ]
+
 const visibleNodes = new Set()
+
 let showExtinctSpecies = true
+
 const sectorVisual = new SectorVisual()
+
 let layoutCalculationRunning = false
 let subtreeUpdateRunning = false
+
 let graphComponent
+
 async function run() {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('#graphComponent')
   if (BrowserDetection.webGL2) {
     graphComponent.graphModelManager = new WebGLGraphModelManager()
   }
+
   initializeStyleDefaults(graphComponent.graph)
+
   initializeInteraction()
+
   initializeSectorVisualization()
+
   initializeGraphSearch(graphComponent)
+
   initializeUI()
+
   void loadAndFilterGraph()
+
   // Make the breadcrumbs visible
   document.getElementById('breadcrumbs').style.display = 'block'
 }
+
 /**
  * Initializes default styles for the given graph.
  * @param graph The graph to set the defaults.
@@ -146,12 +163,14 @@ function initializeStyleDefaults(graph) {
     verticalTextAlignment: 'center'
   })
   graph.nodeDefaults.labels.shareStyleInstance = false
+
   // edge defaults
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '2px #2E282A',
     targetArrow: IArrow.NONE
   })
   graph.edgeDefaults.shareStyleInstance = false
+
   // configures the styles that are used for highlighting the graph items
   // install custom highlight
   graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(
@@ -161,9 +180,7 @@ function initializeStyleDefaults(graph) {
     })
   )
   graphComponent.graph.decorator.edges.highlightRenderer.addConstant(
-    new EdgeStyleIndicatorRenderer({
-      zoomPolicy: StyleIndicatorZoomPolicy.NO_DOWNSCALING
-    })
+    new EdgeStyleIndicatorRenderer({ zoomPolicy: StyleIndicatorZoomPolicy.NO_DOWNSCALING })
   )
   graphComponent.graph.decorator.labels.highlightRenderer.addConstant(
     new LabelStyleIndicatorRenderer({
@@ -172,16 +189,19 @@ function initializeStyleDefaults(graph) {
     })
   )
 }
+
 /**
  * Sets up an input mode for the GraphComponent, and adds custom handles to change the angle and
  * shaft ratio of the arrows.
  */
 function initializeInteraction() {
   graphComponent.maximumZoom = 2
+
   const inputMode = new GraphViewerInputMode({
     selectableItems: GraphItemTypes.NONE,
     clickableItems: GraphItemTypes.NODE | GraphItemTypes.NODE_LABEL | GraphItemTypes.EDGE
   })
+
   // show subtree of the clicked node
   inputMode.addEventListener('item-clicked', async (evt) => {
     let clickedNode
@@ -208,19 +228,23 @@ function initializeInteraction() {
       subtreeUpdateRunning = false
     }
   })
+
   // navigate to the clicked edge
   inputMode.addEventListener('item-left-clicked', async (evt) => {
     if (evt.item instanceof IEdge) {
       await navigateToEdge(evt.item, evt.location, evt.context.canvasComponent)
     }
   })
+
   // highlight subtree when hovered
   const itemHoverInputMode = inputMode.itemHoverInputMode
   itemHoverInputMode.hoverItems = GraphItemTypes.ALL
   itemHoverInputMode.hoverCursor = Cursor.POINTER
+
   itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     const highlights = graphComponent.highlights
     highlights.clear()
+
     if (evt.item instanceof ILabel) {
       // when a label is hovered, only highlight this label
       highlights.add(evt.item)
@@ -232,12 +256,14 @@ function initializeInteraction() {
       highlightSubtree(evt.item, graphComponent)
     }
   })
+
   // highlight sector when hovered
   graphComponent.addEventListener('pointer-move', (evt) => {
     if (sectorVisual.updateHighlight(evt.location)) {
       graphComponent.invalidate()
     }
   })
+
   // if a sector is clicked show its subtree
   inputMode.addEventListener('canvas-clicked', async (evt) => {
     if (!subtreeUpdateRunning) {
@@ -249,74 +275,84 @@ function initializeInteraction() {
       subtreeUpdateRunning = false
     }
   })
+
   graphComponent.inputMode = inputMode
 }
+
 /**
  * Visualizes the sectors in the background of the GraphComponent.
  */
 function initializeSectorVisualization() {
   graphComponent.renderTree.createElement(graphComponent.renderTree.backgroundGroup, sectorVisual)
 }
+
 /**
  * Loads the initial graph, colorizes the subtrees and filters the data that will be visualized.
  */
 async function loadAndFilterGraph() {
+  graphComponent.graph = new FilteredGraphWrapper(graphComponent.graph, (node) => isVisible(node))
+
   await showLoadingIndicator(true, `Loading 'Tree Of Life' data...`)
   setUIDisabled(graphComponent, true)
-  const graph = await loadGraph(graphComponent.graph)
-  colorizeSubtrees(graph)
-  graphComponent.graph = new FilteredGraphWrapper(graph, (node) => isVisible(node))
+
+  const graph = await loadGraph()
+
+  colorizeSubtrees()
+
   // center the graph
   await graphComponent.fitGraphBounds()
+
   // show and layout the first subtree
   subtreeUpdateRunning = true
   const root = graph.nodes.find((node) => node.tag.name === 'Life on Earth')
   await showSubtree(root)
   subtreeUpdateRunning = false
+
   setUIDisabled(graphComponent, false)
   await showLoadingIndicator(false)
 }
+
 /**
  * Returns the main graph that is filtered.
  */
 function mainGraph() {
   return graphComponent.graph.wrappedGraph
 }
+
 /**
  * Determines whether the given node is visible.
  */
 function isVisible(node) {
   return visibleNodes.has(node) && (showExtinctSpecies || node.tag.EXTINCT === '0')
 }
+
 /**
  * Loads the graph from data and apply default styles.
  * @yjs:keep = nodes
  */
-async function loadGraph(graph) {
+async function loadGraph() {
+  const graph = mainGraph()
   const builder = new GraphBuilder(graph)
   const response = await fetch('./resources/TreeOfLifeData.json')
   const data = await response.json()
-  builder.createNodesSource({
-    data: data.nodes,
-    id: 'id',
-    labels: ['tag.name'],
-    tag: 'tag'
-  })
-  builder.createEdgesSource({
-    data: data.links,
-    sourceId: 'source',
-    targetId: 'target'
-  })
+
+  builder.createNodesSource({ data: data.nodes, id: 'id', labels: ['tag.name'], tag: 'tag' })
+
+  builder.createEdgesSource({ data: data.links, sourceId: 'source', targetId: 'target' })
+
   return builder.buildGraph()
 }
+
 /**
  * Colorize the nodes and edges of each subtree with a different color.
  */
-function colorizeSubtrees(graph) {
+function colorizeSubtrees() {
+  const graph = mainGraph()
   const root = getGlobalRoot(graph)
   graph.successors(root).forEach((subtreeRoot, i) => {
     const subtree = getSubtree(subtreeRoot, graph)
     const palette = palettes[i]
+
     subtree.nodes.forEach((node) => {
       const extinct = node.tag.EXTINCT !== '0'
       graph.setStyle(node, getNodeStyle(extinct, palette))
@@ -325,12 +361,14 @@ function colorizeSubtrees(graph) {
       })
       node.tag = { ...node.tag, color: palettes[i].secondary }
     })
+
     subtree.edges.forEach((edge) => {
       const extinct = edge.targetNode.tag.EXTINCT !== '0'
       graph.setStyle(edge, getEdgeStyle(extinct, palette))
     })
   })
 }
+
 /**
  * Returns a node style that uses the given palette.
  */
@@ -341,6 +379,7 @@ function getNodeStyle(extinct, palette) {
     stroke: `2px ${palette.primary}`
   })
 }
+
 /**
  * Returns a label style that uses the given palette.
  */
@@ -354,6 +393,7 @@ function getLabelStyle(extinct, palette) {
     verticalTextAlignment: 'center'
   })
 }
+
 /**
  * Returns an edge style that uses the given palette.
  */
@@ -363,20 +403,22 @@ function getEdgeStyle(extinct, palette) {
     targetArrow: IArrow.NONE
   })
 }
+
 /**
  * Updates the filtered graph to only show the subtree with the given subtree root.
  */
 async function showSubtree(subtreeRoot, prepareAnimation) {
   visibleNodes.clear()
+
   const subtree = getSubtree(subtreeRoot, mainGraph())
+
   // get a list of subtree nodes ordered by their distance to the subtree root
-  const bfs = new Bfs({
-    coreNodes: [subtreeRoot]
-  })
+  const bfs = new Bfs({ coreNodes: [subtreeRoot] })
   const bfsResult = bfs.run(mainGraph())
   const subtreeNodes = subtree.nodes.toSorted(
     (node1, node2) => bfsResult.nodeLayerIds.get(node1) - bfsResult.nodeLayerIds.get(node2)
   )
+
   // only show the layers up until the graph has 500 nodes + the remaining nodes of the last layer
   let currentLayer = 0
   subtreeNodes.forEach((node) => {
@@ -386,17 +428,22 @@ async function showSubtree(subtreeRoot, prepareAnimation) {
       currentLayer = layer
     }
   })
+
   await applyNewLayout(graphComponent, prepareAnimation)
+
   resetGraphSearch()
+
   // highlight the label of the subtree root as a visual orientation
   if (subtreeRoot.labels.size > 0) {
     graphComponent.highlights.add(subtreeRoot.labels.first())
   }
+
   // update sector highlight
   if (sectorVisual.updateHighlight(graphComponent.lastEventLocation)) {
     graphComponent.invalidate()
   }
 }
+
 /**
  * Calculate and apply a new layout.
  */
@@ -409,23 +456,28 @@ async function applyNewLayout(graphComponent, prepareAnimation = true, highlight
   const oldSize = graph.nodes.size
   // update the filtering of the graph
   graph.nodePredicateChanged()
+
   // check whether there is a change in the graph
   const newSize = graph.nodes.size
   if (oldSize !== newSize) {
     await showLoadingIndicator(true, 'Calculating the layout...')
     layoutCalculationRunning = true
     setUIDisabled(graphComponent, true)
+
     // prepare the graph for the layout, move nodes at the center and reset the edge paths
     if (prepareAnimation) {
       prepareSmoothLayoutAnimation(graphComponent)
     }
+
     // apply a radial dendrogram layout
     await layoutGraph(graphComponent)
     setUIDisabled(graphComponent, false)
+
     // highlight the newly inserted extinct nodes
     if (newSize > oldSize && highlightChanges) {
       const highlights = graphComponent.highlights
       highlights.clear()
+
       graph.nodes.forEach((node) => {
         if (node.tag.EXTINCT !== '0') {
           highlights.add(node.labels.get(0))
@@ -436,6 +488,7 @@ async function applyNewLayout(graphComponent, prepareAnimation = true, highlight
     await showLoadingIndicator(false)
   }
 }
+
 /**
  * Moves the nodes of the graph at the center of the graphComponent and resets the edge paths so
  * that the animation of the layout is smoother and nicer.
@@ -450,6 +503,7 @@ function prepareSmoothLayoutAnimation(graphComponent) {
   )
   sectorVisual.updateSectors(graphComponent.graph)
 }
+
 /**
  * Layouts the current graph as a radial dendrogram.
  */
@@ -469,8 +523,10 @@ async function layoutGraph(graphComponent) {
     '200ms',
     radialLayoutData
   )
+
   sectorVisual.updateSectors(graphComponent.graph, radialLayoutData.nodePlacementsResult)
 }
+
 /**
  * Focuses the viewport to the specified edge.
  * See {@link getFocusPosition} for details on determining this position.
@@ -480,6 +536,7 @@ async function navigateToEdge(item, clickLocation, graphComponent) {
   const offset = clickLocation.subtract(graphComponent.viewport.center)
   await graphComponent.zoomToAnimated(graphComponent.zoom, position.subtract(offset))
 }
+
 /**
  * Gets the center of the edge if source and target are visible. Otherwise, the location of source
  * or target, whichever is closer. This is then used to zoom to this location.
@@ -488,6 +545,7 @@ function getFocusPosition(edge, graphComponent) {
   const viewport = graphComponent.viewport
   const targetNodeCenter = edge.targetNode.layout.center
   const sourceNodeCenter = edge.sourceNode.layout.center
+
   if (viewport.contains(targetNodeCenter) && viewport.contains(sourceNodeCenter)) {
     // if the source and the target node are in the view port, return to the middle point of the edge
     return new Point(
@@ -502,6 +560,7 @@ function getFocusPosition(edge, graphComponent) {
       : targetNodeCenter
   }
 }
+
 /**
  * Shows the subtree of the selected root node.
  * @param selectedRoot The selected root node
@@ -514,6 +573,7 @@ async function showSubtreeForSelectedRoot(selectedRoot, prepareAnimation) {
   // update the layout
   await showSubtree(selectedRoot, prepareAnimation)
 }
+
 /**
  * Returns the ancestors of the given node.
  * @param node The selected node
@@ -527,6 +587,7 @@ function getAncestors(node) {
   }
   return ancestors
 }
+
 /**
  * Creates the breadcrumb navigation menu.
  * @param selectedRoot The node that is selected to be the new root node
@@ -534,6 +595,7 @@ function getAncestors(node) {
 function updateNavigationMenuAndCombobox(selectedRoot) {
   // get the ancestors of the selected node including the node itself
   let ancestors = getAncestors(selectedRoot)
+
   // update sample in combo box based on the subtree in which the node belongs
   const selectSubtreeCombo = document.querySelector('#sample-subtrees')
   const subtrees = Array.from(selectSubtreeCombo.options).map((o) => o.text.toLowerCase())
@@ -543,20 +605,24 @@ function updateNavigationMenuAndCombobox(selectedRoot) {
       break
     }
   }
+
   // update the breadcrumb menu
   const itemsElement = document.querySelector('#breadcrumbs .breadcrumbs-items')
   // remove previous elements from the div
   while (itemsElement.lastChild) {
     itemsElement.removeChild(itemsElement.lastChild)
   }
+
   ancestors = ancestors.reverse()
   // hide some ancestors if they are more than 10
   const hasManyAncestors = ancestors.length > 10
+
   let copy = [...ancestors]
   if (hasManyAncestors) {
     copy = copy.slice(ancestors.length - 10, ancestors.length)
     copy.unshift(ancestors[0])
   }
+
   copy.forEach((ancestor, index) => {
     const ancestorDiv = document.createElement('button')
     const ancestorLabel = ancestor.tag.name
@@ -573,9 +639,11 @@ function updateNavigationMenuAndCombobox(selectedRoot) {
       subtreeUpdateRunning = false
     })
     itemsElement.appendChild(ancestorDiv)
+
     if (index != copy.length - 1) {
       itemsElement.appendChild(createArrow())
     }
+
     if (index == 0 && hasManyAncestors) {
       const dots = document.createElement('span')
       dots.innerHTML = '...'
@@ -584,6 +652,7 @@ function updateNavigationMenuAndCombobox(selectedRoot) {
     }
   })
 }
+
 /**
  * Creates an arrow for the navigation menu.
  */
@@ -593,6 +662,7 @@ function createArrow() {
   arrowElement.innerHTML = '>'
   return arrowElement
 }
+
 /**
  * Initializes the toolbar UI elements.
  */
@@ -611,11 +681,13 @@ function initializeUI() {
       }
     }
   )
+
   document.querySelector('#demo-toggle-extinct-button').addEventListener('click', async () => {
     showExtinctSpecies = !showExtinctSpecies
     await applyNewLayout(graphComponent, false, true)
   })
 }
+
 /**
  * Changes the disabled-state of all UI elements in the toolbar.
  */
@@ -626,4 +698,5 @@ function setUIDisabled(graphComponent, disabled) {
   document.querySelector('#searchBox').disabled = disabled
   document.querySelector('#breadcrumbs .breadcrumbs-items').disabled = disabled
 }
+
 run().then(finishLoading)

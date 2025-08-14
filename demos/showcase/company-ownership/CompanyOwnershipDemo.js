@@ -28,10 +28,12 @@
  ***************************************************************************/
 import { GraphOverviewComponent, License } from '@yfiles/yfiles'
 import { CompanyStructureView } from './CompanyStructureView'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { CompanyOwnershipSearch } from './CompanyOwnershipSearch'
 import { PropertiesView } from './PropertiesView'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * The component for the search in the graph
  */
@@ -44,28 +46,36 @@ let propertiesView
  * The class that manages the graph component and the handling of the data
  */
 let companyStructureView
+
 /**
  * Runs this demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   companyStructureView = new CompanyStructureView('#graphComponent')
   const graphComponent = companyStructureView.graphComponent
   // add the listeners for the companyStructureView
   companyStructureView.setNodeClickedListener((node) => propertiesView.showNodeProperties(node))
   companyStructureView.setEdgeClickedListener((edge) => propertiesView.showEdgeProperties(edge))
+
   // initialize graph search
   graphSearch = new CompanyOwnershipSearch(graphComponent)
   CompanyOwnershipSearch.registerEventListener(document.querySelector('#searchBox'), graphSearch)
+
   // create the properties view
   createPropertiesView()
+
   // load the graph
   await loadGraph(graphComponent)
+
   // bind the buttons to their functionality
   initializeUI(graphComponent)
+
   // initialize the overview component
   new GraphOverviewComponent('#overviewComponent', graphComponent)
 }
+
 /**
  * Creates the properties view that displays the information about the current employee.
  */
@@ -73,6 +83,7 @@ function createPropertiesView() {
   const propertiesViewElement = document.getElementById('propertiesView')
   propertiesView = new PropertiesView(propertiesViewElement)
 }
+
 /**
  * Binds actions to the buttons in the toolbar.
  */
@@ -82,6 +93,7 @@ function initializeUI(graphComponent) {
     companyStructureView.useShapeNodeStyle = select.value === 'shapes'
     await loadGraph(graphComponent)
   })
+
   document.querySelectorAll('button[data-command="Shapes"]').forEach((element) => {
     element.addEventListener('click', async () => {
       document.querySelector('#styles').value = 'shapes'
@@ -97,6 +109,7 @@ function initializeUI(graphComponent) {
     })
   })
 }
+
 /**
  * Resets the application and loads the new graph.
  * @param graphComponent The given graphComponent
@@ -108,10 +121,12 @@ async function loadGraph(graphComponent, animate = true) {
   // update the search string
   document.querySelector('#searchBox').value = ''
   graphSearch.updateSearch('')
+
   await companyStructureView.loadGraph('./resources/company-data.json')
   await companyStructureView.layout(animate)
   setUIDisabled(false)
 }
+
 /**
  * Updates the elements of the UI's state and checks whether the buttons should be enabled or not.
  * @param disabled True if the elements should be disabled, false otherwise
@@ -125,4 +140,5 @@ function setUIDisabled(disabled) {
     element.disabled = disabled
   })
 }
+
 void run().then(finishLoading)

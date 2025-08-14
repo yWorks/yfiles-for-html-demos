@@ -38,13 +38,20 @@ import {
   fitGraphBounds,
   initializeTutorialDefaults
 } from '../common'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
+
 graphComponent.graph.nodeDefaults.ports.style = new CustomPortStyle(25)
+
 createSampleGraphIsHit(graphComponent.graph, new OldCustomPortStyle(25))
 const graphEditorInputMode = enableGraphEditing(graphComponent)
 graphEditorInputMode.selectableItems = GraphItemTypes.NONE
 addHoverEffect(graphComponent, graphEditorInputMode)
+
 fitGraphBounds(graphComponent)
+
 finishLoading()

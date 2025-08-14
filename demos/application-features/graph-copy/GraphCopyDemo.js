@@ -47,69 +47,88 @@ import {
   ModifierKeys,
   Size
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { bindYFilesCommand, finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 let originalGraphComponent
+
 let copyGraphComponent
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   originalGraphComponent = new GraphComponent('#graphComponent')
   copyGraphComponent = new GraphComponent('#copyGraphComponent')
   originalGraphComponent.inputMode = new GraphEditorInputMode()
   copyGraphComponent.inputMode = new GraphViewerInputMode()
+
   // configures default styles for newly created original graph and the copy graph elements
   initializeGraph(originalGraphComponent.graph)
   initializeGraph(copyGraphComponent.graph)
+
   // then build the graph from the given data set
   buildGraph(originalGraphComponent.graph, graphData)
+
   LayoutExecutor.ensure()
   originalGraphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+
   await originalGraphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   originalGraphComponent.graph.undoEngineEnabled = true
+
   // bind the buttons to their functionality
   initializeUI()
 }
+
 /**
  * Iterates through the given data set and creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder.createNodesSource({
     data: graphData.nodeList.filter((item) => !item.isGroup),
     id: (item) => item.id,
     parentId: (item) => item.parentId
   })
+
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Determines if the <em>copy</em> command created in {@link #initializeUI} may be executed.
  */
 function canCopyGraph() {
   return originalGraphComponent.selection.size > 0
 }
+
 /**
  * Copy the selected part of the original graph to another graph.
  */
 function copyGraph() {
   const graphCopier = new GraphCopier()
   copyGraphComponent.graph.clear()
+
   graphCopier.copy(originalGraphComponent.graph, copyGraphComponent.graph, (item) => {
     const selection = originalGraphComponent.selection
     if (item instanceof INode || item instanceof IEdge) {
@@ -127,6 +146,7 @@ function copyGraph() {
   void copyGraphComponent.fitGraphBounds()
   return true
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  *
@@ -135,8 +155,10 @@ function copyGraph() {
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
+
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
+
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
     margins: 5
   }).createParameter('bottom')
@@ -145,6 +167,7 @@ function initializeGraph(graph) {
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
+
 /**
  * Clear the graph in the given graph component.
  */
@@ -152,6 +175,7 @@ function clearGraph(graphComponent) {
   graphComponent.graph.clear()
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Binds actions to the buttons in the tutorial's toolbar.
  */
@@ -162,13 +186,16 @@ function initializeUI() {
   const geim = originalGraphComponent.inputMode
   // disable edit on typing not to interfere with our key-binding
   geim.allowEditLabelOnTyping = false
+
   const kim = geim.keyboardInputMode
   kim.addCommandBinding(Command.COPY, copyGraph, canCopyGraph)
   kim.addKeyBinding('c', ModifierKeys.NONE, copyGraph)
   document.querySelector('#copy').addEventListener('click', () => copyGraph())
+
   document
     .querySelector('#new-in-copy')
     .addEventListener('click', () => clearGraph(copyGraphComponent))
+
   bindYFilesCommand(
     '#reset-zoom-in-copy',
     Command.ZOOM,
@@ -176,8 +203,10 @@ function initializeUI() {
     1.0,
     'Zoom to original size'
   )
+
   document
     .querySelector('#fit-graph-bounds-in-copy')
     .addEventListener('click', () => copyGraphComponent.fitGraphBounds())
 }
+
 void run().then(finishLoading)

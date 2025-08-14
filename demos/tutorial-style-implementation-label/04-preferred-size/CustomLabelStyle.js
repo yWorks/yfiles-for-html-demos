@@ -27,39 +27,46 @@
  **
  ***************************************************************************/
 import { Font, LabelStyleBase, Size, SvgVisual, TextRenderSupport } from '@yfiles/yfiles'
-const font = new Font({
-  fontFamily: 'Arial',
-  fontSize: 12
-})
+
+const font = new Font({ fontFamily: 'Arial', fontSize: 12 })
 const padding = 3
+
 export class CustomLabelStyle extends LabelStyleBase {
   createVisual(context, label) {
     // create an SVG text element that displays the label text
     const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+
     const labelSize = label.layout.toSize()
     // use a convenience method to place text content in the <text> element.
     TextRenderSupport.addText(textElement, label.text, font)
+
     // move the text right and down to leave a little padding space
     textElement.setAttribute('transform', `translate(${padding} ${padding})`)
+
     // add a background shape
     const backgroundPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     backgroundPathElement.setAttribute('d', this.createBackgroundShapeData(labelSize))
     backgroundPathElement.setAttribute('stroke', '#aaa')
     backgroundPathElement.setAttribute('fill', '#fffecd')
+
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     gElement.appendChild(backgroundPathElement)
     gElement.appendChild(textElement)
+
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(gElement)
+
     return new SvgVisual(gElement)
   }
+
   getPreferredSize(label) {
     // measure the label text using the font
     const { width, height } = TextRenderSupport.measureText(label.text, font)
     // return the measured size plus a small padding
     return new Size(width + padding + padding, height + padding + padding)
   }
+
   /**
    * Creates a simple "speech balloon" shape.
    */

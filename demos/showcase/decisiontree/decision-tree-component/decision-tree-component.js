@@ -31,7 +31,9 @@ import { getRootNode, readSampleGraph, setAsRootNode } from '../editor-component
 import { Command } from '@yfiles/yfiles'
 import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'
 import './decision-tree.css'
+
 let decisionTree
+
 /**
  * Initializes the decision tree component.
  * Wires-up the buttons in the toolbar of the decision tree component.
@@ -43,12 +45,15 @@ export function initializeDecisionTreeComponent(graphComponent) {
   })
   bindCommand('INCREASE_ZOOM_DECISION_TREE', Command.INCREASE_ZOOM)
   bindCommand('DECREASE_ZOOM_DECISION_TREE', Command.DECREASE_ZOOM)
+
   document
     .querySelector("button[data-command='FIT_GRAPH_BOUNDS']")
     .addEventListener('click', async () => {
       await graphComponent.fitGraphBounds()
     })
+
   bindCommand('ZOOM_ORIGINAL_DECISION_TREE', Command.ZOOM, 1)
+
   // add the sample graphs
   const samples = document.querySelector('#samples')
   ;['cars', 'what-to-do', 'quiz'].forEach((graph) => {
@@ -63,6 +68,7 @@ export function initializeDecisionTreeComponent(graphComponent) {
     showDecisionTree(graphComponent.graph)
   })
 }
+
 /**
  * Creates a new decision tree based on the given graph.
  */
@@ -84,6 +90,7 @@ export function showDecisionTree(graph) {
     )
   }
 }
+
 /**
  * Disposes and hides the decision tree.
  */
@@ -94,6 +101,7 @@ export function hideDecisionTree() {
     decisionTree = null
   }
 }
+
 /**
  * Updates the demo's UI depending on whether a layout is currently calculated.
  * @param running true indicates that a layout is currently calculated
@@ -105,6 +113,7 @@ function setLayoutRunning(running, graphComponent) {
     element.disabled = running
   })
 }
+
 /**
  * Binds the given command and command parameter to the {@link HTMLButtonElement} that matches the
  * given <code>data-command</code> name in the decision tree's toolbar.

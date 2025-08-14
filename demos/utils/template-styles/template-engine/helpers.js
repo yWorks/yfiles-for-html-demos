@@ -33,6 +33,7 @@ import {
   ID_REFERENCE_ATTRIBUTES,
   PARSING_PLACEHOLDER_XLINK_NS
 } from './constants'
+
 /**
  * Generates a prefixed ID.
  * @param id - The original ID.
@@ -42,6 +43,7 @@ import {
 export function generatePrefixedId(id, prefix) {
   return `${prefix}-${id}`
 }
+
 /**
  * Processes ID reference values.
  * @param value - The ID reference value.
@@ -76,6 +78,7 @@ export function processIdReferenceValue(value, idMap, idPrefix) {
     })
     .join(' ')
 }
+
 /**
  * Parses a binding expression.
  * @param value - The binding expression string.
@@ -84,6 +87,7 @@ export function processIdReferenceValue(value, idMap, idPrefix) {
 export function parseBindingExpression(value) {
   const match = value.match(BINDING_REGEX)
   if (!match) return null
+
   const parts = match[2].split(/,\s*/)
   return {
     templateBinding: match[1] === 'TemplateBinding',
@@ -92,6 +96,7 @@ export function parseBindingExpression(value) {
     converterParameter: parts.find((p) => p.startsWith('Parameter='))?.split('=')[1]
   }
 }
+
 /**
  * Creates a binding configuration from an attribute.
  * @param attr - The attribute to create the binding configuration from.
@@ -100,6 +105,7 @@ export function parseBindingExpression(value) {
 export function createBindingConfig(attr) {
   const binding = parseBindingExpression(attr.value)
   if (!binding) return null
+
   return {
     type: attr.name === DATA_CONTENT_ATTRIBUTE ? 'content' : 'attribute',
     ns:
@@ -113,6 +119,7 @@ export function createBindingConfig(attr) {
     converterParameter: binding.converterParameter
   }
 }
+
 /**
  * Sets the content of an element.
  * @param element - The element to set the content of.
@@ -126,6 +133,7 @@ export function setElementContent(element, content) {
     element.appendChild(document.createTextNode(String(content)))
   }
 }
+
 /**
  * Collects template IDs from a root node.
  * @param rootNode - The root node to collect IDs from.
@@ -133,6 +141,7 @@ export function setElementContent(element, content) {
  */
 export function collectTemplateIds(rootNode) {
   const idMap = new Set()
+
   function traverse(node) {
     if (node.nodeType === Node.ELEMENT_NODE) {
       const element = node
@@ -143,9 +152,11 @@ export function collectTemplateIds(rootNode) {
       element.childNodes.forEach(traverse)
     }
   }
+
   traverse(rootNode)
   return idMap
 }
+
 /**
  * Checks if an attribute is an ID reference attribute.
  * @param name - The name of the attribute.
@@ -154,6 +165,7 @@ export function collectTemplateIds(rootNode) {
 export function isIdReferenceAttribute(name) {
   return ID_REFERENCE_ATTRIBUTES.includes(name)
 }
+
 /**
  * Sets an attribute on an element.
  * @param element - The element to set the attribute on.
@@ -181,9 +193,11 @@ export function setAttribute(element, name, value, ns, context) {
     }
   }
 }
+
 export function removeAttribute(element, binding) {
   element.removeAttribute(binding.name)
 }
+
 export function setBindingValue(element, binding, value, renderContext) {
   if (typeof value !== 'undefined') {
     if (binding.type === 'content') {
@@ -207,6 +221,7 @@ export function setBindingValue(element, binding, value, renderContext) {
     }
   }
 }
+
 export function resolvePath(newContext, path) {
   return path
     .split('.')

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { BridgeManager, GraphObstacleProvider } from '@yfiles/yfiles'
+
 /**
  * Creates and configures the BridgeManager.
  * @param graphComponent The given graphComponent

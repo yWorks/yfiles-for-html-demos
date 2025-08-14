@@ -43,6 +43,7 @@ import {
   Point,
   SimpleEdge
 } from '@yfiles/yfiles'
+
 /**
  * Custom create edge input mode for bezier edges.
  * This mode can operate in two different ways:
@@ -57,14 +58,17 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
    * Re-entrance flag when we are inserting/removing dummy edge bends.
    */
   augmenting
+
   /**
    * Additional canvas object that highlights the control point sequence.
    */
   controlPointHighlight
+
   /**
    * Whether we want to create smooth splines.
    */
   $createSmoothSplines
+
   /**
    * Determines whether we want to create smooth splines.
    * If true, each "bend" creation inserts one of the "exterior" control points for a cubic segment, and the point in the middle
@@ -74,6 +78,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
   get createSmoothSplines() {
     return this.$createSmoothSplines
   }
+
   /**
    * Specifies whether we want to create smooth splines.
    * If true, each "bend" creation inserts one of the "exterior" control points for a cubic segment, and the point in the middle
@@ -83,15 +88,19 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
   set createSmoothSplines(value) {
     this.$createSmoothSplines = value
   }
+
   constructor() {
     super()
     this.$createSmoothSplines = true
     // By default, we can't create orthogonal edges with this mode
     // (what would that look like)
     this.orthogonalEdgeCreation = OrthogonalEdgeEditingPolicy.NEVER
+
     this.augmenting = false
     this.controlPointHighlight = null
+
     this.cancelGestureOnInvalidEnd = false
+
     this.validBendHitTestable = IHitTestable.create((context, location) => {
       if (
         !this.previewEdge ||
@@ -110,9 +119,11 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
         lastBend.index % 3 !== 0 || location.subtract(lastBend.location.toPoint()).vectorLength > 10
       )
     })
+
     this.configureDummyGraph()
     this.addEventListener('edge-creation-started', this.configureDummyEdge.bind(this))
   }
+
   /**
    * If we have a bezier edge style, we decorate it so that we can also show the control points.
    * A better solution that would however be more involved would be to show the decoration.
@@ -127,6 +138,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
       simpleEdge.getDecorator().bendCreator.addConstant(defaultBendCreator)
     }
   }
+
   onGestureCanceling(inputModeEventArgs) {
     if (this.controlPointHighlight) {
       this.parentInputModeContext?.canvasComponent?.renderTree.remove(this.controlPointHighlight)
@@ -134,6 +146,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
     }
     super.onGestureCanceling(inputModeEventArgs)
   }
+
   onGestureFinishing(inputModeEventArgs) {
     if (this.controlPointHighlight) {
       this.parentInputModeContext?.canvasComponent?.renderTree.remove(this.controlPointHighlight)
@@ -141,6 +154,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
     }
     super.onGestureFinishing(inputModeEventArgs)
   }
+
   uninstall(context) {
     if (this.controlPointHighlight) {
       this.parentInputModeContext?.canvasComponent?.renderTree.remove(this.controlPointHighlight)
@@ -148,6 +162,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
     }
     super.uninstall(context)
   }
+
   configureDummyGraph() {
     const dummyGraph = this.previewGraph
     // Register to bend creation and removal events
@@ -156,6 +171,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
     dummyGraph.addEventListener('bend-added', this.onBendAdded.bind(this))
     dummyGraph.addEventListener('bend-removed', this.onBendRemoved.bind(this))
   }
+
   onBendRemoved() {
     if (!this.augmenting) {
       if (this.createSmoothSplines && this.previewEdge.style instanceof BezierEdgeStyle) {
@@ -171,6 +187,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
       }
     }
   }
+
   onBendAdded(evt) {
     if (!this.augmenting) {
       if (this.createSmoothSplines && this.previewEdge.style instanceof BezierEdgeStyle) {
@@ -192,6 +209,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
       }
     }
   }
+
   /**
    * Overridden to pad the number of bends so that there are always 2 mod 3 by duplicating the last location, if necessary.
    */

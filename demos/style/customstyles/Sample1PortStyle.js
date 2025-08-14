@@ -36,9 +36,11 @@ import {
   SvgVisual
 } from '@yfiles/yfiles'
 import { SVGNS } from './Namespaces'
+
 /** the size of the port rendering */
 const WIDTH = 4
 const HEIGHT = 4
+
 /**
  * A custom port style based on the {@link PortStyleBase} class.
  * The port is rendered as a circle.
@@ -61,6 +63,7 @@ export class Sample1PortStyle extends PortStyleBase {
     SvgVisual.setTranslate(ellipse, locationX, locationY)
     return SvgVisual.from(ellipse)
   }
+
   updateVisual(context, oldVisual, port) {
     const ellipse = oldVisual.svgElement
     const portLocation = port.locationParameter.model.getLocation(port, port.locationParameter)
@@ -70,6 +73,7 @@ export class Sample1PortStyle extends PortStyleBase {
     SvgVisual.setTranslate(ellipse, locationX, locationY)
     return oldVisual
   }
+
   /**
    * Calculates the bounds of this port.
    * These are also used for arranging the visual, hit testing, visibility testing, and marquee box tests.

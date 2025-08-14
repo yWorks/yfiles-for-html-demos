@@ -43,10 +43,12 @@ import {
   StretchNodeLabelModel,
   TextWrapping
 } from '@yfiles/yfiles'
+
 import { MarkdownLabelStyle } from './MarkdownLabelStyle'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 /**
  * Simple demo that shows how to use MarkupLabelStyle to render labels.
  * The label text shows how to create headings, strong and emphasis text and line breaks,
@@ -57,9 +59,11 @@ import graphData from './graph-data.json'
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
+
   const graph = graphComponent.graph
   // set the defaults for nodes
   graph.edgeDefaults.style = new PolylineEdgeStyle({
@@ -73,6 +77,7 @@ async function run() {
   graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel({
     autoRotation: false
   }).createParameterFromSource(0)
+
   // node labels get markup label support
   const font = new Font('Verdana,sans-serif', 12)
   graph.nodeDefaults.labels.style = new MarkdownLabelStyle(
@@ -93,26 +98,29 @@ async function run() {
       padding: [5]
     })
   )
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new OrthogonalLayout())
   await graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder
-    .createNodesSource({
-      data: graphData.nodeList,
-      id: (item) => item.id
-    })
+    .createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder
     .createEdgesSource({
       data: graphData.edgeList,
@@ -120,6 +128,8 @@ function buildGraph(graph, graphData) {
       targetId: (item) => item.target
     })
     .edgeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.buildGraph()
 }
+
 run().then(finishLoading)

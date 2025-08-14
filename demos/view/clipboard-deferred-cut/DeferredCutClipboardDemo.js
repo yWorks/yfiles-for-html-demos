@@ -40,39 +40,46 @@ import {
   OrthogonalLayout,
   Size
 } from '@yfiles/yfiles'
+
 import { setClipboardStyles } from './ClipboardStyles'
 import { DeferredCutClipboard } from './DeferredCutClipboard'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 let graphComponent
+
 async function run() {
   License.value = await fetchLicense()
+
   // add the graph component
   graphComponent = new GraphComponent('#graphComponent')
   // set the styles and create a sample graph
   initializeGraph(graphComponent.graph)
   setClipboardStyles(graphComponent.graph)
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new OrthogonalLayout({ gridSpacing: 30 }))
   void graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
+
   /**
    * Creates nodes and edges according to the given data.
    */
   function buildGraph(graph, graphData) {
     const graphBuilder = new GraphBuilder(graph)
+
     graphBuilder
-      .createNodesSource({
-        data: graphData.nodeList,
-        id: (item) => item.id
-      })
+      .createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
       .nodeCreator.createLabelBinding((item) => item.label)
+
     graphBuilder
       .createEdgesSource({
         data: graphData.edgeList,
@@ -80,8 +87,10 @@ async function run() {
         targetId: (item) => item.target
       })
       .edgeCreator.createLabelBinding((item) => item.label)
+
     graphBuilder.buildGraph()
   }
+
   /**
    * Initializes the defaults for the styling in this demo.
    *
@@ -90,24 +99,30 @@ async function run() {
   function initializeGraph(graph) {
     // set styles for this demo
     initDemoStyles(graph)
+
     // set sizes and locations specific for this demo
     graph.nodeDefaults.size = new Size(50, 50)
+
     graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
   }
+
   // configure the clipboard itself
   const clipboard = new DeferredCutClipboard()
   // trigger a repaint after copy since copy removed the "marked for cut" mark from the elements
   clipboard.addEventListener('items-copied', () => graphComponent.invalidate())
   graphComponent.clipboard = clipboard
+
   // set up the input mode
   const mode = new GraphEditorInputMode()
   mode.marqueeSelectableItems = GraphItemTypes.NODE | GraphItemTypes.BEND
   graphComponent.inputMode = mode
   graphComponent.graph.undoEngineEnabled = true
+
   // for demonstration purposes we configure a context menu
   // to make it possible to paste to an arbitrary location
   configureContextMenu(graphComponent)
 }
+
 /**
  * Configures a context menu.
  * This is to provide the ability to paste graph elements to an arbitrary location.
@@ -116,10 +131,12 @@ async function run() {
  */
 function configureContextMenu(graphComponent) {
   const inputMode = graphComponent.inputMode
+
   inputMode.addEventListener('populate-item-context-menu', (evt) => {
     if (evt.handled) {
       return
     }
+
     const inputMode = graphComponent.inputMode
     if (evt.item instanceof INode) {
       if (!graphComponent.selection.nodes.includes(evt.item)) {
@@ -142,4 +159,5 @@ function configureContextMenu(graphComponent) {
     }
   })
 }
+
 run().then(finishLoading)

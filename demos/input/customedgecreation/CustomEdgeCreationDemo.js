@@ -47,13 +47,16 @@ import {
   ShowPortCandidates,
   Size
 } from '@yfiles/yfiles'
+
 import { RoutingCreateEdgeInputMode, RoutingStrategy } from './RoutingCreateEdgeInputMode'
 import { PortCandidateRenderer } from './PortCandidateRenderer'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 const defaultColor = '#F0EBE6'
 const nodeColors = ['#D4B483', '#C1666B', '#48A9A6', '#4357AD']
+
 /**
  * Bootstraps the demo.
  */
@@ -63,25 +66,32 @@ async function run() {
   // configures default styles for newly created graph elements
   initDemoStyles(graphComponent.graph, { orthogonalEditing: true })
   graphComponent.graph.nodeDefaults.size = new Size(40, 40)
+
   // configure the port candidate decorator and associated input mode behavior
   initializePortBehavior(graphComponent)
+
   // edge creation should be able to finish on an empty canvas
   initializeInputMode(graphComponent, true)
+
   initializeCustomPortCandidates(graphComponent)
   graphComponent.inputMode.createEdgeInputMode.routingStrategy =
     RoutingStrategy.PERFORMANCE_EDGE_ROUTER
+
   // create an initial sample graph
   createGraph(graphComponent.graph)
   await graphComponent.fitGraphBounds()
+
   // bind the buttons to their functionality
   initializeUI(graphComponent)
 }
+
 /**
  * Configures the given {@link CreateEdgeInputMode} to be able to finish the gesture on an empty
  * canvas with a newly created node.
  */
 function enableTargetNodeCreation(createEdgeInputMode) {
   createEdgeInputMode.previewGraph.nodeDefaults.size = new Size(40, 40)
+
   // each edge creation should use another random target node color
   createEdgeInputMode.addEventListener('gesture-starting', (_, src) => {
     const randomColor = getRandomColor()
@@ -89,9 +99,11 @@ function enableTargetNodeCreation(createEdgeInputMode) {
     src.previewGraph.nodeDefaults.style = randomNodeStyle
     src.previewGraph.setStyle(src.previewEndNode, randomNodeStyle)
     src.previewEndNode.tag = randomColor
+
     // add ports to the dummy node
     addDirectionalPorts(src.previewGraph, src.previewEndNode, newPortStyle(randomColor))
   })
+
   // If targeting another node during edge creation, the dummy target node should not be rendered
   // because we'd use that actual graph node as target if the gesture is finished on a node.
   createEdgeInputMode.addEventListener('end-port-candidate-changed', (evt, src) => {
@@ -111,10 +123,12 @@ function enableTargetNodeCreation(createEdgeInputMode) {
       )
     }
   })
+
   // allow the create edge gesture to be finished anywhere, since we'll create a node if there is
   // no target node in the graph at the given location
   createEdgeInputMode.prematureEndHitTestable = IHitTestable.ALWAYS
   createEdgeInputMode.forceSnapToCandidate = false
+
   // create a new node if the gesture finishes on the empty canvas
   const edgeCreator = createEdgeInputMode.edgeCreator
   createEdgeInputMode.edgeCreator = (
@@ -140,6 +154,7 @@ function enableTargetNodeCreation(createEdgeInputMode) {
     )
   }
 }
+
 /**
  * Initialize the {@link GraphEditorInputMode} as main input mode.
  * In this demo, edges can only be created on distinct source port candidates.
@@ -155,18 +170,23 @@ function initializeInputMode(graphComponent, enableTargetNode) {
   // that the new mode behaves as closely to the original one as possible
   routingCreateEdgeInputMode.priority = geim.createEdgeInputMode.priority
   geim.createEdgeInputMode = routingCreateEdgeInputMode
+
   // show source port candidates as well
   geim.createEdgeInputMode.showPortCandidates = ShowPortCandidates.ALL
+
   // allow edge creation for selected nodes on the given source port(s) as well
   geim.createEdgeInputMode.startOverCandidateOnly = true
+
   // newly created edges should use the same color as their source port color
   geim.createEdgeInputMode.addEventListener('edge-creation-started', (evt, src) => {
     const color = evt.item.sourceNode.tag
     src.previewGraph.setStyle(src.previewEdge, newEdgeStyle(color))
   })
+
   if (enableTargetNode) {
     enableTargetNodeCreation(geim.createEdgeInputMode)
   }
+
   // Use a random node color and add directional ports to each created node
   const graph = graphComponent.graph
   geim.addEventListener('node-created', (evt) => {
@@ -175,13 +195,17 @@ function initializeInputMode(graphComponent, enableTargetNode) {
     const randomColor = getRandomColor()
     graph.setStyle(node, newNodeStyle(randomColor))
     node.tag = randomColor
+
     // add ports
     addDirectionalPorts(graph, node, newPortStyle(randomColor))
   })
+
   // configure the current routing style
   onCreateEdgeModeChanged(geim.createEdgeInputMode)
+
   graphComponent.inputMode = geim
 }
+
 /**
  * Configures the port behavior in this demo to not discard ports when an edge is disconnected, and
  * each node should present its ports as possible candidate.
@@ -196,18 +220,21 @@ function initializePortBehavior(graphComponent) {
   )
   graph.decorator.ports.handle.hide()
 }
+
 /**
  * Configures custom port candidate visualizations for the interactive edge creation.
  */
 function initializeCustomPortCandidates(graphComponent) {
   graphComponent.inputMode.createEdgeInputMode.portCandidateRenderer = new PortCandidateRenderer()
 }
+
 /**
  * Returns a random color from the {@link nodeColors} field.
  */
 function getRandomColor() {
   return nodeColors[Math.floor(Math.random() * nodeColors.length)]
 }
+
 /**
  * Returns a new edge style instance with the given color.
  * @param color The line color for the created edge style.
@@ -215,13 +242,10 @@ function getRandomColor() {
 function newEdgeStyle(color) {
   return new PolylineEdgeStyle({
     stroke: `2px solid ${color}`,
-    targetArrow: new Arrow({
-      type: 'stealth',
-      fill: color,
-      cropLength: 1
-    })
+    targetArrow: new Arrow({ type: 'stealth', fill: color, cropLength: 1 })
   })
 }
+
 /**
  * Returns a new node style instance with the given color.
  * @param color The fill color for the created node style.
@@ -233,21 +257,19 @@ function newNodeStyle(color) {
     fill: defaultColor
   })
 }
+
 /**
  * Returns a new port style instance with the given color.
  * @param color The border color for the created port style.
  */
 function newPortStyle(color) {
   if (document.querySelector('#toggle-port-visualization').checked) {
-    return new ShapePortStyle({
-      shape: 'ellipse',
-      fill: defaultColor,
-      stroke: color
-    })
+    return new ShapePortStyle({ shape: 'ellipse', fill: defaultColor, stroke: color })
   } else {
     return IPortStyle.VOID_PORT_STYLE
   }
 }
+
 /**
  * Helper function to add directional ports to the given node.
  */
@@ -258,6 +280,7 @@ function addDirectionalPorts(graph, node, portStyle) {
   graph.addPort(node, FreeNodePortLocationModel.BOTTOM, portStyle)
   graph.addPort(node, FreeNodePortLocationModel.LEFT, portStyle)
 }
+
 /**
  * Creates a node with directional ports and the given color.
  * @param graph The graph in which the node should be created
@@ -266,14 +289,11 @@ function addDirectionalPorts(graph, node, portStyle) {
  */
 function createNode(graph, location, color) {
   color = color || getRandomColor()
-  const node = graph.createNodeAt({
-    location,
-    tag: color,
-    style: newNodeStyle(color)
-  })
+  const node = graph.createNodeAt({ location, tag: color, style: newNodeStyle(color) })
   addDirectionalPorts(graph, node, newPortStyle(color))
   return node
 }
+
 /**
  * Creates an initial sample graph.
  * @param graph The demo's graph.
@@ -281,26 +301,32 @@ function createNode(graph, location, color) {
 function createGraph(graph) {
   graph.clear()
   createNode(graph, new Point(0, 0), nodeColors[0])
+
   const color1 = nodeColors[1]
   createNode(graph, new Point(-80, -80), color1)
   createNode(graph, new Point(0, -80), color1)
   createNode(graph, new Point(80, -80), color1)
+
   createNode(graph, new Point(-80, 0), color1)
   createNode(graph, new Point(80, 0), color1)
+
   createNode(graph, new Point(-80, 80), color1)
   createNode(graph, new Point(0, 80), color1)
   createNode(graph, new Point(80, 80), color1)
+
   const color2 = nodeColors[2]
   createNode(graph, new Point(-160, -160), color2)
   createNode(graph, new Point(-80, -160), color2)
   createNode(graph, new Point(0, -160), color2)
   createNode(graph, new Point(80, -160), color2)
   createNode(graph, new Point(160, -160), color2)
+
   createNode(graph, new Point(-160, 160), color2)
   createNode(graph, new Point(-80, 160), color2)
   createNode(graph, new Point(0, 160), color2)
   createNode(graph, new Point(80, 160), color2)
   createNode(graph, new Point(160, 160), color2)
+
   const color3 = nodeColors[3]
   createNode(graph, new Point(-240, -240), color3)
   createNode(graph, new Point(-160, -240), color3)
@@ -309,6 +335,7 @@ function createGraph(graph) {
   createNode(graph, new Point(80, -240), color3)
   createNode(graph, new Point(160, -240), color3)
   createNode(graph, new Point(240, -240), color3)
+
   createNode(graph, new Point(-240, 240), color3)
   createNode(graph, new Point(-160, 240), color3)
   createNode(graph, new Point(-80, 240), color3)
@@ -317,12 +344,14 @@ function createGraph(graph) {
   createNode(graph, new Point(160, 240), color3)
   createNode(graph, new Point(240, 240), color3)
 }
+
 /**
  * Switches the routing strategy for edge creation.
  */
 function onCreateEdgeModeChanged(createEdgeInputMode) {
   createEdgeInputMode.routingStrategy = getRoutingStrategy()
 }
+
 /**
  * Gets the routing strategy for the demo's custom create edge input mode.
  */
@@ -338,6 +367,7 @@ function getRoutingStrategy() {
       return RoutingStrategy.NONE
   }
 }
+
 /**
  * Toggles port visualization on the graph.
  */
@@ -354,6 +384,7 @@ function onTogglePortVisualization(graph, checked) {
     graph.setStyle(port, portStyle)
   })
 }
+
 /**
  * Binds actions to the buttons in the toolbar.
  */
@@ -361,18 +392,22 @@ function initializeUI(graphComponent) {
   document.querySelector('#reset').addEventListener('click', () => {
     createGraph(graphComponent.graph)
   })
+
   document
     .querySelector('#create-edge-mode')
     .addEventListener('change', () =>
       onCreateEdgeModeChanged(graphComponent.inputMode.createEdgeInputMode)
     )
+
   document.querySelector('#toggle-target-node').addEventListener('click', (evt) => {
     const button = evt.target
     initializeInputMode(graphComponent, button.checked)
   })
+
   document.querySelector('#toggle-port-visualization').addEventListener('click', (evt) => {
     const button = evt.target
     onTogglePortVisualization(graphComponent.graph, button.checked)
   })
 }
+
 run().then(finishLoading)

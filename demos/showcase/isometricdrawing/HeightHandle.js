@@ -36,6 +36,7 @@ import {
   INode,
   Point
 } from '@yfiles/yfiles'
+
 /**
  * An {@link IHandle} implementation that changes the height in a node's tag.
  */
@@ -45,6 +46,7 @@ export class HeightHandle extends BaseClass(IHandle) {
   node
   inputModeContext
   minimumHeight
+
   constructor(node, inputModeContext, minimumHeight) {
     super()
     this.node = node
@@ -52,15 +54,19 @@ export class HeightHandle extends BaseClass(IHandle) {
     this.minimumHeight = minimumHeight
     this.dragging = false
   }
+
   get type() {
     return HandleType.RESIZE
   }
+
   get tag() {
     return null
   }
+
   get cursor() {
     return this.dragging ? Cursor.GRABBING : Cursor.GRAB
   }
+
   get location() {
     const height = this.node.tag.height
     const cc = this.inputModeContext.canvasComponent
@@ -68,6 +74,7 @@ export class HeightHandle extends BaseClass(IHandle) {
     const up = vp.add(new Point(0, -height * this.inputModeContext.zoom))
     return cc.viewToWorldCoordinates(up)
   }
+
   /**
    * Initializes the drag.
    */
@@ -75,12 +82,14 @@ export class HeightHandle extends BaseClass(IHandle) {
     this.originalHeight = this.node.tag.height
     this.dragging = true
   }
+
   /**
    * Updates the node according to the moving handle.
    */
   handleMove(inputModeContext, originalLocation, newLocation) {
     this.adjustNodeHeight(inputModeContext, originalLocation, newLocation)
   }
+
   /**
    * Cancels the drag and cleans up.
    */
@@ -88,6 +97,7 @@ export class HeightHandle extends BaseClass(IHandle) {
     this.node.tag.height = this.originalHeight
     this.dragging = false
   }
+
   /**
    * Finishes the drag an applies changes.
    */
@@ -95,6 +105,7 @@ export class HeightHandle extends BaseClass(IHandle) {
     this.adjustNodeHeight(context, originalLocation, newLocation)
     this.dragging = false
   }
+
   /**
    * Adjusts the node height according to how much the handle was moved.
    */
@@ -105,6 +116,7 @@ export class HeightHandle extends BaseClass(IHandle) {
     const newHeight = this.originalHeight - delta
     this.node.tag.height = Math.max(this.minimumHeight, newHeight)
   }
+
   /**
    * This implementation does nothing special when clicked.
    */

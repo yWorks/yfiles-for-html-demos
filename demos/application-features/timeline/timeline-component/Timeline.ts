@@ -64,14 +64,8 @@ import { initializeToolTips } from './tooltips'
  * A time entry specifies the time range or points in time when the corresponding data item should be visible.
  */
 export type TimeEntry =
-  | {
-      start?: number
-      end?: number
-    }
-  | {
-      start?: number
-      end?: number
-    }[]
+  | { start?: number; end?: number }
+  | { start?: number; end?: number }[]
   | number[]
 
 type FilterChangedListener<TDataItem> = (filter: (item: TDataItem) => boolean) => void
@@ -550,10 +544,7 @@ export class Timeline<TDataItem> {
     graphComponent.graph = foldingManager.createFoldingView().graph
 
     foldingManager.folderNodeConverter = new AggregationFolderNodeConverter({
-      folderNodeDefaults: {
-        copyLabels: false,
-        size: [20, 50]
-      }
+      folderNodeDefaults: { copyLabels: false, size: [20, 50] }
     })
 
     const inputMode = graphComponent.inputMode as GraphInputMode

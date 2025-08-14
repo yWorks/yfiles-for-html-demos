@@ -28,22 +28,27 @@
  ***************************************************************************/
 import { GraphItemTypes, IEdge, INode, Point, TimeSpan } from '@yfiles/yfiles'
 import { getConnectionData, getEntityInfo } from './entity-data'
+
 /**
  * Enables the tooltips for the node elements.
  */
 export function enableTooltips(graphComponent) {
   const inputMode = graphComponent.inputMode
+
   // enable tooltips for nodes and edges
   inputMode.toolTipItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
+
   const toolTipInputMode = inputMode.toolTipInputMode
   toolTipInputMode.toolTipLocationOffset = new Point(15, 15)
   toolTipInputMode.delay = TimeSpan.fromMilliseconds(100)
   toolTipInputMode.duration = TimeSpan.fromSeconds(3)
+
   inputMode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.handled) {
       // Tooltip content has already been assigned -> nothing to do.
       return
     }
+
     const item = evt.item
     if (item instanceof INode) {
       const nodeInfo = getEntityInfo(item)
@@ -56,6 +61,7 @@ export function enableTooltips(graphComponent) {
         evt.toolTip = connectionData.type
       }
     }
+
     // Indicate that the tooltip content has been set.
     evt.handled = true
   })

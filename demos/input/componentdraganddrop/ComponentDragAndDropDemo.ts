@@ -90,9 +90,7 @@ async function run(): Promise<void> {
  */
 function initializeInputModes(): void {
   // create a GraphEditorInputMode instance
-  const graphEditorInputMode = new GraphEditorInputMode({
-    focusableItems: 'none'
-  })
+  const graphEditorInputMode = new GraphEditorInputMode({ focusableItems: 'none' })
   // add newly created nodes to their only component
   graphEditorInputMode.addEventListener(
     'node-created',
@@ -306,9 +304,7 @@ function initializeGraph(): void {
     stroke: null
   })
 
-  graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '5px #c1c1c1'
-  })
+  graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '5px #c1c1c1' })
 }
 
 /**
@@ -415,8 +411,8 @@ function createComponentVisual(componentGraph: IGraph): string {
   const svg = svgExport.exportSvg(exportComponent)
 
   // Dispose of the component and remove its references to the graph
-  exportComponent.cleanUp()
   exportComponent.graph = new Graph()
+  exportComponent.cleanUp()
 
   const svgString = SvgExport.exportSvgString(svg)
   return SvgExport.encodeSvgDataUrl(svgString)

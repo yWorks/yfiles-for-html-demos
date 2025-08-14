@@ -39,6 +39,7 @@ import {
   Rect,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * A simple HTML Canvas node style that draws a rectangle with a solid fill.
  */
@@ -48,6 +49,7 @@ export class SimpleCanvasNodeStyle extends NodeStyleBase {
     super()
     this.color = color
   }
+
   /**
    * Creates the visual representation for the given node.
    * @param renderContext The render context.
@@ -58,6 +60,7 @@ export class SimpleCanvasNodeStyle extends NodeStyleBase {
   createVisual(renderContext, node) {
     return new NodeRenderVisual(node.layout, this.color)
   }
+
   /**
    * Updates the visual representation for the given node.
    * @param renderContext The render context.
@@ -70,6 +73,7 @@ export class SimpleCanvasNodeStyle extends NodeStyleBase {
   updateVisual(renderContext, oldVisual, node) {
     return oldVisual
   }
+
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
    * Optimized implementation for a rectangular shape.
@@ -81,6 +85,7 @@ export class SimpleCanvasNodeStyle extends NodeStyleBase {
   isHit(context, p, node) {
     return node.layout.toRect().contains(p, context.hitTestRadius)
   }
+
   /**
    * Gets the intersection of a line with the visual representation of the node.
    * Optimized implementation for a rectangular shape.
@@ -92,6 +97,7 @@ export class SimpleCanvasNodeStyle extends NodeStyleBase {
   getIntersection(node, inner, outer) {
     return node.layout.toRect().findLineIntersection(inner, outer)
   }
+
   /**
    * Determines whether the provided point is geometrically inside the visual bounds of the node.
    * Optimized implementation for a rectangular shape.
@@ -102,6 +108,7 @@ export class SimpleCanvasNodeStyle extends NodeStyleBase {
   isInside(node, point) {
     return node.layout.toRect().contains(point)
   }
+
   /**
    * Determines whether the visualization for the specified node is included in the marquee selection.
    * Optimized implementation for a rectangular shape.
@@ -114,12 +121,14 @@ export class SimpleCanvasNodeStyle extends NodeStyleBase {
     return box.containsRectangle(node.layout)
   }
 }
+
 /**
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class NodeRenderVisual extends HtmlCanvasVisual {
   layout
   color
+
   /**
    * Creates an instance of the render visual.
    * @param layout A live view of the layout of a node.
@@ -130,6 +139,7 @@ class NodeRenderVisual extends HtmlCanvasVisual {
     this.layout = layout
     this.color = `rgba(${color.r},${color.g},${color.b},${color.a})`
   }
+
   /**
    * Draw a simple rectangle with a solid orange fill.
    * @param context The render context.

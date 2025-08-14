@@ -40,42 +40,53 @@ import {
   ShapeNodeStyle,
   Size
 } from '@yfiles/yfiles'
+
 import SampleData from './resources/SampleData'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { ScalingNodeStyle } from './ScalingNodeStyle'
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   const graphComponent = new GraphComponent('#graphComponent')
   // configure user interaction
   graphComponent.inputMode = new GraphEditorInputMode()
+
   // create the style definitions from which to compose this demo's node visualizations
   const stylesDefinitions = createStyleDefinitions()
+
   // configures default styles for newly created graph elements
   configureGraph(graphComponent.graph, stylesDefinitions)
+
   // add a sample graph
   createGraph(graphComponent.graph, stylesDefinitions)
+
   // center the sample graph in the visible area
   void graphComponent.fitGraphBounds()
+
   // enable undo and redo
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Sets defaults styles for the given graph.
  */
 function configureGraph(graph, styleDefinitions) {
   // specify a default node size that works well with the insets used in the given style definitions
   graph.nodeDefaults.size = new Size(96, 96)
+
   graph.nodeDefaults.style = createCompositeStyle(styleDefinitions, 'workstation')
+
   graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.BOTTOM
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '2px #617984'
-  })
+
+  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '2px #617984' })
 }
+
 /**
  * Creates a sample graph.
  */
@@ -88,14 +99,10 @@ function createGraph(graph, stylesDefinitions) {
     layout: 'bounds',
     style: (data) => createCompositeStyle(stylesDefinitions, data.type)
   })
-  builder.createEdgesSource({
-    data: SampleData.edges,
-    id: 'id',
-    sourceId: 'src',
-    targetId: 'tgt'
-  })
+  builder.createEdgesSource({ data: SampleData.edges, id: 'id', sourceId: 'src', targetId: 'tgt' })
   builder.buildGraph()
 }
+
 /**
  * Creates a new {@link CompositeNodeStyle} instance with the default background and border from
  * the given style definitions as well as the requested icon from the given style definitions.
@@ -109,6 +116,7 @@ function createCompositeStyle(styleDefinitions, icon) {
     styleDefinitions[icon]
   )
 }
+
 /**
  * Creates several style definitions to use with {@link CompositeNodeStyle}.
  */
@@ -128,4 +136,5 @@ function createStyleDefinitions() {
     workstation: new ScalingNodeStyle(new ImageNodeStyle('./resources/workstation.svg'), 0.7, 0.6)
   }
 }
+
 run().then(finishLoading)

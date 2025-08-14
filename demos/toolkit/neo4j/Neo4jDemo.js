@@ -57,20 +57,26 @@ import {
   Size,
   Stroke
 } from '@yfiles/yfiles'
-import { basicSetup, EditorView } from 'codemirror'
-import { cypher } from '@codemirror/legacy-modes/mode/cypher'
-import { StreamLanguage } from '@codemirror/language'
+
 import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { createGraphBuilder } from './Neo4jGraphBuilder'
 import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading, showLoadingIndicator } from '@yfiles/demo-resources/demo-page'
+import { createCodemirrorEditor, EditorView } from '@yfiles/demo-resources/codemirror-editor'
+
 let editor
+
 let graphComponent
+
 let runCypherQuery
+
 let graphBuilder
+
 let nodes = []
+
 let edges = []
+
 // get hold of some UI elements
 const labelsContainer = document.querySelector('#labels')
 const selectedNodeContainer = document.querySelector('#selected-node-container')
@@ -80,6 +86,7 @@ const numNodesInput = document.querySelector('#numNodes')
 const numLabelsInput = document.querySelector('#numLabels')
 const showEdgeLabelsCheckbox = document.querySelector('#showEdgeLabels')
 const queryErrorContainer = document.querySelector('#queryError')
+
 /**
  * Runs the demo.
  */
@@ -91,35 +98,43 @@ async function run() {
     document.querySelector('#noWebSocketAPI').hidden = false
     return
   }
+
   graphComponent = new GraphComponent('graphComponent')
   initializeGraphDefaults()
   initializeHighlighting()
   createInputMode()
   initializeUI()
 }
+
 /**
  * Initializes the styles for the graph nodes, edges, labels.
  */
 function initializeGraphDefaults() {
   const graph = graphComponent.graph
+
   graph.nodeDefaults.style = createDemoNodeStyle()
   graph.nodeDefaults.size = new Size(30, 30)
+
   graph.edgeDefaults.labels.style = new LabelStyle({
     backgroundFill: 'rgba(255,255,255,0.85)',
     textFill: '#336699'
   })
+
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
     margins: 5
   }).createParameter('bottom')
+
   graph.edgeDefaults.style = createDemoEdgeStyle()
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel().createRatioParameter()
 }
+
 /**
  * Creates highlight styling. See the GraphViewer demo for more details.
  */
 function initializeHighlighting() {
   const orangeRed = Color.ORANGE_RED
   const orangeStroke = new Stroke(orangeRed.r, orangeRed.g, orangeRed.b, 220, 3).freeze()
+
   const nodeStyleHighlight = new NodeStyleIndicatorRenderer({
     nodeStyle: new ShapeNodeStyle({
       shape: ShapeNodeShape.ROUND_RECTANGLE,
@@ -128,10 +143,8 @@ function initializeHighlighting() {
     }),
     margins: 5
   })
-  const dummyCroppingArrow = new Arrow({
-    type: ArrowType.NONE,
-    cropLength: 5
-  })
+
+  const dummyCroppingArrow = new Arrow({ type: ArrowType.NONE, cropLength: 5 })
   const edgeStyleHighlight = new EdgeStyleIndicatorRenderer({
     edgeStyle: new PolylineEdgeStyle({
       stroke: orangeStroke,
@@ -141,8 +154,10 @@ function initializeHighlighting() {
   })
   graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(nodeStyleHighlight)
   graphComponent.graph.decorator.edges.highlightRenderer.addConstant(edgeStyleHighlight)
+
   graphComponent.addEventListener('current-item-changed', () => onCurrentItemChanged())
 }
+
 /**
  * Initialize and configure the input mode. Only allow viewing of the data and moving nodes around.
  */
@@ -153,13 +168,16 @@ function createInputMode() {
     selectableItems: GraphItemTypes.NONE,
     marqueeSelectableItems: GraphItemTypes.NONE
   })
+
   // As the selection is deactivated, the focused item is highlighted instead
   graphComponent.focusIndicatorManager.showFocusPolicy = 'when-focused'
+
   mode.itemHoverInputMode.enabled = true
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.EDGE | GraphItemTypes.NODE
   mode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) =>
     onHoveredItemChanged(evt.item)
   )
+
   // load more data on double click
   mode.addEventListener('item-double-clicked', async ({ item }) => {
     const result = await runCypherQuery(
@@ -186,8 +204,10 @@ function createInputMode() {
       await doLayout()
     }
   })
+
   graphComponent.inputMode = mode
 }
+
 /**
  * If the currentItem property on GraphComponent's changes we adjust the details panel.
  */
@@ -197,6 +217,7 @@ function onCurrentItemChanged() {
   while (propertyTable.lastChild != null) {
     propertyTable.removeChild(propertyTable.lastChild)
   }
+
   const currentItem = graphComponent.currentItem
   const isNode = currentItem instanceof INode
   selectedNodeContainer.hidden = !isNode
@@ -221,6 +242,7 @@ function onCurrentItemChanged() {
     }
   }
 }
+
 /**
  * Loads the graph data from the Neo4j database and constructs a graph using a custom
  * {@link GraphBuilder}.
@@ -230,11 +252,13 @@ async function loadGraph() {
   // show a loading indicator, as the queries can take a while to complete
   await showLoadingIndicator(true)
   setUIDisabled(true)
+
   graphComponent.graph.clear()
   // maximum number of nodes that should be fetched
   const numNodes = parseInt(numNodesInput.value)
   // minimum number of labels that should be present in the returned data
   const numLabels = parseInt(numLabelsInput.value)
+
   // letters that are used as names for nodes in the cypher query
   const letters = ['a', 'b', 'c', 'd', 'e'].slice(0, numLabels)
   // we match a chain of nodes that is at least numLabels long
@@ -272,12 +296,16 @@ async function loadGraph() {
   edges = edgeResult.records.map((record) => record.get('edge'))
   // custom GraphBuilder that assigns nodes different styles based on their labels
   graphBuilder = createGraphBuilder(graphComponent, nodes, edges)
+
   graphBuilder.buildGraph()
+
   // apply a layout to the new graph
   await doLayout()
+
   await showLoadingIndicator(false)
   setUIDisabled(false)
 }
+
 /**
  * This method will be called whenever the mouse moves over a different item. We show a highlight
  * indicator to make it easier for the user to understand the graph's structure.
@@ -286,6 +314,7 @@ async function loadGraph() {
 function onHoveredItemChanged(hoveredItem) {
   // we use the highlight manager of the GraphComponent to highlight related items
   const highlights = graphComponent.highlights
+
   // first remove previous highlights
   highlights.clear()
   // then see where we are hovering over, now
@@ -304,6 +333,7 @@ function onHoveredItemChanged(hoveredItem) {
     highlights.add(hoveredItem.targetNode)
   }
 }
+
 /**
  * Applies an organic layout to the current graph. Tries to highlight substructures in the process.
  */
@@ -331,6 +361,7 @@ async function doLayout() {
     setUIDisabled(false)
   }
 }
+
 /**
  * Disables the HTML elements of the UI.
  * @param value Whether the elements should be disabled.
@@ -340,12 +371,14 @@ function setUIDisabled(value) {
   numNodesInput.disabled = value
   numLabelsInput.disabled = value
 }
+
 /**
  * Wires up the UI.
  * @yjs:keep = setValue,getValue
  */
 function initializeUI() {
   document.querySelector('#reloadDataButton').addEventListener('click', () => loadGraph())
+
   // toggle edge label display
   showEdgeLabelsCheckbox.addEventListener('input', () => {
     const graph = graphComponent.graph
@@ -356,10 +389,12 @@ function initializeUI() {
       graph.setStyle(label, style)
     }
   })
+
   const userEl = document.querySelector('#userInput')
   const hostEl = document.querySelector('#hostInput')
   const passwordEl = document.querySelector('#passwordInput')
   const databaseEl = document.querySelector('#databaseNameInput')
+
   document.querySelector('#login-form').addEventListener('submit', async (e) => {
     e.preventDefault()
     let url = hostEl.value
@@ -371,6 +406,7 @@ function initializeUI() {
     const database = databaseEl.value
     try {
       runCypherQuery = await connectToDB(url, database, user, pass)
+
       // hide the login form and show the graph component
       document.querySelector('#loginPane').setAttribute('style', 'display: none;')
       document.querySelector('#graphPane').style.visibility = 'visible'
@@ -387,6 +423,7 @@ function initializeUI() {
       }
     }
   })
+
   numNodesInput.addEventListener(
     'input',
     () => {
@@ -394,6 +431,7 @@ function initializeUI() {
     },
     true
   )
+
   numLabelsInput.addEventListener(
     'input',
     () => {
@@ -401,12 +439,10 @@ function initializeUI() {
     },
     true
   )
+
   // create cypher query editor
-  const editorContainer = document.querySelector('#queryEditorContainer')
-  editor = new EditorView({
-    parent: editorContainer,
-    extensions: [basicSetup, StreamLanguage.define(cypher)]
-  })
+
+  editor = createCodemirrorEditor('cypher', document.querySelector('#queryEditorContainer'))
   editor.dispatch({
     changes: {
       from: 0,
@@ -438,6 +474,7 @@ function initializeUI() {
     }
     nodes = Array.from(nodeMap.values())
     edges = Array.from(relationshipMap.values())
+
     graphComponent.graph.clear()
     graphBuilder = createGraphBuilder(graphComponent, nodes, edges)
     graphBuilder.buildGraph()
@@ -445,4 +482,5 @@ function initializeUI() {
     await doLayout()
   })
 }
+
 run().then(finishLoading)

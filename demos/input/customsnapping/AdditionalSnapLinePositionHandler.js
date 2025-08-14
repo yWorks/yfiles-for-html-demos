@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { BaseClass, IInputModeContext, IPoint, IPositionHandler, Point } from '@yfiles/yfiles'
+
 /**
  * An {@link IPositionHandler} used to move {@link AdditionalSnapLineVisualCreator} instances.
  */
@@ -34,6 +35,7 @@ export class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandle
   line
   mouseDeltaFromStart
   startFrom = null
+
   /**
    * Creates a new handler for the given `line`.
    * @param line The additional snap line to move.
@@ -47,6 +49,7 @@ export class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandle
       mouseLocation.y - line.from.y
     )
   }
+
   /**
    * Returns a view of the location of the item.
    * The point describes the current world coordinate of the {@link AdditionalSnapLineVisualCreator.from} property
@@ -56,6 +59,7 @@ export class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandle
   get location() {
     return this.line.from
   }
+
   /**
    * Called by clients to indicate that the element is going to be dragged.
    * This call will be followed by one or more calls to {@link IPositionHandler.handleMove},
@@ -66,6 +70,7 @@ export class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandle
   initializeDrag(_inputModeContext) {
     this.startFrom = this.line.from
   }
+
   /**
    * Called by clients to indicate that the element has been dragged and its position
    * should be updated.
@@ -89,6 +94,7 @@ export class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandle
     )
     return true
   }
+
   /**
    * Called by clients to indicate that the drag gesture has been canceled by the user.
    * This method may be called after the initial {@link AdditionalSnapLinePositionHandler.initializeDrag} and zero or
@@ -103,6 +109,7 @@ export class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandle
   cancelDrag(inputModeContext, originalLocation) {
     this.setPosition(this.startFrom.x, this.startFrom.y)
   }
+
   /**
    * Called by clients to indicate that the repositioning has just been finished.
    * This method may be called after the initial {@link AdditionalSnapLinePositionHandler.initializeDrag} and zero or
@@ -122,6 +129,7 @@ export class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandle
       newLocation.y - this.mouseDeltaFromStart.y
     )
   }
+
   /**
    * Called by clients to set the position to the given coordinates.
    * The given coordinates are interpreted to be the new position of the {@link AdditionalSnapLineVisualCreator.from}
@@ -134,6 +142,7 @@ export class AdditionalSnapLinePositionHandler extends BaseClass(IPositionHandle
     // ensure the line stays an orthogonal line by moving its end point in the same way as its start point
     const delta = new Point(x - this.line.from.x, y - this.line.from.y)
     this.line.to = this.line.to.add(delta)
+
     this.line.from = new Point(x, y)
   }
 }

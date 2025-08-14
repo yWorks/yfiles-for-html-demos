@@ -37,55 +37,75 @@ import {
   OrientedRectangle,
   Point
 } from '@yfiles/yfiles'
+
 async function run() {
   const response = await fetch('./license.json')
   License.value = await response.json()
+
   // create the graph in memory
   const layoutGraph = new LayoutGraph()
+
   // define some convenience methods to create elements
   function createNode(x, y, width, height) {
     return layoutGraph.createNode({ layout: [x, y, width, height] })
   }
+
   // build the graph
   const node1 = createNode(0, 0, 30, 30)
   layoutGraph.addLabel(node1, new OrientedRectangle(0, 0, 50, 10))
+
   const node2 = createNode(150, 0, 30, 30)
   layoutGraph.addLabel(node2, new OrientedRectangle(0, 0, 50, 10))
+
   const node3 = createNode(100, 50, 30, 30)
+
   const edge = layoutGraph.createEdge(node1, node3)
   layoutGraph.addBend(edge, 50, 20)
+
   layoutGraph.createEdge(node2, node3)
   layoutGraph.addLabel(layoutGraph.createEdge(node3, node1), new OrientedRectangle(0, 0, 60, 20))
+
   log('Graph dump before algorithm')
   logGraph(layoutGraph)
+
   const centralNode = runAlgorithm(layoutGraph)
   runLayout(layoutGraph, centralNode)
+
   log('Graph dump after analysis and layout')
   logGraph(layoutGraph)
 }
+
 function runAlgorithm(graph) {
   // create data storage
   const edgeCosts = graph.createEdgeDataMap()
+
   // assign some arbitrary costs
   graph.edges.forEach((edge, i) => {
     edgeCosts.set(edge, i / graph.edges.size)
   })
+
   // run the algorithm
   const closenessResult = LayoutGraphAlgorithms.closenessCentrality(graph, true, edgeCosts)
+
   log('Centrality values')
   for (const node of graph.nodes) {
     log(` node ${node.index} : ${closenessResult.get(node)}`)
   }
+
   // find the most central node
   const centralNode = graph.nodes
     .map((node) => ({ node, centrality: closenessResult.get(node) }))
     .reduce((a, b) => (a.centrality > b.centrality ? a : b)).node
+
   // release resources
   graph.disposeEdgeDataMap(edgeCosts)
   graph.disposeNodeDataMap(closenessResult)
+
   log()
+
   return centralNode
 }
+
 function runLayout(layoutGraph, centralNode) {
   // create and configure the layout
   const layout = new HierarchicalLayout({
@@ -93,14 +113,17 @@ function runLayout(layoutGraph, centralNode) {
     stopDuration: '0.5s'
   })
   layout.defaultEdgeDescriptor.backLoopRouting = true
+
   // create the partition
   const layoutGrid = new LayoutGrid(2, 1, 0, 5, 30, 30)
   const layoutData = layout.createLayoutData(layoutGraph)
   // assign the central node to its own row
   layoutData.layoutGridData.layoutGridCellDescriptors = (node) =>
     layoutGrid.createRowSpanDescriptor(node === centralNode ? 0 : 1)
+
   // and run it
   layoutGraph.applyLayout(layout, layoutData)
+
   const firstRow = layoutGrid.rows.first()
   const second = layoutGrid.rows.last()
   log(`Layout Grid results`)
@@ -108,6 +131,7 @@ function runLayout(layoutGraph, centralNode) {
   log(`Second row (${second.index}): ${second.position}, ${second.height}`)
   log()
 }
+
 function logGraph(layoutGraph) {
   function logOrientedBox(orientedBox) {
     let rotation
@@ -121,9 +145,11 @@ function logGraph(layoutGraph) {
       `    ${orientedBox.anchorX}, ${orientedBox.anchorY}, ${orientedBox.width}, ${orientedBox.height}  ${rotation}`
     )
   }
+
   for (const node of layoutGraph.nodes) {
     log(`node ${node.index}`)
     log(` layout ${node.layout.x}, ${node.layout.y}, ${node.layout.width}, ${node.layout.height}`)
+
     if (node.labels.size > 0) {
       log(' labels')
       node.labels.forEach((label) => {
@@ -131,6 +157,7 @@ function logGraph(layoutGraph) {
       })
     }
   }
+
   for (const edge of layoutGraph.edges) {
     log(`edge ${edge.index}  (${edge.source.index} -> ${edge.target.index})`)
     const sourcePortLocation = new Point(
@@ -153,12 +180,15 @@ function logGraph(layoutGraph) {
   }
   log()
 }
+
 /* Helper element and function to log to the HTML page */
 const logElement = document.querySelector('#log')
+
 function log(value) {
   if (arguments.length === 0) {
     value = ''
   }
   logElement.textContent += `${value}\n`
 }
+
 void run()

@@ -27,11 +27,10 @@
  **
  ***************************************************************************/
 import { Font, LabelStyleBase, Size, SvgVisual, TextRenderSupport } from '@yfiles/yfiles'
-const font = new Font({
-  fontFamily: 'Arial',
-  fontSize: 12
-})
+
+const font = new Font({ fontFamily: 'Arial', fontSize: 12 })
 const padding = 3
+
 export class CustomLabelStyle extends LabelStyleBase {
   horizontalAlignment
   verticalAlignment
@@ -40,22 +39,28 @@ export class CustomLabelStyle extends LabelStyleBase {
     this.horizontalAlignment = horizontalAlignment
     this.verticalAlignment = verticalAlignment
   }
+
   createVisual(context, label) {
     // create an SVG text element that displays the label text
     const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+
     const labelSize = label.layout.toSize()
     this.updateText(textElement, label.text, labelSize)
+
     // add a background shape
     const backgroundPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     backgroundPathElement.setAttribute('d', this.createBackgroundShapeData(labelSize))
     backgroundPathElement.setAttribute('stroke', '#aaa')
     backgroundPathElement.setAttribute('fill', '#fffecd')
+
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     gElement.appendChild(backgroundPathElement)
     gElement.appendChild(textElement)
+
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(gElement)
+
     const cache = {
       width: labelSize.width,
       height: labelSize.height,
@@ -63,13 +68,16 @@ export class CustomLabelStyle extends LabelStyleBase {
       horizontalAlignment: this.horizontalAlignment,
       verticalAlignment: this.verticalAlignment
     }
+
     return SvgVisual.from(gElement, cache)
   }
+
   updateVisual(context, oldVisual, label) {
     const gElement = oldVisual.svgElement
     const labelSize = label.layout.toSize()
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
+
     // check if the label size or text has changed
     if (
       labelSize.width !== cache.width ||
@@ -94,18 +102,23 @@ export class CustomLabelStyle extends LabelStyleBase {
       cache.horizontalAlignment = this.horizontalAlignment
       cache.verticalAlignment = this.verticalAlignment
     }
+
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(gElement)
+
     return oldVisual
   }
+
   /**
    * Updates the text content of the text element using TextRenderSupport.
    */
   updateText(textElement, text, labelSize) {
     // use a convenience method to place text content in the <text> element.
     const textContent = TextRenderSupport.addText(textElement, text, font)
+
     textElement.setAttribute('text-anchor', this.horizontalAlignment)
+
     // calculate offset for horizontal alignment
     // leave room for the padding
     let translateX
@@ -123,8 +136,10 @@ export class CustomLabelStyle extends LabelStyleBase {
         translateX = labelSize.width - padding
         break
     }
+
     // calculate the size of the text element
     const textSize = TextRenderSupport.measureText(textContent, font)
+
     // calculate vertical offset for centered alignment
     let translateY = (labelSize.height - textSize.height) * 0.5
     switch (this.verticalAlignment) {
@@ -138,8 +153,10 @@ export class CustomLabelStyle extends LabelStyleBase {
         translateY = labelSize.height - textSize.height - padding
         break
     }
+
     textElement.setAttribute('transform', `translate(${translateX} ${translateY})`)
   }
+
   getPreferredSize(label) {
     const insets = 20 + 2 * padding
     // measure the label text using the font
@@ -147,6 +164,7 @@ export class CustomLabelStyle extends LabelStyleBase {
     // return the measured size plus the insets
     return new Size(width + insets, height + insets)
   }
+
   /**
    * Creates a simple "speech balloon" shape.
    */

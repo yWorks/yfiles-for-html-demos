@@ -26,30 +26,57 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BrowserModule } from '@angular/platform-browser'
-import { NgModule } from '@angular/core'
-import { FormsModule } from '@angular/forms'
+import { Component, Input } from '@angular/core'
+import { Person } from '../person'
 
-import { AppComponent } from './app.component'
-import { GraphComponentComponent } from './graph-component/graph-component.component'
-import { PropertiesViewComponent } from './properties-view/properties-view.component'
-import { NodeComponent } from './node.component'
-import { ContextMenuComponent } from './context-menu/context-menu.component'
-import { GraphOverviewComponentComponent } from './graph-overview-component/graph-overview-component.component'
-import { TooltipComponent } from './tooltip/tooltip.component'
+function findBreak(text: string): number {
+  let result = Math.max(Math.floor(text.length / 2), 20)
+  while (result < text.length && text[result] !== ' ' && result > 0) {
+    result -= 1
+  }
+  return result
+}
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    GraphComponentComponent,
-    PropertiesViewComponent,
-    NodeComponent,
-    ContextMenuComponent,
-    GraphOverviewComponentComponent,
-    TooltipComponent
-  ],
-  imports: [BrowserModule, FormsModule],
-  providers: [],
-  bootstrap: [AppComponent]
-})
-export class AppModule {}
+export const zoomIntermediate = 0.4
+export const zoomDetail = 0.7
+
+@Component({ selector: 'g[node-component]', templateUrl: `./node.component.html` })
+export class NodeComponent {
+  @Input() public item: Person
+  @Input() public zoom: number
+
+  constructor() {
+    this.item = <Person>{}
+    this.zoom = 1
+  }
+
+  get zoomDetail() {
+    return zoomDetail
+  }
+
+  get zoomIntermediate() {
+    return zoomIntermediate
+  }
+
+  get positionFirstLine() {
+    const pos = this.item.position
+    return pos.substring(0, findBreak(pos))
+  }
+
+  get positionSecondLine() {
+    const pos = this.item.position
+    return pos.substring(findBreak(pos) + 1)
+  }
+
+  get nameAbbreviation() {
+    if (this.zoom >= this.zoomIntermediate) {
+      return this.item.name
+    }
+    const strings = this.item.name.split(' ')
+    let converted = `${strings[0].substr(0, 1)}.`
+    for (let i = 1; i < strings.length; i++) {
+      converted += ` ${strings[i]}`
+    }
+    return converted
+  }
+}

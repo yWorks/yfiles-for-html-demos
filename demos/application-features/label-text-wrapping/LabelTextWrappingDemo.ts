@@ -31,7 +31,6 @@ import {
   EdgeSides,
   ExteriorNodeLabelModel,
   Font,
-  Graph,
   GraphComponent,
   GraphEditorInputMode,
   GraphModelManager,
@@ -48,12 +47,11 @@ import {
 
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { BrowserDetection, finishLoading } from '@yfiles/demo-resources/demo-page'
 import {
   initializeSvgWebGlSwitchButton,
   updateSvgWebGlSwitchButton
 } from '../../style/group-node-style/svg-webgl-switch'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 
 let graphComponent: GraphComponent
 
@@ -125,9 +123,7 @@ function initializeGraph(graph: IGraph): void {
 function createGraph(): void {
   // label model and style for the description labels above the node
   const topParameter = new ExteriorNodeLabelModel({ margins: 10 }).createParameter('top')
-  const topLabelStyle = new LabelStyle({
-    horizontalTextAlignment: 'center'
-  })
+  const topLabelStyle = new LabelStyle({ horizontalTextAlignment: 'center' })
   const graph = graphComponent.graph
   const defaultNodeStyle = graph.nodeDefaults.style as RectangleNodeStyle
 
@@ -314,7 +310,6 @@ function createGraph(): void {
 function reinitializeDemo(): void {
   // Dispose of the previous component
   graphComponent.cleanUp()
-  graphComponent.graph = new Graph()
 
   const gcContainer = document.querySelector('#graphComponent')!
   while (gcContainer.childElementCount > 0) {

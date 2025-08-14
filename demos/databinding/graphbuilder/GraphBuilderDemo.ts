@@ -289,9 +289,7 @@ function createSourcesLists(sourcesFactory: SourcesFactory): {
  */
 function initializeLayout() {
   // initialize layout algorithm
-  layout = new HierarchicalLayout({
-    fromScratchLayeringStrategy: 'hierarchical-topmost'
-  })
+  layout = new HierarchicalLayout({ fromScratchLayeringStrategy: 'hierarchical-topmost' })
 
   // initialize layout data
   // configure label placement

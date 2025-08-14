@@ -81,6 +81,7 @@ import {
   Visual
 } from '@yfiles/yfiles'
 import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectangleRendererBase'
+
 class RotatableNodeSelectionRenderer extends OrientedRectangleRendererBase {
   createIndicatorElement(_context, size, _renderTag) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -92,11 +93,13 @@ class RotatableNodeSelectionRenderer extends OrientedRectangleRendererBase {
     rect.setAttribute('fill', 'none')
     return rect
   }
+
   updateIndicatorElement(_context, size, _renderTag, oldSvgElement) {
     oldSvgElement.setAttribute('width', size.width.toString())
     oldSvgElement.setAttribute('height', size.height.toString())
     return oldSvgElement
   }
+
   getLayout(renderTag) {
     const styleWrapper = renderTag.style
     if (styleWrapper instanceof RotatableNodeStyleDecorator) {
@@ -105,6 +108,7 @@ class RotatableNodeSelectionRenderer extends OrientedRectangleRendererBase {
     return new OrientedRectangle(renderTag.layout)
   }
 }
+
 class RotatableNodeFocusRenderer extends OrientedRectangleRendererBase {
   createIndicatorElement(_context, size, _renderTag) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -118,12 +122,14 @@ class RotatableNodeFocusRenderer extends OrientedRectangleRendererBase {
     rect.setAttribute('fill', 'none')
     return rect
   }
+
   updateIndicatorElement(_context, size, _renderTag, oldSvgElement) {
     const rect = oldSvgElement
     rect.setAttribute('width', size.width.toString())
     rect.setAttribute('height', size.height.toString())
     return rect
   }
+
   getLayout(renderTag) {
     const styleWrapper = renderTag.style
     if (styleWrapper instanceof RotatableNodeStyleDecorator) {
@@ -132,6 +138,7 @@ class RotatableNodeFocusRenderer extends OrientedRectangleRendererBase {
     return new OrientedRectangle(renderTag.layout)
   }
 }
+
 class RotatableNodeHighlightRenderer extends OrientedRectangleRendererBase {
   createIndicatorElement(_context, size, _renderTag) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -146,6 +153,7 @@ class RotatableNodeHighlightRenderer extends OrientedRectangleRendererBase {
     container.appendChild(rect1)
     return container
   }
+
   updateIndicatorElement(_context, size, _renderTag, oldSvgElement) {
     const container = oldSvgElement
     const rect1 = container.firstChild
@@ -155,6 +163,7 @@ class RotatableNodeHighlightRenderer extends OrientedRectangleRendererBase {
     rect1.setAttribute('y', '-4')
     return container
   }
+
   getLayout(renderTag) {
     const item = renderTag
     const styleWrapper = item?.style
@@ -164,6 +173,7 @@ class RotatableNodeHighlightRenderer extends OrientedRectangleRendererBase {
     return new OrientedRectangle(item.layout)
   }
 }
+
 /**
  * A node style that displays another wrapped style rotated by a specified rotation angle.
  * The angle is stored in this decorator to keep the tag free for user data. Hence, this decorator
@@ -180,6 +190,7 @@ export class RotatableNodeStyleDecorator extends BaseClass(
   inverseMatrix = new Matrix()
   inverseMatrixCenter = Point.ORIGIN
   inverseMatrixAngle = 0
+
   /**
    * Creates a new instance with a wrapped node style and an angle.
    */
@@ -188,22 +199,26 @@ export class RotatableNodeStyleDecorator extends BaseClass(
     this.wrapped = wrapped || new ShapeNodeStyle()
     this.angle = angle || 0
   }
+
   /**
    * Specifies the wrapped style.
    */
   wrapped
+
   /**
    * Returns the rotation angle.
    */
   get angle() {
     return this.rotatedLayout.angle
   }
+
   /**
    * Specifies the rotation angle.
    */
   set angle(angle) {
     this.rotatedLayout.angle = angle
   }
+
   /**
    * Creates a visual which rotates the visualization of the wrapped style.
    */
@@ -226,21 +241,27 @@ export class RotatableNodeStyleDecorator extends BaseClass(
     context.registerForChildrenIfNecessary(container, this.disposeChildren.bind(this))
     return container
   }
+
   /**
    * Updates a visual which rotates the visualization of the wrapped style.
    */
   updateVisual(context, oldVisual, node) {
     const cache = oldVisual['render-data-cache']
+
     const oldWrappedStyle = cache.wrapped
     const newWrappedStyle = this.wrapped
+
     const creator = this.wrapped.renderer.getVisualCreator(node, this.wrapped)
+
     const oldWrappedVisual = oldVisual.children.at(0)
+
     let newWrappedVisual
     if (newWrappedStyle !== oldWrappedStyle) {
       newWrappedVisual = creator ? creator.createVisual(context) : null
     } else {
       newWrappedVisual = creator ? creator.updateVisual(context, oldWrappedVisual) : null
     }
+
     if (oldWrappedVisual !== newWrappedVisual) {
       if (newWrappedVisual instanceof SvgVisual) {
         if (oldVisual.children.size >= 1) {
@@ -256,28 +277,34 @@ export class RotatableNodeStyleDecorator extends BaseClass(
       context.childVisualRemoved(oldWrappedVisual)
     }
     context.registerForChildrenIfNecessary(oldVisual, this.disposeChildren.bind(this))
+
     if (cache.angle !== this.angle || !cache.center.equals(node.layout.center)) {
       const matrix = new Matrix()
       matrix.rotate(toRadians(this.angle), node.layout.center)
       oldVisual.transform = matrix
     }
+
     oldVisual['render-data-cache'] = {
       angle: this.angle,
       center: node.layout.center,
       wrapped: this.wrapped
     }
+
     return oldVisual
   }
+
   /**
    * Returns bounds based on the size provided by the wrapped style and the location and
    * rotation of the node.
    */
   getBounds(context, node) {
     const nodeOrientedRect = this.getRotatedLayout(node)
+
     // Create an oriented rectangle with the size of the wrapped bounds and the location and rotation of the node
     const wrappedBounds = this.wrapped.renderer
       .getBoundsProvider(node, this.wrapped)
       .getBounds(context)
+
     const orientedRectangle = new OrientedRectangle(
       0,
       0,
@@ -287,8 +314,10 @@ export class RotatableNodeStyleDecorator extends BaseClass(
       nodeOrientedRect.upY
     )
     orientedRectangle.setCenter(node.layout.center)
+
     return orientedRectangle.bounds
   }
+
   /**
    * Returns the intersection point of the node's rotated bounds and the segment between the inner
    * and outer point or null if there is no intersection.
@@ -296,6 +325,7 @@ export class RotatableNodeStyleDecorator extends BaseClass(
   getIntersection(node, inner, outer) {
     const rotatedInner = this.getRotatedPoint(inner, node, false)
     const rotatedOuter = this.getRotatedPoint(outer, node, false)
+
     const rotatedIntersection = this.wrapped.renderer
       .getShapeGeometry(node, this.wrapped)
       .getIntersection(rotatedInner, rotatedOuter)
@@ -304,6 +334,7 @@ export class RotatableNodeStyleDecorator extends BaseClass(
     }
     return null
   }
+
   /**
    * Returns the outline of the node's rotated shape.
    */
@@ -319,6 +350,7 @@ export class RotatableNodeStyleDecorator extends BaseClass(
     }
     return outline
   }
+
   /**
    * Returns whether the given location is inside the rotated node.
    */
@@ -327,11 +359,13 @@ export class RotatableNodeStyleDecorator extends BaseClass(
     const transformedPoint = this.getRotatedPoint(location, node, false)
     return this.wrapped.renderer.getHitTestable(node, this.wrapped).isHit(context, transformedPoint)
   }
+
   /**
    * Returns whether the given node is inside the rectangle.
    */
   isInBox(context, rectangle, node) {
     const nodeOrientedRect = this.getRotatedLayout(node)
+
     // Create an oriented rectangle with the size of the wrapped bounds and the location and rotation of the node
     const wrappedBounds = this.wrapped.renderer
       .getBoundsProvider(node, this.wrapped)
@@ -345,8 +379,10 @@ export class RotatableNodeStyleDecorator extends BaseClass(
       nodeOrientedRect.upY
     )
     orientedRectangle.setCenter(node.layout.center)
+
     return rectangle.intersects(orientedRectangle, 0.01)
   }
+
   /**
    * Returns whether the node is currently visible.
    */
@@ -357,6 +393,7 @@ export class RotatableNodeStyleDecorator extends BaseClass(
         .isVisible(context, rectangle) || this.getBounds(context, node).intersects(rectangle)
     )
   }
+
   /**
    * Returns customized helpers that consider the node rotation for resizing and rotating gestures,
    * highlight indicators, and clipboard operations. Other lookup calls will be delegated to the
@@ -387,16 +424,19 @@ export class RotatableNodeStyleDecorator extends BaseClass(
     if (type === IClipboardHelper) {
       return new RotatableNodeClipboardHelper()
     }
+
     return (
       super.lookup(node, type) || this.wrapped.renderer.getContext(node, this.wrapped).lookup(type)
     )
   }
+
   /**
    * Creates a copy of this node style decorator.
    */
   clone() {
     return new RotatableNodeStyleDecorator(this.wrapped, this.angle)
   }
+
   /**
    * Returns the rotated bounds of the node.
    */
@@ -404,6 +444,7 @@ export class RotatableNodeStyleDecorator extends BaseClass(
     this.rotatedLayout.updateCache(node.layout.toRect())
     return this.rotatedLayout
   }
+
   /**
    * Returns the rotated point.
    */
@@ -411,6 +452,7 @@ export class RotatableNodeStyleDecorator extends BaseClass(
     const matrix = inverse ? this.getInverseRotationMatrix(node) : this.getRotationMatrix(node)
     return matrix.transform(point)
   }
+
   /**
    * Returns the rotation matrix for the given node and the current angle.
    */
@@ -424,6 +466,7 @@ export class RotatableNodeStyleDecorator extends BaseClass(
     }
     return this.matrix
   }
+
   /**
    * Returns the inverse rotation matrix for the given node and the current angle.
    */
@@ -437,6 +480,7 @@ export class RotatableNodeStyleDecorator extends BaseClass(
     }
     return this.inverseMatrix
   }
+
   disposeChildren(context, removedVisual, _dispose) {
     const container = removedVisual instanceof SvgVisualGroup ? removedVisual : null
     if (container != null && container.children.size > 0) {
@@ -444,12 +488,14 @@ export class RotatableNodeStyleDecorator extends BaseClass(
     }
     return null
   }
+
   /**
    * Returns that this style can be converted.
    */
   canConvert(_context, _value) {
     return true
   }
+
   /**
    * Converts this style using {@link RotatableNodeStyleDecoratorExtension}.
    */
@@ -461,6 +507,7 @@ export class RotatableNodeStyleDecorator extends BaseClass(
     return extension
   }
 }
+
 /**
  * A node reshape handle that adjusts its position according to the node rotation.
  */
@@ -474,6 +521,7 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
   dummyLocation = null
   dummySize = null
   initialRect = null
+
   /**
    * Creates a new instance.
    *
@@ -490,6 +538,7 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
     this.symmetricResize = symmetricResize
     this.initialLayout = new OrientedRectangle(this.getNodeBasedOrientedRectangle())
   }
+
   /**
    * Returns the node rotation information.
    */
@@ -499,6 +548,7 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
     }
     return new CachingOrientedRectangle()
   }
+
   /**
    * Sets the original node bounds according to the given anchor location and size.
    */
@@ -516,22 +566,26 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
       this.initialLayout.upY
     )
     const center = orientedRectangle.center
+
     const layout = Rect.fromCenter(center, size.toSize())
     graph.setNodeLayout(this.node, layout)
     return layout
   }
+
   /**
    * Defines the visualization of the handle. In this case a dot that rotates nicely.
    */
   get type() {
     return HandleType.RESIZE
   }
+
   /**
    * Gets the optional tag object associated with the handle.
    */
   get tag() {
     return null
   }
+
   /**
    * Returns the cursor visualization according to the handle position.
    */
@@ -569,12 +623,14 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
     }
     return cursors[index % cursors.length]
   }
+
   /**
    * Gets the location of this handle considering the node rotation.
    */
   get location() {
     return this.getLocation(this.getNodeBasedOrientedRectangle(), this.position)
   }
+
   /**
    * Stores the initial layout of the node in case the user cancels the resizing.
    */
@@ -588,6 +644,7 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
     this.dummyLocation = this.initialLayout.anchor
     this.dummySize = this.initialLayout.toSize()
     this.initialRect = this.node.layout.toRect()
+
     this.portHandles.clear()
     const portContext = new DelegatingContext(inputModeContext)
     this.node.ports.forEach((port) => {
@@ -596,6 +653,7 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
       this.portHandles.add(portHandle)
     })
   }
+
   /**
    * Adjusts the node location and size according to the new handle location.
    */
@@ -605,11 +663,13 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
     const deltaW = this.getWidthDelta(originalLocation, newLocation, upNormal)
     const up = this.initialLayout.upVector
     const deltaH = this.getHeightDelta(originalLocation, newLocation, up)
+
     // add one or two times delta to the width to expand the node right and left
     this.dummySize = new Size(
       this.initialLayout.width + deltaW * (this.symmetricResize ? 2 : 1),
       this.initialLayout.height + deltaH * (this.symmetricResize ? 2 : 1)
     )
+
     // Calculate the new location.
     // Depending on our handle position, a different corner of the node should stay fixed.
     if (this.symmetricResize) {
@@ -641,11 +701,13 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
           break
       }
     }
+
     const newLayout = this.setNodeLocationAndSize(
       inputModeContext,
       this.dummyLocation,
       this.dummySize
     )
+
     const portContext = new DelegatingContext(inputModeContext)
     this.portHandles.forEach((portHandle) => {
       portHandle.handleMove(portContext, this.dummyLocation, newLocation)
@@ -656,6 +718,7 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
       this.reshapeHandler.handleReshape(inputModeContext, this.initialRect, newLayout)
     }
   }
+
   /**
    * Returns the delta by which the width of the node was changed.
    */
@@ -681,6 +744,7 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
         return 0.0
     }
   }
+
   /**
    * Returns the delta by which the height of the node was changed.
    */
@@ -704,6 +768,7 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
         return 0.0
     }
   }
+
   /**
    * Restores the original node layout.
    */
@@ -724,6 +789,7 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
       this.reshapeHandler.cancelReshape(inputModeContext, this.initialRect)
     }
   }
+
   /**
    * Applies the new node layout.
    */
@@ -744,32 +810,38 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
       this.reshapeHandler.reshapeFinished(inputModeContext, this.initialRect, newLayout)
     }
   }
+
   /**
    * Gets the location that is specified by the given ratios.
    */
   static getLocation(rectangle, ratioWidth, ratioHeight) {
     const x1 = rectangle.anchorX
     const y1 = rectangle.anchorY
+
     const upX = rectangle.upX
     const upY = rectangle.upY
+
     const w = rectangle.width * ratioWidth
     const h = rectangle.height * ratioHeight
     const x2 = x1 + upX * h - upY * w
     const y2 = y1 + upY * h + upX * w
     return new Point(x2, y2)
   }
+
   /**
    * Returns the x-coordinate of the rotated bounds.
    */
   get x() {
     return this.getLocation(this.getNodeBasedOrientedRectangle(), this.position).x
   }
+
   /**
    * Returns the y-coordinate of the rotated bounds.
    */
   get y() {
     return this.getLocation(this.getNodeBasedOrientedRectangle(), this.position).y
   }
+
   /**
    * Returns the location of the specified position on the border of the oriented rectangle.
    */
@@ -798,17 +870,20 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
         throw new Error()
     }
   }
+
   /**
    * This implementation does nothing special when clicked.
    */
   handleClick(_evt) {}
 }
+
 /**
  * Provides reshape handles for rotated nodes.
  */
 class RotatedReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
   node
   reshapeHandler
+
   /**
    * Creates a new instance for a given node.
    */
@@ -819,12 +894,14 @@ class RotatedReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
     // implicit resizing of parent group nodes
     this.reshapeHandler = node.lookup(IReshapeHandler)
   }
+
   /**
    * Returns all eight positions around a node.
    */
   getAvailableHandles(_inputModeContext) {
     return HandlePositions.BORDER
   }
+
   /**
    * Returns a RotatedNodeResizeHandle for the given position and node.
    */
@@ -832,12 +909,14 @@ class RotatedReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
     return new RotatedNodeResizeHandle(position, this.node, this.reshapeHandler, false)
   }
 }
+
 /**
  * Provides a rotate handle for a given node.
  */
 class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
   node
   reshapeHandler
+
   /**
    * Creates a new instance for the given node.
    */
@@ -850,11 +929,13 @@ class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
     this.snapDelta = 10
     this.snapToSameAngleDelta = 5
   }
+
   /**
    * Specifies the angular step size to which rotation should snap (in degrees).
    * Default is `90`. Setting this to `0` will disable snapping to predefined steps.
    */
   snapStep
+
   /**
    * Specifies the snapping distance when rotation should snap (in degrees).
    * The rotation will snap if the angle is less than this distance from a {@link snapStep snapping angle}.
@@ -862,6 +943,7 @@ class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
    * disable snapping to predefined steps.
    */
   snapDelta
+
   /**
    * Specifies the snapping distance (in degrees) for snapping to the same angle as other visible
    * nodes. Rotation will snap to another node's rotation angle if the current angle differs from
@@ -869,6 +951,7 @@ class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
    * disable same angle snapping.
    */
   snapToSameAngleDelta
+
   /**
    * Returns a set of handles for the rotated node.
    */
@@ -877,9 +960,11 @@ class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
     handle.snapDelta = this.snapDelta
     handle.snapStep = this.snapStep
     handle.snapToSameAngleDelta = this.snapToSameAngleDelta
+
     return List.fromArray([handle])
   }
 }
+
 /**
  * A custom {@link IHandle} implementation that implements the functionality needed for rotating a
  * label.
@@ -897,6 +982,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
   nodeAngles = null
   // The currently highlighted nodes for same angle snapping.
   sameAngleHighlightedNodes = null
+
   /**
    * Creates a new instance.
    */
@@ -908,6 +994,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
     this.snapStep = 0
     this.snapToSameAngleDelta = 0
   }
+
   /**
    * Returns the current oriented rectangle for the given node.
    */
@@ -917,16 +1004,19 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
       ? wrapper.getRotatedLayout(node)
       : new CachingOrientedRectangle()
   }
+
   /**
    * The threshold value that specifies whether the angle should snap to the next multiple
    * of
    * {@link snapStep} in degrees. Set a value less than or equal to zero to disable this feature.
    */
   snapDelta
+
   /**
    * Specifies the steps in degrees to which rotation should snap to.
    */
   snapStep
+
   /**
    * Specifies the snapping distance (in degrees) for snapping to the same angle as other visible
    * nodes. Rotation will snap to another node's rotation angle if the current angle differs from
@@ -934,24 +1024,28 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
    * disable same angle snapping.
    */
   snapToSameAngleDelta
+
   /**
    * Returns the type of handle which is used.
    */
   get type() {
     return HandleType.MOVE
   }
+
   /**
    * Returns the cursor that is shown when using this handle.
    */
   get cursor() {
     return this._cursor
   }
+
   /**
    * Gets the optional tag object associated with the handle.
    */
   get tag() {
     return null
   }
+
   /**
    * Returns the location of the handle.
    * Since this instance also implements {@link IPoint}, we can simply return this.
@@ -959,6 +1053,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
   get location() {
     return this
   }
+
   /**
    * Initializes the drag.
    */
@@ -969,10 +1064,12 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
     }
     this.rotationCenter = this.node.layout.center
     this.initialAngle = this.getAngle()
+
     const graph = inputModeContext.graph
     if (graph) {
       this.compoundEdit = graph.beginEdit('Change Rotation Angle', 'Change Rotation Angle')
     }
+
     this.portHandles.clear()
     const portContext = new DelegatingContext(inputModeContext)
     this.node.ports.forEach((port) => {
@@ -986,6 +1083,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
     // Collect other visible nodes and their angles and can be rotated and are not *this* node
     if (this.snapToSameAngleDelta > 0) {
       const canvas = inputModeContext.canvasComponent
+
       // only collect nodes that are in the viewport
       const rotatedNodes = canvas.renderTree
         .getElements()
@@ -1006,15 +1104,13 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
         if (group) {
           group.nodes.push(node)
         } else {
-          groups.push({
-            angle,
-            nodes: [node]
-          })
+          groups.push({ angle, nodes: [node] })
         }
         return groups
       }, [])
     }
   }
+
   /**
    * Updates the node according to the moving handle.
    */
@@ -1026,6 +1122,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
       angle = this.snapAngle(inputModeContext, angle)
     }
     this.setAngle(inputModeContext, angle)
+
     const portContext = new DelegatingContext(inputModeContext)
     this.portHandles.forEach((portHandle) => {
       portHandle.handleMove(portContext, originalLocation, newLocation)
@@ -1038,6 +1135,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
       )
     }
   }
+
   /**
    * Returns the 'snapped' vector for the given up vector.
    * If the vector is almost horizontal or vertical, this method returns the exact horizontal or
@@ -1046,6 +1144,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
   calculateAngle(upVector) {
     return normalizeAngle((Math.atan2(upVector.y, upVector.x) / Math.PI) * 180 + 90)
   }
+
   /**
    * Snaps the angle to the rotation angles of other nodes and the coordinate axes.
    * Angles near such an angle are replaced with this angle.
@@ -1087,14 +1186,17 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
       ? this.snapStep * Math.round(angle / this.snapStep)
       : angle
   }
+
   angleDifference(angle1, angle2) {
     return Math.min(Math.abs(angle1 - angle2), 360 - Math.abs(angle1 - angle2))
   }
+
   /**
    * Cancels the drag and cleans up.
    */
   cancelDrag(context, originalLocation) {
     this.setAngle(context, this.initialAngle)
+
     const portContext = new DelegatingContext(context)
     this.portHandles.forEach((portHandle) => {
       portHandle.cancelDrag(portContext, originalLocation)
@@ -1109,27 +1211,32 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
     this.nodeAngles = null
     this.clearSameAngleHighlights(context)
   }
+
   /**
    * Finishes the drag and updates the angle of the rotated node.
    */
   dragFinished(context, originalLocation, newLocation) {
     const vector = newLocation.subtract(this.rotationCenter).normalized
+
     let angle = this.calculateAngle(vector)
     if (this.shouldSnap(context)) {
       angle = this.snapAngle(context, angle)
     }
     this.setAngle(context, angle)
+
     // Switch width / height for 'vertical' rotations
     // Note that other parts of the application need support for this feature, too.
     const graph = context.graph
     if (!graph) {
       return
     }
+
     const portContext = new DelegatingContext(context)
     this.portHandles.forEach((portHandle) => {
       portHandle.dragFinished(portContext, originalLocation, newLocation)
     })
     this.portHandles.clear()
+
     // Workaround: if the OrthogonalEdgeEditingContext is used to keep the edges orthogonal, it is not allowed
     // to change that edges manually. Therefore, we explicitly finish the OrthogonalEdgeEditingContext here and
     // then call the edge router.
@@ -1137,6 +1244,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
     if (edgeEditingContext && edgeEditingContext.isInitialized) {
       edgeEditingContext.dragFinished()
     }
+
     if (this.reshapeHandler) {
       this.reshapeHandler.reshapeFinished(
         context,
@@ -1144,12 +1252,15 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
         this.node.layout.toRect()
       )
     }
+
     if (this.compoundEdit) {
       this.compoundEdit.commit()
     }
+
     this.nodeAngles = null
     this.clearSameAngleHighlights(context)
   }
+
   /**
    * Removes highlights for same angle snapping.
    */
@@ -1161,6 +1272,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
       this.sameAngleHighlightedNodes = null
     }
   }
+
   /**
    * Sets the angle to the node style if the style supports this.
    */
@@ -1177,6 +1289,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
       wrapper.angle = angle
     }
   }
+
   /**
    * Reads the angle from the node style if the style supports this.
    */
@@ -1187,6 +1300,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
     }
     return 0
   }
+
   /**
    * Whether the current gesture does not disable snapping.
    */
@@ -1198,18 +1312,21 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
     }
     return shouldSnap
   }
+
   /**
    * Returns the x-coordinate of the handle's location.
    */
   get x() {
     return this.getLocation().x
   }
+
   /**
    * Returns the y-coordinate of the handle's location.
    */
   get y() {
     return this.getLocation().y
   }
+
   /**
    * Returns the handle's location.
    */
@@ -1224,11 +1341,13 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
       .add(up.multiply(size.height + offset))
       .add(new Point(-up.y, up.x).multiply(size.width * 0.5))
   }
+
   /**
    * This implementation does nothing special when clicked.
    */
   handleClick(_evt) {}
 }
+
 /**
  * Helper class to support clipboard operations for rotatable nodes.
  */
@@ -1253,6 +1372,7 @@ class RotatableNodeClipboardHelper extends BaseClass(IClipboardHelper) {
       }
     }
   }
+
   /**
    * Copies the node style for the paste-operation because {@link RotatableNodeStyleDecorator}
    * should not be shared.
@@ -1270,21 +1390,28 @@ class RotatableNodeClipboardHelper extends BaseClass(IClipboardHelper) {
       }
     }
   }
+
   shouldCopy(_context, _item) {
     return true
   }
+
   shouldCut(_context, _item) {
     return true
   }
+
   shouldPaste(_context, _item) {
     return true
   }
+
   shouldDuplicate(_context, _item) {
     return true
   }
+
   onCopied(_context, _item) {}
+
   onCut(_context, _item) {}
 }
+
 /**
  * An oriented rectangle that specifies the location, size and rotation angle of a rotated node.
  * This class is used mainly for performance reasons. It provides cached values. In principle, it
@@ -1296,6 +1423,7 @@ export class CachingOrientedRectangle extends BaseClass(IOrientedRectangle) {
   _angle = 0
   cachedLayout
   cachedOrientedRect
+
   /**
    * Creates a new instance.
    */
@@ -1304,12 +1432,14 @@ export class CachingOrientedRectangle extends BaseClass(IOrientedRectangle) {
     this.cachedLayout = layout
     this.cachedOrientedRect = new OrientedRectangle(layout)
   }
+
   /**
    * Returns the rotation angle.
    */
   get angle() {
     return this._angle
   }
+
   /**
    * Specifies the rotation angle.
    */
@@ -1319,48 +1449,56 @@ export class CachingOrientedRectangle extends BaseClass(IOrientedRectangle) {
     this.cachedOrientedRect.setCenter(this.cachedLayout.center)
     this._upVector = this.cachedOrientedRect.upVector
   }
+
   /**
    * Returns the width of the rectangle.
    */
   get width() {
     return this.cachedLayout.width
   }
+
   /**
    * Returns the height of the rectangle.
    */
   get height() {
     return this.cachedLayout.height
   }
+
   /**
    * Returns the x-coordinate of the rectangle's anchor point.
    */
   get anchorX() {
     return this.cachedOrientedRect.anchorX
   }
+
   /**
    * Returns the y-coordinate of the rectangle's anchor point.
    */
   get anchorY() {
     return this.cachedOrientedRect.anchorY
   }
+
   /**
    * Returns the x-coordinate of the rectangle's up vector.
    */
   get upX() {
     return this.cachedOrientedRect.upX
   }
+
   /**
    * Returns the y-coordinate of the rectangle's up vector.
    */
   get upY() {
     return this.cachedOrientedRect.upY
   }
+
   /**
    * Returns the rectangle's up vector.
    */
   get upVector() {
     return this._upVector
   }
+
   /**
    * Specifies the rectangle's up vector.
    */
@@ -1370,15 +1508,18 @@ export class CachingOrientedRectangle extends BaseClass(IOrientedRectangle) {
     this.cachedOrientedRect.setCenter(this.cachedLayout.center)
     this.angle = toDegrees(this.cachedOrientedRect.angle)
   }
+
   get bounds() {
     return this.cachedOrientedRect.bounds
   }
+
   /**
    * Returns the angle in radians.
    */
   getRadians() {
     return toRadians(this.angle)
   }
+
   /**
    * Updates the layout in the cache.
    */
@@ -1396,12 +1537,14 @@ export class CachingOrientedRectangle extends BaseClass(IOrientedRectangle) {
     this.cachedOrientedRect.setCenter(this.cachedLayout.center)
   }
 }
+
 /**
  * A context that returns no SnapContext in its lookup and delegates its other methods to an inner
  * context.
  */
 class DelegatingContext extends BaseClass(IInputModeContext) {
   context
+
   /**
    * Creates a new instance
    */
@@ -1409,27 +1552,32 @@ class DelegatingContext extends BaseClass(IInputModeContext) {
     super()
     this.context = context
   }
+
   /**
    * Returns the wrapped context's zoom.
    */
   get zoom() {
     return this.context.zoom
   }
+
   /**
    * Returns the wrapped context's hit test radius.
    */
   get hitTestRadius() {
     return this.context.hitTestRadius
   }
+
   /**
    * Returns the wrapped context's canvas component.
    */
   get canvasComponent() {
     return this.context.canvasComponent
   }
+
   get inputMode() {
     throw this.context.inputMode
   }
+
   /**
    * Delegates to the wrapped context's lookup but cancels the snap context.
    */
@@ -1437,10 +1585,12 @@ class DelegatingContext extends BaseClass(IInputModeContext) {
   lookup(type) {
     return type === SnapContext ? null : this.context.lookup(type)
   }
+
   getDefsId(defsSupport) {
     return this.context.getDefsId(defsSupport)
   }
 }
+
 /**
  * This port handle is used only to trigger the updates of the orthogonal edge editing facility of
  * yFiles. In yFiles, all code related to updates of the orthogonal edge editing facility is
@@ -1454,6 +1604,7 @@ class DummyPortLocationModelParameterHandle extends PortLocationModelParameterHa
   setParameter(_graph, _port, _newParameter) {
     // do nothing
   }
+
   /**
    * Returns the current port location since we don't want to change the port location.
    */
@@ -1461,30 +1612,37 @@ class DummyPortLocationModelParameterHandle extends PortLocationModelParameterHa
     return port.locationParameter
   }
 }
+
 /**
  * Markup extension that helps (de-)serializing a {@link RotatableNodeStyleDecorator}.
  */
 export class RotatableNodeStyleDecoratorExtension extends MarkupExtension {
   _angle = 0
   _wrapped
+
   get angle() {
     return this._angle
   }
+
   set angle(value) {
     this._angle = value
   }
+
   get wrapped() {
     return this._wrapped
   }
+
   set wrapped(value) {
     this._wrapped = value
   }
+
   provideValue(_serviceProvider) {
     const style = new RotatableNodeStyleDecorator()
     style.angle = this.angle
     style.wrapped = this.wrapped
     return style
   }
+
   static create(item) {
     const markupExtension = new RotatableNodeStyleDecoratorExtension()
     markupExtension.angle = item.angle
@@ -1492,6 +1650,7 @@ export class RotatableNodeStyleDecoratorExtension extends MarkupExtension {
     return markupExtension
   }
 }
+
 /**
  * Normalizes the angle to 0–360°.
  */
@@ -1502,12 +1661,14 @@ function normalizeAngle(angle) {
   }
   return normalizedAngle
 }
+
 /**
  * Returns the given angle in degrees.
  */
 function toDegrees(radians) {
   return (radians * 180) / Math.PI
 }
+
 /**
  * Returns the given angle in radians.
  */

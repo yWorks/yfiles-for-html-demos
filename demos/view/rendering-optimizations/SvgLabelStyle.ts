@@ -45,9 +45,7 @@ const SVG_NS = 'http://www.w3.org/2000/svg'
 /**
  * Augment the SvgVisual type with the data used to cache the rendering information
  */
-type Cache = {
-  text: string
-}
+type Cache = { text: string }
 type SvgLabelStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 /**

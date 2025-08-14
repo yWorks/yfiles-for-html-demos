@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { BaseClass, IVisualCreator, SvgVisual } from '@yfiles/yfiles'
+
 /**
  * Creates a visual for the demo's background image.
  */
@@ -40,6 +41,7 @@ export class ImageVisualCreator extends BaseClass(IVisualCreator) {
     super()
     this.imageRect = imageRect
   }
+
   /**
    * Creates a visual for the demo's background image.
    */
@@ -52,6 +54,7 @@ export class ImageVisualCreator extends BaseClass(IVisualCreator) {
     image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', 'resources/earth-layers.svg')
     return new SvgVisual(image)
   }
+
   /**
    * Delegates the call to the {@link createVisual} method.
    */

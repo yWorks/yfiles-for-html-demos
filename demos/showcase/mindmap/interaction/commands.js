@@ -48,12 +48,14 @@ import {
   getSubtree,
   removeSubtree
 } from '../subtrees'
+
 /**
  * Adds key bindings for creating new nodes and collapsing/expanding child nodes.
  */
 export function initializeCommands(graphComponent) {
   const inputMode = graphComponent.inputMode
   const keyboardInputMode = inputMode.keyboardInputMode
+
   // create a child node when INSERT is pressed
   keyboardInputMode.addKeyBinding('Insert', ModifierKeys.NONE, () => {
     if (canExecuteCreateChild(graphComponent)) {
@@ -69,6 +71,7 @@ export function initializeCommands(graphComponent) {
       }
     }
   })
+
   // remove a child node when DELETE is pressed
   keyboardInputMode.addKeyBinding('Delete', ModifierKeys.NONE, () => {
     if (canExecuteDeleteItem(graphComponent)) {
@@ -76,18 +79,21 @@ export function initializeCommands(graphComponent) {
       void executeDeleteItem(graphComponent)
     }
   })
+
   // expand the subtree when ADD is pressed
   keyboardInputMode.addKeyBinding('+', ModifierKeys.NONE, () => {
     if (canExecuteExpandNode(graphComponent)) {
       executeExpandNode(graphComponent)
     }
   })
+
   // collapse the subtree when SUBTRACT is pressed
   keyboardInputMode.addKeyBinding('-', ModifierKeys.NONE, () => {
     if (canExecuteCollapseNode(graphComponent)) {
       executeCollapseNode(graphComponent)
     }
   })
+
   // create a sibling node when ENTER is pressed
   keyboardInputMode.addKeyBinding('Enter', ModifierKeys.NONE, () => {
     if (canExecuteCreateSibling(graphComponent)) {
@@ -104,6 +110,7 @@ export function initializeCommands(graphComponent) {
     }
   })
 }
+
 /**
  * Determines whether the collapse/expand node command can be executed.
  * @returns true if there is a node to collapse/expand and no layout is currently running.
@@ -112,6 +119,7 @@ export function initializeCommands(graphComponent) {
 export function canExecuteToggleCollapseState(graphComponent, node) {
   return !isInLayout() && (!!node || graphComponent.selection.nodes.size > 0)
 }
+
 /**
  * Executes the collapse/expand node command.
  * When the node - or alternatively, the selected node - was expanded,
@@ -126,6 +134,7 @@ export function executeToggleCollapseState(graphComponent, node) {
   void collapseNode(node, !isCollapsed(node), graphComponent)
   return true
 }
+
 /**
  * Collapses/expands a node and updates the layout.
  * When a node is expanded, the subtree nodes appear at the center position
@@ -136,25 +145,31 @@ export function executeToggleCollapseState(graphComponent, node) {
  */
 async function collapseNode(node, collapsed, graphComponent) {
   const fullGraph = getFullGraph(graphComponent)
+
   const compoundEdit = graphComponent.graph.beginEdit(
     'Collapse/Expand',
     'Collapse/Expand',
     fullGraph.nodes
   )
+
   if (isCollapsed(node) === collapsed) {
     // there was no state change
     return
   }
+
   if (!collapsed) {
     // when a subtree is expanded, update the collapsed state before the layout to include the
     // inserted nodes in the animation
     collapseSubtree(node, collapsed, graphComponent.graph)
   }
+
   // collect subtree nodes to expand/collapse them with a nice animation
   let { nodes: subtreeNodes } = getSubtree(fullGraph, node)
   subtreeNodes = subtreeNodes.filter((subtreeNode) => subtreeNode !== node)
+
   // update the layout
   await layoutTree(graphComponent, subtreeNodes, collapsed)
+
   if (collapsed) {
     // when a subtree is collapsed, update the collapsed state after the layout to have the
     // animation before the nodes disappear
@@ -162,6 +177,7 @@ async function collapseNode(node, collapsed, graphComponent) {
   }
   compoundEdit.commit()
 }
+
 /**
  * Determines whether the create child command can be executed.
  * @returns True if there is a parent node and no layout is currently running.
@@ -171,6 +187,7 @@ function canExecuteCreateChild(graphComponent) {
   const parent = graphComponent.currentItem
   return !!parent && !isInLayout()
 }
+
 /**
  * Executes the create child command.
  * A new child node is created, connected to the current node, and the label editor is opened.
@@ -179,25 +196,32 @@ function canExecuteCreateChild(graphComponent) {
 export async function executeCreateChild(nodeStyle, edgeStyle, labelStyle, graphComponent) {
   const fullGraph = getFullGraph(graphComponent)
   const parent = graphComponent.currentItem
+
   const compoundEdit = graphComponent.graph.beginEdit('CreateChild', 'CreateChild')
+
   if (parent) {
     const parentData = getNodeData(parent)
     parentData.collapsed = false
     graphComponent.graph.nodePredicateChanged(parent)
+
     const node = createChild(fullGraph, parent, nodeStyle, edgeStyle, labelStyle)
+
     // update layout
     await layoutTree(graphComponent)
+
     // open label editor after the child node is created
     const inputMode = graphComponent.inputMode
     if (inputMode && node.labels.size > 0) {
       void inputMode.editLabelInputMode.startLabelEditing(node.labels.at(0))
     }
+
     compoundEdit.commit()
     return true
   }
   compoundEdit.cancel()
   return false
 }
+
 /**
  * Determines whether the delete item command can be executed.
  * @returns True if there are selected elements and no layout is currently running.
@@ -207,8 +231,10 @@ function canExecuteDeleteItem(graphComponent) {
   const selection = graphComponent.selection
   const edge = selection.edges.at(0)
   const node = selection.nodes.at(0)
+
   return !isInLayout() && ((!!edge && isCrossReference(edge)) || (!!node && !isRoot(node)))
 }
+
 /**
  * Executes the delete item command.
  * The selected node/edge is removed and the layout is updated.
@@ -216,12 +242,15 @@ function canExecuteDeleteItem(graphComponent) {
  */
 export async function executeDeleteItem(graphComponent) {
   const edge = graphComponent.selection.edges.at(0)
+
   const compoundEdit = graphComponent.graph.beginEdit('DeleteItem', 'DeleteItem')
+
   if (edge) {
     graphComponent.graph.remove(edge)
     await layoutTree(graphComponent)
     compoundEdit.commit()
   }
+
   const node = graphComponent.selection.nodes.at(0)
   if (node) {
     removeSubtree(getFullGraph(graphComponent), node)
@@ -230,6 +259,7 @@ export async function executeDeleteItem(graphComponent) {
   }
   return true
 }
+
 /**
  * Determines whether the expand node command can be executed.
  * @returns True if there is a collapsed node that is selected and no layout is currently running.
@@ -239,6 +269,7 @@ function canExecuteExpandNode(graphComponent) {
   const node = graphComponent.selection.nodes.at(0)
   return !!node && isCollapsed(node) && !isInLayout()
 }
+
 /**
  * Executes the expand node command.
  * The descendants of the selected node become visible.
@@ -252,6 +283,7 @@ function executeExpandNode(graphComponent) {
   }
   return false
 }
+
 /**
  * Determines whether the collapse node command can be executed.
  * @returns True if there is an expanded node that is selected and no layout is currently running.
@@ -261,6 +293,7 @@ function canExecuteCollapseNode(graphComponent) {
   const node = graphComponent.selection.nodes.at(0)
   return !!node && !isCollapsed(node) && !isInLayout()
 }
+
 /**
  * Executes the collapse node command.
  * The descendants of the selected node are hidden.
@@ -274,6 +307,7 @@ function executeCollapseNode(graphComponent) {
   }
   return false
 }
+
 /**
  * Determines whether the create sibling command can be executed.
  * @returns True if there is a selected node that is not the root node
@@ -284,6 +318,7 @@ function canExecuteCreateSibling(graphComponent) {
   const node = graphComponent.selection.nodes.at(0)
   return !!node && !isRoot(node) && !isInLayout()
 }
+
 /**
  * Executes the create sibling command.
  * A new node is created and connected to the parent of the selected node.
@@ -293,23 +328,29 @@ async function executeCreateSibling(nodeStyle, edgeStyle, labelStyle, graphCompo
   const node = graphComponent.selection.nodes.first()
   const nodeData = getNodeData(node)
   const fullGraph = getFullGraph(graphComponent)
+
   const compoundEdit = graphComponent.graph.beginEdit('CreateSibling', 'CreateSibling')
+
   const sibling = createSibling(fullGraph, node, nodeStyle, edgeStyle, labelStyle)
   if (sibling) {
     nodeData.collapsed = false
     graphComponent.graph.nodePredicateChanged()
+
     // update layout
     await layoutTree(graphComponent)
+
     // open label editor after the sibling is created
     if (graphComponent.inputMode instanceof GraphEditorInputMode && sibling.labels.size > 0) {
       void graphComponent.inputMode.editLabelInputMode.startLabelEditing(sibling.labels.get(0))
     }
+
     compoundEdit.commit()
     return true
   }
   compoundEdit.cancel()
   return false
 }
+
 /**
  * Changes the state label and updates the layout.
  */
@@ -326,6 +367,7 @@ export async function changeStateLabel(stateLabelIndex, graphComponent) {
     compoundEdit.commit()
   }
 }
+
 /**
  * Sets the state label described by the state icon index for a node.
  */
@@ -333,11 +375,13 @@ function setStateLabel(node, stateIconIndex, graphComponent) {
   const oldData = getNodeData(node)
   const newData = { ...oldData, stateIcon: stateIconIndex }
   setNodeData(node, newData)
+
   // create a custom undo unit
   const filteredGraph = graphComponent.graph
   filteredGraph.undoEngine.addUnit(
     createTagChangeUndoUnit('Set State Label', oldData, newData, node)
   )
+
   const fullGraph = getFullGraph(graphComponent)
   adjustNodeBounds(node, fullGraph)
 }

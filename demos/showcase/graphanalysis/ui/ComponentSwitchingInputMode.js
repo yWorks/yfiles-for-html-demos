@@ -44,7 +44,9 @@ import {
 } from '@yfiles/yfiles'
 import { getColorForComponent } from '../styles'
 import { getTag } from '../demo-types'
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
  * An input mode that shows an overlay and allows to switch between the displayed
  * components for nodes that belong to multiple components.
@@ -60,13 +62,16 @@ export class ComponentSwitchingInputMode extends InputModeBase {
   hoveredNode
   /** The canvas object for the popup on a hovered node */
   popupRenderTreeElement
+
   // Input event listeners; we need to bind them once, so we can remove them later again.
   mouseMovedHandler = this.onMouseMoved.bind(this)
   mouseLeftHandler = this.onMouseLeft.bind(this)
   mouseClickedHandler = this.onMouseClicked.bind(this)
+
   install(context, controller) {
     super.install(context, controller)
     const graphComponent = context.canvasComponent
+
     // Add custom node overlays where multiple components are present
     const renderTree = context.canvasComponent.renderTree
     this.renderTreeGroup = renderTree.createGroup(renderTree.rootGroup)
@@ -84,11 +89,13 @@ export class ComponentSwitchingInputMode extends InputModeBase {
     this.modelManager.nodeLabelRenderer = IObjectRenderer.VOID_OBJECT_RENDERER
     this.modelManager.portLabelRenderer = IObjectRenderer.VOID_OBJECT_RENDERER
     this.modelManager.install(graphComponent, graphComponent.graph)
+
     // Input event handling
     graphComponent.addEventListener('pointer-move', this.mouseMovedHandler)
     graphComponent.addEventListener('pointer-leave', this.mouseLeftHandler)
     graphComponent.addEventListener('pointer-click', this.mouseClickedHandler)
   }
+
   uninstall(context) {
     const graphComponent = context.canvasComponent
     this.modelManager?.uninstall(graphComponent)
@@ -96,11 +103,14 @@ export class ComponentSwitchingInputMode extends InputModeBase {
       graphComponent.renderTree.remove(this.renderTreeGroup)
       this.renderTreeGroup = undefined
     }
+
     graphComponent.removeEventListener('pointer-move', this.mouseMovedHandler)
     graphComponent.removeEventListener('pointer-leave', this.mouseLeftHandler)
     graphComponent.removeEventListener('pointer-click', this.mouseClickedHandler)
+
     super.uninstall(context)
   }
+
   /**
    * Event listener for mouse move events.
    * This performs a hit-test to see what item is under the mouse pointer
@@ -129,6 +139,7 @@ export class ComponentSwitchingInputMode extends InputModeBase {
         break
     }
   }
+
   /**
    * Determines what item is at the given location.
    */
@@ -150,6 +161,7 @@ export class ComponentSwitchingInputMode extends InputModeBase {
     }
     return { result: 'nothing' }
   }
+
   /**
    * Event listener when the mouse leaves the component.
    * Resets the popup and overlay state.
@@ -159,6 +171,7 @@ export class ComponentSwitchingInputMode extends InputModeBase {
     this.hideFlyout()
     this.parentInputModeContext?.invalidateDisplays()
   }
+
   /**
    * Highlights all nodes and edges belonging to a particular component.
    */
@@ -180,6 +193,7 @@ export class ComponentSwitchingInputMode extends InputModeBase {
       this.parentInputModeContext.invalidateDisplays()
     }
   }
+
   /**
    * Updates the tag for an item with a highlighted component or
    * removes the highlight, as needed.
@@ -191,6 +205,7 @@ export class ComponentSwitchingInputMode extends InputModeBase {
       delete tag.highlightedComponent
     }
   }
+
   /**
    * Enlarges the multicolored component circle that then serves as a popup
    * to select the component to display.
@@ -211,6 +226,7 @@ export class ComponentSwitchingInputMode extends InputModeBase {
       this.popupRenderTreeElement?.toBack()
     }
   }
+
   hideFlyout() {
     this.hoveredNode = undefined
     if (this.popupRenderTreeElement) {
@@ -218,6 +234,7 @@ export class ComponentSwitchingInputMode extends InputModeBase {
     }
     this.popupRenderTreeElement = undefined
   }
+
   /**
    * Event listener for mouse clicks.
    * Clicking on a component color in the popup makes that component display
@@ -234,6 +251,7 @@ export class ComponentSwitchingInputMode extends InputModeBase {
       }
     }
   }
+
   /**
    * Causes the given component to be rendered if it belongs to a node or edge.
    * This works by virtue of the first component in the tag being used for
@@ -260,6 +278,7 @@ export class ComponentSwitchingInputMode extends InputModeBase {
     }
   }
 }
+
 /**
  * A custom renderer implementation that renders a multicolored circle for nodes
  * that belong to multiple components.
@@ -271,10 +290,12 @@ class ComponentOverlayRenderer extends BaseClass(
 ) {
   inputMode
   node
+
   constructor(inputMode) {
     super()
     this.inputMode = inputMode
   }
+
   createVisual(context) {
     // Some nodes may not have a tag, or components in the tag;
     // we don't have to do anything for them
@@ -282,20 +303,27 @@ class ComponentOverlayRenderer extends BaseClass(
     if (!shouldShowOverlay(node)) {
       return null
     }
+
     const tag = getTag(node)
     const components = getSortedComponents(tag.components)
+
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     g.classList.add('components-overlay')
     this.updateCssClasses(g)
+
     const { x, y, width } = node.layout
     const radius = width * 0.5
+
     const ringGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     ringGroup.classList.add('components')
     if (tag.type) {
       ringGroup.classList.add(tag.type)
     }
+
     renderComponentSegments(components, ringGroup, radius - 2.5, radius, radius)
+
     g.append(ringGroup)
+
     // White circle to separate the outer ring from the node
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     circle.cx.baseVal.value = circle.cy.baseVal.value = radius
@@ -303,15 +331,20 @@ class ComponentOverlayRenderer extends BaseClass(
     circle.setAttribute('fill', 'none')
     circle.setAttribute('stroke', 'white')
     circle.setAttribute('stroke-width', '2')
+
     g.append(circle)
+
     // Move to the node's location
     SvgVisual.setTranslate(g, x, y)
+
     const visual = new SvgVisual(g)
+
     // Remember node size and components for updating later
     visual.size = width
     visual.components = new Set(components)
     return visual
   }
+
   updateVisual(context, oldVisual) {
     const node = this.node
     const tag = getTag(node)
@@ -320,6 +353,7 @@ class ComponentOverlayRenderer extends BaseClass(
       return null
     }
     const { x, y, width } = node.layout
+
     const visual = oldVisual
     if (visual.size !== undefined && visual.components) {
       if (
@@ -328,14 +362,17 @@ class ComponentOverlayRenderer extends BaseClass(
         components.every((c) => visual.components.has(c))
       ) {
         const g = visual.svgElement
+
         // Update location and CSS class
         SvgVisual.setTranslate(g, x, y)
         this.updateCssClasses(g)
+
         return visual
       }
     }
     return this.createVisual(context)
   }
+
   /**
    * Updates the CSS classes based on whether this node is currently hovered over
    * and whether the node is highlighted.
@@ -353,6 +390,7 @@ class ComponentOverlayRenderer extends BaseClass(
       element.classList.remove('highlighted')
     }
   }
+
   isVisible(context, rectangle) {
     const node = this.node
     if (!node) {
@@ -360,21 +398,26 @@ class ComponentOverlayRenderer extends BaseClass(
     }
     return rectangle.intersects(node.layout.toRect().getEnlarged(node.layout.width))
   }
+
   getBoundsProvider(renderTag) {
     return IBoundsProvider.EMPTY
   }
+
   getHitTestable(renderTag) {
     return IHitTestable.NEVER
   }
+
   getVisibilityTestable(renderTag) {
     this.node = renderTag
     return this
   }
+
   getVisualCreator(renderTag) {
     this.node = renderTag
     return this
   }
 }
+
 /**
  * Determines whether to show the multicolored circle overlay for a given node.
  */
@@ -382,12 +425,14 @@ function shouldShowOverlay(node) {
   const tag = getTag(node)
   return !!tag && !tag.type && tag.components.length > 1 && tag.gradient === undefined
 }
+
 /**
  * Returns a sorted list of components to keep the overlay stable.
  */
 function getSortedComponents(components) {
   return [...components].sort((a, b) => a - b)
 }
+
 /**
  * Renders a multicolored ring with the given radius for all components.
  */
@@ -396,19 +441,25 @@ function renderComponentSegments(components, g, radius, cx, cy) {
   const angleDeg = (angle * 180) / Math.PI
   const cos = Math.cos(angle)
   const sin = Math.sin(angle)
+
   // Sort components to always get a consistent order of colors
   components = getSortedComponents(components)
+
   const d = `M ${cx} ${cy - radius} A${radius},${radius} 0 0,1 ${cx + sin * radius},${cy - cos * radius}`
+
   for (let i = 0; i < components.length; i++) {
     const slice = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     slice.setAttribute('d', d)
+
     const component = components[i]
     const color = getColorForComponent(component)
     slice.setAttribute('stroke', color)
     slice.setAttribute('transform', `rotate(${i * angleDeg} ${cx} ${cy})`)
+
     g.append(slice)
   }
 }
+
 function getCurrentComponent(item, location) {
   if (item instanceof ComponentSelectionPopup) {
     return getComponentFromPopup(item, location)
@@ -420,24 +471,29 @@ function getCurrentComponent(item, location) {
   }
   return null
 }
+
 function getComponentFromPopup(popup, location) {
   const node = popup.node
   const tag = getTag(node)
   const center = node.layout.center
   const up = new Point(0, -1)
   const vector = location.subtract(center)
+
   let angle = Math.acos(up.scalarProduct(vector) / vector.vectorLength)
   if (location.x < center.x) {
     angle *= -1
   }
+
   // Normalize to 0-2pi
   angle += 2 * Math.PI
   angle %= 2 * Math.PI
+
   const components = getSortedComponents(tag.components)
   const sliceAngle = (2 * Math.PI) / components.length
   const index = Math.floor(angle / sliceAngle)
   return components[index]
 }
+
 /**
  * Sorts a given number to the beginning of the array.
  */
@@ -450,6 +506,7 @@ function sortToBeginning(component, components) {
     }
   }
 }
+
 /**
  * Helper hit-testing object added around a node, so that we can distinguish
  * hitting a node, this popup, or nothing with a yFiles {@link IRenderTreeElement}-based
@@ -461,18 +518,23 @@ class ComponentSelectionPopup extends BaseClass(IObjectRenderer, IHitTestable) {
     super()
     this.node = node
   }
+
   getBoundsProvider(renderTag) {
     return IBoundsProvider.UNBOUNDED
   }
+
   getHitTestable(renderTag) {
     return this
   }
+
   getVisibilityTestable(renderTag) {
     return IVisibilityTestable.ALWAYS
   }
+
   getVisualCreator(renderTag) {
     return IVisualCreator.VOID_VISUAL_CREATOR
   }
+
   isHit(context, location) {
     const { center, width } = this.node.layout
     const distance = location.distanceTo(center)

@@ -98,9 +98,7 @@ function configureGraph(graph: IGraph, styleDefinitions: StyleDefinitions): void
 
   graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.BOTTOM
 
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '2px #617984'
-  })
+  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '2px #617984' })
 }
 
 /**
@@ -115,12 +113,7 @@ function createGraph(graph: IGraph, stylesDefinitions: StyleDefinitions) {
     layout: 'bounds',
     style: (data) => createCompositeStyle(stylesDefinitions, data.type as keyof StyleDefinitions)
   })
-  builder.createEdgesSource({
-    data: SampleData.edges,
-    id: 'id',
-    sourceId: 'src',
-    targetId: 'tgt'
-  })
+  builder.createEdgesSource({ data: SampleData.edges, id: 'id', sourceId: 'src', targetId: 'tgt' })
   builder.buildGraph()
 }
 

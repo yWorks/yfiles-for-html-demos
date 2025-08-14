@@ -28,7 +28,9 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { EdgeStyleBase, IArrow, Rect, Size, SvgVisual } from '@yfiles/yfiles'
+
 const circleRadius = 20
+
 export class CustomEdgeStyle extends EdgeStyleBase {
   distance
   /**
@@ -39,9 +41,11 @@ export class CustomEdgeStyle extends EdgeStyleBase {
     super()
     this.distance = distance
   }
+
   createVisual(context, edge) {
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const generalPath = super.getPath(edge)
+
     const circleLocation = generalPath.getPoint(0.5)
     const circleElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     circleElement.setAttribute('r', String(circleRadius))
@@ -50,46 +54,59 @@ export class CustomEdgeStyle extends EdgeStyleBase {
     circleElement.setAttribute('fill', '#0b7189')
     circleElement.setAttribute('fill-opacity', '0.3')
     group.append(circleElement)
+
     const distance = this.distance
     const loadColor = this.getLoadColor(edge)
     const croppedGeneralPath = super.cropPath(edge, IArrow.NONE, IArrow.NONE, generalPath)
+
     const widePath = croppedGeneralPath.createSvgPath()
     widePath.setAttribute('fill', 'none')
     widePath.setAttribute('stroke', 'black')
     widePath.setAttribute('stroke-width', String(distance + 2))
     group.append(widePath)
+
     const thinPath = croppedGeneralPath.createSvgPath()
     thinPath.setAttribute('fill', 'none')
     thinPath.setAttribute('stroke', loadColor)
     thinPath.setAttribute('stroke-width', String(distance))
     group.append(thinPath)
+
     return SvgVisual.from(group, { generalPath, distance, loadColor })
   }
+
   updateVisual(context, oldVisual, edge) {
     const cache = oldVisual.tag
+
     const group = oldVisual.svgElement
     const widePath = group.children[1]
     const thinPath = group.children[2]
+
     const newGeneralPath = super.getPath(edge)
     if (!newGeneralPath.hasSameValue(cache.generalPath)) {
       const croppedGeneralPath = super.cropPath(edge, IArrow.NONE, IArrow.NONE, newGeneralPath)
       const pathData = croppedGeneralPath.createSvgPathData()
+
       widePath.setAttribute('d', pathData)
       thinPath.setAttribute('d', pathData)
+
       cache.generalPath = newGeneralPath
     }
+
     if (this.distance !== cache.distance) {
       widePath.setAttribute('stroke-width', String(this.distance + 2))
       thinPath.setAttribute('stroke-width', String(this.distance))
       cache.distance = this.distance
     }
+
     const newLoadColor = this.getLoadColor(edge)
     if (newLoadColor !== cache.loadColor) {
       thinPath.setAttribute('stroke', newLoadColor)
       cache.loadColor = newLoadColor
     }
+
     return oldVisual
   }
+
   isHit(context, location, edge) {
     const thickness = this.distance + 2
     const edgePath = super.getPath(edge)
@@ -98,16 +115,22 @@ export class CustomEdgeStyle extends EdgeStyleBase {
   isVisible(context, rectangle, edge) {
     return rectangle.intersects(this.getBounds(context, edge))
   }
+
   getBounds(context, edge) {
     const path = super.getPath(edge)
     const thickness = this.distance + 2
+
     const edgeBounds = path.getBounds().getEnlarged(thickness * 0.5)
+
     const circleBounds = Rect.fromCenter(
       path.getPoint(0.5),
       new Size(circleRadius * 2, circleRadius * 2)
     )
+
     return Rect.add(edgeBounds, circleBounds)
   }
+
+
   /**
    * Returns the color of an edge based on the load property of its tag object.
    * @param edge The edge to get a color for.

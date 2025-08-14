@@ -11,28 +11,11 @@
       "layout": { "x": -100, "y": 85, "width": 60, "height": 30 },
       "labels": [{ "text": "Top" }]
     },
-    {
-      "id": 2,
-      "layout": { "x": 85, "y": 85, "width": 30, "height": 30 }
-    },
-    {
-      "id": 3,
-      "layout": { "x": 85, "y": 145, "width": 30, "height": 30 }
-    },
-    {
-      "id": 4,
-      "layout": { "x": 185, "y": 85, "width": 30, "height": 30 }
-    },
-    {
-      "id": 5,
-      "parentId": 0,
-      "layout": { "x": 85, "y": 25, "width": 30, "height": 30 }
-    },
-    {
-      "id": 6,
-      "parentId": 0,
-      "layout": { "x": 185, "y": 25, "width": 30, "height": 30 }
-    }
+    { "id": 2, "layout": { "x": 85, "y": 85, "width": 30, "height": 30 } },
+    { "id": 3, "layout": { "x": 85, "y": 145, "width": 30, "height": 30 } },
+    { "id": 4, "layout": { "x": 185, "y": 85, "width": 30, "height": 30 } },
+    { "id": 5, "parentId": 0, "layout": { "x": 85, "y": 25, "width": 30, "height": 30 } },
+    { "id": 6, "parentId": 0, "layout": { "x": 185, "y": 25, "width": 30, "height": 30 } }
   ],
   "edgeList": [
     { "source": 5, "target": 6 },

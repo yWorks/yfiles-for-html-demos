@@ -147,9 +147,7 @@ function createGraph(graph: IGraph): void {
 
 function createEditorInputMode(): GraphEditorInputMode {
   return new GraphEditorInputMode({
-    navigationInputMode: {
-      autoGroupNodeAlignmentPolicy: 'top-right'
-    }
+    navigationInputMode: { autoGroupNodeAlignmentPolicy: 'top-right' }
   })
 }
 

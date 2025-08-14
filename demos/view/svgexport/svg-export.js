@@ -29,6 +29,7 @@
 import { Graph, GraphComponent, SvgExport, WebGLGraphModelManager } from '@yfiles/yfiles'
 import { useWebGLRendering } from './webgl-support'
 import { DelayedNodeStyle } from './node-styles/delayed-node-style'
+
 /**
  * Exports a certain area of the graph to an SVG element.
  * @param graphComponent the demo's main graph view.
@@ -51,9 +52,11 @@ export async function exportSvg(
   // ... and assign it the same graph.
   exportComponent.graph = graphComponent.graph
   exportComponent.updateContentBounds()
+
   if (graphComponent.graphModelManager instanceof WebGLGraphModelManager) {
     useWebGLRendering(exportComponent)
   }
+
   // create the exporter class
   const exporter = new SvgExport({
     // determine the bounds of the exported area
@@ -63,6 +66,7 @@ export async function exportSvg(
     inlineSvgImages: true,
     background: background
   })
+
   // set cssStyleSheets to null so the SvgExport will automatically collect all style sheets
   exporter.cssStyleSheet = null
   const resultPromise = exporter.exportSvgAsync(exportComponent, () =>
@@ -71,8 +75,8 @@ export async function exportSvg(
   )
   // make sure to deallocate the resources after the export is done
   void resultPromise.then(() => {
-    exportComponent.cleanUp()
     exportComponent.graph = new Graph()
+    exportComponent.cleanUp()
   })
   return resultPromise
 }

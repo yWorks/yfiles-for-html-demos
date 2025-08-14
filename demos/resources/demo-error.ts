@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { Exception, yfiles } from '@yfiles/yfiles'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+import { BrowserDetection } from './demo-ui/BrowserDetection'
 
 /**
  * If an error occurs, a demo sets a failure state such that consecutive errors can no longer
@@ -80,7 +80,7 @@ export function registerErrorDialog() {
   // Register a handler for unhandled errors
   window.addEventListener('error', (e: ErrorEvent) => {
     e.preventDefault()
-    if (inErrorState()) {
+    if (inErrorState() || isIgnoredError(e.error)) {
       return
     }
     if (BrowserDetection.safariVersion > 0 && e.error instanceof Error) {
@@ -92,7 +92,7 @@ export function registerErrorDialog() {
   // Register a handler for unhandled promise rejections
   window.addEventListener('unhandledrejection', (e: PromiseRejectionEvent) => {
     e.preventDefault()
-    if (inErrorState()) {
+    if (inErrorState() || isIgnoredError(e.reason)) {
       return
     }
     if (BrowserDetection.safariVersion > 0 && e.reason instanceof Error) {
@@ -114,6 +114,15 @@ export function registerErrorDialog() {
   }
 }
 
+/**
+ * Whether the error is not tracked, neither reported to the user.
+ */
+function isIgnoredError(error: Error): boolean {
+  const stack = error ? unwindStack(error) : ''
+
+  return stack.includes('chrome-extension')
+}
+
 function getInnermostError(error: Error): Error {
   let inner: any = error
   while (inner.cause instanceof Error) {
@@ -127,7 +136,7 @@ function getInnermostMessage(error: Error): string {
   return `${inner.name}: ${inner.message}`
 }
 
-function unwindStack(error: any): string | undefined {
+function unwindStack(error: any): string {
   const stack = error.stack
   return !stack || stack.length === 0
     ? '<no stack available>'
@@ -356,12 +365,7 @@ export function createPlainDialog(titleText: string) {
   dialogPanel.appendChild(title)
   dialogPanel.appendChild(contentPanel)
 
-  return {
-    dialogAnchor,
-    dialogPanel,
-    title,
-    contentPanel
-  }
+  return { dialogAnchor, dialogPanel, title, contentPanel }
 }
 
 function inErrorState(): boolean {

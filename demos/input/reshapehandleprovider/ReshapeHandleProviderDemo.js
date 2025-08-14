@@ -42,12 +42,15 @@ import {
 import { PortReshapeHandleProvider } from './PortReshapeHandlerProvider'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent
 let graphEditorInputMode
+
 /**
  * Indicates whether the Shift modifier key is pressed.
  */
 let shiftPressed = false
+
 /**
  * Registers a callback function as a decorator that provides a customized
  * {@link IReshapeHandleProvider} for each port with a {@link ShapePortStyle}.
@@ -64,28 +67,35 @@ function registerReshapeHandleProvider(graph) {
     }
   )
 }
+
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
   // initialize graph defaults
   initializeGraphDefaults(graphComponent.graph)
+
   // create a default editor input mode
   graphEditorInputMode = newEditorInputMode()
   // set the input mode to the graph control.
   graphComponent.inputMode = graphEditorInputMode
+
   // PortReshapeHandlerProvider considers pressed Shift keys.
   // Whenever Ctrl is pressed or released, we force GraphEditorInputMode to requery the handles
   // of selected items
   graphComponent.addEventListener('key-down', (e) => onKeyDown(e))
   graphComponent.addEventListener('key-up', (e) => onKeyUp(e))
   graphComponent.htmlElement.addEventListener('blur', () => onBlur)
+
   // register the reshape handle provider for ports
   registerReshapeHandleProvider(graphComponent.graph)
+
   // create initial graph
   await new GraphMLIOHandler().readFromURL(graphComponent.graph, 'resources/sample.graphml')
   await graphComponent.fitGraphBounds()
 }
+
 /**
  * Configures default behavior and visualizations for the elements of the given graph.
  * @param graph The graph to be configured.
@@ -100,11 +110,13 @@ function initializeGraphDefaults(graph) {
   graph.nodeDefaults.ports.shareStyleInstance = false
   // disable removing ports when all attached edges have been removed
   graph.nodeDefaults.ports.autoCleanUp = false
+
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '3px solid #2E282A',
     orthogonalEditing: true
   })
 }
+
 /**
  * Creates a new editor input mode to handle user interaction in this demo.
  */
@@ -121,8 +133,10 @@ function newEditorInputMode() {
     GraphItemTypes.NODE,
     GraphItemTypes.NODE_LABEL
   ]
+
   return mode
 }
+
 /**
  * Triggers {@link GraphEditorInputMode.requeryHandles} when the shift modifier key is pressed.
  */
@@ -135,6 +149,7 @@ function onKeyDown(e) {
     }
   }
 }
+
 /**
  * Triggers {@link GraphEditorInputMode.requeryHandles} when the shift modifier key is released.
  */
@@ -147,6 +162,7 @@ function onKeyUp(e) {
     }
   }
 }
+
 /**
  * Triggers {@link GraphEditorInputMode.requeryHandles} when the demo's graph component looses focus.
  */
@@ -155,4 +171,5 @@ function onBlur() {
   // update handles
   graphEditorInputMode.requeryHandles()
 }
+
 run().then(finishLoading)

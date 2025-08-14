@@ -42,26 +42,33 @@ import {
   registerConverter
 } from './template-engine/template-engine'
 import { createSVG, TemplateContext, updateSVG } from './StringTemplateSupport'
+
 class PortTemplateContext extends TemplateContext {
   style
+
   constructor(port, style) {
     super(port)
     this.style = style
   }
+
   get port() {
     return this.item
   }
+
   get width() {
     return this.style.renderSize.width
   }
+
   get height() {
     return this.style.renderSize.height
   }
+
   // noinspection JSUnusedGlobalSymbols
   get styleTag() {
     return this.style.tag
   }
 }
+
 export class StringTemplatePortStyle extends PortStyleBase {
   static CONVERTERS = converters
   tag
@@ -71,6 +78,7 @@ export class StringTemplatePortStyle extends PortStyleBase {
   svgContent
   renderSize
   renderFunction
+
   constructor() {
     super()
     const arg = arguments[0]
@@ -91,6 +99,7 @@ export class StringTemplatePortStyle extends PortStyleBase {
       this.renderSize = options.renderSize ? Size.from(options.renderSize) : new Size(5, 5)
     }
   }
+
   /**
    * This mimics the old yFiles 2.x API
    * Registers a global converter.
@@ -100,6 +109,7 @@ export class StringTemplatePortStyle extends PortStyleBase {
   static registerConverter(name, converter) {
     registerConverter(name, converter)
   }
+
   /**
    * This mimics the old yFiles 2.x API
    * @param obj
@@ -108,6 +118,7 @@ export class StringTemplatePortStyle extends PortStyleBase {
     makeObservable(obj)
     return obj
   }
+
   createVisual(renderContext, port) {
     return createSVG(
       port,
@@ -120,11 +131,13 @@ export class StringTemplatePortStyle extends PortStyleBase {
       }
     )
   }
+
   updateVisual(renderContext, oldVisual, port) {
     return updateSVG(oldVisual, port, renderContext, this.cssClass, (element) => {
       SvgVisual.setTranslate(element, port.location.x, port.location.y)
     })
   }
+
   getBounds(_, port) {
     const center = port.location
     return new Rect(

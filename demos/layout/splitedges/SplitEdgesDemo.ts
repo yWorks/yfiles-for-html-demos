@@ -129,15 +129,11 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 async function runLayout() {
   const hierarchicalLayout = new HierarchicalLayout({
     layoutOrientation: 'left-to-right',
-    defaultEdgeDescriptor: {
-      directGroupContentEdgeRouting: true
-    }
+    defaultEdgeDescriptor: { directGroupContentEdgeRouting: true }
   })
 
   const edgeRouter = new EdgeRouter({
-    defaultEdgeDescriptor: {
-      directGroupContentEdgeRouting: true
-    }
+    defaultEdgeDescriptor: { directGroupContentEdgeRouting: true }
   })
 
   const recursiveGroupLayout = new RecursiveGroupLayout({
@@ -151,11 +147,7 @@ async function runLayout() {
       edge.tag && edge.tag.sourceSplitId ? edge.tag.sourceSplitId : null,
     targetSplitIds: (edge: IEdge) =>
       edge.tag && edge.tag.targetSplitId ? edge.tag.targetSplitId : null
-  }).combineWith(
-    new HierarchicalLayoutData({
-      edgeThickness: 3
-    })
-  )
+  }).combineWith(new HierarchicalLayoutData({ edgeThickness: 3 }))
 
   const genericLayoutData = new GenericLayoutData()
   genericLayoutData.addItemMapping(LayoutKeys.GROUP_NODE_PADDING_DATA_KEY).constant = new Insets(
@@ -191,10 +183,7 @@ function initializeDefaults(): void {
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '3px #4E4E4E',
-    targetArrow: new Arrow({
-      fill: '#4E4E4E',
-      type: 'triangle'
-    }),
+    targetArrow: new Arrow({ fill: '#4E4E4E', type: 'triangle' }),
     smoothingLength: 15
   })
   graph.edgeDefaults.shareStyleInstance = false

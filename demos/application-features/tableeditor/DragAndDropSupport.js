@@ -45,8 +45,10 @@ import {
   Table
 } from '@yfiles/yfiles'
 import { DemoStripeStyle, DemoTableStyle } from './TableStyles'
+
 import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
 import { createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+
 /**
  * Configures drag and drop interaction that considers dropping nodes on table nodes.
  */
@@ -58,6 +60,7 @@ export function configureDndInputMode(graph) {
       // tables and tagged nodes should be created as group nodes
       !!ITable.getTable(draggedNode) || draggedNode.tag === 'GroupNode'
   })
+
   nodeDropInputMode.isValidParentPredicate = (node) => {
     const draggedNode = nodeDropInputMode.lastDragEventArgs.item.getData('yfiles.graph.INode')
     if (ITable.getTable(draggedNode) && node !== null && graph.isGroupNode(node)) {
@@ -66,8 +69,10 @@ export function configureDndInputMode(graph) {
     }
     return graph.isGroupNode(node)
   }
+
   return nodeDropInputMode
 }
+
 /**
  * Configures the drag and drop panel.
  */
@@ -76,17 +81,21 @@ export function configureDndPanel() {
   dndPanel.maxItemWidth = 160
   dndPanel.populatePanel(createDndPanelNodes())
 }
+
 /**
  * Creates the nodes that provide the visualizations for the style panel.
  */
 function createDndPanelNodes() {
   const nodeContainer = []
+
   // dummy table that serves to hold only a sample row
   const rowSampleTable = new Table()
   // dummy table that serves to hold only a sample column
   const columnSampleTable = new Table()
+
   // configure the defaults for the row sample table
   rowSampleTable.rowDefaults.style = new NodeStyleStripeStyleAdapter(new DemoStripeStyle())
+
   // create the sample row
   const rowSampleRow = rowSampleTable.createRow()
   // create an invisible sample column in this table so that we will see something.
@@ -101,11 +110,8 @@ function createDndPanelNodes() {
     horizontalTextAlignment: 'center',
     verticalTextAlignment: 'center'
   })
-  rowSampleTable.addLabel({
-    owner: rowSampleRow,
-    text: 'Row',
-    style: labelStyle
-  })
+  rowSampleTable.addLabel({ owner: rowSampleRow, text: 'Row', style: labelStyle })
+
   const columnSampleRow = columnSampleTable.createRow({
     height: 160,
     style: new NodeStyleStripeStyleAdapter(INodeStyle.VOID_NODE_STYLE)
@@ -116,19 +122,24 @@ function createDndPanelNodes() {
   })
   columnSampleTable.setStripePadding(columnSampleRow, Insets.EMPTY)
   columnSampleTable.addLabel(columnSampleColumn, 'Column', StretchStripeLabelModel.TOP, labelStyle)
+
   // table for a complete sample table node
   const sampleTable = new Table()
   sampleTable.padding = Insets.EMPTY
+
   // configure the defaults for the row sample table
   sampleTable.columnDefaults.minimumSize = sampleTable.rowDefaults.minimumSize = 50
+
   // setup defaults for the complete sample table
   // we use a custom style that alternates the stripe colors and uses a special style for all parent stripes.
   sampleTable.rowDefaults.style = new NodeStyleStripeStyleAdapter(new DemoStripeStyle())
   sampleTable.rowDefaults.labels.style = labelStyle
+
   // the style for the columns is simpler, we use a node control style that only points the header padding.
   sampleTable.columnDefaults.style = columnSampleTable.columnDefaults.style =
     new NodeStyleStripeStyleAdapter(new DemoStripeStyle())
   sampleTable.columnDefaults.labels.style = labelStyle
+
   // create a row and a column in the sample table
   sampleTable.createGrid(1, 1)
   // use twice the default width for this sample column (looks nicer in the preview...)
@@ -136,11 +147,13 @@ function createDndPanelNodes() {
   // bind the table to a dummy node which is used for drag & drop
   // binding the table is performed through a TableNodeStyle instance.
   // among other things, this also makes the table instance available in the node's lookup
+
   // add the sample node for the table
   const sampleTableNode = new SimpleNode()
   sampleTableNode.layout = sampleTable.layout.toRect()
   sampleTableNode.style = new DemoTableStyle(sampleTable)
   nodeContainer.push(sampleTableNode)
+
   // add sample rows and columns
   // we use dummy nodes to hold the associated stripe instances - this makes the style panel easier to use
   const columnSampleTableNode = new SimpleNode()
@@ -148,6 +161,7 @@ function createDndPanelNodes() {
   columnSampleTableNode.style = new DemoTableStyle(columnSampleTable)
   columnSampleTableNode.tag = columnSampleTable.rootColumn.childColumns.at(0)
   nodeContainer.push(columnSampleTableNode)
+
   // add sample rows and columns
   // we use dummy nodes to hold the associated stripe instances - this makes the style panel easier to use
   const rowSampleTableNode = new SimpleNode()
@@ -155,18 +169,22 @@ function createDndPanelNodes() {
   rowSampleTableNode.style = new DemoTableStyle(rowSampleTable)
   rowSampleTableNode.tag = rowSampleTable.rootRow.childRows.at(0)
   nodeContainer.push(rowSampleTableNode)
+
   // add normal sample leaf and group nodes
   const normalNode = new SimpleNode()
   normalNode.layout = new Rect(0, 0, 80, 50)
   normalNode.style = createDemoNodeStyle()
   nodeContainer.push(normalNode)
+
   const groupNode = new SimpleNode()
   groupNode.layout = new Rect(0, 0, 120, 70)
   groupNode.style = createGroupNodeStyle()
   groupNode.tag = 'GroupNode'
   nodeContainer.push(groupNode)
+
   return nodeContainer
 }
+
 /**
  * Creates a style that visualizes nodes as dash-dotted outline only.
  */
@@ -174,9 +192,6 @@ export function createGroupNodeStyle() {
   return new ShapeNodeStyle({
     shape: ShapeNodeShape.ROUND_RECTANGLE,
     fill: 'transparent',
-    stroke: new Stroke({
-      dashStyle: DashStyle.DASH_DOT,
-      lineCap: LineCap.SQUARE
-    })
+    stroke: new Stroke({ dashStyle: DashStyle.DASH_DOT, lineCap: LineCap.SQUARE })
   })
 }

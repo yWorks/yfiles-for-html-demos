@@ -38,6 +38,7 @@ import {
   IRenderContext,
   Point
 } from '@yfiles/yfiles'
+
 /**
  * A custom delegating callback that implements {@link CustomCallback.createCustomBridge} differently.
  */
@@ -50,30 +51,35 @@ export class CustomCallback extends BaseClass(IBridgeCreator) {
     super()
     this.fallback = fallback
   }
+
   /**
    * Returns the CrossingStyle to be used.
    */
   getCrossingStyle(context) {
     return this.fallback.getCrossingStyle(context)
   }
+
   /**
    * Returns the BridgeOrientationStyle to be used.
    */
   getOrientationStyle(context) {
     return this.fallback.getOrientationStyle(context)
   }
+
   /**
    * Returns the width of the bridge to be used.
    */
   getBridgeWidth(context) {
     return this.fallback.getBridgeWidth(context)
   }
+
   /**
    * Returns the height of the bridge to be used.
    */
   getBridgeHeight(context) {
     return this.fallback.getBridgeHeight(context)
   }
+
   /**
    * Called by the BridgeManager if the getCrossingStyle method returns BridgeCrossingStyle.CUSTOM to
    * insert a bridge into the given general path.
@@ -92,12 +98,14 @@ export class CustomCallback extends BaseClass(IBridgeCreator) {
       const delta = endPoint.subtract(startPoint)
       const rightVector = delta.multiply(1 / gapLength)
       const upVector = new Point(rightVector.y, -rightVector.x)
+
       // get the height from the context
       const height = this.getBridgeHeight(context)
       // determine bending for our arc
       const arc = 3
       // now draw two arcs at the end and the start of the segment
       path.moveTo(startPoint.add(upVector.multiply(height)).subtract(rightVector.multiply(arc)))
+
       path.quadTo(
         startPoint.add(rightVector.multiply(arc)),
         startPoint.add(upVector.multiply(-height)).subtract(rightVector.multiply(arc))
@@ -112,6 +120,7 @@ export class CustomCallback extends BaseClass(IBridgeCreator) {
     path.moveTo(endPoint)
   }
 }
+
 /**
  * Custom {@link IObstacleProvider} implementation that returns the node style's outline
  * as an obstacle.
@@ -126,6 +135,7 @@ export class GroupNodeObstacleProvider extends BaseClass(IObstacleProvider) {
     super()
     this.groupNode = groupNode
   }
+
   /**
    * Returns an obstacle for the node style's outline.
    * @param context The given render context
@@ -142,6 +152,7 @@ export class GroupNodeObstacleProvider extends BaseClass(IObstacleProvider) {
     // If the node is invisible, don't return anything (won't be painted anyway...)
     return null
   }
+
   /**
    * Uses the node style's outline as obstacle.
    * For node style renderers that don't provide a {@link IShapeGeometry}, no bridges will be created.

@@ -35,17 +35,21 @@ import {
   License,
   SnappableItems
 } from '@yfiles/yfiles'
+
 import { createDemoShapeNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { SnapCircleProvider } from './SnapCircleProvider'
 import { CircleSnapResultProvider } from './CircleSnapResultProvider'
+
 import graphData from './resources/circle-snapping.json'
+
 /**
  * Runs the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   const graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode({
@@ -53,33 +57,43 @@ async function run() {
     allowCreateEdge: false,
     showHandleItems: 'none'
   })
+
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   // enable circular snapping for nodes
   initializeCircularSnapping(graphComponent)
+
   // build a sample graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
+
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id,
     layout: (item) => item.layout
   })
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Configures snapping in a way that is suited to circular/radial arrangements of child nodes
  * around parent nodes.
@@ -105,10 +119,12 @@ function initializeCircularSnapping(graphComponent) {
     considerInitialLabelLocationSnapping: false,
     considerPortLabelOwnerLocationSnapping: false
   })
+
   const nodeDecorator = graphComponent.graph.decorator.nodes
   nodeDecorator.snapReferenceProvider.addFactory((node) => new SnapCircleProvider(node))
   nodeDecorator.snapResultProvider.addConstant(new CircleSnapResultProvider())
 }
+
 /**
  * Configures the graph item style defaults for this demo.
  * @param graph The graph.
@@ -117,4 +133,5 @@ function initializeGraph(graph) {
   initDemoStyles(graph)
   graph.nodeDefaults.style = createDemoShapeNodeStyle('ellipse')
 }
+
 run().then(finishLoading)

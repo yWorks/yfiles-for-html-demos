@@ -27,19 +27,25 @@
  **
  ***************************************************************************/
 import { GraphMLIOHandler, ILookup, MarkupExtension } from '@yfiles/yfiles'
+
 import { Vue2NodeStyle } from './Vue2NodeStyle'
+
 export class Vue2NodeStyleMarkupExtension extends MarkupExtension {
   _template = ''
+
   get template() {
     return this._template
   }
+
   set template(value) {
     this._template = value
   }
+
   provideValue(serviceProvider) {
     return new Vue2NodeStyle(this.template)
   }
 }
+
 export function enableVue2NodeStyleMarkupSerialization(graphMLIOHandler) {
   graphMLIOHandler.addTypeInformation(Vue2NodeStyle, {
     extension: (item) => {
@@ -49,8 +55,6 @@ export function enableVue2NodeStyleMarkupSerialization(graphMLIOHandler) {
     }
   })
   graphMLIOHandler.addTypeInformation(Vue2NodeStyleMarkupExtension, {
-    properties: {
-      template: { default: '', type: String }
-    }
+    properties: { template: { default: '', type: String } }
   })
 }

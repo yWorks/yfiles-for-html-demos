@@ -1,181 +1,45 @@
 {
   "nodeList": [
-    {
-      "id": 0,
-      "label": "Hobbies"
-    },
-    {
-      "id": 1,
-      "label": "Games"
-    },
-    {
-      "id": 2,
-      "label": "Sport"
-    },
-    {
-      "id": 3,
-      "label": "Books"
-    },
-    {
-      "id": 4,
-      "label": "Diy"
-    },
-    {
-      "id": 5,
-      "label": "Collecting"
-    },
-    {
-      "id": 6,
-      "label": "Fantasy"
-    },
-    {
-      "id": 7,
-      "label": "Science\n Fiction"
-    },
-    {
-      "id": 8,
-      "label": "Thriller"
-    },
-    {
-      "id": 9,
-      "label": "Cops and\n Robbers"
-    },
-    {
-      "id": 10,
-      "label": "The Settlers\n of Catan"
-    },
-    {
-      "id": 11,
-      "label": "Computer"
-    },
-    {
-      "id": 12,
-      "label": "Stamps"
-    },
-    {
-      "id": 13,
-      "label": "Dancing"
-    },
-    {
-      "id": 14,
-      "label": "Climbing"
-    },
-    {
-      "id": 15,
-      "label": "Soccer"
-    },
-    {
-      "id": 16,
-      "label": "Rock"
-    },
-    {
-      "id": 17,
-      "label": "Ice"
-    },
-    {
-      "id": 18,
-      "label": "Planes"
-    },
-    {
-      "id": 19,
-      "label": "Cars"
-    }
+    { "id": 0, "label": "Hobbies" },
+    { "id": 1, "label": "Games" },
+    { "id": 2, "label": "Sport" },
+    { "id": 3, "label": "Books" },
+    { "id": 4, "label": "Diy" },
+    { "id": 5, "label": "Collecting" },
+    { "id": 6, "label": "Fantasy" },
+    { "id": 7, "label": "Science\n Fiction" },
+    { "id": 8, "label": "Thriller" },
+    { "id": 9, "label": "Cops and\n Robbers" },
+    { "id": 10, "label": "The Settlers\n of Catan" },
+    { "id": 11, "label": "Computer" },
+    { "id": 12, "label": "Stamps" },
+    { "id": 13, "label": "Dancing" },
+    { "id": 14, "label": "Climbing" },
+    { "id": 15, "label": "Soccer" },
+    { "id": 16, "label": "Rock" },
+    { "id": 17, "label": "Ice" },
+    { "id": 18, "label": "Planes" },
+    { "id": 19, "label": "Cars" }
   ],
   "edgeList": [
-    {
-      "id": 0,
-      "source": 0,
-      "target": 1
-    },
-    {
-      "id": 1,
-      "source": 0,
-      "target": 2
-    },
-    {
-      "id": 2,
-      "source": 0,
-      "target": 3
-    },
-    {
-      "id": 3,
-      "source": 0,
-      "target": 4
-    },
-    {
-      "id": 4,
-      "source": 0,
-      "target": 5
-    },
-    {
-      "id": 5,
-      "source": 1,
-      "target": 9
-    },
-    {
-      "id": 6,
-      "source": 1,
-      "target": 10
-    },
-    {
-      "id": 7,
-      "source": 1,
-      "target": 11
-    },
-    {
-      "id": 8,
-      "source": 2,
-      "target": 13
-    },
-    {
-      "id": 9,
-      "source": 2,
-      "target": 14
-    },
-    {
-      "id": 10,
-      "source": 2,
-      "target": 15
-    },
-    {
-      "id": 11,
-      "source": 3,
-      "target": 6
-    },
-    {
-      "id": 12,
-      "source": 3,
-      "target": 7
-    },
-    {
-      "id": 13,
-      "source": 3,
-      "target": 8
-    },
-    {
-      "id": 14,
-      "source": 4,
-      "target": 18
-    },
-    {
-      "id": 15,
-      "source": 4,
-      "target": 19
-    },
-    {
-      "id": 16,
-      "source": 5,
-      "target": 12
-    },
-    {
-      "id": 17,
-      "source": 14,
-      "target": 16
-    },
-    {
-      "id": 18,
-      "source": 14,
-      "target": 17
-    }
+    { "id": 0, "source": 0, "target": 1 },
+    { "id": 1, "source": 0, "target": 2 },
+    { "id": 2, "source": 0, "target": 3 },
+    { "id": 3, "source": 0, "target": 4 },
+    { "id": 4, "source": 0, "target": 5 },
+    { "id": 5, "source": 1, "target": 9 },
+    { "id": 6, "source": 1, "target": 10 },
+    { "id": 7, "source": 1, "target": 11 },
+    { "id": 8, "source": 2, "target": 13 },
+    { "id": 9, "source": 2, "target": 14 },
+    { "id": 10, "source": 2, "target": 15 },
+    { "id": 11, "source": 3, "target": 6 },
+    { "id": 12, "source": 3, "target": 7 },
+    { "id": 13, "source": 3, "target": 8 },
+    { "id": 14, "source": 4, "target": 18 },
+    { "id": 15, "source": 4, "target": 19 },
+    { "id": 16, "source": 5, "target": 12 },
+    { "id": 17, "source": 14, "target": 16 },
+    { "id": 18, "source": 14, "target": 17 }
   ]
 }

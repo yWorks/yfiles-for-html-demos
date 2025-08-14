@@ -30,9 +30,7 @@ const webpack = require('webpack')
 
 module.exports = {
   mode: 'development',
-  entry: {
-    app: ['./src/webpack-demo.ts']
-  },
+  entry: { app: ['./src/webpack-demo.ts'] },
   // default devtool needs to be disabled for the SourceMapDevToolPlugin below to be used
   devtool: false,
   plugins: [

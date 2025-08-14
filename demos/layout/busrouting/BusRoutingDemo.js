@@ -48,12 +48,14 @@ import SampleData from './resources/SampleData'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * Provides different color fills for new edge busses in this demo.
  */
 class ColorUtil {
   fills = ColorUtil.newFills()
   index = 0
+
   /**
    * Returns a fill not yet in use.
    * @see {@link connectNodes}
@@ -65,8 +67,10 @@ class ColorUtil {
       const b = Math.floor(Math.random() * 150)
       this.fills.push(Fill.from(new Color(r, g, b)))
     }
+
     return this.fills[this.index++]
   }
+
   /**
    * Returns the fills already in use.
    */
@@ -77,6 +81,7 @@ class ColorUtil {
     }
     return copy
   }
+
   /**
    * Creates an initial set of fills for new edges.
    */
@@ -95,31 +100,42 @@ class ColorUtil {
     return fills
   }
 }
+
 /**
  * Display's the demo's graph.
  */
 let graphComponent = null
+
 /**
  * State guard to prevent concurrent layout calculations.
  */
 let layoutRunning = false
+
 /**
  * Manages the different color fills for grouping edges to busses.
  */
 const colorUtil = new ColorUtil()
+
 /**
  * Runs the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   initializeUI()
+
   graphComponent = new GraphComponent('#graphComponent')
   configureUserInteraction(graphComponent)
+
   configureGraph(graphComponent.graph)
+
   loadGraph(graphComponent.graph)
+
   void graphComponent.fitGraphBounds()
+
   await routeEdges()
 }
+
 /**
  * Configures the demo's user interaction.
  * @param graphComponent The demo's graph view.
@@ -135,17 +151,21 @@ function configureUserInteraction(graphComponent) {
   mode.showHandleItems = GraphItemTypes.BEND | GraphItemTypes.EDGE
   // turn on default snapping for graph elements
   mode.snapContext = new GraphSnapContext()
+
   graphComponent.inputMode = mode
 }
+
 /**
  * Configures default visualizations for the given graph.
  * @param graph The demo's graph.
  */
 function configureGraph(graph) {
   initDemoStyles(graph)
+
   // increase the default node size to 50x50 pixel
   graph.nodeDefaults.size = [50, 50]
 }
+
 /**
  * Creates a sample graph structure from the demo's sample data.
  * The sample graph will have edges in three different colors (i.e. red, brown, and blue)
@@ -158,8 +178,10 @@ function loadGraph(graph) {
   const brown = newEdgeStyle()
   // the default style to be used for all edges that are neither red nor brown
   const blue = newEdgeStyle()
+
   // the demo's sample data
   const data = SampleData
+
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
     data: data.nodes, // array of { id: string, bounds: number[] }
@@ -183,6 +205,7 @@ function loadGraph(graph) {
   })
   builder.buildGraph()
 }
+
 /**
  * Triggers a new layout calculation for the edges associated to the given scope.
  * @param edgesToRoute Determines which edges to route. If provided only these edges are routed,
@@ -193,8 +216,10 @@ async function routeEdges(edgesToRoute = null) {
   if (layoutRunning) {
     return
   }
+
   layoutRunning = true
   disableUI(true)
+
   try {
     await routeEdgesCore(edgesToRoute)
   } finally {
@@ -202,6 +227,7 @@ async function routeEdges(edgesToRoute = null) {
     disableUI(false)
   }
 }
+
 /**
  * Routes the edges associated to the given scope and applies the result in an animated fashion.
  * @param edgesToRoute Determines which edges to route. If provided only these edges are routed,
@@ -210,6 +236,7 @@ async function routeEdges(edgesToRoute = null) {
 async function routeEdgesCore(edgesToRoute) {
   // configure bus structures
   const layoutData = new EdgeRouterData()
+
   if (edgesToRoute && edgesToRoute.length > 0) {
     // affected edges are all the edges created in the last connectNodes action
     // mark those edges for routing ...
@@ -219,6 +246,7 @@ async function routeEdgesCore(edgesToRoute) {
       edgesToRoute
   } else {
     // affected edges are all edges
+
     // assign each edge to a bus depending on the edge's color
     for (const fill of colorUtil.usedFills()) {
       layoutData.buses.add(
@@ -229,14 +257,18 @@ async function routeEdgesCore(edgesToRoute) {
       }
     }
   }
+
   // the algorithm used for edge routing
   const algorithm = new EdgeRouter()
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   // calculate the new edge routes and apply the result in an animated fashion
   await graphComponent.applyLayoutAnimated({ layout: algorithm, layoutData: layoutData })
 }
+
 /**
  * Connects all the currently selected nodes and routes the new edges.
  * All new edges will have the same color and thus will be assigned to the same edge bus.
@@ -244,23 +276,28 @@ async function routeEdgesCore(edgesToRoute) {
 async function connectNodes() {
   // prevent previously created edges from being routed as well
   const edgesToRoute = []
+
   // determine the currently selected nodes
   const nodes = graphComponent.selection.nodes.toArray()
   const n = nodes.length
   if (n < 1) {
     return
   }
+
   // create a new style with an as-to-now unused color
   const style = newEdgeStyle()
+
   // connect the selected nodes; assign each new edge the new style
   for (let i = 0; i < n; ++i) {
     for (let j = i + 1; j < n; ++j) {
       edgesToRoute.push(graphComponent.graph.createEdge(nodes[i], nodes[j], style))
     }
   }
+
   // route the new edges and only the new edges
   await routeEdges(edgesToRoute)
 }
+
 /**
  * Creates a new edge style with an as-to-now unused color fill.
  */
@@ -272,6 +309,7 @@ function newEdgeStyle() {
     orthogonalEditing: true
   })
 }
+
 /**
  * Helper function to disable UI during layout animation
  */
@@ -281,6 +319,7 @@ function disableUI(disabled) {
   const layout = document.querySelector('#route')
   layout.disabled = disabled
 }
+
 /**
  * Binds actions to the buttons in the toolbar.
  */
@@ -288,4 +327,5 @@ function initializeUI() {
   document.querySelector('#route').addEventListener('click', () => routeEdges())
   document.querySelector('#connect').addEventListener('click', connectNodes)
 }
+
 run().then(finishLoading)

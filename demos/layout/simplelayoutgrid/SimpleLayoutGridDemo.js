@@ -41,14 +41,17 @@ import { SimpleLayoutGridVisualCreator } from './SimpleLayoutGridVisualCreator'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * Holds the GraphComponent
  */
 let graphComponent
+
 /**
  * The Layout Grid
  */
 let layoutGrid
+
 /**
  * Runs the demo.
  */
@@ -57,23 +60,30 @@ async function run() {
   graphComponent = new GraphComponent('graphComponent')
   // Initialize the styles for the graph elements
   initDemoStyles(graphComponent.graph)
+
   // Initialize the input mode
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // Load the graph
   loadSampleGraph()
+
   // Create the layout grid
   createLayoutGrid()
+
   // Initialize the visual creator for the layout grid
   initializeLayoutGridVisual()
+
   // Run the layout
   runLayout()
 }
+
 /**
  * Creates the layout grid.
  * @returns The created layout grid
  */
 function createLayoutGrid() {
   const graph = graphComponent.graph
+
   // find the desired number of rows/columns
   let columnCount = Number.NEGATIVE_INFINITY
   let rowCount = Number.NEGATIVE_INFINITY
@@ -82,10 +92,7 @@ function createLayoutGrid() {
       const columnIndex = node.tag.column
       const rowIndex = node.tag.row
       // the column/row indices are stored to each node's tag
-      node.tag = {
-        rowIndex,
-        columnIndex
-      }
+      node.tag = { rowIndex, columnIndex }
       columnCount = Math.max(columnIndex, columnCount)
       rowCount = Math.max(rowIndex, rowCount)
     } else {
@@ -94,14 +101,17 @@ function createLayoutGrid() {
   })
   columnCount++
   rowCount++
+
   // creates and configures the LayoutGrid
   if (rowCount > 0 && columnCount > 0) {
     layoutGrid = new LayoutGrid(rowCount, columnCount)
+
     layoutGrid.columns.forEach((columnDescriptor) => {
       columnDescriptor.minimumWidth = 50
       columnDescriptor.leftPadding = 10
       columnDescriptor.rightPadding = 10
     })
+
     layoutGrid.rows.forEach((rowDescriptor) => {
       rowDescriptor.minimumHeight = 50
       rowDescriptor.topPadding = 10
@@ -111,14 +121,14 @@ function createLayoutGrid() {
   }
   return null
 }
+
 /**
  * Arranges the graph with the hierarchical layout algorithm.
  */
 function runLayout() {
   // configures the layout algorithm
-  const layoutAlgorithm = new HierarchicalLayout({
-    nodeDistance: 25
-  })
+  const layoutAlgorithm = new HierarchicalLayout({ nodeDistance: 25 })
+
   // create the grid cell descriptors
   const layoutData = new HierarchicalLayoutData({
     layoutGridData: {
@@ -128,12 +138,15 @@ function runLayout() {
           : null
     }
   })
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   // applies the layout algorithm to the graph
   void graphComponent.applyLayoutAnimated(layoutAlgorithm, '1s', layoutData)
 }
+
 /**
  * Initializes the visual creator for the layout grid and adds it to the background of the graph
  * component.
@@ -146,6 +159,7 @@ function initializeLayoutGridVisual() {
     layoutGridVisualCreator
   )
 }
+
 /**
  * Loads the sample graph.
  */
@@ -159,6 +173,8 @@ function loadSampleGraph() {
   })
   graphBuilder.createGroupNodesSource(GraphData.groups, 'id')
   graphBuilder.createEdgesSource(GraphData.edges, 'source', 'target')
+
   graphBuilder.buildGraph()
 }
+
 run().then(finishLoading)

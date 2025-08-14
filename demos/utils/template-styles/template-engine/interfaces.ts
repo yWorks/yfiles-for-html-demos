@@ -72,8 +72,4 @@ export type RenderFunction = (
   context?: any,
   templateContext?: any,
   idPrefix?: string
-) => {
-  node: Node
-  update: (newContext: any, templateContext: any) => void
-  cleanup: () => void
-}
+) => { node: Node; update: (newContext: any, templateContext: any) => void; cleanup: () => void }

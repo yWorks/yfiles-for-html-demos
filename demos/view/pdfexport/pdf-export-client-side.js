@@ -36,10 +36,12 @@ import {
 } from '@yfiles/yfiles'
 import { PaperSize } from './PaperSize'
 import { useWebGLRendering } from './webgl-support'
+
 // The demo uses the open-source library for PDF export https://github.com/MrRio/jsPDF alongside with
 // https://github.com/yWorks/svg2pdf.js/ to convert a given SVG element to PDF
 import { jsPDF } from 'jspdf'
 import 'svg2pdf.js'
+
 /**
  * Exports the image on the client. This will open a dialog with a preview and the option to save the image as PDF.
  */
@@ -62,9 +64,12 @@ export async function exportPdfClientSide(
     customFonts,
     renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
   )
+
   const pdfIFrame = createPdfIFrame(raw, uri)
+
   return { pdfData: raw, previewElement: pdfIFrame }
 }
+
 /**
  * Exports the {@link IGraph} to PDF with the help of {@link SvgExport} and jsPDF in the client's browser.
  * yFiles {@link SvgExport} is used to export the contents of a {@link GraphComponent} into an
@@ -84,11 +89,14 @@ export async function exportPdf(
   // ... and assign it the same graph.
   exportComponent.graph = graphComponent.graph
   exportComponent.updateContentBounds()
+
   if (graphComponent.graphModelManager instanceof WebGLGraphModelManager) {
     useWebGLRendering(exportComponent)
   }
+
   // Determine the bounds of the exported area
   const targetRect = exportRect || exportComponent.contentBounds
+
   // Create the exporter class
   const exporter = new SvgExport({
     worldBounds: targetRect,
@@ -97,38 +105,47 @@ export async function exportPdf(
     encodeImagesBase64: true,
     inlineSvgImages: true
   })
+
   // set cssStyleSheets to null so the SvgExport will automatically collect all style sheets
   exporter.cssStyleSheet = null
+
   // export the component to svg
   const svgElement = await exporter.exportSvgAsync(
     exportComponent,
     renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
   )
+
   // Dispose of the component and remove its references to the graph
-  exportComponent.cleanUp()
   exportComponent.graph = new Graph()
+  exportComponent.cleanUp()
+
   const size = getExportSize(paperSize, exporter)
   return convertSvgToPdf(svgElement, size, customFonts)
 }
+
 /**
  * Converts the given SVG element to PDF.
  * @yjs:keep = compress,orientation
  */
 async function convertSvgToPdf(svgElement, size, customFonts = []) {
   svgElement = svgElement.cloneNode(true)
+
   const jsPdf = new jsPDF({
     orientation: size.width > size.height ? 'l' : 'p',
     unit: 'pt',
     format: [size.width, size.height],
     compress: true
   })
+
   for (const font of customFonts) {
     jsPdf.addFileToVFS(font.filename, font.data)
     jsPdf.addFont(font.filename, font.id, font.style)
   }
+
   await jsPdf.svg(svgElement, size)
   return { raw: jsPdf.output(), uri: jsPdf.output('datauristring') }
 }
+
 /**
  * Creates an IFrame containing a preview of the given pdf.
  */
@@ -138,6 +155,7 @@ function createPdfIFrame(raw, pdfUrl) {
   pdfIframe.src = pdfUrl
   return pdfIframe
 }
+
 /**
  * Returns the size of the exported PDF. Paper sizes are converted to pixel sizes based on 72 PPI.
  */

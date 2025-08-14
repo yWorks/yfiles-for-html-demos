@@ -125,7 +125,5 @@ export function createCanvasContext(width: number, height: number): CanvasRender
   const canvas = document.createElement('canvas')
   canvas.setAttribute('width', `${width}`)
   canvas.setAttribute('height', `${height}`)
-  return canvas.getContext('2d', {
-    willReadFrequently: true
-  }) as CanvasRenderingContext2D
+  return canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D
 }

@@ -28,115 +28,25 @@
  ***************************************************************************/
 export default {
   nodes: [
-    {
-      id: 0,
-      bounds: [-47.61, 396.02, 96.0, 96.0],
-      label: 'oschi',
-      type: 'workstation'
-    },
-    {
-      id: 1,
-      bounds: [322.01, -130.0, 96.0, 96.0],
-      label: 'scanner',
-      type: 'scanner'
-    },
-    {
-      id: 2,
-      bounds: [237.76, 296.27, 96.0, 96.0],
-      label: 'router',
-      type: 'router'
-    },
+    { id: 0, bounds: [-47.61, 396.02, 96.0, 96.0], label: 'oschi', type: 'workstation' },
+    { id: 1, bounds: [322.01, -130.0, 96.0, 96.0], label: 'scanner', type: 'scanner' },
+    { id: 2, bounds: [237.76, 296.27, 96.0, 96.0], label: 'router', type: 'router' },
     { id: 3, bounds: [78.21, 12.57, 96.0, 96.0], label: 'klotz', type: 'server' },
-    {
-      id: 4,
-      bounds: [98.51, 558.62, 96.0, 96.0],
-      label: 'brummer',
-      type: 'workstation'
-    },
-    {
-      id: 5,
-      bounds: [371.03, 4.28, 96.0, 96.0],
-      label: 'schnucki',
-      type: 'workstation'
-    },
-    {
-      id: 6,
-      bounds: [-47.61, 172.37, 96.0, 96.0],
-      label: 'power',
-      type: 'workstation'
-    },
-    {
-      id: 7,
-      bounds: [481.73, -45.72, 96.0, 96.0],
-      label: 'color',
-      type: 'printer'
-    },
-    {
-      id: 8,
-      bounds: [-183.3, 438.47, 96.0, 96.0],
-      label: 'deskjet',
-      type: 'printer'
-    },
-    {
-      id: 9,
-      bounds: [964.64, 233.16, 96.0, 96.0],
-      label: 'laser',
-      type: 'printer'
-    },
-    {
-      id: 10,
-      bounds: [570.69, 213.43, 96.0, 96.0],
-      label: 'scanner',
-      type: 'scanner'
-    },
-    {
-      id: 11,
-      bounds: [759.14, 362.41, 96.0, 96.0],
-      label: 'switch',
-      type: 'switch'
-    },
-    {
-      id: 12,
-      bounds: [866.5, 308.77, 96.0, 96.0],
-      label: 'trumm',
-      type: 'workstation'
-    },
-    {
-      id: 13,
-      bounds: [836.21, 478.16, 96.0, 96.0],
-      label: 'garelli',
-      type: 'workstation'
-    },
-    {
-      id: 14,
-      bounds: [700.4, 263.83, 96.0, 96.0],
-      label: 'brocken',
-      type: 'workstation'
-    },
-    {
-      id: 15,
-      bounds: [664.83, 462.74, 96.0, 96.0],
-      label: 'kreidler',
-      type: 'workstation'
-    },
-    {
-      id: 16,
-      bounds: [727.38, 133.29, 96.0, 96.0],
-      label: 'phaser',
-      type: 'printer'
-    },
-    {
-      id: 17,
-      bounds: [554.57, 546.24, 96.0, 96.0],
-      label: 'phaser',
-      type: 'printer'
-    },
-    {
-      id: 18,
-      bounds: [315.66, 583.79, 96.0, 96.0],
-      label: 'protz',
-      type: 'workstation'
-    }
+    { id: 4, bounds: [98.51, 558.62, 96.0, 96.0], label: 'brummer', type: 'workstation' },
+    { id: 5, bounds: [371.03, 4.28, 96.0, 96.0], label: 'schnucki', type: 'workstation' },
+    { id: 6, bounds: [-47.61, 172.37, 96.0, 96.0], label: 'power', type: 'workstation' },
+    { id: 7, bounds: [481.73, -45.72, 96.0, 96.0], label: 'color', type: 'printer' },
+    { id: 8, bounds: [-183.3, 438.47, 96.0, 96.0], label: 'deskjet', type: 'printer' },
+    { id: 9, bounds: [964.64, 233.16, 96.0, 96.0], label: 'laser', type: 'printer' },
+    { id: 10, bounds: [570.69, 213.43, 96.0, 96.0], label: 'scanner', type: 'scanner' },
+    { id: 11, bounds: [759.14, 362.41, 96.0, 96.0], label: 'switch', type: 'switch' },
+    { id: 12, bounds: [866.5, 308.77, 96.0, 96.0], label: 'trumm', type: 'workstation' },
+    { id: 13, bounds: [836.21, 478.16, 96.0, 96.0], label: 'garelli', type: 'workstation' },
+    { id: 14, bounds: [700.4, 263.83, 96.0, 96.0], label: 'brocken', type: 'workstation' },
+    { id: 15, bounds: [664.83, 462.74, 96.0, 96.0], label: 'kreidler', type: 'workstation' },
+    { id: 16, bounds: [727.38, 133.29, 96.0, 96.0], label: 'phaser', type: 'printer' },
+    { id: 17, bounds: [554.57, 546.24, 96.0, 96.0], label: 'phaser', type: 'printer' },
+    { id: 18, bounds: [315.66, 583.79, 96.0, 96.0], label: 'protz', type: 'workstation' }
   ],
   edges: [
     { id: 0, src: 2, tgt: 0 },

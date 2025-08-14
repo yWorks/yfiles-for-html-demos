@@ -34,6 +34,7 @@ import {
   IOrthogonalEdgeHelper,
   SegmentOrientation
 } from '@yfiles/yfiles'
+
 /**
  * An {@link IOrthogonalEdgeHelper} for edges that don't have
  * orthogonal editing behavior.
@@ -42,6 +43,7 @@ export class RedOrthogonalEdgeHelper extends BaseClass(IOrthogonalEdgeHelper) {
   constructor(edge) {
     super(edge)
   }
+
   /**
    * Returns the non-orthogonal segment orientation.
    * @param _inputModeContext The input mode context in which the segment is edited
@@ -51,6 +53,7 @@ export class RedOrthogonalEdgeHelper extends BaseClass(IOrthogonalEdgeHelper) {
   getSegmentOrientation(_inputModeContext, _segmentIndex) {
     return SegmentOrientation.NON_ORTHOGONAL
   }
+
   /**
    * Returns `false`.
    * @param _inputModeContext The input mode context in which the segment is edited
@@ -61,6 +64,7 @@ export class RedOrthogonalEdgeHelper extends BaseClass(IOrthogonalEdgeHelper) {
   shouldMoveEndImplicitly(_inputModeContext, _sourceEnd) {
     return false
   }
+
   /**
    * Returns `false`.
    * @see Specified by {@link IOrthogonalEdgeHelper.shouldEditOrthogonally}.
@@ -69,6 +73,7 @@ export class RedOrthogonalEdgeHelper extends BaseClass(IOrthogonalEdgeHelper) {
   shouldEditOrthogonally(_inputModeContext) {
     return false
   }
+
   /**
    * Does nothing; no cleanup of bends performed.
    * @param _inputModeContext The input mode context which edited the edge

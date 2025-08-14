@@ -54,12 +54,7 @@ import { ActivityNodeHandleProvider } from './ActivityNodeHandleProvider'
 import { ActivityNodeSnapResultProvider } from './ActivityNodeSnapResultProvider'
 import { getActivity } from '../resources/data-model'
 
-type VisualCache = {
-  leadWidth?: number
-  followUpWidth?: number
-  color?: string
-  width?: number
-}
+type VisualCache = { leadWidth?: number; followUpWidth?: number; color?: string; width?: number }
 type ActivityNodeStyleVisual = TaggedSvgVisual<SVGGElement, VisualCache>
 
 export const patternFill: PatternFill = createPatternFill()

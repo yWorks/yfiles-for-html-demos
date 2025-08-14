@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { DeviceKind } from './Device'
+
 /**
  * A simple simulator that sends packets through the network.
  */
@@ -35,6 +36,7 @@ export class Simulator {
   get paused() {
     return this._paused
   }
+
   set paused(value) {
     if (this._paused !== value) {
       this._paused = value
@@ -43,25 +45,33 @@ export class Simulator {
       }
     }
   }
+
   // The number of new packets that should be created per tick.
   static NEW_PACKETS_PER_TICK = 5
+
   // The probability that a device or connection fails.
   static FAILURE_PROBABILITY = 0.001
+
   // The number of past ticks to consider when calculating the load of devices and connections.
   static HISTORY_SIZE = 23
+
   // Current timestamp of the simulation.
   time = 0
   _paused = true
   simulatorTimeout = 1500
+
   // The list of packets in the past that are no longer active, but still need to be retained for
   // calculating the load of nodes and edges.
   historicalPackets = []
+
   // The list of active packets that are currently moving around the network.
   activePackets = []
+
   /**
    * Indicates whether random failures of devices and connections should happen.
    */
   failuresEnabled = false
+
   /**
    * Initializes a new instance of the {@link Simulator} class to operate on the given {@link Network}.
    * @param network The network model to simulate.
@@ -74,6 +84,7 @@ export class Simulator {
     }
     this.start()
   }
+
   /**
    * Performs one step in the simulation.
    * Packets move one device per tick. Every tick, a number of new packets is created.
@@ -85,19 +96,24 @@ export class Simulator {
     this.tick()
     setTimeout(() => this.runTick(), this.simulatorTimeout)
   }
+
   tick() {
     if (this.failuresEnabled) {
       this.breakThings()
     }
+
     // reset packet-related properties on the connections
     this.activePackets.forEach((packet) => {
       packet.connection.hasForwardPacket = false
       packet.connection.hasBackwardPacket = false
     })
+
     this.pruneOldPackets()
     this.movePackets()
     this.updateLoads()
+
     this.createPackets()
+
     this.activePackets.forEach((packet) => {
       const connection = packet.connection
       connection.hasForwardPacket =
@@ -105,14 +121,17 @@ export class Simulator {
       connection.hasBackwardPacket =
         connection.hasBackwardPacket || packet.sender === connection.receiver
     })
+
     this.time++
     this.network.onDataUpdated?.()
   }
+
   /**
    * Determines for every connection and device whether it should fail and does so, if necessary.
    */
   breakThings() {
     const isFailing = (item) => Math.random() < Simulator.FAILURE_PROBABILITY * (item.load + 0.1)
+
     this.network.devices
       .filter((item) => !item.failed && isFailing(item))
       .slice(0, 3)
@@ -120,6 +139,7 @@ export class Simulator {
         item.fail()
         this.network.onDeviceFailure?.(item)
       })
+
     this.network.connections
       .filter((item) => !item.failed && isFailing(item))
       .slice(0, 3)
@@ -128,6 +148,7 @@ export class Simulator {
         this.network.onConnectionFailure?.(item)
       })
   }
+
   /**
    * Creates new packets.
    * Packets are only sent from laptops, workstations, smartphones and tablets.
@@ -139,22 +160,27 @@ export class Simulator {
     const enabledConnections = this.network.connections.filter(
       (connection) => connection.enabled && !connection.failed
     )
+
     // Restrict them to those edges that are adjacent to a node that can send packets.
     const eligibleConnections = enabledConnections.filter(
       (connection) => connection.sender.canSendPackets() || connection.receiver.canSendPackets()
     )
+
     // Pick a number of those edges at random
     const selectedConnections = shuffle(eligibleConnections).slice(
       0,
       Simulator.NEW_PACKETS_PER_TICK + 1
     )
+
     const packets = selectedConnections.map((connection) => {
       const sender = connection.sender.canSendPackets() ? connection.sender : connection.receiver
       const receiver = connection.sender.canSendPackets() ? connection.receiver : connection.sender
       return this.createPacket(sender, receiver, connection)
     })
+
     this.activePackets.push(...packets)
   }
+
   /**
    * Moves the active packets around the network according to certain rules.
    * Packets move freely and randomly within the network until they arrive at a non-switch, non-WiFi device.
@@ -172,6 +198,7 @@ export class Simulator {
       const isReceiverWorking = packet.receiver.enabled && !packet.receiver.failed
       return isConnectionWorking && isReceiverWorking
     })
+
     // Packets that arrive at servers or databases. They result in a reply packet.
     const replyPackets = packetsToMove.filter((packet) => {
       const isSenderWorking = packet.sender.enabled && !packet.sender.failed
@@ -179,16 +206,21 @@ export class Simulator {
         packet.receiver.kind === DeviceKind.SERVER || packet.receiver.kind === DeviceKind.DATABASE
       return isSenderWorking && doReceiverReply
     })
+
     // All other packets that just move on to their next destination.
     const movingPackets = packetsToMove.filter((packet) => !packet.receiver.canReceivePackets())
+
     // All packets have to be moved to the history list. We create new ones appropriately.
     this.historicalPackets.push(...this.activePackets)
     this.activePackets = []
+
     movingPackets.forEach((packet) => {
       const origin = packet.sender
       const currentConnection = packet.connection
+
       // We start from the old device of the packet
       const startDevice = packet.receiver
+
       // Try finding a random connection to follow ...
       const possiblePathConnections = this.network
         .getAdjacentConnections(startDevice)
@@ -199,19 +231,24 @@ export class Simulator {
           return origin.canConnectTo(oppositeDevice)
         })
         .filter((connection) => connection.enabled && !connection.failed)
+
       if (possiblePathConnections.length > 0) {
         const connection = shuffle(possiblePathConnections)[0]
+
         const oppositeDevice =
           connection.sender === startDevice ? connection.receiver : connection.sender
+
         const newPacket = this.createPacket(startDevice, oppositeDevice, connection)
         this.activePackets.push(newPacket)
       }
     })
+
     replyPackets.forEach((packet) => {
       // We just bounce a new packet on the same edge, but in reverse direction.
       this.activePackets.push(this.createPacket(packet.receiver, packet.sender, packet.connection))
     })
   }
+
   /**
    * Removes packets from the history that are no longer considered for connection or device load.
    * @see {@link NetworkSimulator.HISTORY_SIZE}
@@ -221,6 +258,7 @@ export class Simulator {
       (packet) => packet.time >= this.time - Simulator.HISTORY_SIZE
     )
   }
+
   /**
    * Updates the load of devices and connections based on traffic in the network.
    * The criteria are perhaps a bit arbitrary here. Connection load is defined as the number of
@@ -229,6 +267,7 @@ export class Simulator {
    */
   updateLoads() {
     const history = [...this.activePackets, ...this.historicalPackets]
+
     // update connection loads
     this.network.connections.forEach((connection) => {
       const timestamps = history
@@ -237,6 +276,7 @@ export class Simulator {
       const numberOfHistoryPackets = new Set(timestamps).size
       connection.load = Math.min(1, numberOfHistoryPackets / Simulator.HISTORY_SIZE)
     })
+
     // update device loads
     this.network.devices.forEach((device) => {
       const timestamps = history.filter(
@@ -251,6 +291,7 @@ export class Simulator {
       )
     })
   }
+
   /**
    * Creates a single packet with the appropriate timestamp.
    * @param sender The sender of the packet.
@@ -261,11 +302,13 @@ export class Simulator {
   createPacket(sender, receiver, connection) {
     return new Packet(sender, receiver, connection, this.time)
   }
+
   start() {
     this._paused = false
     this.runTick()
   }
 }
+
 /**
  * Shuffles an array using the Fisher-Yates algorithm.
  */
@@ -276,6 +319,7 @@ function shuffle(array) {
   }
   return array
 }
+
 /**
  * Simple data structure to model a packet moving through the network.
  */

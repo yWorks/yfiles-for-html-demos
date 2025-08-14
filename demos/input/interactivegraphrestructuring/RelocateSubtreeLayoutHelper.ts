@@ -383,9 +383,7 @@ export class RelocateSubtreeLayoutHelper {
         layoutOrientation: PartialLayoutOrientation.TOP_TO_BOTTOM,
         spacing: 50
       }),
-      layoutData: new FillAreaLayoutData({
-        componentIds: this.components
-      }),
+      layoutData: new FillAreaLayoutData({ componentIds: this.components }),
       animateViewport: false,
       animationDuration: TimeSpan.fromMilliseconds(150)
     })

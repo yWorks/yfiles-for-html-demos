@@ -27,18 +27,24 @@
  **
  ***************************************************************************/
 import { Graph, GraphComponent, LayoutOrientation, License } from '@yfiles/yfiles'
+
 import { FlowchartConfiguration } from './FlowchartConfiguration'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { generateGraphMLIOHandler } from '../flowchart/style/generate-graphMLIO-handler'
 import { saveGraphML } from '@yfiles/demo-utils/graphml-support'
+
 let graphComponent
+
 /**
  * The HTML element used to show the action legend.
  */
 let legendDiv
+
 let configuration
+
 const layoutOrientation = LayoutOrientation.TOP_TO_BOTTOM
+
 /**
  * Bootstraps the demo.
  */
@@ -48,22 +54,31 @@ async function run() {
   graphComponent = new GraphComponent('graphComponent')
   legendDiv = document.querySelector('#legend')
   configuration = new FlowchartConfiguration(layoutOrientation)
+
   // register actions for the toolbar
   initializeUI()
+
   // setup a new flowchart diagram
   setUpNewDiagram()
+
   graphComponent.focus()
 }
+
 function setUpNewDiagram() {
   graphComponent.graph = new Graph()
+
   // initialize the default styling, highlighting,g etc. for graph items
   configuration.initializeGraphDefaults(graphComponent)
+
   // initialize the input mode including adding the flowchart actions to the GraphWizardInputMode
   graphComponent.inputMode = configuration.createInputMode(graphComponent, legendDiv)
+
   // setup the initial diagram
   configuration.initializeDiagram(graphComponent)
+
   graphComponent.focus()
 }
+
 function initializeUI() {
   document.querySelector('#new').addEventListener('click', setUpNewDiagram)
   document.querySelector('#layout-button').addEventListener('click', async () => {
@@ -74,4 +89,5 @@ function initializeUI() {
     await saveGraphML(graphComponent, 'flowchart.graphml', graphMLIOHandler)
   })
 }
+
 run().then(finishLoading)

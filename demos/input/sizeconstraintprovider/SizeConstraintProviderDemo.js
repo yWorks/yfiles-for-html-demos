@@ -38,12 +38,14 @@ import {
   Rect,
   Size
 } from '@yfiles/yfiles'
+
 import { LimitingRectangleRenderer } from './LimitingRectangleRenderer'
 import { GreenSizeConstraintProvider } from './GreenSizeConstraintProvider'
 import { BlueSizeConstraintProvider } from './BlueSizeConstraintProvider'
 import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link INodeSizeConstraintProvider} for each node.
@@ -70,6 +72,7 @@ function registerSizeConstraintProvider(graph, boundaryRectangle) {
     return null
   })
 }
+
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
@@ -82,6 +85,7 @@ async function run() {
     allowClipboardOperations: false,
     movableSelectedItems: GraphItemTypes.NONE
   })
+
   // Create the rectangle that limits the movement of some nodes
   // and add it to the graphComponent.
   const boundaryRectangle = new MutableRectangle(210, 350, 30, 30)
@@ -90,13 +94,18 @@ async function run() {
     boundaryRectangle,
     new LimitingRectangleRenderer()
   )
+
   const graph = graphComponent.graph
+
   // register size constraint providers that are the main subject of this demo
   registerSizeConstraintProvider(graph, boundaryRectangle)
+
   createSampleGraph(graph)
+
   // enable undo and redo
   graph.undoEngineEnabled = true
 }
+
 /**
  * Creates the demo's sample graph.
  * @param graph The graph to populate
@@ -117,6 +126,7 @@ function createSampleGraph(graph) {
     'Encompass Rectangle,\nMin and Max Size'
   )
 }
+
 /**
  * Creates a sample node for this demo.
  * @param graph The given graph
@@ -134,10 +144,8 @@ function createNode(graph, x, y, w, h, colorSet, tag, labelText) {
     style: createDemoNodeStyle(colorSet),
     tag: tag
   })
-  graph.addLabel({
-    owner: node,
-    text: labelText,
-    style: createDemoNodeLabelStyle(colorSet)
-  })
+
+  graph.addLabel({ owner: node, text: labelText, style: createDemoNodeLabelStyle(colorSet) })
 }
+
 run().then(finishLoading)

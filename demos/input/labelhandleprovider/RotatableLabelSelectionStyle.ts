@@ -82,9 +82,7 @@ export class RotatableLabelSelectionStyle extends LabelStyleBase<RotatableLabelS
     container.setAttribute('transform-origin', `center ${height * 0.5 + 15}px`)
     container.style.transformBox = `fill-box`
 
-    return SvgVisual.from(container, {
-      layout: label.layout
-    })
+    return SvgVisual.from(container, { layout: label.layout })
   }
 
   protected updateVisual(

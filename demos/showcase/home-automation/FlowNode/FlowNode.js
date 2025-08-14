@@ -38,6 +38,7 @@ import {} from './FlowNodePort'
 import { FlowNodePortStyle } from './FlowNodePortStyle'
 import { FlowNodeStyle } from './FlowNodeStyle'
 import { flowNodeProperties } from './flowNodeProperties'
+
 export const flowNodeVariants = [
   'storageWriteFile',
   'storageReadFile',
@@ -58,12 +59,15 @@ export const flowNodeVariants = [
   'commonLinkCall',
   'commonStatus'
 ]
+
 /**
  * Properties that should never appear in the tag editor
  */
 export let hiddenProperties = ['hasLeftPort', 'hasRightPort', 'validate']
 export let lockedProperties = ['variant']
+
 const portStyle = new FlowNodePortStyle()
+
 /**
  * Modifies node-related graph configuration.
  */
@@ -71,6 +75,7 @@ export function configureFlowNodes({ graph, selection }) {
   graph.decorator.nodes.focusRenderer.hide()
   graph.decorator.nodes.highlightRenderer.hide()
   graph.decorator.nodes.selectionRenderer.hide()
+
   // When a new node appears in the graph, its ports are added automatically. This is done
   // in reaction to `NodeCreated` event so that nodes added from the DnD palette, which doesn't
   // handle nodes with ports correctly, end up having their ports properly configured as soon as
@@ -87,18 +92,14 @@ export function configureFlowNodes({ graph, selection }) {
           owner: node,
           style: portStyle,
           locationParameter: FreeNodePortLocationModel.LEFT,
-          tag: {
-            side: 'left'
-          }
+          tag: { side: 'left' }
         })
       hasRightPort &&
         graph.addPort({
           owner: node,
           style: portStyle,
           locationParameter: FreeNodePortLocationModel.RIGHT,
-          tag: {
-            side: 'right'
-          }
+          tag: { side: 'right' }
         })
     }
     const label = node.tag.label
@@ -111,10 +112,12 @@ export function configureFlowNodes({ graph, selection }) {
         .sort((a, b) => b - a)[0]
       node.tag = { ...node.tag, label: label + ` #${lastLabelNumber + 1}` }
     }
+
     selection.clear()
     selection.add(node)
   })
 }
+
 /**
  * Creates a FlowNode and adds it to the graph at the specified position.
  * Ports will be added automatically on node creation.
@@ -132,6 +135,7 @@ export function createInGraph({ variant, position, graph }) {
     tag: properties
   })
 }
+
 /**
  * Creates a graph-less FlowNode without ports (but dummy port visuals will still be rendered
  * as part of the node visual).
@@ -140,26 +144,24 @@ export function createFlowNode(variant) {
   const properties = { ...flowNodeProperties[variant] }
   return new SimpleNode({
     style: new FlowNodeStyle(),
-    layout: {
-      width: FlowNodeStyle.defaultWidth,
-      height: FlowNodeStyle.defaultHeight,
-      x: 0,
-      y: 0
-    },
+    layout: { width: FlowNodeStyle.defaultWidth, height: FlowNodeStyle.defaultHeight, x: 0, y: 0 },
     tag: properties
   })
 }
+
 export function assertIsFlowNode(node) {
   if (!isFlowNode(node)) {
     throw new Error('Node not satisfy type FlowNode')
   }
 }
+
 export function isFlowNode(node) {
   if (!(node instanceof INode)) {
     return false
   }
   return validateNodeTag(node.tag)
 }
+
 export function validateNodeTag(tag) {
   return typeof tag === 'object' && tag !== null && flowNodeVariants.includes(tag.variant)
 }

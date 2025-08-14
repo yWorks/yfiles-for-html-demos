@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { PortStyleBase, Rect, SvgVisual } from '@yfiles/yfiles'
+
 /**
  * A basic port style that renders a circle.
  */
@@ -36,6 +37,7 @@ export class CustomPortStyle extends PortStyleBase {
     super()
     this.size = size
   }
+
   createVisual(context, port) {
     const ellipseElement = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     const { x, y } = port.location
@@ -49,6 +51,7 @@ export class CustomPortStyle extends PortStyleBase {
     ellipseElement.setAttribute('stroke-width', '1')
     return new SvgVisual(ellipseElement)
   }
+
   getBounds(context, port) {
     const { x, y } = port.location
     const radius = this.size * 0.5

@@ -480,9 +480,7 @@ export class ContextualToolbar {
       labelModelParameter = this.edgeLabelModelParameter
     } else {
       // if nodes and edges are selected, we use the union of the node's bounding boxes as position reference
-      dummyOwner = new SimpleNode({
-        layout: this.getEnclosingRect()
-      })
+      dummyOwner = new SimpleNode({ layout: this.getEnclosingRect() })
       labelModelParameter = this.nodeLabelModelParameter
     }
 

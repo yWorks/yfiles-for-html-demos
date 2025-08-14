@@ -35,6 +35,7 @@ import {
   INode
 } from '@yfiles/yfiles'
 import { NodeLayoutPortLocationHandle } from './NodeLayoutPortLocationHandle'
+
 /**
  * Creates an {@link IEdgePortHandleProvider} that constraints the original
  * port location handle to the layout rectangle of the port's owner node.
@@ -45,6 +46,7 @@ export class PortLookupEdgePortHandleProvider extends BaseClass(IEdgePortHandleP
     super()
     this.edge = edge
   }
+
   /**
    * Returns a handle that is constrained to the layout rectangle of the
    * port's owner node.

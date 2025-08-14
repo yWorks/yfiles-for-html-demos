@@ -102,10 +102,7 @@ function initializeGraph(): void {
   )
 
   // Create a new style and use it as default node style
-  graph.nodeDefaults.style = new EditablePathNodeStyle({
-    fill: '#FF6C00',
-    stroke: '1.5px #662b00'
-  })
+  graph.nodeDefaults.style = new EditablePathNodeStyle({ fill: '#FF6C00', stroke: '1.5px #662b00' })
   graph.nodeDefaults.size = new Size(200, 200)
 
   // Set some defaults for the edges

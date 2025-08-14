@@ -137,126 +137,70 @@ export function configureExtensions(
   createMetadata(
     NinePositionsEdgeLabelModelExtension,
     {
-      properties: {
-        Angle: { default: 0, type: Number },
-        Distance: { default: 10.0, type: Number }
-      }
+      properties: { Angle: { default: 0, type: Number }, Distance: { default: 10.0, type: Number } }
     },
     callback
   )
   createMetadata(
     ExteriorLabelModelExtension,
-    {
-      properties: {
-        Insets: { type: Insets }
-      }
-    },
+    { properties: { Insets: { type: Insets } } },
     callback
   )
   createMetadata(
     ExteriorLabelModelParameterExtension,
     {
-      properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Position: {
-          type: ExteriorLabelModelPosition
-        }
-      }
+      properties: { Model: { type: ILabelModel }, Position: { type: ExteriorLabelModelPosition } }
     },
     callback
   )
   createMetadata(
     InteriorLabelModelExtension,
-    {
-      properties: {
-        Insets: { type: Insets }
-      }
-    },
+    { properties: { Insets: { type: Insets } } },
     callback
   )
   createMetadata(
     InteriorLabelModelParameterExtension,
     {
-      properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Position: {
-          type: InteriorLabelModelPosition
-        }
-      }
+      properties: { Model: { type: ILabelModel }, Position: { type: InteriorLabelModelPosition } }
     },
     callback
   )
   createMetadata(
     InteriorStretchLabelModelExtension,
-    {
-      properties: {
-        Insets: { type: Insets }
-      }
-    },
+    { properties: { Insets: { type: Insets } } },
     callback
   )
   createMetadata(
     InteriorStretchLabelModelParameterExtension,
     {
       properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Position: {
-          type: InteriorStretchLabelModelPosition
-        }
+        Model: { type: ILabelModel },
+        Position: { type: InteriorStretchLabelModelPosition }
       }
     },
     callback
   )
   createMetadata(
     StripeLabelModelExtension,
-    {
-      properties: {
-        UseActualInsets: { type: Boolean },
-        Ratio: { type: Number }
-      }
-    },
+    { properties: { UseActualInsets: { type: Boolean }, Ratio: { type: Number } } },
     callback
   )
   createMetadata(
     StripeLabelModelParameterExtension,
-    {
-      properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Position: {
-          type: StripeLabelModelPosition
-        }
-      }
-    },
+    { properties: { Model: { type: ILabelModel }, Position: { type: StripeLabelModelPosition } } },
     callback
   )
   createMetadata(
     StretchStripeLabelModelExtension,
-    {
-      properties: {
-        UseActualInsets: { type: Boolean },
-        Insets: { type: Insets }
-      }
-    },
+    { properties: { UseActualInsets: { type: Boolean }, Insets: { type: Insets } } },
     callback
   )
   createMetadata(
     StretchStripeLabelModelParameterExtension,
     {
       properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Position: {
-          type: StretchStripeLabelModelPosition
-        }
+        Model: { type: ILabelModel },
+        Position: { type: StretchStripeLabelModelPosition }
       }
     },
     callback
@@ -265,26 +209,14 @@ export function configureExtensions(
     CompositeLabelModelExtension,
     {
       properties: {
-        LabelModels: {
-          type: IList<ILabelModel>,
-          visibility: GraphMLMemberVisibility.CONTENT
-        }
+        LabelModels: { type: IList<ILabelModel>, visibility: GraphMLMemberVisibility.CONTENT }
       }
     },
     callback
   )
   createMetadata(
     CompositeLabelModelParameterExtension,
-    {
-      properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Parameter: {
-          type: ILabelModelParameter
-        }
-      }
-    },
+    { properties: { Model: { type: ILabelModel }, Parameter: { type: ILabelModelParameter } } },
     callback
   )
   createMetadata(
@@ -292,10 +224,7 @@ export function configureExtensions(
     {
       contentProperty: 'Parameters',
       properties: {
-        Parameters: {
-          type: IList<any>,
-          visibility: GraphMLMemberVisibility.CONTENT
-        },
+        Parameters: { type: IList<any>, visibility: GraphMLMemberVisibility.CONTENT },
         Default: { type: Number }
       }
     },
@@ -303,28 +232,15 @@ export function configureExtensions(
   )
   createMetadata(
     GenericLabelModelParameterExtension,
-    {
-      properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Index: {
-          type: Number
-        }
-      }
-    },
+    { properties: { Model: { type: ILabelModel }, Index: { type: Number } } },
     callback
   )
   createMetadata(
     GenericLabelModelParameterPair,
     {
       properties: {
-        Parameter: {
-          type: ILabelModelParameter
-        },
-        Descriptor: {
-          type: LabelCandidateDescriptor
-        }
+        Parameter: { type: ILabelModelParameter },
+        Descriptor: { type: LabelCandidateDescriptor }
       }
     },
     callback
@@ -333,44 +249,23 @@ export function configureExtensions(
     LabelCandidateDescriptor,
     {
       properties: {
-        Profit: {
-          type: Number
-        },
-        EdgeOverlapPenalty: {
-          type: Number
-        },
-        NodeOverlapPenalty: {
-          type: Number
-        },
-        ExternalCandidate: {
-          type: Boolean
-        }
+        Profit: { type: Number },
+        EdgeOverlapPenalty: { type: Number },
+        NodeOverlapPenalty: { type: Number },
+        ExternalCandidate: { type: Boolean }
       }
     },
     callback
   )
   createMetadata(
     SandwichLabelModelExtension,
-    {
-      properties: {
-        YOffset: {
-          type: Number
-        }
-      }
-    },
+    { properties: { YOffset: { type: Number } } },
     callback
   )
   createMetadata(
     SandwichParameterExtension,
     {
-      properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Position: {
-          type: ExteriorLabelModelPosition
-        }
-      }
+      properties: { Model: { type: ILabelModel }, Position: { type: ExteriorLabelModelPosition } }
     },
     callback
   )
@@ -378,9 +273,7 @@ export function configureExtensions(
     DescriptorWrapperLabelModelExtension,
     {
       properties: {
-        InnerModel: {
-          type: ILabelModel
-        },
+        InnerModel: { type: ILabelModel },
         Descriptor: { type: LabelCandidateDescriptor }
       }
     },
@@ -388,27 +281,12 @@ export function configureExtensions(
   )
   createMetadata(
     DescriptorWrapperLabelModelParameterExtension,
-    {
-      properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Parameter: {
-          type: ILabelModelParameter
-        }
-      }
-    },
+    { properties: { Model: { type: ILabelModel }, Parameter: { type: ILabelModelParameter } } },
     callback
   )
   createMetadata(
     GroupNodeLabelModelExtension,
-    {
-      properties: {
-        ConsiderTabInset: {
-          type: Boolean
-        }
-      }
-    },
+    { properties: { ConsiderTabInset: { type: Boolean } } },
     callback
   )
 }
@@ -477,9 +355,7 @@ class ExteriorLabelModelExtension extends MarkupExtension {
   private static _south: ILabelModelParameter
   private static _southEast: ILabelModelParameter
   static {
-    const umModel = new ExteriorNodeLabelModel({
-      margins: new Insets(0)
-    })
+    const umModel = new ExteriorNodeLabelModel({ margins: new Insets(0) })
     ExteriorLabelModelExtension._northWest = umModel.createParameter(
       ExteriorNodeLabelModelPosition.TOP_LEFT
     )
@@ -606,9 +482,7 @@ class InteriorLabelModelExtension extends MarkupExtension {
   private static _southEast: ILabelModelParameter
 
   static {
-    const umModel = new InteriorNodeLabelModel({
-      padding: new Insets(0)
-    })
+    const umModel = new InteriorNodeLabelModel({ padding: new Insets(0) })
     InteriorLabelModelExtension._northWest = umModel.createParameter(
       InteriorNodeLabelModelPosition.TOP_LEFT
     )
@@ -738,9 +612,7 @@ class InteriorStretchLabelModelExtension extends MarkupExtension {
   private static _centerVertical: ILabelModelParameter
 
   static {
-    const umModel = new StretchNodeLabelModel({
-      padding: new Insets(0)
-    })
+    const umModel = new StretchNodeLabelModel({ padding: new Insets(0) })
     InteriorStretchLabelModelExtension._north = umModel.createParameter(
       StretchNodeLabelModelPosition.TOP
     )
@@ -1487,10 +1359,7 @@ class NinePositionsEdgeLabelModelExtension extends MarkupExtension {
   }
 
   provideValue(serviceProvider: ILookup | null): any {
-    return new NinePositionsEdgeLabelModel({
-      angle: -this.Angle,
-      distance: this.Distance
-    })
+    return new NinePositionsEdgeLabelModel({ angle: -this.Angle, distance: this.Distance })
   }
 }
 

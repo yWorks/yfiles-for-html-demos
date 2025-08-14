@@ -48,6 +48,7 @@ import { OrangeEdgePortCandidateProvider } from './OrangeEdgePortCandidateProvid
 import { RedEdgePortCandidateProvider } from './RedEdgePortCandidateProvider'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link IEdgeReconnectionPortCandidateProvider} for each node.
@@ -61,6 +62,7 @@ function registerEdgePortCandidateProvider(graph) {
   edgeDecorator.reconnectionPortCandidateProvider.addFactory((edge) => {
     // obtain the tag from the edge
     const edgeTag = edge.tag
+
     // Check if it is a known tag and choose the respective implementation
     if (typeof edgeTag !== 'string') {
       return null
@@ -77,6 +79,7 @@ function registerEdgePortCandidateProvider(graph) {
     return null
   })
 }
+
 /**
  * Called after this application has been set up by the demo framework.
  */
@@ -85,8 +88,10 @@ async function run() {
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
+
   // Disable automatic cleanup of unconnected ports since some nodes have a predefined set of ports
   graph.nodeDefaults.ports.autoCleanUp = false
+
   // Create a default editor input mode
   const graphEditorInputMode = new GraphEditorInputMode({
     // Just for user convenience: disable node/edge creation and clipboard operations
@@ -97,28 +102,30 @@ async function run() {
   })
   // and enable the undo feature.
   graph.undoEngineEnabled = true
+
   // Finally, set the input mode to the graph component.
   graphComponent.inputMode = graphEditorInputMode
+
   // Set a port style that makes the pre-defined ports visible
-  graph.nodeDefaults.ports.style = new ShapePortStyle({
-    shape: 'ellipse'
-  })
+  graph.nodeDefaults.ports.style = new ShapePortStyle({ shape: 'ellipse' })
+
   registerEdgePortCandidateProvider(graph)
+
   createSampleGraph(graphComponent)
   graphComponent.updateContentBounds()
 }
+
 /**
  * Creates the sample graph of this demo.
  * @param graphComponent The given graphComponent
  */
 function createSampleGraph(graphComponent) {
   const graph = graphComponent.graph
-  const blackPortStyle = new ShapePortStyle({
-    shape: 'ellipse'
-  })
+  const blackPortStyle = new ShapePortStyle({ shape: 'ellipse' })
   createSubgraph(graph, 'demo-red', 'red', 0)
   createSubgraph(graph, 'demo-orange', 'orange', 200)
   createSubgraph(graph, 'demo-green', 'green', 600)
+
   // the blue nodes have some additional ports besides the ones used by the edge
   const nodes = createSubgraph(graph, 'demo-lightblue', 'blue', 400)
   graph.addPort(
@@ -131,6 +138,7 @@ function createSampleGraph(graphComponent) {
     FreeNodePortLocationModel.INSTANCE.createParameterForRatios(new Point(1.0, 0.8)),
     blackPortStyle
   )
+
   const candidateProvider = IPortCandidateProvider.fromShapeGeometry(nodes[2], 0, 0.25, 0.5, 0.75)
   candidateProvider.style = blackPortStyle
   const candidates = candidateProvider.getAllSourcePortCandidates(graphComponent.inputModeContext)
@@ -139,9 +147,11 @@ function createSampleGraph(graphComponent) {
       portCandidate.createPort(graphComponent.inputModeContext)
     }
   })
+
   // clear undo after initial graph loading
   graph.undoEngine.clear()
 }
+
 /**
  * Creates new graph items in the given graph using the given color set.
  * @param graph The graph instance in which to create sample items.
@@ -151,11 +161,14 @@ function createSampleGraph(graphComponent) {
  */
 function createSubgraph(graph, colorSet, tag, yOffset) {
   const nodeStyle = createDemoNodeStyle(colorSet)
+
   const n1 = graph.createNode(new Rect(100, 100 + yOffset, 60, 60), nodeStyle, tag)
   const n2 = graph.createNode(new Rect(500, 100 + yOffset, 60, 60), nodeStyle, tag)
   const n3 = graph.createNode(new Rect(300, 160 + yOffset, 60, 60), nodeStyle, tag)
+
   const edgeStyle = createDemoEdgeStyle({ colorSetName: colorSet, showTargetArrow: false })
   graph.createEdge(n1, n2, edgeStyle, tag)
   return [n1, n2, n3]
 }
+
 run().then(finishLoading)

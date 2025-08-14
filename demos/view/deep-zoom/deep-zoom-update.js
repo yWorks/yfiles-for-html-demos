@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 const CONTENT_RECT_MARGINS = 50
+
 /**
  * Registers a viewport listener, that checks if the viewport is zoomed in sufficiently close on a
  * group node so that it's (virtual) children need to be added to the graph that is actually
@@ -38,6 +39,7 @@ const CONTENT_RECT_MARGINS = 50
 export function initializeDeepZoom(graphComponent) {
   graphComponent.addEventListener('viewport-changed', updateDeepZoomOnViewportChanged)
 }
+
 /**
  * Exits all groups and sets the zoom to 1.
  */
@@ -45,6 +47,7 @@ export function zoomToOriginal(graphComponent) {
   graphComponent.graph.foldingView.localRoot = null
   graphComponent.zoom = 1
 }
+
 /**
  * Exits all groups and calls {@link GraphComponent.fitContent}.
  */
@@ -52,12 +55,14 @@ export function fitContent(graphComponent) {
   graphComponent.graph.foldingView.localRoot = null
   void graphComponent.fitContent()
 }
+
 // mutex that ensures viewport modifications occur one at time
 let changing = false
 function updateDeepZoomOnViewportChanged(_evt, graphComponent) {
   if (changing) {
     return
   }
+
   // defer update
   setTimeout(() => {
     changing = true
@@ -68,12 +73,15 @@ function updateDeepZoomOnViewportChanged(_evt, graphComponent) {
     }
   })
 }
+
 function updateGraphComponentOnViewportChange(graphComponent) {
   const viewport = graphComponent.viewport
   const foldingView = graphComponent.graph.foldingView
   const masterGraph = foldingView.manager.masterGraph
+
   // finds a group node that is not yet entered but is larger than the current viewport
   const groupNode = findGroupNodeToEnter(graphComponent, foldingView, masterGraph, viewport)
+
   // If such a node exists, nothing but the contents of this group node are visible.
   // Thus, its contents are now the "real" graph, and everything that is hierarchically
   // above this group node needs to be hidden.
@@ -88,9 +96,11 @@ function updateGraphComponentOnViewportChange(graphComponent) {
       exitGroup(graphComponent, masterGraph, foldingView, graphBounds, foldingView.localRoot)
     }
   }
+
   limitMinimumZoom(graphComponent, foldingView)
   limitMaximumZoom(graphComponent, masterGraph, foldingView)
 }
+
 /**
  * Finds a group node that is not yet entered but is larger than the current viewport.
  */
@@ -106,9 +116,11 @@ function findGroupNodeToEnter(graphComponent, foldingView, masterGraph, viewport
     )
   })
 }
+
 function encloses(outer, inner) {
   return outer.contains(inner.topLeft) && outer.contains(inner.bottomRight)
 }
+
 /**
  * Enters a group and seamlessly updates the {@link GraphComponent.zoom} and
  * {@link GraphComponent.viewPoint} for the group contents.
@@ -121,9 +133,11 @@ function encloses(outer, inner) {
 function enterGroup(graphComponent, foldingView, groupNode) {
   const groupLayout = groupNode.layout
   const groupNodeCenterInView = graphComponent.worldToViewCoordinates(groupLayout.center)
+
   // Setting the local root to this group node effectively removes nodes higher up
   // in the hierarchy from the view graph.
   setLocalRoot(graphComponent, foldingView, foldingView.getMasterItem(groupNode))
+
   const graphBounds = graphComponent.contentBounds
   // match the zoom factor of how large the group node contents appeared to
   // the actual size of the contents
@@ -133,12 +147,14 @@ function enterGroup(graphComponent, foldingView, groupNode) {
   )
   const oldZoom = graphComponent.zoom
   graphComponent.zoom = oldZoom * oldScale
+
   // Modify the viewPoint as well so that the center of the group node into which we have zoomed in
   // coincides with the center of the graph we are now presenting as the group nodes contents.
   const graphCenterInView = graphComponent.worldToViewCoordinates(graphBounds.center)
   const delta = graphCenterInView.subtract(groupNodeCenterInView).multiply(1 / graphComponent.zoom)
   graphComponent.viewPoint = graphComponent.viewPoint.add(delta)
 }
+
 /**
  * Exits a group and seamlessly updates the {@link GraphComponent.zoom} and
  * {@link GraphComponent.viewPoint} for the outer graph.
@@ -150,9 +166,12 @@ function enterGroup(graphComponent, foldingView, groupNode) {
  */
 function exitGroup(graphComponent, masterGraph, foldingView, graphBounds, oldRoot) {
   const graphCenterInView = graphComponent.worldToViewCoordinates(graphBounds.center)
+
   const oldZoom = graphComponent.zoom
+
   // switch the localRoot so that the viewGraph displays the parent group node.
   setLocalRoot(graphComponent, foldingView, masterGraph.getParent(oldRoot))
+
   // modify the zoom so that the parent group node appears to be of the same size as its contents.
   const groupNode = foldingView.getViewItem(oldRoot)
   const groupLayout = groupNode.layout
@@ -161,12 +180,14 @@ function exitGroup(graphComponent, masterGraph, foldingView, graphBounds, oldRoo
     groupLayout.height / graphBounds.height
   )
   graphComponent.zoom = oldZoom / newScale
+
   // likewise, adjust the viewPoint so that the center of the groups' contents
   // coincide with the center of the group node
   const groupNodeCenterInView = graphComponent.worldToViewCoordinates(groupLayout.center)
   const delta = groupNodeCenterInView.subtract(graphCenterInView).multiply(1 / graphComponent.zoom)
   graphComponent.viewPoint = graphComponent.viewPoint.add(delta)
 }
+
 /**
  * Sets the new local root and updates the {@link GraphComponent.contentRect}.
  */
@@ -175,6 +196,7 @@ function setLocalRoot(graphComponent, foldingView, newRoot) {
   // after programmatically changing the graph, the content rect has to be updated manually
   graphComponent.updateContentBounds({ margins: CONTENT_RECT_MARGINS })
 }
+
 function limitMinimumZoom(graphComponent, foldingView) {
   // limit zoom if at minimum or maximum depth of hierarchy
   if (foldingView.localRoot) {
@@ -185,6 +207,7 @@ function limitMinimumZoom(graphComponent, foldingView) {
     graphComponent.minimumZoom = 0.3
   }
 }
+
 function limitMaximumZoom(graphComponent, masterGraph, foldingView) {
   // if the current root node has no group grandchildren, limit zooming further in
   if (hasGrandChildren(masterGraph, foldingView.localRoot)) {
@@ -195,6 +218,7 @@ function limitMaximumZoom(graphComponent, masterGraph, foldingView) {
     graphComponent.maximumZoom = 4
   }
 }
+
 function hasGrandChildren(masterGraph, groupNode) {
   return (
     masterGraph

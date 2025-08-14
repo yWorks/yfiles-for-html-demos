@@ -29,8 +29,10 @@
 import { GraphComponent, GraphViewerInputMode, LayoutExecutor, License } from '@yfiles/yfiles'
 import { loadLayoutSampleGraph } from '@yfiles/demo-utils/LoadLayoutFeaturesSampleGraph'
 import { createFeatureLayoutConfiguration } from './EdgeRouterIncremental'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
@@ -39,13 +41,16 @@ async function run() {
   graphComponent.fitGraphBounds()
   initializeUI(graphComponent)
 }
+
 function initializeUI(graphComponent) {
   document.querySelector('#route-edges').addEventListener('click', async () => {
     // Ensure that the LayoutExecutor class is not removed by build optimizers
     // It is needed for the 'applyLayoutAnimated' method in this demo.
     LayoutExecutor.ensure()
+
     const { layout, layoutData } = createFeatureLayoutConfiguration(graphComponent.graph)
     await graphComponent.applyLayoutAnimated(layout, '250ms', layoutData)
   })
 }
+
 run().then(finishLoading)

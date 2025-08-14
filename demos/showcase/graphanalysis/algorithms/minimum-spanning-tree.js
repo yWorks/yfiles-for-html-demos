@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { SpanningTree } from '@yfiles/yfiles'
 import { markItem } from './algorithms'
+
 /**
  * Description of the algorithm which determines the minimum spanning tree of a graph.
  */ export const minimumSpanningTreeDescription = `
@@ -35,6 +36,7 @@ import { markItem } from './algorithms'
   <p>Which edges are included in the minimum spanning tree can be influenced with costs. Edges with lower costs are more likely kept in the tree. </p>
   <p>Costs can be specified using <em>edge labels</em>. The cost of edges without labels is their <em>edge length</em>. When the algorithm should use
   <em>Uniform costs</em> all edges are treated the same. For the sake of simplicity, in this demo we allow only positive edge-costs.</p>`
+
 /**
  * Calculates the minimum spanning tree for the given graph.
  */
@@ -42,12 +44,15 @@ export function calculateMinimumSpanningTree(graph, config) {
   if (graph.nodes.size === 0 || graph.edges.size === 0) {
     return
   }
+
   // calculate the edges of a minimum spanning tree
   const result = new SpanningTree({ costs: config.edgeWeights }).run(graph)
+
   // mark those edges
   result.edges.forEach((edge) => {
     markItem(edge)
   })
+
   graph.nodes.forEach((node) => {
     markItem(node)
   })

@@ -46,10 +46,13 @@ import {
   WebGLSelectionIndicatorManager,
   Workarounds
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
@@ -57,19 +60,24 @@ async function run() {
   if (!checkWebGL2Support()) {
     return
   }
+
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   enableWebGLRendering(graphComponent)
   initInteraction(graphComponent)
+
   // create an initial sample graph
   await createGraph(graphComponent.graph)
   await graphComponent.fitGraphBounds()
+
   // _After_ creating the graph, enable the undo engine
   // This prevents undoing of the graph creation
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Enables WebGL as the rendering technique.
  */
@@ -78,17 +86,20 @@ function enableWebGLRendering(graphComponent) {
   graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager()
   graphComponent.focusIndicatorManager = new WebGLFocusIndicatorManager()
   graphComponent.highlightIndicatorManager = new WebGLHighlightIndicatorManager()
+
   // Optional: precompile the selection shaders
   // This has the effect that the selection is not rendered with a simple fallback style
   // the first time an element is selected, at the cost of initial load time
   Workarounds.precompileWebGLSelectionShaders = true
 }
+
 /**
  * Configures the interaction so that it works nicer with WebGL.
  */
 function initInteraction(graphComponent) {
   graphComponent.inputMode = new GraphEditorInputMode()
 }
+
 /**
  * Initializes the defaults for the graph items in this demo.
  *
@@ -101,6 +112,7 @@ function initInteraction(graphComponent) {
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
+
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(120, 120)
   graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
@@ -108,13 +120,12 @@ function initializeGraph(graph) {
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
-  graph.groupNodeDefaults.labels.style = new LabelStyle({
-    horizontalTextAlignment: 'center'
-  })
+  graph.groupNodeDefaults.labels.style = new LabelStyle({ horizontalTextAlignment: 'center' })
   graph.groupNodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
     margins: 5
   }).createParameter('top')
 }
+
 /**
  * Creates an initial sample graph.
  *
@@ -123,12 +134,15 @@ function initializeGraph(graph) {
  */
 async function createGraph(graph) {
   // get the lists of data items for the nodes and edges
-  const response = await fetch('./resources/hierarchic_2000_2100.json')
+  const response = await fetch('./resources/hierarchical_2000_2100.json')
   const graphData = await response.json()
+
   const getRandomInt = (upper) => Math.floor(Math.random() * upper)
+
   graph.clear()
   // create a map to store the nodes for edge creation
   const nodeMap = new Map()
+
   // create the nodes
   for (const nodeData of graphData.nodeList) {
     const id = nodeData.id
@@ -138,8 +152,10 @@ async function createGraph(graph) {
       tag: { id, type: getRandomInt(9) }
     })
     nodeMap.set(id, node)
+
     graph.addLabel(node, `Item \u2116 ${graph.nodes.size}\nType: ${node.tag.type}`)
   }
+
   for (const edgeData of graphData.edgeList) {
     // get the source and target node from the mapping
     const sourceNode = nodeMap.get(edgeData.s)
@@ -162,4 +178,5 @@ async function createGraph(graph) {
     }
   }
 }
+
 run().then(finishLoading)

@@ -25,11 +25,7 @@ To be able to update the visualization in [updateVisual](https://docs.yworks.com
 
 ```
 // the values we use to render the graphics
-type Cache = {
-  width: number
-  height: number
-  text: string
-}
+type Cache = { width: number; height: number; text: string }
 
 // the type of visual we create and update in CustomLabelStyle
 type CustomLabelStyleVisual = TaggedSvgVisual<SVGGElement, Cache>

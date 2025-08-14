@@ -52,10 +52,6 @@ export class WebGLBufferData<T extends Float32Array> {
     this.attributeLocation = gl.getAttribLocation(program, this.attributeName)
   }
 
-  updateData(): void {
-    this.dirty = true
-  }
-
   enableRendering(renderContext: IRenderContext, gl: WebGLRenderingContext): void {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
     if (this.dirty) {

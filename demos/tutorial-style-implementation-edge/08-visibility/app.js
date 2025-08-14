@@ -35,20 +35,30 @@ import {
   IsVisibleEdgeStyleRenderer,
   startAnimation
 } from '../common'
+
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { CustomEdgeStyle } from './CustomEdgeStyle'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 graphComponent.graphModelManager.edgeRenderer = new IsVisibleEdgeStyleRenderer()
+
 initializeTutorialDefaults(graphComponent)
 graphComponent.horizontalScrollBarPolicy = graphComponent.verticalScrollBarPolicy =
   ScrollBarVisibility.HIDDEN
+
 graphComponent.graph.edgeDefaults.style = new CustomEdgeStyle()
+
 createSampleGraphIsVisible(graphComponent.graph)
+
 const graphEditorInputMode = enableGraphEditing(graphComponent)
 graphEditorInputMode.selectableItems = GraphItemTypes.NONE
+
 graphComponent.updateContentBounds()
 graphComponent.contentBounds = graphComponent.contentBounds.getEnlarged(10)
 graphComponent.zoom = graphComponent.viewport.height / graphComponent.contentBounds.height
+
 startAnimation(graphComponent)
 finishLoading()

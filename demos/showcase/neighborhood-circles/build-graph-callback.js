@@ -30,6 +30,7 @@ import { BezierEdgeStyle, Neighborhood, TraversalDirection } from '@yfiles/yfile
 import { NeighborhoodType } from './NeighborhoodType'
 import { getBuildNeighborhoodCallback } from '../neighborhood/build-graph-callback'
 import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
+
 /**
  * Returns the "build neighborhood graph" callback that is able to create neighborhood graphs
  * of the given type.
@@ -39,6 +40,7 @@ import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
 export function getBuildGraphCallback(type, distance) {
   return (view, nodes, callback) => {
     getBuildNeighborhoodCallback(getTraversalDirection(type), distance)(view, nodes, callback)
+
     const graph = view.neighborhoodGraph
     const edgeStyle = createNeighborhoodEdgeStyle()
     for (const edge of graph.edges) {
@@ -46,6 +48,7 @@ export function getBuildGraphCallback(type, distance) {
     }
   }
 }
+
 /**
  * Maps the given {@link NeighborhoodType} to the corresponding {@link TraversalDirection} that
  * is used by the {@link Neighborhood} algorithm in yFiles.
@@ -62,14 +65,12 @@ function getTraversalDirection(mode) {
       return TraversalDirection.UNDIRECTED
   }
 }
+
 /**
  * Creates a {@link BezierEdgeStyle} instance that uses the target arrow and stroke of the
  * default demo edge style.
  */
 function createNeighborhoodEdgeStyle() {
   const prototype = createDemoEdgeStyle()
-  return new BezierEdgeStyle({
-    stroke: prototype.stroke,
-    targetArrow: prototype.targetArrow
-  })
+  return new BezierEdgeStyle({ stroke: prototype.stroke, targetArrow: prototype.targetArrow })
 }

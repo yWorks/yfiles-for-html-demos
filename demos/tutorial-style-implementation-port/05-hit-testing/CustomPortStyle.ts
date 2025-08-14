@@ -42,9 +42,7 @@ import {
 /**
  * Augment the SvgVisual type with the data used to cache the rendering information
  */
-type Cache = {
-  size: number
-}
+type Cache = { size: number }
 
 type CustomPortStyleVisual = TaggedSvgVisual<SVGEllipseElement, Cache>
 

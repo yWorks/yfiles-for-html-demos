@@ -118,10 +118,7 @@ class ActivityNodeReshapeHandler extends BaseClass(IReshapeHandler, IRectangle) 
    */
   expandBounds(bounds: Rect): Rect {
     const activity = getActivity(this.node)
-    return bounds.getEnlarged({
-      left: getLeadWidth(activity),
-      right: getFollowUpWidth(activity)
-    })
+    return bounds.getEnlarged({ left: getLeadWidth(activity), right: getFollowUpWidth(activity) })
   }
 
   /**
@@ -329,7 +326,7 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
    * Returns the types of handles for the activity nodes.
    */
   get type(): HandleType {
-    return HandleType.RESIZE | HandleType.CUSTOM2
+    return HandleType.RESIZE
   }
 
   /**
@@ -382,7 +379,8 @@ export class TimeHandleRenderer extends ObjectRendererBase<HandlesRenderTag, Svg
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const radius = 10
     renderTag?.handles.forEach((handle) => {
-      const { x, y } = handle.location
+      const offset = renderTag.inputMode.getHandleOffset(handle)
+      const { x, y } = handle.location.toPoint().add(offset)
       if (handle instanceof TimeHandle) {
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
         const d = `M ${x} ${y} m ${radius} ${radius} h -${

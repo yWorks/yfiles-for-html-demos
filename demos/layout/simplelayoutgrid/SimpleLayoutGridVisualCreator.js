@@ -34,6 +34,7 @@ import {
   SvgVisual,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * Visualizes the layout grid that has been used in the layout.
  * Each grid cell is visualized as an svg rectangle.
@@ -43,6 +44,7 @@ export class SimpleLayoutGridVisualCreator extends BaseClass(IVisualCreator) {
    * The layout grid to be visualized
    */
   grid
+
   /**
    * Creates a new instance of LayoutGridVisualCreator.
    * @param grid The layout grid to be visualized
@@ -51,6 +53,7 @@ export class SimpleLayoutGridVisualCreator extends BaseClass(IVisualCreator) {
     super()
     this.grid = grid
   }
+
   /**
    * Creates the visual for the given layout grid.
    * @param context The context that describes where the visual will be used
@@ -58,6 +61,7 @@ export class SimpleLayoutGridVisualCreator extends BaseClass(IVisualCreator) {
    */
   createVisual(context) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     for (const row of this.grid.rows) {
       for (const column of this.grid.columns) {
         const x = column.position
@@ -74,8 +78,10 @@ export class SimpleLayoutGridVisualCreator extends BaseClass(IVisualCreator) {
         container.appendChild(rect)
       }
     }
+
     return new SvgVisual(container)
   }
+
   /**
    * Updates the visual for the given layout grid. In particular, method {@link createVisual} is called.
    * @param context The context that describes where the visual will be used

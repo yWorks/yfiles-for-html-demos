@@ -42,13 +42,17 @@ import {
   Size
 } from '@yfiles/yfiles'
 import { WebglBlobVisual } from './WebglBlobVisual'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { checkWebGLSupport, finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent
+
 const blueColor = Color.from('#242265')
 const redColor = Color.from('#e01a4f')
 const greyColor = Color.from('#767586')
 const purpleColor = Color.from('#aa4586')
+
 async function run() {
   if (!checkWebGLSupport()) {
     return
@@ -58,11 +62,11 @@ async function run() {
   // initialize the input mode
   graphComponent.inputMode = new GraphEditorInputMode({
     allowEditLabel: true,
-    editLabelInputMode: {
-      hideLabelDuringEditing: false
-    }
+    editLabelInputMode: { hideLabelDuringEditing: false }
   })
+
   createSampleGraph()
+
   // add a blob visualization for the reddish group
   const renderTree = graphComponent.renderTree
   renderTree.createElement(
@@ -76,6 +80,7 @@ async function run() {
       120
     )
   )
+
   // add a blob visualization for the bluish group
   renderTree.createElement(
     renderTree.backgroundGroup,
@@ -88,40 +93,28 @@ async function run() {
       150
     )
   )
+
   changeLayout()
+
   initializeUI()
 }
-const redStyle = new ShapeNodeStyle({
-  shape: 'ellipse',
-  fill: redColor,
-  stroke: null
-})
-const blueStyle = new ShapeNodeStyle({
-  shape: 'ellipse',
-  fill: blueColor,
-  stroke: null
-})
-const purpleStyle = new ShapeNodeStyle({
-  shape: 'ellipse',
-  fill: purpleColor,
-  stroke: null
-})
-const greyStyle = new ShapeNodeStyle({
-  shape: 'ellipse',
-  fill: greyColor,
-  stroke: null
-})
+
+const redStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: redColor, stroke: null })
+const blueStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: blueColor, stroke: null })
+const purpleStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: purpleColor, stroke: null })
+const greyStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: greyColor, stroke: null })
+
 /**
  * Creates the initial sample graph.
  */
 function createSampleGraph() {
   const graph = graphComponent.graph
+
   graph.nodeDefaults.size = new Size(50, 50)
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    shape: 'ellipse',
-    fill: redColor
-  })
+  graph.nodeDefaults.style = new ShapeNodeStyle({ shape: 'ellipse', fill: redColor })
+
   graph.decorator.nodes.reshapeHandleProvider.hide()
+
   const styles = [greyStyle, redStyle, purpleStyle, blueStyle]
   for (const type of '0002211333000221333000221333000221333000221333000221333') {
     graph.createNode({ style: styles[Number(type)] })
@@ -135,12 +128,15 @@ function createSampleGraph() {
   )
     .split(',')
     .map((e) => e.split(':').map(Number))
+
   const nodes = graph.nodes.toArray()
   for (const e of edges) {
     graph.createEdge(nodes[e[0]], nodes[e[1]])
   }
+
   graphComponent.fitGraphBounds()
 }
+
 /**
  * Modifies the tag of each leaf node.
  */
@@ -149,11 +145,9 @@ function changeLayout() {
     compactnessFactor: Math.random() * 0.8,
     defaultPreferredEdgeLength: 70 + Math.random() * 20
   })
-  const organicLayoutData = new OrganicLayoutData({
-    scope: {
-      nodes: graphComponent.graph.nodes
-    }
-  })
+
+  const organicLayoutData = new OrganicLayoutData({ scope: { nodes: graphComponent.graph.nodes } })
+
   new LayoutExecutor({
     graphComponent,
     layout: organicLayout,
@@ -163,9 +157,11 @@ function changeLayout() {
     easedAnimation: true
   }).start()
 }
+
 function initializeUI() {
   document.querySelector('#change-layout').addEventListener('click', changeLayout)
 }
+
 /**
  * A background visual creator that produces the metaball groups.
  */
@@ -173,12 +169,14 @@ class BlobBackground extends BaseClass(IVisualCreator) {
   selector
   size
   color
+
   constructor(selector, color, size) {
     super()
     this.selector = selector
     this.size = size
     this.color = color
   }
+
   createVisual(renderContext) {
     return new WebglBlobVisual(
       renderContext.canvasComponent.graph.nodes
@@ -188,8 +186,10 @@ class BlobBackground extends BaseClass(IVisualCreator) {
       this.size
     )
   }
+
   updateVisual(renderContext, oldVisual) {
     return oldVisual
   }
 }
+
 run().then(finishLoading)

@@ -27,61 +27,47 @@
  **
  ***************************************************************************/
 import { PolylineEdgeStyle, ShapeNodeStyle, Size, Stroke } from '@yfiles/yfiles'
+
 export function configureStylesWithDefaults(nodesSource) {
   const blue = '#4281A4'
   nodesSource.nodeCreator.defaults.size = new Size(150, 90)
-  nodesSource.nodeCreator.defaults.style = new ShapeNodeStyle({
-    shape: 'ellipse',
-    fill: blue
-  })
+  nodesSource.nodeCreator.defaults.style = new ShapeNodeStyle({ shape: 'ellipse', fill: blue })
 }
+
 export function configureStylesWithBinding(nodesSource) {
   const red = '#DB3A34'
   const darkBlue = '#1a3442'
   // disable sharing of styles
   nodesSource.nodeCreator.defaults.shareStyleInstance = false
+
   nodesSource.nodeCreator.styleBindings.addBinding('stroke', (entityData) => {
-    return new Stroke({
-      fill: entityData.currency === 'EUR' ? darkBlue : red,
-      thickness: 3
-    })
+    return new Stroke({ fill: entityData.currency === 'EUR' ? darkBlue : red, thickness: 3 })
   })
 }
+
 export function configureStylesWithProvider(nodesSource) {
   const gold = '#F0C808'
   const green = '#56926E'
   nodesSource.nodeCreator.styleProvider = (entityData) => {
     if (entityData.type === 'Branch') {
-      return new ShapeNodeStyle({
-        shape: 'round-rectangle',
-        fill: gold
-      })
+      return new ShapeNodeStyle({ shape: 'round-rectangle', fill: gold })
     } else if (entityData.type === 'Corporation') {
-      return new ShapeNodeStyle({
-        shape: 'octagon',
-        fill: green
-      })
+      return new ShapeNodeStyle({ shape: 'octagon', fill: green })
     }
   }
 }
+
 export function configureEdgeStylesWithProvider(edgesSource) {
   const red = '#DB3A34'
   const gray = '#C1C1C1'
   edgesSource.edgeCreator.styleProvider = (connectionData) => {
     if (connectionData.ownership) {
       return new PolylineEdgeStyle({
-        stroke: new Stroke({
-          fill: connectionData.ownership > 50 ? red : 'black',
-          thickness: 3
-        })
+        stroke: new Stroke({ fill: connectionData.ownership > 50 ? red : 'black', thickness: 3 })
       })
     } else {
       return new PolylineEdgeStyle({
-        stroke: new Stroke({
-          fill: gray,
-          thickness: 3,
-          dashStyle: 'dash'
-        })
+        stroke: new Stroke({ fill: gray, thickness: 3, dashStyle: 'dash' })
       })
     }
   }

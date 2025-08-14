@@ -55,6 +55,7 @@ import {
   Stroke,
   StyleIndicatorZoomPolicy
 } from '@yfiles/yfiles'
+
 import { GraphSearch } from '@yfiles/demo-utils/GraphSearch'
 import FastCanvasStyles from './FastCanvasStyles'
 import { DemoStyleOverviewRenderer } from '@yfiles/demo-resources/demo-styles'
@@ -63,16 +64,21 @@ import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo
 import { openGraphML } from '@yfiles/demo-utils/graphml-support'
 import { registerTemplateStyleSerialization } from '@yfiles/demo-utils/template-styles/MarkupExtensions'
 import { StringTemplateNodeStyle } from '@yfiles/demo-utils/template-styles/StringTemplateNodeStyle'
+
 let graphComponent
+
 let overviewComponent
+
 let graphDescriptionMapper
 let descriptionMapper
 let tooltipMapper
 let urlMapper
+
 /**
  * Holds the graph search object functionality.
  */
 let graphSearch
+
 // get hold of some UI elements
 const graphChooserBox = document.querySelector('#graph-chooser')
 const graphDescription = document.querySelector('#graph-info-content')
@@ -80,15 +86,20 @@ const nodeInfo = document.querySelector('#node-info-label')
 const nodeInfoDescription = document.querySelector('#node-info-description')
 const nodeInfoUrl = document.querySelector('#node-info-url')
 const searchBox = document.querySelector('#search-box')
+
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
   overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
+
   // initialize the graph component
   initializeGraphComponent()
+
   // add the graph functionality
   initializeGraphSearch()
+
   for (const sample of [
     'computer-network',
     'orgchart',
@@ -114,24 +125,31 @@ async function run() {
   void readSampleGraph()
   // reset the node info view
   onCurrentItemChanged()
+
   initializeInputMode()
 }
+
 /**
  * Initializes the graph component
  */
 function initializeGraphComponent() {
   // we want to enable folding for loading and showing nested graphs
   enableFolding()
+
   initializeHighlightStyles()
+
   // set style for the overview control
   overviewComponent.graphOverviewRenderer = new DemoStyleOverviewRenderer()
+
   graphDescriptionMapper = new Mapper()
   descriptionMapper = new Mapper()
   tooltipMapper = new Mapper()
   urlMapper = new Mapper()
+
   // whenever the currentItem property on the graph changes, we want to get notified...
   graphComponent.addEventListener('current-item-changed', onCurrentItemChanged)
 }
+
 /**
  * Initialize the styles that are used for highlighting items.
  */
@@ -140,12 +158,14 @@ function initializeHighlightStyles() {
   // for the hover highlight, create semi transparent orange stroke first
   const orangeRed = Color.ORANGE_RED
   const orangeStroke = new Stroke(orangeRed.r, orangeRed.g, orangeRed.b, 220, 3).freeze()
+
   // nodes should be given a rectangular orange rectangle highlight shape
   const highlightShape = new ShapeNodeStyle({
     shape: ShapeNodeShape.ROUND_RECTANGLE,
     stroke: orangeStroke,
     fill: null
   })
+
   const nodeStyleHighlight = new NodeStyleIndicatorRenderer({
     nodeStyle: highlightShape,
     // that should be slightly larger than the real node
@@ -153,12 +173,12 @@ function initializeHighlightStyles() {
     // but have a fixed size in the view coordinates
     zoomPolicy: StyleIndicatorZoomPolicy.VIEW_COORDINATES
   })
+
   graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(nodeStyleHighlight)
+
   // a similar style for the edges, however, cropped by the highlight's insets
-  const dummyCroppingArrow = new Arrow({
-    type: ArrowType.NONE,
-    cropLength: 5
-  })
+  const dummyCroppingArrow = new Arrow({ type: ArrowType.NONE, cropLength: 5 })
+
   const edgeStyle = new PolylineEdgeStyle({
     stroke: orangeStroke,
     targetArrow: dummyCroppingArrow,
@@ -168,6 +188,7 @@ function initializeHighlightStyles() {
     edgeStyle,
     zoomPolicy: StyleIndicatorZoomPolicy.VIEW_COORDINATES
   })
+
   const bezierEdgeStyle = new BezierEdgeStyle({
     stroke: orangeStroke,
     targetArrow: dummyCroppingArrow,
@@ -177,10 +198,12 @@ function initializeHighlightStyles() {
     edgeStyle: bezierEdgeStyle,
     zoomPolicy: StyleIndicatorZoomPolicy.VIEW_COORDINATES
   })
+
   graphComponent.graph.decorator.edges.highlightRenderer.addFactory((edge) =>
     edge.style instanceof BezierEdgeStyle ? bezierEdgeStyleHighlight : edgeStyleHighlight
   )
 }
+
 /**
  * Initialize and configure the input mode.
  */
@@ -198,8 +221,10 @@ function initializeInputMode() {
     selectableItems: GraphItemTypes.NONE,
     marqueeSelectableItems: GraphItemTypes.NONE
   })
+
   // As the selection is deactivated, the focused item is highlighted instead
   graphComponent.focusIndicatorManager.showFocusPolicy = 'always'
+
   // we want to enable the user to collapse and expand groups interactively, even though we
   // are just a "viewer" application
   graphViewerInputMode.navigationInputMode.allowCollapseGroup = true
@@ -211,6 +236,7 @@ function initializeInputMode() {
   // property instead - this property is changed when clicking on items or navigating via
   // the keyboard.
   graphViewerInputMode.navigationInputMode.useCurrentItemForCommands = true
+
   // we want to get reports of the mouse being hovered over nodes and edges
   // first enable queries
   graphViewerInputMode.itemHoverInputMode.enabled = true
@@ -220,6 +246,7 @@ function initializeInputMode() {
   graphViewerInputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) =>
     onHoveredItemChanged(evt.item)
   )
+
   // when the mouse hovers for a longer time over an item we may optionally display a
   // tooltip. Use this callback for querying the tooltip contents.
   graphViewerInputMode.addEventListener('query-item-tool-tip', (evt) => {
@@ -231,8 +258,10 @@ function initializeInputMode() {
   graphViewerInputMode.toolTipInputMode.toolTipLocationOffset = new Point(0, 10)
   // we show the tooltip for a very long time...
   graphViewerInputMode.toolTipInputMode.duration = '10s'
+
   // if we click on an item we want to perform a custom action, so register a callback
   graphViewerInputMode.addEventListener('item-clicked', (evt) => onItemClicked(evt))
+
   // also if someone clicked on an empty area we want to perform a custom group action
   graphViewerInputMode.clickInputMode.addEventListener('clicked', (args) => {
     // if the user pressed a modifier key during the click...
@@ -240,8 +269,10 @@ function initializeInputMode() {
       onClickInputModeOnClicked(args.context, args.location)
     }
   })
+
   graphComponent.inputMode = graphViewerInputMode
 }
+
 /**
  * Called when the mouse hovers over a different item.
  * This method will be called whenever the mouse moves over a different item. We show a highlight
@@ -250,6 +281,7 @@ function initializeInputMode() {
 function onHoveredItemChanged(item) {
   // we use the highlight manager of the GraphComponent to highlight related items
   const highlights = graphComponent.highlights
+
   // first remove previous highlights
   highlights.clear()
   // then see where we are hovering over, now
@@ -268,6 +300,7 @@ function onHoveredItemChanged(item) {
     highlights.add(item.targetNode)
   }
 }
+
 /**
  * Called when the mouse has been clicked somewhere.
  * @param context The context for the current event
@@ -283,6 +316,7 @@ function onClickInputModeOnClicked(context, location) {
     }
   }
 }
+
 /**
  * Enable folding - change the GraphComponent's graph to a managed view
  * that provides the actual collapse/expand state.
@@ -293,6 +327,7 @@ function enableFolding() {
   // replace the displayed graph with a managed view
   graphComponent.graph = foldingManager.createFoldingView().graph
 }
+
 /**
  * If the currentItem property on GraphComponent's changes we adjust the details panel.
  */
@@ -301,6 +336,7 @@ function onCurrentItemChanged() {
   nodeInfo.innerHTML = 'Empty'
   nodeInfoDescription.innerHTML = 'Empty'
   nodeInfoUrl.innerHTML = 'None'
+
   const currentItem = graphComponent.currentItem
   if (currentItem instanceof INode) {
     // for nodes display the label and the values of the mappers for description and URLs..
@@ -319,6 +355,7 @@ function onCurrentItemChanged() {
     }
   }
 }
+
 /**
  * If an item has been clicked, we can execute a custom command.
  * @param event The item clicked event
@@ -336,6 +373,7 @@ function onItemClicked({ item, shiftKey, ctrlKey }) {
     }
   }
 }
+
 /**
  * Callback that will determine the tooltip content when the mouse hovers over a node.
  * @param item The item for which the tooltip is queried
@@ -350,6 +388,7 @@ function onQueryItemToolTip(item) {
   }
   return null
 }
+
 /**
  * Create the toolTip as a rich HTML element.
  * @returns The tooltip element
@@ -362,6 +401,7 @@ function createTooltipContent(toolTipText) {
   tooltip.appendChild(text)
   return tooltip
 }
+
 /**
  * Helper method that reads the currently selected graphml from the combobox.
  */
@@ -370,6 +410,7 @@ async function readSampleGraph() {
   setUIDisabled(true)
   searchBox.value = ''
   graphSearch.updateSearch('')
+
   // first derive the file name
   const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
   const fileName = `resources/${selectedItem}.graphml`
@@ -383,6 +424,7 @@ async function readSampleGraph() {
   // re-enable navigation buttons
   setUIDisabled(false)
 }
+
 /**
  * Gets the description for the given node.
  */
@@ -390,6 +432,7 @@ function getDescription(node) {
   const masterNode = graphComponent.graph.foldingView.getMasterItem(node)
   return descriptionMapper.get(masterNode)
 }
+
 /**
  * Gets the tool tip text for the given node.
  */
@@ -397,6 +440,7 @@ function getToolTip(node) {
   const masterNode = graphComponent.graph.foldingView.getMasterItem(node)
   return tooltipMapper.get(masterNode)
 }
+
 /**
  * Gets the external resource location for the given node.
  */
@@ -404,6 +448,7 @@ function getUrl(node) {
   const masterNode = graphComponent.graph.foldingView.getMasterItem(node)
   return urlMapper.get(masterNode)
 }
+
 /**
  * Helper method that creates and configures the GraphML parser.
  */
@@ -421,6 +466,7 @@ function createGraphMLIOHandler() {
   ioHandler.addInputMapper(IGraph, String, 'GraphDescription', graphDescriptionMapper)
   return ioHandler
 }
+
 /**
  * Initializes the graph search object.
  */
@@ -436,6 +482,7 @@ function initializeGraphSearch() {
   })
   GraphSearch.registerEventListener(searchBox, graphSearch)
 }
+
 /**
  * Registers actions to the toolbar elements.
  */
@@ -445,6 +492,7 @@ function initializeUI() {
   })
   addNavigationButtons(graphChooserBox).addEventListener('change', readSampleGraph)
 }
+
 /**
  * Updates the elements of the UI's state and the input mode and checks whether the buttons should
  * be enabled or not.
@@ -453,19 +501,17 @@ function setUIDisabled(disabled) {
   graphChooserBox.disabled = disabled
   searchBox.disabled = disabled
 }
+
 /**
  * Initializes the converters for the bindings of the template node styles.
  */
 function initializeConverters() {
-  const colors = {
-    present: '#76b041',
-    busy: '#ab2346',
-    travel: '#a367dc',
-    unavailable: '#c1c1c1'
-  }
+  const colors = { present: '#76b041', busy: '#ab2346', travel: '#a367dc', unavailable: '#c1c1c1' }
+
   StringTemplateNodeStyle.CONVERTERS.demoConverters = {
     // converter function for the background color of nodes
     statusColorConverter: (value) => colors[value] || 'white',
+
     // converter function for the border color nodes
     selectedStrokeConverter: (value) => {
       if (typeof value === 'boolean') {
@@ -473,6 +519,7 @@ function initializeConverters() {
       }
       return '#FFF'
     },
+
     // converter function that adds the numbers given as value and parameter
     addConverter: (value, parameter) => {
       if (typeof parameter === 'string') {
@@ -480,6 +527,7 @@ function initializeConverters() {
       }
       return value
     },
+
     // converter function that converts the given string to a valid path
     pathConverter: (value) => {
       if (typeof value === 'string') {
@@ -489,6 +537,7 @@ function initializeConverters() {
     }
   }
 }
+
 /**
  * A class that implements a custom graph search. The matching string is queried on the labels and
  * the tags of the nodes.
@@ -518,4 +567,5 @@ class CustomGraphSearch extends GraphSearch {
     return node.labels.some((label) => label.text.toLowerCase().indexOf(lowercaseText) !== -1)
   }
 }
+
 run().then(finishLoading)

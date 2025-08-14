@@ -39,11 +39,13 @@ import {
   SvgVisual,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * Creates the visualization for the limiting rectangle.
  */
 export class LimitingRectangleRenderer extends BaseClass(IObjectRenderer, IVisualCreator) {
   rectangle = null
+
   /**
    * Gets the {@link IVisualCreator} for a given {@link IRenderTreeElement}.
    */
@@ -51,6 +53,7 @@ export class LimitingRectangleRenderer extends BaseClass(IObjectRenderer, IVisua
     this.rectangle = renderTag
     return this
   }
+
   /**
    * Returns an implementation of IBoundsProvider that can determine the visible bounds of the rendering of the user
    * object.
@@ -60,6 +63,7 @@ export class LimitingRectangleRenderer extends BaseClass(IObjectRenderer, IVisua
   getBoundsProvider(renderTag) {
     return IBoundsProvider.UNBOUNDED
   }
+
   /**
    * Returns an implementation of IVisibilityTestable that can determine if the rendering of the user object would be
    * visible in a given context.
@@ -69,6 +73,7 @@ export class LimitingRectangleRenderer extends BaseClass(IObjectRenderer, IVisua
   getVisibilityTestable(renderTag) {
     return IVisibilityTestable.ALWAYS
   }
+
   /**
    * Returns an implementation of IHitTestable that can determine whether the rendering of the user object has
    * been hit at a given coordinate.
@@ -78,6 +83,7 @@ export class LimitingRectangleRenderer extends BaseClass(IObjectRenderer, IVisua
   getHitTestable(renderTag) {
     return IHitTestable.NEVER
   }
+
   /**
    * Creates the renderer's visual.
    * @param ctx The context that describes where the visual will be used
@@ -85,6 +91,7 @@ export class LimitingRectangleRenderer extends BaseClass(IObjectRenderer, IVisua
    */
   createVisual(ctx) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+
     rect.x.baseVal.value = this.rectangle.x
     rect.y.baseVal.value = this.rectangle.y
     rect.width.baseVal.value = this.rectangle.width
@@ -92,8 +99,10 @@ export class LimitingRectangleRenderer extends BaseClass(IObjectRenderer, IVisua
     rect.setAttribute('fill', 'none')
     rect.setAttribute('stroke', 'black')
     rect.setAttribute('stroke-thickness', '2')
+
     return new SvgVisual(rect)
   }
+
   /**
    * Updates the renderer's visual.
    * @param ctx The context that describes where the visual will be used
@@ -104,6 +113,7 @@ export class LimitingRectangleRenderer extends BaseClass(IObjectRenderer, IVisua
     if (!(oldVisual instanceof SvgVisual && oldVisual.svgElement instanceof SVGRectElement)) {
       return this.createVisual(ctx)
     }
+
     const rect = oldVisual.svgElement
     rect.x.baseVal.value = this.rectangle.x
     rect.y.baseVal.value = this.rectangle.y

@@ -75,8 +75,8 @@ export async function exportSvg(
   )
   // make sure to deallocate the resources after the export is done
   void resultPromise.then(() => {
-    exportComponent.cleanUp()
     exportComponent.graph = new Graph()
+    exportComponent.cleanUp()
   })
   return resultPromise
 }

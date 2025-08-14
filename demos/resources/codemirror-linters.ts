@@ -27,6 +27,9 @@
  **
  ***************************************************************************/
 import { type Diagnostic, linter } from '@codemirror/lint'
+import '@codemirror/lang-css'
+import '@codemirror/lang-json'
+import '@codemirror/lang-xml'
 import { XMLValidator } from 'fast-xml-parser'
 import postcss, { CssSyntaxError } from 'postcss'
 
@@ -41,12 +44,7 @@ export const getXmlLinter = () =>
       const startPos = view.state.doc.line(line).from + col
       const from = startPos > 0 ? startPos - 1 : startPos
       const to = from + 1
-      diagnostics.push({
-        from,
-        to,
-        severity: 'error',
-        message: result.err.msg
-      })
+      diagnostics.push({ from, to, severity: 'error', message: result.err.msg })
     }
     return diagnostics
   })
@@ -61,12 +59,7 @@ export const getJsonLinter = () =>
       if (e instanceof SyntaxError) {
         const match = /at position (\d+)/.exec(e.message)
         const pos = match ? parseInt(match[1]) : 0
-        diagnostics.push({
-          from: pos,
-          to: pos + 1,
-          severity: 'error',
-          message: e.message
-        })
+        diagnostics.push({ from: pos, to: pos + 1, severity: 'error', message: e.message })
       }
     }
     return diagnostics
@@ -95,12 +88,7 @@ export const getCssLinter = () =>
         })
       } else {
         const error = e as Error
-        diagnostics.push({
-          from: 0,
-          to: text.length,
-          severity: 'error',
-          message: error.message
-        })
+        diagnostics.push({ from: 0, to: text.length, severity: 'error', message: error.message })
       }
     }
     return diagnostics

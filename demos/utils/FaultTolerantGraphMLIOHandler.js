@@ -39,6 +39,7 @@ import {
   ShapeNodeStyle,
   StripeTypes
 } from '@yfiles/yfiles'
+
 /**
  * This GraphML IO Handler can read graphs with unknown styles.
  *
@@ -47,12 +48,15 @@ import {
  */
 class FaultTolerantGraphMLIOHandler extends GraphMLIOHandler {
   onRetry = null
+
   async readFromDocument(graph, document) {
     return this.retry(() => super.readFromDocument(graph, document))
   }
+
   async readFromURL(graph, url) {
     return this.retry(() => super.readFromURL(graph, url))
   }
+
   async retry(read) {
     try {
       // try with styles enabled
@@ -64,6 +68,7 @@ class FaultTolerantGraphMLIOHandler extends GraphMLIOHandler {
       if (typeof this.onRetry === 'function') {
         this.onRetry(err)
       }
+
       // retry with styles disabled
       this.deserializationPropertyOverrides.set(
         SerializationProperties.DISABLE_STYLES,
@@ -82,6 +87,7 @@ class FaultTolerantGraphMLIOHandler extends GraphMLIOHandler {
         true
       )
       const graph = await read()
+
       // re-enable styles
       this.deserializationPropertyOverrides.set(
         SerializationProperties.DISABLE_STYLES,
@@ -99,10 +105,12 @@ class FaultTolerantGraphMLIOHandler extends GraphMLIOHandler {
         SerializationProperties.IGNORE_XAML_DESERIALIZATION_ERRORS,
         false
       )
+
       return graph
     }
   }
 }
+
 /**
  * Creates a preconfigured GraphMLIOHandler that supports all styles that are used in this demo.
  */
@@ -111,14 +119,17 @@ export function createConfiguredGraphMLIOHandler(graphComponent) {
   if (graphComponent) {
     const selectedEdges = new Mapper()
     const selectedNodes = new Mapper()
+
     // read selection state for edges ...
     graphMLIOHandler.addInputMapper(IEdge, Boolean, 'SelectedEdges', selectedEdges)
     // ... and nodes.
     graphMLIOHandler.addInputMapper(INode, Boolean, 'SelectedNodes', selectedNodes)
+
     // set selection state for edges and nodes once parsing is finished
     graphMLIOHandler.addEventListener('parsed', () => {
       const selection = graphComponent.selection
       selection.clear()
+
       const graph = graphComponent.graph
       for (const node of graph.nodes) {
         if (selectedNodes.get(node)) {
@@ -132,6 +143,7 @@ export function createConfiguredGraphMLIOHandler(graphComponent) {
       }
     })
   }
+
   // ignore or replace some unknown bpmn styles to avoid exceptions
   graphMLIOHandler.addEventListener('handle-deserialization', (evt) => {
     if (evt.xmlNode instanceof Element) {
@@ -149,5 +161,6 @@ export function createConfiguredGraphMLIOHandler(graphComponent) {
       }
     }
   })
+
   return graphMLIOHandler
 }

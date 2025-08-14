@@ -35,6 +35,7 @@ import {
   SvgVisual
 } from '@yfiles/yfiles'
 import { isColorSetName } from '@yfiles/demo-resources/demo-styles'
+
 /**
  * A custom demo node style whose colors match the given well-known CSS rule.
  */
@@ -44,6 +45,7 @@ export class Sample2NodeStyle extends NodeStyleBase {
     super()
     this.cssClass = cssClass
   }
+
   /**
    * Creates the visual for a node.
    */
@@ -51,6 +53,7 @@ export class Sample2NodeStyle extends NodeStyleBase {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     const { x, y, width, height } = node.layout
     const nodeRounding = '3.5'
+
     rect.width.baseVal.value = width
     rect.height.baseVal.value = height
     rect.setAttribute('rx', nodeRounding)
@@ -58,17 +61,17 @@ export class Sample2NodeStyle extends NodeStyleBase {
     rect.setAttribute('fill', '#FF6C00')
     rect.setAttribute('stroke', '#662b00')
     rect.setAttribute('stroke-width', '1.5px')
+
     if (this.cssClass) {
       const attribute = isColorSetName(this.cssClass) ? this.cssClass + '-node' : this.cssClass
       rect.setAttribute('class', attribute)
     }
+
     SvgVisual.setTranslate(rect, x, y)
-    return SvgVisual.from(rect, {
-      width,
-      height,
-      cssClass: this.cssClass
-    })
+
+    return SvgVisual.from(rect, { width, height, cssClass: this.cssClass })
   }
+
   /**
    * Re-renders the node by updating the old visual for improved performance.
    */
@@ -78,8 +81,10 @@ export class Sample2NodeStyle extends NodeStyleBase {
     if (!cache) {
       return this.createVisual(renderContext, node)
     }
+
     const layout = node.layout
     const { x, y, width, height } = layout
+
     if (cache.width !== width) {
       rect.width.baseVal.value = width
       cache.width = width
@@ -88,6 +93,7 @@ export class Sample2NodeStyle extends NodeStyleBase {
       rect.height.baseVal.value = height
       cache.height = height
     }
+
     if (cache.cssClass !== this.cssClass) {
       if (this.cssClass) {
         const attribute = isColorSetName(this.cssClass) ? this.cssClass + '-node' : this.cssClass
@@ -97,18 +103,24 @@ export class Sample2NodeStyle extends NodeStyleBase {
       }
       cache.cssClass = this.cssClass
     }
+
     SvgVisual.setTranslate(rect, x, y)
+
     return oldVisual
   }
 }
+
 export class Sample2NodeStyleExtension extends MarkupExtension {
   _cssClass = ''
+
   get cssClass() {
     return this._cssClass
   }
+
   set cssClass(value) {
     this._cssClass = value
   }
+
   provideValue(serviceProvider) {
     const style = new Sample2NodeStyle()
     style.cssClass = this.cssClass

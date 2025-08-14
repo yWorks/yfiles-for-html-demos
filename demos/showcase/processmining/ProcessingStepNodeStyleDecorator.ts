@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  Color,
   ICanvasContext,
   INode,
   INodeStyle,
@@ -37,17 +38,14 @@ import {
   SvgVisualGroup
 } from '@yfiles/yfiles'
 
-declare type Cache = SvgVisualGroup & {
-  cache?: {
-    value: number
-  }
-}
+declare type Cache = SvgVisualGroup & { cache?: { value: number } }
 
 /**
- * Returns the color associated with the given intensity value from blue (low) to red (high).
+ * Returns the color associated with the given intensity value from green (low) to red (high).
  */
 function getIntensityColor(value: number): string {
-  return `rgb(${(16 + value * 239) | 0}, ${((1 - value) * 239) | 16}, 16)`
+  const c = Color.fromHSLA(((1 - value) * 100) / 360, 1, 0.5, 1)
+  return `rgb(${c.r}, ${c.g}, ${c.b})`
 }
 
 /**
@@ -92,7 +90,7 @@ export class ProcessingStepNodeStyleDecorator extends NodeStyleBase {
     circleBackground.cx.baseVal.value = cx
     circleBackground.cy.baseVal.value = cy
     circleBackground.r.baseVal.value = height / 2 + 3
-    circleBackground.setAttribute('fill', 'rgb(220,220,220)')
+    circleBackground.setAttribute('fill', '#ffffff')
     circleBackground.setAttribute('stroke', 'none')
     g.appendChild(circleBackground)
 
@@ -102,7 +100,7 @@ export class ProcessingStepNodeStyleDecorator extends NodeStyleBase {
     trackBackground.r.baseVal.value = r
     trackBackground.setAttribute('fill', 'none')
     trackBackground.setAttribute('stroke-width', String(thickness))
-    trackBackground.setAttribute('stroke', 'orange')
+    trackBackground.setAttribute('stroke', '#343e49')
     g.appendChild(trackBackground)
 
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')

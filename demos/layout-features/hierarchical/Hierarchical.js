@@ -38,6 +38,7 @@ import {
   LayoutOrientation,
   PortSides
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to configure {@link HierarchicalLayout}.
  * @param graph The graph to be laid out
@@ -47,6 +48,7 @@ import {
 export function createFeatureLayoutConfiguration(graph) {
   // create and configure the hierarchical layout algorithm
   const layout = new HierarchicalLayout()
+
   // default settings for edge routing
   const defaultEdgeDescriptor = layout.defaultEdgeDescriptor
   // the first segment length can be used to reserve "space" for edge decorations (typically
@@ -56,12 +58,14 @@ export function createFeatureLayoutConfiguration(graph) {
   defaultEdgeDescriptor.minimumFirstSegmentLength = 5
   // the length of the last segment is increased to prevent bends "inside" target arrow heads
   defaultEdgeDescriptor.minimumLastSegmentLength = 20
+
   // default settings for node placement
   const defaultNodeDescriptor = layout.defaultNodeDescriptor
   // specifies the vertical alignment of nodes inside a layer (i.e., a horizontal line of nodes)
   // see e.g., the layer with nodes 1, 6, 8, 9, 23, and 25 where nodes with different heights are
   // bottom aligned
   defaultNodeDescriptor.layerAlignment = 0
+
   // specifies the main direction of the layout result
   layout.layoutOrientation = LayoutOrientation.BOTTOM_TO_TOP
   // specify a preferred maximum duration to prevent very long runtimes for LARGE graphs
@@ -73,6 +77,7 @@ export function createFeatureLayoutConfiguration(graph) {
   layout.nodeToEdgeDistance = 50
   // the minimum horizontal distance between two nodes in the same layer
   layout.nodeDistance = 10
+
   // try to reduce the number of bends in edges that connect nodes in subsequent layers
   // see e.g., the edges connecting node 26 to node 6 and node 10 to node 20
   // (comment the below three lines to observe the difference)
@@ -80,8 +85,10 @@ export function createFeatureLayoutConfiguration(graph) {
   // disable the barycenter node placer mode which produces more symmetric placements but would
   // make the straightenEdges option obsolete
   layout.coordinateAssigner.symmetryOptimizationStrategy = 'none'
+
   // create and configure layout data for the hierarchical layout algorithm
   const layoutData = new HierarchicalLayoutData()
+
   // aside from specifying edge routing options for all edges, it is also possible to specify
   // routing options for specific edges only - e.g., the following code changes the orthogonal
   // edge routing to octilinear routing for some edges
@@ -93,10 +100,12 @@ export function createFeatureLayoutConfiguration(graph) {
   // explicitly assigned to the appropriate edges
   layoutData.edgeDescriptors = (edge) =>
     isOctilinearEdge(edge) ? octilinearEdgeDescriptor : defaultEdgeDescriptor
+
   // declare some edges as "critical"
   // the set of critical edges will be routed as straight as possible
   // see the edges connecting nodes 19, 0, 1, and 2
   layoutData.criticalEdgePriorities = (edge) => (isCriticalEdge(edge) ? 10 : 0)
+
   // force the edge from node 20 to node 21 to leave its source node on the right side
   layoutData.ports.sourcePortCandidates.mapper.set(
     graph.edges.find((edge) => edge.tag === 12),
@@ -107,8 +116,10 @@ export function createFeatureLayoutConfiguration(graph) {
     graph.edges.find((edge) => edge.tag === 32),
     new EdgePortCandidates().addFreeCandidate(PortSides.RIGHT)
   )
+
   return { layout, layoutData }
 }
+
 /**
  * Determines if the given edge is a critical edge.
  * For this example, an arbitrary set of consecutive edges was chosen.
@@ -117,6 +128,7 @@ function isCriticalEdge(edge) {
   const tag = edge.tag
   return tag === 1 || tag === 3 || tag === 16
 }
+
 /**
  * Determines if the given edge has to be routed in an octilinear fashion/
  * For this example, an arbitrary set of edges was chosen.

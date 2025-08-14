@@ -37,16 +37,25 @@ import {
   startNodeAnimation
 } from '../common'
 import { CustomNodeStyle } from './CustomNodeStyle'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
 graphComponent.horizontalScrollBarPolicy = graphComponent.verticalScrollBarPolicy =
   ScrollBarVisibility.HIDDEN
+
 graphComponent.graph.nodeDefaults.style = new CustomNodeStyle()
+
 graphComponent.graphModelManager.nodeRenderer = new IsVisibleNodeStyleRenderer()
+
 createSampleGraphIsVisible(graphComponent.graph, graphComponent.viewport)
+
 configureMinimumSize(graphComponent)
+
 // Move viewport so that the animation will move nodes outside and back inside
 graphComponent.updateContentBounds()
+
 startNodeAnimation(graphComponent)
 finishLoading()

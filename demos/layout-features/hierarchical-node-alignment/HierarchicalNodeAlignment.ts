@@ -62,11 +62,7 @@ export function createFeatureLayoutConfiguration(graph: IGraph) {
  * @param graph The input graph
  */
 function calculateLongestPath(graph: IGraph): ResultItemCollection<IEdge> {
-  return new LongestPath({
-    subgraphEdges: {
-      excludes: getCycleEdges(graph)
-    }
-  }).run(graph).edges
+  return new LongestPath({ subgraphEdges: { excludes: getCycleEdges(graph) } }).run(graph).edges
 }
 
 /**

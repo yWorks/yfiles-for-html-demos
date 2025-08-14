@@ -26,11 +26,7 @@ type EntityData = {
   currency: 'USD' | 'EUR'
 }
 
-type ConnectionData = {
-  sourceId: string
-  targetId: string
-  ownership: number
-}
+type ConnectionData = { sourceId: string; targetId: string; ownership: number }
 ```
 
 ## Node styling
@@ -81,15 +77,9 @@ nodesSource.nodeCreator.styleProvider = (
   entityData: EntityData
 ): ShapeNodeStyle | undefined => {
   if (entityData.type === 'Branch') {
-    return new ShapeNodeStyle({
-      shape: 'round-rectangle',
-      fill: gold
-    })
+    return new ShapeNodeStyle({ shape: 'round-rectangle', fill: gold })
   } else if (entityData.type === 'Corporation') {
-    return new ShapeNodeStyle({
-      shape: 'octagon',
-      fill: green
-    })
+    return new ShapeNodeStyle({ shape: 'octagon', fill: green })
   }
 }
 ```
@@ -111,11 +101,7 @@ edgesSource.edgeCreator.styleProvider = (
     })
   } else {
     return new PolylineEdgeStyle({
-      stroke: new Stroke({
-        fill: gray,
-        thickness: 3,
-        dashStyle: 'dash'
-      })
+      stroke: new Stroke({ fill: gray, thickness: 3, dashStyle: 'dash' })
     })
   }
 }

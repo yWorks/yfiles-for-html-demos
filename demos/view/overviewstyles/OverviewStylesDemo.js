@@ -44,6 +44,7 @@ import {
   Stroke,
   TreeLayout
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
@@ -53,20 +54,25 @@ import { OverviewCanvasRenderer } from './OverviewCanvasRenderer'
 import { OverviewSvgRenderer } from './OverviewSvgRenderer'
 import { detailNodeStyleTemplate, overviewNodeStyleTemplate } from './style-templates'
 import { createLitNodeStyleFromSource } from '@yfiles/demo-utils/LitNodeStyle'
+
 /**
  * The GraphComponent
  */
 let graphComponent
+
 /**
  * The overview graph component that uses the Canvas and Svg visual creator.
  */
 let overviewComponent
+
 /**
  * The graph component that uses the overview inputMode to let the overview graph use the same
  * styles as the graphComponent.
  */
 let overviewGraphComponent
+
 const overviewStyleBox = document.querySelector('#graph-chooser-box')
+
 /**
  * Runs the demo.
  */
@@ -76,16 +82,19 @@ async function run() {
   graphComponent.focusIndicatorManager.showFocusPolicy = ShowFocusPolicy.ALWAYS
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
+
   graphComponent.inputMode = new GraphViewerInputMode()
+
   overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
+
   // initialize the overview graph with SVG rendering
   overviewComponent.graphOverviewRenderer = new OverviewSvgRenderer()
+
   // initialize the overview graph that uses the same GraphComponent styles.
   // If you want the overview to use the same styles as the GraphComponent, you can use a GraphComponent to display the overview.
   overviewGraphComponent = new GraphComponent('overviewGraphComponent')
-  overviewGraphComponent.inputMode = new OverviewInputMode({
-    canvasComponent: graphComponent
-  })
+  overviewGraphComponent.inputMode = new OverviewInputMode({ canvasComponent: graphComponent })
+
   // Apply default styling
   const graph = graphComponent.graph
   initDemoStyles(graph)
@@ -96,42 +105,51 @@ async function run() {
   })
   graph.nodeDefaults.labels.layoutParameter = new StretchNodeLabelModel().createParameter('center')
   graphComponent.focusIndicatorManager.enabled = false
+
   // Labels get the HTML label style
   const font = new Font('Montserrat,sans-serif', 14)
   graph.nodeDefaults.labels.style = new HtmlLabelStyle(font)
   graph.edgeDefaults.labels.style = new HtmlLabelStyle(font)
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
-    new TreeLayout({
-      defaultSubtreePlacer: new CompactSubtreePlacer()
-    })
+    new TreeLayout({ defaultSubtreePlacer: new CompactSubtreePlacer() })
   )
   void graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
+
   initializeUI()
+
   const initialStyle = overviewStyleBox.value
   overviewStyling(initialStyle)
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id
   }).nodeCreator.tagProvider = (item) => item.tag
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Styles the overview graph.
  * @param styleType The type of the styling selected with the combobox.
@@ -142,6 +160,7 @@ function overviewStyling(styleType) {
       const overviewSvgRenderer = new OverviewSvgRenderer()
       overviewSvgRenderer.nodeStyle = (_) => createLitNodeStyleFromSource(overviewNodeStyleTemplate)
       overviewComponent.graphOverviewRenderer = overviewSvgRenderer
+
       // updates the overview component then show the overview graph
       void overviewComponent.updateVisualAsync().then(() => {
         // hide the overview graph that uses the GraphComponent styles and show the overview graph that uses the canvas, SVG or WebGL creator
@@ -151,6 +170,7 @@ function overviewStyling(styleType) {
       break
     case 'CanvasOverviewRenderer':
       overviewComponent.graphOverviewRenderer = new OverviewCanvasRenderer()
+
       // updates the overview component then show the overview graph
       void overviewComponent.updateVisualAsync().then(() => {
         // hides the overview graph that uses the GraphComponent styles and show the overview graph that uses the canvas, SVG or WebGL creator
@@ -161,6 +181,7 @@ function overviewStyling(styleType) {
     case 'OverviewInputMode':
       // sets the overview graph and fit the overview graph bounds
       overviewGraphComponent.graph = graphComponent.graph
+
       // updates the overview component then show the overview graph
       void overviewGraphComponent.updateVisualAsync().then(() => {
         // hides the overview graph that uses the canvas or Svg visual creator and show the overview graph that uses the GraphComponent styles
@@ -171,6 +192,7 @@ function overviewStyling(styleType) {
       break
   }
 }
+
 /**
  * Registers the actions for the GUI elements, typically the
  * toolbar buttons, during the creation of this application.
@@ -181,4 +203,5 @@ function initializeUI() {
     overviewStyling(selectedValue)
   })
 }
+
 void run().then(finishLoading)

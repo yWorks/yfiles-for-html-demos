@@ -50,24 +50,23 @@ import {
 import { isColorSetName } from '@yfiles/demo-resources/demo-styles'
 import { Sample2Arrow } from './Sample2Arrow'
 import { SVGNS } from './Namespaces'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+
 /**
  * A custom demo edge style whose colors match the given well-known CSS style.
  */
 export class Sample2EdgeStyle extends EdgeStyleBase {
   cssClass
-  hiddenArrow = new Arrow({
-    type: ArrowType.NONE,
-    cropLength: 6
-  })
+  hiddenArrow = new Arrow({ type: ArrowType.NONE, cropLength: 6 })
   fallbackArrow = new Sample2Arrow()
   markerDefsSupport = null
   showTargetArrows = true
   useMarkerArrows = true
+
   constructor(cssClass) {
     super()
     this.cssClass = cssClass
   }
+
   /**
    * Helper function to crop a {@link GeneralPath} by the length of the used arrow.
    */
@@ -76,14 +75,12 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
       return null
     }
     if (this.showTargetArrows) {
-      const dummyArrow =
-        !isBrowserWithBadMarkerSupport && this.useMarkerArrows
-          ? this.hiddenArrow
-          : this.fallbackArrow
+      const dummyArrow = this.useMarkerArrows ? this.hiddenArrow : this.fallbackArrow
       return this.cropPath(edge, IArrow.NONE, dummyArrow, gp)
     }
     return this.cropPath(edge, IArrow.NONE, IArrow.NONE, gp)
   }
+
   /**
    * Creates the visual for an edge.
    */
@@ -91,16 +88,20 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     let renderPath = this.createPath(edge)
     // crop the path such that the arrow tip is at the end of the edge
     renderPath = this.cropRenderedPath(edge, renderPath)
+
     if (!renderPath || renderPath.getLength() === 0) {
       return null
     }
+
     const gp = this.createPathWithBridges(renderPath, renderContext)
+
     const path = document.createElementNS(SVGNS, 'path')
     const pathData = gp.size === 0 ? '' : gp.createSvgPathData()
     path.setAttribute('d', pathData)
     path.setAttribute('fill', 'none')
     path.setAttribute('stroke', '#662b00')
     path.setAttribute('stroke-width', '1.5px')
+
     if (this.cssClass) {
       if (isColorSetName(this.cssClass)) {
         path.setAttribute('class', `${this.cssClass}-edge`)
@@ -110,27 +111,32 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
         this.fallbackArrow.cssClass = `${this.cssClass}-arrow`
       }
     }
-    if (!isBrowserWithBadMarkerSupport && this.useMarkerArrows) {
+
+    if (this.useMarkerArrows) {
       this.showTargetArrows &&
         path.setAttribute(
           'marker-end',
           'url(#' + renderContext.getDefsId(this.createMarker()) + ')'
         )
+
       return SvgVisual.from(path, {
         path: renderPath,
         obstacleHash: this.getObstacleHash(renderContext)
       })
     }
+
     // use yFiles arrows instead of markers
     const container = document.createElementNS(SVGNS, 'g')
     container.appendChild(path)
     this.showTargetArrows &&
       super.addArrows(renderContext, container, edge, gp, IArrow.NONE, this.fallbackArrow)
+
     return SvgVisual.from(container, {
       path: renderPath,
       obstacleHash: this.getObstacleHash(renderContext)
     })
   }
+
   /**
    * Re-renders the edge by updating the old visual for improved performance.
    */
@@ -138,6 +144,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     if (oldVisual === null) {
       return this.createVisual(renderContext, edge)
     }
+
     let renderPath = this.createPath(edge)
     if (!renderPath || renderPath.getLength() === 0) {
       return null
@@ -145,6 +152,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     // crop the path such that the arrow tip is at the end of the edge
     renderPath = this.cropRenderedPath(edge, renderPath)
     const newObstacleHash = this.getObstacleHash(renderContext)
+
     const path = oldVisual.svgElement
     const cache = oldVisual.tag
     if (
@@ -155,7 +163,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
       cache.obstacleHash = newObstacleHash
       const gp = this.createPathWithBridges(renderPath, renderContext)
       const pathData = gp.size === 0 ? '' : gp.createSvgPathData()
-      if (!isBrowserWithBadMarkerSupport && this.useMarkerArrows) {
+      if (this.useMarkerArrows) {
         // update code for marker arrows
         path.setAttribute('d', pathData)
         return oldVisual
@@ -173,6 +181,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     }
     return oldVisual
   }
+
   /**
    * Creates the path of an edge.
    */
@@ -220,6 +229,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     }
     return super.getPath(edge)
   }
+
   /**
    * Gets the path of the edge cropped at the node border.
    */
@@ -228,6 +238,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     // crop path at node border
     return path ? this.cropPath(edge, IArrow.NONE, IArrow.NONE, path) : null
   }
+
   /**
    * Decorates a given path with bridges.
    * All work is delegated to the BridgeManager's addBridges() method.
@@ -240,6 +251,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     // if there is a bridge manager registered: use it to add the bridges to the path
     return manager === null ? path : manager.addBridges(context, path, null)
   }
+
   /**
    * Gets an obstacle hash from the context.
    * The obstacle hash changes if any obstacle has changed on the entire graph.
@@ -254,6 +266,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     // get a hash value which represents the current state of the obstacles.
     return manager === null ? 42 : manager.getObstacleHash(context)
   }
+
   /**
    * Queries the context's lookup for a BridgeManager instance.
    * @param context The context to get the BridgeManager from.
@@ -262,6 +275,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
   getBridgeManager(context) {
     return context.lookup(BridgeManager)
   }
+
   /**
    * Determines whether the visual representation of the edge has been hit at the given location.
    */
@@ -278,6 +292,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     }
     return false
   }
+
   /**
    * Determines whether the edge visual is visible or not.
    */
@@ -300,6 +315,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
       if (clip.contains(spl)) {
         return true
       }
+
       let outerX, outerY
       if (edge.bends.size === 1) {
         const bendLocation = edge.bends.get(0).location
@@ -318,6 +334,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
           outerY = sourcePortLocation.y - 20
         }
       }
+
       // intersect the self-loop lines with the clip
       return (
         clip.intersectsLine(spl, new Point(outerX, spl.y)) ||
@@ -326,8 +343,10 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
         clip.intersectsLine(new Point(tpl.x, outerY), tpl)
       )
     }
+
     return super.isVisible(canvasContext, clip, edge)
   }
+
   /**
    * Helper method to let the svg marker be created by the {@link ISvgDefsCreator} implementation.
    */
@@ -337,6 +356,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     }
     return this.markerDefsSupport
   }
+
   /**
    * This implementation of the look-up provides a custom implementation of the
    * {@link IObstacleProvider} to support bridges.
@@ -348,6 +368,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
       : super.lookup(edge, type)
   }
 }
+
 /**
  * Manages the arrow markers as SVG definitions.
  */
@@ -357,6 +378,7 @@ export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
     super()
     this.cssClass = cssClass
   }
+
   /**
    * Creates a defs-element.
    */
@@ -368,18 +390,22 @@ export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
     markerElement.setAttribute('markerWidth', '7')
     markerElement.setAttribute('markerHeight', '7')
     markerElement.setAttribute('orient', 'auto')
+
     const path = document.createElementNS(SVGNS, 'path')
     path.setAttribute('d', 'M 0 0 L 15 5 L 0 10 z')
     path.setAttribute('fill', '#662b00')
+
     if (this.cssClass) {
       const attribute = isColorSetName(this.cssClass)
         ? `${this.cssClass}-edge-arrow`
         : `${this.cssClass}-arrow`
       path.setAttribute('class', attribute)
     }
+
     markerElement.appendChild(path)
     return markerElement
   }
+
   /**
    * Checks if the specified node references the element represented by this object.
    */
@@ -388,6 +414,7 @@ export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
       ? false
       : ISvgDefsCreator.isAttributeReference(node, 'marker-end', id)
   }
+
   /**
    * Updates the defs element with the current gradient data.
    */
@@ -395,6 +422,7 @@ export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
     // Nothing to do here
   }
 }
+
 /**
  * A custom {@link IObstacleProvider} implementation for {@link Sample2EdgeStyle}.
  */
@@ -404,6 +432,7 @@ class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
     super()
     this.edge = edge
   }
+
   /**
    * Returns this edge's path as obstacle.
    * @returns The edge's path.
@@ -412,28 +441,36 @@ class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
     return this.edge.style.renderer.getPathGeometry(this.edge, this.edge.style).getPath()
   }
 }
+
 export class Sample2EdgeStyleExtension extends MarkupExtension {
   _cssClass = ''
   _showTargetArrows = true
   _useMarkerArrows = true
+
   get cssClass() {
     return this._cssClass
   }
+
   set cssClass(value) {
     this._cssClass = value
   }
+
   get showTargetArrows() {
     return this._showTargetArrows
   }
+
   set showTargetArrows(value) {
     this._showTargetArrows = value
   }
+
   get useMarkerArrows() {
     return this._useMarkerArrows
   }
+
   set useMarkerArrows(value) {
     this._useMarkerArrows = value
   }
+
   provideValue(serviceProvider) {
     const style = new Sample2EdgeStyle()
     style.cssClass = this.cssClass
@@ -442,4 +479,3 @@ export class Sample2EdgeStyleExtension extends MarkupExtension {
     return style
   }
 }
-const isBrowserWithBadMarkerSupport = BrowserDetection.safariVersion > 0

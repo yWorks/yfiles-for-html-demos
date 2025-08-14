@@ -90,51 +90,68 @@ import {
   initDemoStyles
 } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+import {
+  addNavigationButtons,
+  BrowserDetection,
+  finishLoading
+} from '@yfiles/demo-resources/demo-page'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
+
 /**
  * The GraphComponent
  */
 let graphComponent
+
 /**
  * The overview component
  */
 let overviewComponent
+
 /**
  * The option editor that stores the currently selected layout configuration.
  */
 let optionEditor
 let presetsUiBuilder
+
 let configOptionsValid = false
 let inLayout = false
 let inLoadSample = false
+
 const comboBoxSeparatorItem = '-----------'
+
 // get hold of some UI elements
 const layoutComboBox = document.querySelector(`#layout-select-box`)
 addNavigationButtons(layoutComboBox, true, false, 'sidebar-button')
 const sampleComboBox = document.querySelector(`#sample-select-box`)
 const layoutButton = document.querySelector(`#apply-layout-button`)
+
 // keep track of user interactions with the graph
 let customGraphSelected = false
 let customGraph = null
+
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
   // initialize the GraphOverviewComponent
   overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
+
   configOptionsValid = true
+
   // we start loading the input mode
   graphComponent.inputMode = createEditorMode()
+
   // use two finger panning to allow easier editing with touch gestures
   configureTwoPointerPanning(graphComponent)
+
   // wire up the UI
   initializeUI()
+
   // initialize the property editor
   const editorElement = document.querySelector(`#data-editor`)
   optionEditor = new OptionEditor(editorElement)
+
   // initialize the presets UI builder
   presetsUiBuilder = new PresetsUiBuilder({
     rootElement: document.querySelector(`#data-presets`),
@@ -142,17 +159,24 @@ async function run() {
     presetDefs: Presets,
     onPresetApplied: () => applyLayout(false)
   })
+
   // disable UI during initialization
   setUIDisabled(true)
+
   // initialize the graph and the defaults
   initializeGraph()
+
   // configure overview panel
   overviewComponent.graphOverviewRenderer = new DemoStyleOverviewRenderer()
+
   // after the initial graph is loaded, we continue loading with the algorithms
   initializeLayoutAlgorithms()
+
   await initializeApplicationFromUrl()
+
   updateStyleDefaults(graphComponent.graph)
 }
+
 /**
  * Enables loading and saving the graph to GraphML.
  */
@@ -163,6 +187,7 @@ function enableGraphML() {
   })
   return graphMLIOHandler
 }
+
 /**
  * Populates the sample combobox depending on the chosen layout algorithm.
  */
@@ -181,6 +206,7 @@ function initializeSamples(layoutName) {
     }
   }
 }
+
 /**
  * Loads all layout modules and populates the layout combo box.
  */
@@ -190,6 +216,7 @@ function initializeLayoutAlgorithms() {
   )
   initializeComboBox(layoutComboBox, layoutNames)
 }
+
 /**
  * Creates a new instance of the configuration for the layout algorithm with the given name.
  * @param normalizedName The name of the layout algorithm for which a configuration is created.
@@ -234,6 +261,7 @@ function createLayoutConfig(normalizedName) {
       return new HierarchicalLayoutConfig()
   }
 }
+
 /**
  * Returns the index of the first option with the given value.
  * @param combobox The combobox to search.
@@ -251,6 +279,7 @@ function getIndexInComboBox(combobox, value) {
   }
   return -1
 }
+
 /**
  * Populates the given HTMLSelectElement with the items in the given string array.
  */
@@ -258,6 +287,7 @@ function initializeComboBox(combobox, names) {
   while (combobox.lastChild) {
     combobox.removeChild(combobox.lastChild)
   }
+
   for (const entry of names) {
     let label = ''
     let value = ''
@@ -278,6 +308,7 @@ function initializeComboBox(combobox, names) {
     }
   }
 }
+
 /**
  * Actually applies the layout.
  * @param clearUndo Specifies whether the undo queue should be cleared after the layout
@@ -286,12 +317,15 @@ function initializeComboBox(combobox, names) {
  */
 async function applyLayout(clearUndo) {
   const config = optionEditor.config
+
   if (!config || !configOptionsValid || inLayout) {
     return
   }
+
   // prevent starting another layout calculation
   inLayout = true
   setUIDisabled(true)
+
   await config.apply(graphComponent, () => {
     releaseLocks()
     setUIDisabled(false)
@@ -301,9 +335,11 @@ async function applyLayout(clearUndo) {
     }
   })
 }
+
 function getSelectedAlgorithm() {
   return layoutComboBox.options[layoutComboBox.selectedIndex].value
 }
+
 function updateThicknessButtonsState(layoutName) {
   const generateEdgeThicknessButton = document.querySelector(`#generate-edge-thickness-button`)
   const resetEdgeThicknessButton = document.querySelector(`#reset-edge-thickness-button`)
@@ -327,6 +363,7 @@ function updateThicknessButtonsState(layoutName) {
     }
   }
 }
+
 /**
  * Handles a selection change in the layout combo box.
  */
@@ -336,19 +373,25 @@ async function onLayoutChanged(initSamples = true, appliedPresetId = '') {
     if (initSamples) {
       initializeSamples(layoutName)
     }
+
     // maybe enable thickness buttons
     updateThicknessButtonsState(layoutName)
+
     // use a new instance to re-initialize the default values
     const config = createLayoutConfig(layoutName)
+
     // place description in left sidebar
     updateDescriptionText(config)
+
     // this demo starts with collapsed option settings by default
     config.collapsedInitialization = true
+
     optionEditor.config = config
     optionEditor.validateConfigCallback = (b) => {
       configOptionsValid = b
       layoutButton.disabled = !(configOptionsValid && !inLayout)
     }
+
     let presetsStruct
     if (customGraphSelected) {
       presetsStruct = findPresets(layoutName)
@@ -358,31 +401,38 @@ async function onLayoutChanged(initSamples = true, appliedPresetId = '') {
       await onSampleChangedCore(key)
       presetsStruct = findPresets(layoutName, key)
     }
+
     presetsUiBuilder.buildUi(
       presetsStruct,
       appliedPresetId ? appliedPresetId : presetsStruct.defaultPreset
     )
+
     await applyLayout(!customGraphSelected)
   }
 }
+
 function updateDescriptionText(config) {
   const layoutDescriptionContainer = document.querySelector(`#layout-description-container`)
   const layoutDescription = document.querySelector(`#layout-description`)
   const layoutTitle = document.querySelector(`#layout-title`)
+
   layoutDescriptionContainer.classList.remove('highlight-description')
   while (layoutDescription.lastChild) {
     layoutDescription.removeChild(layoutDescription.lastChild)
   }
   layoutTitle.innerHTML = ''
+
   if (config.descriptionText) {
     layoutDescription.innerHTML = config.descriptionText
     layoutTitle.innerHTML = config.title
+
     // highlight the description once
     setTimeout(() => {
       layoutDescriptionContainer.classList.add('highlight-description')
     }, 0)
   }
 }
+
 function findPresets(algorithmName, sampleKey = '') {
   const algorithm = findAlgorithmImpl(algorithmName)
   if (algorithm && algorithm.samples) {
@@ -410,6 +460,7 @@ function findPresets(algorithmName, sampleKey = '') {
   }
   return { presets: [], defaultPreset: '', invalidPresets: [] }
 }
+
 function findAlgorithmImpl(algorithmName) {
   for (const entry of LayoutStyles) {
     if (!isSeparator(entry) && getNormalizedName(entry.layout) === algorithmName) {
@@ -418,18 +469,21 @@ function findAlgorithmImpl(algorithmName) {
   }
   return null
 }
+
 /**
  * Returns the value of the currently selected sample.
  */
 function getSelectedSample() {
   return sampleComboBox.options[sampleComboBox.selectedIndex].value
 }
+
 /**
  * Returns the normalized version of the given name, i.e., in lowercase and '-' instead of space.
  */
 function getNormalizedName(name) {
   return name.toLowerCase().replace(/\s/g, '-')
 }
+
 /**
  * Initializes the application configuration from the URL.
  */
@@ -441,6 +495,7 @@ async function initializeApplicationFromUrl() {
     await loadConfigurationFromUrl()
   }
 }
+
 /**
  * Updates current layout algorithm and current sample graph when the window location hash changes.
  */
@@ -452,6 +507,7 @@ async function onHashChanged() {
     await onLayoutChanged()
   }
 }
+
 /**
  * Checks whether the location hash specifies a valid sample, and loads that.
  */
@@ -459,9 +515,11 @@ async function loadConfigurationFromLocationHash(windowLocationHash) {
   // eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
   const match = windowLocationHash.match(/#([\w_-]+)/)
   const hash = match && match.length > 1 ? match[1].toLowerCase().replace(/_/g, '-') : ''
+
   let layout = hash
   let sample = null
   let preset = null
+
   // support some specific hashed URLs by parsing specific sample configurations
   if (hash === 'hierarchical-with-subcomponents') {
     layout = 'hierarchical'
@@ -499,8 +557,10 @@ async function loadConfigurationFromLocationHash(windowLocationHash) {
     layout = 'hierarchical'
     sample = 'grouping'
   }
+
   await loadConfiguration(layout, sample, preset)
 }
+
 /**
  * Parses the URL parameters and loads the requested configuration.
  */
@@ -516,6 +576,7 @@ async function loadConfigurationFromUrl() {
     await onLayoutChanged()
   }
 }
+
 /**
  * Loads the requested layout, sample, and preset.
  */
@@ -528,12 +589,15 @@ async function loadConfiguration(layout = null, sample = null, preset = null) {
       await onLayoutChanged()
       return
     }
+
     if (layoutIndex !== -1 && layoutComboBox.selectedIndex !== layoutIndex) {
       layoutComboBox.selectedIndex = layoutIndex
     }
+
     // always initialize the samples if the layout is given
     const layoutName = layoutComboBox.options[layoutIndex].value
     initializeSamples(layoutName)
+
     // load the requested sample
     if (sample !== null) {
       const sampleIndex = getIndexInComboBox(sampleComboBox, sample)
@@ -542,9 +606,11 @@ async function loadConfiguration(layout = null, sample = null, preset = null) {
       }
     }
   }
+
   // loads the requested layout alongside the selected sample
   await onLayoutChanged(layout === null, preset === null ? '' : preset)
 }
+
 /**
  * Copies the current graph into a temporary {@link IGraph} instance for later use.
  */
@@ -553,6 +619,7 @@ function storeModifiedGraph() {
   const copier = new GraphCopier()
   copier.copy(graphComponent.graph, customGraph)
 }
+
 /**
  * Loads the temporary stored modified graph into the main {@link GraphComponent}.
  */
@@ -563,6 +630,7 @@ function loadModifiedGraph() {
     copier.copy(customGraph, graphComponent.graph)
   }
 }
+
 /**
  * Stores the current state as modified graph and adds a sample graph item for it.
  */
@@ -570,6 +638,7 @@ function updateModifiedGraphSample() {
   addCustomGraphEntry()
   storeModifiedGraph()
 }
+
 /**
  * Adjusts the style defaults to match the overall graph theme.
  */
@@ -597,6 +666,7 @@ function updateStyleDefaults(graph) {
     graph.edgeDefaults.style = createDemoEdgeStyle()
   }
 }
+
 /**
  * Handles a selection change in the sample combo box.
  */
@@ -604,13 +674,17 @@ async function onSampleChanged() {
   if (inLayout || inLoadSample) {
     return
   }
+
   // load the sample
   const key = getSelectedSample()
   await onSampleChangedCore(key)
+
   const presetsStruct = findPresets(getSelectedAlgorithm(), key)
   presetsUiBuilder.buildUi(presetsStruct, presetsStruct.defaultPreset)
+
   await applyLayout(true)
 }
+
 async function onSampleChangedCore(key) {
   const graph = graphComponent.graph
   if (key == null || key === 'none') {
@@ -622,6 +696,7 @@ async function onSampleChangedCore(key) {
   }
   inLoadSample = true
   setUIDisabled(true)
+
   if (customGraphSelected) {
     storeModifiedGraph()
   } else if (key === 'modified-graph') {
@@ -630,15 +705,21 @@ async function onSampleChangedCore(key) {
     customGraphSelected = true
     return
   }
+
   customGraphSelected = false
+
   const filePath = `resources/${key}.graphml`
+
   // load the sample graph and start the layout algorithm in the done handler
   const ioh = createConfiguredGraphMLIOHandler(graphComponent)
   await ioh.readFromURL(graph, filePath)
+
   // update style defaults based on the loaded sample
   updateStyleDefaults(graph)
+
   graphComponent.zoomTo(graphComponent.zoom, getCenter(graph))
 }
+
 /**
  * Generate and add random labels for a collection of ModelItems.
  * Existing items will be deleted before adding the new items.
@@ -653,12 +734,15 @@ function onGenerateItemLabels(items) {
   const labelCount = Math.floor(
     items.size * (Math.random() * (labelPercMax - labelPercMin) + labelPercMin)
   )
+
   const graph = graphComponent.graph
+
   const itemList = new List()
   for (const item of items) {
     itemList.add(item)
     removeLabels(graph, item)
   }
+
   // add random item labels
   const loremList = LoremIpsum
   for (let i = 0; i < labelCount; i++) {
@@ -675,6 +759,7 @@ function onGenerateItemLabels(items) {
     graph.addLabel(item, label)
   }
 }
+
 function onRemoveItemLabels(graph) {
   for (const edge of graph.edges) {
     removeLabels(graph, edge)
@@ -683,6 +768,7 @@ function onRemoveItemLabels(graph) {
     removeLabels(graph, node)
   }
 }
+
 function onGenerateEdgeThicknesses(graph) {
   for (const edge of graph.edges) {
     const thickness = Math.random() * 4 + 1
@@ -697,6 +783,7 @@ function onGenerateEdgeThicknesses(graph) {
   }
   graph.invalidateDisplays()
 }
+
 function onResetEdgeThicknesses(graph) {
   for (const edge of graph.edges) {
     const oldStyle = edge.style
@@ -708,6 +795,7 @@ function onResetEdgeThicknesses(graph) {
   }
   graph.invalidateDisplays()
 }
+
 function onGenerateEdgeDirections(graph) {
   for (const edge of graph.edges) {
     const directed = Math.random() >= 0.5
@@ -721,6 +809,7 @@ function onGenerateEdgeDirections(graph) {
   }
   graph.invalidateDisplays()
 }
+
 function onResetEdgeDirections(graph, directed = false) {
   for (const edge of graph.edges) {
     const oldStyle = edge.style
@@ -733,6 +822,7 @@ function onResetEdgeDirections(graph, directed = false) {
   }
   graph.invalidateDisplays()
 }
+
 function adoptFromOldStyle(oldStyle, style, thickness) {
   const oldStroke = oldStyle.stroke
   if (oldStroke !== null) {
@@ -742,6 +832,7 @@ function adoptFromOldStyle(oldStyle, style, thickness) {
   style.targetArrow = oldStyle.targetArrow
   style.smoothingLength = oldStyle.smoothingLength
 }
+
 function createStroke(prototype, thickness) {
   return new Stroke({
     fill: prototype.fill ?? 'black',
@@ -751,26 +842,33 @@ function createStroke(prototype, thickness) {
     dashStyle: prototype.dashStyle
   }).freeze()
 }
+
 function getDefaultArrow(graph) {
   const defaultStyleArrow = graph.edgeDefaults.style.targetArrow
   return !(defaultStyleArrow instanceof Arrow && defaultStyleArrow.type === ArrowType.NONE)
     ? defaultStyleArrow
     : createDemoEdgeStyle().targetArrow
 }
+
 /**
  * Initializes the graph instance and set default styles.
  */
 function initializeGraph() {
   const graph = graphComponent.graph
+
   // enable grouping and undo support
   graph.undoEngineEnabled = true
+
   // set some nice defaults
   initDemoStyles(graph)
+
   // use a smart label model to support integrated labeling
   const model = new SmartEdgeLabelModel({ autoRotation: false })
   graph.edgeDefaults.labels.layoutParameter = model.createParameterFromSource(0)
+
   registerGraphEditListeners()
 }
+
 /**
  * Store a custom graph entry in the samples, if users modify the graph interactively.
  * The demo only tracks structural changes to the graph.
@@ -786,6 +884,7 @@ function registerGraphEditListeners() {
   geim.editLabelInputMode.addEventListener('label-edited', onGraphEdited)
   geim.createEdgeInputMode.addEventListener('edge-created', onGraphEdited)
 }
+
 /**
  * Listener called when graph is edited.
  */
@@ -793,6 +892,7 @@ function onGraphEdited() {
   addCustomGraphEntry()
   presetsUiBuilder.resetInvalidState()
 }
+
 /**
  * Adds a custom sample graph entry for a modified graph by the user.
  */
@@ -811,6 +911,7 @@ function addCustomGraphEntry() {
   }
   sampleComboBox.selectedIndex = customGraphIdx
 }
+
 /**
  * Creates the default input mode for the {@link GraphComponent},
  * a {@link GraphEditorInputMode}.
@@ -822,6 +923,7 @@ function createEditorMode() {
     enabled: false,
     gridSnapType: GridSnapTypes.NONE
   })
+
   // create default interaction with snapping and orthogonal edge editing
   const mode = new GraphEditorInputMode({
     snapContext: newGraphSnapContext,
@@ -829,11 +931,9 @@ function createEditorMode() {
       // initially disable the orthogonal edge editing
       enabled: false
     }),
-    navigationInputMode: {
-      allowCollapseGroup: false,
-      allowExpandGroup: false
-    }
+    navigationInputMode: { allowCollapseGroup: false, allowExpandGroup: false }
   })
+
   // make bend creation more important than moving of selected edges
   // this has the effect that dragging a selected edge (not its bends)
   // will create a new bend instead of moving all bends
@@ -841,18 +941,23 @@ function createEditorMode() {
   // edge editing because this creates additional bends every time
   // the edge is moved otherwise
   mode.createBendInputMode.priority = mode.moveSelectedItemsInputMode.priority - 1
+
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
   if (BrowserDetection.webGL2) {
     mode.handleInputMode.handlesRenderer = new HandlesRenderer(RenderMode.WEBGL)
   }
+
   // also we add a context menu
   initializeContextMenu(mode)
+
   return mode
 }
+
 function initializeContextMenu(inputMode) {
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   inputMode.addEventListener('populate-item-context-menu', (evt) => populateContextMenu(evt))
 }
+
 /**
  * Populates the context menu based on the item the mouse hovers over
  */
@@ -860,14 +965,18 @@ function populateContextMenu(args) {
   if (args.handled) {
     return
   }
+
   const menuItems = []
+
   // get the item which is located at the mouse position
   const hits = graphComponent.graphModelManager.hitTester.enumerateHits(
     args.context,
     args.queryLocation
   )
+
   // check whether a node was it. If it was, we prefer it over edges
   const hit = hits.find((item) => item instanceof INode) || hits.at(0)
+
   if (!hit) {
     // empty canvas hit: provide 'select all'
     menuItems.push({
@@ -878,6 +987,7 @@ function populateContextMenu(args) {
       }
     })
   }
+
   const graphSelection = graphComponent.selection
   const inputMode = graphComponent.inputMode
   // if a node or an edge is hit: provide 'Select All Nodes' or 'Select All Edges', respectively
@@ -935,11 +1045,13 @@ function populateContextMenu(args) {
       }
     })
   }
+
   // finally, if the context menu has at least one entry, set the showMenu flag
   if (menuItems.length > 0) {
     args.contextMenu = menuItems
   }
 }
+
 /**
  * Wire up the UI...
  */
@@ -962,49 +1074,63 @@ function initializeUI() {
     const geim = graphComponent.inputMode
     geim.snapContext.enabled = snappingEnabled
   })
+
   document.querySelector('#orthogonal-editing-button').addEventListener('click', () => {
     const geim = graphComponent.inputMode
     geim.orthogonalEdgeEditingContext.enabled = querySelector('#orthogonal-editing-button').checked
   })
+
   document.querySelector('#apply-layout-button').addEventListener('click', async () => {
     await applyLayout(false)
   })
+
   document.querySelector('#layout-select-box').addEventListener('change', async () => {
     await onLayoutChanged()
     layoutComboBox.focus()
   })
+
   document.querySelector('#sample-select-box').addEventListener('change', async () => {
     await onSampleChanged()
     sampleComboBox.focus()
   })
+
   // document.querySelector(selector)!.addEventListener('click', action)
+
   document.querySelector('#generate-node-labels').addEventListener('click', () => {
     onGenerateItemLabels(graphComponent.graph.nodes)
     updateModifiedGraphSample()
   })
+
   document.querySelector('#generate-edge-labels').addEventListener('click', () => {
     onGenerateItemLabels(graphComponent.graph.edges)
     updateModifiedGraphSample()
   })
+
   document.querySelector('#remove-labels').addEventListener('click', () => {
     onRemoveItemLabels(graphComponent.graph)
     updateModifiedGraphSample()
   })
+
   document.querySelector('#generate-edge-thickness-button').addEventListener('click', () => {
     onGenerateEdgeThicknesses(graphComponent.graph)
   })
+
   document.querySelector('#reset-edge-thickness-button').addEventListener('click', () => {
     onResetEdgeThicknesses(graphComponent.graph)
   })
+
   document.querySelector('#generate-edge-direction-button').addEventListener('click', () => {
     onGenerateEdgeDirections(graphComponent.graph)
   })
+
   document.querySelector('#reset-edge-direction-button').addEventListener('click', () => {
     onResetEdgeDirections(graphComponent.graph, true)
   })
+
   window.addEventListener('hashchange', async () => {
     await onHashChanged()
   })
+
   // apply layout shortcut with CTRL+Enter
   window.addEventListener('keydown', async (e) => {
     const geim = graphComponent.inputMode
@@ -1025,10 +1151,12 @@ function initializeUI() {
     }
   })
 }
+
 function releaseLocks() {
   inLoadSample = false
   inLayout = false
 }
+
 /**
  * Enables the HTML elements and the input mode.
  * @param disabled true if the elements should be disabled, false otherwise
@@ -1043,12 +1171,14 @@ function setUIDisabled(disabled) {
   graphComponent.inputMode.waiting = disabled
   presetsUiBuilder.setPresetButtonDisabled(disabled)
 }
+
 function updateUIState() {
   sampleComboBox.disabled = false
   layoutComboBox.disabled = false
   layoutButton.disabled = !(configOptionsValid && !inLayout)
   presetsUiBuilder.setPresetButtonDisabled(false)
 }
+
 function removeLabels(graph, item) {
   const labels = new List()
   for (const label of item.labels) {
@@ -1058,6 +1188,7 @@ function removeLabels(graph, item) {
     graph.remove(label)
   }
 }
+
 /**
  * Calculates the center of the accumulated bounds of the given graph's nodes.
  */
@@ -1072,7 +1203,9 @@ function getCenter(graph) {
     return Point.ORIGIN
   }
 }
+
 function querySelector(selector) {
   return document.querySelector(selector)
 }
+
 run().then(finishLoading)

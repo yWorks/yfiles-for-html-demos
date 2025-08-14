@@ -46,11 +46,7 @@ export type Location = { x: number; y: number }
 
 export function useContextMenu(getGraphComponent: () => GraphComponent) {
   // data needed in the context menu' component
-  const data = reactive({
-    items: [] as MenuItem[],
-    location: { x: 0, y: 0 },
-    display: false
-  })
+  const data = reactive({ items: [] as MenuItem[], location: { x: 0, y: 0 }, display: false })
 
   let graphComponent: GraphComponent
   onMounted(() => {
@@ -129,9 +125,5 @@ export function useContextMenu(getGraphComponent: () => GraphComponent) {
     inputMode.contextMenuInputMode.closeMenu()
   }
 
-  return {
-    data,
-    register,
-    hide
-  }
+  return { data, register, hide }
 }

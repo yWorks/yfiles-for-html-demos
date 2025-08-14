@@ -38,6 +38,7 @@ import {
   SnapReferenceVisualizationType
 } from '@yfiles/yfiles'
 import { EqualAngleSnapLine, NodeSnapCircle, NodeSnapLine } from './SnapReferences'
+
 /**
  * Provides {@link SnapReference} for {@link #addCircleSnapReferences circles} around the node
  * with radii to its children, for {@link #addAngleSnapReferences lines with fixed angles}, for
@@ -48,21 +49,26 @@ export class SnapCircleProvider extends NodeSnapReferenceProvider {
   constructor(node) {
     super(node)
   }
+
   anglePoints = new List([
     new Point(0, -1), // 0°
     new Point(1, 0), // 90°
     new Point(0, 1), // 180°
     new Point(-1, 0) // 360°
   ])
+
   addSnapReferences(context, evt) {
     const graphComponent = evt.context.canvasComponent
     if (!(graphComponent instanceof GraphComponent)) {
       return
     }
+
     const centerNode = this.node
     const graph = graphComponent.graph
+
     const center = centerNode.layout.center
     const outEdges = graph.outEdgesAt(centerNode)
+
     const radii = Array.from(
       new Set(
         outEdges.map((outEdge) => {
@@ -73,11 +79,13 @@ export class SnapCircleProvider extends NodeSnapReferenceProvider {
     )
     const siblings = outEdges.map((outEdge) => outEdge.targetNode).toArray()
     const fullViewportSize = Math.max(graphComponent.viewport.width, graphComponent.viewport.height)
+
     this.addCircleSnapReferences(evt, radii, centerNode, center)
     this.addAngleSnapReferences(evt, centerNode, center, fullViewportSize)
     this.addOppositeSiblingSnapReferences(evt, siblings, center, fullViewportSize, centerNode)
     this.addEqualAngleSnapReferences(context, evt, siblings, center, fullViewportSize, centerNode)
   }
+
   /**
    * Adds circular snap references around the given node at the given radii.
    */
@@ -88,6 +96,7 @@ export class SnapCircleProvider extends NodeSnapReferenceProvider {
       )
     }
   }
+
   /**
    * Adds snap lines radiating out from the given node at pre-determined {@link #anglePoints angles}.
    */
@@ -105,6 +114,7 @@ export class SnapCircleProvider extends NodeSnapReferenceProvider {
       )
     }
   }
+
   /**
    * Adds snap lines radiating out from the given center node opposite each given sibling node.
    */
@@ -112,6 +122,7 @@ export class SnapCircleProvider extends NodeSnapReferenceProvider {
     for (const sibling of siblings) {
       const siblingCenter = sibling.layout.center
       const opposite = center.add(center.subtract(siblingCenter).normalized.multiply(maxRadius))
+
       evt.addSnapReference(
         new NodeSnapLine(
           centerNode,
@@ -124,6 +135,7 @@ export class SnapCircleProvider extends NodeSnapReferenceProvider {
       )
     }
   }
+
   /**
    * Adds snap lines radiating out from the given center node bisecting the angles between any two
    * consecutive nodes of the given sibling nodes.
@@ -131,6 +143,7 @@ export class SnapCircleProvider extends NodeSnapReferenceProvider {
   addEqualAngleSnapReferences(context, evt, siblings, center, maxRadius, centerNode) {
     const angles = new Map()
     const movedNodes = context.affectedItems.ofType(INode).toArray()
+
     // calculate the angle for each sibling and sort the siblings according to their angles
     const fixedSiblings = siblings
       .filter((sibling) => !movedNodes.includes(sibling))
@@ -141,15 +154,18 @@ export class SnapCircleProvider extends NodeSnapReferenceProvider {
         return fixedSibling
       })
       .sort((a, b) => angles.get(a) - angles.get(b))
+
     for (let i = 0, n = fixedSiblings.length; i < n; ++i) {
       const sibling1 = fixedSiblings[i == 0 ? n - 1 : i - 1]
       const sibling2 = fixedSiblings[i]
+
       // calculate the angle for the bisecting line between the two siblings
       const angleOffset = i == 0 ? 2 * Math.PI : 0
       const centeredAngle = (angles.get(sibling1) - angleOffset + angles.get(sibling2)) * 0.5
       const centeredPoint = new Point(Math.cos(centeredAngle), Math.sin(centeredAngle))
         .multiply(maxRadius)
         .add(center)
+
       evt.addSnapReference(
         new EqualAngleSnapLine(
           centerNode,

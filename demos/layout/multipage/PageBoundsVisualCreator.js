@@ -27,10 +27,12 @@
  **
  ***************************************************************************/
 import { BaseClass, IRenderContext, IVisualCreator, Point, SvgVisual, Visual } from '@yfiles/yfiles'
+
 /**
  * A constant margin for the page so the graph does not touch the frame.
  */
 const MARGIN = 15
+
 /**
  * This class renders a rectangle that represents the page.
  */
@@ -38,6 +40,7 @@ export class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
   pageWidth = 0
   pageHeight = 0
   center
+
   constructor() {
     super()
     /**
@@ -45,6 +48,7 @@ export class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
      */
     this.center = Point.ORIGIN
   }
+
   /**
    * Creates a visual for a rectangular page.
    * @see Overrides {@link IVisualCreator.createVisual}.
@@ -56,8 +60,10 @@ export class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
     rectangle.setAttribute('stroke-dasharray', '5')
     rectangle.setAttribute('stroke-linecap', 'square')
     rectangle.setAttribute('fill', 'white')
+
     return this.updateVisual(context, new SvgVisual(rectangle))
   }
+
   /**
    * Updates the size of the visual for a rectangular page.
    * @see Overrides {@link IVisualCreator.updateVisual}.
@@ -66,19 +72,23 @@ export class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
     if (this.pageWidth === 0 || this.pageHeight === 0) {
       return null
     }
+
     const rectangle = oldVisual.svgElement
     // update the size of the page
     const width = this.pageWidth + MARGIN
     const height = this.pageHeight + MARGIN
+
     rectangle.setAttribute('x', '0')
     rectangle.setAttribute('y', '0')
     rectangle.setAttribute('width', width.toString())
     rectangle.setAttribute('height', height.toString())
+
     // update the position of the page
     rectangle.setAttribute(
       'transform',
       `translate(${this.center.x - width * 0.5} ${this.center.y - height * 0.5})`
     )
+
     return oldVisual
   }
 }

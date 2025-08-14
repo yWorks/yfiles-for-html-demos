@@ -37,12 +37,14 @@ import {
   Size
 } from '@yfiles/yfiles'
 import { AdditionalSnapLinePositionHandler } from './AdditionalSnapLinePositionHandler'
+
 /**
  * This input mode allows moving free snap lines using a drag gesture.
  */
 export class AdditionalSnapLineMoveInputMode extends MoveInputMode {
   snapLineCreators
   handler = null
+
   /**
    * Creates a new instance of {@link AdditionalSnapLineMoveInputMode}
    */
@@ -52,6 +54,7 @@ export class AdditionalSnapLineMoveInputMode extends MoveInputMode {
     this.positionHandler = null
     this.hitTestable = IHitTestable.create(this.isValidHit.bind(this))
   }
+
   /**
    * Returns true if an AdditionalSnapLine can be found in a close surrounding of the given location.
    */
@@ -65,6 +68,7 @@ export class AdditionalSnapLineMoveInputMode extends MoveInputMode {
       return false
     }
   }
+
   /**
    * Returns the first AdditionalSnapLine found in a close surrounding of the given location
    * or null if none can be found.
@@ -73,6 +77,7 @@ export class AdditionalSnapLineMoveInputMode extends MoveInputMode {
     const surrounding = new Rect(location.add(new Point(-3, -3)), new Size(6, 6))
     return this.snapLineCreators.find((line) => surrounding.intersectsLine(line.from, line.to))
   }
+
   /**
    * Sets the {@link MoveInputMode.positionHandler} property.
    * @see Overrides {@link MoveInputMode.onDragStarting}
@@ -81,6 +86,7 @@ export class AdditionalSnapLineMoveInputMode extends MoveInputMode {
     this.positionHandler = this.handler
     super.onDragStarting(inputModeEventArgs)
   }
+
   /**
    * Clears the {@link MoveInputMode.positionHandler} property.
    * @see Overrides {@link MoveInputMode.onDragCanceled}
@@ -89,6 +95,7 @@ export class AdditionalSnapLineMoveInputMode extends MoveInputMode {
     super.onDragCanceled(inputModeEventArgs)
     this.positionHandler = null
   }
+
   /**
    * Clears the {@link MoveInputMode.positionHandler} property.
    * @see Overrides {@link MoveInputMode.onDragFinished}

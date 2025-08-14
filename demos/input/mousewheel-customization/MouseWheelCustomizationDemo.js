@@ -38,22 +38,30 @@ import {
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the graph component
   const graphComponent = new GraphComponent('graphComponent')
+
   // Set custom style defaults that will be used for newly created graph items
   initDemoStyles(graphComponent.graph)
   // initialize the graph
   createSampleGraph(graphComponent.graph)
   initializeUI(graphComponent)
+
   // initialize the input mode
   graphComponent.inputMode = new GraphEditorInputMode()
+
   updateMouseWheelBehavior('custom', graphComponent)
+
   graphComponent.selection.add(graphComponent.graph.nodes.first())
+
   // center the graph
   void graphComponent.fitGraphBounds()
 }
+
 function updateModifiers(value, graphComponent) {
   switch (value) {
     case 'default':
@@ -66,6 +74,7 @@ function updateModifiers(value, graphComponent) {
       break
   }
 }
+
 // a wheel event listener that resizes the selected nodes when shift and control both are pressed.
 const customWheelListener = (evt, eventSource) => {
   const graphComponent = eventSource
@@ -79,6 +88,7 @@ const customWheelListener = (evt, eventSource) => {
       // shrink the node
       growthFactor = 1 / growthFactor
     }
+
     selectedNodes.forEach((node) => {
       const oldLayout = node.layout.toRect()
       // calculate the new layout
@@ -90,6 +100,7 @@ const customWheelListener = (evt, eventSource) => {
     evt.preventDefault()
   }
 }
+
 function updateMouseWheelBehavior(value, graphComponent) {
   switch (value) {
     case 'none':
@@ -114,6 +125,7 @@ function updateMouseWheelBehavior(value, graphComponent) {
       break
   }
 }
+
 /**
  * Creates the initial sample graph.
  */
@@ -122,6 +134,7 @@ function createSampleGraph(graph) {
   graph.createNode(new Rect(0, 0, 50, 50))
   graph.createNode(new Rect(200, 0, 50, 50))
 }
+
 /**
  * Wires up the toolbar UI elements.
  */
@@ -143,4 +156,5 @@ function initializeUI(graphComponent) {
     graphComponent.mouseWheelZoomFactor = Number.parseFloat(zoomFactorInput.value)
   })
 }
+
 run().then(finishLoading)

@@ -43,21 +43,28 @@ import { nodeTypesMap } from './data-types'
 import { getArcEdgeStyle, initializeDefaultStyles, updateStyles } from './styles'
 import { krebsCycleData } from './resources/krebs-cycle-data'
 import { configureKrebsCycleLayout } from './configure-krebs-cycle-layout'
+
 let graphComponent
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
   // initialize the interaction
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // set some default styles for nodes and edges
   initializeDefaultStyles(graphComponent.graph)
+
   // load the data-set and create the graph
   loadSample()
+
   // configure and run the organic layout algorithm
   void runLayout()
+
   // wire-up the UI
   initializeUI()
 }
+
 /**
  * Loads the new graph sample and updates the style and the graph structure.
  */
@@ -69,6 +76,7 @@ function loadSample() {
   // remove the parallel edge since we use a bidirectional edge style
   removeParallelEdges()
 }
+
 /**
  * Runs the appropriate layout configuration based on the selected sample.
  */
@@ -78,6 +86,7 @@ async function runLayout() {
     sample === 'pentose'
       ? configurePentosePhosphateLayout(graphComponent)
       : configureKrebsCycleLayout()
+
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
     layout: config.layout,
@@ -86,18 +95,21 @@ async function runLayout() {
     animateViewport: true
   })
   await layoutExecutor.start()
+
   // update arc edges based on the source/target positions
   const graph = graphComponent.graph
   graph.edges
     .filter((edge) => edge.style instanceof ArcEdgeStyle)
     .forEach((edge) => graph.setStyle(edge, getArcEdgeStyle(graph, edge)))
 }
+
 /**
  * Loads the input data and builds the graph.
  */
 function createGraph() {
   const sample = document.querySelector('#select-sample').value
   const sampleData = sample === 'pentose' ? pentosePhosphateData : krebsCycleData
+
   const builder = new GraphBuilder(graphComponent.graph)
   // create the nodes and update the nodes' tag based on the type mapping
   builder.createNodesSource({
@@ -108,15 +120,14 @@ function createGraph() {
     },
     labels: [(data) => data.label ?? '']
   })
+
   // create the edges
-  builder.createEdgesSource({
-    data: sampleData.edges,
-    sourceId: 'source',
-    targetId: 'target'
-  })
+  builder.createEdgesSource({ data: sampleData.edges, sourceId: 'source', targetId: 'target' })
+
   // create the graph
   builder.buildGraph()
 }
+
 /**
  * Removes the parallel edges that have already been assigned a void edge style.
  */
@@ -128,6 +139,7 @@ function removeParallelEdges() {
     }
   }
 }
+
 /**
  * Binds actions to the elements of the toolbar.
  */
@@ -140,4 +152,5 @@ function initializeUI() {
     await runLayout()
   })
 }
+
 void run().then(finishLoading)

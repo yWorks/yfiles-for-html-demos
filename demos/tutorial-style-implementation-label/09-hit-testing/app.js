@@ -38,19 +38,29 @@ import {
   IsHitLabelStyleRenderer
 } from '../common'
 import { CustomLabelStyle } from './CustomLabelStyle'
+
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
 initializeLabelModelHitTest(graphComponent)
+
 graphComponent.graphModelManager.nodeLabelRenderer = new IsHitLabelStyleRenderer()
 graphComponent.graphModelManager.edgeLabelRenderer = new IsHitLabelStyleRenderer()
+
 const graph = graphComponent.graph
 graph.nodeDefaults.labels.style = new CustomLabelStyle()
 graph.edgeDefaults.labels.style = new CustomLabelStyle()
+
 createSampleGraphHitTesting(graph)
+
 const graphEditorInputMode = enableGraphEditing(graphComponent)
 graphEditorInputMode.selectableItems = GraphItemTypes.NONE
 addHoverEffect(graphComponent, graphEditorInputMode)
+
 await fitGraphBounds(graphComponent)
+
 finishLoading()

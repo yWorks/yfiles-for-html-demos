@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// eslint-disable @typescript-eslint/explicit-function-return-type
 import {
   Arrow,
   EdgePathLabelModel,
@@ -39,6 +38,7 @@ import {
   PortAdjustmentPolicy,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
+
 const SampleData = {
   nodeList: [
     { id: 0, layout: { x: 432.5, y: 0, width: 40, height: 40 }, tag: { type: 2 } },
@@ -118,6 +118,7 @@ const SampleData = {
     { source: 9, target: 34 }
   ]
 }
+
 /**
  * Creates an initial sample graph.
  */
@@ -148,6 +149,7 @@ export function createSampleGraph(graph) {
   })
   nodeLabelCreator.styleProvider = () => labelStyle.clone()
   nodeLabelCreator.textProvider = (dataItem) => `.node\n.type-${dataItem.tag.type || '0'}`
+
   const edgesSource = builder.createEdgesSource({
     data: SampleData.edgeList,
     sourceId: 'source',
@@ -158,11 +160,7 @@ export function createSampleGraph(graph) {
         smoothingLength: 50,
         cssClass: 'edge',
         stroke: '1px solid currentColor',
-        targetArrow: new Arrow({
-          stroke: null,
-          fill: 'currentColor',
-          type: 'triangle'
-        })
+        targetArrow: new Arrow({ stroke: null, fill: 'currentColor', type: 'triangle' })
       })
     }
   })
@@ -174,13 +172,14 @@ export function createSampleGraph(graph) {
   }).createRatioParameter()
   edgeLabelCreator.styleProvider = () => labelStyle.clone()
   edgeLabelCreator.textProvider = () => '.edge'
+
   builder.buildGraph()
-  const layout = new HierarchicalLayout({
-    nodeDistance: 50
-  })
+
+  const layout = new HierarchicalLayout({ nodeDistance: 50 })
   const layoutData = new HierarchicalLayoutData({
     // consider the node types of the sample data
     nodeTypes: (node) => node.tag.type
   })
+
   graph.applyLayout({ layout, layoutData, portAdjustmentPolicies: PortAdjustmentPolicy.ALWAYS })
 }

@@ -67,10 +67,7 @@ export function prepareProcessVisualization(graph: IGraph, eventLog: EventLog): 
     if (processTransition.isSelfLoop) {
       allEvents = eventsByActivities[processTransitionData.sourceLabel]
       allEvents.sort((event1, event2) => event1.timestamp - event2.timestamp)
-      allEvents = allEvents.map((event, index) => ({
-        source: index % 2 === 0,
-        event
-      }))
+      allEvents = allEvents.map((event, index) => ({ source: index % 2 === 0, event }))
     } else {
       const sourceEvents = eventsByActivities[processTransitionData.sourceLabel].map((event) => ({
         source: true,
@@ -103,6 +100,7 @@ export function prepareProcessVisualization(graph: IGraph, eventLog: EventLog): 
 
             // add an item to the transition representing the event
             addItem(
+              events[0].event.caseId,
               processTransition,
               false,
               event.timestamp,

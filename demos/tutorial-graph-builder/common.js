@@ -37,12 +37,14 @@ import {
   PortAdjustmentPolicy,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
+
 /**
  * Retrieves sample ownership data.
  */
 export async function getData() {
   return fetch('../ownership-data.json').then((response) => response.json())
 }
+
 /**
  * Configures colors for styling the nodes retrieved from the given data sources.
  */
@@ -65,6 +67,7 @@ export function configureStyles(nodesSources) {
     })
   })
 }
+
 /**
  * Applies a preconfigured layout.
  */
@@ -72,6 +75,7 @@ export async function runLayout(graphComponent, animated = false) {
   graphComponent.limitFitContentZoom = false
   const hierarchicalLayout = new HierarchicalLayout()
   hierarchicalLayout.componentLayout.enabled = true
+
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
     layout: hierarchicalLayout,
@@ -82,6 +86,7 @@ export async function runLayout(graphComponent, animated = false) {
   })
   await layoutExecutor.start()
 }
+
 /**
  * Initializes the default styles for nodes, edges, and labels.
  */
@@ -104,11 +109,10 @@ export function initializeTutorialDefaults(graphComponent) {
     stroke: '1.5px #0b7189',
     targetArrow: '#0b7189 medium triangle'
   })
-  graph.groupNodeDefaults.style = new GroupNodeStyle({
-    tabFill: '#111d4a',
-    contentAreaPadding: 10
-  })
+
+  graph.groupNodeDefaults.style = new GroupNodeStyle({ tabFill: '#111d4a', contentAreaPadding: 10 })
 }
+
 /**
  * Fits the graph into the graph component with a minimum zoom value.
  * The graph will be slightly zoomed in to avoid that small graphs are displayed too small.

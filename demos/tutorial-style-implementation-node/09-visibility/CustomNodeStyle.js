@@ -29,33 +29,45 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { GeneralPath, NodeStyleBase, Rect, Size, SvgVisual } from '@yfiles/yfiles'
+
 const tabWidth = 50
 const tabHeight = 14
+
 export class CustomNodeStyle extends NodeStyleBase {
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
+
     const circleElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     circleElement.cx.baseVal.value = node.layout.width * 0.5
     circleElement.cy.baseVal.value = node.layout.height * 0.5
     circleElement.r.baseVal.value = Math.max(node.layout.width, node.layout.height)
     circleElement.setAttribute('fill', '#0b7189')
     circleElement.setAttribute('fill-opacity', '0.3')
+
     const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     pathElement.setAttribute('d', createPathData(0, 0, width, height))
+
     pathElement.setAttribute('fill', node.tag?.color ?? '#0b7189')
     pathElement.setAttribute('stroke', '#333')
+
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     SvgVisual.setTranslate(g, x, y)
+
     g.append(circleElement)
     g.append(pathElement)
+
     return new SvgVisual(g)
   }
+
+
   isVisible(context, rectangle, node) {
     // consider the circle, which is twice the size of the node
     const circleDiameter = Math.max(node.layout.height, node.layout.width) * 2
     const bounds = Rect.fromCenter(node.layout.center, new Size(circleDiameter, circleDiameter))
     return rectangle.intersects(bounds)
   }
+
+
   isHit(context, location, node) {
     // Check for bounding box
     if (!node.layout.toRect().contains(location, context.hitTestRadius)) {
@@ -63,6 +75,7 @@ export class CustomNodeStyle extends NodeStyleBase {
     }
     const { x, y } = location
     const { x: layoutX, y: layoutY } = node.layout
+
     // Check for the upper-right corner, which is empty
     if (
       x > layoutX + tabWidth + context.hitTestRadius &&
@@ -73,6 +86,7 @@ export class CustomNodeStyle extends NodeStyleBase {
     // all other points are either inside the tab or the rest of the node
     return true
   }
+
   getOutline(node) {
     // Use the node's layout, and enlarge it with half the stroke width
     // to ensure that the arrow ends exactly at the outline
@@ -87,6 +101,7 @@ export class CustomNodeStyle extends NodeStyleBase {
     path.close()
     return path
   }
+
   isInside(node, location) {
     // Check for bounding box
     if (!node.layout.contains(location)) {
@@ -94,6 +109,7 @@ export class CustomNodeStyle extends NodeStyleBase {
     }
     const { x, y } = location
     const { y: ly } = node.layout
+
     // Check for the upper-right corner, which is empty
     if (x > x + tabWidth && y < ly + tabHeight) {
       return false
@@ -103,6 +119,7 @@ export class CustomNodeStyle extends NodeStyleBase {
     return true
   }
 }
+
 /**
  * Creates the path data for the SVG path element.
  */

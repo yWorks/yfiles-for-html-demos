@@ -116,32 +116,20 @@ function createShapeSamples(shapes: ShapeNodeShape[], column: number, graph: IGr
     // Create a green node with aspect ratio 1:1
     const n1 = graph.createNode({
       layout: [column * 350 - size1 / 2, i * 200 - size1 / 2, size1, size1],
-      style: new ShapeNodeStyle({
-        shape: shapes[i],
-        fill: fill1,
-        stroke: stroke1
-      })
+      style: new ShapeNodeStyle({ shape: shapes[i], fill: fill1, stroke: stroke1 })
     })
 
     // Create a blue node with aspect ratio 2:1
     const n2 = graph.createNode({
       layout: [column * 350 + 100 - size2 / 2, i * 200 - size1 / 2, size2, size1],
-      style: new ShapeNodeStyle({
-        shape: shapes[i],
-        fill: fill2,
-        stroke: stroke2
-      }),
+      style: new ShapeNodeStyle({ shape: shapes[i], fill: fill2, stroke: stroke2 }),
       labels: [ShapeNodeShape[shapes[i]]]
     })
 
     // Create a yellow node with aspect ratio 1:2
     const n3 = graph.createNode({
       layout: [column * 350 + 200 - size1 / 2, i * 200 - size2 / 2, size1, size2],
-      style: new ShapeNodeStyle({
-        shape: shapes[i],
-        fill: fill3,
-        stroke: stroke3
-      })
+      style: new ShapeNodeStyle({ shape: shapes[i], fill: fill3, stroke: stroke3 })
     })
 
     graph.createEdge(n1, n2)

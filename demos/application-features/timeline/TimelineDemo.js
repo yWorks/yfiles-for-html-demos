@@ -33,35 +33,44 @@ import {
   License,
   OrganicLayout
 } from '@yfiles/yfiles'
+
 import { timelineData } from './timeline-data'
 import { Timeline } from './timeline-component/Timeline'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+
 /**
  * The main graph component that displays the graph.
  */
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the main graph component and graph style
   graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
   initDemoStyles(graph)
+
   // build graph with the given data
   buildGraph(graph, timelineData)
+
   //initialize the timeline component
   const timeline = initializeTimeline()
+
   // build timeline with the data stored in graph nodes
   timeline.items = graph.nodes.map(getNodeData).toArray()
+
   // apply layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new OrganicLayout())
   await graphComponent.fitGraphBounds()
 }
+
 /**
  * Initializes a timeline component without timeframe rectangle and play button,
  * and register click and hover event listeners on its bar elements.
@@ -72,15 +81,15 @@ function initializeTimeline() {
     inTimeframeBars: { fill: '#e0d5cc' },
     barHover: { stroke: '#662b00' },
     barSelect: { fill: '#ffc499' },
-    legend: {
-      even: { backgroundFill: '#ff6c00' },
-      odd: { backgroundFill: '#ffc499' }
-    }
+    legend: { even: { backgroundFill: '#ff6c00' }, odd: { backgroundFill: '#ffc499' } }
   }
+
   const timeline = new Timeline('timeline-component', getTimeEntry, timelineStyle, false, false)
+
   timeline.setBarSelectListener((items) => {
     const selection = graphComponent.selection
     selection.clear()
+
     const selectedItems = new Set(items.map((item) => item.id))
     graphComponent.graph.nodes.forEach((node) => {
       const nodeData = getNodeData(node)
@@ -89,9 +98,11 @@ function initializeTimeline() {
       }
     })
   })
+
   timeline.setBarHoverListener((items) => {
     const highlights = graphComponent.highlights
     highlights.clear()
+
     const selectedItems = new Set(items.map((item) => item.id))
     graphComponent.graph.nodes.forEach((node) => {
       const nodeData = getNodeData(node)
@@ -100,28 +111,36 @@ function initializeTimeline() {
       }
     })
   })
+
   return timeline
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, data) {
   const builder = new GraphBuilder(graph)
+
   const entityNodesSource = builder.createNodesSource(data.nodeList, 'id')
+
   entityNodesSource.nodeCreator.tagProvider = (node) => ({
     ...node,
     start: convertDates(node.start),
     end: convertDates(node.end)
   })
+
   builder.createEdgesSource(data.edgeList, 'from', 'to')
+
   builder.buildGraph()
 }
+
 /**
  * Returns an object or a list of objects containing the timestamps
  * of the start and end dates stored in the data for the given node.
  */
 function getTimeEntry(item) {
   const ni = item
+
   if (ni.start.length === 1 && ni.end.length === 1) {
     return { start: ni.start[0].getTime(), end: ni.end[0].getTime() }
   } else {
@@ -131,12 +150,14 @@ function getTimeEntry(item) {
     }))
   }
 }
+
 /**
  * Returns the information stored in the data for the given node.
  */
 function getNodeData(node) {
   return node.tag
 }
+
 /**
  * Returns a Date object or a list of Date objects that are converted from
  * the given string / list of string.
@@ -144,4 +165,5 @@ function getNodeData(node) {
 function convertDates(dates) {
   return Array.isArray(dates) ? dates.map((e) => new Date(e)) : [new Date(dates)]
 }
+
 void run().then(finishLoading)

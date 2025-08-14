@@ -52,11 +52,7 @@ function initGraph(graphComponent: GraphComponent) {
   graphComponent.graph.nodeDefaults.size = new Size(width, height)
 
   for (const { x, y, tag } of graphData) {
-    graphComponent.graph.createNode({
-      layout: [x, y, width, height],
-      style,
-      tag
-    })
+    graphComponent.graph.createNode({ layout: [x, y, width, height], style, tag })
   }
 }
 

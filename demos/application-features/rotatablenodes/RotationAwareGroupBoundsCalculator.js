@@ -36,6 +36,7 @@ import {
   Rect
 } from '@yfiles/yfiles'
 import { RotatableNodeStyleDecorator } from './RotatableNodes'
+
 /**
  * Calculates group bounds taking the rotated layout for nodes which
  * {@link RotatableNodeStyleDecorator support rotation}.
@@ -46,6 +47,7 @@ export class RotationAwareGroupBoundsCalculator extends BaseClass(IGroupBoundsCa
     super()
     this.node = node
   }
+
   /**
    * Calculates the minimum bounds for the given group node to enclose all its children plus insets.
    */
@@ -65,6 +67,7 @@ export class RotationAwareGroupBoundsCalculator extends BaseClass(IGroupBoundsCa
     return bounds.isEmpty ? bounds : bounds.getEnlarged(getPadding(this.node))
   }
 }
+
 /**
  * Returns insets to add to apply to the given groupNode.
  */

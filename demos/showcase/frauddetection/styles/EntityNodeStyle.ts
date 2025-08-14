@@ -45,9 +45,7 @@ import { nodeStyleMapping } from './graph-styles'
 /**
  * Augment the SvgVisual type with the data used to cache the rendering information
  */
-type Cache = {
-  fraud: boolean
-}
+type Cache = { fraud: boolean }
 type EntityNodeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 /**

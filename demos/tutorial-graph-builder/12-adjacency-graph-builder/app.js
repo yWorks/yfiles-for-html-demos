@@ -29,14 +29,21 @@
 import { GraphComponent, License, Size } from '@yfiles/yfiles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 import { orgChartData } from './adjacency-data'
 import { configureGraphBuilder } from './adjacency-graph-building'
 import { initializeTutorialDefaults, runLayout } from '../common'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
+
 graphComponent.graph.nodeDefaults.size = new Size(200, 80)
+
 const adjacencyGraphBuilder = configureGraphBuilder(graphComponent.graph, orgChartData)
 adjacencyGraphBuilder.buildGraph()
+
 void runLayout(graphComponent)
+
 finishLoading()

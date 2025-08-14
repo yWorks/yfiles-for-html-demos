@@ -59,10 +59,7 @@ type Sample1LabelStyleVisual = TaggedSvgVisual<SVGGElement, LabelRenderDataCache
  * editing of the label text.
  */
 export class Sample1LabelStyle extends LabelStyleBase<Sample1LabelStyleVisual> {
-  private readonly font: Font = new Font({
-    fontFamily: 'Arial',
-    fontSize: 12
-  })
+  private readonly font: Font = new Font({ fontFamily: 'Arial', fontSize: 12 })
 
   /**
    * Creates the visual for a label to be drawn.

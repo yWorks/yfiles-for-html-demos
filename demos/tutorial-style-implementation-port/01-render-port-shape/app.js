@@ -36,11 +36,18 @@ import {
   fitGraphBounds,
   initializeTutorialDefaults
 } from '../common'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
+
 graphComponent.graph.nodeDefaults.ports.style = new CustomPortStyle()
+
 createSimpleGraph(graphComponent.graph)
 enableGraphEditing(graphComponent)
+
 fitGraphBounds(graphComponent)
+
 finishLoading()

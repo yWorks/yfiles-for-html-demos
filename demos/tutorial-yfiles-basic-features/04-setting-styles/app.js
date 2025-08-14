@@ -36,13 +36,18 @@ import {
   initializeTutorialDefaults
 } from '../common'
 import { createGraphItemsWithStyles, setDefaultStyles, setStyles } from './setting-styles'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
+
 setDefaultStyles(graphComponent.graph)
 createSampleGraph(graphComponent.graph)
+
 fitGraphBounds(graphComponent)
 finishLoading()
+
 addButtonListener('#createGraphItemsWithStylesButton', () =>
   createGraphItemsWithStyles(graphComponent.graph)
 )

@@ -47,16 +47,15 @@ import {
 import licenseData from '../../../lib/license.json'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
-import { basicSetup, EditorView } from 'codemirror'
-import { StateEffect, type StateEffectType, StateField } from '@codemirror/state'
-import { lintGutter } from '@codemirror/lint'
-import { javascript } from '@codemirror/lang-javascript'
-import { xml } from '@codemirror/lang-xml'
-import { getJsonLinter, getXmlLinter } from '@yfiles/demo-resources/codeMirrorLinters'
-const xmlLinter = getXmlLinter()
-const jsonLinter = getJsonLinter()
-let graphComponent: GraphComponent
+import {
+  createCodemirrorEditor,
+  EditorView,
+  StateEffect,
+  type StateEffectType,
+  StateField
+} from '@yfiles/demo-resources/codemirror-editor'
 
+let graphComponent: GraphComponent
 let templateEditor: EditorView
 let setTemplateEditorEditable: StateEffectType<boolean>
 
@@ -94,17 +93,11 @@ function initializeEditors(): void {
       return value
     }
   })
-  templateEditor = new EditorView({
-    parent: document.querySelector('#templateEditorContainer')!,
-    extensions: [
-      basicSetup,
-      xml(),
-      lintGutter(),
-      xmlLinter,
-      templateEditorEditable,
-      EditorView.editable.from(templateEditorEditable)
-    ]
-  })
+  templateEditor = createCodemirrorEditor(
+    'xml',
+    document.querySelector('#templateEditorContainer')!,
+    [templateEditorEditable, EditorView.editable.from(templateEditorEditable)]
+  )
 
   setTagEditorEditable = StateEffect.define<boolean>()
   const tagEditorEditable = StateField.define<boolean>({
@@ -118,17 +111,10 @@ function initializeEditors(): void {
       return value
     }
   })
-  tagEditor = new EditorView({
-    parent: document.querySelector('#tagEditorContainer')!,
-    extensions: [
-      basicSetup,
-      javascript(),
-      jsonLinter,
-      lintGutter(),
-      tagEditorEditable,
-      EditorView.editable.from(tagEditorEditable)
-    ]
-  })
+  tagEditor = createCodemirrorEditor('json', document.querySelector('#tagEditorContainer')!, [
+    tagEditorEditable,
+    EditorView.editable.from(tagEditorEditable)
+  ])
 
   // disable standard selection and focus visualization
   graphComponent.selectionIndicatorManager.enabled = false
@@ -181,11 +167,7 @@ function initializeEditors(): void {
     })
     tagEditor.dispatch({
       effects: setTagEditorEditable.of(false),
-      changes: {
-        from: 0,
-        to: tagEditor.state.doc.length,
-        insert: 'Select a node to edit its tag.'
-      }
+      changes: { from: 0, to: tagEditor.state.doc.length, insert: 'Select a node to edit its tag.' }
     })
     document.querySelector<HTMLButtonElement>(`#apply-template-button`)!.disabled = true
     document.querySelector<HTMLButtonElement>(`#apply-tag-button`)!.disabled = true

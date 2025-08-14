@@ -149,10 +149,7 @@ export class ListNodeStyle extends NodeStyleBase<ListNodeStyleVisual> {
   private render(g: SVGGElement, nodeSize: Size, nodeInfo: NodeInfo, context: IRenderContext) {
     // draw the rect with a thick border
     const borderThickness = 4
-    const borderStroke = new Stroke({
-      fill: this.borderFill,
-      thickness: borderThickness
-    })
+    const borderStroke = new Stroke({ fill: this.borderFill, thickness: borderThickness })
     // rect around the border with backgroundFill
     const border = document.createElementNS(SVGNS, 'rect')
     border.width.baseVal.value = nodeSize.width

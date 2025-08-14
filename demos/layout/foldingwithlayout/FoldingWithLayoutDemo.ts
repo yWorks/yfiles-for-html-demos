@@ -78,10 +78,7 @@ function initializeGraph(): void {
 
   // managing the appearance of folder nodes
   foldingManager.folderNodeConverter = new FolderNodeConverter({
-    folderNodeDefaults: {
-      copyLabels: true,
-      size: new Size(110, 60)
-    }
+    folderNodeDefaults: { copyLabels: true, size: new Size(110, 60) }
   })
 
   // read sample graph
@@ -146,9 +143,7 @@ function buildGraph(graph: IGraph): void {
   // applying  hierarchical layout with recursive edges
   const hierarchicalLayout = new HierarchicalLayout({
     fromSketchMode: true,
-    defaultEdgeDescriptor: {
-      recursiveEdgePolicy: 'directed'
-    }
+    defaultEdgeDescriptor: { recursiveEdgePolicy: 'directed' }
   })
 
   // apply a layout and move it to the top of the graph component

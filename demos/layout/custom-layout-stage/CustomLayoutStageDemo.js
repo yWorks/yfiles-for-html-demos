@@ -41,16 +41,19 @@ import {
   ShapeNodeStyle,
   Size
 } from '@yfiles/yfiles'
+
 import { MoveNodesAsideStage } from './MoveNodesAsideStage'
 import { AlignmentStage } from './AlignmentStage'
 import { ZigZagEdgesStage } from './ZigZagEdgesStage'
 import { createDemoNodeLabelStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * The graph component in which the graph is displayed.
  */
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
@@ -58,19 +61,24 @@ async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
+
   // Create the sample graph
   await createGraph(graphComponent.graph)
+
   // Finally, enable the undo engine. This prevents undoing of the graph creation
   graphComponent.graph.undoEngineEnabled = true
+
   // Bind the buttons to their actions
   initializeUI()
 }
+
 /**
  * Moves the nodes marked “aside” to the side of the graph.
  */
 function runMoveAsideLayout() {
   // Create the custom stage including core layout
   const layout = new MoveNodesAsideStage(createCoreLayout())
+
   // Execute the layout
   return new LayoutExecutor({
     graphComponent,
@@ -79,16 +87,19 @@ function runMoveAsideLayout() {
     animationDuration: '0.5s'
   }).start()
 }
+
 /**
  * Aligns the green nodes vertically in the graph.
  */
 async function runAlignNodesLayout() {
   // Create the custom stage including core layout
   const layout = new AlignmentStage(createCoreLayout())
+
   // create the layout data for the custom alignment stage
   let layoutData = createAlignmentStageLayoutData()
   // combine this with the layoutData of the hierarchical layout
   layoutData = layoutData.combineWith(createHierarchicalLayoutData())
+
   // Execute the layout
   await new LayoutExecutor({
     graphComponent,
@@ -97,12 +108,14 @@ async function runAlignNodesLayout() {
     animationDuration: '0.5s'
   }).start()
 }
+
 /**
  * Changes edge paths to a zig-zag shape.
  */
 async function runZigZagLayout() {
   // Create the custom stage including core layout
   const layout = new ZigZagEdgesStage(createCoreLayout())
+
   // Execute the layout
   await new LayoutExecutor({
     graphComponent,
@@ -111,6 +124,7 @@ async function runZigZagLayout() {
     animationDuration: '0.5s'
   }).start()
 }
+
 /**
  * Applies all custom layout stages at once. Typically, layout stages can be chained like this to
  * divide responsibilities for different parts of the layout customization into separate stages.
@@ -123,10 +137,12 @@ async function runAllLayouts() {
   const layout = new ZigZagEdgesStage(
     new MoveNodesAsideStage(new AlignmentStage(createCoreLayout()))
   )
+
   // create the layout data for the custom alignment stage
   let layoutData = createAlignmentStageLayoutData()
   // combine this with the layoutData of the hierarchical layout
   layoutData = layoutData.combineWith(createHierarchicalLayoutData())
+
   await new LayoutExecutor({
     graphComponent,
     layout,
@@ -134,6 +150,7 @@ async function runAllLayouts() {
     animationDuration: '0.5s'
   }).start()
 }
+
 /**
  * Creates custom layout data for the alignment stage.
  */
@@ -145,6 +162,7 @@ function createAlignmentStageLayoutData() {
     node.style.shape === ShapeNodeShape.ELLIPSE
   return layoutData
 }
+
 /**
  * Creates the layout data for the hierarchical layout algorithm. Sequence and layering
  * constraints are used to constrain the placement of the green nodes for this sample.
@@ -159,15 +177,15 @@ function createHierarchicalLayoutData() {
   }
   return layoutData
 }
+
 /**
  * Creates the core layout for all the other layouts: A simple hierarchical layout with orthogonal
  * edges and a slightly increased layer distance.
  */
 function createCoreLayout() {
-  return new HierarchicalLayout({
-    minimumLayerDistance: 50
-  })
+  return new HierarchicalLayout({ minimumLayerDistance: 50 })
 }
+
 /**
  * Creates an initial sample graph.
  *
@@ -178,6 +196,7 @@ async function createGraph(graph) {
   initDemoStyles(graph, { shape: ShapeNodeShape.ROUND_RECTANGLE })
   graph.edgeDefaults.shareStyleInstance = false
   graph.nodeDefaults.labels.style = createDemoNodeLabelStyle('demo-palette-21')
+
   const nodeLocations = [
     [150, 0],
     [100, 50],
@@ -193,6 +212,7 @@ async function createGraph(graph) {
     [25, 100]
   ]
   const nodes = nodeLocations.map((location) => graph.createNodeAt(location))
+
   // We have a few special nodes in this sample
   const greenNodeStyle = new ShapeNodeStyle({
     shape: 'ellipse',
@@ -202,15 +222,14 @@ async function createGraph(graph) {
   graph.setStyle(nodes[9], greenNodeStyle)
   graph.setStyle(nodes[10], greenNodeStyle)
   graph.setStyle(nodes[11], greenNodeStyle)
-  const blueNodeStyle = new ShapeNodeStyle({
-    fill: '#17BEBB',
-    stroke: '1.5px #407271'
-  })
+
+  const blueNodeStyle = new ShapeNodeStyle({ fill: '#17BEBB', stroke: '1.5px #407271' })
   graph.setStyle(nodes[7], blueNodeStyle)
   graph.setStyle(nodes[8], blueNodeStyle)
   nodes[7].tag = nodes[8].tag = { moveAside: true }
   graph.addLabel(nodes[7], 'Aside')
   graph.addLabel(nodes[8], 'Aside')
+
   graph.createEdge(nodes[0], nodes[1])
   graph.createEdge(nodes[0], nodes[2])
   graph.createEdge(nodes[1], nodes[3])
@@ -219,16 +238,16 @@ async function createGraph(graph) {
   graph.createEdge(nodes[2], nodes[6])
   graph.createEdge(nodes[3], nodes[7])
   graph.createEdge(nodes[6], nodes[8])
-  const dashedEdgeStyle = new PolylineEdgeStyle({
-    stroke: '1.5px dashed darkgray'
-  })
+  const dashedEdgeStyle = new PolylineEdgeStyle({ stroke: '1.5px dashed darkgray' })
   const e1 = graph.createEdge(nodes[0], nodes[9], dashedEdgeStyle)
   const e2 = graph.createEdge(nodes[1], nodes[10], dashedEdgeStyle)
   const e3 = graph.createEdge(nodes[3], nodes[11], dashedEdgeStyle)
   e1.tag = e2.tag = e3.tag = { horizontal: true }
+
   graphComponent.graph.applyLayout(createCoreLayout(), createHierarchicalLayoutData())
   await graphComponent.fitGraphBounds()
 }
+
 /**
  * Binds actions to the buttons in the tutorial's toolbar.
  */
@@ -238,6 +257,7 @@ function initializeUI() {
       btn.disabled = !btn.disabled
     })
   }
+
   document.querySelectorAll("button[data-action='RunStage1']").forEach((btn) => {
     btn.addEventListener('click', async () => {
       flipDisableButtons()
@@ -267,4 +287,5 @@ function initializeUI() {
     })
   })
 }
+
 run().then(finishLoading)

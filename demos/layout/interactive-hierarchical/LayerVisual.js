@@ -40,6 +40,7 @@ import {
   SvgVisual,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * Manages and renders the layers.
  */
@@ -50,6 +51,7 @@ export class LayerVisual extends BaseClass(IVisualCreator) {
   dividers = new List()
   // the opacity of the drawing
   opacity = '0.5'
+
   /**
    * updates the layer drawing from the information passed in
    */
@@ -63,18 +65,22 @@ export class LayerVisual extends BaseClass(IVisualCreator) {
     } else {
       nodes = graph.nodes
     }
+
     let layerCount = 0
     nodes.forEach((node) => (layerCount = Math.max(layerCount, layerMapper.get(node))))
     layerCount++
+
     // calculate min and max values
     const mins = new Array(layerCount)
     const maxs = new Array(layerCount)
     for (let i = 0; i < maxs.length; i++) {
       maxs[i] = Number.MIN_SAFE_INTEGER
     }
+
     for (let i = 0; i < mins.length; i++) {
       mins[i] = Number.MAX_SAFE_INTEGER
     }
+
     let minX = Number.POSITIVE_INFINITY
     let maxX = Number.NEGATIVE_INFINITY
     nodes.forEach((node) => {
@@ -83,11 +89,13 @@ export class LayerVisual extends BaseClass(IVisualCreator) {
       minX = Math.min(minX, node.layout.x)
       maxX = Math.max(maxX, node.layout.maxX)
     })
+
     // now determine divider locations
     this.dividers.clear()
     for (let i = 0; i < maxs.length - 1; i++) {
       this.dividers.add((maxs[i] + mins[i + 1]) * 0.5)
     }
+
     // determine the bounds of all elements
     const margin = 10
     mins[0] -= margin
@@ -104,6 +112,7 @@ export class LayerVisual extends BaseClass(IVisualCreator) {
       this.bounds = Rect.EMPTY
     }
   }
+
   /**
    * Gets the layer at the given location.
    * @param location The location.
@@ -130,8 +139,10 @@ export class LayerVisual extends BaseClass(IVisualCreator) {
     if (!nbounds.contains(location)) {
       return Number.MAX_SAFE_INTEGER
     }
+
     // now search the layer
     let top = this.bounds.y
+
     let layerCount = 0
     for (let i = 0; i < this.dividers.size; i++) {
       const divider = this.dividers.get(i)
@@ -154,6 +165,7 @@ export class LayerVisual extends BaseClass(IVisualCreator) {
     // should not really happen...
     return Number.MAX_SAFE_INTEGER
   }
+
   /**
    * Gets the bounds of a layer by index as specified by {@link LayerVisual.getLayer}.
    * @param layerIndex Index of the layer.
@@ -175,6 +187,7 @@ export class LayerVisual extends BaseClass(IVisualCreator) {
           LAYER_INSETS * 2
         )
       }
+
       // after last layer
       const layerBounds = this.getLayerBounds(this.dividers.size)
       return new Rect(
@@ -191,6 +204,7 @@ export class LayerVisual extends BaseClass(IVisualCreator) {
         : this.bounds.y + this.bounds.height
     return new Rect(this.bounds.x, top, this.bounds.width, bottom - top)
   }
+
   /**
    * Creates a new visual that emphasizes the hierarchical layers in the graph layout.
    * @see overrides {@link IVisualCreator.createVisual}
@@ -201,6 +215,7 @@ export class LayerVisual extends BaseClass(IVisualCreator) {
       new SvgVisual(document.createElementNS('http://www.w3.org/2000/svg', 'g'))
     )
   }
+
   /**
    * Updates the visual that emphasizes the hierarchical layers in the graph layout.
    * @see overrides {@link IVisualCreator.updateVisual}
@@ -210,6 +225,7 @@ export class LayerVisual extends BaseClass(IVisualCreator) {
       return this.createVisual(context)
     }
     const g = oldVisual.svgElement
+
     let y = this.bounds.y
     let count = 0
     this.dividers.forEach((divider) => {
@@ -232,6 +248,7 @@ export class LayerVisual extends BaseClass(IVisualCreator) {
       y = bottom
       count++
     })
+
     let rectangle
     if (g.childNodes.length <= count) {
       g.appendChild(
@@ -247,12 +264,14 @@ export class LayerVisual extends BaseClass(IVisualCreator) {
     rectangle.setAttribute('fill', count % 2 === 1 ? LIGHT_FILL : DARK_FILL)
     rectangle.setAttribute('opacity', this.opacity)
     count++
+
     while (g.childNodes.length > count) {
       g.removeChild(g.childNodes.item(g.childNodes.length - 1))
     }
     return oldVisual
   }
 }
+
 /**
  * checks a layer and determines if the layer has been clicked near the border
  */
@@ -269,14 +288,17 @@ function getLayerIndex(location, layerBounds, layerIndex) {
   // in current layer
   return layerIndex
 }
+
 /**
  * the dark fill used for drawing the layers
  */
 const DARK_FILL = '#FFC914'
+
 /**
  * the light fill used for drawing the layers
  */
 const LIGHT_FILL = '#FFE8A0'
+
 /**
  * the insets for each layer
  */

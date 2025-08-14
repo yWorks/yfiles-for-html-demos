@@ -32,7 +32,6 @@ import {
   Component,
   ElementRef,
   EnvironmentInjector,
-  Injector,
   NgZone,
   ViewChild
 } from '@angular/core'
@@ -41,20 +40,13 @@ import graphData from './assets/graph-data.json'
 import { AngularNodeComponentStyle } from './AngularComponentNodeStyle'
 import { NodeComponent } from './node.component'
 
-@Component({
-    selector: 'graph-component',
-    templateUrl: './graph.component.html',
-    standalone: false
-})
+@Component({ selector: 'graph-component', templateUrl: './graph.component.html' })
 export class GraphComponentComponent implements AfterViewInit {
   @ViewChild('graphComponentRef') graphComponentRef!: ElementRef
 
-  contextMenuActions: { title: string; action: () => void }[] = []
   private graphComponent!: GraphComponent
 
   constructor(
-    private injector: Injector,
-    private appRef: ApplicationRef,
     private zone: NgZone,
     private environmentInjector: EnvironmentInjector,
     private applicationRef: ApplicationRef
@@ -87,12 +79,9 @@ export class GraphComponentComponent implements AfterViewInit {
       )
 
       for (const { x, y, tag } of graphData) {
-        this.graphComponent.graph.createNode({
-          layout: [x, y, width, height],
-          tag
-        })
+        this.graphComponent.graph.createNode({ layout: [x, y, width, height], tag })
       }
-      this.graphComponent.fitGraphBounds()
+      void this.graphComponent.fitGraphBounds()
     })
   }
 }

@@ -34,6 +34,7 @@ import {
   OrganicLayoutData,
   OrganicScope
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to create and configure {@link OrganicLayout} so that it run only on a predefined
  * set of nodes.
@@ -44,6 +45,8 @@ export function createFeatureLayoutConfiguration(graph) {
   const layoutData = new OrganicLayoutData()
   layoutData.scope.nodes = (node) => node.tag && node.tag.includeInLayout
   layoutData.scope.scopeModes = OrganicScope.INCLUDE_CLOSE_NODES
+
   const layout = new OrganicLayout()
+
   return { layout, layoutData }
 }

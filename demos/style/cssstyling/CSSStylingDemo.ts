@@ -74,9 +74,7 @@ async function run(): Promise<void> {
   const circularLayout = new CircularLayout({
     partitioningPolicy: 'single-cycle',
     nodeLabelPlacement: 'ray-like',
-    componentLayout: {
-      enabled: false
-    }
+    componentLayout: { enabled: false }
   })
   graphComponent.graph.applyLayout(circularLayout)
   await graphComponent.fitGraphBounds()
@@ -92,10 +90,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   const graphBuilder = new GraphBuilder(graph)
 
   graphBuilder
-    .createNodesSource({
-      data: graphData.nodeList,
-      id: (item) => item.id
-    })
+    .createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
     .nodeCreator.createLabelBinding((data) => data.label)
 
   graphBuilder.createEdgesSource({
@@ -113,10 +108,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 function configureInputMode(): void {
   const graphEditorInputMode = new GraphEditorInputMode({
     // enable snapping
-    snapContext: new GraphSnapContext({
-      snapDistance: 10,
-      visualizeSnapResults: true
-    }),
+    snapContext: new GraphSnapContext({ snapDistance: 10, visualizeSnapResults: true }),
     // allow focusing all graph elements
     focusableItems: GraphItemTypes.ALL
   })

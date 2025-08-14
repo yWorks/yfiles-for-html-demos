@@ -34,6 +34,7 @@ import {
   GraphEditorInputMode,
   HandlePositions,
   HandleType,
+  IGraph,
   IHandle,
   IInputModeContext,
   INode,
@@ -43,15 +44,18 @@ import {
   NodeReshapeHandlerHandle,
   Point
 } from '@yfiles/yfiles'
+
 /**
  * A NodeReshapeHandleProvider for cyan nodes that toggles aspect ratio resizing on and of when clicking on its handles.
  */
 export class ClickableNodeReshapeHandleProvider extends NodeReshapeHandleProvider {
   state
+
   constructor(node, reshapeHandler, state) {
     super(node, reshapeHandler, HandlePositions.BORDER)
     this.state = state
   }
+
   getHandle(inputModeContext, position) {
     const wrapped = super.getHandle(inputModeContext, position)
     wrapped.ratioReshapeRecognizer = this.state.keepAspectRatio
@@ -60,60 +64,90 @@ export class ClickableNodeReshapeHandleProvider extends NodeReshapeHandleProvide
     return new ClickableNodeReshapeHandlerHandle(this.state, wrapped)
   }
 }
+
 class ClickableNodeReshapeHandlerHandle extends BaseClass(IHandle) {
   state
   wrapped
+
   constructor(state, wrapped) {
     super()
     this.state = state
     this.wrapped = wrapped
   }
+
   get cursor() {
     return this.wrapped.cursor
   }
+
   get location() {
     return this.wrapped.location
   }
+
   /**
-   * Modifies the wrapped {@link IHandle.type} by combining it with {@link HandleType.MOVE3}.
+   * Changes the wrapped round handles to quadratic ones to visualize the state.
    */
   get type() {
-    return this.state.keepAspectRatio ? (this.wrapped.type |= HandleType.MOVE3) : this.wrapped.type
+    return this.state.keepAspectRatio ? HandleType.CUSTOM2 : this.wrapped.type
   }
+
   get tag() {
     return this.wrapped.tag
   }
+
   /**
    * Toggles the aspect ratio state of the application.
    */
   handleClick(eventArgs) {
     this.state.toggleAspectRatio()
   }
+
   handleMove(context, originalLocation, newLocation) {
     this.wrapped.handleMove(context, originalLocation, newLocation)
   }
+
   initializeDrag(context) {
     this.wrapped.initializeDrag(context)
   }
+
   dragFinished(context, originalLocation, newLocation) {
     this.wrapped.dragFinished(context, originalLocation, newLocation)
   }
+
   cancelDrag(context, originalLocation) {
     this.wrapped.cancelDrag(context, originalLocation)
   }
 }
+
 export class ApplicationState {
   get keepAspectRatio() {
     return this._keepAspectRatio
   }
+
   graphEditorInputMode
+  graph
+
   _keepAspectRatio = false
-  constructor(graphEditorInputMode, keepAspectRatio) {
+
+  constructor(graphEditorInputMode, graph, keepAspectRatio) {
     this.graphEditorInputMode = graphEditorInputMode
+    this.graph = graph
     this._keepAspectRatio = keepAspectRatio
   }
+
   toggleAspectRatio() {
     this._keepAspectRatio = !this._keepAspectRatio
     this.graphEditorInputMode.requeryHandles()
+    this.updateLabel()
+  }
+
+  updateLabel() {
+    const goldNode = this.graph.nodes.find((n) => n.tag === 'gold')
+    if (goldNode) {
+      const label = goldNode.labels.first()
+      if (label) {
+        const stateString = this._keepAspectRatio ? 'keep' : "don't keep"
+        this.graph.setLabelText(label, label.text.replace(/:\n.*/, `:\n ${stateString}`))
+      }
+    }
   }
 }

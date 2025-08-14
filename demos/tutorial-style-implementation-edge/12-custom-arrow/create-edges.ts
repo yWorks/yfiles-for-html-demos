@@ -41,48 +41,24 @@ export function createEdges(graph: IGraph): void {
     stroke: '#042d37'
   })
 
-  const node1 = graph.createNode({
-    layout: [0, 0, 30, 30]
-  })
-  const node2 = graph.createNode({
-    layout: [0, 50, 30, 30]
-  })
-  const node3 = graph.createNode({
-    layout: [0, 100, 30, 30]
-  })
-  const node4 = graph.createNode({
-    layout: [100, 0, 30, 30]
-  })
-  const node5 = graph.createNode({
-    layout: [100, 50, 30, 30]
-  })
-  const node6 = graph.createNode({
-    layout: [100, 100, 30, 30]
-  })
+  const node1 = graph.createNode({ layout: [0, 0, 30, 30] })
+  const node2 = graph.createNode({ layout: [0, 50, 30, 30] })
+  const node3 = graph.createNode({ layout: [0, 100, 30, 30] })
+  const node4 = graph.createNode({ layout: [100, 0, 30, 30] })
+  const node5 = graph.createNode({ layout: [100, 50, 30, 30] })
+  const node6 = graph.createNode({ layout: [100, 100, 30, 30] })
 
   const style = new CustomEdgeStyle(4)
   style.sourceArrow = new CustomArrow(4)
 
-  graph.createEdge({
-    source: node1,
-    target: node4,
-    style: style
-  })
+  graph.createEdge({ source: node1, target: node4, style: style })
 
   const style2 = new CustomEdgeStyle(2)
   style2.targetArrow = new CustomArrow(2)
-  graph.createEdge({
-    source: node2,
-    target: node5,
-    style: style2
-  })
+  graph.createEdge({ source: node2, target: node5, style: style2 })
 
   const style3 = new CustomEdgeStyle(6)
   style3.sourceArrow = new CustomArrow(6)
   style3.targetArrow = new CustomArrow(6)
-  graph.createEdge({
-    source: node3,
-    target: node6,
-    style: style3
-  })
+  graph.createEdge({ source: node3, target: node6, style: style3 })
 }

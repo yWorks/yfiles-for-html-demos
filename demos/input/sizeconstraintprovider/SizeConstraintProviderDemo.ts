@@ -155,11 +155,7 @@ function createNode(
     tag: tag
   })
 
-  graph.addLabel({
-    owner: node,
-    text: labelText,
-    style: createDemoNodeLabelStyle(colorSet)
-  })
+  graph.addLabel({ owner: node, text: labelText, style: createDemoNodeLabelStyle(colorSet) })
 }
 
 run().then(finishLoading)

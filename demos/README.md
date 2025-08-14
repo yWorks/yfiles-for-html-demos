@@ -11,7 +11,7 @@
 -->
 # yFiles for HTML Demo Applications
 
-The [yFiles for HTML 3.0.0.2](https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html) demos and tutorials are extensive sample applications that present the features of the yFiles for HTML diagramming library.
+The [yFiles for HTML 3.0.0.3](https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html) demos and tutorials are extensive sample applications that present the features of the yFiles for HTML diagramming library.
 
 The complete source code of all of these samples is part of the yFiles for HTML package and available at [Github](https://github.com/yWorks/yfiles-for-html-demos)
 
@@ -299,7 +299,7 @@ This folder and its subfolders contain demo applications which make use of the d
 <img src="../doc/demo-thumbnails/template-styles.webp" alt="Template Styles screenshot" width="128" height="96" /> | [Template Styles](style/templatestyles/) | Shows SVG template styles for nodes using a simple templating engine.
 <img src="../doc/demo-thumbnails/template-node-style.webp" alt="Template Node Style screenshot" width="128" height="96" /> | [Template Node Style](style/template-node-style/) | Presents a versatile and customizable template node style using a simple templating engine.
 <img src="../doc/demo-thumbnails/react-template-node-style.webp" alt="React JSX Component Style screenshot" width="128" height="96" /> | [React JSX Component Style](style/react-template-node-style/) | Presents a versatile and easily customizable template node style based on JSX and React.
-<img src="../doc/demo-thumbnails/vue-template-node-style.webp" alt="Vue Template Node Style screenshot" width="128" height="96" /> | [Vue Template Node Style](style/vue-template-node-style/) | Presents a versatile and easily customizable template node style based on Vue.
+<img src="../doc/demo-thumbnails/vue-template-node-style.webp" alt="Vue Template Node Style screenshot" width="128" height="96" /> | [Vue Template Node Style](style/vue-template-node-style/README.html) | Presents a versatile and easily customizable template node style based on Vue.
 <img src="../doc/demo-thumbnails/lit-template-node-style.webp" alt="Lit Template Node Style screenshot" width="128" height="96" /> | [Lit Template Node Style](style/lit-template-node-style/) | Presents a versatile and easily customizable template node style based on the Lit templating framework.
 <img src="../doc/demo-thumbnails/webgl-styles.webp" alt="WebGL Styles screenshot" width="128" height="96" /> | [WebGL Styles](style/webgl-styles/) | Shows the various graph item styles available in WebGL rendering.
 <img src="../doc/demo-thumbnails/webgl-selection-styles.webp" alt="WebGL Selection Styles screenshot" width="128" height="96" /> | [WebGL Selection Styles](style/webgl-selection-styles/) | Shows the possible styling configurations for selections in WebGL rendering.

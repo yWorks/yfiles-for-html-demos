@@ -32,11 +32,18 @@ import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { CustomPortStyle } from './CustomPortStyle'
 import { enableGraphEditing, fitGraphBounds, initializeTutorialDefaults } from '../common'
 import { createNodesAndPorts } from './create-ports'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
+
 graphComponent.graph.nodeDefaults.ports.style = new CustomPortStyle()
+
 createNodesAndPorts(graphComponent.graph)
 enableGraphEditing(graphComponent)
+
 fitGraphBounds(graphComponent)
+
 finishLoading()

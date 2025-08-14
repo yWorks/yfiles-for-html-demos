@@ -109,8 +109,8 @@ async function exportSvg(graphComponent: GraphComponent): Promise<void> {
     // await new Promise((resolve) => setTimeout(resolve, 2000))
   })
   // Dispose of the component and remove its references to the graph
-  exportComponent.cleanUp()
   exportComponent.graph = new Graph()
+  exportComponent.cleanUp()
 
   downloadFile(SvgExport.exportSvgString(svg), 'graph.svg')
 }

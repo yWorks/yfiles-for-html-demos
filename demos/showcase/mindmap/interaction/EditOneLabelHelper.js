@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { EditLabelHelper, IEdge } from '@yfiles/yfiles'
 import { isCrossReference } from '../data-types'
+
 /**
  * An {@link EditLabelHelper} that only allows for adding a single label to nodes or cross-reference edges.
  */
@@ -38,6 +39,7 @@ export class EditOneLabelHelper extends EditLabelHelper {
       evt.cancel = true
       return
     }
+
     super.onLabelAdding(context, evt)
   }
 }

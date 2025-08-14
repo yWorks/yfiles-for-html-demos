@@ -27,12 +27,14 @@
  **
  ***************************************************************************/
 import { GeneralPath, GeneralPathNodeStyle, yfiles } from '@yfiles/yfiles'
+
 /**
  * The usage of yfiles.lang.Enum here is only for GraphML compatibility, and shouldn't be needed
  * elsewhere. For enums in your own application, use either TypeScript enums or a simple keyed
  * object with constants.
  */
 const Enum = yfiles.lang.Enum
+
 export const ShapeNodeShape = Enum('ShapeNodeShape', {
   SHEARED_RECTANGLE: 100,
   SHEARED_RECTANGLE2: 101,
@@ -43,6 +45,7 @@ export const ShapeNodeShape = Enum('ShapeNodeShape', {
   FAT_ARROW2: 106,
   STAR5_UP: 107
 })
+
 export class ShapeNodeStyles {
   // region predefined shapes
   static Star5IntrinsicAspectRatio = 1.0514622
@@ -57,6 +60,7 @@ export class ShapeNodeStyles {
   static Star5Up = ShapeNodeStyles.createStarPath(5, 0, false)
   static IntrinsicStar5Up = ShapeNodeStyles.createStarPath(5, 0, true)
   static Thing = ShapeNodeStyles.createThing()
+
   static getPath(shape, keepIntrinsicAspectRatio) {
     switch (shape) {
       case ShapeNodeShape.TRAPEZ:
@@ -79,6 +83,7 @@ export class ShapeNodeStyles {
         return ShapeNodeStyles.Thing
     }
   }
+
   static getIntrinsicAspectRatio(shape) {
     switch (shape) {
       case ShapeNodeShape.TRAPEZ:
@@ -95,6 +100,7 @@ export class ShapeNodeStyles {
         return 1
     }
   }
+
   static createThing() {
     {
       const path = new GeneralPath(6)
@@ -103,9 +109,11 @@ export class ShapeNodeStyles {
       path.lineTo(1, 0.8)
       path.quadTo(0.5, 1.2, 0, 0.8)
       path.close()
+
       return path
     }
   }
+
   static createShearedShape(
     xRatio,
     useXRatioTopLeft,
@@ -122,12 +130,15 @@ export class ShapeNodeStyles {
     let xLeftRatio = x + xRatio * width
     let xRightRatio = maxX - xRatio * width
     let slope = height / (width * xRatio)
+
     const topLeftX = useXRatioTopLeft ? xLeftRatio : x
     const topRightX = useXRatioTopRight ? xRightRatio : maxX
     const bottomRightX = useXRatioBottomRight ? xRightRatio : maxX
     const bottomLeftX = useXRatioBottomLeft ? xLeftRatio : x
+
     const noHorizontalLineTop = topLeftX >= topRightX
     const noHorizontalLineBottom = bottomLeftX >= bottomRightX
+
     const path = new GeneralPath(4)
     if (noHorizontalLineTop && noHorizontalLineBottom) {
       // use some empty path as returning null would switch unexpectedly to non-shape wrapping code
@@ -153,9 +164,11 @@ export class ShapeNodeStyles {
       path.lineTo(bottomRightX, maxY)
       path.lineTo(bottomLeftX, maxY)
     }
+
     path.close()
     return path
   }
+
   static createFatArrow2() {
     {
       const path = new GeneralPath(6)
@@ -166,9 +179,11 @@ export class ShapeNodeStyles {
       path.lineTo(0.1, 1)
       path.lineTo(0, 0.5)
       path.close()
+
       return path
     }
   }
+
   static createFatArrow() {
     {
       const path = new GeneralPath(6)
@@ -179,9 +194,11 @@ export class ShapeNodeStyles {
       path.lineTo(0, 1)
       path.lineTo(0.1, 0.5)
       path.close()
+
       return path
     }
   }
+
   static createStarPath(pointCount, initialAngle, keepIntrinsicAspectRatio) {
     const path = GeneralPathNodeStyle.createStarPath(pointCount, 0.6, initialAngle)
     return keepIntrinsicAspectRatio

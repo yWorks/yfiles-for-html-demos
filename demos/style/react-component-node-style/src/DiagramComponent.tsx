@@ -43,8 +43,8 @@ export function DiagramComponent(props: { initGraph: (graphComponent: GraphCompo
           graphComponent.htmlElement.parentElement.removeChild(graphComponent.htmlElement)
         }
         // Dispose of the component and remove its references to the graph
-        graphComponent.cleanUp()
         graphComponent.graph = new Graph()
+        graphComponent.cleanUp()
       }
     }
   }, [])

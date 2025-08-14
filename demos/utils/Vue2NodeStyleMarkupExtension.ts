@@ -55,8 +55,6 @@ export function enableVue2NodeStyleMarkupSerialization(graphMLIOHandler: GraphML
     }
   })
   graphMLIOHandler.addTypeInformation(Vue2NodeStyleMarkupExtension, {
-    properties: {
-      template: { default: '', type: String }
-    }
+    properties: { template: { default: '', type: String } }
   })
 }

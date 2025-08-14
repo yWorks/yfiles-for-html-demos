@@ -34,6 +34,7 @@ import {
   SvgVisual,
   SvgVisualGroup
 } from '@yfiles/yfiles'
+
 export class RectangleVisualCreator extends BaseClass(IVisualCreator) {
   title
   titlePosition
@@ -60,6 +61,7 @@ export class RectangleVisualCreator extends BaseClass(IVisualCreator) {
     this.boundsProvider = boundsProvider
     this.renderInViewCoordinates = renderInViewCoordinates
   }
+
   /**
    * Creates the visual that renders the content bounds.
    * @param context The context that describes where the visual will be used
@@ -74,15 +76,19 @@ export class RectangleVisualCreator extends BaseClass(IVisualCreator) {
       rectangleElement.setAttribute('stroke-dasharray', '3')
     }
     const rectVisual = new SvgVisual(rectangleElement)
+
     const textElement = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
     textElement.textContent = this.title
     textElement.setAttribute('fill', this.stroke)
     const textVisual = new SvgVisual(textElement)
+
     groupVisual.add(rectVisual)
     groupVisual.add(textVisual)
     this.updateVisual(context, groupVisual)
+
     return groupVisual
   }
+
   /**
    * Updates the content bounds visual.
    * @param context The context that describes where the visual will be used
@@ -93,17 +99,21 @@ export class RectangleVisualCreator extends BaseClass(IVisualCreator) {
     if (oldVisual.children.size != 2) {
       return this.createVisual(context)
     }
+
     const rect = this.boundsProvider()
     if (rect != null) {
       if (this.renderInViewCoordinates) {
         oldVisual.transform = context.viewTransform
       }
+
       const rectangle = oldVisual.children.get(0).svgElement
       rectangle.setAttribute('x', rect.x.toString())
       rectangle.setAttribute('y', rect.y.toString())
       rectangle.setAttribute('width', rect.width > 0 ? rect.width.toString() : '1')
       rectangle.setAttribute('height', rect.height > 0 ? rect.height.toString() : '1')
+
       const text = oldVisual.children.get(1).svgElement
+
       text.setAttribute('x', `${rect.x + 10}`)
       if (this.titlePosition === 'top') {
         text.setAttribute('y', `${rect.y + 20}`)

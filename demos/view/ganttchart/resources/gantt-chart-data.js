@@ -29,46 +29,16 @@
 export const ganttChartData = {
   originDate: '2023-03-21',
   tasks: [
-    {
-      id: 1,
-      name: 'Market Analysis'
-    },
-    {
-      id: 2,
-      name: 'Functional Specification'
-    },
-    {
-      id: 3,
-      name: 'Architecture'
-    },
-    {
-      id: 4,
-      name: 'Project Planning'
-    },
-    {
-      id: 5,
-      name: 'Product Design'
-    },
-    {
-      id: 6,
-      name: 'Development'
-    },
-    {
-      id: 7,
-      name: 'Test Setup'
-    },
-    {
-      id: 8,
-      name: 'Testing'
-    },
-    {
-      id: 9,
-      name: 'Documentation'
-    },
-    {
-      id: 10,
-      name: 'Finalizing'
-    }
+    { id: 1, name: 'Market Analysis' },
+    { id: 2, name: 'Functional Specification' },
+    { id: 3, name: 'Architecture' },
+    { id: 4, name: 'Project Planning' },
+    { id: 5, name: 'Product Design' },
+    { id: 6, name: 'Development' },
+    { id: 7, name: 'Test Setup' },
+    { id: 8, name: 'Testing' },
+    { id: 9, name: 'Documentation' },
+    { id: 10, name: 'Finalizing' }
   ],
   activities: [
     {
@@ -88,20 +58,8 @@ export const ganttChartData = {
       dependencies: [0],
       followUpTime: 6
     },
-    {
-      id: 13,
-      name: 'API Spec',
-      taskId: 2,
-      startDate: '2023-03-30',
-      endDate: '2023-04-02'
-    },
-    {
-      id: 2,
-      taskId: 3,
-      startDate: '2023-03-25',
-      endDate: '2023-03-26',
-      dependencies: [1]
-    },
+    { id: 13, name: 'API Spec', taskId: 2, startDate: '2023-03-30', endDate: '2023-04-02' },
+    { id: 2, taskId: 3, startDate: '2023-03-25', endDate: '2023-03-26', dependencies: [1] },
     {
       id: 3,
       name: 'Personnel Assignment',
@@ -129,19 +87,8 @@ export const ganttChartData = {
       followUpTime: 24,
       dependencies: [2, 13]
     },
-    {
-      id: 6,
-      taskId: 7,
-      startDate: '2023-04-07',
-      endDate: '2023-04-08',
-      dependencies: [5]
-    },
-    {
-      id: 7,
-      taskId: 7,
-      startDate: '2023-04-11',
-      endDate: '2023-04-12'
-    },
+    { id: 6, taskId: 7, startDate: '2023-04-07', endDate: '2023-04-08', dependencies: [5] },
+    { id: 7, taskId: 7, startDate: '2023-04-11', endDate: '2023-04-12' },
     {
       id: 8,
       name: 'Unit Tests',

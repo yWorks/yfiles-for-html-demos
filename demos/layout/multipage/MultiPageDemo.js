@@ -49,6 +49,7 @@ import {
   Size,
   TreeLayout
 } from '@yfiles/yfiles'
+
 import {
   createDemoEdgeStyle,
   createDemoNodeLabelStyle,
@@ -59,6 +60,7 @@ import { MultiPageIGraphBuilder } from './MultiPageIGraphBuilder'
 import { PageBoundsVisualCreator } from './PageBoundsVisualCreator'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading, showLoadingIndicator } from '@yfiles/demo-resources/demo-page'
+
 /**
  * This demo demonstrates how the result of a multi-page layout calculation
  * can be displayed in a graph component.
@@ -71,35 +73,43 @@ async function run() {
   graphComponent = new GraphComponent('graphComponent')
   modelGraphComponent = new GraphComponent('modelGraphComponent')
   initDemoStyles(modelGraphComponent.graph, { theme: 'demo-palette-21' })
+
   initializeUI()
   initializeCoreLayouts()
   initializeInputModes()
   await loadModelGraph('Pop Artists')
 }
+
 /**
  * Shows the current page of the multi-page layout.
  */
 let graphComponent
+
 /**
  * Shows the complete model graph.
  */
 let modelGraphComponent
+
 /**
  * The calculated page graphs.
  */
 let viewGraphs
+
 /**
  * The currently selected page.
  */
 let pageNumber = 0
+
 /**
  * The visual creator for rendering the page bounds.
  */
 let pageBoundsVisualCreator
+
 /**
  * A flag that prevents re-entrant layout calls.
  */
 let layouting = false
+
 /**
  * Starts the multi page layout calculation.
  */
@@ -109,6 +119,7 @@ function runMultiPageLayout() {
     return
   }
   layouting = true
+
   // parse the pageWidth and pageHeight parameters
   const pageWidthTextBox = document.querySelector('#pageWidthTextBox')
   let pageWidth = parseFloat(pageWidthTextBox.value)
@@ -120,6 +131,7 @@ function runMultiPageLayout() {
   if (Number.isNaN(pageHeight)) {
     pageHeight = 800
   }
+
   // get the core layout
   const coreLayoutComboBox = document.querySelector('#coreLayoutComboBox')
   const layoutIndex = coreLayoutComboBox.selectedIndex
@@ -128,12 +140,14 @@ function runMultiPageLayout() {
     // configure CompactSubtreePlacer to respect the aspect ratio of the page
     coreLayout.defaultSubtreePlacer.aspectRatio = pageWidth / pageHeight
   }
+
   const createProxyReferenceNodes = document.querySelector('#createProxyReferenceNodes')
   const createProxyNodes = createProxyReferenceNodes.checked
   const placeMultipleComponentsOnSinglePage = document.querySelector(
     '#placeMultipleComponentsOnSinglePage'
   )
   const placeComponentsOnSinglePage = placeMultipleComponentsOnSinglePage.checked
+
   const multiPageLayout = new MultiPageLayout({
     coreLayout,
     maximumPageSize: new Size(pageWidth, pageHeight),
@@ -144,7 +158,9 @@ function runMultiPageLayout() {
       await applyLayoutResult(result, pageWidth, pageHeight)
     }
   })
+
   const multiPageLayoutData = new MultiPageLayoutData()
+
   setTimeout(() => {
     const adapter = new LayoutGraphAdapter(modelGraphComponent.graph)
     // Note that unlike other layouts, MultiPageLayout does not alter the input graph.
@@ -153,6 +169,7 @@ function runMultiPageLayout() {
     layouting = false
   }, 0)
 }
+
 /**
  * Applies the result of the multi-page layout using a {@link MultiPageIGraphBuilder}.
  */
@@ -182,37 +199,47 @@ async function applyLayoutResult(multiPageLayoutResult, pageWidth, pageHeight) {
   builder.proxyReferenceEdgeDefaults.style = createDemoEdgeStyle({
     colorSetName: 'demo-palette-14'
   })
+
   // create the graphs
   viewGraphs = builder.createViewGraphs()
   setPageNumber(0)
+
   if (pageBoundsVisualCreator != null) {
     pageBoundsVisualCreator.pageWidth = pageWidth
     pageBoundsVisualCreator.pageHeight = pageHeight
   }
+
   document.querySelector('#previous-page').disabled = true
   document.querySelector('#next-page').disabled = viewGraphs.length <= 1
+
   await showLoadingIndicator(false)
 }
+
 function setPageNumber(newPageNumber, targetNode = null) {
   graphComponent.highlights.clear()
   graphComponent.focusIndicatorManager.focusedItem = null
+
   if (viewGraphs.length <= 0) {
     document.querySelector('#previous-page').disabled = true
     document.querySelector('#next-page').disabled = true
     return
   }
+
   pageNumber =
     newPageNumber < 0
       ? 0
       : newPageNumber > viewGraphs.length - 1
         ? viewGraphs.length - 1
         : newPageNumber
+
   const pageNumberTextBox = document.querySelector('#page-number-text-box')
   pageNumberTextBox.value = (pageNumber + 1).toString()
   pageNumberTextBox.setAttribute('min', '1')
   pageNumberTextBox.setAttribute('max', `${viewGraphs.length}`)
+
   graphComponent.graph = viewGraphs[pageNumber]
   graphComponent.updateContentBounds()
+
   if (pageBoundsVisualCreator == null) {
     pageBoundsVisualCreator = new PageBoundsVisualCreator()
     graphComponent.renderTree.createElement(
@@ -221,6 +248,7 @@ function setPageNumber(newPageNumber, targetNode = null) {
     )
   }
   pageBoundsVisualCreator.center = graphComponent.contentBounds.center
+
   // place target node under mouse cursor
   if (targetNode !== null && graphComponent.graph.contains(targetNode)) {
     const targetCenter = targetNode.layout.center
@@ -236,9 +264,11 @@ function setPageNumber(newPageNumber, targetNode = null) {
   } else {
     void graphComponent.fitGraphBounds()
   }
+
   document.querySelector('#previous-page').disabled = !checkPageNumber(pageNumber - 1)
   document.querySelector('#next-page').disabled = !checkPageNumber(pageNumber + 1)
 }
+
 /**
  * "Jump" to a referencing node of a clicked auxiliary multi-page node.
  * @param viewNode The multi page node that has been clicked
@@ -256,6 +286,7 @@ function goToReferencingNode(viewNode) {
     }
   }
 }
+
 /**
  * Checks if the given page number is valid.
  * A valid page number lies between 0 and the number of pages.
@@ -263,6 +294,7 @@ function goToReferencingNode(viewNode) {
 function checkPageNumber(pageNo) {
   return !Number.isNaN(pageNo) && viewGraphs && pageNo >= 0 && pageNo < viewGraphs.length
 }
+
 /**
  * Registers the actions for the GUI elements, typically the
  * toolbar buttons, during the creation of this application.
@@ -285,6 +317,7 @@ function initializeUI() {
       setPageNumber(pageNo)
     }
   })
+
   document.querySelector('#samples').addEventListener('change', async (evt) => {
     const value = evt.target.value
     if (value === 'yFiles Layout Namespaces') {
@@ -292,23 +325,23 @@ function initializeUI() {
     }
     await loadModelGraph(value)
   })
+
   document.querySelector('#apply-layout').addEventListener('click', async () => {
     await showLoadingIndicator(true)
     runMultiPageLayout()
   })
 }
+
 /**
  * Creates the core layout algorithms and populates the layouts box.
  */
 function initializeCoreLayouts() {
   const hierarchicalLayout = new HierarchicalLayout()
-  const organicLayout = new OrganicLayout({
-    defaultMinimumNodeDistance: 10,
-    deterministic: true
-  })
-  const treeLayout = new TreeLayout({
-    defaultSubtreePlacer: new CompactSubtreePlacer()
-  })
+
+  const organicLayout = new OrganicLayout({ defaultMinimumNodeDistance: 10, deterministic: true })
+
+  const treeLayout = new TreeLayout({ defaultSubtreePlacer: new CompactSubtreePlacer() })
+
   const additionalParentCount = document.querySelector('#additionalParentCount')
   const coreLayoutComboBox = document.querySelector('#coreLayoutComboBox')
   addOption(coreLayoutComboBox, 'Hierarchical', hierarchicalLayout)
@@ -325,6 +358,7 @@ function initializeCoreLayouts() {
     { passive: false }
   )
 }
+
 /**
  * Adds a new option to the given combo-box
  * @param comboBox The combo-box to extend.
@@ -337,6 +371,7 @@ function addOption(comboBox, text, value) {
   option.myValue = value // use myValue because value would be converted to a string
   comboBox.add(option)
 }
+
 /**
  * Initializes the input modes for both graph controls.
  */
@@ -347,14 +382,17 @@ function initializeInputModes() {
     selectableItems: GraphItemTypes.NONE,
     focusableItems: GraphItemTypes.NONE
   })
+
   // highlight nodes on hover
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE | GraphItemTypes.LABEL
   inputMode.itemHoverInputMode.addEventListener('hovered-item-changed', onHoveredItemChanged)
+
   // handle clicks on nodes
   inputMode.addEventListener('item-clicked', (evt) => {
     goToReferencingNode(evt.item)
   })
   graphComponent.inputMode = inputMode
+
   // create the input mode for the model graph and disable selection and focus
   const modelInputMode = new GraphViewerInputMode({
     clickableItems: GraphItemTypes.NONE,
@@ -369,6 +407,7 @@ function initializeInputModes() {
   })
   modelGraphComponent.inputMode = modelInputMode
 }
+
 /**
  * Add/Remove the hovered item to the highlight manager.
  */
@@ -380,28 +419,35 @@ function onHoveredItemChanged(evt) {
   } else if (evt.oldItem instanceof ILabel) {
     highlights.remove(evt.oldItem.owner)
   }
+
   if (evt.item instanceof INode) {
     highlights.add(evt.item)
   } else if (evt.item instanceof ILabel) {
     highlights.add(evt.item.owner)
   }
 }
+
 /**
  * Loads the model graph and applies an initial multi-page layout.
  */
 async function loadModelGraph(graphId) {
   // show a notification because the multi-page layout takes some time
   await showLoadingIndicator(true)
+
   const filename =
     graphId === 'Pop Artists'
       ? 'resources/pop-artists-small.graphml'
       : 'resources/yfiles-layout-namespaces.graphml'
+
   await new GraphMLIOHandler().readFromURL(modelGraphComponent.graph, filename)
   // fit model graph to the component
   void modelGraphComponent.fitGraphBounds()
+
   // fit the graph to the component
   void graphComponent.fitGraphBounds()
+
   // calculate the multi-page layout
   runMultiPageLayout()
 }
+
 run().then(finishLoading)

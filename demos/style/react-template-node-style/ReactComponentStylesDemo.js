@@ -27,10 +27,9 @@
  **
  ***************************************************************************/
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 import * as ReactDOM from 'react-dom'
-import { basicSetup, EditorView } from 'codemirror'
-import { javascript } from '@codemirror/lang-javascript'
-import { linter, lintGutter } from '@codemirror/lint'
+
 import {
   ExteriorNodeLabelModel,
   GraphBuilder,
@@ -44,6 +43,7 @@ import {
   Rect,
   Size
 } from '@yfiles/yfiles'
+
 import SampleData from './resources/sample'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { registerReactComponentNodeStyleSerialization } from './ReactComponentSvgNodeStyleMarkupExtension'
@@ -59,19 +59,27 @@ import { ReactComponentHtmlNodeStyle } from './ReactComponentHtmlNodeStyle'
 import { ReactComponentSvgLabelStyle } from './ReactComponentSvgLabelStyle'
 import { ReactComponentSvgNodeStyle } from './ReactComponentSvgNodeStyle'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
-import { StateEffect, StateField } from '@codemirror/state'
-import { getJsonLinter } from '@yfiles/demo-resources/codeMirrorLinters'
-const jsonLinter = getJsonLinter()
+import {
+  createCodemirrorEditor,
+  EditorView,
+  StateEffect,
+  StateField
+} from '@yfiles/demo-resources/codemirror-editor'
+
 let graphComponent
+
 let jsxRenderFunctionTextArea
 let setJsxRenderFunctionTextAreaEditable
+
 let tagTextArea
 let setTagTextAreaEditable
+
 const templateErrorArea = document.querySelector('#template-text-area-error')
 const tagErrorArea = document.querySelector('#tag-text-area-error')
 const applyTemplateButton = document.querySelector('#apply-template-button')
 const htmlTemplateToggle = document.querySelector('#html-template')
 const applyTagButton = document.querySelector('#apply-tag-button')
+
 /**
  * Runs the demo.
  */
@@ -82,12 +90,14 @@ async function run() {
     clickSelectableItems: GraphItemTypes.NODE | GraphItemTypes.LABEL,
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.LABEL
   })
+
   // initialize demo
   initializeTextAreas()
   initializeStyles()
   loadSampleGraph()
   initializeUI()
 }
+
 /**
  * Initializes text areas to use CodeMirror and to update when the selection in the graph has
  * changed.
@@ -105,15 +115,12 @@ function initializeTextAreas() {
       return value
     }
   })
-  jsxRenderFunctionTextArea = new EditorView({
-    parent: document.querySelector('#templateEditorContainer'),
-    extensions: [
-      basicSetup,
-      javascript({ jsx: true }),
-      jsxRenderFunctionTextAreaEditable,
-      EditorView.editable.from(jsxRenderFunctionTextAreaEditable)
-    ]
-  })
+  jsxRenderFunctionTextArea = createCodemirrorEditor(
+    'jsx',
+    document.querySelector('#templateEditorContainer'),
+    [jsxRenderFunctionTextAreaEditable, EditorView.editable.from(jsxRenderFunctionTextAreaEditable)]
+  )
+
   setTagTextAreaEditable = StateEffect.define()
   const tagTextAreaEditable = StateField.define({
     create: () => true,
@@ -126,24 +133,21 @@ function initializeTextAreas() {
       return value
     }
   })
-  tagTextArea = new EditorView({
-    parent: document.querySelector('#tagEditorContainer'),
-    extensions: [
-      basicSetup,
-      javascript(),
-      jsonLinter,
-      lintGutter(),
-      tagTextAreaEditable,
-      EditorView.editable.from(tagTextAreaEditable)
-    ]
-  })
+  tagTextArea = createCodemirrorEditor('json', document.querySelector('#tagEditorContainer'), [
+    tagTextAreaEditable,
+    EditorView.editable.from(tagTextAreaEditable)
+  ])
+
   // disable standard selection and focus visualization
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
+
   graphComponent.selection.addEventListener('item-added', onSelectionChanged)
   graphComponent.selection.addEventListener('item-removed', onSelectionChanged)
 }
+
 const defaultLabelSize = [150, 14]
+
 /**
  * Initializes the default styles for the graph. By default org-chart nodes are used.
  */
@@ -152,18 +156,22 @@ function initializeStyles() {
   graph.nodeDefaults.style = createReactComponentSvgNodeStyleFromJSX(demoSvgNodeStyleJSXSources)
   graph.nodeDefaults.size = new Size(290, 100)
   graph.nodeDefaults.shareStyleInstance = false
+
   graph.nodeDefaults.labels.style = createReactComponentSvgLabelStyleFromJSX(
     demoSvgLabelStyleJSXSources,
     defaultLabelSize
   )
+
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
     margins: 2
   }).createParameter('top')
+
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '2px rgb(170, 170, 170)',
     targetArrow: IArrow.NONE
   })
 }
+
 function toggleHtmlSvgTemplate(event) {
   const isHtml = event.target.checked
   if (
@@ -204,8 +212,10 @@ function toggleHtmlSvgTemplate(event) {
     })
   }
 }
+
 function onSelectionChanged() {
   const selectedItem = graphComponent.selection.nodes.at(0) ?? graphComponent.selection.labels.at(0)
+
   templateErrorArea.classList.remove('open-error')
   tagErrorArea.classList.remove('open-error')
   let jsx
@@ -217,6 +227,7 @@ function onSelectionChanged() {
       selectedItem.style instanceof ReactComponentHtmlLabelStyle ||
       selectedItem.style instanceof ReactComponentHtmlNodeStyle
   }
+
   jsxRenderFunctionTextArea.dispatch({
     effects: setJsxRenderFunctionTextAreaEditable.of(jsx !== undefined),
     changes: {
@@ -227,6 +238,7 @@ function onSelectionChanged() {
   })
   applyTemplateButton.disabled = !jsx
   htmlTemplateToggle.disabled = !jsx
+
   tagTextArea.dispatch({
     effects: setTagTextAreaEditable.of(tag !== undefined),
     changes: {
@@ -237,6 +249,7 @@ function onSelectionChanged() {
   })
   applyTagButton.disabled = !selectedItem
 }
+
 const demoSvgNodeStyleJSXSources = `({width, height, selected, detail, tag}) =>
 (
   <>
@@ -316,6 +329,7 @@ const demoSvgNodeStyleJSXSources = `({width, height, selected, detail, tag}) =>
     }
   </>
 )`
+
 const demoHtmlNodeStyleJSXSources = `({selected, detail, tag}) =>
 (
   <div style={
@@ -367,6 +381,7 @@ const demoHtmlNodeStyleJSXSources = `({selected, detail, tag}) =>
   </div>
 )
 `
+
 const demoSvgLabelStyleJSXSources = `({width, height, selected, text, tag}) =>
 (
   <>
@@ -374,6 +389,7 @@ const demoSvgLabelStyleJSXSources = `({width, height, selected, text, tag}) =>
     <SvgText fill="#222" x={4} width={width-8} height={height} fontSize="10" content={text}/>
   </>
 )`
+
 const demoHtmlLabelStyleJSXSources = `({selected, text, tag}) =>
 (
   <div style={
@@ -391,14 +407,18 @@ const demoHtmlLabelStyleJSXSources = `({selected, text, tag}) =>
     {text}
   </div>
 )`
+
 /**
  * Initializes GraphML writing and reading for files containing ReactComponentNodeStyle.
  */
 function initializeIO() {
   const graphmlHandler = new GraphMLIOHandler()
+
   registerReactComponentNodeStyleSerialization(graphmlHandler)
+
   return graphmlHandler
 }
+
 /**
  * Loads the sample graph.
  */
@@ -420,13 +440,18 @@ function loadSampleGraph() {
     layout: (data) =>
       new Rect(data.layout.x, data.layout.y, defaultNodeSize.width, defaultNodeSize.height)
   })
+
   nodesSource.nodeCreator.createLabelBinding((dataItem) => dataItem.name)
+
   graphBuilder.createEdgesSource(SampleData.edges, 'src', 'tgt').edgeCreator.bendsProvider = (e) =>
     e.bends
+
   const graph = graphBuilder.buildGraph()
   void graphComponent.fitGraphBounds(30)
+
   graphComponent.selection.add(graph.nodes.last())
 }
+
 function applyJSXtoSelectedNodes(jsxSource, svg) {
   const style = svg
     ? createReactComponentSvgNodeStyleFromJSX(jsxSource)
@@ -435,31 +460,39 @@ function applyJSXtoSelectedNodes(jsxSource, svg) {
   style.renderer
     .getVisualCreator(graphComponent.selection.nodes.first(), style)
     .createVisual(graphComponent.createRenderContext())
+
   // check whether there is an error in the style or template
   ReactDOM.flushSync(() => {})
+
   graphComponent.selection.nodes.forEach((node) => {
     graphComponent.graph.setStyle(node, style)
   })
 }
+
 function applyJSXtoSelectedLabels(jsxSource, svg) {
   const style = svg
     ? createReactComponentSvgLabelStyleFromJSX(jsxSource, defaultLabelSize)
     : createReactComponentHtmlLabelStyleFromJSX(jsxSource, defaultLabelSize)
+
   // check if style is a valid style
   style.renderer
     .getVisualCreator(graphComponent.selection.labels.first(), style)
     .createVisual(graphComponent.createRenderContext())
+
   // check whether there is an error in the style or template
   ReactDOM.flushSync(() => {})
+
   graphComponent.selection.labels.forEach((label) => {
     graphComponent.graph.setStyle(label, style)
   })
 }
+
 /**
  * Wires up the UI. Buttons are linked with their according actions.
  */
 function initializeUI() {
   const graphMLIOHandler = initializeIO()
+
   document.querySelector('#open-file-button').addEventListener('click', async () => {
     try {
       await openGraphML(graphComponent, graphMLIOHandler)
@@ -471,10 +504,12 @@ function initializeUI() {
       graphComponent.graph.clear()
     }
   })
+
   document.querySelector('#save-button').addEventListener('click', async () => {
     saveGraphML(graphComponent, 'reactTemplateNodeStyle.graphml', graphMLIOHandler)
   })
   htmlTemplateToggle.addEventListener('change', toggleHtmlSvgTemplate)
+
   document.querySelector('#apply-template-button').addEventListener('click', () => {
     if (graphComponent.selection.nodes.size === 0 && graphComponent.selection.labels.size === 0) {
       return
@@ -494,6 +529,7 @@ function initializeUI() {
       templateErrorArea.classList.add('open-error')
     }
   })
+
   document.querySelector('#apply-tag-button').addEventListener('click', () => {
     graphComponent.selection.nodes.forEach((node) => {
       try {
@@ -509,6 +545,8 @@ function initializeUI() {
     })
     graphComponent.invalidate()
   })
+
   document.querySelector('#reload').addEventListener('click', loadSampleGraph)
 }
+
 run().then(finishLoading)

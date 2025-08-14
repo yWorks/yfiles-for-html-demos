@@ -43,6 +43,7 @@ import {
   PortSides,
   Size
 } from '@yfiles/yfiles'
+
 /**
  * Layout Stage which handles {@link RotatableNodeStyleDecorator rotated nodes}.
  * The during the {@link LayoutStageBase.coreLayout} the layout is calculated with the rotated node's
@@ -52,6 +53,7 @@ import {
 export class RotatedNodeLayoutStage extends LayoutStageBase {
   /** How to connect edges from the bounding box to the actual shape. */
   edgeRoutingMode = 'shortest-straight-path-to-border'
+
   /**
    * The {@link NodeDataKey} key to register a data provider that provides the
    * oriented layout to this stage.
@@ -59,6 +61,7 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
   static get ROTATED_NODE_LAYOUT_DATA_KEY() {
     return new NodeDataKey('RotatedNodeLayoutStage.RotatedNodeLayoutRectDataKey')
   }
+
   /**
    * Executes the layout algorithm.
    * Enlarges the node layout to fully encompass the rotated layout (the rotated layout's bounding box). If the
@@ -73,6 +76,7 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
     if (!this.coreLayout) {
       return
     }
+
     const rectProvider = graph.context.getItemData(
       RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DATA_KEY
     )
@@ -110,10 +114,12 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
         addedTargetPortCandidates = true
       }
     }
+
     try {
       const originalDimensions = new Mapper()
       graph.nodes.forEach((node) => {
         const orientedLayout = rectProvider.get(node)
+
         // the oriented layout's corners
         const tl = new Point(
           orientedLayout.anchorX + orientedLayout.upX * orientedLayout.height,
@@ -132,6 +138,7 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
           orientedLayout.anchorX - orientedLayout.upY * orientedLayout.width,
           orientedLayout.anchorY + orientedLayout.upX * orientedLayout.width
         )
+
         // the outline based on the corners
         const outline = new GeneralPath()
         outline.moveTo(tl)
@@ -139,6 +146,7 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
         outline.lineTo(br)
         outline.lineTo(bl)
         outline.close()
+
         if (orientedLayout) {
           // if the current node is rotated: apply fixes
           // remember old layout and size
@@ -146,14 +154,10 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
           const newLayout = orientedLayout.bounds
           const offset = new Point(newLayout.x - oldLayout.x, newLayout.y - oldLayout.y)
           const originalSize = new Size(oldLayout.width, oldLayout.height)
-          const oldDimensions = {
-            offset,
-            size: originalSize,
-            outline,
-            location: null
-          }
+          const oldDimensions = { offset, size: originalSize, outline, location: null }
           if (this.edgeRoutingMode === 'fixed-port') {
             // EdgeRoutingMode: FixedPort: keep the ports at their current location
+
             // for each out edge
             node.outEdges.forEach((edge) => {
               // create a strong port candidate for the side which is closest to the port location (without rotation)
@@ -174,6 +178,7 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
               }
             })
           }
+
           // For source and target port candidates: fix the PortSide according to the rotation
           const angle = Math.atan2(orientedLayout.upY, orientedLayout.upX)
           if (sourcePortCandidates) {
@@ -186,6 +191,7 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
               this.fixPortCandidateSide(targetPortCandidates, edge, angle)
             })
           }
+
           // enlarge the node layout
           const position = new Point(newLayout.x, newLayout.y)
           oldDimensions.location = position
@@ -197,6 +203,7 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
         }
       })
       this.coreLayout.applyLayout(graph)
+
       graph.nodes
         .filter((node) => !graph.isGroupNode(node))
         .forEach((node) => {
@@ -205,18 +212,22 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
           const offset = oldDimensions.offset
           const originalSize = oldDimensions.size
           const newLayout = node.layout
+
           // create a general path representing the new rotated layout
           const path = oldDimensions.outline
           const transform = new Matrix()
           transform.translate(node.layout.topLeft.subtract(oldDimensions.location))
           path.transform(transform)
+
           // restore the original size
           node.layout.x = newLayout.x - offset.x
           node.layout.y = newLayout.y - offset.y
           node.layout.width = originalSize.width
           node.layout.height = originalSize.height
+
           // graph.setLocation(node, new Point(newLayout.x - offset.x, newLayout.y - offset.y))
           // graph.setSize(node, originalSize.toYDimension())
+
           if (this.edgeRoutingMode === 'no-routing') {
             // NoRouting still needs fix for self-loops
             node.edges.forEach((edge) => {
@@ -227,9 +238,11 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
             })
             return
           }
+
           if (this.edgeRoutingMode !== 'shortest-straight-path-to-border') {
             return
           }
+
           // enlarge the adjacent segment to the oriented rectangle (represented by the path)
           // handling in and out edges separately will automatically cause self-loops to be handled correctly
           node.inEdges.forEach((edge) => {
@@ -252,6 +265,7 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
       }
     }
   }
+
   /**
    * Find the best {@link PortSides} according to the position of the port.
    * The orientation is not rotated, i.e. bottomLeft is always the anchor of the oriented rectangle.
@@ -277,6 +291,7 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
     }
     return side
   }
+
   /**
    * Fix the {@link PortSides} of the given edge's port candidates for the oriented rectangles
    * rotation.
@@ -351,6 +366,7 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
       )
     }
   }
+
   /**
    * Fix the ports for 'shortest-straight-path-to-border' by enlarging the adjacent segment to the rotated layout.
    */

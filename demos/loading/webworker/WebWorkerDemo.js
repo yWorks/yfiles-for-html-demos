@@ -37,6 +37,7 @@ import {
   License,
   WaitInputMode
 } from '@yfiles/yfiles'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import {
@@ -44,14 +45,17 @@ import {
   initializeBasicDemoStyles,
   initializeFolding
 } from '@yfiles/demo-utils/sample-graph'
+
 const layoutButton = document.querySelector('#run-layout')
+
 let graphComponent = null
+
 let executor = null
-const worker = new Worker(new URL('./WorkerLayout', import.meta.url), {
-  type: 'module'
-})
+const worker = new Worker(new URL('./WorkerLayout', import.meta.url), { type: 'module' })
+
 async function run() {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('#graphComponent')
   // initialize styles as well as graph
   graphComponent.inputMode = new GraphEditorInputMode()
@@ -63,17 +67,22 @@ async function run() {
     graphComponent.graph.undoEngine?.clear()
     layoutButton.disabled = false
   })
+
   await graphComponent.fitGraphBounds()
+
   // bind the demo buttons to their functionality
   initializeUI()
 }
+
 /**
  * Applies a hierarchical layout in a web worker task.
  */
 async function runWebWorkerLayout() {
   const layoutData = createLayoutData()
   const layoutDescriptor = createLayoutDescriptor()
+
   setLoading(true)
+
   // create an asynchronous layout executor that calculates a layout on the worker
   executor = new LayoutExecutorAsync({
     messageHandler: LayoutExecutorAsync.createWebWorkerMessageHandler(worker),
@@ -84,11 +93,14 @@ async function runWebWorkerLayout() {
     animateViewport: true,
     easedAnimation: true
   })
+
   // run the Web Worker layout
   await executor.start()
   executor = null
+
   setLoading(false)
 }
+
 /**
  * Cancels the Web Worker and the layout executor. The layout is stopped and the graph stays the same.
  */
@@ -99,18 +111,15 @@ async function cancelWebWorkerLayout() {
   }
   return
 }
+
 /**
  * Creates the object that describes the layout to the Web Worker layout executor.
  * @returns The LayoutDescriptor for this layout
  */
 function createLayoutDescriptor() {
-  return {
-    name: 'HierarchicalLayout',
-    properties: {
-      nodeDistance: 50
-    }
-  }
+  return { name: 'HierarchicalLayout', properties: { nodeDistance: 50 } }
 }
+
 /**
  * Creates the layout data that is used to execute the layout.
  */
@@ -125,6 +134,7 @@ function createLayoutData() {
       })
   })
 }
+
 /**
  * Sets whether the wait cursor should be shown and editing should be disabled during layout calculation.
  */
@@ -141,6 +151,7 @@ function setLoading(value) {
     }
   }
 }
+
 /**
  * Helper method that binds actions to the buttons in the demo's toolbar.
  */
@@ -148,4 +159,5 @@ function initializeUI() {
   document.querySelector('#run-layout').addEventListener('click', () => runWebWorkerLayout())
   document.querySelector('#cancel-layout').addEventListener('click', () => cancelWebWorkerLayout())
 }
+
 run().then(finishLoading)

@@ -101,10 +101,7 @@ function initializeHighlights(graphComponent: GraphComponent): void {
   graphComponent.graph.decorator.edges.highlightRenderer.addFactory(
     (edge) =>
       new EdgeStyleIndicatorRenderer({
-        edgeStyle: new ArcEdgeStyle({
-          stroke: '5px dashed #db3a34',
-          height: getArcHeight(edge)
-        })
+        edgeStyle: new ArcEdgeStyle({ stroke: '5px dashed #db3a34', height: getArcHeight(edge) })
       })
   )
 }

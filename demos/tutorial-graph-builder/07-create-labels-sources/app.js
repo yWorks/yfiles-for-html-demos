@@ -45,7 +45,9 @@ import {
   createNodeLabelsWithProvider,
   createNodeLabelsWithSources
 } from './create-labels-sources'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 const graph = graphComponent.graph
 graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -54,19 +56,23 @@ graph.nodeDefaults.style = new ShapeNodeStyle({
   stroke: '#eeeeee'
 })
 graph.nodeDefaults.size = new Size(135, 60)
-graph.nodeDefaults.labels.style = new LabelStyle({
-  horizontalTextAlignment: 'center'
-})
+graph.nodeDefaults.labels.style = new LabelStyle({ horizontalTextAlignment: 'center' })
 graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
 graph.edgeDefaults.style = new PolylineEdgeStyle({
   stroke: '#aaaaaa',
   targetArrow: '#aaaaaa small triangle'
 })
+
 const graphBuilder = new GraphBuilder(graph)
+
 createNodeLabelsWithBinding(graphBuilder)
 createNodeLabelsWithProvider(graphBuilder)
 createNodeLabelsWithSources(graphBuilder)
+
 createEdgeLabelsWithProvider(graphBuilder)
+
 graphBuilder.buildGraph()
+
 void runLayout(graphComponent)
+
 finishLoading()

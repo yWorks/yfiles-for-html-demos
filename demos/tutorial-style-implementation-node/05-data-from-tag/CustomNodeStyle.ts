@@ -87,12 +87,7 @@ export class CustomNodeStyle extends NodeStyleBase<CustomNodeStyleVisual> {
       g.append(badge)
     }
 
-    return SvgVisual.from(g, {
-      width,
-      height,
-      fillColor,
-      showBadge
-    })
+    return SvgVisual.from(g, { width, height, fillColor, showBadge })
 
   }
 

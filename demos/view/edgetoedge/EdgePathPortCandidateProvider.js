@@ -35,6 +35,7 @@ import {
   PortCandidate,
   PortCandidateProviderBase
 } from '@yfiles/yfiles'
+
 /**
  * A port candidate provider that aggregates different {@link IPortLocationModel PortLocationModels}
  * to provide a number of port candidates along the path of the edge.
@@ -48,20 +49,24 @@ export class EdgePathPortCandidateProvider extends PortCandidateProviderBase {
     super()
     this.edge = edge
   }
+
   /**
    * Creates an enumeration of possible port candidates.
    */
   getPortCandidates(context) {
     const candidates = []
     const edge = this.edge
+
     // add equally distributed port candidates along the edge
     for (let i = 1; i < 10; ++i) {
       candidates.push(
         new PortCandidate(edge, EdgePathPortLocationModel.INSTANCE.createRatioParameter(0.1 * i))
       )
     }
+
     // add a dynamic candidate that can be used if shift is pressed to assign the exact location.
     candidates.push(new PortCandidate(edge, EdgePathPortLocationModel.INSTANCE))
+
     return IEnumerable.from(candidates)
   }
 }

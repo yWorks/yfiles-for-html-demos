@@ -57,6 +57,7 @@ import {
   Rect,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
+
 export class MultiPageIGraphBuilder {
   // initialize mappers
   layoutToViewNode = new Mapper()
@@ -72,6 +73,7 @@ export class MultiPageIGraphBuilder {
   proxyNodeDefaults
   proxyReferenceNodeDefaults
   result
+
   /**
    * Creates a new instance for the given model graph and the given {@link MultiPageLayout}.
    * @param result The holder for the pages created by the
@@ -84,48 +86,58 @@ export class MultiPageIGraphBuilder {
     normalEdgeDefaults.labels.style = NULL_LABEL_STYLE
     normalEdgeDefaults.labels.layoutParameter = NULL_LABEL_MODEL_PARAMETER
     this.normalEdgeDefaults = normalEdgeDefaults
+
     const connectorEdgeDefaults = new EdgeDefaults()
     connectorEdgeDefaults.style = NULL_EDGE_STYLE
     connectorEdgeDefaults.labels.style = NULL_LABEL_STYLE
     connectorEdgeDefaults.labels.layoutParameter = NULL_LABEL_MODEL_PARAMETER
     this.connectorEdgeDefaults = connectorEdgeDefaults
+
     const proxyEdgeDefaults = new EdgeDefaults()
     proxyEdgeDefaults.style = NULL_EDGE_STYLE
     proxyEdgeDefaults.labels.style = NULL_LABEL_STYLE
     proxyEdgeDefaults.labels.layoutParameter = NULL_LABEL_MODEL_PARAMETER
     this.proxyEdgeDefaults = proxyEdgeDefaults
+
     const proxyReferenceEdgeDefaults = new EdgeDefaults()
     proxyReferenceEdgeDefaults.style = NULL_EDGE_STYLE
     proxyReferenceEdgeDefaults.labels.style = NULL_LABEL_STYLE
     proxyReferenceEdgeDefaults.labels.layoutParameter = NULL_LABEL_MODEL_PARAMETER
     this.proxyReferenceEdgeDefaults = proxyReferenceEdgeDefaults
+
     const normalNodeDefaults = new NodeDefaults()
     normalNodeDefaults.style = NULL_NODE_STYLE
     normalNodeDefaults.labels.style = NULL_LABEL_STYLE
     normalNodeDefaults.labels.layoutParameter = NULL_LABEL_MODEL_PARAMETER
     this.normalNodeDefaults = normalNodeDefaults
+
     const groupNodeDefaults = new NodeDefaults()
     groupNodeDefaults.style = NULL_NODE_STYLE
     groupNodeDefaults.labels.style = NULL_LABEL_STYLE
     groupNodeDefaults.labels.layoutParameter = NULL_LABEL_MODEL_PARAMETER
     this.groupNodeDefaults = groupNodeDefaults
+
     const connectorNodeDefaults = new NodeDefaults()
     connectorNodeDefaults.style = NULL_NODE_STYLE
     connectorNodeDefaults.labels.style = NULL_LABEL_STYLE
     connectorNodeDefaults.labels.layoutParameter = NULL_LABEL_MODEL_PARAMETER
     this.connectorNodeDefaults = connectorNodeDefaults
+
     const proxyNodeDefaults = new NodeDefaults()
     proxyNodeDefaults.style = NULL_NODE_STYLE
     proxyNodeDefaults.labels.style = NULL_LABEL_STYLE
     proxyNodeDefaults.labels.layoutParameter = NULL_LABEL_MODEL_PARAMETER
     this.proxyNodeDefaults = proxyNodeDefaults
+
     const proxyReferenceNodeDefaults = new NodeDefaults()
     proxyReferenceNodeDefaults.style = NULL_NODE_STYLE
     proxyReferenceNodeDefaults.labels.style = NULL_LABEL_STYLE
     proxyReferenceNodeDefaults.labels.layoutParameter = NULL_LABEL_MODEL_PARAMETER
     this.proxyReferenceNodeDefaults = proxyReferenceNodeDefaults
+
     this.result = result
   }
+
   /**
    * Creates a list of page graphs.
    * For each page of the multi-page layout, a graph is created that contains
@@ -137,9 +149,11 @@ export class MultiPageIGraphBuilder {
   createViewGraphs() {
     this.viewToLayoutNode.clear()
     const viewGraphs = new Array(this.result.pageGraphs.size)
+
     for (let i = 0; i < viewGraphs.length; i++) {
       viewGraphs[i] = this.createPageView(i)
     }
+
     for (let i = 0; i < viewGraphs.length; i++) {
       const graph = viewGraphs[i]
       graph.nodes.forEach((node) => {
@@ -150,8 +164,10 @@ export class MultiPageIGraphBuilder {
         }
       })
     }
+
     return viewGraphs
   }
+
   /**
    * Copies a single page into the given view graph.
    * @param pageNo The page number.
@@ -163,6 +179,7 @@ export class MultiPageIGraphBuilder {
     this.copyPage(pageLayoutGraph, pageView, pageNo)
     return pageView
   }
+
   /**
    * Copies the contents of the given {@link LayoutGraph} into the given view graph.
    * @param pageLayoutGraph The layout graph to use as source.
@@ -178,11 +195,13 @@ export class MultiPageIGraphBuilder {
       // store the page number
       copiedNode.tag.pageNumber = pageNo
     })
+
     // copy all edges
     pageLayoutGraph.edges.forEach((layoutEdge) => {
       this.copyEdge(pageLayoutGraph, layoutEdge, pageView)
     })
   }
+
   /**
    * Copy all labels of the given edge.
    */
@@ -196,6 +215,7 @@ export class MultiPageIGraphBuilder {
       this.copyEdgeLabel(pageView, edgeLabelLayout, edgeModelLabel, copiedEdge, labelDefaults)
     }
   }
+
   /**
    * Copy all labels of the given node.
    */
@@ -210,6 +230,7 @@ export class MultiPageIGraphBuilder {
       this.copyNodeLabel(pageView, nodeLabelLayout, nodeModelLabel, layoutNode, copiedNode)
     }
   }
+
   /**
    * Copy one edge label.
    * @param pageView The view (i.e. target) graph.
@@ -225,6 +246,7 @@ export class MultiPageIGraphBuilder {
       labelDefaults.style !== NULL_LABEL_STYLE
         ? labelDefaults.getStyleInstance(viewEdge)
         : modelLabel.style.clone()
+
     // create a new label in the view graph using the style,
     // the text from the original label and the layout from the layout graph
     const viewLabel = pageView.addLabel({
@@ -233,6 +255,7 @@ export class MultiPageIGraphBuilder {
       style,
       tag: modelLabel.tag
     })
+
     // the layout graph yields an oriented rectangle for the label, now we need to find the according parameter
     // for the view model
     const finder = modelLabel.layoutParameter.model
@@ -247,6 +270,7 @@ export class MultiPageIGraphBuilder {
     pageView.setLabelLayoutParameter(viewLabel, parameter)
     return viewLabel
   }
+
   /**
    * Copy one node label.
    * @param pageView The view (i.e. target) graph.
@@ -276,12 +300,14 @@ export class MultiPageIGraphBuilder {
         labelDefaults = this.normalNodeDefaults.labels
         break
     }
+
     const style =
       labelDefaults.style !== NULL_LABEL_STYLE
         ? labelDefaults.getStyleInstance(viewNode)
         : modelLabel !== null
           ? modelLabel.style.clone()
           : pageView.nodeDefaults.labels.style
+
     const text = modelLabel !== null ? modelLabel.text : ''
     const tag = modelLabel !== null ? modelLabel.tag : null
     const viewLabel = pageView.addLabel({
@@ -290,11 +316,13 @@ export class MultiPageIGraphBuilder {
       style,
       tag: modelLabel.tag
     })
+
     // the layout graph yields an oriented rectangle for the label, now we need to find the according parameter
     // for the view model
     const finder = modelLabel.layoutParameter.model
       .getContext(viewLabel)
       .lookup(ILabelModelParameterFinder)
+
     let parameter
     if (!finder || !modelLabel || labelDefaults.layoutParameter != NULL_LABEL_MODEL_PARAMETER) {
       parameter = labelDefaults.getLayoutParameterInstance(viewNode)
@@ -302,8 +330,10 @@ export class MultiPageIGraphBuilder {
       parameter = finder.findBestParameter(nodeLabelLayout.layout)
     }
     pageView.setLabelLayoutParameter(viewLabel, parameter)
+
     return viewLabel
   }
+
   /**
    * Returns a node of the output {@link IGraph} that corresponds
    * to the provided node of the {@link LayoutGraph} returned by the
@@ -312,6 +342,7 @@ export class MultiPageIGraphBuilder {
   getViewNode(layoutNode) {
     return this.layoutToViewNode.get(layoutNode)
   }
+
   /**
    * Returns the layout node that corresponds
    * to the provided node of the output graph.
@@ -319,6 +350,7 @@ export class MultiPageIGraphBuilder {
   getLayoutNode(viewNode) {
     return this.viewToLayoutNode.get(viewNode)
   }
+
   /**
    * Returns a node of the original input graph that corresponds
    * to the provided node of the {@link LayoutGraph} returned by the
@@ -329,6 +361,7 @@ export class MultiPageIGraphBuilder {
   getModelNode(layoutNode) {
     return this.result.context.getNodeId(layoutNode)
   }
+
   /**
    * Returns an edge of the original input graph that corresponds
    * the provided edge of the {@link LayoutGraph} returned by the
@@ -339,6 +372,7 @@ export class MultiPageIGraphBuilder {
   getModelEdge(layoutEdge) {
     return this.result.context.getEdgeId(layoutEdge)
   }
+
   /**
    * If the provided {@link LayoutGraph} node has a represented node,
    * returns the node of the original input graph that corresponds to this node.
@@ -355,6 +389,7 @@ export class MultiPageIGraphBuilder {
     }
     return null
   }
+
   /**
    * If the provided {@link LayoutGraph} edge has a represented edge,
    * returns the edge of the original input graph that corresponds to this edge.
@@ -370,6 +405,7 @@ export class MultiPageIGraphBuilder {
     }
     return null
   }
+
   /**
    * Returns a port of the resulting graph view that corresponds to the
    *  provided port of the original input graph.
@@ -377,6 +413,7 @@ export class MultiPageIGraphBuilder {
   getViewPort(layoutPort) {
     return this.modelToViewPort.get(layoutPort)
   }
+
   /**
    * Called by the various edge creation callbacks to create an edge in the resulting graph view
    * that corresponds to the provided `layoutEdge`.
@@ -401,11 +438,13 @@ export class MultiPageIGraphBuilder {
       const representedEdge = this.getRepresentedEdge(edge)
       return edge !== layoutEdge && representedEdge === modelEdge
     })
+
     const style =
       !modelEdge || edgeDefaults.style !== NULL_EDGE_STYLE
         ? edgeDefaults.getStyleInstance()
         : modelEdge.style.clone()
     const tag = modelEdge ? modelEdge.tag : null
+
     let viewEdge
     if (modelEdge && !conflictingEdge) {
       // if the edge has a model edge: create the copied edge between
@@ -421,17 +460,21 @@ export class MultiPageIGraphBuilder {
       const viewTarget = this.getViewNode(layoutEdge.target)
       viewEdge = pageView.createEdge(viewSource, viewTarget, style, tag)
     }
+
     // adjust the port location
     const newSourcePortLocation = layoutEdge.sourcePortLocation
     const newTargetPortLocation = layoutEdge.targetPortLocation
     pageView.setPortLocation(viewEdge.sourcePort, newSourcePortLocation.toPoint())
     pageView.setPortLocation(viewEdge.targetPort, newTargetPortLocation.toPoint())
+
     // and copy the bends
     layoutEdge.bends.forEach((bend) => {
       pageView.addBend(viewEdge, bend.location)
     })
+
     return viewEdge
   }
+
   /**
    * Copies the given edge. Delegate to the type specific implementations.
    * @param pageLayoutGraph The layout graph.
@@ -453,6 +496,7 @@ export class MultiPageIGraphBuilder {
         throw new Error('unknown edge type')
     }
   }
+
   /**
    * Create a normal edge, i.e., an edge that directly corresponds to an edge of the original input graph.
    * @param pageLayoutGraph The layout graph representing the current page
@@ -474,6 +518,7 @@ export class MultiPageIGraphBuilder {
     this.copyEdgeLabels(pageView, layoutEdge, edge, modelEdge, this.normalEdgeDefaults.labels)
     return edge
   }
+
   /**
    * Create a connector edge.
    * A connector edge is an edge connected to a connector node, i.e., it represents an edge
@@ -503,6 +548,7 @@ export class MultiPageIGraphBuilder {
     )
     return viewEdge
   }
+
   /**
    * Create a proxy edge.
    * A proxy edge is an edge connected to a proxy node, i.e., a node that is a proxy
@@ -532,6 +578,7 @@ export class MultiPageIGraphBuilder {
     )
     return viewEdge
   }
+
   /**
    * Create a proxy reference edge.
    * A proxy reference edge is an edge connected to a proxy reference node, i.e., a node that
@@ -553,6 +600,7 @@ export class MultiPageIGraphBuilder {
       this.proxyReferenceEdgeDefaults
     )
   }
+
   /**
    * Called by the various node creation callbacks to create a node in the resulting graph view
    * that corresponds to the provided `layoutNode`.
@@ -592,10 +640,14 @@ export class MultiPageIGraphBuilder {
     if (modelNode !== null) {
       this.copyPorts(pageView, viewNode, modelNode)
     }
+
     this.viewToLayoutNode.set(viewNode, layoutNode)
+
     viewNode.tag = { isReferenceNode }
+
     return viewNode
   }
+
   /**
    * Copy the given node. Delegate to the type specific implementations.
    * @param layoutNode The node in the layout graph.
@@ -625,6 +677,7 @@ export class MultiPageIGraphBuilder {
     }
     return viewNode
   }
+
   /**
    * Copy the ports from a provided node of the original input graph to a node of the resulting multi-page graph view.
    */
@@ -637,6 +690,7 @@ export class MultiPageIGraphBuilder {
       this.modelToViewPort.set(port, viewPort)
     })
   }
+
   /**
    * Create a normal node, i.e., a node that directly corresponds to a node of the original input graph.
    * This implementation copies the labels of the corresponding node in the original input graph.
@@ -661,6 +715,7 @@ export class MultiPageIGraphBuilder {
     this.copyNodeLabels(pageView, layoutNode, viewNode, modelNode)
     return viewNode
   }
+
   /**
    * Create a group node, i.e., a node that directly corresponds to a group node of the original input graph.
    * This implementation copies the labels of the corresponding node in the original input graph.
@@ -685,6 +740,7 @@ export class MultiPageIGraphBuilder {
     this.copyNodeLabels(pageView, layoutNode, viewNode, modelNode)
     return viewNode
   }
+
   /**
    * Create a connector node, i.e., a node that represents a "jump mark" to another connector node on a different
    * page. This implementation copies the labels of the represented node and applies the
@@ -708,6 +764,7 @@ export class MultiPageIGraphBuilder {
     this.copyNodeLabels(pageView, layoutNode, viewNode, representedNode)
     return viewNode
   }
+
   /**
    * Create a proxy node, i.e., a node that "partially" represents a node of the input graph.
    * This implementation copies the labels of the represented node and applies the {@link proxyNodeDefaults}.
@@ -730,6 +787,7 @@ export class MultiPageIGraphBuilder {
     this.copyNodeLabels(pageView, layoutNode, viewNode, representedNode)
     return viewNode
   }
+
   /**
    * Create a proxy reference node, i.e., a node referencing a proxy node.
    * This implementation copies the labels of the represented node and applies the
@@ -764,24 +822,28 @@ export class MultiPageIGraphBuilder {
     return viewNode
   }
 }
+
 /**
  * The default node style used for node defaults.
  * This style instance is only a marker that tells the graph builder to clone the style
  * of the corresponding node in the original graph.
  */
 const NULL_NODE_STYLE = new ShapeNodeStyle()
+
 /**
  * The default edge style used for edge defaults.
  * This style instance is only a marker that tells the graph builder to clone the style
  * of the corresponding edge in the original graph.
  */
 const NULL_EDGE_STYLE = new PolylineEdgeStyle()
+
 /**
  * The default label style used for label defaults.
  * This style instance is only a marker that tells the graph builder to clone the style
  * of the corresponding label in the original graph.
  */
 const NULL_LABEL_STYLE = new LabelStyle()
+
 /**
  * The default label model parameter used for label defaults.
  * This label model parameter instance is only a marker that tells the graph builder to clone the

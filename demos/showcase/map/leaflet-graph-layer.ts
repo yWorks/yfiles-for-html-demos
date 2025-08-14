@@ -78,13 +78,7 @@ export function createMap(
   // create the map
   const worldMap = new LeafletMap(containerId, leafletOptions)
   worldMap.setView(new LatLng(15.538, 16.523), 3)
-  worldMap.addLayer(
-    new TileLayer(osmUrl, {
-      minZoom: 3,
-      maxZoom: 12,
-      attribution: osmAttrib
-    })
-  )
+  worldMap.addLayer(new TileLayer(osmUrl, { minZoom: 3, maxZoom: 12, attribution: osmAttrib }))
 
   // add a zoom control
   control.scale().addTo(worldMap)
@@ -192,8 +186,8 @@ export class GraphLayer extends Layer {
     map.off('zoomend', this.showGraphComponent, this)
     this.pane = undefined
     this.mapPane = undefined
-    this.graphComponent.cleanUp()
     this.graphComponent.graph = new Graph()
+    this.graphComponent.cleanUp()
     this.graphComponent.htmlElement.remove()
     return this
   }

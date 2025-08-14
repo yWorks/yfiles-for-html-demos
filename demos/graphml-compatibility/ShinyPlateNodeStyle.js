@@ -54,15 +54,18 @@ import {
   Stroke,
   SvgVisualGroup
 } from '@yfiles/yfiles'
+
 import {
   createRoundRectanglePath,
   findLineIntersectionWithRoundRect,
   roundRectContains,
   roundRectIsHit
 } from './node-style-utils'
+
 export class ShinyPlateNodeStyle extends DelegatingNodeStyle {
   impl = new ShinyPlateNodeStyleImpl()
   wrappedStyle
+
   constructor(options) {
     super()
     this.wrappedStyle = new ShadowNodeStyleDecorator(this.impl)
@@ -74,45 +77,59 @@ export class ShinyPlateNodeStyle extends DelegatingNodeStyle {
       this.stroke = options.stroke ?? null
     }
   }
+
   get fill() {
     return this.impl.fill
   }
+
   set fill(value) {
     this.impl.fill = value
   }
+
   get stroke() {
     return this.impl.stroke
   }
+
   set stroke(value) {
     this.impl.stroke = value
   }
+
   get radius() {
     return this.impl.radius
   }
+
   set radius(value) {
     this.impl.radius = value
   }
+
   get insets() {
     return this.impl.insets
   }
+
   set insets(value) {
     this.impl.insets = value
   }
+
   _drawShadow = true
+
   get drawShadow() {
     return this._drawShadow
   }
+
   set drawShadow(value) {
     this._drawShadow = value
+
     if (value) {
       this.wrappedStyle = new ShadowNodeStyleDecorator(this.impl)
     } else {
       this.wrappedStyle = this.impl
     }
   }
+
   getStyle(node) {
     return this.wrappedStyle
   }
+
   clone() {
     return new ShinyPlateNodeStyle({
       drawShadow: this.drawShadow,
@@ -123,47 +140,61 @@ export class ShinyPlateNodeStyle extends DelegatingNodeStyle {
     })
   }
 }
+
 class ShinyPlateNodeStyleImpl extends BaseClass(INodeStyle) {
   _renderer = new ShinyPlateNodeStyleRenderer()
+
   _fill = Color.BLACK
   _stroke = null
   _radius = 5
   _insets = new Insets(5)
+
   constructor() {
     super()
   }
+
   get fill() {
     return this._fill
   }
+
   set fill(value) {
     this._fill = value
   }
+
   get stroke() {
     return this._stroke
   }
+
   set stroke(value) {
     this._stroke = value
   }
+
   get radius() {
     return this._radius
   }
+
   set radius(value) {
     this._radius = value
   }
+
   get insets() {
     return this._insets
   }
+
   set insets(value) {
     this._insets = value
   }
+
   /** @inheritdoc */
   get renderer() {
     return this._renderer
   }
+
   clone() {
     return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
   }
 }
+
 class ShinyPlateNodeStyleRenderer extends BaseClass(
   INodeStyleRenderer,
   IShapeGeometry,
@@ -178,39 +209,51 @@ class ShinyPlateNodeStyleRenderer extends BaseClass(
   _style
   _node
   _outline = null
+
   get style() {
     return this._style
   }
+
   set style(value) {
     this._style = value
   }
+
   get node() {
     return this._node
   }
+
   set node(value) {
     this._node = value
   }
+
   get fill() {
     return this.style.fill
   }
+
   get stroke() {
     return this.style.stroke ?? null
   }
+
   get radius() {
     return this.style.radius
   }
+
   get layout() {
     return this.node.layout
   }
+
   get outline() {
     return this._outline
   }
+
   set outline(value) {
     this._outline = value
   }
+
   constructor() {
     super()
   }
+
   createVisual(context) {
     return new ShinyPlateNodeStyleVisual().render(
       this.fill,
@@ -220,6 +263,7 @@ class ShinyPlateNodeStyleRenderer extends BaseClass(
       context
     )
   }
+
   updateVisual(context, oldVisual) {
     if (oldVisual) {
       return oldVisual.update(this.fill, this.stroke, this.layout, this.radius, context)
@@ -227,15 +271,19 @@ class ShinyPlateNodeStyleRenderer extends BaseClass(
       return this.createVisual(context)
     }
   }
+
   getIntersection(inner, outer) {
     return findLineIntersectionWithRoundRect(inner, outer, this.layout.toRect(), this.radius)
   }
+
   isInside(location) {
     return roundRectContains(location, this.layout, this.radius)
   }
+
   isHit(context, location) {
     return roundRectIsHit(location, this.layout, this.radius, context.hitTestRadius)
   }
+
   getOutline() {
     if (this.outline) {
       return this.outline
@@ -251,25 +299,31 @@ class ShinyPlateNodeStyleRenderer extends BaseClass(
       return this.outline
     }
   }
+
   configure() {
     this.outline = null
   }
+
   isVisible(context, rectangle) {
     return rectangle.intersects(Rect.from(this.layout))
   }
+
   lookup(type) {
     if (type === IGroupPaddingProvider) {
       return new MyGroupPaddingProvider(this.style)
     }
     return null
   }
+
   getBounds(context) {
     return Rect.from(this.layout)
   }
+
   isInPath(context, lassoPath) {
     const outline = this.getOutline()
     return lassoPath.areaIntersects(outline, context.hitTestRadius)
   }
+
   getVisualCreator(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -281,6 +335,7 @@ class ShinyPlateNodeStyleRenderer extends BaseClass(
       return IVisualCreator.VOID_VISUAL_CREATOR
     }
   }
+
   getBoundsProvider(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -292,6 +347,7 @@ class ShinyPlateNodeStyleRenderer extends BaseClass(
       return IBoundsProvider.EMPTY
     }
   }
+
   getHitTestable(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -303,6 +359,7 @@ class ShinyPlateNodeStyleRenderer extends BaseClass(
       return IHitTestable.NEVER
     }
   }
+
   getMarqueeTestable(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -314,6 +371,7 @@ class ShinyPlateNodeStyleRenderer extends BaseClass(
       return IMarqueeTestable.NEVER
     }
   }
+
   getVisibilityTestable(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -324,6 +382,7 @@ class ShinyPlateNodeStyleRenderer extends BaseClass(
       return IVisibilityTestable.NEVER
     }
   }
+
   getLassoTestable(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -335,6 +394,7 @@ class ShinyPlateNodeStyleRenderer extends BaseClass(
       return ILassoTestable.NEVER
     }
   }
+
   getContext(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -345,10 +405,12 @@ class ShinyPlateNodeStyleRenderer extends BaseClass(
       return ILookup.EMPTY
     }
   }
+
   isInBox(context, rectangle) {
     const rect = this.layout
     return rectangle.intersects(Rect.from(rect))
   }
+
   getShapeGeometry(node, style) {
     const theStyle = style
     if (theStyle) {
@@ -361,14 +423,17 @@ class ShinyPlateNodeStyleRenderer extends BaseClass(
     }
   }
 }
+
 class ShinyPlateNodeStyleVisual extends SvgVisualGroup {
   fill = null
   stroke = null
   layout = new MutableRectangle()
   radius = 0
+
   constructor() {
     super()
   }
+
   render(fill, stroke, rectangle, radius, ctx) {
     const dx = rectangle.x
     const dy = rectangle.y
@@ -380,6 +445,7 @@ class ShinyPlateNodeStyleVisual extends SvgVisualGroup {
     this.svgElement.setAttribute('transform', `translate(${dx}, ${dy})`)
     return this
   }
+
   update(fill, stroke, rectangle, radius, ctx) {
     const dx = rectangle.x
     const dy = rectangle.y
@@ -388,6 +454,7 @@ class ShinyPlateNodeStyleVisual extends SvgVisualGroup {
     const radiusChanged = this.radius !== radius
     const layoutChanged =
       this.layout.width !== rectangle.width || this.layout.height !== rectangle.height
+
     if (fillChanged || strokeChanged || radiusChanged || layoutChanged) {
       this.stroke = stroke
       this.fill = fill
@@ -405,16 +472,21 @@ class ShinyPlateNodeStyleVisual extends SvgVisualGroup {
         ctx
       )
     }
+
     this.svgElement.setAttribute('transform', `translate(${dx}, ${dy})`)
     return this
   }
+
   paint(layout, fill, stroke, radius, ctx) {
     const container = this.svgElement
+
     while (container.firstChild) {
       container.removeChild(container.firstChild)
     }
+
     let layoutWidth = layout.width
     let layoutHeight = layout.height
+
     const rectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rectangle.setAttribute('width', layoutWidth.toString())
     rectangle.setAttribute('height', layoutHeight.toString())
@@ -422,11 +494,15 @@ class ShinyPlateNodeStyleVisual extends SvgVisualGroup {
     rectangle.setAttribute('ry', radius.toString())
     fill?.applyTo(rectangle, ctx)
     stroke?.applyTo(rectangle, ctx)
+
     layoutWidth = Math.min(layoutWidth, Math.max(0.65 * layoutWidth, radius * 2))
     layoutHeight = Math.min(layoutHeight, Math.max(0.8 * layoutHeight, radius * 2))
+
     radius = Math.min(radius, Math.min(layoutWidth * 0.5, layoutHeight * 0.5))
     const r2 = Math.min(radius * 0.75, Math.min(layoutWidth * 0.4, layoutHeight * 0.4))
+
     const gp = new GeneralPath(12)
+
     gp.moveTo(radius - r2, radius)
     gp.quadTo(radius - r2, radius - r2, radius, radius - r2)
     gp.lineTo(layoutWidth - radius, radius - r2)
@@ -439,8 +515,10 @@ class ShinyPlateNodeStyleVisual extends SvgVisualGroup {
     )
     gp.quadTo(radius + r2, layoutHeight - radius + r2, radius, layoutHeight - radius + r2)
     gp.quadTo(radius - r2, layoutHeight - radius + r2, radius - r2, layoutHeight - radius)
+
     const w = layoutWidth - r2 - r2
     const h = layoutHeight - r2 - r2
+
     // create gradient
     const gradientStops = [
       new GradientStop(Color.fromRGBA(255, 255, 255, 0.86), 0),
@@ -453,6 +531,7 @@ class ShinyPlateNodeStyleVisual extends SvgVisualGroup {
       endPoint: this.calculateGradientVector(w, h)
     })
     gradientFill.freeze()
+
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     const gradient = gradientFill.toSvgGradient()
     const gradientId = ctx.canvasComponent.svgDefsManager.generateUniqueDefsId()
@@ -461,10 +540,12 @@ class ShinyPlateNodeStyleVisual extends SvgVisualGroup {
     defs.appendChild(gradient)
     path.setAttribute('fill', `url(#${gradientId})`)
     path.setAttribute('d', gp.createSvgPathData())
+
     container.appendChild(rectangle)
     container.appendChild(path)
     container.appendChild(defs)
   }
+
   updateCore(
     layout,
     fill,
@@ -477,33 +558,44 @@ class ShinyPlateNodeStyleVisual extends SvgVisualGroup {
     ctx
   ) {
     const container = this.svgElement
+
     if (container.childNodes.length !== 3) {
       this.paint(layout, fill, stroke, radius, ctx)
       return
     }
+
     const rectangle = container.childNodes[0]
     const path = container.childNodes[1]
     const defs = container.childNodes[2]
+
     let layoutWidth = layout.width
     let layoutHeight = layout.height
+
     if (radiusChanged) {
       rectangle.setAttribute('rx', radius.toString())
       rectangle.setAttribute('ry', radius.toString())
     }
+
     if (fillChanged) {
       fill?.applyTo(rectangle, ctx)
     }
+
     if (strokeChanged) {
       stroke?.applyTo(rectangle, ctx)
     }
+
     if (layoutChanged) {
       rectangle.setAttribute('width', layoutWidth.toString())
       rectangle.setAttribute('height', layoutHeight.toString())
+
       layoutWidth = Math.min(layoutWidth, Math.max(0.65 * layoutWidth, radius * 2))
       layoutHeight = Math.min(layoutHeight, Math.max(0.8 * layoutHeight, radius * 2))
+
       radius = Math.min(radius, Math.min(layoutWidth * 0.5, layoutHeight * 0.5))
       const r2 = Math.min(radius * 0.75, Math.min(layoutWidth * 0.4, layoutHeight * 0.4))
+
       const gp = new GeneralPath()
+
       gp.moveTo(radius - r2, radius)
       gp.quadTo(radius - r2, radius - r2, radius, radius - r2)
       gp.lineTo(layoutWidth - radius, radius - r2)
@@ -516,22 +608,29 @@ class ShinyPlateNodeStyleVisual extends SvgVisualGroup {
       )
       gp.quadTo(radius + r2, layoutHeight - radius + r2, radius, layoutHeight - radius + r2)
       gp.quadTo(radius - r2, layoutHeight - radius + r2, radius - r2, layoutHeight - radius)
+
       const w = layoutWidth - r2 - r2
       const h = layoutHeight - r2 - r2
+
       // Assuming defs.firstChild is of a type with `x2` and `y2` properties, and `CalculateGradientVector` is a helper function
       const gradient = defs.firstChild
+
       // Calculate gradient vector based on `w` and `h`
       const vector = this.calculateGradientVector(w, h)
       gradient.setAttribute('x2', String(vector.x))
       gradient.setAttribute('y2', String(vector.y))
+
       // Set the path data (assuming `path` is defined and `CreateGeometry` is a method on `gp`)
       path.setAttribute('d', gp.createSvgPathData())
     }
   }
+
   calculateGradientVector(width, height) {
     if (width === 0) return new Point(0, 1)
     if (height === 0) return new Point(1, 0)
+
     const pqRatio = (width * width) / (height * height)
+
     let p, q
     if (pqRatio >= 1) {
       p = pqRatio
@@ -540,18 +639,22 @@ class ShinyPlateNodeStyleVisual extends SvgVisualGroup {
       p = 1
       q = 1 / pqRatio
     }
+
     const x = width * (q / (p + q))
     const y = height * (p / (p + q))
     const factor = 1.0 / Math.max(x, y)
     return new Point(x * factor, y * factor)
   }
 }
+
 class MyGroupPaddingProvider extends BaseClass(IGroupPaddingProvider) {
   style
+
   constructor(style) {
     super()
     this.style = style
   }
+
   getPadding() {
     return this.style.insets
   }

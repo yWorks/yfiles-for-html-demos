@@ -153,11 +153,7 @@
   <span class="hljs-attr">currency</span>: <span class="hljs-string">&#x27;USD&#x27;</span> | <span class="hljs-string">&#x27;EUR&#x27;</span>
 }
 
-type <span class="hljs-title class_">ConnectionData</span> = {
-  <span class="hljs-attr">sourceId</span>: string
-  <span class="hljs-attr">targetId</span>: string
-  <span class="hljs-attr">ownership</span>: number
-}</code></pre>
+type <span class="hljs-title class_">ConnectionData</span> = { <span class="hljs-attr">sourceId</span>: string; <span class="hljs-attr">targetId</span>: string; <span class="hljs-attr">ownership</span>: number }</code></pre>
                 </div>
               </div>
             </div>
@@ -260,15 +256,9 @@ nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
   <span class="hljs-attr">entityData</span>: <span class="hljs-title class_">EntityData</span>
 ): <span class="hljs-title class_">ShapeNodeStyle</span> | <span class="hljs-function"><span class="hljs-params">undefined</span> =&gt;</span> {
   <span class="hljs-keyword">if</span> (entityData.<span class="hljs-property">type</span> === <span class="hljs-string">&#x27;Branch&#x27;</span>) {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShapeNodeStyle</span>({
-      <span class="hljs-attr">shape</span>: <span class="hljs-string">&#x27;round-rectangle&#x27;</span>,
-      <span class="hljs-attr">fill</span>: gold
-    })
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShapeNodeStyle</span>({ <span class="hljs-attr">shape</span>: <span class="hljs-string">&#x27;round-rectangle&#x27;</span>, <span class="hljs-attr">fill</span>: gold })
   } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (entityData.<span class="hljs-property">type</span> === <span class="hljs-string">&#x27;Corporation&#x27;</span>) {
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShapeNodeStyle</span>({
-      <span class="hljs-attr">shape</span>: <span class="hljs-string">&#x27;octagon&#x27;</span>,
-      <span class="hljs-attr">fill</span>: green
-    })
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShapeNodeStyle</span>({ <span class="hljs-attr">shape</span>: <span class="hljs-string">&#x27;octagon&#x27;</span>, <span class="hljs-attr">fill</span>: green })
   }
 }</code></pre>
                   </div>
@@ -303,11 +293,7 @@ nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
     })
   } <span class="hljs-keyword">else</span> {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">PolylineEdgeStyle</span>({
-      <span class="hljs-attr">stroke</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Stroke</span>({
-        <span class="hljs-attr">fill</span>: gray,
-        <span class="hljs-attr">thickness</span>: <span class="hljs-number">3</span>,
-        <span class="hljs-attr">dashStyle</span>: <span class="hljs-string">&#x27;dash&#x27;</span>
-      })
+      <span class="hljs-attr">stroke</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Stroke</span>({ <span class="hljs-attr">fill</span>: gray, <span class="hljs-attr">thickness</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">dashStyle</span>: <span class="hljs-string">&#x27;dash&#x27;</span> })
     })
   }
 }</code></pre>

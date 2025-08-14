@@ -43,7 +43,7 @@ import {
   RenderMode
 } from '@yfiles/yfiles'
 import { PositionHandler } from './PositionHandler'
-import { RectangleRenderer } from '../../../utils/RectangleRenderer'
+import { RectangleRenderer } from '@yfiles/demo-utils/RectangleRenderer'
 
 let renderTreeElement: IRenderTreeElement
 let exportHandleInputMode: HandleInputMode

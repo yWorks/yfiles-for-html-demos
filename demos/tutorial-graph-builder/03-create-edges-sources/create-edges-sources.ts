@@ -30,11 +30,7 @@ import type { EdgesSource, GraphBuilder } from '@yfiles/yfiles'
 
 export function createEdgesSourceFromArray(
   graphBuilder: GraphBuilder
-): EdgesSource<{
-  id: string
-  sourceId: string
-  targetId: string
-}> {
+): EdgesSource<{ id: string; sourceId: string; targetId: string }> {
   // add node data including ids
   const nodeData = [{ id: 0 }, { id: 1 }, { id: 2 }]
   graphBuilder.createNodesSource(nodeData, 'id')

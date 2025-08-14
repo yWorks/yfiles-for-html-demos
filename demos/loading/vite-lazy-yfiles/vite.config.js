@@ -27,10 +27,21 @@
  **
  ***************************************************************************/
 import { defineConfig } from 'vite'
+import optimizer from '@yworks/optimizer/rollup-plugin'
 
-export default defineConfig({
-  base: './',
-  resolve: {
-    preserveSymlinks: true
+export default defineConfig(({ mode }) => {
+  return {
+    base: './',
+    plugins: [
+      mode === 'production'
+        ? optimizer({
+            shouldOptimize({ id }) {
+              // make sure not to exclude demo-utils since it is in node_modules and uses yFiles API
+              return id.includes('demo-utils') || !id.includes('node_modules')
+            }
+          })
+        : null
+    ],
+    resolve: { preserveSymlinks: true }
   }
 })

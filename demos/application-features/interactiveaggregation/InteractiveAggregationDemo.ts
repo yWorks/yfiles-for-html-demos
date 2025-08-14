@@ -40,6 +40,8 @@ import {
   INode,
   INodeStyle,
   InteriorNodeLabelModel,
+  LabelingScope,
+  LabelShape,
   LabelStyle,
   LayoutExecutor,
   License,
@@ -85,18 +87,10 @@ const grayBorder: Stroke = new Stroke('#77776E', 2.0)
 
 // style factories for aggregation nodes
 const shapeStyle = (shape: ShapeNodeShape): ShapeNodeStyle =>
-  new ShapeNodeStyle({
-    fill: '#C7C7A6',
-    shape: shape,
-    stroke: grayBorder
-  })
+  new ShapeNodeStyle({ fill: '#C7C7A6', shape: shape, stroke: grayBorder })
 
 const fillStyle = (fillColor: string): ShapeNodeStyle =>
-  new ShapeNodeStyle({
-    fill: fillColor,
-    shape: ShapeNodeShape.ELLIPSE,
-    stroke: grayBorder
-  })
+  new ShapeNodeStyle({ fill: fillColor, shape: ShapeNodeShape.ELLIPSE, stroke: grayBorder })
 
 const shapeAndFillStyle = (shapeAndFill: ShapeAndFill): ShapeNodeStyle =>
   new ShapeNodeStyle({
@@ -125,8 +119,13 @@ async function run(): Promise<void> {
   aggregateGraph = new AggregationGraphWrapper(graphComponent.graph)
 
   // set default label text sizes for aggregation labels
-  aggregateGraph.aggregationNodeDefaults.labels.style = new LabelStyle({ textSize: 32 })
-  aggregateGraph.aggregationEdgeDefaults.labels.style = new LabelStyle({ textSize: 24 })
+  aggregateGraph.aggregationNodeDefaults.labels.style = new LabelStyle({ textSize: 28 })
+  aggregateGraph.aggregationEdgeDefaults.labels.style = new LabelStyle({
+    textSize: 18,
+    shape: LabelShape.PILL,
+    backgroundFill: 'rgba(255,255,255,0.8)',
+    padding: 4
+  })
 
   // assign it to the graphComponent
   graphComponent.graph = aggregateGraph
@@ -283,9 +282,7 @@ function registerAggregationCallbacks(): void {
     // set the thickness to the number of aggregated edges
     graph.setStyle(
       edge,
-      new PolylineEdgeStyle({
-        stroke: new Stroke(Color.GRAY, 1 + aggregatedEdgesCount)
-      })
+      new PolylineEdgeStyle({ stroke: new Stroke(Color.GRAY, Math.max(2, aggregatedEdgesCount)) })
     )
 
     if (aggregatedEdgesCount > 1) {
@@ -304,52 +301,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
     data: graphData.nodeList,
     id: (item) => item.id,
     parentId: (item) => item.parentId
-  }).nodeCreator.styleProvider = (item) => {
-    switch (item.tag) {
-      case 'b1':
-        return new ShapeNodeStyle({
-          fill: '#67b7dc',
-          stroke: '#617984',
-          shape: ShapeNodeShape.RECTANGLE
-        })
-      case 'b2':
-        return new ShapeNodeStyle({
-          fill: '#67b7dc',
-          stroke: '#617984',
-          shape: ShapeNodeShape.OCTAGON
-        })
-      case 'p1':
-        return new ShapeNodeStyle({
-          fill: '#177E89',
-          stroke: '#304F52',
-          shape: ShapeNodeShape.RECTANGLE
-        })
-      case 'p2':
-        return new ShapeNodeStyle({
-          fill: '#177E89',
-          stroke: '#304F52',
-          shape: ShapeNodeShape.OCTAGON
-        })
-      case 'p3':
-        return new ShapeNodeStyle({
-          fill: '#177E89',
-          stroke: '#304F52',
-          shape: ShapeNodeShape.DIAMOND
-        })
-      case 'l2':
-        return new ShapeNodeStyle({
-          fill: '#aa4586',
-          stroke: '#66485B',
-          shape: ShapeNodeShape.OCTAGON
-        })
-      case 'l3':
-        return new ShapeNodeStyle({
-          fill: '#aa4586',
-          stroke: '#66485B',
-          shape: ShapeNodeShape.DIAMOND
-        })
-    }
-  }
+  }).nodeCreator.styleProvider = (item) => nodeStyles[item.tag as string]
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
@@ -358,6 +310,54 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   })
 
   graphBuilder.buildGraph()
+}
+
+const nodeStyles: Record<string, any> = {
+  blueRectangle: new ShapeNodeStyle({
+    fill: '#67b7dc',
+    stroke: '#617984',
+    shape: ShapeNodeShape.RECTANGLE
+  }),
+  blueOctagon: new ShapeNodeStyle({
+    fill: '#67b7dc',
+    stroke: '#617984',
+    shape: ShapeNodeShape.OCTAGON
+  }),
+  blueDiamond: new ShapeNodeStyle({
+    fill: '#67b7dc',
+    stroke: '#617984',
+    shape: ShapeNodeShape.DIAMOND
+  }),
+  greenRectangle: new ShapeNodeStyle({
+    fill: '#177E89',
+    stroke: '#304F52',
+    shape: ShapeNodeShape.RECTANGLE
+  }),
+  greenOctagon: new ShapeNodeStyle({
+    fill: '#177E89',
+    stroke: '#304F52',
+    shape: ShapeNodeShape.OCTAGON
+  }),
+  greenDiamond: new ShapeNodeStyle({
+    fill: '#177E89',
+    stroke: '#304F52',
+    shape: ShapeNodeShape.DIAMOND
+  }),
+  purpleRectangle: new ShapeNodeStyle({
+    fill: '#aa4586',
+    stroke: '#66485B',
+    shape: ShapeNodeShape.RECTANGLE
+  }),
+  purpleOctagon: new ShapeNodeStyle({
+    fill: '#aa4586',
+    stroke: '#66485B',
+    shape: ShapeNodeShape.OCTAGON
+  }),
+  purpleDiamond: new ShapeNodeStyle({
+    fill: '#aa4586',
+    stroke: '#66485B',
+    shape: ShapeNodeShape.DIAMOND
+  })
 }
 
 /**
@@ -451,8 +451,8 @@ function aggregate<TKey>(
   key: TKey,
   styleFactory: (style: TKey) => INodeStyle
 ): void {
-  const size = graphComponent.graph.nodeDefaults.size.multiply(1 + nodes.size * 0.2)
-  const layout = Rect.fromCenter(Point.ORIGIN, size)
+  const size = Math.sqrt(graphComponent.graph.nodeDefaults.size.width * nodes.size) * 5
+  const layout = Rect.fromCenter(Point.ORIGIN, new Size(size, size))
   aggregateGraph.aggregate(nodes, layout, styleFactory(key))
 }
 
@@ -475,9 +475,13 @@ function separate(nodes: IEnumerable<INode>): void {
  */
 async function runLayout(): Promise<void> {
   const layout = new OrganicLayout({
-    defaultMinimumNodeDistance: 60,
-    avoidNodeEdgeOverlap: true,
-    edgeLabelPlacement: 'integrated'
+    defaultMinimumNodeDistance: 80,
+    defaultPreferredEdgeLength: 100,
+    genericLabeling: {
+      enabled: true,
+      scope: LabelingScope.EDGE_LABELS,
+      defaultEdgeLabelingCosts: { ambiguousPlacementCost: 1.0 }
+    }
   })
 
   await graphComponent.applyLayoutAnimated(layout, '1s')

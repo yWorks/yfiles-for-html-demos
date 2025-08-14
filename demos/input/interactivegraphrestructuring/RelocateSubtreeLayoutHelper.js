@@ -55,6 +55,7 @@ import {
   TimeSpan
 } from '@yfiles/yfiles'
 import { Subtree } from './Subtree'
+
 /**
  * This class performs the layout and the animation while relocating a subtree.
  */
@@ -63,40 +64,49 @@ export class RelocateSubtreeLayoutHelper {
    * The layout executor that will run the layout.
    */
   executor
+
   /**
    * The component that displays the graph.
    */
   graphComponent
+
   /**
    * The graph layout copy on which the new layout is calculated while the subtree is moving.
    */
   resetToWorkingGraphStageData
+
   /**
    * The graph layout copy that stores the original layout before the subtree has been moved.
    * This copy is used to restore the graph when the drag is canceled.
    */
   resetToOriginalGraphStageData
+
   /**
    * The subgraph that is dragged.
    */
   subtree
+
   /**
    * The canvas object of the edge connecting the subtree with the rest of the graph.
    * This edge is hidden while the subtree is dragged.
    */
   renderTreeElementEdge
+
   /**
    * Sibling subtrees that should not be modified by the layout.
    */
   components = new Mapper()
+
   /**
    *  A lock which prevents re-entrant layout execution.
    */
   layoutIsRunning = false
+
   /**
    * Indicates whether a layout run has been requested while a layout calculation is running.
    */
   layoutPending = false
+
   /**
    * The executor has been stopped.
    * The final layout for the complete tree including the edge to the dragged subtree shall be calculated.
@@ -104,6 +114,7 @@ export class RelocateSubtreeLayoutHelper {
   stopped = false
   canceled = false
   initializing = false
+
   /**
    * Creates a new instance of {@link RelocateSubtreeLayoutHelper}.
    * @param graphComponent The given graphComponent
@@ -114,6 +125,7 @@ export class RelocateSubtreeLayoutHelper {
     this.subtree = subtree
     this.components = new Mapper()
   }
+
   /**
    * Starts a layout calculation if none is already running.
    */
@@ -125,6 +137,7 @@ export class RelocateSubtreeLayoutHelper {
     }
     void this.runLayoutCore()
   }
+
   async runLayoutCore() {
     do {
       // prevent other layouts from running
@@ -140,6 +153,7 @@ export class RelocateSubtreeLayoutHelper {
       // repeat if another layout has been requested in the meantime
     } while (this.layoutPending)
   }
+
   /**
    * Initializes the current layout calculation.
    */
@@ -147,6 +161,7 @@ export class RelocateSubtreeLayoutHelper {
     this.initializing = true
     this.runLayout()
   }
+
   /**
    * Cancels the current layout calculation.
    */
@@ -155,6 +170,7 @@ export class RelocateSubtreeLayoutHelper {
     this.canceled = true
     this.runLayout()
   }
+
   /**
    * Stops the current layout calculation.
    */
@@ -163,6 +179,7 @@ export class RelocateSubtreeLayoutHelper {
     this.stopped = true
     this.runLayout()
   }
+
   /**
    * Called before the layout run starts.
    */
@@ -174,12 +191,14 @@ export class RelocateSubtreeLayoutHelper {
         () => true
       )
       this.executor = this.createInitializingLayoutExecutor()
+
       // highlight the parent of the current subtree and make the connection to the root invisible
       if (this.subtree.parent) {
         this.renderTreeElementEdge = this.graphComponent.graphModelManager.getRenderTreeElement(
           this.subtree.parentToRootEdge
         )
         this.renderTreeElementEdge.visible = false
+
         this.subtree.newParent = this.subtree.parent
         this.updateComponents()
         highlights.add(this.subtree.newParent)
@@ -187,8 +206,10 @@ export class RelocateSubtreeLayoutHelper {
     } else if (this.stopped) {
       // before the last run starts, we have to re-parent the subtree
       this.applyNewParent()
+
       // last layout run also includes subtree
       this.executor = this.createFinishedLayoutExecutor()
+
       // remove highlight
       if (this.subtree.newParent) {
         highlights.remove(this.subtree.newParent)
@@ -210,6 +231,7 @@ export class RelocateSubtreeLayoutHelper {
       this.executor = this.createCanceledLayoutExecutor()
     }
   }
+
   /**
    * Called after the layout run finished.
    */
@@ -226,6 +248,7 @@ export class RelocateSubtreeLayoutHelper {
       this.updateNewParent()
     }
   }
+
   /**
    *  Checks if the moved subtree root is near another parent.
    */
@@ -236,6 +259,7 @@ export class RelocateSubtreeLayoutHelper {
       if (this.subtree.newParent) {
         this.graphComponent.highlights.remove(this.subtree.newParent)
       }
+
       if (candidate) {
         this.graphComponent.highlights.add(candidate)
       }
@@ -243,6 +267,7 @@ export class RelocateSubtreeLayoutHelper {
       this.updateComponents()
     }
   }
+
   /**
    * Creates a mapping to specify the components which should not be modified by the method clearAreaLayout().
    */
@@ -258,6 +283,7 @@ export class RelocateSubtreeLayoutHelper {
       })
     }
   }
+
   /**
    * Determines the node that is nearest to the subtree root.
    */
@@ -273,6 +299,7 @@ export class RelocateSubtreeLayoutHelper {
         nodesOnTop.add(node)
       }
     })
+
     let minDist = Number.POSITIVE_INFINITY
     let result = null
     const rootCenter = this.subtree.root.layout.center
@@ -287,6 +314,7 @@ export class RelocateSubtreeLayoutHelper {
     })
     return result
   }
+
   /**
    * Relocates the edge to the subtree root to the new parent node.
    */
@@ -302,6 +330,7 @@ export class RelocateSubtreeLayoutHelper {
       this.subtree.parent = this.subtree.newParent
     }
   }
+
   /**
    * Creates a {@link GivenCoordinatesLayoutData} that stores the layout of nodes and edges.
    * @param nodePredicate Determines the nodes to store
@@ -318,6 +347,7 @@ export class RelocateSubtreeLayoutHelper {
         layoutData.nodeLocations.mapper.set(node, layout.topLeft)
         layoutData.nodeSizes.mapper.set(node, layout.toSize())
       })
+
     graph.edges
       .filter((edge) => edgePredicate(edge))
       .forEach((edge) => {
@@ -327,8 +357,10 @@ export class RelocateSubtreeLayoutHelper {
         points.add(edge.targetPort.location)
         layoutData.edgePaths.mapper.set(edge, points)
       })
+
     return layoutData
   }
+
   /**
    * A {@link LayoutExecutor} that is used when the subtree dragging starts.
    * When the drag begins, the {@link FillAreaLayout} fills up the space that was covered by the subtree.
@@ -348,13 +380,12 @@ export class RelocateSubtreeLayoutHelper {
         layoutOrientation: PartialLayoutOrientation.TOP_TO_BOTTOM,
         spacing: 50
       }),
-      layoutData: new FillAreaLayoutData({
-        componentIds: this.components
-      }),
+      layoutData: new FillAreaLayoutData({ componentIds: this.components }),
       animateViewport: false,
       animationDuration: TimeSpan.fromMilliseconds(150)
     })
   }
+
   /**
    * A {@link LayoutExecutor} that is used while dragging the subtree.
    * First, all nodes and edges are pushed back into place before the drag started, except the
@@ -371,6 +402,7 @@ export class RelocateSubtreeLayoutHelper {
     draggingLayoutExecutor.animationDuration = TimeSpan.fromMilliseconds(150)
     return draggingLayoutExecutor
   }
+
   /**
    * A {@link LayoutExecutor} that is used after the drag is finished.
    * First, all nodes and edges are pushed back into place before the drag started, except the
@@ -386,6 +418,7 @@ export class RelocateSubtreeLayoutHelper {
       layoutData: this.createClearAreaLayoutData()
     })
   }
+
   /**
    * A {@link LayoutExecutor} that is used after the drag is canceled.
    * All nodes and edges are pushed back into place before the drag started.
@@ -398,6 +431,7 @@ export class RelocateSubtreeLayoutHelper {
       animationDuration: TimeSpan.fromMilliseconds(150)
     })
   }
+
   /**
    * Creates the {@link ILayoutAlgorithm} used while dragging and finishing the gesture.
    */
@@ -419,6 +453,7 @@ export class RelocateSubtreeLayoutHelper {
       )
     }
   }
+
   /**
    * Creates the {@link LayoutData} used while dragging and finishing the gesture.
    */
@@ -438,6 +473,7 @@ export class RelocateSubtreeLayoutHelper {
     return new CompositeLayoutData(this.resetToWorkingGraphStageData, clearAreaLayoutData)
   }
 }
+
 /**
  * A class that calculates the layout for the whole graph but animates only the part that does not
  * belong to the subtree.
@@ -448,6 +484,7 @@ class DraggingLayoutExecutor extends LayoutExecutor {
    * morphed after a new layout has been calculated.
    */
   filteredGraph
+
   /**
    * Creates a new instance of {@link DraggingLayoutExecutor}.
    * @param graphComponent The given graphComponent
@@ -463,6 +500,7 @@ class DraggingLayoutExecutor extends LayoutExecutor {
       () => true
     )
   }
+
   /**
    * Creates an {@link IAnimation} that morphs all graph elements except the subgraph to
    * the new layout.

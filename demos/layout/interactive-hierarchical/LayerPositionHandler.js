@@ -41,6 +41,7 @@ import {
   SvgVisual,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * Helper class that moves a node and uses the location of the mouse
  * to determine the layer where the nodes should be moved to.
@@ -50,6 +51,7 @@ export class LayerPositionHandler extends ConstrainedPositionHandler {
   node
   newLayerMapper
   renderTreeElement = null
+
   /**
    * Creates a new instance that wraps the base handler
    */
@@ -59,6 +61,7 @@ export class LayerPositionHandler extends ConstrainedPositionHandler {
     this.node = node
     this.newLayerMapper = newLayerMapper
   }
+
   /**
    * Called when a node drag started.
    * This add a rectangle which highlights the layer into which the node would be currently dropped.
@@ -66,6 +69,7 @@ export class LayerPositionHandler extends ConstrainedPositionHandler {
    */
   onInitialized(inputModeContext, originalLocation) {
     super.onInitialized(inputModeContext, originalLocation)
+
     // create the visual indicator
     const visual = new LayerIndicatorVisual()
     this.renderTreeElement = inputModeContext.canvasComponent.renderTree.createElement(
@@ -74,6 +78,7 @@ export class LayerPositionHandler extends ConstrainedPositionHandler {
     )
     this.updateTargetBounds(inputModeContext.canvasComponent.lastEventLocation)
   }
+
   /**
    * Called when a node drag was canceled.
    * The highlighting rectangle is removed.
@@ -84,6 +89,7 @@ export class LayerPositionHandler extends ConstrainedPositionHandler {
     // clean up
     context.canvasComponent?.renderTree.remove(this.renderTreeElement)
   }
+
   /**
    * Called when a node drag was finished.
    * The layer is updated for the moved node and the highlighting rectangle is removed.
@@ -97,6 +103,7 @@ export class LayerPositionHandler extends ConstrainedPositionHandler {
     inputModeContext.canvasComponent?.renderTree.remove(this.renderTreeElement)
     this.newLayerMapper.set(this.node, newLayer)
   }
+
   /**
    * Updates the highlighting rectangle while the node is moved.
    * @see overrides {@link ConstrainedPositionHandler.onMoved}
@@ -106,6 +113,7 @@ export class LayerPositionHandler extends ConstrainedPositionHandler {
     // update the bounds to highlight
     this.updateTargetBounds(inputModeContext.canvasComponent.lastEventLocation)
   }
+
   /**
    * Does nothing because the location should not be constrained.
    * @see overrides {@link ConstrainedPositionHandler.constrainNewLocation}
@@ -114,6 +122,7 @@ export class LayerPositionHandler extends ConstrainedPositionHandler {
     // do not constrain...
     return newLocation
   }
+
   /**
    * Updates the target bounds of the currently hit layer.
    */
@@ -128,11 +137,13 @@ export class LayerPositionHandler extends ConstrainedPositionHandler {
     return lastLayer
   }
 }
+
 /**
  * Visual that presents a rectangle which marks the current layer to drop a node.
  */
 class LayerIndicatorVisual extends BaseClass(IVisualCreator) {
   bounds = null
+
   createVisual(context) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.x.baseVal.value = this.bounds ? this.bounds.x : 0
@@ -143,6 +154,7 @@ class LayerIndicatorVisual extends BaseClass(IVisualCreator) {
     rect.setAttribute('stroke', 'darkgray')
     return new SvgVisual(rect)
   }
+
   updateVisual(context, oldVisual) {
     if (!(oldVisual instanceof SvgVisual)) {
       return this.createVisual(context)

@@ -45,19 +45,26 @@ import {
   Size,
   SvgVisual
 } from '@yfiles/yfiles'
+
 export class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMode {
   dummyNode
+
   // determines in which quadrant the marquee is dragged
   currentReshapePosition
+
   constructor() {
     super()
     this.priority = 50
     this.dummyNode = new SimpleNode()
+
     this.currentReshapePosition = HandlePositions.NONE
+
     this.useViewCoordinates = false
+
     // customizing the marquee rect visualization to look like the current node
     this.marqueeRenderer = new MyMarqueeTemplate()
   }
+
   /**
    * Creates a rectangle that incorporates the snap result
    */
@@ -73,29 +80,42 @@ export class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMode {
     } else {
       this.currentReshapePosition |= HandlePositions.BOTTOM
     }
+
     const snapState = this.getSnapContext().handleMove(currentDragLocation, false)
     const rect = super.calculateMarqueeRectangle(startDragLocation, snapState)
+
     this.dummyNode.layout = rect
+
     this.getSnapContext().dragged(currentDragLocation, snapState)
     return rect
   }
+
   /**
    * Called when a drag is started. Prepares the SnapContext for collecting results that the marquee can be snapped to.
    */
   onDragStarted(evt) {
     super.onDragStarted(evt)
+
     const snapContext = this.getSnapContext()
+
     snapContext.initializeDrag(
       new InputModeContext(this.parentInputModeContext),
       this.selectionRectangle.topLeft
     )
+
     snapContext.addItemToBeReshaped(this.dummyNode)
+
     snapContext.dragInitialized()
+
     this.dummyNode.layout = Rect.from(evt.rectangle)
+
     const initialBounds = Rect.from(evt.rectangle)
+
     const lastEventLocation = this.parentInputModeContext?.canvasComponent?.lastEventLocation
     this.currentReshapePosition = this.getReshapePosition(lastEventLocation, evt.rectangle)
+
     this.getSnapContext().addItemToBeReshaped(this.dummyNode)
+
     const collectSnapResultsEventListener = (evt) => {
       const reshapePosition = this.currentReshapePosition
       const topLeftChangeFactor_x =
@@ -110,6 +130,7 @@ export class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMode {
         (reshapePosition & HandlePositions.LEFT) == HandlePositions.LEFT ? -1 : 1
       const sizeChangeFactor_y =
         (reshapePosition & HandlePositions.TOP) == HandlePositions.TOP ? -1 : 1
+
       NodeReshapeSnapResultProvider.INSTANCE.collectSnapResults(
         snapContext,
         evt,
@@ -130,10 +151,12 @@ export class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMode {
       )
     }
     snapContext.addEventListener('collect-snap-results', collectSnapResultsEventListener)
+
     snapContext.addEventListener('cleaned-up', () =>
       snapContext.removeEventListener('collect-snap-results', collectSnapResultsEventListener)
     )
   }
+
   /**
    * Signals the SnapContext that the drag is finished.
    */
@@ -149,13 +172,16 @@ export class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMode {
     this.getSnapContext().dragFinished(new Point(x, y), false)
     super.onDragFinished(evt)
   }
+
   /**
    * Signals the SnapContext that the drag has been canceled.
    */
   onDragCanceled(evt) {
     this.getSnapContext().cancelDrag()
   }
+
   snapContext = null
+
   /**
    * Looks up the current SnapContext or creates a new one
    */
@@ -171,6 +197,7 @@ export class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMode {
       }
     }
   }
+
   /**
    * Determines the reshape position
    */
@@ -189,12 +216,15 @@ export class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMode {
     return result
   }
 }
+
 export class MyMarqueeTemplate extends ObjectRendererBase {
   dummyNode
+
   constructor() {
     super()
     this.dummyNode = new SimpleNode()
   }
+
   createVisual(context, renderTag) {
     this.dummyNode.layout = renderTag.selectionRectangle
     const graph = context.canvasComponent.inputModeContext.graph
@@ -206,6 +236,7 @@ export class MyMarqueeTemplate extends ObjectRendererBase {
     }
     return visual
   }
+
   updateVisual(context, oldVisual, renderTag) {
     return this.createVisual(context, renderTag)
   }

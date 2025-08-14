@@ -29,14 +29,21 @@
 import { GraphComponent, License, Size } from '@yfiles/yfiles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 import { orgChartData } from './tree-data'
 import { configureGraphBuilder } from './tree-graph-building'
 import { initializeTutorialDefaults, runLayout } from '../common'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
+
 graphComponent.graph.nodeDefaults.size = new Size(200, 80)
+
 const treeBuilder = configureGraphBuilder(graphComponent.graph, orgChartData)
 treeBuilder.buildGraph()
+
 void runLayout(graphComponent)
+
 finishLoading()

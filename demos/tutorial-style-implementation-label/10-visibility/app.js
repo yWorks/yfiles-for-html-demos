@@ -36,20 +36,28 @@ import {
   startNodeAnimation
 } from '../common'
 import { CustomLabelStyle } from './CustomLabelStyle'
+
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 graphComponent.zoom = 3
+
 initializeTutorialDefaults(graphComponent)
 initializeLabelModelVisibility(graphComponent)
 graphComponent.horizontalScrollBarPolicy = graphComponent.verticalScrollBarPolicy =
   ScrollBarVisibility.HIDDEN
+
 graphComponent.graphModelManager.nodeLabelRenderer = new IsVisibleLabelStyleRenderer()
 graphComponent.graphModelManager.edgeLabelRenderer = new IsVisibleLabelStyleRenderer()
+
 const graph = graphComponent.graph
 graph.nodeDefaults.labels.style = new CustomLabelStyle()
 graph.edgeDefaults.labels.style = new CustomLabelStyle()
+
 createSampleGraphVisibility(graph, graphComponent.viewport)
 graphComponent.updateContentBounds()
+
 startNodeAnimation(graphComponent)
 finishLoading()

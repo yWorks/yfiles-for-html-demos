@@ -29,6 +29,7 @@
 import { BaseClass, HtmlCanvasVisual, IVisualCreator } from '@yfiles/yfiles'
 import { daysInMonth, ganttDayWidth, getVisualRange } from './gantt-utils'
 import { ganttTaskSpacing, getCompleteTaskHeight, getTaskY } from './sweepline-layout'
+
 /**
  * Manages and renders the background grid of the main component.
  */
@@ -41,16 +42,19 @@ export class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
     super()
     this.dataModel = dataModel
   }
+
   /**
    * Paints the grid visualization.
    */
   render(renderContext, renderingContext2D) {
     const { x, width } = renderContext.canvasComponent.viewport
     const { startDate, startX, endX } = getVisualRange(x - 100, x + width + 100)
+
     this.paintDays(renderContext, renderingContext2D, startX, endX)
     this.paintMonths(renderContext, renderingContext2D, startX, endX, startDate)
     this.paintTaskSeparators(renderingContext2D, startX, endX)
   }
+
   /**
    * Paints the day separators.
    */
@@ -59,8 +63,10 @@ export class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
     const y1 = component.viewport.y
     const y2 = component.viewport.bottomLeft.y
     const width = ganttDayWidth
+
     renderingContext2D.strokeStyle = '#ccc'
     renderingContext2D.lineWidth = 1
+
     renderingContext2D.beginPath()
     for (let x = startX; x < endX; x += width) {
       renderingContext2D.moveTo(x, y1)
@@ -68,6 +74,7 @@ export class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
     }
     renderingContext2D.stroke()
   }
+
   /**
    * Paints the month separators.
    */
@@ -75,8 +82,10 @@ export class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
     const component = renderContext.canvasComponent
     const y1 = component.viewport.y
     const y2 = component.viewport.bottomLeft.y
+
     renderingContext2D.strokeStyle = '#ccc'
     renderingContext2D.lineWidth = 3
+
     renderingContext2D.beginPath()
     for (
       let x = startX,
@@ -92,6 +101,7 @@ export class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
     }
     renderingContext2D.stroke()
   }
+
   /**
    * Paints the horizontal task lane separators.
    */
@@ -100,6 +110,7 @@ export class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
     renderingContext2D.strokeStyle = '#ccc'
     renderingContext2D.lineWidth = 1
     renderingContext2D.setLineDash([5, 5])
+
     renderingContext2D.beginPath()
     this.dataModel.tasks.forEach((task) => {
       const y = getTaskY(task) + getCompleteTaskHeight(task) + ganttTaskSpacing * 0.5
@@ -109,12 +120,14 @@ export class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
     renderingContext2D.stroke()
     renderingContext2D.restore()
   }
+
   /**
    * Returns this instance.
    */
   createVisual(context) {
     return this
   }
+
   /**
    * Returns this instance.
    */

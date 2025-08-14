@@ -37,61 +37,37 @@ export function createAssociationStyle(): PolylineEdgeStyle {
 
 export function createDirectedAssociationStyle(): PolylineEdgeStyle {
   return new PolylineEdgeStyle({
-    targetArrow: new Arrow({
-      stroke: Stroke.BLACK,
-      fill: Color.BLACK,
-      type: ArrowType.STEALTH
-    }),
+    targetArrow: new Arrow({ stroke: Stroke.BLACK, fill: Color.BLACK, type: ArrowType.STEALTH }),
     orthogonalEditing: true
   })
 }
 
 export function createRealizationStyle(): PolylineEdgeStyle {
   return new PolylineEdgeStyle({
-    stroke: new Stroke({
-      dashStyle: DashStyle.DASH
-    }),
-    sourceArrow: new Arrow({
-      stroke: Stroke.BLACK,
-      fill: Color.WHITE,
-      type: ArrowType.TRIANGLE
-    }),
+    stroke: new Stroke({ dashStyle: DashStyle.DASH }),
+    sourceArrow: new Arrow({ stroke: Stroke.BLACK, fill: Color.WHITE, type: ArrowType.TRIANGLE }),
     orthogonalEditing: true
   })
 }
 
 export function createGeneralizationStyle(): PolylineEdgeStyle {
   return new PolylineEdgeStyle({
-    sourceArrow: new Arrow({
-      stroke: Stroke.BLACK,
-      fill: Color.WHITE,
-      type: ArrowType.TRIANGLE
-    }),
+    sourceArrow: new Arrow({ stroke: Stroke.BLACK, fill: Color.WHITE, type: ArrowType.TRIANGLE }),
     orthogonalEditing: true
   })
 }
 
 export function createAggregationStyle(): PolylineEdgeStyle {
   return new PolylineEdgeStyle({
-    sourceArrow: new Arrow({
-      stroke: Stroke.BLACK,
-      fill: Color.WHITE,
-      type: ArrowType.DIAMOND
-    }),
+    sourceArrow: new Arrow({ stroke: Stroke.BLACK, fill: Color.WHITE, type: ArrowType.DIAMOND }),
     orthogonalEditing: true
   })
 }
 
 export function createDependencyStyle(): PolylineEdgeStyle {
   return new PolylineEdgeStyle({
-    stroke: new Stroke({
-      dashStyle: DashStyle.DASH
-    }),
-    targetArrow: new Arrow({
-      stroke: Stroke.BLACK,
-      fill: Color.BLACK,
-      type: ArrowType.STEALTH
-    }),
+    stroke: new Stroke({ dashStyle: DashStyle.DASH }),
+    targetArrow: new Arrow({ stroke: Stroke.BLACK, fill: Color.BLACK, type: ArrowType.STEALTH }),
     orthogonalEditing: true
   })
 }

@@ -75,11 +75,7 @@ async function run(): Promise<void> {
 
   // layout and center the graph
   LayoutExecutor.ensure()
-  graphComponent.graph.applyLayout(
-    new HierarchicalLayout({
-      minimumLayerDistance: 35
-    })
-  )
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
   await graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that

@@ -36,6 +36,7 @@ import {
   LayoutData,
   PortSides
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates various settings of the {@link EdgeRouter} algorithm.
  * @param graph The graph to be laid out
@@ -45,32 +46,44 @@ export function createFeatureLayoutConfiguration(graph) {
   const router = new EdgeRouter()
   // create the layout data for the edge routing algorithm
   const layoutData = new EdgeRouterData()
+
   // define distance in pixels that edges should keep to other edges
   router.defaultEdgeDescriptor.minimumEdgeDistance = 5
+
   // minimum length of the first and last segments
   router.defaultEdgeDescriptor.minimumFirstSegmentLength = 15
   router.defaultEdgeDescriptor.minimumLastSegmentLength = 15
+
   // set minimum distance that edges need to keep from nodes
   router.minimumNodeToEdgeDistance = 5
+
   // make the router aware of fixed edge labels (i.e. it tries to avoid overlaps with them)
   router.edgeLabelPlacement = 'consider-unaffected-edge-labels'
+
   // the algorithm's scope is restricted such that some edges are not routed (red edges)
   configureRouterScope(graph, router, layoutData)
+
   // configure individual routing styles for edges (some octilinear, others orthogonal)
   configureRoutingStyle(graph, router, layoutData)
+
   // configure some edges to be grouped: in this example the golden edges are grouped at their
   // target side
   configureEdgeGrouping(graph, router, layoutData)
+
   // configure port candidates (restrict ports to specific sides) for some edges
   // (edges at node 5 and node 7 in the example graph)
   configurePortCandidates(layoutData)
+
   // define that the edge routes must be on a grid with a spacing of 10 pixels
   router.gridSpacing = 10
+
   // limit the time which the algorithm should use - when it is up, the process tries to finish
   // as fast as possible, falling back to more simple solutions and lower quality routes
   router.stopDuration = '5s'
+
   return { layout: router, layoutData }
 }
+
 /**
  * Configure the {@link EdgeRouter} to only route a specific set of affected edges.
  */
@@ -78,6 +91,7 @@ function configureRouterScope(graph, router, data) {
   // define the set of edges that should be routed by using a delegate function
   data.scope.edges = (edge) => shouldRouteEdge(edge)
 }
+
 function shouldRouteEdge(e) {
   if (e.tag === 15 || e.tag === 16 || e.tag === 17 || e.tag === 18 || e.tag === 19) {
     // exclude certain edges
@@ -86,6 +100,7 @@ function shouldRouteEdge(e) {
   // route the other ones
   return true
 }
+
 /**
  * Configures the routing style for the {@link EdgeRouter} such that some edges have orthogonal
  * and some an octilinear routing style.
@@ -94,6 +109,7 @@ function configureRoutingStyle(graph, router, layoutData) {
   // the default style - configured on the defaultEdgeDescriptor instance - is orthogonal
   const defaultDescriptor = router.defaultEdgeDescriptor
   defaultDescriptor.routingStyle = 'orthogonal'
+
   // configure some edges to get an octilinear routing style (blue edges in the example graph)
   // copy the current default descriptor and change the routingStyle property on the copied instance
   const octilinearDescriptor = defaultDescriptor.createCopy()
@@ -101,9 +117,11 @@ function configureRoutingStyle(graph, router, layoutData) {
   layoutData.edgeDescriptors = (edge) =>
     routeOctilinear(edge) ? octilinearDescriptor : defaultDescriptor
 }
+
 function routeOctilinear(edge) {
   return edge.tag === 11 || edge.tag === 12 || edge.tag === 0
 }
+
 /**
  * Defines edge grouping constraints for some specific edges.
  */
@@ -111,6 +129,7 @@ function configureEdgeGrouping(graph, router, layoutData) {
   const groupId = 'goldenGroup'
   layoutData.targetGroupIds = (edge) => (edge.tag === 10 || edge.tag == 7 ? groupId : null)
 }
+
 /**
  * Defines port candidates for edges at specific nodes.
  */

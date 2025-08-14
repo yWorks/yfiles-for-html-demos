@@ -41,11 +41,7 @@ const tabHeight = 14
  * Augment the SvgVisual type with the data used to cache the rendering information
  */
 // the values we use to render the graphics
-type Cache = {
-  width: number
-  height: number
-  fillColor: string
-}
+type Cache = { width: number; height: number; fillColor: string }
 
 type CustomNodeStyleVisual = TaggedSvgVisual<SVGPathElement, Cache>
 

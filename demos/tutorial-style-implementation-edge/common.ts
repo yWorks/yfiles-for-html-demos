@@ -77,9 +77,7 @@ export function createSimpleGraph(
     stroke: '#042d37'
   })
   const node1 = graph.createNode()
-  const node2 = graph.createNode({
-    layout: [100, 200, 30, 30]
-  })
+  const node2 = graph.createNode({ layout: [100, 200, 30, 30] })
 
   graph.createEdge({
     source: node1,
@@ -99,26 +97,12 @@ export function createSampleGraphHitTest(
     stroke: '#042d37'
   })
   const node1 = graph.createNode({ layout: [0, 0, 30, 30] })
-  const node2 = graph.createNode({
-    layout: [0, 200, 30, 30]
-  })
-  const node3 = graph.createNode({
-    layout: [100, 0, 30, 30]
-  })
-  const node4 = graph.createNode({
-    layout: [100, 200, 30, 30]
-  })
+  const node2 = graph.createNode({ layout: [0, 200, 30, 30] })
+  const node3 = graph.createNode({ layout: [100, 0, 30, 30] })
+  const node4 = graph.createNode({ layout: [100, 200, 30, 30] })
 
-  graph.createEdge({
-    source: node1,
-    target: node2,
-    style: oldEdgeStyle
-  })
-  graph.createEdge({
-    source: node3,
-    target: node4,
-    style: newEdgeStyle
-  })
+  graph.createEdge({ source: node1, target: node2, style: oldEdgeStyle })
+  graph.createEdge({ source: node3, target: node4, style: newEdgeStyle })
 
   const labelModelParameter = FreeNodeLabelModel.INSTANCE.createParameter(
     [0.5, 1],
@@ -137,15 +121,9 @@ export function createSampleGraphIsVisible(graph: IGraph): void {
   })
 
   for (let i = 0; i < 40; i++) {
-    const node1 = graph.createNode({
-      layout: [i * 50, 0, 30, 30]
-    })
-    const node2 = graph.createNode({
-      layout: [i * 50, 100, 30, 30]
-    })
-    const node3 = graph.createNode({
-      layout: [i * 50, 200, 30, 30]
-    })
+    const node1 = graph.createNode({ layout: [i * 50, 0, 30, 30] })
+    const node2 = graph.createNode({ layout: [i * 50, 100, 30, 30] })
+    const node3 = graph.createNode({ layout: [i * 50, 200, 30, 30] })
 
     graph.createEdge({
       source: node1,
@@ -170,12 +148,8 @@ export function createSampleGraphBounds(
     stroke: '#042d37'
   })
 
-  const node1 = graph.createNode({
-    layout: [50, 0, 30, 30]
-  })
-  const node2 = graph.createNode({
-    layout: [200, 0, 30, 30]
-  })
+  const node1 = graph.createNode({ layout: [50, 0, 30, 30] })
+  const node2 = graph.createNode({ layout: [200, 0, 30, 30] })
 
   graph.createEdge({
     source: node1,
@@ -195,40 +169,16 @@ export function createSampleGraphBridges(
     stroke: '#042d37'
   })
 
-  const node1 = graph.createNode({
-    layout: [50, 0, 30, 30]
-  })
-  const node2 = graph.createNode({
-    layout: [50, 100, 30, 30]
-  })
-  const node3 = graph.createNode({
-    layout: [0, 50, 30, 30]
-  })
-  const node4 = graph.createNode({
-    layout: [150, 50, 30, 30]
-  })
-  const node5 = graph.createNode({
-    layout: [100, 0, 30, 30]
-  })
-  const node6 = graph.createNode({
-    layout: [100, 100, 30, 30]
-  })
+  const node1 = graph.createNode({ layout: [50, 0, 30, 30] })
+  const node2 = graph.createNode({ layout: [50, 100, 30, 30] })
+  const node3 = graph.createNode({ layout: [0, 50, 30, 30] })
+  const node4 = graph.createNode({ layout: [150, 50, 30, 30] })
+  const node5 = graph.createNode({ layout: [100, 0, 30, 30] })
+  const node6 = graph.createNode({ layout: [100, 100, 30, 30] })
 
-  graph.createEdge({
-    source: node1,
-    target: node2,
-    style: edgeStyle
-  })
-  graph.createEdge({
-    source: node5,
-    target: node6,
-    style: edgeStyle
-  })
-  graph.createEdge({
-    source: node3,
-    target: node4,
-    style: edgeStyle
-  })
+  graph.createEdge({ source: node1, target: node2, style: edgeStyle })
+  graph.createEdge({ source: node5, target: node6, style: edgeStyle })
+  graph.createEdge({ source: node3, target: node4, style: edgeStyle })
 }
 
 export function enableGraphEditing(

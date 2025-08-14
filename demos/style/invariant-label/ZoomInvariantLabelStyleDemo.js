@@ -50,19 +50,23 @@ import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode({
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
   })
+
   initDemoStyles(graphComponent.graph)
   // For the general appearance of a label, we use the common demo defaults set above
   const baseLabelStyle = graphComponent.graph.nodeDefaults.labels.style
   // Initially, use FIXED_BELOW_THRESHOLD mode
   setLabelStyle(graphComponent.graph, 'FIXED_BELOW_THRESHOLD', baseLabelStyle)
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
@@ -73,18 +77,23 @@ async function run() {
     })
   )
   void graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
+
   // Instances of {@link ZoomInvariantLabelStyleBase} should not be shared
   graphComponent.graph.nodeDefaults.labels.shareStyleInstance = false
   graphComponent.graph.edgeDefaults.labels.shareStyleInstance = false
+
   initializeUI(graphComponent)
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id
@@ -92,6 +101,7 @@ function buildGraph(graph, graphData) {
   nodesSource.nodeCreator.createLabelBinding((item) => item.label)
   nodesSource.nodeCreator.layoutProvider = (item) =>
     item.tag === 'level 1' ? new Rect(0, 0, 100, 70) : new Rect(0, 0, 30, 70)
+
   graphBuilder
     .createEdgesSource({
       data: graphData.edgeList,
@@ -99,8 +109,10 @@ function buildGraph(graph, graphData) {
       targetId: (item) => item.target
     })
     .edgeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Sets a new label style for the given mode to all labels in the graph.
  * @param graph The graph.
@@ -121,6 +133,7 @@ function setLabelStyle(graph, mode, baseLabelStyle = null) {
     graph.setStyle(label, createLabelStyle(mode, innerLabelStyle))
   }
 }
+
 /**
  * Creates a new label style for the given mode and base style.
  */
@@ -137,6 +150,7 @@ function createLabelStyle(mode, baseLabelStyle) {
     return baseLabelStyle
   }
 }
+
 /**
  * Wires up the UI.
  */
@@ -152,36 +166,45 @@ function initializeUI(graphComponent) {
   )
   addNavigationButtons(modeSelectElement).addEventListener('change', (_evt) => {
     setLabelStyle(graphComponent.graph, modeSelectElement.value)
+
     // hide the threshold controls if not applicable for the selected zoom style
     document.getElementById('zoomThresholdControls').hidden =
       modeSelectElement.value === 'DEFAULT' || modeSelectElement.value === 'FIT_OWNER'
+
     // hide the maxScale controls if not applicable for the selected zoom style
     document.getElementById('maxScaleControls').hidden =
       modeSelectElement.value !== 'INVARIANT_OUTSIDE_RANGE'
   })
+
   // adds an event listener to the threshold slider
   const zoomThresholdInput = document.querySelector('#zoomThreshold')
   zoomThresholdInput.addEventListener('change', () => {
     document.querySelector('#zoomThresholdLabel').textContent = zoomThresholdInput.value
     const zoomThreshold = parseFloat(zoomThresholdInput.value)
+
     for (const label of graphComponent.graph.labels) {
       label.style.zoomThreshold = zoomThreshold
     }
     graphComponent.updateVisual()
   })
+
   const maxScaleInput = document.querySelector('#maxScale')
   maxScaleInput.addEventListener('change', () => {
     document.querySelector('#maxScaleLabel').textContent = maxScaleInput.value
     const maxScale = parseFloat(maxScaleInput.value)
+
     for (const label of graphComponent.graph.labels) {
       label.style.maxScale = maxScale
     }
     graphComponent.updateVisual()
   })
+
   // shows the current zoom level in the toolbar
   graphComponent.addEventListener('zoom-changed', () => {
     document.querySelector('#zoomLevel').textContent = graphComponent.zoom.toFixed(2)
   })
+
   modeSelectElement.dispatchEvent(new Event('change'))
 }
+
 run().then(finishLoading)

@@ -385,10 +385,7 @@ async function updateGraph(root?: INode, clickedNode?: INode, isDrillDown = fals
   // register a highlight
   graph.decorator.nodes.highlightRenderer.addConstant(
     new NodeStyleIndicatorRenderer({
-      nodeStyle: new ShapeNodeStyle({
-        fill: null,
-        stroke: '3px crimson'
-      })
+      nodeStyle: new ShapeNodeStyle({ fill: null, stroke: '3px crimson' })
     })
   )
 
@@ -677,13 +674,7 @@ function compare(node1: INode | null, node2: INode | null) {
   return ascending ? result : -result
 }
 
-type RenderDataCache = {
-  x: number
-  y: number
-  width: number
-  height: number
-  fill: string
-}
+type RenderDataCache = { x: number; y: number; width: number; height: number; fill: string }
 
 type ColorNodeStyleVisual = TaggedSvgVisual<SVGRectElement, RenderDataCache>
 
@@ -701,13 +692,7 @@ class ColorNodeStyle extends NodeStyleBase<ColorNodeStyleVisual> {
 
     SvgVisual.setTranslate(rect, x, y)
 
-    return SvgVisual.from(rect, {
-      x,
-      y,
-      width,
-      height,
-      fill: node.tag.color
-    })
+    return SvgVisual.from(rect, { x, y, width, height, fill: node.tag.color })
   }
 
   updateVisual(
@@ -732,13 +717,7 @@ class ColorNodeStyle extends NodeStyleBase<ColorNodeStyleVisual> {
     if (renderCache.x !== x || renderCache.y !== y) {
       SvgVisual.setTranslate(rect, x, y)
     }
-    oldVisual.tag = {
-      x,
-      y,
-      width,
-      height,
-      fill: node.tag.color
-    }
+    oldVisual.tag = { x, y, width, height, fill: node.tag.color }
     return oldVisual
   }
 }

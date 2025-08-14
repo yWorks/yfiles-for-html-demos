@@ -42,6 +42,7 @@ import {
 import { getVoterShift } from './data-types'
 import { normalizeThickness } from './edge-thickness'
 import { updateStyles } from './styles-support'
+
 /**
  * Normalizes the edge thicknesses, updates the node and edge styles and the node sizes accordingly,
  * and runs a new layout.
@@ -55,6 +56,7 @@ export async function updateStylesAndLayout(graphComponent, fromSketchMode) {
   await runLayout(graphComponent, fromSketchMode)
   compoundEdit.commit()
 }
+
 /**
  * Runs the hierarchical layout to create the sankey diagram.
  * @param graphComponent The given graphComponent
@@ -64,12 +66,15 @@ export async function runLayout(graphComponent, fromSketchMode) {
   // configure the layout algorithm
   const layout = createHierarchicalLayout(fromSketchMode)
   const layoutData = createHierarchicalLayoutData(graphComponent.graph, fromSketchMode)
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   // run the layout and animate the result
   await graphComponent.applyLayoutAnimated(layout, '0.5s', layoutData)
 }
+
 /**
  * Configures the hierarchical layout algorithm for the Sankey visualization.
  * @param fromSketchMode True if the layout should run n incremental mode, false otherwise
@@ -96,14 +101,17 @@ function createHierarchicalLayout(fromSketchMode) {
       bendReduction: false
     }
   })
+
   // for Sankey diagrams, the nodes should be adjusted to the
   // incoming/outgoing flow (enlarged if necessary) -> use NodeResizingStage for that purpose
   const nodeResizingStage = new NodeResizingStage(hierarchicalLayout)
   nodeResizingStage.layoutOrientation = hierarchicalLayout.layoutOrientation
   nodeResizingStage.portBorderGapRatio = 1
   hierarchicalLayout.layoutStages.prepend(nodeResizingStage)
+
   return hierarchicalLayout
 }
+
 /**
  * Configures the hierarchical layout data for the Sankey visualization
  * @returns The configured hierarchical Layout data object
@@ -125,6 +133,7 @@ function createHierarchicalLayoutData(graph, fromSketchMode) {
       targetPortCandidates: new EdgePortCandidates().addFreeCandidate('left')
     }
   })
+
   if (!fromSketchMode) {
     // In this demo, the nodes are ordered in the layers based on their size to show how the party
     // strength gets modified along the elections.
@@ -136,6 +145,7 @@ function createHierarchicalLayoutData(graph, fromSketchMode) {
   }
   return hierarchicalLayoutData
 }
+
 /**
  * This layout stage ensures that the size of the nodes is large enough such that
  * all edges can be placed without overlaps.
@@ -145,6 +155,7 @@ class NodeResizingStage extends LayoutStageBase {
   #layoutOrientation
   #portBorderGapRatio
   #minimumPortDistance
+
   /**
    * Creates a new instance of NodeResizingStage.
    */
@@ -155,6 +166,7 @@ class NodeResizingStage extends LayoutStageBase {
     this.#portBorderGapRatio = 0
     this.#minimumPortDistance = 0
   }
+
   /**
    * Gets the main orientation of the layout. Should be the same value as for the associated core layout
    * algorithm.
@@ -163,6 +175,7 @@ class NodeResizingStage extends LayoutStageBase {
   get layoutOrientation() {
     return this.#layoutOrientation
   }
+
   /**
    * Gets the main orientation of the layout. Should be the same value as for the associated core layout
    * algorithm.
@@ -171,6 +184,7 @@ class NodeResizingStage extends LayoutStageBase {
   set layoutOrientation(orientation) {
     this.#layoutOrientation = orientation
   }
+
   /**
    * Gets the port border gap ratio for the port distribution at the sides of the nodes.
    * Should be the same value as for the associated core layout algorithm.
@@ -179,6 +193,7 @@ class NodeResizingStage extends LayoutStageBase {
   get portBorderGapRatio() {
     return this.#portBorderGapRatio
   }
+
   /**
    * Sets the port border gap ratio for the port distribution at the sides of the nodes. Should be the same value
    * as for the associated core layout algorithm.
@@ -187,6 +202,7 @@ class NodeResizingStage extends LayoutStageBase {
   set portBorderGapRatio(portBorderGapRatio) {
     this.#portBorderGapRatio = portBorderGapRatio
   }
+
   /**
    * Returns the minimum distance between two ports on the same node side.
    * @returns The minimum distance between two ports
@@ -194,6 +210,7 @@ class NodeResizingStage extends LayoutStageBase {
   get minimumPortDistance() {
     return this.#minimumPortDistance
   }
+
   /**
    * Gets the minimum distance between two ports on the same node side.
    * @param minimumPortDistance The minimum distance
@@ -201,6 +218,7 @@ class NodeResizingStage extends LayoutStageBase {
   set minimumPortDistance(minimumPortDistance) {
     this.#minimumPortDistance = minimumPortDistance
   }
+
   /**
    * Applies the layout to the given graph.
    * @param graph The given graph
@@ -209,12 +227,15 @@ class NodeResizingStage extends LayoutStageBase {
     if (!this.coreLayout) {
       return
     }
+
     graph.nodes.forEach((node) => {
       this.adjustNodeSize(node, graph)
     })
+
     // run the core layout
     this.coreLayout.applyLayout(graph)
   }
+
   /**
    * Adjusts the size of the given node.
    * @param node The given node
@@ -223,6 +244,7 @@ class NodeResizingStage extends LayoutStageBase {
   adjustNodeSize(node, graph) {
     let width = 60
     let height = 40
+
     const leftEdgeSpace = node.inEdges.size > 0 ? this.calcRequiredSpace(node.inEdges, graph) : 0
     const rightEdgeSpace = node.outEdges.size > 0 ? this.calcRequiredSpace(node.outEdges, graph) : 0
     if (
@@ -237,11 +259,13 @@ class NodeResizingStage extends LayoutStageBase {
       height = Math.max(height, leftEdgeSpace)
       height = Math.max(height, rightEdgeSpace)
     }
+
     // adjust size for edges with strong port candidates
     const edgeThicknessDP = graph.context.getItemData(HierarchicalLayout.EDGE_THICKNESS_DATA_KEY)
     if (edgeThicknessDP !== null) {
       node.edges.forEach((edge) => {
         const thickness = edgeThicknessDP.get(edge)
+
         const spc = this.getFirstPortCandidate(edge, true)
         if (edge.source === node && spc && spc.type !== PortCandidateType.FREE) {
           const sourcePoint = new Point(
@@ -251,6 +275,7 @@ class NodeResizingStage extends LayoutStageBase {
           width = Math.max(width, Math.abs(sourcePoint.x) * 2 + thickness)
           height = Math.max(height, Math.abs(sourcePoint.y) * 2 + thickness)
         }
+
         const tpc = this.getFirstPortCandidate(edge, false)
         if (edge.target === node && tpc && tpc.type !== PortCandidateType.FREE) {
           const targetPoint = new Point(
@@ -265,6 +290,7 @@ class NodeResizingStage extends LayoutStageBase {
     node.layout.width = width
     node.layout.height = height
   }
+
   /**
    * Calculates the space required when placing the given edge side by side without overlaps and considering
    * the specified minimum port distance and edge thickness.
@@ -281,6 +307,7 @@ class NodeResizingStage extends LayoutStageBase {
       2 * this.portBorderGapRatio * this.minimumPortDistance
     )
   }
+
   /**
    * Returns the first port candidate for the given edge, if exists.
    */
@@ -293,6 +320,7 @@ class NodeResizingStage extends LayoutStageBase {
     return dp?.get(e)?.candidates.at(0) ?? null
   }
 }
+
 /**
  * Returns whether the given node represents a non-voter.
  */

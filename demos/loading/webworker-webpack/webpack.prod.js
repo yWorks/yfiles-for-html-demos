@@ -33,9 +33,7 @@ const OptimizerPlugin = require('@yworks/optimizer/webpack-plugin')
 
 module.exports = {
   mode: 'production',
-  entry: {
-    app: ['./src/WebWorkerWebpackDemo.ts']
-  },
+  entry: { app: ['./src/WebWorkerWebpackDemo.ts'] },
   plugins: [
     new OptimizerPlugin({
       logLevel: 'info',
@@ -70,12 +68,8 @@ module.exports = {
     minimizer: [
       // don't minimize the yfiles chunk to save some time
       // (yfiles is already minimized)
-      new TerserPlugin({
-        exclude: /^yfiles\./
-      })
+      new TerserPlugin({ exclude: /^yfiles\./ })
     ]
   },
-  output: {
-    filename: '[name].[contenthash].js'
-  }
+  output: { filename: '[name].[contenthash].js' }
 }

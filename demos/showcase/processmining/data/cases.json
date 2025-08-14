@@ -1,0 +1,1402 @@
+[
+  {
+    "caseId": 0,
+    "data": {
+      "description": "Implement SSO authentication for enterprise portal",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 1,
+    "data": {
+      "description": "Optimize database query performance for reporting module",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 2,
+    "data": {
+      "description": "Implement dark mode for admin dashboard",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 3,
+    "data": {
+      "description": "Fix cross-browser compatibility issues in checkout flow",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 4,
+    "data": {
+      "description": "Add multi-factor authentication for sensitive operations",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 5,
+    "data": {
+      "description": "Implement real-time notification system for critical alerts",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 6,
+    "data": {
+      "description": "Optimize image loading for mobile devices",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 7,
+    "data": {
+      "description": "Create API documentation with Swagger integration",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 8,
+    "data": {
+      "description": "Implement CI/CD pipeline for microservices architecture",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 9,
+    "data": {
+      "description": "Fix memory leak in data processing module",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 10,
+    "data": {
+      "description": "Implement data export functionality to multiple formats",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 11,
+    "data": {
+      "description": "Enhance search functionality with advanced filters",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 12,
+    "data": {
+      "description": "Implement role-based access control for admin features",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 13,
+    "data": {
+      "description": "Optimize frontend bundle size for faster loading",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 14,
+    "data": {
+      "description": "Add automated regression testing for critical workflows",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 15,
+    "data": {
+      "description": "Implement password strength meter for registration form",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 16,
+    "data": {
+      "description": "Create user activity dashboard with analytics",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 17,
+    "data": {
+      "description": "Fix accessibility issues for screen readers",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 18,
+    "data": {
+      "description": "Implement WebSocket for real-time collaboration features",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 19,
+    "data": {
+      "description": "Add support for internationalization and localization",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 20,
+    "data": {
+      "description": "Implement OAuth 2.0 for third-party integrations",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 21,
+    "data": {
+      "description": "Create automated data backup and recovery system",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 22,
+    "data": {
+      "description": "Optimize API response time for mobile clients",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 23,
+    "data": {
+      "description": "Implement feature flagging system for gradual rollouts",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 24,
+    "data": {
+      "description": "Add comprehensive error logging and monitoring",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 25,
+    "data": {
+      "description": "Implement GraphQL API for flexible data querying",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 26,
+    "data": {
+      "description": "Create interactive onboarding tutorial for new users",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 27,
+    "data": {
+      "description": "Implement rate limiting for public API endpoints",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 28,
+    "data": {
+      "description": "Add PDF report generation for analytics dashboard",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 29,
+    "data": {
+      "description": "Implement secure file upload with virus scanning",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 30,
+    "data": {
+      "description": "Implement containerization for development environments",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 31,
+    "data": {
+      "description": "Add drag-and-drop functionality for content management",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 32,
+    "data": {
+      "description": "Implement lazy loading for image galleries",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 33,
+    "data": {
+      "description": "Create automated database schema migration tool",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 34,
+    "data": {
+      "description": "Implement JWT authentication for API security",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 35,
+    "data": {
+      "description": "Add custom theme support with CSS variables",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 36,
+    "data": {
+      "description": "Implement caching strategy for frequently accessed data",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 37,
+    "data": {
+      "description": "Create interactive data visualization dashboard",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 38,
+    "data": {
+      "description": "Implement progressive web app capabilities",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 39,
+    "data": {
+      "description": "Add automated code quality checks in CI pipeline",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 40,
+    "data": {
+      "description": "Implement data encryption for sensitive customer information",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 41,
+    "data": {
+      "description": "Create user behavior analytics module",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 42,
+    "data": {
+      "description": "Implement serverless functions for microservices",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 43,
+    "data": {
+      "description": "Add voice search capability to product catalog",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 44,
+    "data": {
+      "description": "Implement A/B testing framework for UI components",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 45,
+    "data": {
+      "description": "Create automated performance testing suite",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 46,
+    "data": {
+      "description": "Implement content delivery network for static assets",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 47,
+    "data": {
+      "description": "Add social media authentication options",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 48,
+    "data": {
+      "description": "Implement event sourcing for audit trail",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 49,
+    "data": {
+      "description": "Create responsive email template system",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 50,
+    "data": {
+      "description": "Implement chatbot for customer support",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 51,
+    "data": {
+      "description": "Add geolocation-based content filtering",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 52,
+    "data": {
+      "description": "Implement WebRTC for video conferencing",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 53,
+    "data": {
+      "description": "Create automated API documentation generator",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 54,
+    "data": {
+      "description": "Implement push notifications for mobile app",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 55,
+    "data": {
+      "description": "Add machine learning recommendation engine",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 56,
+    "data": {
+      "description": "Implement data visualization with D3.js",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 57,
+    "data": {
+      "description": "Create automated database indexing optimization",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 58,
+    "data": {
+      "description": "Implement service worker for offline functionality",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 59,
+    "data": {
+      "description": "Add biometric authentication for mobile app",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 60,
+    "data": {
+      "description": "Implement Redis caching for API responses",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 61,
+    "data": {
+      "description": "Create automated UI screenshot testing",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 62,
+    "data": {
+      "description": "Implement WebAssembly for performance-critical functions",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 63,
+    "data": {
+      "description": "Add voice command interface for accessibility",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 64,
+    "data": {
+      "description": "Implement blockchain for secure transaction ledger",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 65,
+    "data": {
+      "description": "Create automated load testing infrastructure",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 66,
+    "data": {
+      "description": "Implement virtual reality product visualization",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 67,
+    "data": {
+      "description": "Add natural language processing for search queries",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 68,
+    "data": {
+      "description": "Implement microservices monitoring dashboard",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 69,
+    "data": {
+      "description": "Create automated security vulnerability scanning",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 70,
+    "data": {
+      "description": "Implement augmented reality for product visualization",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 71,
+    "data": {
+      "description": "Add predictive text input for search fields",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 72,
+    "data": {
+      "description": "Implement database sharding for horizontal scaling",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 73,
+    "data": {
+      "description": "Create AI-powered customer support chatbot",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 74,
+    "data": {
+      "description": "Implement real-time collaborative document editing",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 75,
+    "data": {
+      "description": "Add automated database backup and recovery",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 76,
+    "data": {
+      "description": "Implement IoT device integration API",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 77,
+    "data": {
+      "description": "Create interactive product tour for new users",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 78,
+    "data": {
+      "description": "Implement distributed tracing for microservices",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 79,
+    "data": {
+      "description": "Add facial recognition for secure login",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 80,
+    "data": {
+      "description": "Implement gesture-based navigation for mobile app",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 81,
+    "data": {
+      "description": "Create automated infrastructure provisioning with Terraform",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 82,
+    "data": {
+      "description": "Implement GraphQL subscriptions for real-time updates",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 83,
+    "data": {
+      "description": "Add voice-to-text transcription for meeting notes",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 84,
+    "data": {
+      "description": "Implement zero-downtime deployment pipeline",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 85,
+    "data": {
+      "description": "Create AI-powered image recognition for product search",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 86,
+    "data": {
+      "description": "Implement advanced data filtering and sorting",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 87,
+    "data": {
+      "description": "Add automated database schema validation",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 88,
+    "data": {
+      "description": "Implement serverless image processing pipeline",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 89,
+    "data": {
+      "description": "Create interactive data visualization with charts",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 90,
+    "data": {
+      "description": "Implement automated code review tools in CI pipeline",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 91,
+    "data": {
+      "description": "Add real-time analytics dashboard for user behavior",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 92,
+    "data": {
+      "description": "Implement drag-and-drop interface for report builder",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 93,
+    "data": {
+      "description": "Create automated API integration testing framework",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 94,
+    "data": {
+      "description": "Implement dynamic form generation based on user roles",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 95,
+    "data": {
+      "description": "Add support for custom report templates",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 96,
+    "data": {
+      "description": "Implement secure file sharing with expiration dates",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 97,
+    "data": {
+      "description": "Create automated database performance monitoring",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 98,
+    "data": {
+      "description": "Implement smart search with autocomplete suggestions",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 99,
+    "data": {
+      "description": "Add support for bulk data import and validation",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 100,
+    "data": {
+      "description": "Implement multi-tenant architecture for SaaS platform",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 101,
+    "data": {
+      "description": "Create automated UI regression testing suite",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 102,
+    "data": {
+      "description": "Implement single sign-on for enterprise customers",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 103,
+    "data": {
+      "description": "Add support for custom data visualization widgets",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 104,
+    "data": {
+      "description": "Implement advanced user permission management",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 105,
+    "data": {
+      "description": "Create automated deployment pipeline for microservices",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 106,
+    "data": {
+      "description": "Add support for custom workflow automation rules",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 107,
+    "data": {
+      "description": "Implement real-time collaboration features for documents",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 108,
+    "data": {
+      "description": "Create comprehensive API documentation portal",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 109,
+    "data": {
+      "description": "Implement data anonymization for GDPR compliance",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 110,
+    "data": {
+      "description": "Implement advanced search with natural language processing",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 111,
+    "data": {
+      "description": "Create automated infrastructure scaling solution",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 112,
+    "data": {
+      "description": "Implement AI-powered content recommendation engine",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 113,
+    "data": {
+      "description": "Add support for custom reporting dashboards",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 114,
+    "data": {
+      "description": "Implement secure document management system",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 115,
+    "data": {
+      "description": "Create automated data quality validation framework",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 116,
+    "data": {
+      "description": "Implement interactive onboarding tutorials for new users",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 117,
+    "data": {
+      "description": "Add support for third-party plugin integration",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 118,
+    "data": {
+      "description": "Implement real-time data synchronization across devices",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 119,
+    "data": {
+      "description": "Create customizable workflow automation system",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 120,
+    "data": {
+      "description": "Implement containerized microservices architecture",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 121,
+    "data": {
+      "description": "Add support for custom branding and white-labeling",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 122,
+    "data": {
+      "description": "Implement advanced data analytics dashboard",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 123,
+    "data": {
+      "description": "Create automated security vulnerability scanning",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 124,
+    "data": {
+      "description": "Implement multi-language support for global users",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 125,
+    "data": {
+      "description": "Add support for custom email notification templates",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 126,
+    "data": {
+      "description": "Implement advanced user activity monitoring",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 127,
+    "data": {
+      "description": "Create automated database schema migration tool",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 128,
+    "data": {
+      "description": "Implement interactive data visualization dashboard",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 129,
+    "data": {
+      "description": "Add support for custom API endpoint creation",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 130,
+    "data": {
+      "description": "Implement blockchain-based document verification",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 131,
+    "data": {
+      "description": "Create automated performance testing framework",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 132,
+    "data": {
+      "description": "Implement advanced data encryption for sensitive data",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 133,
+    "data": {
+      "description": "Add support for custom report scheduling",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 134,
+    "data": {
+      "description": "Implement AI-powered customer support chatbot",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 135,
+    "data": {
+      "description": "Create automated code quality analysis tools",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 136,
+    "data": {
+      "description": "Implement real-time event processing system",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 137,
+    "data": {
+      "description": "Add support for custom dashboard widgets",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 138,
+    "data": {
+      "description": "Implement secure file transfer protocol",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 139,
+    "data": {
+      "description": "Create automated data backup and recovery system",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 140,
+    "data": {
+      "description": "Implement advanced user behavior analytics",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 141,
+    "data": {
+      "description": "Create automated infrastructure monitoring system",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 142,
+    "data": {
+      "description": "Implement serverless computing architecture",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 143,
+    "data": {
+      "description": "Add support for custom data import/export formats",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 144,
+    "data": {
+      "description": "Implement advanced audit logging system",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 145,
+    "data": {
+      "description": "Create automated database performance tuning",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 146,
+    "data": {
+      "description": "Implement progressive web app capabilities",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 147,
+    "data": {
+      "description": "Add support for custom authentication providers",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 148,
+    "data": {
+      "description": "Implement real-time data analytics dashboard",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 149,
+    "data": {
+      "description": "Create automated UI component testing framework",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 150,
+    "data": {
+      "description": "Implement advanced data visualization library",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 151,
+    "data": {
+      "description": "Add support for custom workflow approval processes",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 152,
+    "data": {
+      "description": "Implement machine learning for anomaly detection",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 153,
+    "data": {
+      "description": "Create automated API versioning system",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 154,
+    "data": {
+      "description": "Implement advanced search with faceted filtering",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 155,
+    "data": {
+      "description": "Add support for custom notification channels",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 156,
+    "data": {
+      "description": "Implement secure password management system",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 157,
+    "data": {
+      "description": "Create automated cloud resource optimization",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 158,
+    "data": {
+      "description": "Implement interactive guided tours for new features",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 159,
+    "data": {
+      "description": "Add support for custom data validation rules",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 160,
+    "data": {
+      "description": "Implement real-time collaboration for document editing",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 161,
+    "data": {
+      "description": "Create automated test data generation framework",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 162,
+    "data": {
+      "description": "Implement advanced user permission management",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 163,
+    "data": {
+      "description": "Add support for custom reporting templates",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 164,
+    "data": {
+      "description": "Implement AI-powered predictive analytics",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 165,
+    "data": {
+      "description": "Create automated infrastructure as code deployment",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 166,
+    "data": {
+      "description": "Implement advanced data masking for sensitive information",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 167,
+    "data": {
+      "description": "Add support for custom keyboard shortcuts",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 168,
+    "data": {
+      "description": "Implement secure API key management system",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 169,
+    "data": {
+      "description": "Create automated database index optimization",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 170,
+    "data": {
+      "description": "Implement advanced user interface customization",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 171,
+    "data": {
+      "description": "Create automated dependency vulnerability scanning",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 172,
+    "data": {
+      "description": "Implement real-time data synchronization across platforms",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 173,
+    "data": {
+      "description": "Add support for custom email notification rules",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 174,
+    "data": {
+      "description": "Implement advanced error handling and recovery",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 175,
+    "data": {
+      "description": "Create automated performance bottleneck detection",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 176,
+    "data": {
+      "description": "Implement feature flag management system",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 177,
+    "data": {
+      "description": "Add support for custom data retention policies",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 178,
+    "data": {
+      "description": "Implement advanced data transformation pipeline",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 179,
+    "data": {
+      "description": "Create automated cross-browser testing framework",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 180,
+    "data": {
+      "description": "Implement secure document sharing with permissions",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 181,
+    "data": {
+      "description": "Add support for custom data visualization widgets",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 182,
+    "data": {
+      "description": "Implement advanced user onboarding workflow",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 183,
+    "data": {
+      "description": "Create automated code documentation generator",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 184,
+    "data": {
+      "description": "Implement real-time notification system",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 185,
+    "data": {
+      "description": "Add support for custom report scheduling",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 186,
+    "data": {
+      "description": "Implement advanced data import validation",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 187,
+    "data": {
+      "description": "Create automated infrastructure scaling solution",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 188,
+    "data": {
+      "description": "Implement AI-powered content moderation",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 189,
+    "data": {
+      "description": "Add support for custom API rate limiting",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 190,
+    "data": {
+      "description": "Implement real-time database synchronization",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 191,
+    "data": {
+      "description": "Create automated accessibility testing framework",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 192,
+    "data": {
+      "description": "Implement advanced data archiving solution",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 193,
+    "data": {
+      "description": "Add support for custom workflow automation",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 194,
+    "data": {
+      "description": "Implement progressive image loading for galleries",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 195,
+    "data": {
+      "description": "Create automated database backup verification",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 196,
+    "data": {
+      "description": "Implement advanced search with natural language",
+      "assignee": "Binary Beasts"
+    }
+  },
+  {
+    "caseId": 197,
+    "data": {
+      "description": "Add support for custom user interface themes",
+      "assignee": "Agile Avengers"
+    }
+  },
+  {
+    "caseId": 198,
+    "data": {
+      "description": "Implement secure file transfer with encryption",
+      "assignee": "Code Crusaders"
+    }
+  },
+  {
+    "caseId": 199,
+    "data": {
+      "description": "Create automated system health monitoring dashboard",
+      "assignee": "Binary Beasts"
+    }
+  }
+]

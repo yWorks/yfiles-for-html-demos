@@ -523,9 +523,7 @@ export const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
       assistantNodes: (node) => {
         return node.tag ? node.tag.assistant : null
       },
-      multiParentDescriptors: new MultiParentDescriptor({
-        minimumBusDistance: 20
-      })
+      multiParentDescriptors: new MultiParentDescriptor({ minimumBusDistance: 20 })
     })
   },
 
@@ -696,9 +694,7 @@ export const TreeLayoutConfig = (Class as any)('TreeLayoutConfig', {
         layout.allowMultiParent = allowMultiParents
         break
       case SubtreePlacer.BUS:
-        layout.defaultSubtreePlacer = new BusSubtreePlacer({
-          spacing
-        })
+        layout.defaultSubtreePlacer = new BusSubtreePlacer({ spacing })
         layout.allowMultiParent = allowMultiParents
         break
       case SubtreePlacer.DOUBLE_LAYER:

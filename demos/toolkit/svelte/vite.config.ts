@@ -40,9 +40,7 @@ export default defineConfig(({ mode }) => {
         allow: ['../../../']
       }
     },
-    resolve: {
-      preserveSymlinks: true
-    },
+    resolve: { preserveSymlinks: true },
     plugins: [
       svelte({ preprocess: preprocess() }),
       mode === 'production'

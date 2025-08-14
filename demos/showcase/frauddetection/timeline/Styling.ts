@@ -39,21 +39,11 @@ import type { TimeInterval } from './Timeline'
 import { intervalsIntersect } from './Utilities'
 import type { Bucket } from './bucket-aggregation'
 
-type LegendTextStyle = Partial<{
-  textFill: string
-  backgroundFill: string
-  font: string
-}>
+type LegendTextStyle = Partial<{ textFill: string; backgroundFill: string; font: string }>
 
-type LegendItemStyle = Partial<{
-  fill: string
-  stroke: string
-}>
+type LegendItemStyle = Partial<{ fill: string; stroke: string }>
 
-export type TimeFrameStyle = Partial<{
-  fill: string
-  stroke: string
-}>
+export type TimeFrameStyle = Partial<{ fill: string; stroke: string }>
 
 export type TimelineStyle = Partial<{
   timeframe: LegendItemStyle
@@ -62,10 +52,7 @@ export type TimelineStyle = Partial<{
   barHover: LegendItemStyle
   barSelect: LegendItemStyle
   sectionSelect: LegendItemStyle
-  legend: Partial<{
-    even: LegendTextStyle
-    odd: LegendTextStyle
-  }>
+  legend: Partial<{ even: LegendTextStyle; odd: LegendTextStyle }>
 }>
 
 /**

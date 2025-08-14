@@ -43,12 +43,16 @@ import {
   PolylineEdgeStyle,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
+
 import GraphBuilderData from './resources/graph'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 const graphChooserBox = document.querySelector('#graph-chooser-box')
+
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
@@ -57,45 +61,40 @@ async function run() {
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
+
   // Initializes the input mode
   initializeInputMode()
+
   // Initializes the highlight style
   initHighlightingStyle(graphComponent)
+
   // Configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   // Create an initial sample graph
   createSampleGraph()
   void graphComponent.fitGraphBounds()
+
   // Enable the undo engine. This prevents undoing of the graph creation
   graphComponent.graph.undoEngineEnabled = true
+
   // Zoom to a node that has "Sport" label
   await graphComponent.zoomToAnimated(1, new Point(1637.468, 1828))
 }
+
 /**
  * Creates the sample graph.
  */
 function createSampleGraph() {
   const builder = new GraphBuilder({
     graph: graphComponent.graph,
-    nodes: [
-      {
-        data: GraphBuilderData.nodes,
-        id: 'id',
-        layout: 'layout',
-        labels: ['label']
-      }
-    ],
-    edges: [
-      {
-        data: GraphBuilderData.edges,
-        sourceId: 'source',
-        targetId: 'target',
-        id: 'id'
-      }
-    ]
+    nodes: [{ data: GraphBuilderData.nodes, id: 'id', layout: 'layout', labels: ['label'] }],
+    edges: [{ data: GraphBuilderData.edges, sourceId: 'source', targetId: 'target', id: 'id' }]
   })
+
   builder.buildGraph()
 }
+
 /**
  * Configures the highlight style that will be used for the nodes that match the searched query.
  * @param graphComponent The graph component.
@@ -111,15 +110,15 @@ function initHighlightingStyle(graphComponent) {
     // With a padding for the decoration
     margins: 7
   })
+
   const edgeHighlightStyle = new EdgeStyleIndicatorRenderer({
     // We choose a shape node style
-    edgeStyle: new PolylineEdgeStyle({
-      stroke: '3px #621B00'
-    })
+    edgeStyle: new PolylineEdgeStyle({ stroke: '3px #621B00' })
   })
   graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(nodeHighlightStyle)
   graphComponent.graph.decorator.edges.highlightRenderer.addConstant(edgeHighlightStyle)
 }
+
 /**
  * Initializes the input mode for this component.
  */
@@ -135,6 +134,7 @@ function initializeInputMode() {
   })
   graphComponent.inputMode = inputMode
 }
+
 /**
  * Zooms to the suitable point.
  * @param item The element that we clicked.
@@ -154,6 +154,7 @@ async function zoomToLocation(item, currentMouseClickLocation) {
     await graphComponent.zoomToAnimated(graphComponent.zoom, location)
   }
 }
+
 /**
  * Gets the focus point.
  * @param item The element that we clicked.
@@ -187,6 +188,7 @@ function getFocusPoint(item) {
   }
   return null
 }
+
 /**
  * Initializes the input mode for this component.
  */
@@ -199,11 +201,13 @@ function updateHighlight(item) {
   } else if (item instanceof INode) {
     highlights.add(item)
   }
+
   // clear highlights after one second
   setTimeout(() => {
     highlights.clear()
   }, 1000)
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  *
@@ -213,4 +217,5 @@ function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
 }
+
 run().then(finishLoading)

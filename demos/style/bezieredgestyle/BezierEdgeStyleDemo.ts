@@ -73,11 +73,7 @@ const bezierEdgeSegmentLabelModel = new BezierEdgeSegmentLabelModel({ autoSnappi
 const bezierPathLabelModel = new BezierEdgePathLabelModel({ autoSnapping: true })
 const bezierEdgeStyle: BezierEdgeStyle = new BezierEdgeStyle({
   stroke: '3px #4169E1',
-  targetArrow: new Arrow({
-    fill: '#4169E1',
-    stroke: '#4169E1',
-    type: ArrowType.TRIANGLE
-  })
+  targetArrow: new Arrow({ fill: '#4169E1', stroke: '#4169E1', type: ArrowType.TRIANGLE })
 })
 
 async function run(): Promise<void> {
@@ -188,11 +184,7 @@ function registerBezierDecorators(): void {
 function loadSample(sample: any): void {
   graphComponent.graph.clear()
   const builder = new GraphBuilder(graphComponent.graph)
-  builder.createNodesSource({
-    data: sample.nodes,
-    id: 'id',
-    layout: 'layout'
-  })
+  builder.createNodesSource({ data: sample.nodes, id: 'id', layout: 'layout' })
   const edgeCreator = builder.createEdgesSource(sample.edges, 'source', 'target', 'id').edgeCreator
 
   if (sample === SampleLabels) {

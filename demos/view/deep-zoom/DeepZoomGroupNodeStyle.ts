@@ -209,8 +209,8 @@ export class DeepZoomGroupNodeStyle extends NodeStyleBase<SvgVisual> {
     const svg = svgExport.exportSvg(tempGraphComponent) as SVGElement
 
     // clean up
-    tempGraphComponent.cleanUp()
     tempGraphComponent.graph = new Graph()
+    tempGraphComponent.cleanUp()
     tempView.dispose()
 
     return [svg, allBounds]

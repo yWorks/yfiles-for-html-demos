@@ -33,9 +33,7 @@ const path = require('path')
 
 module.exports = {
   mode: 'development',
-  entry: {
-    app: ['./src/WebWorkerWebpackDemo.ts']
-  },
+  entry: { app: ['./src/WebWorkerWebpackDemo.ts'] },
   devServer: {
     static: [
       path.join(__dirname, 'dist'),
@@ -64,7 +62,5 @@ module.exports = {
       exclude: ['yfiles.js']
     })
   ],
-  output: {
-    filename: '[name].js'
-  }
+  output: { filename: '[name].js' }
 }

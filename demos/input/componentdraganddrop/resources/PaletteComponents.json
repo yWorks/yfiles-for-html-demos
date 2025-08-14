@@ -1,179 +1,59 @@
 [
   {
     "nodeData": [
-      {
-        "id": 0,
-        "x": 35,
-        "y": -15
-      },
-      {
-        "id": 1,
-        "x": 85,
-        "y": 35
-      },
-      {
-        "id": 2,
-        "x": 35,
-        "y": 85
-      },
-      {
-        "id": 3,
-        "x": -15,
-        "y": 35
-      },
-      {
-        "id": 4,
-        "x": 35,
-        "y": 35
-      }
+      { "id": 0, "x": 35, "y": -15 },
+      { "id": 1, "x": 85, "y": 35 },
+      { "id": 2, "x": 35, "y": 85 },
+      { "id": 3, "x": -15, "y": 35 },
+      { "id": 4, "x": 35, "y": 35 }
     ],
     "edgeData": [
-      {
-        "id": 0,
-        "source": 0,
-        "target": 4
-      },
-      {
-        "id": 1,
-        "source": 1,
-        "target": 4
-      },
-      {
-        "id": 2,
-        "source": 2,
-        "target": 4
-      },
-      {
-        "id": 3,
-        "source": 3,
-        "target": 4
-      }
+      { "id": 0, "source": 0, "target": 4 },
+      { "id": 1, "source": 1, "target": 4 },
+      { "id": 2, "source": 2, "target": 4 },
+      { "id": 3, "source": 3, "target": 4 }
     ],
     "color": "#76b041"
   },
   {
     "nodeData": [
-      {
-        "id": 0,
-        "x": -15,
-        "y": -15
-      },
-      {
-        "id": 1,
-        "x": 85,
-        "y": -15
-      },
-      {
-        "id": 2,
-        "x": 85,
-        "y": 85
-      },
-      {
-        "id": 3,
-        "x": -15,
-        "y": 85
-      }
+      { "id": 0, "x": -15, "y": -15 },
+      { "id": 1, "x": 85, "y": -15 },
+      { "id": 2, "x": 85, "y": 85 },
+      { "id": 3, "x": -15, "y": 85 }
     ],
     "edgeData": [
-      {
-        "id": 0,
-        "source": 0,
-        "target": 1
-      },
-      {
-        "id": 1,
-        "source": 1,
-        "target": 2
-      },
-      {
-        "id": 2,
-        "source": 2,
-        "target": 3
-      },
-      {
-        "id": 3,
-        "source": 3,
-        "target": 0
-      }
+      { "id": 0, "source": 0, "target": 1 },
+      { "id": 1, "source": 1, "target": 2 },
+      { "id": 2, "source": 2, "target": 3 },
+      { "id": 3, "source": 3, "target": 0 }
     ],
     "color": "#ffc914"
   },
   {
     "nodeData": [
-      {
-        "id": 0,
-        "x": 35,
-        "y": -15
-      },
-      {
-        "id": 1,
-        "x": -15,
-        "y": 71.6
-      },
-      {
-        "id": 2,
-        "x": 85,
-        "y": 71.6
-      },
-      {
-        "id": 3,
-        "x": 35,
-        "y": 42.735
-      }
+      { "id": 0, "x": 35, "y": -15 },
+      { "id": 1, "x": -15, "y": 71.6 },
+      { "id": 2, "x": 85, "y": 71.6 },
+      { "id": 3, "x": 35, "y": 42.735 }
     ],
     "edgeData": [
-      {
-        "id": 0,
-        "source": 0,
-        "target": 3
-      },
-      {
-        "id": 1,
-        "source": 1,
-        "target": 3
-      },
-      {
-        "id": 2,
-        "source": 2,
-        "target": 3
-      }
+      { "id": 0, "source": 0, "target": 3 },
+      { "id": 1, "source": 1, "target": 3 },
+      { "id": 2, "source": 2, "target": 3 }
     ],
     "color": "#2d728f"
   },
   {
     "nodeData": [
-      {
-        "id": 0,
-        "x": 35,
-        "y": -15
-      },
-      {
-        "id": 1,
-        "x": -15,
-        "y": 71.6
-      },
-      {
-        "id": 2,
-        "x": 85,
-        "y": 71.6
-      }
+      { "id": 0, "x": 35, "y": -15 },
+      { "id": 1, "x": -15, "y": 71.6 },
+      { "id": 2, "x": 85, "y": 71.6 }
     ],
     "edgeData": [
-      {
-        "id": 0,
-        "source": 0,
-        "target": 1
-      },
-      {
-        "id": 1,
-        "source": 0,
-        "target": 2
-      },
-      {
-        "id": 2,
-        "source": 1,
-        "target": 2
-      }
+      { "id": 0, "source": 0, "target": 1 },
+      { "id": 1, "source": 0, "target": 2 },
+      { "id": 2, "source": 1, "target": 2 }
     ],
     "color": "#ff6c00"
   }

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { INode, IRenderContext, NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
+
 /**
  * A simple node style that renders the person's image and possibly an indicator if there are
  * unrevealed friends.
@@ -41,48 +42,61 @@ export class SocialNetworkNodeStyle extends NodeStyleBase {
   createVisual(context, node) {
     const person = node.tag
     const layout = node.layout
+
     const container = createSvgElement('g')
+
     // create an image for the person
     const image = createSvgElement('image')
     image.setAttribute('href', `./resources/${person.icon}.svg`)
     image.setAttribute('width', `${layout.width}`)
     image.setAttribute('height', `${layout.height}`)
     container.appendChild(image)
+
     // maybe add an indicator for unrevealed friends
     if (person.friends.length < person.friendsCount) {
       const iconColor = 'lightgray'
       const icon = createSvgElement('g')
       icon.setAttribute('transform', `translate(${layout.width - 8} 8)`)
+
       const circle = createSvgElement('circle')
       circle.setAttribute('fill', 'white')
       circle.setAttribute('stroke', iconColor)
       circle.setAttribute('stroke-width', '2')
       circle.setAttribute('r', '10px')
+
       const bgCircle = createSvgElement('circle')
       bgCircle.setAttribute('fill', 'white')
       bgCircle.setAttribute('r', '13px')
+
       const dot1 = createSvgElement('circle')
       dot1.setAttribute('fill', iconColor)
       dot1.setAttribute('r', '2px')
+
       const dot2 = createSvgElement('circle')
       dot2.setAttribute('fill', iconColor)
       dot2.setAttribute('r', '2px')
       dot2.setAttribute('cx', '-6px')
+
       const dot3 = createSvgElement('circle')
       dot3.setAttribute('fill', iconColor)
       dot3.setAttribute('r', '2px')
       dot3.setAttribute('cx', '6px')
+
       icon.appendChild(bgCircle)
       icon.appendChild(circle)
       icon.appendChild(dot1)
       icon.appendChild(dot2)
       icon.appendChild(dot3)
+
       container.appendChild(icon)
     }
+
     // set the location
     SvgVisual.setTranslate(container, layout.x, layout.y)
+
     return new SvgVisual(container)
   }
+
   /**
    * Update's the node visual.
    * @param context The render context
@@ -94,8 +108,10 @@ export class SocialNetworkNodeStyle extends NodeStyleBase {
     const person = node.tag
     const layout = node.layout
     const svgElement = oldVisual.svgElement
+
     // update the location
     SvgVisual.setTranslate(svgElement, layout.x, layout.y)
+
     if (
       svgElement.childNodes.length === 2 &&
       person.friends.length === person.friendsCount &&
@@ -104,9 +120,11 @@ export class SocialNetworkNodeStyle extends NodeStyleBase {
       // remove the "+" sign
       svgElement.removeChild(svgElement.lastElementChild)
     }
+
     return oldVisual
   }
 }
+
 function createSvgElement(name) {
   return document.createElementNS('http://www.w3.org/2000/svg', name)
 }

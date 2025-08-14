@@ -42,11 +42,7 @@ import {
 /**
  * Augment the SvgVisual type with the data used to cache the rendering information
  */
-type Cache = {
-  generalPath: GeneralPath
-  distance: number
-  loadColor: string
-}
+type Cache = { generalPath: GeneralPath; distance: number; loadColor: string }
 
 type CustomEdgeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 

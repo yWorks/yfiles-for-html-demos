@@ -41,6 +41,7 @@ import {
   Rect,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * A node style for HTML Canvas rendering with a complex visualization. Its visual complexity is
  * similar to the complex SVG node style. As a result, their performance is comparable.
@@ -57,6 +58,7 @@ export class ComplexCanvasNodeStyle extends NodeStyleBase {
     const type = typeof node.tag === 'number' ? node.tag : 0
     return new NodeRenderVisual(node.layout, COLOR_SCHEMES[type % COLOR_SCHEMES.length])
   }
+
   /**
    * Updates the visual representation for the given node.
    * @param context The render context.
@@ -69,6 +71,7 @@ export class ComplexCanvasNodeStyle extends NodeStyleBase {
   updateVisual(context, oldVisual, node) {
     return oldVisual
   }
+
   /**
    * Gets the outline of the node, an ellipse in this case.
    * This allows correct edge path intersection calculation, among others.
@@ -80,6 +83,7 @@ export class ComplexCanvasNodeStyle extends NodeStyleBase {
     outline.appendEllipse(rect, false)
     return outline
   }
+
   /**
    * Get the bounding box of the node.
    * @param context The canvas context.
@@ -89,6 +93,7 @@ export class ComplexCanvasNodeStyle extends NodeStyleBase {
   getBounds(context, node) {
     return node.layout.toRect()
   }
+
   /**
    * Hit test which considers the HitTestRadius specified in CanvasContext.
    * @param context The input mode context.
@@ -104,6 +109,7 @@ export class ComplexCanvasNodeStyle extends NodeStyleBase {
     const bounds = this.getEllipseBounds(node.layout)
     return GeometryUtilities.ellipseContains(bounds, p, context.hitTestRadius)
   }
+
   /**
    * Checks if a node is inside a certain box. Considers HitTestRadius.
    * @param context The input mode context.
@@ -118,11 +124,14 @@ export class ComplexCanvasNodeStyle extends NodeStyleBase {
     if (!super.isInBox(context, rectangle, node)) {
       return false
     }
+
     const eps = context.hitTestRadius
+
     const outline = this.getOutline(node)
     if (outline === null) {
       return false
     }
+
     if (outline.pathIntersects(rectangle, eps)) {
       return true
     }
@@ -137,6 +146,7 @@ export class ComplexCanvasNodeStyle extends NodeStyleBase {
       rectangle.contains(node.layout.toRect().bottomRight)
     )
   }
+
   /**
    * Exact geometric check whether a point p lies inside the node. This is important for
    * e.g. intersection calculation.
@@ -151,6 +161,7 @@ export class ComplexCanvasNodeStyle extends NodeStyleBase {
     const bounds = this.getEllipseBounds(node.layout)
     return GeometryUtilities.ellipseContains(bounds, p, 0)
   }
+
   /**
    * Calculates the intersection point of the node's outline with a line between
    * an inner and an outer point.
@@ -166,6 +177,7 @@ export class ComplexCanvasNodeStyle extends NodeStyleBase {
       outer
     )
   }
+
   /**
    * Calculates the bounds of the icon inside the node.
    */
@@ -176,7 +188,9 @@ export class ComplexCanvasNodeStyle extends NodeStyleBase {
     return new Rect(x, y, d, d)
   }
 }
+
 const COLOR_SCHEMES = createColorSchemes()
+
 function createColorSchemes() {
   const colorSchemes = []
   colorSchemes.push({
@@ -220,6 +234,7 @@ function createColorSchemes() {
   })
   return colorSchemes
 }
+
 /**
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
@@ -231,6 +246,7 @@ class NodeRenderVisual extends HtmlCanvasVisual {
    * To scale it correctly, the original SVG size is needed.
    */
   static ORIGINAL_SIZE = 75
+
   /**
    * Creates an instance of the complex canvas node style renderer.
    * @param layout A live view of the layout of a node.
@@ -241,6 +257,7 @@ class NodeRenderVisual extends HtmlCanvasVisual {
     this.layout = layout
     this.colorScheme = colorScheme
   }
+
   /**
    * Draws a complex node style. The visual complexity is comparable to the complex SVG node style, since
    * it is a converted SVG but with a rectangular shape.
@@ -248,6 +265,7 @@ class NodeRenderVisual extends HtmlCanvasVisual {
    */
   render(context, htmlCanvasContext) {
     const l = this.layout
+
     // get the min of width and height to be able to draw the icon in a square
     const length = Math.min(l.width, l.height)
     htmlCanvasContext.save()
@@ -260,7 +278,9 @@ class NodeRenderVisual extends HtmlCanvasVisual {
       length / NodeRenderVisual.ORIGINAL_SIZE,
       length / NodeRenderVisual.ORIGINAL_SIZE
     )
+
     const colorScheme = this.colorScheme
+
     // draw the icon
     htmlCanvasContext.save()
     htmlCanvasContext.beginPath()

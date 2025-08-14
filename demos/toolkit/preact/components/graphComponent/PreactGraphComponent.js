@@ -42,13 +42,16 @@ import {
 import { PreactComponentNodeStyle } from './PreactComponentNodeStyle'
 import NodeTemplate from './NodeTemplate'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 LayoutExecutor.ensure()
+
 export default (props) => {
   const gcRef = useRef(null)
   const graphComponentRef = useRef(null)
   const graphBuilderRef = useRef(null)
   const nodesSourceRef = useRef(null)
   const edgesSourceRef = useRef(null)
+
   /**
    * Note that we pass an empty dependency array here, which causes
    * the effect to only be triggered when the component is first mounted
@@ -57,19 +60,23 @@ export default (props) => {
   useEffect(() => {
     const graphComponent = new GraphComponent(gcRef.current)
     graphComponent.inputMode = new GraphViewerInputMode()
+
     initializeStyles(graphComponent)
+
     graphComponentRef.current = graphComponent
     const graphBuilder = createGraphBuilder()
     graphBuilderRef.current = graphBuilder
     graphBuilder.buildGraph()
     doLayout()
     finishLoading()
+
     // return a cleanup function (like componentWillUnmount())
     return () => {
-      graphComponent.cleanUp()
       graphComponent.graph = new Graph()
+      graphComponent.cleanUp()
     }
   }, [])
+
   /**
    * This effect is triggered whenever the itemData or connectionData changes.
    * In order to update the graph view, we set the new data and apply a GraphBuilder update.
@@ -80,6 +87,7 @@ export default (props) => {
     graphBuilderRef.current?.updateGraph()
     doLayout()
   }, [props.itemData, props.connectionData])
+
   /**
    * We use a string template to create the node visualizations. Depending on the
    * "state" property of the data items, a different CSS class is set on the outer
@@ -93,12 +101,14 @@ export default (props) => {
       targetArrow: `#304f52 small triangle`
     })
   }
+
   const doLayout = () => {
     props.setLayoutRunning(true)
     graphComponentRef.current?.applyLayoutAnimated(new HierarchicalLayout(), '1s').then(() => {
       props.setLayoutRunning(false)
     })
   }
+
   /**
    * The GraphBuilder configuration is straight-forward for the simple data model
    * used in the demo: we use the data item's "id" property for the GraphBuilder id, and
@@ -119,11 +129,13 @@ export default (props) => {
     })
     nodesSourceRef.current = nodesSource
     edgesSourceRef.current = edgesSource
+
     // We need to update the node tags with each item update.
     nodesSource.nodeCreator.addEventListener('node-updated', (evt) => {
       nodesSource.nodeCreator.updateTag(evt.graph, evt.item, evt.dataItem)
     })
     return graphBuilder
   }
+
   return html` <div class="graph-component" ref=${gcRef} /> `
 }

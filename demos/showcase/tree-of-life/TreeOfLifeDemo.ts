@@ -67,9 +67,9 @@ import { SectorVisual } from './SectorVisual'
 import { getGlobalRoot, getSubtree, highlightSubtree } from './SubtreeSupport'
 import { initializeGraphSearch, resetGraphSearch } from './TreeOfLifeSearch'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 import {
   addNavigationButtons,
+  BrowserDetection,
   finishLoading,
   showLoadingIndicator
 } from '@yfiles/demo-resources/demo-page'
@@ -188,9 +188,7 @@ function initializeStyleDefaults(graph: IGraph): void {
     })
   )
   graphComponent.graph.decorator.edges.highlightRenderer.addConstant(
-    new EdgeStyleIndicatorRenderer({
-      zoomPolicy: StyleIndicatorZoomPolicy.NO_DOWNSCALING
-    })
+    new EdgeStyleIndicatorRenderer({ zoomPolicy: StyleIndicatorZoomPolicy.NO_DOWNSCALING })
   )
   graphComponent.graph.decorator.labels.highlightRenderer.addConstant(
     new LabelStyleIndicatorRenderer({
@@ -300,14 +298,14 @@ function initializeSectorVisualization() {
  * Loads the initial graph, colorizes the subtrees and filters the data that will be visualized.
  */
 async function loadAndFilterGraph() {
+  graphComponent.graph = new FilteredGraphWrapper(graphComponent.graph, (node) => isVisible(node))
+
   await showLoadingIndicator(true, `Loading 'Tree Of Life' data...`)
   setUIDisabled(graphComponent, true)
 
-  const graph = await loadGraph(graphComponent.graph)
+  const graph = await loadGraph()
 
-  colorizeSubtrees(graph)
-
-  graphComponent.graph = new FilteredGraphWrapper(graph, (node) => isVisible(node))
+  colorizeSubtrees()
 
   // center the graph
   await graphComponent.fitGraphBounds()
@@ -340,23 +338,15 @@ function isVisible(node: INode): boolean {
  * Loads the graph from data and apply default styles.
  * @yjs:keep = nodes
  */
-async function loadGraph(graph: IGraph): Promise<IGraph> {
+async function loadGraph(): Promise<IGraph> {
+  const graph = mainGraph()
   const builder = new GraphBuilder(graph)
   const response = await fetch('./resources/TreeOfLifeData.json')
   const data = await response.json()
 
-  builder.createNodesSource({
-    data: data.nodes,
-    id: 'id',
-    labels: ['tag.name'],
-    tag: 'tag'
-  })
+  builder.createNodesSource({ data: data.nodes, id: 'id', labels: ['tag.name'], tag: 'tag' })
 
-  builder.createEdgesSource({
-    data: data.links,
-    sourceId: 'source',
-    targetId: 'target'
-  })
+  builder.createEdgesSource({ data: data.links, sourceId: 'source', targetId: 'target' })
 
   return builder.buildGraph()
 }
@@ -364,7 +354,8 @@ async function loadGraph(graph: IGraph): Promise<IGraph> {
 /**
  * Colorize the nodes and edges of each subtree with a different color.
  */
-function colorizeSubtrees(graph: IGraph) {
+function colorizeSubtrees() {
+  const graph = mainGraph()
   const root = getGlobalRoot(graph)
   graph.successors(root).forEach((subtreeRoot, i) => {
     const subtree = getSubtree(subtreeRoot, graph)
@@ -430,9 +421,7 @@ async function showSubtree(subtreeRoot: INode, prepareAnimation?: boolean) {
   const subtree = getSubtree(subtreeRoot, mainGraph())
 
   // get a list of subtree nodes ordered by their distance to the subtree root
-  const bfs = new Bfs({
-    coreNodes: [subtreeRoot]
-  })
+  const bfs = new Bfs({ coreNodes: [subtreeRoot] })
   const bfsResult = bfs.run(mainGraph())
   const subtreeNodes = subtree.nodes.toSorted(
     (node1, node2) => bfsResult.nodeLayerIds.get(node1)! - bfsResult.nodeLayerIds.get(node2)!

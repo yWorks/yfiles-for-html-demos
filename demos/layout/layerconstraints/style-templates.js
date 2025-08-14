@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { svg } from 'lit-html'
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
+
 export const constraintNodeStyle = new LitNodeStyle(
   //language =HTML
   ({ layout, tag }) => svg`
@@ -67,6 +68,7 @@ export const constraintNodeStyle = new LitNodeStyle(
   </g>
 `
 )
+
 function getBackgroundColor(value) {
   if (Number.isInteger(value)) {
     switch (value) {
@@ -81,6 +83,7 @@ function getBackgroundColor(value) {
   }
   return '#FFF'
 }
+
 function getTextColor(value) {
   return Number.isInteger(value) && (value === 0 || value === 3) ? 'black' : 'white'
 }

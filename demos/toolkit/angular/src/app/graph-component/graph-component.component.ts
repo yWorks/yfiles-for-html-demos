@@ -28,13 +28,11 @@
  ***************************************************************************/
 import {
   AfterViewInit,
-  ApplicationRef,
   Component,
-  ComponentFactoryResolver,
   ElementRef,
-  Injector,
   NgZone,
-  ViewChild
+  ViewChild,
+  ViewContainerRef
 } from '@angular/core'
 import { GraphComponentService } from '../services/graph-component.service'
 import {
@@ -45,18 +43,20 @@ import {
   IEdge,
   IModelItem,
   INode,
-  type QueryItemToolTipEventArgs,
   Point,
+  type QueryItemToolTipEventArgs,
   Rect,
   TimeSpan
 } from '@yfiles/yfiles'
 import { TooltipComponent } from '../tooltip/tooltip.component'
 import { Person } from '../person'
+import { ContextMenuComponent } from '../context-menu/context-menu.component'
 
 @Component({
   selector: 'graph-component',
   templateUrl: './graph-component.component.html',
-  styleUrls: ['./graph-component.component.css']
+  styleUrls: ['./graph-component.component.css'],
+  imports: [ContextMenuComponent]
 })
 export class GraphComponentComponent implements AfterViewInit {
   @ViewChild('graphComponentRef') graphComponentRef!: ElementRef
@@ -66,10 +66,8 @@ export class GraphComponentComponent implements AfterViewInit {
 
   constructor(
     private graphComponentService: GraphComponentService,
-    private injector: Injector,
-    private appRef: ApplicationRef,
-    private zone: NgZone,
-    private componentFactoryResolver: ComponentFactoryResolver
+    private viewContainerRef: ViewContainerRef,
+    private zone: NgZone
   ) {}
 
   ngAfterViewInit(): void {
@@ -133,7 +131,7 @@ export class GraphComponentComponent implements AfterViewInit {
       }
 
       // Use a rich HTML element as tooltip content. Alternatively, a plain string would do as well.
-      evt.toolTip = this.createTooltipContent(evt.item!)
+      evt.toolTip = this.createTooltipContent(evt.item!).nativeElement
 
       // Indicate that the tooltip content has been set.
       evt.handled = true
@@ -157,19 +155,16 @@ export class GraphComponentComponent implements AfterViewInit {
     }
 
     // Retrieve the factory for TooltipComponents
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(TooltipComponent)
-    // Have the factory create a new TooltipComponent
-    const container = document.createElement('div')
-    const tooltipRef = componentFactory.create(this.injector, undefined, container)
-    // Attach the component to the Angular component tree so that change detection will work
-    this.appRef.attachView(tooltipRef.hostView)
-    // Assign the NodeComponent's item input property
+    const tooltipRef = this.viewContainerRef.createComponent(TooltipComponent)
 
+    // Assign the NodeComponent's item input property
     this.zone.run(() => {
+      // Run in zone to notify Angular of events in the yFiles component that should trigger Angular functionality.
+      // See https://docs.yworks.com/yfileshtml/#/kb/article/848/Improving_performance_of_large_Angular_applications
       tooltipRef.instance.title = tooltipTitle
       tooltipRef.instance.content = tooltipContent
     })
 
-    return container
+    return tooltipRef.instance.elementRef
   }
 }

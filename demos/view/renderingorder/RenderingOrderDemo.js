@@ -47,38 +47,48 @@ import {
   SvgVisual,
   Visual
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
   graphComponent.graph.undoEngineEnabled = true
+
   // configures default styles for newly created graph elements
   initDemoDefaults()
+
   // add a sample graph
   createGraph()
+
   // bind the buttons to their functionality
   initializeUI()
 }
+
 /**
  * Switches between pre-defined rendering order settings for common use cases.
  * Note: The settings may also be combined in different ways, too.
  */
 function selectRenderingOrder(order) {
   const graphModelManager = graphComponent.graphModelManager
+
   // set to default first
   graphModelManager.nodeLabelLayerPolicy = LabelLayerPolicy.SEPARATE_LAYER
   graphModelManager.edgeLabelLayerPolicy = LabelLayerPolicy.SEPARATE_LAYER
   graphModelManager.portLayerPolicy = PortLayerPolicy.SEPARATE_LAYER
   graphModelManager.hierarchicalNestingPolicy = HierarchicalNestingPolicy.NODES_AND_EDGES
   graphModelManager.edgeGroup.below(graphModelManager.nodeGroup)
+
   switch (order) {
     case 'at-owner':
       graphModelManager.nodeLabelLayerPolicy = LabelLayerPolicy.AT_OWNER
@@ -100,17 +110,16 @@ function selectRenderingOrder(order) {
       break
   }
 }
+
 /**
  * Initializes the defaults for the styles in this demo.
  */
 function initDemoDefaults() {
   const graph = graphComponent.graph
   initDemoStyles(graph)
-  graph.nodeDefaults.ports.style = new ShapePortStyle({
-    fill: '#111D4A',
-    shape: 'ellipse'
-  })
+  graph.nodeDefaults.ports.style = new ShapePortStyle({ fill: '#111D4A', shape: 'ellipse' })
 }
+
 /**
  * Creates the sample graph.
  */
@@ -122,6 +131,7 @@ function createGraph() {
   void graphComponent.fitGraphBounds()
   graphComponent.graph.undoEngine.clear()
 }
+
 /**
  * Creates a sample graph with overlapping exterior node labels.
  */
@@ -129,22 +139,13 @@ function createOverlappingLabelSample(origin) {
   const graph = graphComponent.graph
   graph.createNode({
     layout: [origin.x, origin.y + 50, 50, 50],
-    labels: [
-      {
-        text: 'External Node Label 1',
-        layoutParameter: ExteriorNodeLabelModel.BOTTOM
-      }
-    ]
+    labels: [{ text: 'External Node Label 1', layoutParameter: ExteriorNodeLabelModel.BOTTOM }]
   })
   graph.createNode({
     layout: [origin.x + 60, origin.y + 80, 50, 50],
-    labels: [
-      {
-        text: 'External Node Label 2',
-        layoutParameter: ExteriorNodeLabelModel.BOTTOM
-      }
-    ]
+    labels: [{ text: 'External Node Label 2', layoutParameter: ExteriorNodeLabelModel.BOTTOM }]
   })
+
   graphComponent.renderTree.createElement(
     graphComponent.renderTree.backgroundGroup,
     new RectangleBorder(
@@ -155,34 +156,25 @@ function createOverlappingLabelSample(origin) {
     )
   )
 }
+
 /**
  * Creates a sample graph with overlapping nodes that have interior node labels.
  */
 function createOverlappingNodeSample(origin) {
   const graph = graphComponent.graph
+
   // overlapping nodes
-  const back1 = graph.createNode({
-    layout: [origin.x, origin.y + 20, 50, 50],
-    labels: ['Back']
-  })
-  graph.createNode({
-    layout: [origin.x + 20, origin.y + 35, 50, 50],
-    labels: ['Middle']
-  })
+  const back1 = graph.createNode({ layout: [origin.x, origin.y + 20, 50, 50], labels: ['Back'] })
+  graph.createNode({ layout: [origin.x + 20, origin.y + 35, 50, 50], labels: ['Middle'] })
   const front1 = graph.createNode({
     layout: [origin.x + 40, origin.y + 50, 50, 50],
     labels: ['Front']
   })
+
   // overlapping nodes with ports
-  const back2 = graph.createNode({
-    layout: [origin.x + 120, origin.y + 20, 50, 50]
-  })
-  const middle2 = graph.createNode({
-    layout: [origin.x + 140, origin.y + 35, 50, 50]
-  })
-  const front2 = graph.createNode({
-    layout: [origin.x + 160, origin.y + 50, 50, 50]
-  })
+  const back2 = graph.createNode({ layout: [origin.x + 120, origin.y + 20, 50, 50] })
+  const middle2 = graph.createNode({ layout: [origin.x + 140, origin.y + 35, 50, 50] })
+  const front2 = graph.createNode({ layout: [origin.x + 160, origin.y + 50, 50, 50] })
   const nodes = [back2, middle2, front2]
   nodes.forEach((node) => {
     graph.addPort(node, FreeNodePortLocationModel.BOTTOM)
@@ -190,6 +182,7 @@ function createOverlappingNodeSample(origin) {
     graph.addPort(node, FreeNodePortLocationModel.LEFT)
     graph.addPort(node, FreeNodePortLocationModel.RIGHT)
   })
+
   const edge1 = graph.createEdge({
     source: back1,
     target: back2,
@@ -207,6 +200,7 @@ function createOverlappingNodeSample(origin) {
     bends: [new Point(origin.x + 65, origin.y + 190), new Point(origin.x + 185, origin.y + 190)]
   })
   graph.setRelativePortLocation(edge2.sourcePort, new Point(0, 25))
+
   graphComponent.renderTree.createElement(
     graphComponent.renderTree.backgroundGroup,
     new RectangleBorder(
@@ -217,38 +211,28 @@ function createOverlappingNodeSample(origin) {
     )
   )
 }
+
 /**
  * Creates a sample graph with an edge that crosses a group node.
  */
 function createOverlappingEdgeSample(origin) {
   const graph = graphComponent.graph
-  const srcNode = graph.createNode({
-    layout: [origin.x, origin.y + 60, 50, 50]
-  })
-  const tgtNode1 = graph.createNode({
-    layout: [origin.x + 250, origin.y + 60, 50, 50]
-  })
-  const tgtNode2 = graph.createNode({
-    layout: [origin.x + 122.5, origin.y + 130, 50, 50]
-  })
-  const groupNode = graph.createGroupNode({
-    layout: [origin.x + 85, origin.y, 125, 200]
-  })
+
+  const srcNode = graph.createNode({ layout: [origin.x, origin.y + 60, 50, 50] })
+  const tgtNode1 = graph.createNode({ layout: [origin.x + 250, origin.y + 60, 50, 50] })
+  const tgtNode2 = graph.createNode({ layout: [origin.x + 122.5, origin.y + 130, 50, 50] })
+  const groupNode = graph.createGroupNode({ layout: [origin.x + 85, origin.y, 125, 200] })
   graph.addLabel(groupNode, 'Group Node')
   graph.setParent(tgtNode2, groupNode)
-  const edge = graph.createEdge({
-    source: srcNode,
-    target: tgtNode1
-  })
-  graph.addLabel({
-    owner: edge,
-    text: 'Edge Label'
-  })
+
+  const edge = graph.createEdge({ source: srcNode, target: tgtNode1 })
+  graph.addLabel({ owner: edge, text: 'Edge Label' })
   graph.createEdge({
     source: srcNode,
     target: tgtNode2,
     bends: [new Point(origin.x + 25, origin.y + 155)]
   })
+
   graphComponent.renderTree.createElement(
     graphComponent.renderTree.backgroundGroup,
     new RectangleBorder(
@@ -259,15 +243,18 @@ function createOverlappingEdgeSample(origin) {
     )
   )
 }
+
 /**
  * Creates a sample graph with nested group nodes and edges.
  */
 function createNestedGroupSample(origin) {
   const graph = graphComponent.graph
+
   const root = graph.createGroupNode({
     layout: [origin.x, origin.y, 230, 220],
     labels: ['Outer Group Node']
   })
+
   const outerChild1 = graph.createNode({
     parent: root,
     layout: [origin.x + 145, origin.y + 30, 50, 50],
@@ -283,6 +270,7 @@ function createNestedGroupSample(origin) {
     target: outerChild2,
     bends: [new Point(origin.x + 65, origin.y + 55)]
   })
+
   const childGroup = graph.createGroupNode({
     parent: root,
     layout: [origin.x + 20, origin.y + 50, 150, 150],
@@ -303,6 +291,7 @@ function createNestedGroupSample(origin) {
     target: innerNode2,
     bends: [new Point(origin.x + 125, origin.y + 105)]
   })
+
   graphComponent.renderTree.createElement(
     graphComponent.renderTree.backgroundGroup,
     new RectangleBorder(
@@ -313,6 +302,7 @@ function createNestedGroupSample(origin) {
     )
   )
 }
+
 /**
  * Binds the actions to the buttons in the demo's toolbar.
  */
@@ -325,6 +315,7 @@ function initializeUI() {
     }
   )
 }
+
 /**
  * Creates a boundary rectangle with a title for a sample graph.
  */
@@ -346,8 +337,10 @@ class RectangleBorder extends BaseClass(IVisualCreator) {
     this.titleOrigin = titleOrigin
     this.title = title
   }
+
   createVisual(ctx) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.x.baseVal.value = this.rectOrigin.x
     rect.y.baseVal.value = this.rectOrigin.y
@@ -358,20 +351,21 @@ class RectangleBorder extends BaseClass(IVisualCreator) {
     rect.setAttribute('stroke-width', '4px')
     rect.setAttribute('stroke-dasharray', '5,5')
     container.appendChild(rect)
+
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
     text.textContent = this.title
     text.setAttribute('fill', 'gray')
     text.setAttribute('x', `${this.titleOrigin.x}`)
     text.setAttribute('y', `${this.titleOrigin.y}`)
-    new Font({
-      fontSize: 18,
-      fontWeight: 'bold'
-    }).applyTo(text)
+    new Font({ fontSize: 18, fontWeight: 'bold' }).applyTo(text)
     container.appendChild(text)
+
     return new SvgVisual(container)
   }
+
   updateVisual(ctx, oldVisual) {
     return oldVisual
   }
 }
+
 run().then(finishLoading)

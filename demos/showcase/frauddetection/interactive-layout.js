@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { InteractiveOrganicLayout, Reachability, TimeSpan } from '@yfiles/yfiles'
 import { InteractiveOrganicLayoutHelper } from '@yfiles/demo-utils/InteractiveOrganicLayoutHelper'
+
 /**
  * Initializes the layout algorithm, animations and interaction with the current graph.
  *
@@ -49,9 +50,12 @@ export function initializeLayout(graphComponent) {
     // InteractiveOrganicLayoutHelper.needsGraphAdapterUpdate to true.
     needsGraphAdapterUpdate: true
   })
+
   prepareInteraction()
   prepareStructureChanges()
+
   return { startLayout, stopLayout }
+
   /**
    * Registers the necessary drag listeners to the input mode to configure the interactive layout
    * to respect the drag position.
@@ -59,10 +63,13 @@ export function initializeLayout(graphComponent) {
   function prepareInteraction() {
     const inputMode = graphComponent.inputMode
     const moveUnselectedItemsInputMode = inputMode.moveUnselectedItemsInputMode
+
     let draggedComponent
+
     function getDraggedNode(moveInputMode) {
       return moveInputMode.affectedItems.at(0)
     }
+
     moveUnselectedItemsInputMode.addEventListener('drag-started', (_, moveInputMode) => {
       const draggedNode = getDraggedNode(moveInputMode)
       // find the nodes that belong to the same component as the dragged node
@@ -73,18 +80,22 @@ export function initializeLayout(graphComponent) {
       interactiveOrganicLayoutHelper.updateInertiaAndStressForAllNodes(0.8, 0.2)
       restartLayout(draggedNode, draggedComponent)
     })
+
     moveUnselectedItemsInputMode.addEventListener('dragged', (_, moveInputMode) => {
       updateDraggedComponent(getDraggedNode(moveInputMode), draggedComponent, 0.01)
     })
+
     moveUnselectedItemsInputMode.addEventListener('drag-canceled', (_, moveInputMode) => {
       setFinalNodeLocation(getDraggedNode(moveInputMode), draggedComponent)
       draggedComponent = null
     })
+
     moveUnselectedItemsInputMode.addEventListener('drag-finished', (_, moveInputMode) => {
       setFinalNodeLocation(getDraggedNode(moveInputMode), draggedComponent)
       draggedComponent = null
     })
   }
+
   /**
    * Registers the necessary listeners that react to structural changes to the graph like node/edge
    * addition/deletion so that the layout algorithm is updated accordingly.
@@ -105,6 +116,7 @@ export function initializeLayout(graphComponent) {
       interactiveOrganicLayoutHelper.removeEdge(evt.sourcePortOwner, evt.targetPortOwner)
     })
   }
+
   /**
    * Starts an interactive layout and configures how much the nodes are allowed to move.
    * The concept is the following:
@@ -118,12 +130,14 @@ export function initializeLayout(graphComponent) {
   async function startLayout() {
     await interactiveOrganicLayoutHelper.startAnimator(graphComponent)
   }
+
   /**
    * Stops the layout along with the animation.
    */
   function stopLayout() {
     interactiveOrganicLayoutHelper.stopLayout()
   }
+
   /**
    * When a node is first dragged, the interactive layout to restart and get an updated graph structure.
    */
@@ -134,6 +148,7 @@ export function initializeLayout(graphComponent) {
       interactiveOrganicLayoutHelper.fixNode(draggedNode)
     }
   }
+
   /**
    * During dragging, the dragged node has to take the position of the drag gesture.
    * All other nodes that belong to this component can be moved to adjust their positions close to the
@@ -145,6 +160,7 @@ export function initializeLayout(graphComponent) {
       interactiveOrganicLayoutHelper.fixNode(draggedNode, 1)
     }
   }
+
   /**
    * The dragged node has to move to the drag position and remain there.
    */
@@ -154,6 +170,7 @@ export function initializeLayout(graphComponent) {
       updateStressAndInertiaForOtherNodes(draggedNode, draggedComponent, -1)
     }
   }
+
   /**
    * Allow the nodes of the moved component to move close to the dragged node.
    * @param draggedNode the node that will be dragged.
@@ -169,6 +186,7 @@ export function initializeLayout(graphComponent) {
       }
     })
   }
+
   /**
    * Checks whether the given node is currently visible in the graph.
    */

@@ -37,11 +37,7 @@ import {
 } from '@yfiles/yfiles'
 import { type ColorSetName, isColorSetName } from '@yfiles/demo-resources/demo-styles'
 
-type Sample2NodeStyleCache = {
-  width: number
-  height: number
-  cssClass?: string
-}
+type Sample2NodeStyleCache = { width: number; height: number; cssClass?: string }
 
 /**
  * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
@@ -79,11 +75,7 @@ export class Sample2NodeStyle extends NodeStyleBase<Sample2NodeStyleVisual> {
 
     SvgVisual.setTranslate(rect, x, y)
 
-    return SvgVisual.from(rect, {
-      width,
-      height,
-      cssClass: this.cssClass
-    })
+    return SvgVisual.from(rect, { width, height, cssClass: this.cssClass })
   }
 
   /**

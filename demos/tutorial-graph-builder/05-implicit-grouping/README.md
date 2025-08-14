@@ -34,20 +34,13 @@ To address these use cases, the [NodesSource](https://docs.yworks.com/yfileshtml
 In the example data, we start from an initial set of entities. Each one has a property `children` that can contain a (potentially empty) list of child entities and a `path` property that describes a hierarchical path structure how this entity can be reached, similar to a file system path.
 
 ```
-export type ItemData = {
-  id: string
-  path: string
-  children?: ChildData[]
-}
+export type ItemData = { id: string; path: string; children?: ChildData[] }
 ```
 
 Each child item can optionally have a further list of its own child items:
 
 ```
-export type ChildData = {
-  id: string
-  children?: ChildData[]
-}
+export type ChildData = { id: string; children?: ChildData[] }
 ```
 
 The initial items as well as the child entities carry an additional `id` attribute to make it easier to define relations between them.
@@ -62,10 +55,7 @@ The initial items as well as the child entities carry an additional `id` attribu
       {
         id: 'child1',
         children: [
-          {
-            id: 'child11',
-            children: [{ id: 'child14' }, { id: 'child15' }]
-          },
+          { id: 'child11', children: [{ id: 'child14' }, { id: 'child15' }] },
           { id: 'child12' }
         ]
       },

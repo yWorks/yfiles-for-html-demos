@@ -68,48 +68,64 @@ import {
   finishLoading
 } from '@yfiles/demo-resources/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
+
 /**
  * The component displaying the demo's graph.
  */
 let graphComponent
+
 /**
  * This demo's graph instance.
  */
 let graph
+
 /**
  * The layout call is asynchronous. However, we only want one layout at a time.
  */
 let isLayoutRunning = false
+
 /**
  * Bootstraps this demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
   graph = graphComponent.graph
+
   // initialize the input mode
   graphComponent.inputMode = createEditorMode()
+
   // use two finger panning to allow easier editing with touch gestures
   configureTwoPointerPanning(graphComponent)
+
   // initialize default styles
   initDemoStyles(graph, { orthogonalEditing: true })
   graph.groupNodeDefaults.style = createGroupNodeStyle()
+
   // configures the drag and drop panel
   configureDndPanel()
+
   // Enable general undo support
   graph.undoEngineEnabled = true
+
   // configures the table editor input mode
   const tableEditorInputMode = configureTableEditing()
+
   // configures the context menu
   configureContextMenu(tableEditorInputMode)
+
   // enable loading and saving, and load a sample graph
   const graphMLIOHandler = new GraphMLIOHandler()
+
   // reads the default graph from the given file
   void createGraph(graphMLIOHandler)
+
   // bind toolbar actions
   initializeUI(graphMLIOHandler)
 }
+
 /**
  * Reads the default sample graph.
  */
@@ -119,6 +135,7 @@ async function createGraph(graphMLIOHandler) {
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0',
     TableStyles
   )
+
   graphMLIOHandler.addTypeInformation(DemoTableStyle, {
     properties: {
       tableRenderingOrder: { default: TableRenderingOrder.ROWS_FIRST, type: TableRenderingOrder },
@@ -126,9 +143,11 @@ async function createGraph(graphMLIOHandler) {
       backgroundStyle: { type: INodeStyle }
     }
   })
+
   await graphMLIOHandler.readFromURL(graphComponent.graph, 'resources/sample.graphml')
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Creates the editor input mode for this demo.
  */
@@ -139,20 +158,24 @@ function createEditorMode() {
     nodeDropInputMode: configureDndInputMode(graph)
   })
 }
+
 /**
  * Configures table editing specific parts.
  * @returns The table editor input mode
  */
 function configureTableEditing() {
   const graphInputMode = graphComponent.inputMode
+
   // use the undo support from the graph also for all future table instances
   Table.installStaticUndoSupport(graph)
+
   // provide no candidates for edge creation at pool nodes - this effectively disables
   // edge creations for those nodes
   graph.decorator.nodes.portCandidateProvider.addConstant(
     (node) => !!ITable.getTable(node),
     IPortCandidateProvider.NO_CANDIDATES
   )
+
   // customize marquee selection handling for pool nodes
   graph.decorator.nodes.marqueeTestable.addFactory(
     (node) => !!ITable.getTable(node),
@@ -164,9 +187,11 @@ function configureTableEditing() {
         return box.contains(rectangle.topLeft) && box.contains(rectangle.bottomRight)
       })
   )
+
   const reparentStripeHandler = new ReparentStripeHandler()
   reparentStripeHandler.maxColumnLevel = 2
   reparentStripeHandler.maxRowLevel = 2
+
   // create a new TEIM instance which also allows drag and drop
   const tableInputMode = new TableEditorInputMode({
     reparentStripeHandler,
@@ -174,8 +199,10 @@ function configureTableEditing() {
     priority: graphInputMode.handleInputMode.priority + 1
   })
   tableInputMode.stripeDropInputMode.enabled = true
+
   // add to GEIM
   graphInputMode.add(tableInputMode)
+
   // tooltip for tables. We show only tool tips for stripe headers in this demo.
   graphInputMode.toolTipInputMode.addEventListener('query-tool-tip', (evt) => {
     if (!evt.handled) {
@@ -193,35 +220,28 @@ function configureTableEditing() {
   // register custom reparent handler that prevents reparenting of table nodes (i.e. they may only appear on root
   // level)
   graphInputMode.reparentNodeHandler = new MyReparentHandler(graphInputMode.reparentNodeHandler)
+
   // prevent re-parenting of tables into tables by copy & paste
   const clipboard = new GraphClipboard()
   clipboard.parentNodeDetection = ParentNodeDetectionModes.PREVIOUS_PARENT
   graphComponent.clipboard = clipboard
-  graphInputMode.addEventListener('deleted-item', ({ item }) => {
-    console.log('GEIM: deleted item', item)
-  })
-  tableInputMode.addEventListener('deleted-item', ({ item }) => {
-    console.log('TEIM: deleted item', item)
-  })
-  tableInputMode.addEventListener('deleted-selection', (args) => {
-    console.log('TEIM: deleted selection')
-  })
-  graphInputMode.editLabelInputMode.addEventListener('label-edited', ({ item }) => {
-    console.log('GEIM.ELIM: label-edited', item)
-  })
+
   return tableInputMode
 }
+
 /**
  * Initializes the context menu.
  * @param tableEditorInputMode The table editor input mode that is used to populate the context menu
  */
 function configureContextMenu(tableEditorInputMode) {
   const graphInputMode = graphComponent.inputMode
+
   // add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   graphInputMode.addEventListener('populate-item-context-menu', (evt) =>
     populateContextMenu(evt, tableEditorInputMode)
   )
 }
+
 /**
  * Event handler for the context menu.
  * @param args The event arguments
@@ -231,12 +251,14 @@ function populateContextMenu(args, tableEditorInputMode) {
   if (args.handled) {
     return
   }
+
   const graphInputMode = graphComponent.inputMode
   const stripe = tableEditorInputMode.findStripe(
     args.queryLocation,
     StripeTypes.ALL,
     StripeSubregionTypes.HEADER
   )
+
   if (stripe) {
     args.contextMenu = [
       {
@@ -245,6 +267,7 @@ function populateContextMenu(args, tableEditorInputMode) {
           tableEditorInputMode.deleteStripe(stripe.stripe)
         }
       },
+
       {
         label: `Insert new stripe before ${stripe.stripe}`,
         action: () => {
@@ -269,15 +292,11 @@ function populateContextMenu(args, tableEditorInputMode) {
       (item) => !!ITable.getTable(item)
     )
     if (tableNode && tableNode.size > 0) {
-      args.contextMenu = [
-        {
-          label: `ContextMenu for ${tableNode.at(0)}`,
-          action: () => {}
-        }
-      ]
+      args.contextMenu = [{ label: `ContextMenu for ${tableNode.at(0)}`, action: () => {} }]
     }
   }
 }
+
 /**
  * Perform a hierarchical layout that also configures the tables.
  * Table support is automatically enabled in {@link LayoutExecutor}. The layout will:
@@ -292,6 +311,7 @@ async function applyLayout() {
     groupLayeringPolicy: 'ignore-groups'
   })
   layout.componentLayout.enabled = false
+
   // we use Layout executor convenience method that already sets up the whole layout pipeline correctly
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
@@ -303,6 +323,7 @@ async function applyLayout() {
   })
   // table cells may only grow by an automatic layout.
   layoutExecutor.tableLayoutConfigurator.compaction = false
+
   if (!isLayoutRunning) {
     // do not start another layout if it is running already.
     isLayoutRunning = true
@@ -315,6 +336,7 @@ async function applyLayout() {
     }
   }
 }
+
 /**
  * Wire up the UI.
  */
@@ -327,4 +349,5 @@ function initializeUI(graphMLIOHandler) {
     await saveGraphML(graphComponent, 'tableEditor.graphml', graphMLIOHandler)
   })
 }
+
 run().then(finishLoading)

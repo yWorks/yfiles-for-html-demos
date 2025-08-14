@@ -28,6 +28,7 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { EdgeStyleBase, IArrow, SvgVisual } from '@yfiles/yfiles'
+
 export class CustomEdgeStyle extends EdgeStyleBase {
   distance
   /**
@@ -38,53 +39,70 @@ export class CustomEdgeStyle extends EdgeStyleBase {
     super()
     this.distance = distance
   }
+
   createVisual(context, edge) {
     const distance = this.distance
     const loadColor = this.getLoadColor(edge)
+
     const generalPath = super.getPath(edge)
     const croppedGeneralPath = super.cropPath(edge, IArrow.NONE, IArrow.NONE, generalPath)
+
     const widePath = croppedGeneralPath.createSvgPath()
     widePath.setAttribute('fill', 'none')
     widePath.setAttribute('stroke', 'black')
     widePath.setAttribute('stroke-width', String(distance + 2))
+
     const thinPath = croppedGeneralPath.createSvgPath()
     thinPath.setAttribute('fill', 'none')
     thinPath.setAttribute('stroke', loadColor)
     thinPath.setAttribute('stroke-width', String(distance))
+
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     group.append(widePath, thinPath)
+
     return SvgVisual.from(group, { generalPath, distance, loadColor })
   }
+
   updateVisual(context, oldVisual, edge) {
     const cache = oldVisual.tag
+
     const group = oldVisual.svgElement
     const widePath = group.children[0]
     const thinPath = group.children[1]
+
     const newGeneralPath = super.getPath(edge)
     if (!newGeneralPath.hasSameValue(cache.generalPath)) {
       const croppedGeneralPath = super.cropPath(edge, IArrow.NONE, IArrow.NONE, newGeneralPath)
       const pathData = croppedGeneralPath.createSvgPathData()
+
       widePath.setAttribute('d', pathData)
       thinPath.setAttribute('d', pathData)
+
       cache.generalPath = newGeneralPath
     }
+
     if (this.distance !== cache.distance) {
       widePath.setAttribute('stroke-width', String(this.distance + 2))
       thinPath.setAttribute('stroke-width', String(this.distance))
       cache.distance = this.distance
     }
+
     const newLoadColor = this.getLoadColor(edge)
     if (newLoadColor !== cache.loadColor) {
       thinPath.setAttribute('stroke', newLoadColor)
       cache.loadColor = newLoadColor
     }
+
     return oldVisual
   }
+
   isHit(context, location, edge) {
     const thickness = this.distance + 2
     const edgePath = super.getPath(edge)
     return edgePath.pathContains(location, context.hitTestRadius + thickness * 0.5)
   }
+
+
   /**
    * Returns the color of an edge based on the load property of its tag object.
    * @param edge The edge to get a color for.

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { Font, Size, TextRenderSupport, TextWrapping } from '@yfiles/yfiles'
+
 export function convertTextToWrappedSVG(text, parameter) {
   // parse "parameter" according to this spec:
   // width height [;font[;trimming[;color]?]?]?
@@ -37,19 +38,24 @@ export function convertTextToWrappedSVG(text, parameter) {
   // "font" is a css-like font shorthand
   // "trimming" is "none"|"word"|"character"|"character-ellipsis"|"word-ellipsis"
   // "color" is a css color shorthand
+
   // early exit for no text or no parameters
   if ((text?.length ?? 0) === 0 || !parameter) {
     return text
   }
+
   // Parse the "parameter" string into its components
   const [dimensions, font, trimming, color] = parameter.split(';').map((s) => s.trim())
+
   // Create an SVG text element to add the text to
   const svgNS = 'http://www.w3.org/2000/svg'
   const textElement = document.createElementNS(svgNS, 'text')
+
   // set the color
   if (color) {
     textElement.style.fill = color
   }
+
   // determine the size
   const [widthStr, heightStr] = dimensions?.split(' ') || []
   const width = parseInt(widthStr, 10)
@@ -58,6 +64,7 @@ export function convertTextToWrappedSVG(text, parameter) {
     width > 0 ? width : Number.POSITIVE_INFINITY,
     height > 0 ? height : Number.POSITIVE_INFINITY
   )
+
   // and translate the text wrapping constants using the yFiles for HTML 2.6 values for
   // backwards compatibility
   const wrapping =
@@ -68,6 +75,7 @@ export function convertTextToWrappedSVG(text, parameter) {
       'character-ellipsis': TextWrapping.WRAP_CHARACTER_ELLIPSIS,
       'word-ellipsis': TextWrapping.WRAP_WORD_ELLIPSIS
     }[trimming] ?? TextWrapping.TRIM_CHARACTER
+
   // use the yFiles convenience method to perform the heavy lifting of text wrapping
   TextRenderSupport.addText(textElement, text, Font.from(font), maximumSize, wrapping)
   return textElement

@@ -49,10 +49,7 @@ export function createLabels(graph: IGraph): void {
   graph.addLabel({
     owner: node3,
     text: 'Label with background color and icon',
-    tag: {
-      iconUrl: 'resources/settings-16.svg',
-      backgroundColor: '#9DC6D0'
-    }
+    tag: { iconUrl: 'resources/settings-16.svg', backgroundColor: '#9DC6D0' }
   })
 
   graph.addLabel({ owner: node4, text: 'This label has only text' })

@@ -26,10 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { basicSetup, EditorView } from 'codemirror'
-import { javascript } from '@codemirror/lang-javascript'
-import { lintGutter } from '@codemirror/lint'
-
 import {
   Arrow,
   ArrowType,
@@ -52,12 +48,13 @@ import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 import { registerTemplateStyleSerialization } from '@yfiles/demo-utils/template-styles/MarkupExtensions'
-import { StateEffect, type StateEffectType, StateField } from '@codemirror/state'
-import { xml } from '@codemirror/lang-xml'
-import { getXmlLinter, getJsonLinter } from '@yfiles/demo-resources/codeMirrorLinters'
-
-const xmlLinter = getXmlLinter()
-const jsonLinter = getJsonLinter()
+import {
+  createCodemirrorEditor,
+  EditorView,
+  StateEffect,
+  type StateEffectType,
+  StateField
+} from '@yfiles/demo-resources/codemirror-editor'
 
 let templateEditor: EditorView
 let setTemplateEditorEditable: StateEffectType<boolean>
@@ -97,17 +94,11 @@ function initializeEditors(graphComponent: GraphComponent): void {
       return value
     }
   })
-  templateEditor = new EditorView({
-    parent: document.querySelector('#templateEditorContainer')!,
-    extensions: [
-      basicSetup,
-      xml(),
-      lintGutter(),
-      xmlLinter,
-      templateEditorEditable,
-      EditorView.editable.from(templateEditorEditable)
-    ]
-  })
+  templateEditor = createCodemirrorEditor(
+    'xml',
+    document.querySelector('#templateEditorContainer')!,
+    [templateEditorEditable, EditorView.editable.from(templateEditorEditable)]
+  )
 
   setTagEditorEditable = StateEffect.define<boolean>()
   const tagEditorEditable = StateField.define<boolean>({
@@ -121,17 +112,12 @@ function initializeEditors(graphComponent: GraphComponent): void {
       return value
     }
   })
-  tagEditor = new EditorView({
-    parent: document.querySelector('#tagEditorContainer')!,
-    extensions: [
-      basicSetup,
-      javascript(),
-      jsonLinter,
-      lintGutter(),
-      tagEditorEditable,
-      EditorView.editable.from(tagEditorEditable)
-    ]
-  })
+
+  tagEditor = createCodemirrorEditor(
+    'json',
+    document.querySelector<HTMLTextAreaElement>('#tagEditorContainer')!,
+    [tagEditorEditable, EditorView.editable.from(tagEditorEditable)]
+  )
 
   // disable standard selection and focus visualization
   graphComponent.selectionIndicatorManager.enabled = false
@@ -173,7 +159,7 @@ function initializeEditors(graphComponent: GraphComponent): void {
     }
   })
 
-  graphComponent.selection.addEventListener('item-removed', (_, graphComponent) => {
+  graphComponent.selection.addEventListener('item-removed', () => {
     templateEditor.dispatch({
       effects: setTemplateEditorEditable.of(false),
       changes: {
@@ -184,11 +170,7 @@ function initializeEditors(graphComponent: GraphComponent): void {
     })
     tagEditor.dispatch({
       effects: setTagEditorEditable.of(false),
-      changes: {
-        from: 0,
-        to: tagEditor.state.doc.length,
-        insert: 'Select a node to edit its tag.'
-      }
+      changes: { from: 0, to: tagEditor.state.doc.length, insert: 'Select a node to edit its tag.' }
     })
     document.querySelector<HTMLButtonElement>(`#apply-template-button`)!.disabled = true
     document.querySelector<HTMLButtonElement>(`#apply-tag-button`)!.disabled = true
@@ -241,12 +223,7 @@ function initializeStyles(graph: IGraph): void {
  * Initializes the converters for the bindings of the template node styles.
  */
 function initializeConverters(): void {
-  const colors = {
-    present: '#76b041',
-    busy: '#ab2346',
-    travel: '#a367dc',
-    unavailable: '#c1c1c1'
-  }
+  const colors = { present: '#76b041', busy: '#ab2346', travel: '#a367dc', unavailable: '#c1c1c1' }
 
   StringTemplateNodeStyle.CONVERTERS.demoConverters = {
     // converter function for the background color of nodes

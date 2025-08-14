@@ -36,6 +36,7 @@ import {
   TextRenderSupport
 } from '@yfiles/yfiles'
 import { getMax, SCALED_MAX_X, SCALED_MAX_Y } from './scale-data'
+
 /**
  * Adds a visual for the horizontal and vertical axes to the background group of the given graph
  * component.
@@ -46,53 +47,62 @@ export function drawAxis(graphComponent, trail) {
   axisGroup.toBack()
   renderTree.createElement(axisGroup, new AxisVisual(trail))
 }
+
 /**
  * Determines how much the axis should extend beyond its first and last value ticks.
  */
 const AXIS_EXTEND = 20
+
 /**
  * The size of a value tick in an axis.
  */
 const TICK_LENGTH = 3
+
 /**
  * The desired maximum value for the horizontal axis.
  */
 const X_AXIS_MAX = 55000
+
 /**
  * The desired maximum value for the vertical axis.
  */
 const Y_AXIS_MAX = 600
+
 /**
  * The desired tick scale for the horizontal axis.
  */
 const X_AXIS_SCALE = 5
+
 /**
  * The desired tick scale for the vertical axis.
  */
 const Y_AXIS_SCALE = 50
+
 /**
  * The desired unit for the horizontal axis.
  */
 const X_AXIS_UNIT = 1000
+
 /**
  * The desired unit for the vertical axis.
  */
 const Y_AXIS_UNIT = 1
+
 /**
  * The desired label for the horizontal axis.
  */
 const X_AXIS_LABEL = 'km'
+
 /**
  * The desired label for the vertical axis.
  */
 const Y_AXIS_LABEL = 'm'
+
 /**
  * The desired font for the axes.
  */
-const AXIS_FONT = new Font({
-  fontFamily: 'Roboto,sans-serif',
-  fontSize: 14
-})
+const AXIS_FONT = new Font({ fontFamily: 'Roboto,sans-serif', fontSize: 14 })
+
 /**
  * Creates the visualization for the axes, draws the corresponding ticks, and their labels.
  */
@@ -102,20 +112,26 @@ class AxisVisual extends BaseClass(IVisualCreator, IBoundsProvider) {
     super()
     this.trail = trail
   }
+
   /**
    * Creates the two axes, draws the corresponding ticks, and their labels.
    */
   createVisual(context) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     const { maxX, maxY } = getMax(this.trail)
     const horizontalAxisLength = (X_AXIS_MAX * SCALED_MAX_X) / maxX
     const verticalAxisLength = (Y_AXIS_MAX * SCALED_MAX_Y) / maxY
+
     this.addLine(-AXIS_EXTEND, horizontalAxisLength + 2 * AXIS_EXTEND, 0, 0, container)
     this.addLine(0, 0, AXIS_EXTEND, -verticalAxisLength - AXIS_EXTEND, container)
+
     this.drawTicksOnHorizontalAxis(horizontalAxisLength, container)
     this.drawTicksOnVerticalAxis(verticalAxisLength, container)
+
     return new SvgVisual(container)
   }
+
   /**
    * Draws the horizontal axis ticks and their labels.
    */
@@ -129,6 +145,7 @@ class AxisVisual extends BaseClass(IVisualCreator, IBoundsProvider) {
         this.addTickLabel(String(X_AXIS_SCALE * i), tickPos, -TICK_LENGTH, true, container)
       }
     }
+
     // draw the last tick of the axis and add a label with the axis unit
     this.addLine(
       axisLength + 2 * AXIS_EXTEND,
@@ -139,6 +156,7 @@ class AxisVisual extends BaseClass(IVisualCreator, IBoundsProvider) {
     )
     this.addLabel(`(${X_AXIS_LABEL})`, axisLength + 3.5 * AXIS_EXTEND, 0, container)
   }
+
   /**
    * Draws the vertical axis ticks and their labels.
    */
@@ -152,6 +170,7 @@ class AxisVisual extends BaseClass(IVisualCreator, IBoundsProvider) {
         this.addTickLabel(String(Y_AXIS_SCALE * i), -TICK_LENGTH, -tickPos, false, container)
       }
     }
+
     // draw the last tick of the axis and add a label with the axis unit
     this.addLine(
       -TICK_LENGTH,
@@ -162,6 +181,7 @@ class AxisVisual extends BaseClass(IVisualCreator, IBoundsProvider) {
     )
     this.addLabel(`(${Y_AXIS_LABEL})`, -AXIS_EXTEND, -axisLength - 2 * AXIS_EXTEND, container)
   }
+
   /**
    * Returns the number of necessary ticks based on the length of the given axis, its unit, and scale.
    */
@@ -169,6 +189,7 @@ class AxisVisual extends BaseClass(IVisualCreator, IBoundsProvider) {
     const lastTick = axisLength / unit
     return lastTick / scale
   }
+
   /**
    * Adds a line element for the given coordinates.
    */
@@ -182,6 +203,7 @@ class AxisVisual extends BaseClass(IVisualCreator, IBoundsProvider) {
     line.setAttribute('stroke-width', '1')
     container.appendChild(line)
   }
+
   /**
    * Adds a tick label at the given location.
    */
@@ -194,6 +216,7 @@ class AxisVisual extends BaseClass(IVisualCreator, IBoundsProvider) {
       container
     )
   }
+
   /**
    * Adds a text element at the given location.
    */
@@ -210,12 +233,14 @@ class AxisVisual extends BaseClass(IVisualCreator, IBoundsProvider) {
     text.setAttribute('dominant-baseline', 'middle')
     container.appendChild(text)
   }
+
   /**
    * Delegates to {@link createVisual}.
    */
   updateVisual(context, oldVisual) {
     return this.createVisual(context)
   }
+
   /**
    * Returns the bounds of this visual so that the size of the axis is also considered
    * when fitGraphBounds is called.
@@ -223,13 +248,16 @@ class AxisVisual extends BaseClass(IVisualCreator, IBoundsProvider) {
    */
   getBounds(context) {
     const graphComponent = context.canvasComponent
+
     // calculate the bounding box that contains all nodes
     const xValues = graphComponent.graph.nodes.map((node) => node.layout.x)
     const yValues = graphComponent.graph.nodes.map((node) => node.layout.y)
+
     const minX = Math.min(...xValues)
     const minY = Math.min(...yValues)
     const maxX = Math.max(...xValues)
     const maxY = Math.max(...yValues)
+
     return new Rect(
       minX,
       minY,

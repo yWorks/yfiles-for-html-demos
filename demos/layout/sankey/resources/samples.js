@@ -62,6 +62,7 @@ export const electionData = {
     { id: 31, name: 'Non-voter' },
     { id: 32, name: 'Non-voter' }
   ],
+
   voterShift: [
     { source: 0, target: 5, voters: 13654 },
     { source: 0, target: 7, voters: 1140 },

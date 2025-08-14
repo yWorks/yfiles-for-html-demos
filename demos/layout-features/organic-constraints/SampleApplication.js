@@ -34,22 +34,30 @@ import {
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { loadLayoutSampleGraph } from '@yfiles/demo-utils/LoadLayoutFeaturesSampleGraph'
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('#graphComponent')
   // enable mouse drag panning and mouse wheel zooming
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // load the graph
   await loadLayoutSampleGraph(graphComponent.graph, './sample.json')
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   // create a configured instance of the organic layout algorithm
   const { layout, layoutData } = createFeatureLayoutConfiguration(graphComponent.graph)
+
   // run the layout algorithm
   await graphComponent.applyLayoutAnimated(layout, '0s', layoutData)
+
   initializeUI(graphComponent)
 }
+
 /**
  * Registers a listener to the "use constraints" button in the demo toolbar that switches
  * between constraint layout calculation and unconstrained layout calculation.
@@ -63,4 +71,5 @@ function initializeUI(graphComponent) {
     await graphComponent.applyLayoutAnimated(layout, '250ms', layoutData)
   })
 }
+
 void run().then(finishLoading)

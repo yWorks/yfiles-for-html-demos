@@ -332,9 +332,7 @@ export function configureHighlights(graphComponent: GraphComponent): void {
   )
   graphComponent.graph.decorator.edges.highlightRenderer.addConstant(
     new EdgeStyleIndicatorRenderer({
-      edgeStyle: new PolylineEdgeStyle({
-        stroke: '3px orange'
-      })
+      edgeStyle: new PolylineEdgeStyle({ stroke: '3px orange' })
     })
   )
 }

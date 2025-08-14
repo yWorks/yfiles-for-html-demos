@@ -50,10 +50,7 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
 } {
   // initialize the tabular layout algorithm
   // edges are considered to minimize the overall edge length
-  const tabularLayout = new TabularLayout({
-    considerEdges: true,
-    layoutMode: getLayoutMode()
-  })
+  const tabularLayout = new TabularLayout({ considerEdges: true, layoutMode: getLayoutMode() })
 
   // the tabular layout algorithm supports only straight-line edges
   // the edge router algorithm is used as a post-processing to get orthogonal edge paths instead

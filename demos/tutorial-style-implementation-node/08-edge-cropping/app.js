@@ -39,17 +39,26 @@ import {
 } from '../common'
 import { CustomNodeStyle } from './CustomNodeStyle'
 import { CustomNodeStyle as OldCustomNodeStyle } from '../06-render-text/CustomNodeStyle'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
+
 graphComponent.graph.nodeDefaults.style = new CustomNodeStyle()
+
 createSampleGraphEdgeCropping(graphComponent.graph)
 enableGraphEditing(graphComponent)
 configureMinimumSize(graphComponent)
+
 fitGraphBounds(graphComponent)
+
 // Overlay
 const oldState = initializeInlineGraphComponent('#old-state')
 oldState.graph.nodeDefaults.style = new OldCustomNodeStyle()
+
 createSampleGraphEdgeCropping(oldState.graph)
 oldState.zoomTo(oldState.graph.nodes.first().layout.toRect().getEnlarged(50))
+
 finishLoading()

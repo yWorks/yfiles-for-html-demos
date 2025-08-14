@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent } from '@yfiles/yfiles'
+
 export function configureGraphEvents(graphComponent) {
   // trigger a re-rendering of the graph when a node tag changed to have the labels reflect the data
   graphComponent.graph.addEventListener('node-tag-changed', () => {

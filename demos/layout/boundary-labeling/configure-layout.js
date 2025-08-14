@@ -34,6 +34,7 @@ import {
   Rect
 } from '@yfiles/yfiles'
 import { getPointData, isLabel, MultiPageNodeType } from './data-types'
+
 /**
  * Returns a layout configuration of the organic layout with constraints so that:
  * (i) Label nodes associated with points on the left side of the image should be placed before their
@@ -50,13 +51,12 @@ export function configureLayout(graph, imageRect) {
   resetLabelPositions(graph)
   // define the label models based on the position of the point
   assignLabelModels(graph, imageRect)
+
   // some basic configuration for the organic layout
   // scope SUBSET is used because the locations of the points may not change i.e., the algorithm may
   // arrange only label nodes
-  const organicLayout = new OrganicLayout({
-    deterministic: true,
-    defaultMinimumNodeDistance: 5
-  })
+  const organicLayout = new OrganicLayout({ deterministic: true, defaultMinimumNodeDistance: 5 })
+
   // specifies desired edge lengths and the set of node to be arranged, i.e., the label nodes
   const organicLayoutData = new OrganicLayoutData({
     preferredEdgeLengths: (edge) => (isLeftPoint(edge.sourceNode, imageRect) ? 50 : 25),
@@ -68,6 +68,7 @@ export function configureLayout(graph, imageRect) {
   for (const edge of graph.edges) {
     const point = edge.sourceNode
     const labelNode = edge.targetNode
+
     if (isVerticalPoint(point, imageRect)) {
       // create the constraints for the nodes on the top/bottom part
       addVerticalConstraints(point, labelNode, organicLayoutData, imageRect)
@@ -75,10 +76,13 @@ export function configureLayout(graph, imageRect) {
       addHorizontalConstraints(point, labelNode, organicLayoutData, imageRect)
     }
   }
+
   // create the constraints to vertically align the label nodes, excluding the ones on the top part
   addVerticalLabelToLabelConstraints(graph, imageRect, organicLayoutData)
+
   return { layout: organicLayout, layoutData: organicLayoutData }
 }
+
 /**
  * Creates horizontal constraints so that:
  * (i) Label nodes associated with points on the left side of the image are placed to the left of
@@ -88,14 +92,17 @@ export function configureLayout(graph, imageRect) {
  */
 function addHorizontalConstraints(point, labelNode, organicLayoutData, imageRect) {
   const pointLeft = isLeftPoint(point, imageRect)
+
   // determine which node should be on the left/right based on the location of the point
   const left = pointLeft ? labelNode : point
   const right = pointLeft ? point : labelNode
+
   // calculate the distance of the point to the left/right boundary of the image to make sure
   // that the label node is placed outside the image
   const distanceToBorder = pointLeft
     ? Math.abs(point.layout.x - imageRect.x)
     : Math.abs(point.layout.x - imageRect.x - imageRect.width)
+
   // enforce a minimum distance between the two nodes
   const separationConstraint = organicLayoutData.constraints.addSeparationConstraint(
     ConstraintOrientation.HORIZONTAL,
@@ -103,13 +110,16 @@ function addHorizontalConstraints(point, labelNode, organicLayoutData, imageRect
   )
   separationConstraint.firstSet.item = left
   separationConstraint.secondSet.item = right
+
   // create a constraint tο enforce the desired order of the point and label node
   const orderConstraint = organicLayoutData.constraints.addOrderConstraint(
     ConstraintOrientation.HORIZONTAL
   )
+
   orderConstraint.mapper.set(left, 1)
   orderConstraint.mapper.set(right, 2)
 }
+
 /**
  * Creates constraints that force label nodes associated with points on the top/bottom side of
  * the image to be placed above/below their associated points but not necessary vertically
@@ -121,11 +131,13 @@ function addVerticalConstraints(point, labelNode, organicLayoutData, imageRect) 
   // location of the point node
   const top = isTop ? labelNode : point
   const bottom = isTop ? point : labelNode
+
   // calculate the distance of the point to the top/bottom boundary of the image to make sure
   // that the label node is placed outside the image
   const distanceToBorder = isTop
     ? Math.abs(point.layout.y - imageRect.y)
     : Math.abs(point.layout.y - imageRect.y - imageRect.height)
+
   // enforce a minimum distance between the two nodes
   const separationConstraint = organicLayoutData.constraints.addSeparationConstraint(
     ConstraintOrientation.VERTICAL,
@@ -133,6 +145,7 @@ function addVerticalConstraints(point, labelNode, organicLayoutData, imageRect) 
   )
   separationConstraint.firstSet.item = top
   separationConstraint.secondSet.item = bottom
+
   // create a constraint to enforce the desired ordering of the point and its label node
   // based on whether the point node should ly above or below its label node
   const orderConstraint = organicLayoutData.constraints.addOrderConstraint(
@@ -141,6 +154,7 @@ function addVerticalConstraints(point, labelNode, organicLayoutData, imageRect) 
   orderConstraint.mapper.set(top, 1)
   orderConstraint.mapper.set(bottom, 2)
 }
+
 /**
  * Create constraints to vertically align the label nodes excluding the ones on the top/bottom part.
  */
@@ -149,23 +163,27 @@ function addVerticalLabelToLabelConstraints(graph, imageRect, organicLayoutData)
   const nonVerticalPoints = graph.nodes.filter(
     (node) => isLabel(node) && !isVerticalPoint(node, imageRect)
   )
+
   // get the labels on the left side and create a constraint to align them vertically
   const leftAlignmentConstraint = organicLayoutData.constraints.addAlignmentConstraint(
     ConstraintOrientation.VERTICAL
   )
   leftAlignmentConstraint.items = nonVerticalPoints.filter((node) => isLeftPoint(node, imageRect))
+
   // get the labels on the right side and create a constraint to align them vertically
   const rightAlignmentConstraint = organicLayoutData.constraints.addAlignmentConstraint(
     ConstraintOrientation.VERTICAL
   )
   rightAlignmentConstraint.items = nonVerticalPoints.filter((node) => !isLeftPoint(node, imageRect))
 }
+
 /**
  * Returns whether the point lies on the left side of the image.
  */
 function isLeftPoint(point, imageRect) {
   return point.layout.x < imageRect.x + imageRect.width * 0.5
 }
+
 /**
  * Returns whether the point lies on the top of the image, i.e., the distance from the top border is smaller
  * than 30.
@@ -173,6 +191,7 @@ function isLeftPoint(point, imageRect) {
 function isTopPoint(point, imageRect) {
   return Math.abs(point.layout.y - imageRect.y) < 30
 }
+
 /**
  * Returns whether the point lies on the bottom of the image, i.e., the distance from the bottom border is smaller
  * than 30.
@@ -180,6 +199,7 @@ function isTopPoint(point, imageRect) {
 function isBottomPoint(point, imageRect) {
   return Math.abs(point.layout.y - imageRect.y - imageRect.height) < 30
 }
+
 /**
  * Returns whether the connection between the point and its label node should be vertical,
  * i.e., the point lies on the topmost/bottommost part of the image.
@@ -187,6 +207,7 @@ function isBottomPoint(point, imageRect) {
 function isVerticalPoint(point, imageRect) {
   return isTopPoint(point, imageRect) || isBottomPoint(point, imageRect)
 }
+
 /**
  * Defines the positions of the labels based on the location of the point.
  */
@@ -195,6 +216,7 @@ function assignLabelModels(graph, imageRect) {
     .filter((node) => isLabel(node))
     .forEach((labelNode) => {
       const label = labelNode.labels.at(0)
+
       if (isVerticalPoint(labelNode, imageRect)) {
         const isTop = isTopPoint(labelNode, imageRect)
         // for labels that should go vertically, i.e., point is on the top or at the bottom
@@ -214,6 +236,7 @@ function assignLabelModels(graph, imageRect) {
       }
     })
 }
+
 /**
  * For better layout results when the graph is re-arranged after font changes, the label
  * nodes are placed initially on the positions of the point nodes.

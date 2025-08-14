@@ -39,19 +39,24 @@ import {
   OrganicLayout,
   PointerEventArgs
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 let graphComponent
 let inputMode
 let decoration
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
   initDemoStyles(graphComponent.graph)
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
@@ -62,27 +67,32 @@ async function run() {
     })
   )
   await graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
+
   configureLassoSelection()
+
   initializeUI()
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-  graphBuilder.createNodesSource({
-    data: graphData.nodeList,
-    id: (item) => item.id
-  })
+
+  graphBuilder.createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Initialize lasso selection.
  */
@@ -93,6 +103,7 @@ function configureLassoSelection() {
   lassoSelectionInputMode.enabled = true
   graphComponent.inputMode = inputMode
 }
+
 /**
  * Sets the selection style.
  * Supports free-hand or polyline lasso selection. Additionally, classic marquee selection
@@ -100,6 +111,7 @@ function configureLassoSelection() {
  */
 function setSelectionStyle(style) {
   const lassoSelectionInputMode = inputMode.lassoSelectionInputMode
+
   switch (style) {
     default:
     case 'free-hand-selection':
@@ -109,12 +121,14 @@ function setSelectionStyle(style) {
       lassoSelectionInputMode.endSegmentRecognizer = EventRecognizers.MOUSE_DOWN
       lassoSelectionInputMode.dragSegmentRecognizer = EventRecognizers.MOUSE_MOVE
       lassoSelectionInputMode.finishRecognizer = EventRecognizers.MOUSE_UP
+
       lassoSelectionInputMode.dragFreeHandRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DRAG
       // never start a segment in free-hand lasso selection
       lassoSelectionInputMode.startSegmentRecognizerTouch = EventRecognizers.NEVER
       lassoSelectionInputMode.endSegmentRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DOWN
       lassoSelectionInputMode.dragSegmentRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DRAG
       lassoSelectionInputMode.finishRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_UP
+
       lassoSelectionInputMode.enabled = true
       break
     case 'polyline-selection':
@@ -126,18 +140,22 @@ function setSelectionStyle(style) {
       lassoSelectionInputMode.dragSegmentRecognizer = (evt, eventSource) =>
         EventRecognizers.MOUSE_DRAG(evt, eventSource) ||
         EventRecognizers.MOUSE_MOVE(evt, eventSource)
+
       // finish anywhere with a double click
       lassoSelectionInputMode.finishRecognizer = (evt) => {
         return evt instanceof PointerEventArgs && evt.clickCount > 1
       }
+
       lassoSelectionInputMode.dragFreeHandRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DRAG
       // always start a segment for polyline lasso selection
       lassoSelectionInputMode.startSegmentRecognizerTouch = EventRecognizers.ALWAYS
       lassoSelectionInputMode.endSegmentRecognizerTouch = (evt, eventSource) =>
         EventRecognizers.TOUCH_PRIMARY_DOWN(evt, eventSource) ||
         EventRecognizers.TOUCH_PRIMARY_UP(evt, eventSource)
+
       lassoSelectionInputMode.dragSegmentRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DRAG
       lassoSelectionInputMode.finishRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DOUBLE_TAP
+
       lassoSelectionInputMode.enabled = true
       break
     case 'marquee-selection':
@@ -148,6 +166,7 @@ function setSelectionStyle(style) {
       break
   }
 }
+
 /**
  * Specifies the radius around the lasso selection starting point in which the lasso can be closed.
  * When the lasso is dragged near its starting point, a circle with corresponding radius is
@@ -156,6 +175,7 @@ function setSelectionStyle(style) {
 function setFinishRadius(radius) {
   inputMode.lassoSelectionInputMode.finishRadius = radius
 }
+
 /**
  * Decorates the lasso-testable lookup to provide different modes of when a node is selected.
  */
@@ -186,6 +206,7 @@ function setLassoTestables(mode) {
     )
   }
 }
+
 /**
  * Binds actions to the toolbar elements.
  */
@@ -203,4 +224,5 @@ function initializeUI() {
     setLassoTestables(lassoTestable.value)
   })
 }
+
 run().then(finishLoading)

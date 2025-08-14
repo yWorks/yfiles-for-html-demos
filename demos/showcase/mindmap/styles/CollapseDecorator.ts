@@ -59,9 +59,7 @@ import { hasChildNodes } from '../subtrees'
 /**
  * Augment the SvgVisual type with the wrappedVisual used to cache the rendering information.
  */
-type Cache = {
-  wrappedVisual?: SvgVisual
-}
+type Cache = { wrappedVisual?: SvgVisual }
 type CollapseDecoratorVisual = TaggedSvgVisual<SVGGElement, Cache>
 /**
  * Augment the SVGElement type with the label and the icon used to cache the rendering information.
@@ -220,10 +218,7 @@ export class CollapseDecorator extends NodeStyleBase<CollapseDecoratorVisual> {
           executeToggleCollapseState(graphComponent, node)
         }
       },
-      {
-        passive: false,
-        capture: true
-      }
+      { passive: false, capture: true }
     )
     return g
   }

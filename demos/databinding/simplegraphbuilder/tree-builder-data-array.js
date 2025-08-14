@@ -36,36 +36,18 @@ export default {
           position: 'Chief Executive Assistant',
           name: 'Gary Roberts',
           children: [
-            {
-              position: 'Senior Executive Assistant',
-              name: 'Alexander Burns'
-            },
-            {
-              position: 'Junior Executive Assistant',
-              name: 'Linda Newland'
-            }
+            { position: 'Senior Executive Assistant', name: 'Alexander Burns' },
+            { position: 'Junior Executive Assistant', name: 'Linda Newland' }
           ]
         },
         {
           position: 'Vice President of Production',
           name: 'Amy Kain',
           children: [
-            {
-              position: 'Production Supervisor',
-              name: 'Kathy Maxwell'
-            },
-            {
-              position: 'Shipping and Receiving Supervisor',
-              name: 'Ray Hammond'
-            },
-            {
-              position: 'Facilities Manager',
-              name: 'Anne Binger'
-            },
-            {
-              position: 'Master Scheduler',
-              name: 'Larry Littlefield'
-            }
+            { position: 'Production Supervisor', name: 'Kathy Maxwell' },
+            { position: 'Shipping and Receiving Supervisor', name: 'Ray Hammond' },
+            { position: 'Facilities Manager', name: 'Anne Binger' },
+            { position: 'Master Scheduler', name: 'Larry Littlefield' }
           ]
         },
         {
@@ -76,28 +58,16 @@ export default {
               position: 'European Sales Manager',
               name: 'Robert Hartman',
               children: [
-                {
-                  position: 'Sales Representative',
-                  name: 'Michael Daniels'
-                },
-                {
-                  position: 'Sales Representative',
-                  name: 'Rebecca Polite'
-                }
+                { position: 'Sales Representative', name: 'Michael Daniels' },
+                { position: 'Sales Representative', name: 'Rebecca Polite' }
               ]
             },
             {
               position: 'North America Sales Manager',
               name: 'Joe Vargas',
               children: [
-                {
-                  position: 'Sales Representative',
-                  name: 'Melissa Noren'
-                },
-                {
-                  position: 'Sales Representative',
-                  name: 'Robert Parson'
-                }
+                { position: 'Sales Representative', name: 'Melissa Noren' },
+                { position: 'Sales Representative', name: 'Robert Parson' }
               ]
             }
           ]

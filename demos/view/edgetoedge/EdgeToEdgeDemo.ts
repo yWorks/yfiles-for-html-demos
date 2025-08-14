@@ -150,9 +150,7 @@ function createSnapContext(): GraphSnapContext {
 function initializeInputMode(): void {
   const mode = new GraphEditorInputMode({
     snapContext: createSnapContext(),
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext({
-      enabled: false
-    })
+    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext({ enabled: false })
   })
 
   mode.createEdgeInputMode.allowEdgeToEdgeConnections = true

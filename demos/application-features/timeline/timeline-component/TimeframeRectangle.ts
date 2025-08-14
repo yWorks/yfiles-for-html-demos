@@ -168,12 +168,7 @@ export class TimeframeRectangle {
   }
 }
 
-type Cache = SvgVisual & {
-  cache?: {
-    size: Size
-    location: Point
-  }
-}
+type Cache = SvgVisual & { cache?: { size: Size; location: Point } }
 
 class RectangleVisual extends BaseClass(IVisualCreator) {
   /**

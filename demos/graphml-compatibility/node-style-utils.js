@@ -27,13 +27,17 @@
  **
  ***************************************************************************/
 import { Color, GeneralPath, Point } from '@yfiles/yfiles'
+
 export function createRoundRectanglePath(x, y, width, height, radius) {
   const BEZIER_ARC_APPROXIMATION = 0.552284749830794 // (Math.Sqrt(2) - 1) * 4 / 3
+
   const roundRect = new GeneralPath(16)
   const arcX = Math.min(width * 0.5, radius)
   const arcY = Math.min(height * 0.5, radius)
+
   const cx = (1 - BEZIER_ARC_APPROXIMATION) * arcX
   const cy = (1 - BEZIER_ARC_APPROXIMATION) * arcY
+
   roundRect.moveTo(x, y + arcY)
   roundRect.cubicTo(x, y + cy, x + cx, y, x + arcX, y)
   roundRect.lineTo(x + width - arcX, y)
@@ -52,6 +56,7 @@ export function createRoundRectanglePath(x, y, width, height, radius) {
   roundRect.close()
   return roundRect
 }
+
 export function roundRectContains(i, rectangle, rectArcRadius) {
   const layoutX = rectangle.x
   const layoutY = rectangle.y
@@ -61,14 +66,17 @@ export function roundRectContains(i, rectangle, rectArcRadius) {
     // definitely no
     return false
   }
+
   // see if x fits
   if (i.x >= layoutX + rectArcRadius && i.x <= layoutX + layoutW - rectArcRadius) {
     return true
   }
+
   // see if y fits
   if (i.y >= layoutY + rectArcRadius && i.y <= layoutY + layoutH - rectArcRadius) {
     return true
   }
+
   // see if we have perfect circles in the corners
   if (layoutW >= rectArcRadius * 2 && layoutH >= rectArcRadius * 2) {
     // no trivial case but perfect circles - find out quadrant
@@ -79,11 +87,14 @@ export function roundRectContains(i, rectangle, rectArcRadius) {
     const dy =
       i.y -
       (i.y < layoutY + layoutH * 0.5 ? layoutY + rectArcRadius : layoutY + layoutH - rectArcRadius)
+
     return dx * dx + dy * dy <= rectArcRadius * rectArcRadius
   }
+
   // fallback code:
   return createRoundRectanglePath(layoutX, layoutY, layoutW, layoutH, rectArcRadius).areaContains(i)
 }
+
 export function roundRectIsHit(i, rectangle, rectArcRadius, eps) {
   const layoutX = rectangle.x
   const layoutY = rectangle.y
@@ -98,14 +109,17 @@ export function roundRectIsHit(i, rectangle, rectArcRadius, eps) {
     // definitely no
     return false
   }
+
   // see if x fits
   if (i.x >= layoutX + rectArcRadius && i.x <= layoutX + layoutW - rectArcRadius) {
     return true
   }
+
   // see if y fits
   if (i.y >= layoutY + rectArcRadius && i.y <= layoutY + layoutH - rectArcRadius) {
     return true
   }
+
   // see if we have perfect circles in the corners
   if (layoutW >= rectArcRadius * 2 && layoutH >= rectArcRadius * 2) {
     // no trivial case but perfect circles - find out quadrant
@@ -118,15 +132,18 @@ export function roundRectIsHit(i, rectangle, rectArcRadius, eps) {
       (i.y < layoutY + layoutH * 0.5 ? layoutY + rectArcRadius : layoutY + layoutH - rectArcRadius)
     return dx * dx + dy * dy <= (rectArcRadius + eps) * (rectArcRadius + eps)
   }
+
   // fallback code:
   return createRoundRectanglePath(layoutX, layoutY, layoutW, layoutH, rectArcRadius).areaContains(
     i,
     eps
   )
 }
+
 export function findLineIntersectionWithRoundRect(inner, outer, rect, rectArcRadius) {
   const layout = rect.toRect()
   const intersection = layout.findLineIntersection(inner, outer)
+
   // no intersection with the rectangle - we should have an intersection unless outer is inside the rectangle but outside the round rect.
   if (intersection != null) {
     const i = intersection
@@ -137,24 +154,33 @@ export function findLineIntersectionWithRoundRect(inner, outer, rect, rectArcRad
       // trivial case - line intersects rectangular part
       return i
     }
+
     // see if we have perfect circles in the corners
     if (layout.width >= rectArcRadius * 2 && layout.height >= rectArcRadius * 2) {
       // no trivial case but perfect circles - find out quadrant
       const left = i.x < layout.x + layout.width * 0.5
       const top = i.y < layout.y + layout.height * 0.5
+
       // determine center of circle
       const cx = left ? layout.x + rectArcRadius : layout.x + layout.width - rectArcRadius
       const cy = top ? layout.y + rectArcRadius : layout.y + layout.height - rectArcRadius
+
       const dx = outer.x - inner.x
       const dy = outer.y - inner.y
+
       const innerX = inner.x - cx
       const innerY = inner.y - cy
+
       const outerX = innerX + dx
       const outerY = innerY + dy
+
       const r = rectArcRadius
+
       const dr2 = dx * dx + dy * dy
       const d = innerX * outerY - outerX * innerY
+
       const disc = r * r * dr2 - d * d
+
       // calculate intersections
       if (disc >= 0) {
         const sqrtDisc = Math.sqrt(disc)
@@ -176,6 +202,7 @@ export function findLineIntersectionWithRoundRect(inner, outer, rect, rectArcRad
     return null
   }
 }
+
 export function rectangleContains(x, y, w, h, px, py, epsilon) {
   // If width or height is negative, the rectangle is invalid, return false.
   if (w < 0 || h < 0) {
@@ -185,9 +212,11 @@ export function rectangleContains(x, y, w, h, px, py, epsilon) {
   if (!isFinite(w) || !isFinite(h)) {
     return true
   }
+
   // Adjust the rectangle bounds by epsilon and check if point (px, py) is inside.
   return rectangleContainsHelper(x - epsilon, y - epsilon, w + 2 * epsilon, h + 2 * epsilon, px, py)
 }
+
 function rectangleContainsHelper(x, y, w, h, px, py) {
   // If width or height is negative, the rectangle is invalid, return false.
   if (w < 0 || h < 0) {
@@ -197,8 +226,10 @@ function rectangleContainsHelper(x, y, w, h, px, py) {
   if (!isFinite(w) || !isFinite(h)) {
     return true
   }
+
   return px >= x && py >= y && px <= x + w && py <= y + h
 }
+
 /**
  * Mixes two colors using the provided ratio.
  * @param color0 - The first color.
@@ -212,8 +243,10 @@ export function mixColors(color0, color1, ratio) {
   const g = Math.round(color0.g * ratio + color1.g * iratio)
   const b = Math.round(color0.b * ratio + color1.b * iratio)
   const a = Math.round(color0.a * ratio + color1.a * iratio)
+
   return new Color({ r, g, b, a })
 }
+
 export function toSvgColorString(color) {
   return `rgb(${color.r},${color.g},${color.b})`
 }

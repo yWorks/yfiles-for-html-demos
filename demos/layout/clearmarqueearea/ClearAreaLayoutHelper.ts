@@ -177,9 +177,7 @@ export class ClearAreaLayoutHelper {
   private createDraggingLayoutData(): LayoutData {
     return new CompositeLayoutData(
       this.resetToOriginalGraphStageData!,
-      new ClearAreaLayoutData({
-        areaGroupNode: (node): boolean => node === this.groupNode
-      })
+      new ClearAreaLayoutData({ areaGroupNode: (node): boolean => node === this.groupNode })
     )
   }
 

@@ -161,6 +161,7 @@ export const singleStar = {
     { source: 23, target: 13 }
   ]
 }
+
 // sample 2
 export const multipleStars = {
   nodes: [

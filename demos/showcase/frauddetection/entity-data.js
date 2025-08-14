@@ -27,18 +27,21 @@
  **
  ***************************************************************************/
 import { INode } from '@yfiles/yfiles'
+
 /**
  * Type-safe getter for entity data stored in the node tag.
  */
 export function getEntityData(node) {
   return node.tag
 }
+
 /**
  * Sets the given entity data to the given node.
  */
 export function setEntityData(node, entity) {
   node.tag = entity
 }
+
 /**
  * Returns the information stored in the business data for the given node.
  * This is necessary for showing this information in the properties panel
@@ -47,6 +50,7 @@ export function setEntityData(node, entity) {
 export function getEntityInfo(node) {
   return getEntityData(node).info
 }
+
 /**
  * Returns an object containing all the information stored in the business data
  * for the given node
@@ -73,21 +77,25 @@ export function getInfoMap(node) {
     if (entity.exit.length > 0) {
       records['Exit Date'] = entity.exit[0].toString()
     }
+
     return records
   }
 }
+
 /**
  * Type-safe getter for connection data stored in the edge tag.
  */
 export function getConnectionData(edge) {
   return edge.tag
 }
+
 /**
  * Sets the given connection data to the given edge.
  */
 export function setConnectionData(edge, connection) {
   edge.tag = connection
 }
+
 /**
  * Returns the type of the connection stored in the business data for the given edge.
  * If no type exists in the data, it returns 'untyped'.
@@ -95,6 +103,7 @@ export function setConnectionData(edge, connection) {
 export function getEdgeType(edge) {
   return getConnectionData(edge).type ?? 'untyped'
 }
+
 /**
  * Returns whether an item is tagged as fraud.
  */
@@ -102,8 +111,10 @@ export function isFraud(item) {
   const tag = item instanceof INode ? getEntityData(item) : getConnectionData(item)
   return tag.fraud ?? false
 }
+
 export function getTimeEntry(item) {
   const ni = item
+
   if (ni.enter.length === 1 && ni.exit.length === 1) {
     return { start: ni.enter[0].getTime(), end: ni.exit[0].getTime() }
   } else {
@@ -113,6 +124,7 @@ export function getTimeEntry(item) {
     }))
   }
 }
+
 export function getNode(graph, entityData) {
   return graph.nodes.find((node) => {
     const data = getEntityData(node)

@@ -29,10 +29,7 @@
 import { Point, RadialLayout, RadialLayoutData } from '@yfiles/yfiles'
 import type { ApplyLayoutCallback, NeighborhoodView } from '../neighborhood/NeighborhoodView'
 
-export type CircleInfo = {
-  center: Point
-  radius: number
-}
+export type CircleInfo = { center: Point; radius: number }
 
 /**
  * Returns the layout callback suitable for the demo's neighborhood view.
@@ -44,22 +41,13 @@ export function getApplyLayoutCallback(
 ): ApplyLayoutCallback {
   return (view, nodes) => {
     // arrange the nodes in the neighborhood graph on concentric circles
-    const radialLayout = new RadialLayout({
-      createControlPoints: true,
-      edgeRoutingStyle: 'arc'
-    })
-    const radialLayoutData = new RadialLayoutData({
-      centerNodes: nodes
-    })
+    const radialLayout = new RadialLayout({ createControlPoints: true, edgeRoutingStyle: 'arc' })
+    const radialLayoutData = new RadialLayoutData({ centerNodes: nodes })
     view.neighborhoodGraph.applyLayout(radialLayout, radialLayoutData)
 
     // collect the geometry of the calculated circles
     const indices = new Set<number>()
-    const circles: {
-      center: Point
-      radius: number
-      index: number
-    }[] = []
+    const circles: { center: Point; radius: number; index: number }[] = []
     for (const node of view.neighborhoodGraph.nodes) {
       const info = radialLayoutData.nodePlacementsResult.get(node)
       if (info) {

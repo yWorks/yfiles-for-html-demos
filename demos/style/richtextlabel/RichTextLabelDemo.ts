@@ -115,9 +115,7 @@ async function run(): Promise<void> {
     new HierarchicalLayout({
       automaticEdgeGrouping: true,
       minimumLayerDistance: 150,
-      defaultEdgeDescriptor: new HierarchicalLayoutEdgeDescriptor({
-        minimumLastSegmentLength: 75
-      })
+      defaultEdgeDescriptor: new HierarchicalLayoutEdgeDescriptor({ minimumLastSegmentLength: 75 })
     })
   )
   await graphComponent.fitGraphBounds()

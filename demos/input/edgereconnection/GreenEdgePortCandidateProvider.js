@@ -36,6 +36,7 @@ import {
   List,
   PortCandidate
 } from '@yfiles/yfiles'
+
 /**
  * An {@link IEdgeReconnectionPortCandidateProvider} that uses candidates with a
  * dynamic NodeScaled port location model. It allows moving ports to any
@@ -62,6 +63,7 @@ export class GreenEdgePortCandidateProvider extends BaseClass(
     })
     return candidates
   }
+
   /**
    * Returns all target port candidates that may be used for all nodes.
    * @param context The context for which the candidates should be provided

@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { GraphSearch } from '@yfiles/demo-utils/GraphSearch'
 import { getEmployee } from './model/data-loading'
+
 /**
  * Initializes the graph search to be able to search the graph for specific persons.
  */
@@ -37,6 +38,7 @@ export function initializeGraphSearch(graphComponent, orgChartGraph) {
   GraphSearch.registerEventListener(searchBox, graphSearch)
   orgChartGraph.setGraphUpdatedListener(() => graphSearch.updateSearch(searchBox.value))
 }
+
 /**
  * Implements the custom graph search for this demo.
  * It matches the search term with the label text and the contents of the nodes' tags.

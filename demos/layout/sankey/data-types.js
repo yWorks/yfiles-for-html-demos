@@ -32,6 +32,7 @@
 export function getPoliticalParty(node) {
   return node.tag
 }
+
 /**
  * Returns the data associated with the given edge.
  */

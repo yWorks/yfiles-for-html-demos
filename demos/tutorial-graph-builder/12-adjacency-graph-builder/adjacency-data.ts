@@ -55,11 +55,7 @@ export const orgChartData: OrgChartEntry[] = [
     name: 'Amy Kain',
     colleagues: ['0_1_0']
   },
-  {
-    id: '0_1_0',
-    position: 'Production Supervisor',
-    name: 'Kathy Maxwell'
-  }
+  { id: '0_1_0', position: 'Production Supervisor', name: 'Kathy Maxwell' }
 ]
 
 export type OrgChartEntry = {

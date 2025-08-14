@@ -211,9 +211,7 @@ export class FlowchartConfiguration {
         type: 'triangle'
       })
     })
-    graph.edgeDefaults.labels.style = new LabelStyle({
-      textFill: colorSet.labelText
-    })
+    graph.edgeDefaults.labels.style = new LabelStyle({ textFill: colorSet.labelText })
     graph.edgeDefaults.labels.layoutParameter = NinePositionsEdgeLabelModel.CENTER_BELOW
     graph.edgeDefaults.shareStyleInstance = false
 
@@ -285,9 +283,7 @@ export class FlowchartConfiguration {
       allowCreateNode: false,
       allowCreateBend: false,
       focusableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
-      createEdgeInputMode: {
-        showPortCandidates: ShowPortCandidates.END
-      },
+      createEdgeInputMode: { showPortCandidates: ShowPortCandidates.END },
       editLabelInputMode: {
         autoRemoveEmptyLabels: false,
         textEditorInputMode: {
@@ -302,9 +298,7 @@ export class FlowchartConfiguration {
           autoCommitOnFocusLost: true
         }
       },
-      marqueeSelectionInputMode: {
-        enabled: false
-      },
+      marqueeSelectionInputMode: { enabled: false },
       moveViewportInputMode: {
         // move viewport by dragging the empty canvas with the mouse
         beginRecognizer: EventRecognizers.MOUSE_DOWN
@@ -441,10 +435,7 @@ export class FlowchartConfiguration {
       const type = this.flowchartTypes[i]
       pickerButtons.push({
         type: type,
-        style: {
-          type: 'icon',
-          iconPath: 'resources/icons/flowchart-' + type + '.svg'
-        },
+        style: { type: 'icon', iconPath: 'resources/icons/flowchart-' + type + '.svg' },
         tooltip: typeToTooltip(type)
       })
     }
@@ -660,9 +651,7 @@ export class FlowchartConfiguration {
       action: async (inData, wasCanceled) => {
         if (wasCanceled) {
           // if the next step (picker type selection) was canceled, cancel this step as well
-          return {
-            success: false
-          }
+          return { success: false }
         }
         const currentItem = mode.graphComponent.currentItem
         const graph = mode.graph
@@ -684,11 +673,7 @@ export class FlowchartConfiguration {
         )
 
         mode.graphComponent.currentItem = child
-        return {
-          success: true,
-          undoData: { currentItem, child, edge },
-          outData: { child, edge }
-        }
+        return { success: true, undoData: { currentItem, child, edge }, outData: { child, edge } }
       },
       undo: (undoData) => {
         const { currentItem, child, edge } = undoData as {
@@ -716,11 +701,7 @@ export class FlowchartConfiguration {
             edge
           )
           const newLabel = labelPicked && edge.labels.size > 0 ? edge.labels.at(0) : null
-          return {
-            success: labelPicked,
-            undoData: newLabel,
-            outData: inData
-          }
+          return { success: labelPicked, undoData: newLabel, outData: inData }
         },
         undo: (inData) => {
           if (inData) {

@@ -78,12 +78,7 @@ export default class ReactGraphComponent extends Component {
     this.graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
       smoothingLength: 25,
       stroke: '4px #662b00',
-      targetArrow: new Arrow({
-        fill: '#662b00',
-        lengthScale: 2,
-        widthScale: 2,
-        type: 'ellipse'
-      })
+      targetArrow: new Arrow({ fill: '#662b00', lengthScale: 2, widthScale: 2, type: 'ellipse' })
     })
   }
 
@@ -110,9 +105,4 @@ export default class ReactGraphComponent extends Component {
   }
 }
 
-ReactGraphComponent.defaultProps = {
-  graphData: {
-    nodesSource: [],
-    edgesSource: []
-  }
-}
+ReactGraphComponent.defaultProps = { graphData: { nodesSource: [], edgesSource: [] } }

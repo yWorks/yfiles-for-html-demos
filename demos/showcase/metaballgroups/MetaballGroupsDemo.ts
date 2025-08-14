@@ -62,9 +62,7 @@ async function run(): Promise<void> {
   // initialize the input mode
   graphComponent.inputMode = new GraphEditorInputMode({
     allowEditLabel: true,
-    editLabelInputMode: {
-      hideLabelDuringEditing: false
-    }
+    editLabelInputMode: { hideLabelDuringEditing: false }
   })
 
   createSampleGraph()
@@ -101,26 +99,10 @@ async function run(): Promise<void> {
   initializeUI()
 }
 
-const redStyle = new ShapeNodeStyle({
-  shape: 'ellipse',
-  fill: redColor,
-  stroke: null
-})
-const blueStyle = new ShapeNodeStyle({
-  shape: 'ellipse',
-  fill: blueColor,
-  stroke: null
-})
-const purpleStyle = new ShapeNodeStyle({
-  shape: 'ellipse',
-  fill: purpleColor,
-  stroke: null
-})
-const greyStyle = new ShapeNodeStyle({
-  shape: 'ellipse',
-  fill: greyColor,
-  stroke: null
-})
+const redStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: redColor, stroke: null })
+const blueStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: blueColor, stroke: null })
+const purpleStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: purpleColor, stroke: null })
+const greyStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: greyColor, stroke: null })
 
 /**
  * Creates the initial sample graph.
@@ -129,10 +111,7 @@ function createSampleGraph(): void {
   const graph = graphComponent.graph
 
   graph.nodeDefaults.size = new Size(50, 50)
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    shape: 'ellipse',
-    fill: redColor
-  })
+  graph.nodeDefaults.style = new ShapeNodeStyle({ shape: 'ellipse', fill: redColor })
 
   graph.decorator.nodes.reshapeHandleProvider.hide()
 
@@ -167,11 +146,7 @@ function changeLayout(): void {
     defaultPreferredEdgeLength: 70 + Math.random() * 20
   })
 
-  const organicLayoutData = new OrganicLayoutData({
-    scope: {
-      nodes: graphComponent.graph.nodes
-    }
-  })
+  const organicLayoutData = new OrganicLayoutData({ scope: { nodes: graphComponent.graph.nodes } })
 
   new LayoutExecutor({
     graphComponent,

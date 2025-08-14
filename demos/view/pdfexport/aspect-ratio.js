@@ -33,6 +33,7 @@ import {
   IReshapeHandler,
   NodeReshapeHandleProvider
 } from '@yfiles/yfiles'
+
 /**
  * Configures node-resize behavior to force resize operations to keep the aspect ratio of the
  * respective nodes.

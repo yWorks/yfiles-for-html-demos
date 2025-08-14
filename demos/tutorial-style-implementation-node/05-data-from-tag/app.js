@@ -37,14 +37,21 @@ import {
 } from '../common'
 import { CustomNodeStyle } from './CustomNodeStyle'
 import { createNodes } from './create-nodes'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
+
 graphComponent.graph.nodeDefaults.style = new CustomNodeStyle()
 graphComponent.graph.nodeDefaults.labels.layoutParameter =
   FreeNodeLabelModel.INSTANCE.createParameter([0.5, 1], [0, 10], [0.5, 0])
+
 createNodes(graphComponent.graph)
 enableGraphEditing(graphComponent)
 configureMinimumSize(graphComponent)
+
 fitGraphBounds(graphComponent)
+
 finishLoading()

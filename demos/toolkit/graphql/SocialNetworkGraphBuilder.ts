@@ -29,10 +29,7 @@
 import { EdgesSource, GraphBuilder, IGraph, INode, NodesSource } from '@yfiles/yfiles'
 import type { Person } from './Person'
 
-type Friendship = {
-  from: number
-  to: number
-}
+type Friendship = { from: number; to: number }
 
 /**
  * A {@link GraphBuilder} that is tailored towards the social network use case in this demo.

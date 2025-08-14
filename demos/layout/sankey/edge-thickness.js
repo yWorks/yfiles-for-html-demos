@@ -29,6 +29,7 @@
 import { getVoterShift } from './data-types'
 import { TagChangeUndoUnit } from './interaction/TagChangeUndoUnit'
 import { updateEdgeStyle } from './styles-support'
+
 /**
  * Returns the thickness from the given string or numerical value.
  * Since the thickness will be used for the edge stroke and for the layout,
@@ -37,6 +38,7 @@ import { updateEdgeStyle } from './styles-support'
 export function getThickness(voters) {
   return Math.max(2, typeof voters === 'string' ? parseFloat(voters) : voters)
 }
+
 /**
  * Updates the edge data when the thickness changes, so that the new value is stored in the
  * edge's tag. It also updates the edge stroke and creates an undo unit so
@@ -47,6 +49,7 @@ export function updateEdgeThickness(edge, thickness, graphComponent) {
   const oldData = { ...getVoterShift(edge) }
   const newData = getVoterShift(edge)
   newData.thickness = thickness
+
   // create the undo unit to revert the change if needed
   const tagUndoUnit = new TagChangeUndoUnit(
     'Thickness changed',
@@ -56,9 +59,11 @@ export function updateEdgeThickness(edge, thickness, graphComponent) {
     edge,
     () => updateEdgeStyle(edge)
   )
+
   // add the undo unit to the graph's undoEngine
   graphComponent.graph.undoEngine.addUnit(tagUndoUnit)
 }
+
 /**
  * Normalizes the thickness of the edges based on the current label texts. The largest
  * thickness is 200, while the smallest 2. If no label text exists, edge thickness 2 will be assigned.
@@ -73,10 +78,12 @@ export function normalizeThickness(graphComponent) {
     },
     [Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]
   )
+
   const min = minMax[0]
   const max = minMax[1]
   const largestThickness = 200
   const smallestThickness = 2
+
   // normalize the thickness of the graph's edges
   graph.edges.forEach((edge) => {
     let thickness = 2

@@ -185,9 +185,7 @@ export class PriorityPanel {
     let labelModelParameter: ILabelModelParameter | null = null
     const firstItem = this.currentItems[0]
     if (firstItem instanceof IEdge) {
-      labelModelParameter = new EdgePathLabelModel({
-        autoRotation: false
-      }).createRatioParameter()
+      labelModelParameter = new EdgePathLabelModel({ autoRotation: false }).createRatioParameter()
       dummyLabel = new SimpleLabel(firstItem, '', labelModelParameter)
     } else if (firstItem instanceof INode) {
       labelModelParameter = ExteriorNodeLabelModel.TOP

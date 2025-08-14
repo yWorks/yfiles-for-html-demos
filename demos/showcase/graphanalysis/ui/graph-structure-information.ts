@@ -234,16 +234,8 @@ function updateStructureAnalysis(graph: IGraph, container: Element): void {
  * List of all structural analysis algorithms whose results are displayed in the panel.
  */
 const structureAnalysis: { name: string; apply: (graph: IGraph) => boolean; url?: string }[] = [
-  {
-    name: 'Acyclic',
-    apply: isAcyclic,
-    url: 'https://en.wikipedia.org/wiki/Cycle_(graph_theory)'
-  },
-  {
-    name: 'Bipartite',
-    apply: isBipartite,
-    url: 'https://en.wikipedia.org/wiki/Bipartite_graph'
-  },
+  { name: 'Acyclic', apply: isAcyclic, url: 'https://en.wikipedia.org/wiki/Cycle_(graph_theory)' },
+  { name: 'Bipartite', apply: isBipartite, url: 'https://en.wikipedia.org/wiki/Bipartite_graph' },
   {
     name: 'Connected',
     apply: isConnected,

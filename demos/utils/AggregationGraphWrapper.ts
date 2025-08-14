@@ -91,11 +91,7 @@ import {
  * Determines what kind of edges should be created when replacing original edges with aggregation
  * edges in calls to methods of the {@link AggregationGraphWrapper}.
  */
-export const EdgeReplacementPolicy = {
-  NONE: 0,
-  UNDIRECTED: 1,
-  DIRECTED: 2
-}
+export const EdgeReplacementPolicy = { NONE: 0, UNDIRECTED: 1, DIRECTED: 2 }
 
 /**
  * An IGraph implementation that wraps another graph and can replace some of its items by other items.

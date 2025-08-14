@@ -88,10 +88,7 @@ abstract class LargeGraphDemoConfiguration extends DemoConfiguration {
     const node = graph.createNode({
       parent,
       layout: Rect.fromCenter(location, graph.nodeDefaults.size),
-      tag: {
-        id: graph.nodes.size,
-        type: this.getRandomInt(this.webGLNodeStyles.length)
-      }
+      tag: { id: graph.nodes.size, type: this.getRandomInt(this.webGLNodeStyles.length) }
     })
     graph.setStyle(node, this.nodeStyleProvider(node, graph))
     return node
@@ -109,9 +106,7 @@ abstract class LargeGraphDemoConfiguration extends DemoConfiguration {
       margins: [0, 0, 5, 0]
     }).createParameter('bottom')
 
-    graph.nodeDefaults.labels.style = new LabelStyle({
-      backgroundFill: '#fffd'
-    })
+    graph.nodeDefaults.labels.style = new LabelStyle({ backgroundFill: '#fffd' })
 
     graph.groupNodeDefaults.style = createDemoGroupStyle({})
   }

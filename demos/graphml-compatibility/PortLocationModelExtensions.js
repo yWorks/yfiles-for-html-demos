@@ -36,6 +36,7 @@ import {
   XmlName
 } from '@yfiles/yfiles'
 import { YfilesCommon_3_0_XamlNS, YfilesCommonXamlNS } from './GraphMLCompatibility'
+
 export function configureRenamings(callback) {
   const nameMappings = new Map()
   nameMappings.set(
@@ -48,111 +49,116 @@ export function configureRenamings(callback) {
     callback(new XmlName(key, YfilesCommon_3_0_XamlNS), new XmlName(value, YfilesCommonXamlNS))
   )
 }
+
 export function configureExtensions(callback) {
   createMetadata(
     GenericPortLocationParameterExtension,
-    {
-      properties: {
-        Model: {
-          type: IPortLocationModel
-        }
-      }
-    },
+    { properties: { Model: { type: IPortLocationModel } } },
     callback
   )
   createMetadata(
     GenericPortLocationModelExtension,
-    {
-      properties: {
-        LocationParameters: {
-          type: IList
-        }
-      }
-    },
+    { properties: { LocationParameters: { type: IList } } },
     callback
   )
   createMetadata(
     SegmentRatioParameterExtension,
     {
       properties: {
-        Index: {
-          type: Number,
-          default: 0
-        },
-        Ratio: {
-          type: Number,
-          default: 0
-        },
-        Model: {
-          type: IPortLocationModel,
-          default: null
-        }
+        Index: { type: Number, default: 0 },
+        Ratio: { type: Number, default: 0 },
+        Model: { type: IPortLocationModel, default: null }
       }
     },
     callback
   )
 }
+
 function createMetadata(type, metadata, callback, ns = YfilesCommon_3_0_XamlNS) {
   metadata.name = type.name
   metadata.xmlNamespace = ns
   callback(type, metadata)
 }
+
 // region Compatibility classes for GenericPortLocationModel
+
 class GenericPortLocationParameterExtension extends MarkupExtension {
   _Index = 0
+
   get Index() {
     return this._Index
   }
+
   set Index(value) {
     this._Index = value
   }
+
   _Model = null
+
   get Model() {
     return this._Model
   }
+
   set Model(value) {
     this._Model = value
   }
+
   provideValue() {
     return this._Model.locationParameters.at(this._Index)
   }
 }
+
 class GenericPortLocationModelExtension extends MarkupExtension {
   _LocationParameters = new List()
+
   get LocationParameters() {
     return this._LocationParameters
   }
+
   provideValue() {
     const compositeLabelModel = new CompositePortLocationModel()
+
     this._LocationParameters.forEach((m) => {
       compositeLabelModel.addParameter(m)
     })
     return compositeLabelModel
   }
 }
+
+
 // region Compatibility classes for SegmentRatioPortLocationModel
+
 class SegmentRatioParameterExtension extends MarkupExtension {
   _Index = 0
+
   get Index() {
     return this._Index
   }
+
   set Index(value) {
     this._Index = value
   }
+
   _Model = null
+
   get Model() {
     return this._Model
   }
+
   set Model(value) {
     this._Model = value
   }
+
   _Ratio = 0
+
   get Ratio() {
     return this._Ratio
   }
+
   set Ratio(value) {
     this._Ratio = value
   }
+
   provideValue() {
     let portModel = this._Model
     if (portModel == null) {
@@ -162,3 +168,4 @@ class SegmentRatioParameterExtension extends MarkupExtension {
     return portModel.createParameterFromSource(this._Index, this._Ratio)
   }
 }
+

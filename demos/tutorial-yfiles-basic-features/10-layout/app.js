@@ -38,16 +38,24 @@ import {
   setDefaultLabelLayoutParameters
 } from '../common'
 import { applyLayout, runLayout } from './layout'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 setDefaultLabelLayoutParameters(graphComponent.graph)
+
 configureInteraction(graphComponent)
+
 createSampleGraphLayout(graphComponent.graph)
+
 fitGraphBounds(graphComponent)
 finishLoading()
+
 addButtonListener('#layoutButton', () => applyLayout(graphComponent))
+
 const layoutButton = document.querySelector('#layoutAnimatedButton')
+
 addButtonListener('#layoutAnimatedButton', async () => {
   layoutButton.disabled = true
   await runLayout(graphComponent)

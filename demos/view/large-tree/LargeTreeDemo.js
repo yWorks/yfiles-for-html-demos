@@ -53,35 +53,44 @@ import {
   WebGLSelectionIndicatorManager,
   WebGLShapeNodeStyle
 } from '@yfiles/yfiles'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import {
   checkWebGL2Support,
   finishLoading,
   showLoadingIndicator
 } from '@yfiles/demo-resources/demo-page'
+
 /**
  * The current number of tree layers. Also, the starting value for the demo.
  */
 let currentLayers = 3
+
 const nodeStyles = []
 let webGLEdgeStyle
+
 /**
  * Configures the maximum graph size reachable with layer additions.
  */
 const maxGraphSize = 250_000
+
 async function run() {
   if (!checkWebGL2Support()) {
     return
   }
+
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
+
   initializeStyleDefaults()
   enableWebGLRendering(graphComponent)
   initializeInputElements(graphComponent)
+
   await createGraph(graphComponent, currentLayers)
   initializeUI(graphComponent)
 }
+
 /**
  * Initializes the WebGL node and edge styles
  */
@@ -89,8 +98,10 @@ function initializeStyleDefaults() {
   ;['#242265', '#01baff', '#f26419', '#fdca40'].forEach((color) => {
     nodeStyles.push(new WebGLShapeNodeStyle('round-rectangle', color, '#0000'))
   })
+
   webGLEdgeStyle = new WebGLPolylineEdgeStyle({ targetArrow: 'triangle-small' })
 }
+
 /**
  * Enables WebGL as the rendering technique
  */
@@ -98,6 +109,7 @@ function enableWebGLRendering(graphComponent) {
   graphComponent.graphModelManager = new WebGLGraphModelManager()
   graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager()
 }
+
 /**
  * Initializes the graph manipulation UI elements
  */
@@ -110,6 +122,7 @@ function initializeInputElements(graphComponent) {
     updateLayersUI(graphComponent)
   })
 }
+
 /**
  * Updates the graph manipulation UI
  * Enables and disables the add/remove layer buttons depending on graph size and child count
@@ -118,6 +131,7 @@ function updateLayersUI(graphComponent) {
   // update display of current layers
   const layerCountElement = document.querySelector('#layerCount')
   layerCountElement.textContent = String(currentLayers)
+
   // disable/enable add layer button
   const leaves = graphComponent.graph.nodes.filter(
     (node) => graphComponent.graph.outDegree(node) == 0
@@ -125,9 +139,11 @@ function updateLayersUI(graphComponent) {
   const childCount = Number(document.querySelector('#childCountInput').value)
   document.querySelector('#add-layer').disabled =
     graphComponent.graph.nodes.size + leaves * childCount > maxGraphSize
+
   // disable removing the root node
   document.querySelector('#remove-layer').disabled = currentLayers == 0
 }
+
 /**
  * Enables/disables the graph manipulation UI. Used during graph changes and extendLayout.
  */
@@ -136,6 +152,7 @@ function setUIDisabled(disabled) {
   document.querySelector('#remove-layer').disabled = disabled
   document.querySelector('#childCountInput').disabled = disabled
 }
+
 /**
  * Updates the graph information on the sidebar.
  */
@@ -143,6 +160,7 @@ function updateGraphInformation(graph) {
   document.querySelector('#numberNodes').textContent = String(graph.nodes.size)
   document.querySelector('#numberEdges').textContent = String(graph.edges.size)
 }
+
 /**
  * Wires up the toolbar UI elements.
  */
@@ -152,6 +170,7 @@ function initializeUI(graphComponent) {
     .querySelector('#remove-layer')
     .addEventListener('click', () => removeLayer(graphComponent))
 }
+
 /**
  * Creates the tree with a given number of layers
  * @param graphComponent the graphComponent
@@ -161,22 +180,25 @@ async function createGraph(graphComponent, layers) {
   const graph = graphComponent.graph
   const gmm = graphComponent.graphModelManager
   const childCount = Number(document.querySelector('#childCountInput').value)
+
   setUIDisabled(true)
   const queue = []
   const rootNode = createTreeNode(graph, 0, queue, Point.ORIGIN)
   graph.setNodeLayout(rootNode, Rect.fromCenter(graphComponent.viewport.center, rootNode.layout))
   graph.setStyle(rootNode, nodeStyles[0])
-  const fadeInAnimation = gmm.createFadeAnimation({
-    type: 'fade-out',
-    timing: '1s ease reverse'
-  })
+
+  const fadeInAnimation = gmm.createFadeAnimation({ type: 'fade-out', timing: '1s ease reverse' })
+
   extendTree(graphComponent, layers, childCount, queue, fadeInAnimation)
   graph.tag = { maxLayer: layers, childCount: childCount }
+
   await runExtendLayout(graphComponent, fadeInAnimation)
+
   updateGraphInformation(graphComponent.graph)
   updateLayersUI(graphComponent)
   setUIDisabled(false)
 }
+
 /**
  * Adds a layer to the graph.
  */
@@ -184,31 +206,38 @@ async function addLayer(graphComponent) {
   currentLayers++
   const graph = graphComponent.graph
   const graphInfo = graph.tag
+
   const childCount = Number(document.querySelector('#childCountInput').value)
+
   setUIDisabled(true)
+
   const queue = []
   graph.nodes
     .filter((node) => node.tag.layer == graphInfo.maxLayer)
     .forEach((node) => {
       queue.push(node)
     })
+
   const gmm = graphComponent.graphModelManager
-  const fadeInAnimation = gmm.createFadeAnimation({
-    type: 'fade-out',
-    timing: '1s ease reverse'
-  })
+  const fadeInAnimation = gmm.createFadeAnimation({ type: 'fade-out', timing: '1s ease reverse' })
+
   const numberChildren = queue.length * childCount
+
   if (numberChildren > 20_000) {
     await showLoadingIndicator(true, 'Creating child nodes...')
   }
   extendTree(graphComponent, currentLayers, childCount, queue, fadeInAnimation)
+
   graph.tag = { maxLayer: currentLayers, childCount: childCount }
+
   await runExtendLayout(graphComponent, fadeInAnimation)
   await showLoadingIndicator(false)
   setUIDisabled(false)
+
   updateGraphInformation(graphComponent.graph)
   updateLayersUI(graphComponent)
 }
+
 /**
  * Extends the tree with new layers.
  *
@@ -221,6 +250,7 @@ async function addLayer(graphComponent) {
 function extendTree(graphComponent, maxLayer, childCount, queue, fadeInAnimation) {
   const graph = graphComponent.graph
   const gmm = graphComponent.graphModelManager
+
   while (queue[0].tag.layer < maxLayer) {
     const source = queue.shift()
     const newLayer = source.tag.layer + 1
@@ -234,12 +264,14 @@ function extendTree(graphComponent, maxLayer, childCount, queue, fadeInAnimation
     }
   }
 }
+
 function createTreeNode(graph, layer, queue, center) {
   const node = graph.createNodeAt(center)
   node.tag = { layer }
   queue.push(node)
   return node
 }
+
 /**
  * Runs the layout on the graph in the cases of graph creation and extension
  *
@@ -251,6 +283,7 @@ async function runExtendLayout(graphComponent, fadeInAnimation) {
   if (shouldReduceEdgeLength(graphComponent.graph)) {
     coreLayout.minimumEdgeLength = 0
   }
+
   const fixedNodeData = new LayoutAnchoringStageData({
     nodeAnchoringPolicies: (node) =>
       graphComponent.graph.inDegree(node) == 0
@@ -260,13 +293,16 @@ async function runExtendLayout(graphComponent, fadeInAnimation) {
   const layout = new LayoutAnchoringStage(coreLayout)
   await applyLayout(graphComponent, layout, fixedNodeData, fadeInAnimation, fadeInAnimation)
 }
+
 /**
  * Removes a layer from the graph.
  */
 async function removeLayer(graphComponent) {
   currentLayers--
   const graph = graphComponent.graph
+
   const childCount = Number(document.querySelector('#childCountInput').value)
+
   setUIDisabled(true)
   const removeNodes = []
   graph.nodes.forEach((node) => {
@@ -274,16 +310,20 @@ async function removeLayer(graphComponent) {
       removeNodes.push(node)
     }
   })
+
   if (removeNodes.length > 20_000) {
     await showLoadingIndicator(true, 'Removing child nodes...')
   }
   await reduceTree(graphComponent, removeNodes)
   graph.tag = { maxLayer: currentLayers, childCount: childCount }
+
   await showLoadingIndicator(false)
   setUIDisabled(false)
+
   updateGraphInformation(graphComponent.graph)
   updateLayersUI(graphComponent)
 }
+
 /**
  * Removes nodes from the tree, animating them onto their parent nodes before removal
  * using the {@link PlaceNodesAtBarycenterStage}.
@@ -293,31 +333,31 @@ async function removeLayer(graphComponent) {
  */
 async function reduceTree(graphComponent, removeNodes) {
   const graph = graphComponent.graph
+
   const barycenterData = new PlaceNodesAtBarycenterStageData({ affectedNodes: removeNodes })
   const subgraphData = new SubgraphLayoutStageData({
     subgraphNodes: (node) => !removeNodes.includes(node)
   })
+
   const barycenterStage = new PlaceNodesAtBarycenterStage()
   const radialTreeLayout = new RadialTreeLayout()
   const subgraphLayout = radialTreeLayout.layoutStages.get(SubgraphLayoutStage)
   subgraphLayout.enabled = true
+
   if (shouldReduceEdgeLength(graphComponent.graph)) {
     radialTreeLayout.minimumEdgeLength = 0
   }
+
   const gmm = graphComponent.graphModelManager
-  const nodeFadeOutAnimation = gmm.createFadeAnimation({
-    type: 'fade-out',
-    timing: '1s ease'
-  })
+  const nodeFadeOutAnimation = gmm.createFadeAnimation({ type: 'fade-out', timing: '1s ease' })
   // Fading out edges faster looks better
-  const edgeFadeOutAnimation = gmm.createFadeAnimation({
-    type: 'fade-out',
-    timing: '500ms ease'
-  })
+  const edgeFadeOutAnimation = gmm.createFadeAnimation({ type: 'fade-out', timing: '500ms ease' })
+
   removeNodes.forEach((node) => {
     gmm.setAnimations(node, [nodeFadeOutAnimation])
     gmm.setAnimations(graph.edgesAt(node).get(0), [edgeFadeOutAnimation])
   })
+
   await applyLayout(
     graphComponent,
     new SequentialLayout(radialTreeLayout, barycenterStage),
@@ -325,10 +365,12 @@ async function reduceTree(graphComponent, removeNodes) {
     nodeFadeOutAnimation,
     edgeFadeOutAnimation
   )
+
   removeNodes.forEach((node) => {
     graph.remove(node)
   })
 }
+
 /**
  * Determines if {@link RadialTreeLayout} should route edges as short as possible to produce the most
  * compact arrangement possible.
@@ -337,6 +379,7 @@ async function reduceTree(graphComponent, removeNodes) {
 function shouldReduceEdgeLength(graph) {
   return graph.nodes.size > 1_000
 }
+
 /**
  * Cleans up all WebGL animations, as only a limited number of set animations are allowed
  */
@@ -350,6 +393,7 @@ function cleanupAnimations(graphComponent) {
     gmm.setAnimations(edge, [])
   })
 }
+
 /**
  * Helper function to create and start the layout executor
  */
@@ -369,17 +413,22 @@ async function applyLayout(
     animateViewport: true,
     targetBoundsPadding: 100
   })
+
   executor.nodeAnimation = nodeFadeOutAnimation
   executor.edgeAnimation = edgeFadeOutAnimation
+
   await executor.start()
+
   cleanupAnimations(graphComponent)
 }
+
 /**
  * Customized layout executor that adds webgl animations for nodes and edges
  */
 class AnimatedLayoutExecutor extends LayoutExecutor {
   edgeAnimation
   nodeAnimation
+
   createAnimation() {
     let finalAnimation
     const animations = [this.createLayoutAnimation(), this.nodeAnimation, this.edgeAnimation]
@@ -393,4 +442,5 @@ class AnimatedLayoutExecutor extends LayoutExecutor {
     return finalAnimation
   }
 }
+
 run().then(finishLoading)

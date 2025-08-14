@@ -34,6 +34,7 @@ import {
   ITable,
   NodeDropInputMode
 } from '@yfiles/yfiles'
+
 /**
  * Custom {@link NodeDropInputMode} that disallows to reparent a table node.
  */
@@ -46,9 +47,11 @@ export class MyReparentHandler extends BaseClass(IReparentNodeHandler) {
     super()
     this.coreHandler = coreHandler
   }
+
   isReparentGesture(context, node) {
     return this.coreHandler.isReparentGesture(context, node)
   }
+
   shouldReparent(context, node) {
     // Ok, this node has a table associated - disallow dragging into a group node.
     if (ITable.getTable(node)) {
@@ -56,9 +59,11 @@ export class MyReparentHandler extends BaseClass(IReparentNodeHandler) {
     }
     return this.coreHandler.shouldReparent(context, node)
   }
+
   isValidParent(context, node, newParent) {
     return this.coreHandler.isValidParent(context, node, newParent)
   }
+
   reparent(context, node, newParent) {
     this.coreHandler.reparent(context, node, newParent)
   }

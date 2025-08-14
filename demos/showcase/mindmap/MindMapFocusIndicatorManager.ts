@@ -61,11 +61,7 @@ export class MindMapFocusIndicatorManager extends FocusIndicatorManager<INode> {
     const nodeData = getNodeData(node)
     return isRoot(node)
       ? new NodeStyleIndicatorRenderer({
-          nodeStyle: new ShapeNodeStyle({
-            shape: 'pill',
-            stroke: `5px black`,
-            fill: 'none'
-          }),
+          nodeStyle: new ShapeNodeStyle({ shape: 'pill', stroke: `5px black`, fill: 'none' }),
           zoomPolicy: 'world-coordinates',
           margins: 0
         })

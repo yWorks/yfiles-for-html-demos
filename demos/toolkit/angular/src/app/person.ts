@@ -26,14 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IPropertyObservable } from '@yfiles/yfiles'
-
 /**
- * Class for representing one person. It implements {@link IPropertyObservable} so that {@link TemplateNodeStyle} can
- * listen to changes and update the node visualization accordingly.
+ * Class for representing one person.
  */
 export class Person {
-  private listeners = []
   private _position: string
   private _name: string
   private _email: string

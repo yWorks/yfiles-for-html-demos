@@ -32,10 +32,7 @@ import { GraphBuilder, IEdge, IGraph, INode } from '@yfiles/yfiles'
  * A type that describes the graph data.
  * This data is used to build a graph that acts as a base for the simulated event log.
  */
-type GraphData = {
-  nodes: NodeData[]
-  edges: EdgeData[]
-}
+type GraphData = { nodes: NodeData[]; edges: EdgeData[] }
 
 /**
  * A type that describes the data of a node in the simulation graph.
@@ -66,18 +63,10 @@ export function getProcessTransitionTag(transition: IEdge): EdgeData {
  */
 export function getSimulationGraph(): IGraph {
   const builder = new GraphBuilder()
-  builder.createNodesSource({
-    data: graphData.nodes,
-    id: 'id'
-  }).nodeCreator.tagProvider = (dataItem): NodeData => ({
-    duration: Math.random() * 0.5,
-    ...dataItem
-  })
-  builder.createEdgesSource({
-    data: graphData.edges,
-    sourceId: 'source',
-    targetId: 'target'
-  })
+  builder.createNodesSource({ data: graphData.nodes, id: 'id' }).nodeCreator.tagProvider = (
+    dataItem
+  ): NodeData => ({ duration: Math.random() * 0.5, ...dataItem })
+  builder.createEdgesSource({ data: graphData.edges, sourceId: 'source', targetId: 'target' })
   return builder.buildGraph()
 }
 
@@ -86,7 +75,7 @@ export function getSimulationGraph(): IGraph {
  */
 const graphData: GraphData = {
   nodes: [
-    { id: 1, label: 'Start', capacity: 50 },
+    { id: 1, label: 'Feature Request', capacity: 50 },
     { id: 3, label: 'Evaluation', capacity: 20 },
     { id: 4, label: 'Move to Backlog' },
     { id: 5, label: 'Prepare', capacity: 20 },

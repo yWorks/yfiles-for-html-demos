@@ -45,6 +45,7 @@ import {
   SvgVisual,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * An arrow that appears like the edge tapers to a point.
  */
@@ -53,21 +54,25 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
   // they are populated in getVisualCreator and used in the implementations of the IVisualCreator interface.
   anchor = Point.ORIGIN
   direction = Point.ORIGIN
+
   // the un-rotated bounds of the arrow
   bounds = null
   // backing field properties width, length
   _width
   _length
+
   // The shape of the arrow's path.
   // We draw in a normalized coordinate system where the edge is horizontal and meets the target at (0,0)
   // The path is just a simple triangle with length and width 1 - the actual adjustment is done by simply scaling everything later.
   // We create a tiny overlap between the edge and the arrow by painting a fraction over the edge.
   // This avoids anti-aliasing artifacts where the edge meets the arrow.
   _pathShape = 'M -1.1,-0.5 L -1,-0.5 L 0,0 L -1,0.5 L -1.1,0.5 Z'
+
   /**
    * The fill of this arrow
    */
   fill
+
   /**
    * Initializes a new instance of the {@link TaperedArrow} class.
    * @param width The width of the arrow
@@ -81,6 +86,7 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
     this.updateBounds()
     this.fill = fill
   }
+
   /**
    * Returns the length of the arrow, i.e. the distance from the arrow's tip to
    * the position where the visual representation of the edge's path should begin.
@@ -89,26 +95,31 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
   get length() {
     return this._length
   }
+
   set length(value) {
     this._length = value
     this.updateBounds()
   }
+
   /**
    * Returns the thickness of the arrow.
    */
   get width() {
     return this._width
   }
+
   set width(value) {
     this._width = value
     this.updateBounds()
   }
+
   /**
    * Calculates the bounds for the current values of length and width.
    */
   updateBounds() {
     this.bounds = new Rect(-this._length, -this._width / 2, this._width, this._width)
   }
+
   /**
    * Gets the cropping length associated with this instance.
    * Value: Always returns 0
@@ -119,6 +130,7 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
   get cropLength() {
     return 0
   }
+
   /**
    * Creates the visual for the arrow.
    * @param context The context that contains the information needed to create the visual.
@@ -128,17 +140,21 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
   createVisual(context) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path.setAttribute('d', this._pathShape)
+
     // set the fill of the path
     Fill.setFill(this.fill, path, context)
+
     // scale and arrange the path to the correct position
     path.setAttribute(
       'transform',
       `matrix(${this.direction.x} ${this.direction.y} ${-this.direction.y} ${this.direction.x} ${this.anchor.x} ${this.anchor.y}) scale(${this.length},${this.width})`
     )
+
     const visual = new SvgVisual(path)
     visual['render-data-cache'] = this.fill
     return visual
   }
+
   /**
    * Re-renders the arrow using the old visual for performance reasons.
    * @param context The context that contains the information needed to create the visual.
@@ -153,6 +169,7 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
       // no path element exists, re-create the visual from scratch
       return this.createVisual(context)
     }
+
     const cache = oldVisual['render-data-cache']
     // check if fill changed
     if (this.fill !== cache) {
@@ -160,6 +177,7 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
       Fill.setFill(this.fill, path, context)
       oldVisual['render-data-cache'] = this.fill
     }
+
     // otherwise just scale and re-arrange and transform the arrow path to the right location
     path.setAttribute(
       'transform',
@@ -167,6 +185,7 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
     )
     return oldVisual
   }
+
   /**
    * Returns the bounds of the arrow for the current flyweight configuration.
    * @param context The context to calculate the bounds for.
@@ -183,6 +202,7 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
     matrix.scale(this.length, this.length)
     return matrix.calculateTransformedBounds(this.bounds)
   }
+
   /**
    * Gets an {@link IBoundsProvider} implementation that can yield
    * this arrow's bounds if painted at the given location using the
@@ -202,6 +222,7 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
     this.direction = directionVector
     return this
   }
+
   /**
    * Gets an {@link IVisualCreator} implementation that will create
    * the {@link IVisualCreator} for this arrow
@@ -218,10 +239,12 @@ export class TaperedArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
     this.direction = direction
     return this
   }
+
   get cropAtPort() {
     return false
   }
 }
+
 /**
  * A markup extension class used for (de-)serializing the custom arrow style to GraphML.
  */
@@ -229,24 +252,31 @@ export class TaperedArrowExtension extends MarkupExtension {
   _width = 2
   _length = 0
   _fill = Color.BLACK
+
   get width() {
     return this._width
   }
+
   set width(value) {
     this._width = value
   }
+
   get length() {
     return this._length
   }
+
   set length(value) {
     this._length = value
   }
+
   get fill() {
     return this._fill
   }
+
   set fill(value) {
     this._fill = value
   }
+
   /**
    * Returns an object that is set as the value of the target property for this markup extension.
    * @param serviceProvider The object that provides services for the markup extension
@@ -258,6 +288,7 @@ export class TaperedArrowExtension extends MarkupExtension {
     arrow.fill = this.fill
     return arrow
   }
+
   static create(item) {
     const markupExtension = new TaperedArrowExtension()
     markupExtension.width = item.width

@@ -53,8 +53,10 @@ import {
   Stroke,
   TextDecorations
 } from '@yfiles/yfiles'
+
 // we use font-awesome icons for the toolbar in this demo
 import '@fortawesome/fontawesome-free/js/all.min.js'
+
 /**
  * Adds a HTML panel on top of the contents of the GraphComponent that is used as a container for the contextual
  * toolbar.
@@ -79,6 +81,7 @@ export class ContextualToolbar {
   // Remove the entire toolbar from the document flow otherwise it will block mouse events. However, we still want
   // to fade it out first.
   hideTimer
+
   /**
    * Sets the items to display the contextual toolbar for.
    * Setting this property to a value other than null shows the toolbar.
@@ -98,29 +101,36 @@ export class ContextualToolbar {
       this.hide()
     }
   }
+
   /**
    * Gets the items to display information for.
    */
   get selectedItems() {
     return this._selectedItems
   }
+
   /**
    * Constructs a new instance of the ContextualToolbar.
    */
   constructor(graphComponent, container) {
     this.graphComponent = graphComponent
     this.container = container
+
     // initialize a label model parameter that is used to position the node pop-up
     this.nodeLabelModelParameter = new ExteriorNodeLabelModel({ margins: 10 }).createParameter(
       'top'
     )
+
     // initialize a label model parameter that is used to position the edge pop-up
     const edgeLabelModel = new EdgePathLabelModel({ autoRotation: false })
     this.edgeLabelModelParameter = edgeLabelModel.createRatioParameter()
+
     this._selectedItems = []
+
     this.registerUpdateListeners()
     this.registerClickListeners()
   }
+
   /**
    * Applies the font settings given by the parameter object to all selected labels.
    */
@@ -135,6 +145,7 @@ export class ContextualToolbar {
       this.graphComponent.graph.setStyle(label, clone)
     }
   }
+
   /**
    * Increases or decreases the font size by 2px.
    */
@@ -148,6 +159,7 @@ export class ContextualToolbar {
       this.graphComponent.graph.setStyle(label, clone)
     }
   }
+
   /**
    * Applies the given color and shape to the selected nodes.
    */
@@ -163,6 +175,7 @@ export class ContextualToolbar {
       this.graphComponent.graph.setStyle(node, clone)
     }
   }
+
   /**
    * Creates a new node next to the current node and connects both nodes with an edge.
    */
@@ -183,6 +196,7 @@ export class ContextualToolbar {
     this.graphComponent.selection.clear()
     newSelection.forEach((item) => this.graphComponent.selection.nodes.add(item))
   }
+
   /**
    * Finds a location for the new node that doesn't overlap with other nodes.
    */
@@ -216,6 +230,7 @@ export class ContextualToolbar {
     }
     return new Point(originalLayout.x + stepSize, originalLayout.y)
   }
+
   /**
    * Applies the given color and arrow type to the selected edges.
    */
@@ -225,6 +240,7 @@ export class ContextualToolbar {
       const oldStroke = oldStyle.stroke
       const oldSourceArrow = oldStyle.sourceArrow
       const oldTargetArrow = oldStyle.targetArrow
+
       const newStyle = oldStyle.clone()
       newStyle.stroke = new Stroke({
         fill: color || oldStroke.fill || 'black',
@@ -242,9 +258,11 @@ export class ContextualToolbar {
         lengthScale: 1.5,
         widthScale: 1.5
       })
+
       this.graphComponent.graph.setStyle(edge, newStyle)
     }
   }
+
   /**
    * Helper function to show/hide a picker container.
    * @param e The event of the toggle button.
@@ -254,12 +272,15 @@ export class ContextualToolbar {
     const dataContainerId = toggleButton.getAttribute('data-container-id')
     const pickerContainer = document.querySelector('#' + dataContainerId)
     const show = toggleButton.checked
+
     if (!show) {
       this.hideAllPickerContainer()
       return
     }
+
     // hide all picker containers except for the one that should be toggled
     this.hideAllPickerContainer(toggleButton, pickerContainer)
+
     // position the container above/below the toggle button
     pickerContainer.style.display = 'block'
     const labelElement = document.querySelector(`label[for="${toggleButton.id}"]`)
@@ -280,11 +301,13 @@ export class ContextualToolbar {
       pickerContainer.style.top = `-${pickerClientRect.height + 12}px`
       pickerContainer.classList.remove('bottom')
     }
+
     // timeout the fading animation to make sure that the element is visible
     setTimeout(() => {
       pickerContainer.style.opacity = '1'
     }, 0)
   }
+
   /**
    * Closes all picker containers except for the given elements.
    * @param exceptToggleButton The container toggle that should not be closed.
@@ -298,6 +321,7 @@ export class ContextualToolbar {
         btn.checked = false
       }
     }
+
     const pickerContainers = document.querySelectorAll('.picker-container')
     for (let i = 0; i < pickerContainers.length; i++) {
       const container = pickerContainers[i]
@@ -309,18 +333,21 @@ export class ContextualToolbar {
       }
     }
   }
+
   /**
    * Returns an array of the currently selected edges.
    */
   getSelectedEdges() {
     return this.selectedItems.filter((item) => item instanceof IEdge)
   }
+
   /**
    * Returns an array of the currently selected nodes.
    */
   getSelectedNodes() {
     return this.selectedItems.filter((item) => item instanceof INode)
   }
+
   /**
    * Returns an array of the currently selected labels.
    */
@@ -335,6 +362,7 @@ export class ContextualToolbar {
     }
     return labels
   }
+
   /**
    * Shows or hides the user interface elements for the different item types depending on the current selection.
    */
@@ -364,6 +392,7 @@ export class ContextualToolbar {
       edgeUI.style.display = 'none'
     }
   }
+
   /**
    * Updates the label controls depending on the selection.
    * If multiple labels are selected, we just take the state of the first label, for simplicity.
@@ -380,23 +409,30 @@ export class ContextualToolbar {
       fontUnderlineToggle.checked = font.textDecoration === TextDecorations.UNDERLINE
     }
   }
+
   /**
    * Makes this toolbar visible near the given items.
    */
   show() {
     clearTimeout(this.hideTimer)
     this.container.style.display = 'block'
+
     // we hide the picker containers such that we don't need to update their position if new elements are added to
     // the toolbar
     this.hideAllPickerContainer()
+
     // show hide UI for nodes and/or labels
     this.updateItemUI()
+
     // maybe initialize some label UI elements to match the current label style
     this.updateLabelControlState()
+
     // place the contextual toolbar
     this.updateLocation()
+
     this.container.style.opacity = '1'
   }
+
   /**
    * Hides this toolbar.
    */
@@ -409,6 +445,7 @@ export class ContextualToolbar {
       this.container.style.display = 'none'
     }, 300)
   }
+
   /**
    * Changes the location of toolbar to the location calculated by a label model parameter.
    * Depending on the selection, either an edge specific label model is used, or a node label model
@@ -421,25 +458,27 @@ export class ContextualToolbar {
     const width = this.container.clientWidth
     const height = this.container.clientHeight
     const zoom = this.graphComponent.zoom
+
     let dummyOwner
     let labelModelParameter
+
     if (this.containsEdges && !this.containsNodes) {
       // if only edges are selected, we want to use the first edge as position reference
       dummyOwner = this.selectedItems.find((item) => item instanceof IEdge)
       labelModelParameter = this.edgeLabelModelParameter
     } else {
       // if nodes and edges are selected, we use the union of the node's bounding boxes as position reference
-      dummyOwner = new SimpleNode({
-        layout: this.getEnclosingRect()
-      })
+      dummyOwner = new SimpleNode({ layout: this.getEnclosingRect() })
       labelModelParameter = this.nodeLabelModelParameter
     }
+
     // create a dummy label to let the LabelModelParameter compute the correct location
     const dummyLabel = new SimpleLabel(dummyOwner, '', labelModelParameter)
     dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
     const newLayout = labelModelParameter.model.getGeometry(dummyLabel, labelModelParameter)
     this.setLocation(newLayout.anchorX, newLayout.anchorY - (height + 10) / zoom, width, height)
   }
+
   /**
    * Returns the union rectangle of the selected nodes and labels.
    */
@@ -454,6 +493,7 @@ export class ContextualToolbar {
     }
     return enclosingRect
   }
+
   /**
    * Sets the location of this pop-up to the given world coordinates.
    * @param x The target x-coordinate of the toolbar
@@ -471,6 +511,7 @@ export class ContextualToolbar {
     this.container.style.left = `${left}px`
     this.container.style.top = `${top}px`
   }
+
   /**
    * Adds listeners for graph changes, to update the location or state of the toolbar accordingly.
    */
@@ -499,6 +540,7 @@ export class ContextualToolbar {
     )
     this.graphComponent.clipboard.addEventListener('items-cut', () => this.hide())
   }
+
   /**
    * Wire up the functions of the contextual toolbar.
    */
@@ -536,27 +578,32 @@ export class ContextualToolbar {
       pickerContainer.classList.add('target')
       this.showPickerContainer(e)
     })
+
     for (const button of document.querySelectorAll('#color-picker-colors > button')) {
       button.addEventListener('click', () => {
         const color = button.getAttribute('data-color')
         this.applyNodeStyle(color)
       })
     }
+
     for (const button of document.querySelectorAll('#font-color-picker-colors > button')) {
       button.addEventListener('click', () => {
         const color = button.getAttribute('data-color')
         this.applyFontStyle({}, color)
       })
     }
+
     for (const button of document.querySelectorAll('#shape-picker-shapes > button')) {
       button.addEventListener('click', () => {
         const shape = button.getAttribute('data-shape')
         this.applyNodeStyle(null, shape)
       })
     }
+
     document
       .querySelector('#quick-element-creation')
       ?.addEventListener('click', () => this.createConnectedNode())
+
     for (const button of document.querySelectorAll('#arrow-picker-types > button')) {
       button.addEventListener('click', () => {
         const arrowType = button.getAttribute('data-type')
@@ -568,12 +615,14 @@ export class ContextualToolbar {
         }
       })
     }
+
     for (const button of document.querySelectorAll('#edge-colors > button')) {
       button.addEventListener('click', () => {
         const color = button.getAttribute('data-color')
         this.applyEdgeStyle(color)
       })
     }
+
     document.querySelector('#font-bold')?.addEventListener('click', (e) => {
       this.hideAllPickerContainer()
       const target = e.target
@@ -603,6 +652,7 @@ export class ContextualToolbar {
       this.hideAllPickerContainer()
       this.changeFontSize(true)
     })
+
     const inputMode = this.graphComponent.inputMode
     document.querySelector('#cut-button')?.addEventListener('click', () => inputMode.cut())
     document
@@ -611,6 +661,7 @@ export class ContextualToolbar {
     document
       .querySelector('#delete-button')
       ?.addEventListener('click', () => inputMode.deleteSelection())
+
     // we don't use the bindYFilesCommand helper for some buttons, because we want to close the picker container after the
     // command was executed
     const pasteButton = document.querySelector('#paste-button')
@@ -621,6 +672,7 @@ export class ContextualToolbar {
         this.hideAllPickerContainer()
       }
     })
+
     clipboard.addEventListener('items-cut', () => {
       if (this.graphComponent.clipboard.isEmpty) {
         pasteButton.setAttribute('disabled', 'disabled')
@@ -628,6 +680,7 @@ export class ContextualToolbar {
         pasteButton.removeAttribute('disabled')
       }
     })
+
     clipboard.addEventListener('items-copied', () => {
       if (this.graphComponent.clipboard.isEmpty) {
         pasteButton.setAttribute('disabled', 'disabled')
@@ -635,6 +688,7 @@ export class ContextualToolbar {
         pasteButton.removeAttribute('disabled')
       }
     })
+
     const copyButton = document.querySelector('#copy-button')
     copyButton.addEventListener('click', () => {
       inputMode.copy()

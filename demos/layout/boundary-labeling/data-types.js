@@ -40,12 +40,14 @@ export var MultiPageNodeType
    */
   MultiPageNodeType[(MultiPageNodeType['LABEL'] = 1)] = 'LABEL'
 })(MultiPageNodeType || (MultiPageNodeType = {}))
+
 /**
  * Returns the data associated with the given node.
  */
 export function getPointData(node) {
   return node.tag
 }
+
 /**
  * Returns whether the given node represents a label node.
  */

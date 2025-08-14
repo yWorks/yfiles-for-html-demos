@@ -89,7 +89,7 @@ let layoutGridVisualCreator: LayoutGridVisualCreator | null
 let layoutGridVisualObject: IRenderTreeElement
 
 /**
- * The Partition Grid
+ * The Layout Grid
  */
 let layoutGrid: LayoutGrid
 
@@ -159,10 +159,7 @@ async function run(): Promise<void> {
 function initializeGraph(graph: IGraph): void {
   // set the default style for nodes, this style refers to the nodes without grid restrictions
   graph.nodeDefaults.size = new Size(30, 30)
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'lightgray',
-    stroke: null
-  })
+  graph.nodeDefaults.style = new ShapeNodeStyle({ fill: 'lightgray', stroke: null })
   graph.nodeDefaults.shareStyleInstance = false
 
   // set the default styles for group nodes
@@ -235,10 +232,7 @@ function initializeStyleAndTag(graph: IGraph): void {
       continue
     }
 
-    node.tag = {
-      columnIndex: node.tag.column,
-      rowIndex: node.tag.row
-    }
+    node.tag = { columnIndex: node.tag.column, rowIndex: node.tag.row }
 
     // check if the given node is assigned to a layout grid cell ...
     if (hasActiveRestrictions(node)) {
@@ -292,10 +286,7 @@ function configureUserInteraction(): void {
       // if a node is created, we have to determine the column/row indices based on the position where the node is
       // created
       const cellId = determineCellIndex(node.layout.center)
-      node.tag = {
-        rowIndex: cellId.rowIndex,
-        columnIndex: cellId.columnIndex
-      }
+      node.tag = { rowIndex: cellId.rowIndex, columnIndex: cellId.columnIndex }
     } else {
       graph.addLabel(node, 'Group')
     }
@@ -317,10 +308,7 @@ function configureUserInteraction(): void {
   inputMode.addEventListener('deleting-selection', (evt) => {
     for (const item of evt.selection) {
       if (item instanceof INode) {
-        item.tag = {
-          rowIndex: -1,
-          columnIndex: -1
-        }
+        item.tag = { rowIndex: -1, columnIndex: -1 }
       }
     }
   })
@@ -380,7 +368,7 @@ async function onDragFinished(_evt: InputModeEventArgs, moveInputMode: MoveInput
 }
 
 /**
- * Updates the partition cell indices for the given node only if it has active restrictions.
+ * Updates the layout grid cell indices for the given node only if it has active restrictions.
  * @param node The node to be examined
  */
 function updateNodeRestrictions(node: INode): void {
@@ -390,10 +378,7 @@ function updateNodeRestrictions(node: INode): void {
   // some offsets to be used when the rect lies on the border of two columns/rows
   const cellId = determineCellIndex(node.layout.center)
   // remove the node from the columns/rows' mapping before the last movement
-  node.tag = {
-    rowIndex: cellId.rowIndex,
-    columnIndex: cellId.columnIndex
-  }
+  node.tag = { rowIndex: cellId.rowIndex, columnIndex: cellId.columnIndex }
 }
 
 /**
@@ -613,10 +598,7 @@ function determineCellIndex(point: Point): CellId {
       }
     })
   }
-  return {
-    rowIndex,
-    columnIndex
-  }
+  return { rowIndex, columnIndex }
 }
 
 /**
@@ -659,10 +641,10 @@ function adjustGraphComponentBounds(): void {
 }
 
 /**
- * Returns a partition cell for the given node if it has valid row/column indices or
+ * Returns a layout grid cell for the given node if it has valid row/column indices or
  * `null` otherwise.
  * @param node The given node to create the cell id for
- * @returns A partition cell for the given node if it has valid row/column indices
+ * @returns A layout grid cell for the given node if it has valid row/column indices
  * or `null` otherwise
  */
 function createNodeCellId(node: INode): LayoutGridCellDescriptor | null {
@@ -673,12 +655,12 @@ function createNodeCellId(node: INode): LayoutGridCellDescriptor | null {
 }
 
 /**
- * Returns a partition cell for the given group node if any of its descendants has a valid
- * partition cell id or
+ * Returns a layout grid cell for the given group node if any of its descendants has a valid
+ * layout grid cell id or
  * `null` otherwise.
  * @param node The group node to create the cell id for
- * @returns A partition cell id for the given group node if any of its descendants
- * has a valid partition cell id or `null` otherwise
+ * @returns A layout grid cell id for the given group node if any of its descendants
+ * has a valid layout grid cell id or `null` otherwise
  */
 function getGroupNodeCellId(node: INode): LayoutGridCellDescriptor | null {
   const graph = graphComponent.graph
@@ -705,7 +687,7 @@ function getGroupNodeCellId(node: INode): LayoutGridCellDescriptor | null {
     // at least one row and one column is specified by the children and should be spanned by this group node
     return layoutGrid.createCellSpanDescriptor(rowSet, columnSet)
   }
-  // otherwise the group node doesn't span any partition cells
+  // otherwise the group node doesn't span any layout grid cells
   return null
 }
 
@@ -782,7 +764,7 @@ function createLayoutGridDescriptors(): ((node: INode) => LayoutGridCellDescript
         // this means the group node will be adjusted to contain its children but has no specific assignment to cells
         return null
       }
-      // the group nodes has children whose partition cells shall be spanned so a spanning PartitionCellId is
+      // the group nodes has children whose layout grid cells shall be spanned so a spanning cell id is
       // created that contains all rows/column of its child nodes.
       return getGroupNodeCellId(node)
     }
@@ -915,10 +897,7 @@ function removeRow(selectedIndex: number): void {
       for (const node of nodes.slice(0)) {
         const columnIndex = i === selectedIndex ? -1 : node.tag.columnIndex
         const rowIndex = i === selectedIndex ? -1 : node.tag.rowIndex - 1
-        node.tag = {
-          columnIndex,
-          rowIndex
-        }
+        node.tag = { columnIndex, rowIndex }
       }
     }
   }
@@ -940,10 +919,7 @@ function removeColumn(selectedIndex: number): void {
       for (const node of nodes.slice(0)) {
         const columnIndex = i === selectedIndex ? -1 : node.tag.columnIndex - 1
         const rowIndex = i === selectedIndex ? -1 : node.tag.rowIndex
-        node.tag = {
-          columnIndex,
-          rowIndex
-        }
+        node.tag = { columnIndex, rowIndex }
       }
     }
   }
@@ -1056,10 +1032,7 @@ function getFirstChildActiveRestriction(groupNode: INode): CellId {
       return { rowIndex: descendant.tag.rowIndex, columnIndex: descendant.tag.columnIndex }
     }
   }
-  return {
-    rowIndex: -1,
-    columnIndex: -1
-  }
+  return { rowIndex: -1, columnIndex: -1 }
 }
 
 /**
@@ -1083,10 +1056,7 @@ async function removeRestrictions(): Promise<void> {
   const graph = graphComponent.graph
   for (const node of graphComponent.selection.nodes) {
     if (!graph.isGroupNode(node)) {
-      node.tag = {
-        columnIndex: -1,
-        rowIndex: -1
-      }
+      node.tag = { columnIndex: -1, rowIndex: -1 }
     }
   }
   updateToolbar()
@@ -1127,10 +1097,7 @@ async function addRestrictions(): Promise<void> {
       const cellId = determineCellIndex(node.layout.center)
       const columnIndex = cellId.columnIndex
       const rowIndex = cellId.rowIndex
-      node.tag = {
-        columnIndex,
-        rowIndex
-      }
+      node.tag = { columnIndex, rowIndex }
     }
   }
   updateToolbar()
@@ -1188,7 +1155,7 @@ class CustomLayoutExecutor extends LayoutExecutor {
   createLayoutAnimation(): any {
     const graphMorphAnimation = super.createLayoutAnimation()
     if (layoutGridVisualCreator) {
-      // we want to animate the graph itself as well as the partition
+      // we want to animate the graph itself as well as the layout
       // grid visualization, so we use a parallel animation:
       return IAnimation.createParallelAnimation([graphMorphAnimation, layoutGridVisualCreator])
     }

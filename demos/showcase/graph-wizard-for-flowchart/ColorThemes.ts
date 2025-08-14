@@ -30,12 +30,7 @@
  * A set of colors for the fill and outline color of a node style as well as the text and background
  * fill of its labels.
  */
-export type ColorSet = {
-  fill: string
-  outline: string
-  labelFill: string
-  labelText: string
-}
+export type ColorSet = { fill: string; outline: string; labelFill: string; labelText: string }
 
 /**
  * Themes of {@link ColorSet color sets} suiting each other.

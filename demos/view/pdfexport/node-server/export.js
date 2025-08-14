@@ -36,9 +36,7 @@ async function exportPdf(svg, w, h, margin, paperSize) {
 
   const browser = await puppeteer.launch({ headless: 'new' })
   const page = await browser.newPage()
-  await page.goto(path.join(__dirname, 'index.html'), {
-    waitUntil: 'domcontentloaded'
-  })
+  await page.goto(path.join(__dirname, 'index.html'), { waitUntil: 'domcontentloaded' })
 
   try {
     await page.evaluate(
@@ -55,12 +53,7 @@ async function exportPdf(svg, w, h, margin, paperSize) {
   }
 
   const pdfConfig = {
-    margin: {
-      top: `${margin}px`,
-      bottom: `${margin}px`,
-      left: `${margin}px`,
-      right: `${margin}px`
-    }
+    margin: { top: `${margin}px`, bottom: `${margin}px`, left: `${margin}px`, right: `${margin}px` }
   }
 
   if (paperSize) {

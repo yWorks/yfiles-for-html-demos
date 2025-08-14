@@ -92,9 +92,12 @@ import {
   initDemoStyles
 } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+import {
+  addNavigationButtons,
+  BrowserDetection,
+  finishLoading
+} from '@yfiles/demo-resources/demo-page'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 /**
@@ -954,10 +957,7 @@ function createEditorMode(): IInputMode {
       // initially disable the orthogonal edge editing
       enabled: false
     }),
-    navigationInputMode: {
-      allowCollapseGroup: false,
-      allowExpandGroup: false
-    }
+    navigationInputMode: { allowCollapseGroup: false, allowExpandGroup: false }
   })
 
   // make bend creation more important than moving of selected edges

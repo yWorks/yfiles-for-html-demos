@@ -1,6 +1,6 @@
 {
   "name": "@yfiles/demo-resources-ts",
-  "version": "30.0.2",
+  "version": "30.0.3",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
@@ -12,6 +12,14 @@
     "./tutorial.css": "./style/tutorial.css"
   },
   "dependencies": {
-    "@yfiles/yfiles": "^30.0.2+dev"
+    "@yfiles/yfiles": "^30.0.3+dev",
+    "@codemirror/legacy-modes": "^6.5.0",
+    "@codemirror/lang-css": "^6.3.0",
+    "@codemirror/lang-javascript": "^6.2.0",
+    "@codemirror/lang-json": "^6.0.0",
+    "@codemirror/lang-xml": "^6.1.0",
+    "codemirror": "^6.0.2",
+    "fast-xml-parser": "^5.2.0",
+    "postcss": "^8.5.0"
   }
 }

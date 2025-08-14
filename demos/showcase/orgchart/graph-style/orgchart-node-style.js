@@ -27,19 +27,23 @@
  **
  ***************************************************************************/
 import { createLitNodeStyleFromSource } from '@yfiles/demo-utils/LitNodeStyle'
+
 /**
  * Creates a new {@link Vue2NodeStyle} with a template that shows more details on higher
  * zoom levels and fewer details on lower zoom levels.
  */
 export function createOrgChartNodeStyle(graphComponent, nodeSize) {
   const nodeStyle = createLitNodeStyleFromSource(nodeStyleTemplate)
+
   // create the drop shadow element only once
   const defsElement = graphComponent.svgDefsManager.defs
   if (!defsElement.querySelector('#node-dropshadow')) {
     defsElement.appendChild(createDropShadowElement(nodeSize))
   }
+
   return nodeStyle
 }
+
 const nodeStyleTemplate = `({ layout, tag, selected, zoom }) => {
   function formatPosition(position, maxLength) {
     if (!position || position.length <= maxLength) {
@@ -95,6 +99,7 @@ const nodeStyleTemplate = `({ layout, tag, selected, zoom }) => {
     \`}
   </g>
 \`}`
+
 /**
  * Creates the drop shadow element for the nodes.
  */
@@ -120,6 +125,7 @@ function createDropShadowElement(nodeSize) {
   image.setAttribute('id', 'node-dropshadow')
   return image
 }
+
 /**
  * Helper function to draw a round rectangle on a given canvas context.
  */

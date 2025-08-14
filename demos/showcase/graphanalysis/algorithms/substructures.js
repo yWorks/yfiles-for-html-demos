@@ -34,6 +34,7 @@ import {
   TreeSubstructures
 } from '@yfiles/yfiles'
 import { markItem } from './algorithms'
+
 /**
  * Description of the algorithm which determines chain substructures in the graph.
  */
@@ -43,6 +44,7 @@ export const chainsSubstructuresDescription = `
   <p>If the algorithm is configured to take edge directedness into account, <em>all</em>
   edges along the path must point into the <em>same</em> direction, i.e. if the edge
   directions alter along the path, the path is not recognized as a chain substructure.</p>`
+
 /**
  * Calculates the chain substructures in the graph in the given graph.
  */
@@ -52,6 +54,7 @@ export function calculateChainSubstructures(graph, config) {
     edgeDirectedness: config.directed ? 1 : 0
   })
   const substructures = chainSubstructures.run(graph)
+
   substructures.chains.forEach((chain, chainIndex) => {
     chain.nodes.forEach((node) => {
       markItem(node, chainIndex)
@@ -61,6 +64,7 @@ export function calculateChainSubstructures(graph, config) {
     })
   })
 }
+
 /**
  * Description of the algorithm which determines cycle substructures in the graph.
  */
@@ -72,6 +76,7 @@ export const cycleSubstructuresDescription = `
   <p>If the algorithm is configured to take edge directedness into account <em>all</em>
   edges along the path must point into the <em>same</em> direction, i.e. if the edge
   directions alter along the path, the path is not recognized as a cycle substructure.</p>`
+
 /**
  * Calculates the cycle substructures in the graph in the given graph.
  */
@@ -81,6 +86,7 @@ export function calculateCycleSubstructures(graph, config) {
     edgeDirectedness: config.directed ? 1 : 0
   })
   const substructures = cycleSubstructures.run(graph)
+
   substructures.cycles.forEach((cycle, cycleIndex) => {
     cycle.nodes.forEach((node) => {
       markItem(node, cycleIndex)
@@ -90,6 +96,7 @@ export function calculateCycleSubstructures(graph, config) {
     })
   })
 }
+
 /**
  * Description of the algorithm which determines star substructures in the graph.
  */
@@ -99,6 +106,7 @@ export const starSubstructuresDescription = `
   <p>If edge directedness is taken into account, <em>all</em> edges must either point away from
   or towards the root node. If for a root node there are differing edge directions present
   the algorithm returns the largest star for the root node.</p>`
+
 /**
  * Calculates the star substructures in the graph in the given graph.
  */
@@ -108,6 +116,7 @@ export function calculateStarSubstructures(graph, config) {
     edgeDirectedness: config.directed ? 1 : 0
   })
   const substructures = starSubstructures.run(graph)
+
   substructures.stars.forEach((star, starIndex) => {
     star.nodes.forEach((node) => {
       markItem(node, starIndex)
@@ -117,6 +126,7 @@ export function calculateStarSubstructures(graph, config) {
     })
   })
 }
+
 /**
  * Description of the algorithm which determines tree substructures in the graph.
  */
@@ -125,6 +135,7 @@ export const treeSubstructuresDescription = `
   <p>The root of a tree is the only node which may have non-tree edges.</p>
   <p>If edge directedness is taken into account, all edges along the tree
   substructure must point into the same direction, i.e. from the root to the leafs.</p>`
+
 /**
  * Calculates the tree substructures in the graph in the given graph.
  */
@@ -134,6 +145,7 @@ export function calculateTreeSubstructures(graph, config) {
     edgeDirectedness: config.directed ? 1 : 0
   })
   const substructures = treeSubstructures.run(graph)
+
   substructures.trees.forEach((tree, treeIndex) => {
     tree.nodes.forEach((node) => {
       markItem(node, treeIndex)
@@ -143,6 +155,7 @@ export function calculateTreeSubstructures(graph, config) {
     })
   })
 }
+
 /**
  * Description of the algorithm which determines clique substructures in the graph.
  */
@@ -152,14 +165,14 @@ export const cliquesSubstructuresDescription = `
   <p>Note that finding a maximum clique is NP-hard. Hence, only a simple heuristic approach
   that does not guarantee to find all/the largest clique(s) is used.</p>
   <p>A node can only be contained in a single clique, i.e. the returned cliques are non-overlapping.</p>`
+
 /**
  * Calculates the clique substructures in the graph in the given graph.
  */
 export function calculateCliqueSubstructures(graph) {
-  const cliqueSubstructures = new CliqueSubstructures({
-    minimumSize: 2
-  })
+  const cliqueSubstructures = new CliqueSubstructures({ minimumSize: 2 })
   const substructures = cliqueSubstructures.run(graph)
+
   substructures.cliques.forEach((clique, cliqueIndex) => {
     clique.nodes.forEach((node) => {
       markItem(node, cliqueIndex)

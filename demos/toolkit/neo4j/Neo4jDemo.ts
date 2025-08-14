@@ -58,15 +58,13 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 
-import { basicSetup, EditorView } from 'codemirror'
-import { cypher } from '@codemirror/legacy-modes/mode/cypher'
-import { StreamLanguage } from '@codemirror/language'
 import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { createGraphBuilder } from './Neo4jGraphBuilder'
 import type { Neo4jRecord, Node, Relationship, Result } from './Neo4jUtil'
 import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading, showLoadingIndicator } from '@yfiles/demo-resources/demo-page'
+import { createCodemirrorEditor, EditorView } from '@yfiles/demo-resources/codemirror-editor'
 
 let editor: EditorView
 
@@ -147,10 +145,7 @@ function initializeHighlighting(): void {
     margins: 5
   })
 
-  const dummyCroppingArrow = new Arrow({
-    type: ArrowType.NONE,
-    cropLength: 5
-  })
+  const dummyCroppingArrow = new Arrow({ type: ArrowType.NONE, cropLength: 5 })
   const edgeStyleHighlight = new EdgeStyleIndicatorRenderer({
     edgeStyle: new PolylineEdgeStyle({
       stroke: orangeStroke,
@@ -452,11 +447,11 @@ function initializeUI(): void {
   )
 
   // create cypher query editor
-  const editorContainer = document.querySelector<HTMLTextAreaElement>('#queryEditorContainer')!
-  editor = new EditorView({
-    parent: editorContainer,
-    extensions: [basicSetup, StreamLanguage.define(cypher)]
-  })
+
+  editor = createCodemirrorEditor(
+    'cypher',
+    document.querySelector<HTMLTextAreaElement>('#queryEditorContainer')!
+  )
   editor.dispatch({
     changes: {
       from: 0,

@@ -162,20 +162,20 @@ function initializeToggleAggregation(): void {
     clickableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
     focusableItems: GraphItemTypes.NODE
   })
-  graphViewerInputMode.addEventListener('item-clicked', (evt) => {
+  graphViewerInputMode.addEventListener('item-clicked', async (evt) => {
     if (!(evt.item instanceof INode)) {
       return
     }
     // prevent default behavior, which would select nodes that are no longer in the graph
     evt.handled = true
 
-    toggleAggregationNode(evt.item)
+    await toggleAggregationNode(evt.item)
   })
   graphComponent.inputMode = graphViewerInputMode
 
-  graphComponent.addEventListener('key-up', (evt) => {
+  graphComponent.addEventListener('key-up', async (evt) => {
     if (evt.key === 'Enter') {
-      toggleAggregationNode(graphComponent.currentItem as INode)
+      await toggleAggregationNode(graphComponent.currentItem as INode)
     }
   })
   graphComponent.addEventListener('current-item-changed', () => {
@@ -186,7 +186,7 @@ function initializeToggleAggregation(): void {
 /**
  * Toggles the aggregation of a node, runs a layout and sets the current item.
  */
-function toggleAggregationNode(node: INode): void {
+async function toggleAggregationNode(node: INode): Promise<void> {
   if (!aggregationHelper.aggregateGraph.isAggregationItem(node)) {
     // is an original node -> only set current item
     graphComponent.currentItem = node
@@ -200,7 +200,9 @@ function toggleAggregationNode(node: INode): void {
   graphComponent.currentItem = affectedNodes.first()
 
   // run layout
-  runLayoutOnHierarchyView(affectedNodes)
+  await setUiDisabled(true)
+  await runLayoutOnHierarchyView(affectedNodes)
+  await setUiDisabled(false)
 }
 
 /**
@@ -333,11 +335,7 @@ function initializeHighlightStyles(): void {
 
   // nodes should be given a rectangular orange rectangle highlight shape
   const highlightNodeStyle = new NodeStyleIndicatorRenderer({
-    nodeStyle: new ShapeNodeStyle({
-      shape: ShapeNodeShape.ELLIPSE,
-      stroke: orangePen,
-      fill: null
-    }),
+    nodeStyle: new ShapeNodeStyle({ shape: ShapeNodeShape.ELLIPSE, stroke: orangePen, fill: null }),
     margins: 5
   })
   graphComponent.graph.decorator.nodes.focusRenderer.addConstant(
@@ -352,10 +350,7 @@ function initializeHighlightStyles(): void {
   )
 
   // a similar style for the edges, however cropped by the highlight's insets
-  const dummyCroppingArrow = new Arrow({
-    type: ArrowType.NONE,
-    cropLength: 5
-  })
+  const dummyCroppingArrow = new Arrow({ type: ArrowType.NONE, cropLength: 5 })
   const highlightEdgeStyle = new EdgeStyleIndicatorRenderer({
     edgeStyle: new BezierEdgeStyle({
       stroke: orangePen,
@@ -389,6 +384,7 @@ async function runAggregation(): Promise<void> {
  */
 async function switchView(): Promise<void> {
   const switchViewButton = document.querySelector<HTMLButtonElement>('#switch-view')!
+  await setUiDisabled(true)
   if (graphComponent.graph instanceof AggregationGraphWrapper) {
     graphComponent.graph = createFilteredView()
     await runCircularLayout()
@@ -398,6 +394,7 @@ async function switchView(): Promise<void> {
     await runLayoutOnHierarchyView()
     switchViewButton.innerText = 'Switch To Filtered View'
   }
+  await setUiDisabled(false)
 }
 
 /**
@@ -521,10 +518,7 @@ async function runRadialTreeLayout(affectedNodes?: IEnumerable<INode>): Promise<
   const treeReductionStageData = new TreeReductionStageData({
     nonTreeEdges: nonTreeEdges,
     edgeBundleDescriptors: (edge: IEdge): EdgeBundleDescriptor => {
-      return new EdgeBundleDescriptor({
-        bundled: nonTreeEdges.includes(edge),
-        bezierFitting: true
-      })
+      return new EdgeBundleDescriptor({ bundled: nonTreeEdges.includes(edge), bezierFitting: true })
     }
   })
 
@@ -640,9 +634,7 @@ class CustomRadialGroupLayoutStage extends LayoutStageBase {
       preferredRootSectorAngle: 360,
       nodeLabelPlacement: 'ray-like-leaves',
       // ... configure bundling
-      edgeBundling: {
-        defaultBundleDescriptor: { bundled: true, bezierFitting: true }
-      }
+      edgeBundling: { defaultBundleDescriptor: { bundled: true, bezierFitting: true } }
     })
 
     const radialGroupLayoutData = radialGroup.createLayoutData(graph)
@@ -778,10 +770,7 @@ function initializeStyles(): void {
     stroke: 'dashed #00000073',
     targetArrow: new Arrow({ type: ArrowType.OPEN, stroke: '#00000073' })
   })
-  descendantLabelStyle = new LabelStyle({
-    textFill: '#00000080',
-    textSize: 10
-  })
+  descendantLabelStyle = new LabelStyle({ textFill: '#00000080', textSize: 10 })
 }
 
 /**
@@ -805,6 +794,7 @@ function switchHierarchyEdgeVisibility(graph: IGraph, visible: boolean) {
  */
 function setUiDisabled(disabled: boolean): Promise<void> {
   return new Promise<void>((resolve) => {
+    document.querySelector<HTMLSelectElement>('#layout-style-select')!.disabled = disabled
     document.querySelector<HTMLElement>('#calculating-indicator')!.style.display = !disabled
       ? 'none'
       : 'block'
@@ -845,22 +835,13 @@ function loadGraph(graph: IGraph): IGraph {
   nodeStyle.normalizedOutline = outline
   graph.nodeDefaults.style = nodeStyle
 
-  graph.nodeDefaults.labels.style = new LabelStyle({
-    textFill: '#4b4b4b',
-    textSize: 10
-  })
-  graph.edgeDefaults.style = new BezierEdgeStyle({
-    stroke: '#696969'
-  })
+  graph.nodeDefaults.labels.style = new LabelStyle({ textFill: '#4b4b4b', textSize: 10 })
+  graph.edgeDefaults.style = new BezierEdgeStyle({ stroke: '#696969' })
   graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.CENTER
 
   // build the graph from json-data
   const graphBuilder = new GraphBuilder(graph)
-  graphBuilder.createNodesSource({
-    data: SampleGraph.nodes,
-    id: 'id',
-    labels: ['l']
-  })
+  graphBuilder.createNodesSource({ data: SampleGraph.nodes, id: 'id', labels: ['l'] })
   graphBuilder.createEdgesSource(SampleGraph.edges, 's', 't', 'id')
 
   return graphBuilder.buildGraph()
@@ -924,7 +905,7 @@ class ZoomToNodesLayoutExecutor extends LayoutExecutor {
       throw new Error('Cannot zoom to nodes that are not in the graph')
     }
     const layoutNodes = this.nodes.map((node) => this.adapter!.getLayoutNode(node)!)
-    const bounds = this.adapter!.layoutGraph.getBounds(layoutNodes)
+    const bounds = this.adapter!.layoutGraph.getBounds(layoutNodes, [])
 
     const viewportAnimation = new ViewportAnimation(
       this.graphComponent,

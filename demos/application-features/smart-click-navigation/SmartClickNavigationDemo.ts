@@ -88,22 +88,8 @@ async function run(): Promise<void> {
 function createSampleGraph(): void {
   const builder = new GraphBuilder({
     graph: graphComponent.graph,
-    nodes: [
-      {
-        data: GraphBuilderData.nodes,
-        id: 'id',
-        layout: 'layout',
-        labels: ['label']
-      }
-    ],
-    edges: [
-      {
-        data: GraphBuilderData.edges,
-        sourceId: 'source',
-        targetId: 'target',
-        id: 'id'
-      }
-    ]
+    nodes: [{ data: GraphBuilderData.nodes, id: 'id', layout: 'layout', labels: ['label'] }],
+    edges: [{ data: GraphBuilderData.edges, sourceId: 'source', targetId: 'target', id: 'id' }]
   })
 
   builder.buildGraph()
@@ -127,9 +113,7 @@ function initHighlightingStyle(graphComponent: GraphComponent): void {
 
   const edgeHighlightStyle = new EdgeStyleIndicatorRenderer({
     // We choose a shape node style
-    edgeStyle: new PolylineEdgeStyle({
-      stroke: '3px #621B00'
-    })
+    edgeStyle: new PolylineEdgeStyle({ stroke: '3px #621B00' })
   })
   graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(nodeHighlightStyle)
   graphComponent.graph.decorator.edges.highlightRenderer.addConstant(edgeHighlightStyle)

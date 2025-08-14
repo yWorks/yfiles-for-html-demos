@@ -27,10 +27,9 @@ protected getBounds(context: ICanvasContext, node: INode): Rect {
   // Do we even have a badge?
   if (tag?.showBadge) {
     // If so, return a rectangle that's larger to the left and top
-    return node.layout.toRect().getEnlarged({
-      left: badgeRadius,
-      top: badgeRadius
-    })
+    return node.layout
+      .toRect()
+      .getEnlarged({ left: badgeRadius, top: badgeRadius })
   }
   return node.layout.toRect()
 }

@@ -56,9 +56,7 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
 
   // the RecursiveGroupLayout can use a core layout algorithm to arrange the top level hierarchy
   const coreLayout = new HierarchicalLayout()
-  const layout = new RecursiveGroupLayout({
-    coreLayout
-  })
+  const layout = new RecursiveGroupLayout({ coreLayout })
 
   // assign a layout algorithm to each group node
   const mapper = new Mapper<INode, ILayoutAlgorithm>()

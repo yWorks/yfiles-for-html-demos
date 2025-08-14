@@ -40,22 +40,34 @@ import {
 } from '../common'
 import { CustomNodeStyle } from './CustomNodeStyle'
 import { CustomNodeStyle as OldCustomNodeStyle } from '../06-render-text/CustomNodeStyle'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
+
 graphComponent.graph.nodeDefaults.style = new CustomNodeStyle()
+
 createSampleGraphGetBounds(graphComponent.graph)
+
 enableGraphEditing(graphComponent)
 configureMinimumSize(graphComponent)
+
 fitGraphBounds(graphComponent)
 graphComponent.renderTree.createElement(
   graphComponent.renderTree.inputModeGroup,
   new BoundsVisual()
 )
+
 // Inline old state
 const oldState = initializeInlineGraphComponent('#old-state')
 oldState.graph.nodeDefaults.style = new OldCustomNodeStyle()
+
 createSampleGraphGetBounds(oldState.graph)
+
 fitGraphBounds(oldState)
+
 oldState.renderTree.createElement(oldState.renderTree.inputModeGroup, new BoundsVisual())
+
 finishLoading()

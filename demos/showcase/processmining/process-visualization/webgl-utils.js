@@ -36,6 +36,7 @@ export class WebGLBufferData {
   DataType
   data = null
   attributeLocation = -1
+
   constructor(entryCount, pointerType, attributeName, elementSize, dataType) {
     this.entryCount = entryCount
     this.pointerType = pointerType
@@ -43,15 +44,14 @@ export class WebGLBufferData {
     this.elementSize = elementSize
     this.DataType = dataType
   }
+
   init(gl, program) {
     this.dirty = true
     this.buffer = gl.createBuffer()
     this.data = new this.DataType(this.elementSize * this.entryCount)
     this.attributeLocation = gl.getAttribLocation(program, this.attributeName)
   }
-  updateData() {
-    this.dirty = true
-  }
+
   enableRendering(renderContext, gl) {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
     if (this.dirty) {
@@ -61,9 +61,11 @@ export class WebGLBufferData {
     gl.enableVertexAttribArray(this.attributeLocation)
     gl.vertexAttribPointer(this.attributeLocation, this.elementSize, this.pointerType, false, 0, 0)
   }
+
   disableRendering(renderContext, gl) {
     gl.disableVertexAttribArray(this.attributeLocation)
   }
+
   dispose(gl, program) {
     gl.deleteBuffer(this.buffer)
     gl.deleteProgram(program)
@@ -72,13 +74,16 @@ export class WebGLBufferData {
     this.attributeLocation = -1
   }
 }
+
 export class WebGLProgramInfo {
   entryCount
   buffers
+
   constructor(entryCount) {
     this.entryCount = entryCount
     this.buffers = []
   }
+
   createFloatBuffer(attributeName, entrySize = 1) {
     const bufferData = new WebGLBufferData(
       this.entryCount,
@@ -90,21 +95,25 @@ export class WebGLProgramInfo {
     this.buffers.push(bufferData)
     return bufferData
   }
+
   init(gl, program) {
     for (const buffer of this.buffers) {
       buffer.init(gl, program)
     }
   }
+
   enableRendering(renderContext, gl) {
     for (const buffer of this.buffers) {
       buffer.enableRendering(renderContext, gl)
     }
   }
+
   disableRendering(renderContext, gl) {
     for (const buffer of this.buffers) {
       buffer.disableRendering(renderContext, gl)
     }
   }
+
   dispose(gl, program) {
     for (const buffer of this.buffers) {
       buffer.dispose(gl, program)

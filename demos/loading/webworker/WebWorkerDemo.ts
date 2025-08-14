@@ -52,9 +52,7 @@ const layoutButton = document.querySelector<HTMLButtonElement>('#run-layout')!
 let graphComponent: GraphComponent = null!
 
 let executor: LayoutExecutorAsync | null = null
-const worker = new Worker(new URL('./WorkerLayout', import.meta.url), {
-  type: 'module'
-})
+const worker = new Worker(new URL('./WorkerLayout', import.meta.url), { type: 'module' })
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -120,12 +118,7 @@ async function cancelWebWorkerLayout(): Promise<void> {
  * @returns The LayoutDescriptor for this layout
  */
 function createLayoutDescriptor(): LayoutDescriptor {
-  return {
-    name: 'HierarchicalLayout',
-    properties: {
-      nodeDistance: 50
-    }
-  }
+  return { name: 'HierarchicalLayout', properties: { nodeDistance: 50 } }
 }
 
 /**

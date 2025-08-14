@@ -46,10 +46,7 @@ import { finishLoading } from '@yfiles/demo-resources/demo-page'
 /**
  * Augment the GeneralPathNodeStyle type with the data used to create labels.
  */
-type CustomNodeStyle = {
-  style: GeneralPathNodeStyle
-  label: string
-}
+type CustomNodeStyle = { style: GeneralPathNodeStyle; label: string }
 
 /**
  * Bootstraps the demo.
@@ -293,10 +290,7 @@ function createCustomNodes(graph: IGraph): void {
   })
 
   // custom person icon
-  customNodeStyles.push({
-    style: createPersonNodeStyle('demo-blue'),
-    label: 'Shape: Person Icon'
-  })
+  customNodeStyles.push({ style: createPersonNodeStyle('demo-blue'), label: 'Shape: Person Icon' })
 
   // create a node for each style instance
   let x = 0

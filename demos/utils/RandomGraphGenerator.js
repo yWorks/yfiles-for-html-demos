@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { HashMap, IGraph, INode } from '@yfiles/yfiles'
+
 /**
  * A class that creates random graphs. The size of the graph and other options  may be specified.
  * These options influence the properties of the created graph.
@@ -59,6 +60,7 @@ export class RandomGraphGenerator {
    * does not contain multiple edges. By default disallowed.
    */
   allowMultipleEdges
+
   /**
    * Creates a new instance of RandomGraphGenerator.
    */
@@ -70,6 +72,7 @@ export class RandomGraphGenerator {
     this.allowCycles = config.$allowCycles || false
     this.allowMultipleEdges = config.$allowMultipleEdges || false
   }
+
   /**
    * Generates a new random graph that obeys the specified settings.
    */
@@ -86,6 +89,7 @@ export class RandomGraphGenerator {
       this.generateSparseGraph(graph)
     }
   }
+
   /**
    * Random graph generator in case multiple edges are allowed.
    */
@@ -93,15 +97,18 @@ export class RandomGraphGenerator {
     const n = this.nodeCount
     const m = this.edgeCount
     const index = new HashMap()
+
     const deg = new Array(n)
     const nodes = new Array(n)
     for (let i = 0; i < n; i++) {
       nodes[i] = this.createNode(graph)
       index.set(nodes[i], i)
     }
+
     for (let i = 0; i < m; i++) {
       deg[Math.floor(Math.random() * n)]++
     }
+
     for (let i = 0; i < n; i++) {
       const v = nodes[i]
       let d = deg[i]
@@ -114,6 +121,7 @@ export class RandomGraphGenerator {
         d--
       }
     }
+
     if (!this.allowCycles) {
       graph.edges.forEach((edge) => {
         const sourcePort = edge.sourcePort
@@ -124,19 +132,25 @@ export class RandomGraphGenerator {
       })
     }
   }
+
   /**
    * Random graph generator for dense graphs.
    */
   generateDenseGraph(graph) {
     graph.clear()
     const nodes = new Array(this.nodeCount)
+
     for (let i = 0; i < this.nodeCount; i++) {
       nodes[i] = this.createNode(graph)
     }
+
     permutate(nodes)
+
     const m = Math.min(this.getMaxEdges(), this.edgeCount)
     const n = this.nodeCount
+
     const adder = this.allowSelfLoops && this.allowCycles ? 0 : 1
+
     const edgeWanted = getBoolArray(this.getMaxEdges(), m)
     for (let i = 0, k = 0; i < n; i++) {
       for (let j = i + adder; j < n; j++, k++) {
@@ -150,31 +164,40 @@ export class RandomGraphGenerator {
       }
     }
   }
+
   /**
    * Random graph generator for sparse graphs.
    */
   generateSparseGraph(graph) {
     graph.clear()
     const index = new HashMap()
+
     const n = this.nodeCount
+
     const m = Math.min(this.getMaxEdges(), this.edgeCount)
+
     const nodes = new Array(n)
+
     for (let i = 0; i < n; i++) {
       nodes[i] = this.createNode(graph)
       index.set(nodes[i], i)
     }
+
     permutate(nodes)
+
     let count = m
     while (count > 0) {
       const vi = Math.floor(Math.random() * n)
       const v = nodes[vi]
       const w = nodes[Math.floor(Math.random() * n)]
+
       if (graph.getEdge(v, w) || (v === w && (!this.allowSelfLoops || !this.allowCycles))) {
         continue
       }
       graph.createEdge(v, w)
       count--
     }
+
     if (!this.allowCycles) {
       graph.edges.forEach((edge) => {
         const sourcePort = edge.sourcePort
@@ -185,12 +208,14 @@ export class RandomGraphGenerator {
       })
     }
   }
+
   /**
    * Creates a node
    */
   createNode(graph) {
     return this.nodeCreator(graph)
   }
+
   /**
    * Helper method that returns the maximum number of edges of a graph that still obeys the set structural
    * constraints.
@@ -206,6 +231,7 @@ export class RandomGraphGenerator {
     return maxEdges
   }
 }
+
 /**
  * Permutates the positions of the elements within the given array.
  */
@@ -225,12 +251,14 @@ function permutate(a) {
     a[j] = tmp
   }
 }
+
 /**
  * Returns an array of n unique random integers that lie within the range min (inclusive) and max (exclusive).
  * If max - min &lt; n then null is returned.
  */
 function getUniqueArray(n, min, max) {
   max--
+
   let ret = null
   const l = max - min + 1
   if (l >= n && n > 0) {
@@ -249,6 +277,7 @@ function getUniqueArray(n, min, max) {
   }
   return ret
 }
+
 /**
  * Returns an array of n randomly chosen boolean values of which trueCount of them are true.
  * If the requested numbers of true values is bigger than the number
@@ -258,6 +287,7 @@ function getBoolArray(n, trueCount) {
   if (trueCount > n) {
     throw new Error(`RandomSupport.GetBoolArray( ${n}, ${trueCount} )`)
   }
+
   const a = getUniqueArray(trueCount, 0, n)
   const b = []
   if (a) {

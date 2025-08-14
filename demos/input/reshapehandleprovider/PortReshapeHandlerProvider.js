@@ -37,6 +37,7 @@ import {
   Size
 } from '@yfiles/yfiles'
 import { PortReshapeHandle } from './PortReshapeHandle'
+
 /**
  * An {@link IReshapeHandleProvider} implementation for {@link IPort}s using {@link ShapePortStyle}.
  * The provided {@link PortReshapeHandle} modifies the {@link ShapePortStyle.renderSize render size}.
@@ -57,6 +58,7 @@ export class PortReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
     this.portStyle = portStyle
     this.minimumSize = minimumSize
   }
+
   /**
    * Returns {@link HandlePositions.CORNERS} or {@link HandlePositions.BORDER} as available handle
    * positions depending on the modifier state of `Shift`.
@@ -69,6 +71,7 @@ export class PortReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
       ? HandlePositions.BORDER
       : HandlePositions.CORNERS
   }
+
   /**
    * Returns a {@link PortReshapeHandle} for the port at the given position and
    * sets its {@link PortReshapeHandle.minimumSize} to {@link minimumSize}.

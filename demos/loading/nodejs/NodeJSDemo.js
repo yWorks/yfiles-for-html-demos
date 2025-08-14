@@ -33,45 +33,54 @@ import {
   License,
   WaitInputMode
 } from '@yfiles/yfiles'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license.js'
+
 import {
   createGroupedSampleGraph,
   initializeBasicDemoStyles,
   initializeFolding
 } from '@yfiles/demo-utils/sample-graph'
 import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
+
 let graphComponent
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
+
   // initialize styles as well as graph
   graphComponent.inputMode = new GraphEditorInputMode()
   initializeFolding(graphComponent)
   initializeBasicDemoStyles(graphComponent.graph)
   createGroupedSampleGraph(graphComponent.graph)
   await graphComponent.fitGraphBounds()
+
   initializeUI()
+
   await runNodeJSLayout()
+
   graphComponent.graph.undoEngine.clear()
 }
+
 /**
  * Runs the layout using the Node.js server.
  */
 async function runNodeJSLayout() {
   showLoading()
+
   // handles the connection between the Node.js server and the client application
   async function nodeJsMessageHandler(data) {
     // send the data blob to the Node.js server
     const request = await fetch('http://localhost:3001/layout', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8'
-      },
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       body: JSON.stringify(data)
     })
     // resolve with the data of the resulting graph that was returned from the server
     return request.json()
   }
+
   // The LayoutExecutorAsync allows to hook up with a LayoutExecutorAsyncWorker on a different
   // server and applies the response to the current diagram.
   const remoteExecutor = new LayoutExecutorAsync({
@@ -81,6 +90,7 @@ async function runNodeJSLayout() {
     animateViewport: true,
     easedAnimation: true
   })
+
   try {
     await remoteExecutor.start()
   } catch (e) {
@@ -96,6 +106,7 @@ Is the layout server running? If not, start the layout server and reload the dem
     hideLoading()
   }
 }
+
 /**
  * Shows the wait cursor and disables editing during the layout calculation.
  */
@@ -109,6 +120,7 @@ function showLoading() {
     }
   }
 }
+
 /**
  * Removes the wait cursor and restores editing after the layout calculation.
  */
@@ -122,6 +134,7 @@ function hideLoading() {
     waitMode.waiting = false
   }
 }
+
 /**
  * Registers the run layout button action.
  */
@@ -130,4 +143,5 @@ function initializeUI() {
     await runNodeJSLayout()
   })
 }
+
 run().then(finishLoading)

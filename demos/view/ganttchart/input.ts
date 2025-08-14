@@ -47,6 +47,7 @@ import {
   LabelEventArgs,
   NodeEventArgs,
   Point,
+  ShowPortCandidates,
   SnappableItems
 } from '@yfiles/yfiles'
 import { hideActivityInfo, hideInfo, showActivityInfo, showInfo } from './info-panel'
@@ -72,13 +73,11 @@ export function configureInteraction(
     clickableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
     clickHitTestOrder: [GraphItemTypes.NODE, GraphItemTypes.EDGE],
     marqueeSelectableItems: GraphItemTypes.NONE,
-    createEdgeInputMode: {
-      startOverCandidateOnly: false
-    }
+    createEdgeInputMode: { startOverCandidateOnly: false }
   })
 
   // configure an input mode that moves unselected nodes
-  enableMovingUnselectedNodes(graphEditorInputMode, modelChangedCallback)
+  configureNodeMovement(graphEditorInputMode, modelChangedCallback)
 
   // enable the node/edge highlighting on hover
   enableHighlighting(graphEditorInputMode)
@@ -233,12 +232,14 @@ function enableCreateEdgeOnShift(createEdgeInputMode: CreateEdgeInputMode): void
   createEdgeInputMode.allowSelfLoops = false
   createEdgeInputMode.allowCreateBend = false
   createEdgeInputMode.forceSnapToCandidate = true
+  createEdgeInputMode.showPortCandidates = ShowPortCandidates.END
   // only allow edges to connect to explicit candidates to make sure edges only connect to the correct side of a
   // node
   createEdgeInputMode.useHitItemsCandidatesOnly = true
 
   createEdgeInputMode.enforceBendCreationRecognizer = EventRecognizers.NEVER
   createEdgeInputMode.portCandidateResolutionRecognizer = EventRecognizers.NEVER
+  createEdgeInputMode.directionalConstraintRecognizer = EventRecognizers.NEVER
 }
 
 /**
@@ -289,24 +290,17 @@ function updateHighlights(evt: HoveredItemChangedEventArgs): void {
   }
 }
 
-/**
- * Creates an input mode that moves unselected nodes when 'shift' is not pressed.
- */
-function enableMovingUnselectedNodes(
+function configureNodeMovement(
   graphEditorInputMode: GraphEditorInputMode,
   modelChangedCallback: () => Promise<void>
 ): void {
-  // disable default move gestures
-  graphEditorInputMode.moveSelectedItemsInputMode.enabled = false
-
-  // configure an input mode that moves unselected nodes
+  const moveSelectedItemsInputMode = graphEditorInputMode.moveSelectedItemsInputMode
   const moveUnselectedItemsInputMode = graphEditorInputMode.moveUnselectedItemsInputMode
-  moveUnselectedItemsInputMode.priority = graphEditorInputMode.createEdgeInputMode.priority + 1
-  moveUnselectedItemsInputMode.enabled = true
+  graphEditorInputMode.movableUnselectedItems = graphEditorInputMode.movableSelectedItems =
+    GraphItemTypes.NODE
 
-  moveUnselectedItemsInputMode.addEventListener('drag-started', () => hideActivityInfo())
-  moveUnselectedItemsInputMode.addEventListener(
-    'drag-finished',
-    async () => await modelChangedCallback()
-  )
+  moveUnselectedItemsInputMode.addEventListener('drag-started', hideActivityInfo)
+  moveUnselectedItemsInputMode.addEventListener('drag-finished', modelChangedCallback)
+  moveSelectedItemsInputMode.addEventListener('drag-started', hideActivityInfo)
+  moveSelectedItemsInputMode.addEventListener('drag-finished', modelChangedCallback)
 }

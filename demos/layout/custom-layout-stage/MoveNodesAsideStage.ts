@@ -121,9 +121,7 @@ export class MoveNodesAsideStage extends LayoutStageBase {
     const edgeRouter = new EdgeRouter()
     // We also have to tell the EdgeRouter which edges to route (in this case,
     // edges at affected nodes, so we tell it the affected nodes)
-    const edgeRouterData = new EdgeRouterData({
-      scope: { incidentNodes: asideNodes }
-    })
+    const edgeRouterData = new EdgeRouterData({ scope: { incidentNodes: asideNodes } })
 
     // Finally, EdgeRouter can calculate routes for the remaining edges.
     graph.applyLayout(edgeRouter, edgeRouterData)

@@ -49,10 +49,12 @@ import {
   SvgVisual
 } from '@yfiles/yfiles'
 import { CustomEdgeStyle } from './07-hit-testing/CustomEdgeStyle'
+
 export function initializeLabelModel(graphComponent) {
   graphComponent.graph.edgeDefaults.labels.layoutParameter =
     new SmartEdgeLabelModel().createParameterFromSource(0)
 }
+
 export function createSimpleGraph(graphComponent, opaque = true) {
   const graph = graphComponent.graph
   const fill = opaque ? '#0b7189' : '#0b718988'
@@ -62,15 +64,11 @@ export function createSimpleGraph(graphComponent, opaque = true) {
     stroke: '#042d37'
   })
   const node1 = graph.createNode()
-  const node2 = graph.createNode({
-    layout: [100, 200, 30, 30]
-  })
-  graph.createEdge({
-    source: node1,
-    target: node2,
-    bends: [new Point(90, 60), new Point(10, 170)]
-  })
+  const node2 = graph.createNode({ layout: [100, 200, 30, 30] })
+
+  graph.createEdge({ source: node1, target: node2, bends: [new Point(90, 60), new Point(10, 170)] })
 }
+
 export function createSampleGraphHitTest(graph, newEdgeStyle, oldEdgeStyle) {
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: 'round-rectangle',
@@ -78,25 +76,13 @@ export function createSampleGraphHitTest(graph, newEdgeStyle, oldEdgeStyle) {
     stroke: '#042d37'
   })
   const node1 = graph.createNode({ layout: [0, 0, 30, 30] })
-  const node2 = graph.createNode({
-    layout: [0, 200, 30, 30]
-  })
-  const node3 = graph.createNode({
-    layout: [100, 0, 30, 30]
-  })
-  const node4 = graph.createNode({
-    layout: [100, 200, 30, 30]
-  })
-  graph.createEdge({
-    source: node1,
-    target: node2,
-    style: oldEdgeStyle
-  })
-  graph.createEdge({
-    source: node3,
-    target: node4,
-    style: newEdgeStyle
-  })
+  const node2 = graph.createNode({ layout: [0, 200, 30, 30] })
+  const node3 = graph.createNode({ layout: [100, 0, 30, 30] })
+  const node4 = graph.createNode({ layout: [100, 200, 30, 30] })
+
+  graph.createEdge({ source: node1, target: node2, style: oldEdgeStyle })
+  graph.createEdge({ source: node3, target: node4, style: newEdgeStyle })
+
   const labelModelParameter = FreeNodeLabelModel.INSTANCE.createParameter(
     [0.5, 1],
     [0, 10],
@@ -105,46 +91,34 @@ export function createSampleGraphHitTest(graph, newEdgeStyle, oldEdgeStyle) {
   graph.addLabel(node2, 'Default hit-test', labelModelParameter)
   graph.addLabel(node4, 'Custom hit-test', labelModelParameter)
 }
+
 export function createSampleGraphIsVisible(graph) {
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: 'round-rectangle',
     fill: '#0b7189',
     stroke: '#042d37'
   })
+
   for (let i = 0; i < 40; i++) {
-    const node1 = graph.createNode({
-      layout: [i * 50, 0, 30, 30]
-    })
-    const node2 = graph.createNode({
-      layout: [i * 50, 100, 30, 30]
-    })
-    const node3 = graph.createNode({
-      layout: [i * 50, 200, 30, 30]
-    })
-    graph.createEdge({
-      source: node1,
-      target: node2,
-      tag: { isVisibleImplementation: false }
-    })
-    graph.createEdge({
-      source: node2,
-      target: node3,
-      tag: { isVisibleImplementation: true }
-    })
+    const node1 = graph.createNode({ layout: [i * 50, 0, 30, 30] })
+    const node2 = graph.createNode({ layout: [i * 50, 100, 30, 30] })
+    const node3 = graph.createNode({ layout: [i * 50, 200, 30, 30] })
+
+    graph.createEdge({ source: node1, target: node2, tag: { isVisibleImplementation: false } })
+    graph.createEdge({ source: node2, target: node3, tag: { isVisibleImplementation: true } })
   }
 }
+
 export function createSampleGraphBounds(graph, edgeStyle) {
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: 'round-rectangle',
     fill: '#0b7189',
     stroke: '#042d37'
   })
-  const node1 = graph.createNode({
-    layout: [50, 0, 30, 30]
-  })
-  const node2 = graph.createNode({
-    layout: [200, 0, 30, 30]
-  })
+
+  const node1 = graph.createNode({ layout: [50, 0, 30, 30] })
+  const node2 = graph.createNode({ layout: [200, 0, 30, 30] })
+
   graph.createEdge({
     source: node1,
     target: node2,
@@ -152,46 +126,26 @@ export function createSampleGraphBounds(graph, edgeStyle) {
     // bends: [new Point(0, 15), new Point(0, 50), new Point(65, 50)]
   })
 }
+
 export function createSampleGraphBridges(graph, edgeStyle) {
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: 'round-rectangle',
     fill: '#0b7189',
     stroke: '#042d37'
   })
-  const node1 = graph.createNode({
-    layout: [50, 0, 30, 30]
-  })
-  const node2 = graph.createNode({
-    layout: [50, 100, 30, 30]
-  })
-  const node3 = graph.createNode({
-    layout: [0, 50, 30, 30]
-  })
-  const node4 = graph.createNode({
-    layout: [150, 50, 30, 30]
-  })
-  const node5 = graph.createNode({
-    layout: [100, 0, 30, 30]
-  })
-  const node6 = graph.createNode({
-    layout: [100, 100, 30, 30]
-  })
-  graph.createEdge({
-    source: node1,
-    target: node2,
-    style: edgeStyle
-  })
-  graph.createEdge({
-    source: node5,
-    target: node6,
-    style: edgeStyle
-  })
-  graph.createEdge({
-    source: node3,
-    target: node4,
-    style: edgeStyle
-  })
+
+  const node1 = graph.createNode({ layout: [50, 0, 30, 30] })
+  const node2 = graph.createNode({ layout: [50, 100, 30, 30] })
+  const node3 = graph.createNode({ layout: [0, 50, 30, 30] })
+  const node4 = graph.createNode({ layout: [150, 50, 30, 30] })
+  const node5 = graph.createNode({ layout: [100, 0, 30, 30] })
+  const node6 = graph.createNode({ layout: [100, 100, 30, 30] })
+
+  graph.createEdge({ source: node1, target: node2, style: edgeStyle })
+  graph.createEdge({ source: node5, target: node6, style: edgeStyle })
+  graph.createEdge({ source: node3, target: node4, style: edgeStyle })
 }
+
 export function enableGraphEditing(graphComponent) {
   const graphEditorInputMode = new GraphEditorInputMode({
     allowCreateEdge: false,
@@ -201,10 +155,12 @@ export function enableGraphEditing(graphComponent) {
   graphComponent.inputMode = graphEditorInputMode
   return graphEditorInputMode
 }
+
 export function addHoverEffect(graphComponent, inputMode) {
   const itemHoverInputMode = inputMode.itemHoverInputMode
   itemHoverInputMode.hoverItems = GraphItemTypes.EDGE
   let hoveredItemHighlight = null
+
   function addHighlight(edge) {
     hoveredItemHighlight = graphComponent.renderTree.createElement(
       graphComponent.renderTree.inputModeGroup,
@@ -214,6 +170,7 @@ export function addHoverEffect(graphComponent, inputMode) {
             edge.style instanceof CustomEdgeStyle && edge.style.distance
               ? context.hitTestRadius + edge.style.distance + 2
               : context.hitTestRadius
+
           const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
           path.setAttribute('d', createPathData(edge))
           path.setAttribute('fill', 'none')
@@ -222,18 +179,21 @@ export function addHoverEffect(graphComponent, inputMode) {
           path.setAttribute('stroke-width', String(width))
           return new SvgVisual(path)
         }
+
         updateVisual(context, oldVisual) {
           return this.createVisual(context)
         }
       })()
     )
   }
+
   function removeHighlight() {
     if (hoveredItemHighlight) {
       graphComponent.renderTree.remove(hoveredItemHighlight)
       hoveredItemHighlight = null
     }
   }
+
   itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     removeHighlight()
     if (evt.item) {
@@ -251,10 +211,12 @@ export function addHoverEffect(graphComponent, inputMode) {
     }
   })
 }
+
 function createPathData(edge) {
   const points = IEdge.getPathPoints(edge).toArray()
   return 'M ' + points.map((point) => `${point.x} ${point.y}`).join(' L ')
 }
+
 export function zoomToContent(graphComponent) {
   void graphComponent.fitGraphBounds()
   const contentRect = graphComponent.contentBounds.getEnlarged(10).size
@@ -264,9 +226,11 @@ export function zoomToContent(graphComponent) {
     viewPort.height / contentRect.height
   )
 }
+
 function getTag(edge) {
   return edge.tag
 }
+
 export class IsVisibleEdgeStyleRenderer extends BaseClass(IObjectRenderer) {
   getBoundsProvider(edge) {
     return new (class extends BaseClass(IBoundsProvider) {
@@ -275,9 +239,11 @@ export class IsVisibleEdgeStyleRenderer extends BaseClass(IObjectRenderer) {
       }
     })()
   }
+
   getHitTestable(edge) {
     return edge.style.renderer.getHitTestable(edge, edge.style)
   }
+
   getVisibilityTestable(edge) {
     const tag = getTag(edge)
     return tag.isVisibleImplementation
@@ -291,6 +257,7 @@ export class IsVisibleEdgeStyleRenderer extends BaseClass(IObjectRenderer) {
           }
         })()
   }
+
   getVisualCreator(edge) {
     return new (class extends BaseClass(IVisualCreator) {
       createVisual(context) {
@@ -303,12 +270,14 @@ export class IsVisibleEdgeStyleRenderer extends BaseClass(IObjectRenderer) {
         }
         return visual
       }
+
       updateVisual(context, oldVisual) {
         return oldVisual
       }
     })()
   }
 }
+
 export function startAnimation(graphComponent) {
   graphComponent.addEventListener('size-changed', () => {
     setTimeout(() => {
@@ -316,13 +285,17 @@ export function startAnimation(graphComponent) {
       void animate()
     }, 0)
   })
+
   const animator = new Animator(graphComponent)
+
   async function animate() {
     await animateNodes(animator, graphComponent.graph, graphComponent.graph.nodes)
   }
+
   setAnimationStartPoint(graphComponent)
   setTimeout(animate, 500)
 }
+
 function animateNodes(animator, graph, nodes) {
   const animations = []
   for (const node of nodes) {
@@ -338,36 +311,45 @@ function animateNodes(animator, graph, nodes) {
   const animation = IAnimation.createParallelAnimation(animations)
   return animator.animate(animation)
 }
+
 function setAnimationStartPoint(graphComponent) {
   const contentRect = graphComponent.contentBounds
   graphComponent.viewPoint = new Point(contentRect.topRight.x, contentRect.centerY).subtract(
     new Point(graphComponent.viewport.width, graphComponent.viewport.height * 0.5)
   )
 }
+
 export class BoundsVisual extends BaseClass(IVisualCreator) {
   createVisual(context) {
     const graph = context.canvasComponent.graph
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     g.append(
       ...graph.edges.map((e) => {
         const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
         const { x, y, width, height } = e.style.renderer
           .getBoundsProvider(e, e.style)
           .getBounds(context)
+
         SvgVisual.setTranslate(rect, x, y)
+
         rect.width.baseVal.value = width
         rect.height.baseVal.value = height
         rect.setAttribute('fill', 'none')
         rect.setAttribute('stroke', 'red')
+
         return rect
       })
     )
+
     return new SvgVisual(g)
   }
+
   updateVisual(context, oldVisual) {
     return this.createVisual(context)
   }
 }
+
 /**
  * Initializes the default styles for nodes, edges, and labels.
  */
@@ -390,11 +372,10 @@ export function initializeTutorialDefaults(graphComponent) {
     stroke: '1.5px #0b7189',
     targetArrow: '#0b7189 medium triangle'
   })
-  graph.groupNodeDefaults.style = new GroupNodeStyle({
-    tabFill: '#111d4a',
-    contentAreaPadding: 10
-  })
+
+  graph.groupNodeDefaults.style = new GroupNodeStyle({ tabFill: '#111d4a', contentAreaPadding: 10 })
 }
+
 /**
  * Fits the graph into the graph component with a minimum zoom value.
  * The graph will be slightly zoomed in to avoid that small graphs are displayed too small.

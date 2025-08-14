@@ -36,13 +36,19 @@ import {
   initializeTutorialDefaults
 } from '../common'
 import { CustomGroupNodeStyle } from './CustomGroupNodeStyle'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
 enableGraphEditing(graphComponent)
+
 graphComponent.graph.groupNodeDefaults.style = new CustomGroupNodeStyle()
 graphComponent.graph.nodeDefaults.labels.layoutParameter =
   FreeNodeLabelModel.INSTANCE.createParameter([0.5, 1], [0, 10], [0.5, 0])
+
 createSampleGraphGroupNodeStyle2(graphComponent.graph)
+
 fitGraphBounds(graphComponent)
 finishLoading()

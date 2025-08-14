@@ -28,14 +28,14 @@
  ***************************************************************************/
 import { Reachability } from '@yfiles/yfiles'
 import { GraphSynchronizer } from './GraphSynchronizer'
+
 /**
  * Initializes the web worker for the interactive layout and configures it for the input gestures.
  */
 export async function initializeWorkerLayout(graphComponent, moveInputMode) {
   // load worker immediately on startup
-  const worker = new Worker(new URL('./WorkerLayout', import.meta.url), {
-    type: 'module'
-  })
+  const worker = new Worker(new URL('./WorkerLayout', import.meta.url), { type: 'module' })
+
   await new Promise((resolve) => {
     const readyListener = (evt) => {
       if (typeof evt.data === 'object' && evt.data.type === 'worker-ready') {
@@ -45,6 +45,7 @@ export async function initializeWorkerLayout(graphComponent, moveInputMode) {
     }
     worker.addEventListener('message', readyListener)
   })
+
   // use the GraphSynchronizer class to synchronize the UI graph with the graph in the web worker
   const graphSynchronizer = new GraphSynchronizer(graphComponent.graph, (message) =>
     worker.postMessage(message)
@@ -52,15 +53,19 @@ export async function initializeWorkerLayout(graphComponent, moveInputMode) {
   worker.addEventListener('message', (evt) => {
     graphSynchronizer.acceptMessage(evt.data)
   })
+
   return { startLayout }
+
   /**
    * Sends the message to the worker to start the layout and registers the necessary listeners for
    * handling drag operations.
    */
   function startLayout() {
     sendMessage({ type: 'start-layout' })
+
     prepareInteraction(moveInputMode, graphSynchronizer)
   }
+
   /**
    * Registers the necessary drag listeners to the input mode to configure the interactive layout
    * to respect the drag position.
@@ -68,9 +73,11 @@ export async function initializeWorkerLayout(graphComponent, moveInputMode) {
   function prepareInteraction(moveInputMode, graphSynchronizer) {
     let draggedNodeId
     let draggedComponentIds
+
     function getDraggedNode(moveInputMode) {
       return moveInputMode.affectedItems.at(0)
     }
+
     moveInputMode.addEventListener('drag-started', (_, moveInputMode) => {
       const draggedNode = getDraggedNode(moveInputMode)
       draggedNodeId = graphSynchronizer.getId(draggedNode)
@@ -87,13 +94,11 @@ export async function initializeWorkerLayout(graphComponent, moveInputMode) {
         componentIds: draggedComponentIds
       })
     })
+
     moveInputMode.addEventListener('dragged', () => {
-      sendMessage({
-        type: 'dragged',
-        nodeId: draggedNodeId,
-        componentIds: draggedComponentIds
-      })
+      sendMessage({ type: 'dragged', nodeId: draggedNodeId, componentIds: draggedComponentIds })
     })
+
     moveInputMode.addEventListener('drag-canceled', () => {
       sendMessage({
         type: 'drag-canceled',
@@ -103,6 +108,7 @@ export async function initializeWorkerLayout(graphComponent, moveInputMode) {
       draggedNodeId = undefined
       draggedComponentIds = undefined
     })
+
     moveInputMode.addEventListener('drag-finished', () => {
       sendMessage({
         type: 'drag-finished',
@@ -113,6 +119,7 @@ export async function initializeWorkerLayout(graphComponent, moveInputMode) {
       draggedComponentIds = undefined
     })
   }
+
   function sendMessage(message) {
     worker.postMessage(message)
   }

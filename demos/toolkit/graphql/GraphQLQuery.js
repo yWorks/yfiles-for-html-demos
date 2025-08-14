@@ -27,17 +27,16 @@
  **
  ***************************************************************************/
 const url = 'http://localhost:4244/graphql'
+
 /**
  * Executes a GraphQL query to the GraphQL endpoint.
  */
 export async function graphQLQuery(query, variables = {}) {
   const response = await fetch(url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({ query, variables })
   })
+
   return response.json()
 }

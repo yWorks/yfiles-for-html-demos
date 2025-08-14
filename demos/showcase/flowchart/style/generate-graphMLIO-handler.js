@@ -28,8 +28,10 @@
  ***************************************************************************/
 import { FlowchartNodeStyle, FlowchartNodeType } from './FlowchartStyle'
 import { Color, Fill, GraphMLIOHandler, MarkupExtension, Stroke } from '@yfiles/yfiles'
+
 export function generateGraphMLIOHandler() {
   const graphMLIOHandler = new GraphMLIOHandler()
+
   // enable serialization of the flowchart styles - this is done with a markup extension
   graphMLIOHandler.addTypeInformation(FlowchartNodeStyle, {
     extension: (item) => {
@@ -52,6 +54,7 @@ export function generateGraphMLIOHandler() {
   )
   return graphMLIOHandler
 }
+
 /**
  * Markup extension needed to (de-)serialize the flowchart style.
  */
@@ -60,30 +63,39 @@ export class FlowchartNodeStyleExtension extends MarkupExtension {
   $fill = new Color(183, 201, 227)
   $type = FlowchartNodeType.Data
   $cssClass = null
+
   get type() {
     return this.$type
   }
+
   set type(type) {
     this.$type = type
   }
+
   get stroke() {
     return this.$stroke
   }
+
   set stroke(stroke) {
     this.$stroke = stroke
   }
+
   get fill() {
     return this.$fill
   }
+
   set fill(fill) {
     this.$fill = fill
   }
+
   get cssClass() {
     return this.$cssClass
   }
+
   set cssClass(value) {
     this.$cssClass = value
   }
+
   provideValue(serviceProvider) {
     const style = new FlowchartNodeStyle(this.type)
     style.type = this.type
@@ -92,6 +104,7 @@ export class FlowchartNodeStyleExtension extends MarkupExtension {
     style.cssClass = this.cssClass
     return style
   }
+
   static create(item) {
     const extension = new FlowchartNodeStyleExtension()
     extension.type = item.type

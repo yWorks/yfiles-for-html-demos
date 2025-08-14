@@ -41,6 +41,7 @@ import { calculateCriticalPathEdges, runLayout } from './CriticalPathHelper'
 import { createDemoNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * Runs this demo.
  */
@@ -48,11 +49,14 @@ async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
+
   initializeGraph(graphComponent)
   loadSampleGraph(graphComponent)
+
   // calculates the critical path and shows the results
   await calculateCriticalPathAndShowResult(graphComponent)
 }
+
 /**
  * Calculates the critical paths and shows the result.
  * @param graphComponent The given graphComponent
@@ -60,11 +64,14 @@ async function run() {
 async function calculateCriticalPathAndShowResult(graphComponent) {
   // runs the algorithms and marks the important nodes and edges using their tags
   calculateCriticalPathEdges(graphComponent)
+
   // changes the styles of the critical path edges and critical nodes
   showResult(graphComponent)
+
   // run the layout algorithm
   await runLayout(graphComponent)
 }
+
 /**
  * Changes the styles of the critical path edges and critical nodes based on the result of the rank
  * assignment algorithm.
@@ -90,9 +97,11 @@ function showResult(graphComponent) {
   criticalNodeStyle.stroke = '2px #F26419'
   const startNodeStyle = createDemoNodeStyle('demo-palette-402')
   const finishNodeStyle = createDemoNodeStyle('demo-palette-403')
+
   graph.edges.forEach((edge) => {
     const sourceNode = edge.sourceNode
     const targetNode = edge.targetNode
+
     if (edge.tag.critical) {
       // change the style of the critical edge
       graph.setStyle(edge, criticalStyle)
@@ -106,6 +115,7 @@ function showResult(graphComponent) {
         graph.setStyle(edge, slackStyle)
       }
     }
+
     // change the style of the lowest/highest nodes and add the label to the last node with the total
     // time needed to complete the project
     if (sourceNode.tag.lowestNode) {
@@ -120,12 +130,14 @@ function showResult(graphComponent) {
     }
   })
 }
+
 /**
  * Initializes the styles for the graph elements.
  * @param graphComponent The given graphComponent
  */
 function initializeGraph(graphComponent) {
   const graph = graphComponent.graph
+
   // configure node/edge style defaults
   initDemoStyles(graph, { theme: 'demo-palette-58' })
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
@@ -135,6 +147,7 @@ function initializeGraph(graphComponent) {
     distance: 3
   }).createRatioParameter()
 }
+
 /**
  * Loads the sample graph.
  * @param graphComponent The given graphComponent
@@ -149,6 +162,7 @@ function loadSampleGraph(graphComponent) {
     layout: 'layout',
     labels: ['label']
   })
+
   builder.createEdgesSource({
     data: GraphData.edges,
     id: 'id',
@@ -157,7 +171,9 @@ function loadSampleGraph(graphComponent) {
     tag: 'tag',
     labels: ['label']
   })
+
   builder.buildGraph()
+
   // we add a label that shows the duration of each task
   graph.nodes.forEach((node) => {
     if (node.labels.get(0).text !== 'START' && node.labels.get(0).text !== 'FINISH') {
@@ -165,4 +181,5 @@ function loadSampleGraph(graphComponent) {
     }
   })
 }
+
 run().then(finishLoading)

@@ -43,6 +43,7 @@ import {
   SvgExport
 } from '@yfiles/yfiles'
 import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+
 /**
  * An input mode which supports dragging nodes from the component to another HTML element.
  *
@@ -55,14 +56,17 @@ export class NodeDragInputMode extends InputModeBase {
   node = null
   oldAutoDrag = null
   img = null
+
   onNodeRemovedListeners
   onMouseDragListener
   onMouseDownListener
   onMouseUpListener
   onDragStartedListener
   onDragEndListener
+
   constructor() {
     super()
+
     // initializes listener functions in order to install/uninstall them
     this.onNodeRemovedListeners = (evt) => this.handleNodeRemoved(evt.item)
     this.onMouseDragListener = (_evt) => this.onMouseDrag()
@@ -71,7 +75,9 @@ export class NodeDragInputMode extends InputModeBase {
     this.onDragStartedListener = (evt) => this.onDragStarted(evt)
     this.onDragEndListener = (_evt) => this.onDragEnd()
   }
+
   /////////////////// common input mode handling ///////////////////////
+
   /**
    * Installs this input mode.
    * Adds all listeners.
@@ -87,6 +93,7 @@ export class NodeDragInputMode extends InputModeBase {
     this.graphComponent.htmlElement.addEventListener('dragend', this.onDragEndListener)
     this.graphComponent.htmlElement.draggable = true
   }
+
   /**
    * Uninstalls this input mode.
    */
@@ -101,6 +108,7 @@ export class NodeDragInputMode extends InputModeBase {
     this.graphComponent.htmlElement.draggable = false
     this.graphComponent = null
   }
+
   /**
    * Cancels the input mode.
    */
@@ -112,7 +120,9 @@ export class NodeDragInputMode extends InputModeBase {
     this.img = null
     super.cancel()
   }
+
   //////////////////////////// native drag events
+
   /**
    * The actual HTML drag has been started on the div.
    * Sets the pre-rendered image which is dragged and the drag data.
@@ -130,6 +140,7 @@ export class NodeDragInputMode extends InputModeBase {
       event.preventDefault()
     }
   }
+
   /**
    * The actual HTML drag has been ended.
    * Dispatch a mouse up event on the component.
@@ -142,12 +153,15 @@ export class NodeDragInputMode extends InputModeBase {
     // therefore, yFiles thinks that the mouse is still down
     const evt = new PointerEvent('pointerup', { pointerType: 'mouse' })
     this.graphComponent.htmlElement.dispatchEvent(evt)
+
     if (typeof this.oldAutoDrag === 'boolean') {
       this.graphComponent.autoScrollOnBounds = this.oldAutoDrag
       this.oldAutoDrag = null
     }
   }
+
   //////////////////////// yFiles mouse events ////////////////////////////////////
+
   /**
    * Mouse down on the component.
    * If a node is hit "arm" this input mode by setting the node which might be dragged.
@@ -174,6 +188,7 @@ export class NodeDragInputMode extends InputModeBase {
       }
     }
   }
+
   /**
    * The mouse is dragged on the component.
    * Request the mutex, i.e., prevent other input modes from being started.
@@ -189,6 +204,7 @@ export class NodeDragInputMode extends InputModeBase {
       }
     }
   }
+
   /**
    * Cleans up if a mouse down is followed by a mouse drag but not a dragstart event.
    */
@@ -197,7 +213,9 @@ export class NodeDragInputMode extends InputModeBase {
       this.cancel()
     }
   }
+
   /////////////////////////////// image creation //////////////////////////////////////
+
   /**
    * Creates an img element which represents the dragged node.
    * This element is the actually dragged element.
@@ -214,7 +232,9 @@ export class NodeDragInputMode extends InputModeBase {
     img.setAttribute('draggable', 'false')
     return img
   }
+
   static _exportComponent
+
   /**
    * Creates an SVG which shows the node.
    * Returns it base64 encoded, so we can use it as a value for an img's src attribute.
@@ -227,9 +247,11 @@ export class NodeDragInputMode extends InputModeBase {
     const exportComponent = NodeDragInputMode._exportComponent
     const exportGraph = exportComponent.graph
     exportGraph.clear()
+
     // we create a node in this GraphComponent that should be exported as SVG
     NodeDragInputMode.copyNode(node, exportGraph)
     exportComponent.updateContentBounds(5)
+
     // the SvgExport can export the content of any GraphComponent
     const svgExport = new SvgExport(exportComponent.contentBounds)
     svgExport.cssStyleSheet = null
@@ -237,6 +259,7 @@ export class NodeDragInputMode extends InputModeBase {
     const svgString = SvgExport.exportSvgString(svg)
     return SvgExport.encodeSvgDataUrl(svgString)
   }
+
   static copyNode(node, targetGraph) {
     const newNode = targetGraph.createNode(node.layout, node.style, node.tag)
     for (const label of node.labels) {
@@ -263,9 +286,12 @@ export class NodeDragInputMode extends InputModeBase {
       }
     }
   }
+
   ////////////////////////////  Node to String handling //////////////////////////////////////
+
   nodeToId = new Map()
   idToNode = new Map()
+
   getId(node) {
     let id = this.nodeToId.get(node)
     if (!id) {
@@ -279,9 +305,11 @@ export class NodeDragInputMode extends InputModeBase {
     }
     return id
   }
+
   getNode(id) {
     return this.idToNode.get(id)
   }
+
   handleNodeRemoved(node) {
     const id = this.nodeToId.get(node)
     if (id) {
@@ -289,7 +317,9 @@ export class NodeDragInputMode extends InputModeBase {
       this.nodeToId.delete(node)
     }
   }
+
   //////////////////////////// Adding elements to drop at ///////////////////////////////////
+
   /**
    * Specifies the given {@link HTMLElement} as a target for dropping {@link INode nodes}.
    * @param target An {@link HTMLElement} to be able to drop {@link INode nodes} on.
@@ -318,6 +348,7 @@ export class NodeDragInputMode extends InputModeBase {
     })
   }
 }
+
 /**
  * A GraphComponent which supports drag events.
  * Overrides the default where the GraphComponent prevents drag events.

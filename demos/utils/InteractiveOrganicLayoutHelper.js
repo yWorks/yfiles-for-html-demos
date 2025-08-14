@@ -35,6 +35,7 @@ import {
   LayoutGraphAdapter,
   TimeSpan
 } from '@yfiles/yfiles'
+
 export class InteractiveOrganicLayoutHelper {
   graph
   config
@@ -45,6 +46,7 @@ export class InteractiveOrganicLayoutHelper {
   currentAnimator
   currentInterval
   layoutGraphAdapter
+
   /**
    * Creates a new {@link InteractiveOrganicLayoutHelper} instance.
    * If the graphComponent's graph is an instance of {@link FilteredGraphWrapper}, we have to
@@ -58,6 +60,7 @@ export class InteractiveOrganicLayoutHelper {
     this.config = config
     this.duration = this.config.duration ?? 20
   }
+
   /**
    * Gets the node handle which holds the data for a given node, creating it if non-existent
    * @param node the node to retrieve the handle for
@@ -66,6 +69,7 @@ export class InteractiveOrganicLayoutHelper {
   getNodeHandle(node) {
     return this.layoutData?.nodeHandles.get(node)
   }
+
   /**
    *  Creates the layout data that is always provided when starting the {@link InteractiveOrganicLayout}
    *  via the {@link  LayoutExecutor} - it defines a handle/information instance for each node and
@@ -74,13 +78,17 @@ export class InteractiveOrganicLayoutHelper {
   createAdapter() {
     const adapter = new LayoutGraphAdapter(this.graph)
     adapter.initialize()
+
     if (!this.layoutData) {
       this.layoutData = new InteractiveOrganicLayoutData()
     }
+
     // adds the layoutData to the layoutGraph context, to be passed to the layout algorithm afterward
     adapter.applyLayoutData(this.layoutData)
+
     return adapter
   }
+
   /**
    * Creates a new {@link InteractiveOrganicLayout} instance and starts it.
    */
@@ -88,13 +96,17 @@ export class InteractiveOrganicLayoutHelper {
     if (!this.layoutGraphAdapter || this.config.needsGraphAdapterUpdate) {
       this.layoutGraphAdapter = this.createAdapter()
     }
+
     this.layout = this.config.layout
       ? this.config.layout()
       : new InteractiveOrganicLayout({ stopDuration: TimeSpan.fromMilliseconds(2000) })
+
     this.prepareNodesForLayout()
+
     // starts the layout calculation
     this.layout.startLayout(this.layoutGraphAdapter.layoutGraph, this.duration)
   }
+
   /**
    * Stops the {@link InteractiveOrganicLayout}.
    */
@@ -102,6 +114,7 @@ export class InteractiveOrganicLayoutHelper {
     this.layout?.stopLayout()
     this.layout = null
   }
+
   /**
    * Starts the layout using {@link requestAnimationFrame} via an {@link Animator}.
    * Can only be used in the UI thread.
@@ -110,19 +123,25 @@ export class InteractiveOrganicLayoutHelper {
   startAnimator(graphComponent) {
     // stop the previous layout calculation if one is already running
     this.stopLayout()
+
     // clean up previous animator
     this.currentAnimator?.stop()
+
     // force recreation of context
     this.needsStructureUpdate = true
+
     // fix all nodes in their locations
     this.updateInertiaAndStressForAllNodes()
+
     // create a new one
     const animator = new Animator({
       canvasComponent: graphComponent,
       autoInvalidation: true,
       allowUserInteraction: true
     })
+
     this.currentAnimator = animator
+
     // run an infinite animation that continues the layout operation in between updates
     return animator.animate(() => {
       // we might have to recreate the layout instance when the graph structure changes.
@@ -131,26 +150,33 @@ export class InteractiveOrganicLayoutHelper {
         this.stopLayout()
         this.startLayout()
       }
+
       // progresses the layout calculation
       this.layout?.continueLayout(this.duration)
+
       // update the locations of the nodes and cause re-rendering, if required.
       if (this.layoutData.updateNodeCenters(this.graph) > 0) {
         graphComponent.updateVisual()
       }
     }, TimeSpan.MAX_VALUE)
   }
+
   /**
    * Starts the layout using {@link setInterval}. Can be used in a worker thread.
    */
   startInterval() {
     // stop the previous layout calculation if one is already running
     this.stopLayout()
+
     // clean up previous animator
     clearInterval(this.currentInterval)
+
     // force recreation of context
     this.needsStructureUpdate = true
+
     // fix all nodes in their locations
     this.updateInertiaAndStressForAllNodes()
+
     this.currentInterval = setInterval(() => {
       // we might have to recreate the layout instance when the graph structure changes.
       if (this.needsStructureUpdate) {
@@ -158,11 +184,14 @@ export class InteractiveOrganicLayoutHelper {
         this.stopLayout()
         this.startLayout()
       }
+
       // progresses the layout calculation
       this.layout?.continueLayout(this.duration)
+
       this.layoutData.updateNodeCenters(this.graph)
     }, this.duration)
   }
+
   /**
    * Helper method that updates the inertia and stress for all nodes of the graph.
    * By default, it fixes all nodes, setting their inertia to 1 and stress to 0
@@ -172,6 +201,7 @@ export class InteractiveOrganicLayoutHelper {
       this.fixNode(node, inertia, stress)
     })
   }
+
   /**
    * Handles necessary layout data updates when a new node is created in the original graph.
    * <p>
@@ -195,8 +225,10 @@ export class InteractiveOrganicLayoutHelper {
       nodeHandle.inertia = 0
       nodeHandle.stress = 1
     }
+
     this.needsStructureUpdate = true
   }
+
   /**
    * Handles necessary layout data updates when a new edge is created in the original graph.
    * <p>
@@ -212,6 +244,7 @@ export class InteractiveOrganicLayoutHelper {
     this.changeInertia(edge.targetNode, -0.3)
     this.needsStructureUpdate = true
   }
+
   /**
    * Handles necessary layout data updates when an edge is removed from the original graph.
    * <p>
@@ -228,6 +261,7 @@ export class InteractiveOrganicLayoutHelper {
     this.changeInertia(targetPortOwner, -0.3)
     this.needsStructureUpdate = true
   }
+
   /**
    * Handles necessary layout data updates when a node is removed from the original graph.
    * <p>
@@ -237,6 +271,7 @@ export class InteractiveOrganicLayoutHelper {
   removeNode() {
     this.needsStructureUpdate = true
   }
+
   /**
    * Fixes a given node by increasing the heat of the neighbor nodes and optionally setting the inertia
    * and stress of the node itself to the given values.
@@ -262,6 +297,7 @@ export class InteractiveOrganicLayoutHelper {
     // In this case, the node itself is fixed, but its neighbors will wake up
     this.increaseNeighborStress(node, 0.5)
   }
+
   /**
    * Schedules an update of the inertia for the given node.
    *
@@ -275,6 +311,7 @@ export class InteractiveOrganicLayoutHelper {
     }
     nodeHandle.inertia = Math.min(1, Math.max(0, nodeHandle.inertia + delta))
   }
+
   /**
    * Schedules an update of the stress for the given node.
    *
@@ -288,6 +325,7 @@ export class InteractiveOrganicLayoutHelper {
     }
     nodeHandle.stress = Math.min(1, Math.max(0, nodeHandle.stress + delta))
   }
+
   /**
    * Increases the heat of the neighbors of a given node by a given value.
    * <p>
@@ -306,6 +344,7 @@ export class InteractiveOrganicLayoutHelper {
       nodeHandle.stress = Math.min(1, nodeHandle.stress + delta)
     }
   }
+
   /**
    * Warms-up all nodes in the graph by increasing their stress value in the force-directed layout, which
    * has the effect that they want to move more.
@@ -319,6 +358,7 @@ export class InteractiveOrganicLayoutHelper {
       nodeHandle.stress = Math.max(minStress, nodeHandle.stress)
     }
   }
+
   /**
    * Unfix nodes to prepare them for a layout calculation. Meant to be used if some nodes have been
    * previously fixed for some reason, e.g., during a dragging operation.

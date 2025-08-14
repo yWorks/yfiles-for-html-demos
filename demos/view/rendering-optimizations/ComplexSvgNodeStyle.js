@@ -41,6 +41,7 @@ import {
   Rect,
   SvgVisual
 } from '@yfiles/yfiles'
+
 /**
  * This class manages an SVG element in the <defs> element.
  */
@@ -55,6 +56,7 @@ class SimpleSvgDefsCreator extends BaseClass(ISvgDefsCreator) {
     super()
     this.svgElement = svgElement
   }
+
   /**
    * Creates the actual defs element.
    * @param context The canvas context.
@@ -67,6 +69,7 @@ class SimpleSvgDefsCreator extends BaseClass(ISvgDefsCreator) {
     visualElement.removeAttribute('id')
     return visualElement
   }
+
   /**
    * Updates the defs element. This implementation does nothing.
    * @param context The canvas context.
@@ -74,6 +77,7 @@ class SimpleSvgDefsCreator extends BaseClass(ISvgDefsCreator) {
    * @see Specified by {@link ISvgDefsCreator.updateDefsElement}.
    */
   updateDefsElement(context, oldElement) {}
+
   /**
    * Checks if this defs element is still referenced by this node.
    * In this simple implementation, the element should never be removed from the DOM.
@@ -86,6 +90,7 @@ class SimpleSvgDefsCreator extends BaseClass(ISvgDefsCreator) {
     return true
   }
 }
+
 /**
  * An node style for complex SVG visualizations with an elliptical shape.
  *
@@ -112,6 +117,7 @@ export class ComplexSvgNodeStyle extends NodeStyleBase {
     new SimpleSvgDefsCreator(document.querySelector('#usericon_male4')),
     new SimpleSvgDefsCreator(document.querySelector('#usericon_male5'))
   ]
+
   /**
    * Returns the defs creator for the given node based on its tag.
    * @param node The node.
@@ -121,6 +127,7 @@ export class ComplexSvgNodeStyle extends NodeStyleBase {
     const index = Math.max(0, Math.min(type, ComplexSvgNodeStyle.IMAGES.length - 1))
     return ComplexSvgNodeStyle.IMAGES[index]
   }
+
   /**
    * Creates the visual representation for the given node.
    * @param context The render context.
@@ -131,19 +138,23 @@ export class ComplexSvgNodeStyle extends NodeStyleBase {
    */
   createVisual(context, node) {
     const useElement = document.createElementNS('http://www.w3.org/2000/svg', 'use')
+
     // get the defs creator
     const defsCreator = ComplexSvgNodeStyle.getDefsCreator(node)
     // get the defs id of the element that belongs to the creator ...
     const id = context.getDefsId(defsCreator)
     // ... and assign it to the <use> element
     useElement.href.baseVal = `#${id}`
+
     // set the proper location and size of the <use>
     const { x, y, width, height } = node.layout
     const matrix = new Matrix(width, 0, 0, height, x, y)
     matrix.applyTo(useElement)
+
     // store the information about current node layout so we can efficiently update the element later
     return SvgVisual.from(useElement, { x, y, width, height })
   }
+
   /**
    * Updates the visual representation for the given node.
    * @param context The render context.
@@ -155,8 +166,10 @@ export class ComplexSvgNodeStyle extends NodeStyleBase {
    */
   updateVisual(context, oldVisual, node) {
     const { x, y, width, height } = node.layout
+
     // get the cache we stored in the createVisual method
     const cache = oldVisual.tag
+
     // update width and height only if necessary
     if (cache.x !== x || cache.y !== y || cache.width !== width || cache.height !== height) {
       // set the proper location and size of the use
@@ -167,8 +180,10 @@ export class ComplexSvgNodeStyle extends NodeStyleBase {
       cache.width = width
       cache.height = height
     }
+
     return oldVisual
   }
+
   /**
    * Gets the outline of the node's visual, an ellipse in this case.
    * This allows correct edge path intersection calculation, among others.
@@ -180,6 +195,7 @@ export class ComplexSvgNodeStyle extends NodeStyleBase {
     outline.appendEllipse(node.layout, false)
     return outline
   }
+
   /**
    * Gets the bounding box of the node's visual.
    * @param context The canvas context.
@@ -189,6 +205,7 @@ export class ComplexSvgNodeStyle extends NodeStyleBase {
   getBounds(context, node) {
     return node.layout.toRect()
   }
+
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
    * @param context The input mode context.
@@ -204,6 +221,7 @@ export class ComplexSvgNodeStyle extends NodeStyleBase {
       GeometryUtilities.ellipseContains(nodeLayout, location, context.hitTestRadius)
     )
   }
+
   /**
    * Determines whether the visualization for the specified node is included in the marquee selection.
    * @param context The input mode context.
@@ -217,7 +235,9 @@ export class ComplexSvgNodeStyle extends NodeStyleBase {
     if (!super.isInBox(context, rectangle, node)) {
       return false
     }
+
     const eps = context.hitTestRadius
+
     const outline = this.getOutline(node)
     if (outline.pathIntersects(rectangle, eps)) {
       return true
@@ -230,6 +250,7 @@ export class ComplexSvgNodeStyle extends NodeStyleBase {
     }
     return rectangle.contains(node.layout.topLeft) && rectangle.contains(node.layout.bottomRight)
   }
+
   /**
    * Determines whether the provided point is geometrically inside the visual bounds of the node.
    * @param node The node.
@@ -243,6 +264,7 @@ export class ComplexSvgNodeStyle extends NodeStyleBase {
     }
     return GeometryUtilities.ellipseContains(node.layout.toRect(), location, 0)
   }
+
   /**
    * Gets the intersection of a line with the visual representation of the node.
    * @param node The node.

@@ -117,10 +117,9 @@ export function calculateReachableNodes(graph: IGraph, config: AlgorithmConfig):
 
   const markedSource = config.startNodes?.[0] || graph.nodes.last()!
 
-  const result = new Reachability({
-    directed: config.directed,
-    startNodes: markedSource
-  }).run(graph)
+  const result = new Reachability({ directed: config.directed, startNodes: markedSource }).run(
+    graph
+  )
 
   result.reachableNodes.forEach((node) => {
     markItem(node, 0)

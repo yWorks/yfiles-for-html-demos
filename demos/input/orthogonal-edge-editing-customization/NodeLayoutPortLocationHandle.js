@@ -27,12 +27,14 @@
  **
  ***************************************************************************/
 import { ConstrainedHandle, IHandle, IInputModeContext, INode, Point } from '@yfiles/yfiles'
+
 /**
  * A port location handle that is constrained to the layout rectangle of
  * the port's owner node.
  */
 export class NodeLayoutPortLocationHandle extends ConstrainedHandle {
   node
+
   /**
    * Creates a new instance of {@link NodeLayoutPortLocationHandle}.
    */
@@ -40,6 +42,7 @@ export class NodeLayoutPortLocationHandle extends ConstrainedHandle {
     super(wrappedHandle)
     this.node = node
   }
+
   /**
    * Returns the constraints for the new location.
    * @param context The context in which the drag will be performed

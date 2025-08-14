@@ -71,11 +71,7 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   LayoutExecutor.ensure()
-  graphComponent.graph.applyLayout(
-    new HierarchicalLayout({
-      minimumLayerDistance: 35
-    })
-  )
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
   await graphComponent.fitGraphBounds()
 
   // Finally, enable the undo engine. This prevents undoing of the graph creation

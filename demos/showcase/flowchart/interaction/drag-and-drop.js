@@ -29,11 +29,13 @@
 import { NodeDropInputMode, Rect, SimpleNode } from '@yfiles/yfiles'
 import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
 import { FlowchartNodeStyle, FlowchartNodeType } from '../style/FlowchartStyle'
+
 export function initializeDnd(graphEditorInputMode) {
   graphEditorInputMode.nodeDropInputMode = new NodeDropInputMode({
     showPreview: true,
     enabled: true
   })
+
   const dndNodes = Object.keys(FlowchartNodeType).map(
     (type) =>
       new SimpleNode({
@@ -41,6 +43,7 @@ export function initializeDnd(graphEditorInputMode) {
         style: new FlowchartNodeStyle(FlowchartNodeType[type])
       })
   )
+
   const dndPanel = new DragAndDropPanel(document.getElementById('dnd-panel'))
   dndPanel.maxItemWidth = 160
   dndPanel.populatePanel(dndNodes)

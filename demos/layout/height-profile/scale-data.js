@@ -27,19 +27,23 @@
  **
  ***************************************************************************/
 import { Point } from '@yfiles/yfiles'
+
 /**
  * The maximum coordinate of the horizontal axis
  */
 export const SCALED_MAX_X = Math.max(Math.max(window.screen.width, window.screen.height) * 0.9, 300)
+
 /**
  * The maximum coordinate of the vertical axis
  */
 export const SCALED_MAX_Y = Math.max(Math.min(window.screen.width, window.screen.height) * 0.4, 100)
+
 /**
  * Scales the given dataset.
  */
 export function scaleData(trail) {
   const { maxX, maxY } = getMax(trail)
+
   return trail
     .map((point) => {
       const xScaled = scalePoint(point.x, maxX, SCALED_MAX_X)
@@ -48,6 +52,7 @@ export function scaleData(trail) {
     })
     .sort((p1, p2) => p1.x - p2.x)
 }
+
 /**
  * Returns the maximum values of the x- and y-coordinates of the trail's points.
  */
@@ -58,6 +63,7 @@ export function getMax(trail) {
   const maxY = Math.max(...yCoords)
   return { maxX, maxY }
 }
+
 /**
  * Scales the given point.
  * @param location The location of the point

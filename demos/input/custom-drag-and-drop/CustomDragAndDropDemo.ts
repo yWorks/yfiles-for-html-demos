@@ -89,9 +89,7 @@ function initializeStyles(graph: IGraph): void {
   })
 
   graph.edgeDefaults.shareStyleInstance = false
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '5px solid darkgray'
-  })
+  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '5px solid darkgray' })
 }
 
 /**
@@ -99,11 +97,7 @@ function initializeStyles(graph: IGraph): void {
  */
 function createSampleGraph(graph: IGraph): void {
   const builder = new GraphBuilder(graph)
-  builder.createNodesSource({
-    data: SampleData.nodes,
-    id: 'id',
-    layout: 'layout'
-  })
+  builder.createNodesSource({ data: SampleData.nodes, id: 'id', layout: 'layout' })
   builder.createEdgesSource({
     data: SampleData.edges,
     id: 'id',

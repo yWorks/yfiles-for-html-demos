@@ -105,6 +105,7 @@ export const HierarchicalSampleData = {
     { source: 9, target: 34 }
   ]
 }
+
 export const OrganicSampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: { type: 2 } },
@@ -294,6 +295,7 @@ export const OrganicSampleData = {
     { source: 40, target: 38 }
   ]
 }
+
 export const TreeSampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: { type: 0 } },
@@ -391,6 +393,7 @@ export const TreeSampleData = {
     { source: 15, target: 45 }
   ]
 }
+
 export const CircularSampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: { type: 2 } },
@@ -486,6 +489,7 @@ export const CircularSampleData = {
     { source: 27, target: 22 }
   ]
 }
+
 export const ComponentSampleData = {
   nodeList: [
     { id: 0, layout: { x: 62, y: 215, width: 40, height: 40 }, tag: { type: 0 } },
@@ -557,6 +561,7 @@ export const ComponentSampleData = {
     { source: 32, target: 36 }
   ]
 }
+
 export const CompactDiskSampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: { type: 2 } },
@@ -762,6 +767,7 @@ export const CompactDiskSampleData = {
   ],
   edgeList: []
 }
+
 export const RadialTreeSampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: null },
@@ -881,249 +887,58 @@ export const RadialTreeSampleData = {
     { source: 7, target: 56 }
   ]
 }
+
 export const RadialSampleData = {
   nodeList: [
     { id: 0, layout: { width: 40, height: 40 }, tag: null },
-    {
-      id: 1,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 2,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 3,
-      layout: { width: 40, height: 40 },
-      tag: { type: 2 }
-    },
-    {
-      id: 4,
-      layout: { width: 40, height: 40 },
-      tag: { type: 0 }
-    },
-    {
-      id: 5,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 6,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 7,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 8,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 9,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 10,
-      layout: { width: 40, height: 40 },
-      tag: { type: 0 }
-    },
-    {
-      id: 11,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 12,
-      layout: { width: 40, height: 40 },
-      tag: { type: 0 }
-    },
-    {
-      id: 13,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 14,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 15,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 16,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 17,
-      layout: { width: 40, height: 40 },
-      tag: { type: 2 }
-    },
-    {
-      id: 18,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 19,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 20,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 21,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 22,
-      layout: { width: 40, height: 40 },
-      tag: { type: 0 }
-    },
-    {
-      id: 23,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 24,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 25,
-      layout: { width: 40, height: 40 },
-      tag: { type: 0 }
-    },
-    {
-      id: 26,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 27,
-      layout: { width: 40, height: 40 },
-      tag: { type: 0 }
-    },
-    {
-      id: 28,
-      layout: { width: 40, height: 40 },
-      tag: { type: 0 }
-    },
-    {
-      id: 29,
-      layout: { width: 40, height: 40 },
-      tag: { type: 0 }
-    },
-    {
-      id: 30,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 31,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 32,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 33,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 34,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 35,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 36,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 37,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 38,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 39,
-      layout: { width: 40, height: 40 },
-      tag: null
-    },
-    {
-      id: 40,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 41,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 42,
-      layout: { width: 40, height: 40 },
-      tag: { type: 1 }
-    },
-    {
-      id: 43,
-      layout: { width: 55, height: 44 },
-      tag: { type: 1 }
-    },
-    {
-      id: 44,
-      layout: { width: 40, height: 40 },
-      tag: { type: 0 }
-    },
-    {
-      id: 45,
-      layout: { width: 40, height: 40 },
-      tag: { type: 0 }
-    },
-    {
-      id: 46,
-      layout: { width: 55, height: 44 },
-      tag: { type: 1 }
-    },
-    {
-      id: 47,
-      layout: { width: 55, height: 44 },
-      tag: { type: 1 }
-    },
-    {
-      id: 48,
-      layout: { width: 55, height: 44 },
-      tag: { type: 1 }
-    }
+    { id: 1, layout: { width: 40, height: 40 }, tag: null },
+    { id: 2, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 3, layout: { width: 40, height: 40 }, tag: { type: 2 } },
+    { id: 4, layout: { width: 40, height: 40 }, tag: { type: 0 } },
+    { id: 5, layout: { width: 40, height: 40 }, tag: null },
+    { id: 6, layout: { width: 40, height: 40 }, tag: null },
+    { id: 7, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 8, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 9, layout: { width: 40, height: 40 }, tag: null },
+    { id: 10, layout: { width: 40, height: 40 }, tag: { type: 0 } },
+    { id: 11, layout: { width: 40, height: 40 }, tag: null },
+    { id: 12, layout: { width: 40, height: 40 }, tag: { type: 0 } },
+    { id: 13, layout: { width: 40, height: 40 }, tag: null },
+    { id: 14, layout: { width: 40, height: 40 }, tag: null },
+    { id: 15, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 16, layout: { width: 40, height: 40 }, tag: null },
+    { id: 17, layout: { width: 40, height: 40 }, tag: { type: 2 } },
+    { id: 18, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 19, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 20, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 21, layout: { width: 40, height: 40 }, tag: null },
+    { id: 22, layout: { width: 40, height: 40 }, tag: { type: 0 } },
+    { id: 23, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 24, layout: { width: 40, height: 40 }, tag: null },
+    { id: 25, layout: { width: 40, height: 40 }, tag: { type: 0 } },
+    { id: 26, layout: { width: 40, height: 40 }, tag: null },
+    { id: 27, layout: { width: 40, height: 40 }, tag: { type: 0 } },
+    { id: 28, layout: { width: 40, height: 40 }, tag: { type: 0 } },
+    { id: 29, layout: { width: 40, height: 40 }, tag: { type: 0 } },
+    { id: 30, layout: { width: 40, height: 40 }, tag: null },
+    { id: 31, layout: { width: 40, height: 40 }, tag: null },
+    { id: 32, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 33, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 34, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 35, layout: { width: 40, height: 40 }, tag: null },
+    { id: 36, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 37, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 38, layout: { width: 40, height: 40 }, tag: null },
+    { id: 39, layout: { width: 40, height: 40 }, tag: null },
+    { id: 40, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 41, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 42, layout: { width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 43, layout: { width: 55, height: 44 }, tag: { type: 1 } },
+    { id: 44, layout: { width: 40, height: 40 }, tag: { type: 0 } },
+    { id: 45, layout: { width: 40, height: 40 }, tag: { type: 0 } },
+    { id: 46, layout: { width: 55, height: 44 }, tag: { type: 1 } },
+    { id: 47, layout: { width: 55, height: 44 }, tag: { type: 1 } },
+    { id: 48, layout: { width: 55, height: 44 }, tag: { type: 1 } }
   ],
   edgeList: [
     { source: 0, target: 1 },

@@ -53,10 +53,7 @@ import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
-type Subcomponent = {
-  nodes: INode[]
-  layout: ILayoutAlgorithm
-}
+type Subcomponent = { nodes: INode[]; layout: ILayoutAlgorithm }
 
 type PlacementPolicyValue = 'automatic' | 'isolated' | 'always-integrated'
 
@@ -142,10 +139,7 @@ function createSubcomponent(
     )
     if (newSubcomponentIndex < 0) {
       // add a new subcomponent
-      newSubcomponent = {
-        nodes: [],
-        layout
-      }
+      newSubcomponent = { nodes: [], layout }
       subcomponents.push(newSubcomponent)
       newSubcomponentIndex = subcomponents.length - 1
     } else {
@@ -294,10 +288,7 @@ function createTreeLayout(): TreeLayout {
  * Returns a new organic layout algorithm instance.
  */
 function createOrganicLayout(): OrganicLayout {
-  return new OrganicLayout({
-    deterministic: true,
-    defaultPreferredEdgeLength: 70
-  })
+  return new OrganicLayout({ deterministic: true, defaultPreferredEdgeLength: 70 })
 }
 
 /**

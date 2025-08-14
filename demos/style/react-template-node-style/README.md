@@ -29,5 +29,5 @@ Select nodes or labels in the view and inspect their templates and tag values in
 
 - [Template Styles Demo](../../style/templatestyles/)
 - [Template Node Style Demo](../../style/template-node-style/)
-- [Vue Template Node Style Demo](../../../demos-ts/style/vue-template-node-style/)
+- [Vue Template Node Style Demo](../../../demos-ts/style/vue-template-node-style/README.html)
 - [Lit Template Node Style Demo](../../style/lit-template-node-style/)

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  Graph,
   GraphComponent,
   GraphEditorInputMode,
   HierarchicalLayout,
@@ -43,35 +44,38 @@ import { HtmlEditableNodeStyle } from './HtmlEditableNodeStyle'
 import { updateTagView } from './util'
 import { defaultData, people } from './data'
 import { downloadFile } from '@yfiles/demo-utils/file-support'
+
 // Ensure that the LayoutExecutor class is not removed by build optimizers
 // It is needed for the 'applyLayoutAnimated' method in this demo.
 LayoutExecutor.ensure()
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('#graphComponent')
   const graph = graphComponent.graph
+
   // We use the custom HTML node style for all nodes
   graph.nodeDefaults.style = new HtmlEditableNodeStyle()
   graph.nodeDefaults.size = [280, 380]
+
   initGraphDefaults(graph)
+
   createGraphFromData(graph)
+
   initTagView(graphComponent)
   initLayout(graphComponent)
   await initExport(graphComponent)
   graphComponent.inputMode = createInputMode()
 }
+
 /**
  * Create the yFiles graph from the JSON data
  */
 function createGraphFromData(graph) {
   const id2node = new Map()
   for (const employee of people) {
-    id2node.set(
-      employee.id,
-      graph.createNode({
-        tag: employee
-      })
-    )
+    id2node.set(employee.id, graph.createNode({ tag: employee }))
   }
   for (const employee of people) {
     if (typeof employee.superior !== 'undefined') {
@@ -83,6 +87,7 @@ function createGraphFromData(graph) {
     }
   }
 }
+
 function initGraphDefaults(graph) {
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     smoothingLength: 50,
@@ -93,6 +98,7 @@ function initGraphDefaults(graph) {
     new NodeSizeConstraintProvider([50, 50], Size.INFINITE)
   )
 }
+
 /**
  * When a node is selected or deselected, update the node data JSON in the left panel.
  */
@@ -101,14 +107,15 @@ function initTagView(graphComponent) {
     const firstSelectedNode = graphComponent.nodes.at(0)
     updateTagView(firstSelectedNode)
   })
+
   graphComponent.selection.addEventListener('item-removed', (_, graphComponent) => {
     updateTagView(null)
   })
 }
+
 function createInputMode() {
-  const inputMode = new GraphEditorInputMode({
-    allowAddLabel: false
-  })
+  const inputMode = new GraphEditorInputMode({ allowAddLabel: false })
+
   // When a node is created, we add default dummy data as the user tag.
   inputMode.addEventListener('node-created', (evt, inputMode) => {
     const graph = inputMode.graphComponent.graph
@@ -120,6 +127,7 @@ function createInputMode() {
   })
   return inputMode
 }
+
 /**
  * Run a plain hierarchical layout
  */
@@ -131,12 +139,15 @@ function initLayout(graphComponent) {
     await graphComponent.applyLayoutAnimated(layout)
   })
 }
+
 async function initExport(graphComponent) {
   // Copy the CSS rules for our HTML node style to the generated SVG
-  const styles = await fetch('./style.css', {
-    headers: { Accept: 'text/css' }
-  }).then((r) => r.text())
+  const styles = await fetch('./style.css', { headers: { Accept: 'text/css' } }).then((r) =>
+    r.text()
+  )
+
   const exportBtn = document.querySelector('#export-btn')
+
   exportBtn.addEventListener('click', async () => {
     const exporter = new SvgExport({
       cssStyleSheet: styles,
@@ -147,10 +158,14 @@ async function initExport(graphComponent) {
     const exportComponent = new GraphComponent()
     exportComponent.graph = graphComponent.graph
     const element = await exporter.exportSvgAsync(exportComponent)
+
     // Dispose of the component and remove its references to the graph
+    exportComponent.graph = new Graph()
     exportComponent.cleanUp()
     const exportString = SvgExport.exportSvgString(element)
+
     downloadFile(exportString, 'export.svg')
   })
 }
+
 void run().then(finishLoading)

@@ -47,6 +47,7 @@ export const graphData = {
     { id: '61', group: 'group6' },
     { id: '62', group: 'group6' }
   ],
+
   edgesSource: [
     { from: '00', to: '01' },
     { from: '01', to: '10' },
@@ -74,6 +75,7 @@ export const graphData = {
     { from: '62', to: '12' },
     { from: '20', to: '50' }
   ],
+
   groupsSource: [
     { id: 'group1', label: 'group one' },
     { id: 'group2', parentGroup: 'group1', label: 'group two' },

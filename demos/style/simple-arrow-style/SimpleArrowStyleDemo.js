@@ -38,32 +38,40 @@ import {
   PolylineEdgeStyle,
   Stroke
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { TaperedArrow, TaperedArrowExtension } from './TaperedArrow'
 import { colorSets } from '@yfiles/demo-resources/demo-colors'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
+
 /**
  * Runs the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   const graphComponent = new GraphComponent('#graphComponent')
   // initialize input mode
   graphComponent.inputMode = new GraphEditorInputMode()
+
   // initialize demo styles
   initializeStyleDefaults(graphComponent.graph)
+
   // create the sample graph
   createSampleGraph(graphComponent)
+
   initializeUI(graphComponent)
 }
+
 /**
  * Configure GraphML so that custom arrows can be serialized and deserialized to this format.
  */
 function createGraphMLIOHandler() {
   const graphMLIOHandler = new GraphMLIOHandler()
+
   // ensure that these constants can be deserialized even when they have not yet been used yet
   graphMLIOHandler.addTypeInformation(TaperedArrow, {
     extension: (item) => {
@@ -81,12 +89,14 @@ function createGraphMLIOHandler() {
   })
   return graphMLIOHandler
 }
+
 /**
  * Initializes the style defaults.
  * @param graph The graph.
  */
 function initializeStyleDefaults(graph) {
   initDemoStyles(graph)
+
   // default edge style with the following arrow configuration
   const taperedArrow = new TaperedArrow(5, 10, Fill.from('#ab2346'))
   graph.edgeDefaults.style = new PolylineEdgeStyle({
@@ -95,18 +105,22 @@ function initializeStyleDefaults(graph) {
     targetArrow: taperedArrow
   })
 }
+
 /**
  * Creates the sample graph for this demo.
  * @param graphComponent The graphComponent to add the nodes to
  */
 function createSampleGraph(graphComponent) {
   const graph = graphComponent.graph
+
   graph.clear()
   const node1 = graph.createNodeAt([0, 0])
   const node2 = graph.createNodeAt([300, 0])
+
   const heights = [-75, -50, -25, 0, 25, 50, 95]
   const edgeThicknesses = [1, 2, 3, 4, 5, 8, 10]
   const edgeColor = colorSets['demo-orange'].stroke
+
   for (let i = 0; i < heights.length; i++) {
     const height = heights[i]
     const width = edgeThicknesses[i]
@@ -123,14 +137,17 @@ function createSampleGraph(graphComponent) {
       })
     )
   }
+
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Binds actions to the demo's UI controls.
  */
 function initializeUI(graphComponent) {
   // configure GraphML so that custom arrows can be serialized and deserialized to this format
   const graphMLIOHandler = createGraphMLIOHandler()
+
   document.querySelector('#reload').addEventListener('click', () => {
     graphComponent.graph.clear()
     createSampleGraph(graphComponent)
@@ -142,4 +159,5 @@ function initializeUI(graphComponent) {
     await saveGraphML(graphComponent, 'arrowStyle.graphml', graphMLIOHandler)
   })
 }
+
 run().then(finishLoading)

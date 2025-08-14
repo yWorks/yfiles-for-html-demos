@@ -33,6 +33,7 @@ import {
   ILayoutAlgorithm,
   LayoutData
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to create and configure {@link HierarchicalLayout} so that it run only on a
  * predefined set of nodes and edges.
@@ -44,6 +45,8 @@ export function createFeatureLayoutConfiguration(graph) {
   const layoutData = new HierarchicalLayoutData()
   layoutData.incrementalNodes = (node) => node.tag && node.tag.includeInLayout
   layoutData.incrementalEdges = (edge) => edge.tag && edge.tag.includeInLayout
+
   const layout = new HierarchicalLayout({ fromSketchMode: true })
+
   return { layout, layoutData }
 }

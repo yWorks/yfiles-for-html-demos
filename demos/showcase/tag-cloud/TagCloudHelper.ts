@@ -128,10 +128,7 @@ function updateNodeLabel(graph: IGraph, node: INode, fontSize: number, fontColor
   // set the desired font size and font color to the label of the node
   graph.setStyle(
     node.labels.get(0),
-    new LabelStyle({
-      font: new Font({ fontSize: fontSize }),
-      textFill: fontColor
-    })
+    new LabelStyle({ font: new Font({ fontSize: fontSize }), textFill: fontColor })
   )
 }
 

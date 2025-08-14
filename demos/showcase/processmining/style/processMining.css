@@ -1,0 +1,106 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.process-step-node {
+  fill: #343e49;
+  stroke: none;
+}
+
+.graph-component {
+  background-color: #ffffff;
+}
+
+.details-popup {
+  position: absolute;
+  background-color: white;
+  max-width: 250px;
+  box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.details-popup h3 {
+  margin: 5px 0 10px 0;
+}
+
+.task-card {
+  border: 1px solid rgb(44, 152, 230);
+  border-radius: 5px;
+  padding: 0 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  margin: 10px 0;
+}
+
+.task-card h4 {
+  margin: 5px 0;
+}
+
+.task-card p {
+  margin: 5px 0;
+  font-size: 12px;
+}
+
+.task-card-details {
+  margin-left: 20px;
+}
+
+.infinite-loop-button {
+  border: 1px solid #343e49 !important;
+  width: fit-content !important;
+  margin-left: 20px !important;
+  padding: 0 10px !important;
+  height: 28px !important;
+}
+
+.infinite-loop-button-enabled {
+  background-color: #343e49 !important;
+  color: white !important;
+}
+
+.hide-thumb::-webkit-slider-thumb {
+  display: none;
+}
+
+input[type='range'] {
+  width: 100px;
+  --val: 40; /* default value, JS will update this */
+  background: linear-gradient(
+    to right,
+    rgb(162, 217, 255) 0%,
+    #0075ff calc(var(--val, 40) * 1%),
+    #ddd calc(var(--val, 40) * 1%),
+    #ddd 100%
+  );
+  border-radius: 5px;
+  height: 8px;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+}

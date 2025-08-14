@@ -40,12 +40,15 @@ import {
   License,
   TreeAnalysis
 } from '@yfiles/yfiles'
+
 import { initializeNodePopups } from './node-popup-toolbar'
 import { MindMapEdgeStyle } from './styles/MindMapEdgeStyle'
 import { layoutTree } from './mind-map-layout'
 import { initializeCommands } from './interaction/commands'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 import { hobbies } from './resources/hobbies'
 import { getNodeData, isCollapsed, isCrossReference } from './data-types'
 import { initializeStyles, updateStyles } from './styles/styles-support'
@@ -55,6 +58,7 @@ import { useSingleSelection } from './interaction/single-selection'
 import { EditOneLabelHelper } from './interaction/EditOneLabelHelper'
 import { MindMapFocusIndicatorManager } from './MindMapFocusIndicatorManager'
 import { MindMapOverviewRenderer } from './styles/MindMapOverviewRenderer'
+
 // This demo shows how to implement a mind map viewer and editor.
 //
 // The demo provides the following features:
@@ -65,20 +69,25 @@ import { MindMapOverviewRenderer } from './styles/MindMapOverviewRenderer'
 // - Decorate nodes with state icons
 // - Edit the color of nodes
 // - Add cross-reference edges between nodes
+
 /**
  * The GraphComponent
  */
 let graphComponent
+
 /**
  * A filtered graph hiding the collapsed nodes.
  */
 let filteredGraph
+
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
   const overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
   overviewComponent.graphOverviewRenderer = new MindMapOverviewRenderer()
+
   initializeGraphComponent()
   initializeStyles()
   initializeGraphFiltering()
@@ -86,12 +95,16 @@ async function run() {
   initializeSubtrees(graphComponent)
   initializeCrossReferences(graphComponent)
   initializeNodePopups(graphComponent)
+
   await buildGraph(graphComponent.graph)
+
   // add custom commands to interact with the mind map
   initializeCommands(graphComponent)
+
   // limit the viewport so that the graph cannot be panned too far out of view
   graphComponent.viewportLimiter.policy = 'within-margins'
 }
+
 /**
  * Initializes the graphComponent.
  * Adds a view port limiter to limit panning, when the graph fits in the graphComponent, adds
@@ -100,17 +113,23 @@ async function run() {
 function initializeGraphComponent() {
   // enables undo
   graphComponent.graph.undoEngineEnabled = true
+
   // set the maximum zoom factor of viewport to 2.0
   graphComponent.maximumZoom = 2.0
+
   // render the focus for the root in front of the node and for the other nodes behind
   graphComponent.focusIndicatorManager = new MindMapFocusIndicatorManager()
+
   const nodeDecorator = graphComponent.graph.decorator.nodes
+
   // prevent adding more than one label to a cross-reference edge or a node
   graphComponent.graph.decorator.edges.editLabelHelper.addConstant(new EditOneLabelHelper())
   nodeDecorator.editLabelHelper.addConstant(new EditOneLabelHelper())
+
   // hide selection
   nodeDecorator.selectionRenderer.hide()
 }
+
 /**
  * Initializes and customizes the input mode.
  * The mind map demo uses a customized version of the {@link GraphEditorInputMode} to implement
@@ -129,17 +148,13 @@ function initializeInputModes() {
     allowClipboardOperations: false,
     contextMenuItems: GraphItemTypes.NODE,
     focusableItems: GraphItemTypes.NODE,
-    editLabelInputMode: {
-      autoRemoveEmptyLabels: false
-    },
+    editLabelInputMode: { autoRemoveEmptyLabels: false },
     // enable panning without ctrl-key pressed
     moveViewportInputMode: { beginRecognizer: EventRecognizers.MOUSE_DOWN },
     movableSelectedItemsPredicate: (item) =>
       item instanceof INode && item !== getRoot(graphComponent.graph),
     // disable the moveUnselectedItemsInputMode so that only selected nodes can be moved
-    moveUnselectedItemsInputMode: {
-      enabled: false
-    },
+    moveUnselectedItemsInputMode: { enabled: false },
     // make only the nodes and the cross-reference edges selectable
     selectablePredicate: (item) => {
       if (item instanceof IEdge) {
@@ -157,17 +172,22 @@ function initializeInputModes() {
       await layoutTree(graphComponent)
     }
   })
+
   graphEditorInputMode.moveSelectedItemsInputMode.priority =
     graphEditorInputMode.moveViewportInputMode.priority - 1
+
   graphComponent.inputMode = graphEditorInputMode
+
   // disable selection of multiple elements simultaneously
   useSingleSelection(graphComponent)
 }
+
 /**
  * Initializes filtering for hiding nodes.
  */
 function initializeGraphFiltering() {
   const graph = graphComponent.graph
+
   /**
    * Determines whether a node's parent is collapsed, so it should not be visible.
    */
@@ -179,9 +199,11 @@ function initializeGraphFiltering() {
     }
     return true
   }
+
   filteredGraph = new FilteredGraphWrapper(graph, nodePredicate)
   graphComponent.graph = filteredGraph
 }
+
 /**
  * Creates the graph from the given dataset.
  * After building the graph, for each node we have to calculate its data needed for visualization
@@ -197,8 +219,10 @@ async function buildGraph(graph) {
   const edgesSource = graphBuilder.createEdgesSource(hobbies.connections, 'from', 'to')
   edgesSource.edgeCreator.defaults.style = new MindMapEdgeStyle(1, 1)
   graphBuilder.buildGraph()
+
   // create the data information for each node needed for visualization and interaction
   initializeNodeData(graph)
+
   // create the styles for the nodes and edges based on the elements' data
   updateStyles(
     graph.nodes.find((node) => graph.inDegree(node) === 0),
@@ -206,11 +230,15 @@ async function buildGraph(graph) {
   )
   // calculate the bounds for each node based on its label's size
   graph.nodes.forEach((node) => adjustNodeBounds(node, graph))
+
   // arrange the graph using a tree layout
   await layoutTree(graphComponent)
+
   await graphComponent.fitGraphBounds()
+
   graphComponent.graph.undoEngine.clear()
 }
+
 /**
  * Initializes the data needed for the node visualization and interaction.
  */
@@ -229,20 +257,22 @@ function initializeNodeData(graph) {
         )
     )
   }
+
   try {
     // Run a tree analysis algorithm to calculate the depth of each node,
     // i.e., the distance of a node from the root node.
     // Ignore the cross-reference edges, because they do not belong to the tree structure
-    const treeAnalysis = new TreeAnalysis({
-      subgraphEdges: (e) => !isCrossReference(e)
-    })
+    const treeAnalysis = new TreeAnalysis({ subgraphEdges: (e) => !isCrossReference(e) })
+
     const analysisResult = treeAnalysis.run(graph)
+
     // set the node data for the root node
     const root = analysisResult.root
     const rootData = getNodeData(root)
     rootData.depth = analysisResult.getDepth(root)
     rootData.collapsed = false
     rootData.stateIcon = 0
+
     // calculate the node data for all other nodes
     const colors = ['#56926e', '#ff6c00', '#4281a4', '#AA5F82', '#db3a34']
     // get the direct neighbors of the root
@@ -277,4 +307,5 @@ function initializeNodeData(graph) {
     }
   }
 }
+
 void run().then(finishLoading)

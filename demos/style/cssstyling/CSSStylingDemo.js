@@ -49,69 +49,76 @@ import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { CSS3NodeStyleWrapper } from './CSS3NodeStyleWrapper'
 import graphData from './graph-data.json'
 import { GraphOverviewRenderer } from './GraphOverviewRenderer'
+
 let graphComponent
+
 async function run() {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('graphComponent')
   const overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
   // add a custom visualization for the elements in the overview
   overviewComponent.graphOverviewRenderer = new GraphOverviewRenderer()
+
   configureInputMode()
   initializeGraph(graphComponent.graph)
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   const circularLayout = new CircularLayout({
     partitioningPolicy: 'single-cycle',
     nodeLabelPlacement: 'ray-like',
-    componentLayout: {
-      enabled: false
-    }
+    componentLayout: { enabled: false }
   })
   graphComponent.graph.applyLayout(circularLayout)
   await graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder
-    .createNodesSource({
-      data: graphData.nodeList,
-      id: (item) => item.id
-    })
+    .createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
     .nodeCreator.createLabelBinding((data) => data.label)
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Configures an input mode to allow the operations which use the templates that were styled with CSS.
  */
 function configureInputMode() {
   const graphEditorInputMode = new GraphEditorInputMode({
     // enable snapping
-    snapContext: new GraphSnapContext({
-      snapDistance: 10,
-      visualizeSnapResults: true
-    }),
+    snapContext: new GraphSnapContext({ snapDistance: 10, visualizeSnapResults: true }),
     // allow focusing all graph elements
     focusableItems: GraphItemTypes.ALL
   })
+
   // allow hovering of all graph elements
   graphEditorInputMode.itemHoverInputMode.hoverItems = GraphItemTypes.ALL
+
   // enable tooltips
   const toolTipInputMode = graphEditorInputMode.toolTipInputMode
   toolTipInputMode.toolTipLocationOffset = [15, 15]
   toolTipInputMode.delay = '500ms'
   toolTipInputMode.duration = '5s'
+
   // add a tooltip for hovered items
   graphEditorInputMode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.handled) {
@@ -120,6 +127,7 @@ function configureInputMode() {
     evt.toolTip = createTooltipContent(evt.item)
     evt.handled = true
   })
+
   // add a highlight for hovered items
   graphEditorInputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     const highlights = graphComponent.highlights
@@ -130,14 +138,17 @@ function configureInputMode() {
       highlights.add(evt.item)
     }
   })
+
   // whenever the user creates a node, we set a created flag on its tag data object, which will then be used
   // by the custom node style to set the appropriate CSS classes
   graphEditorInputMode.addEventListener('node-created', (evt) => {
     const node = evt.item
     node.tag = { created: true }
   })
+
   graphComponent.inputMode = graphEditorInputMode
 }
+
 /**
  * Creates a tooltip text depending on the class of the item.
  */
@@ -153,6 +164,7 @@ function createTooltipContent(item) {
   }
   return null
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  */
@@ -160,17 +172,21 @@ function initializeGraph(graph) {
   const demoNodeStyle = createDemoNodeStyle()
   demoNodeStyle.stroke = '1.5px #3c4253'
   demoNodeStyle.fill = 'white'
+
   const demoEdgeStyle = createDemoEdgeStyle({ showTargetArrow: false })
   demoEdgeStyle.stroke = '1.5px white'
+
   const demoLabelStyle = new LabelStyle({
     textFill: 'white',
     padding: [3, 5, 3, 5],
     backgroundFill: 'rgba(60, 66, 83, 0.5)'
   })
+
   graph.nodeDefaults.style = new CSS3NodeStyleWrapper(demoNodeStyle)
   graph.edgeDefaults.style = demoEdgeStyle
   graph.nodeDefaults.labels.style = demoLabelStyle
   graph.edgeDefaults.labels.style = demoLabelStyle
   graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.BOTTOM
 }
+
 void run().then(finishLoading)

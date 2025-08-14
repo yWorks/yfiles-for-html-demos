@@ -35,6 +35,7 @@ import {
   LayoutStageBase,
   Point
 } from '@yfiles/yfiles'
+
 /**
  * Arranges nodes in a circle.
  * Determines the size for each node by comparing the number and weights of all edges at the node.
@@ -44,10 +45,13 @@ import {
  */
 export class ChordDiagramLayout extends LayoutStageBase {
   _gapRatio
+
   static EDGE_WEIGHT_KEY = new EdgeDataKey('EDGE_WEIGHT_DATA_KEY')
   static STYLE_HINT_KEY = new EdgeDataKey('STYLE_HINT_DATA_KEY')
+
   static CENTER = Point.ORIGIN
   static RADIUS = 300
+
   /**
    * Sets the ratio of gaps to nodes, default value is 25%
    * @param value - [0..1] what ratio is occupied by empty space
@@ -55,6 +59,7 @@ export class ChordDiagramLayout extends LayoutStageBase {
   set gapRatio(value) {
     this._gapRatio = value
   }
+
   /**
    * Returns the ratio of gaps to nodes, default value is 25%
    * @returns value [0..1] what ratio is occupied by empty space
@@ -62,10 +67,12 @@ export class ChordDiagramLayout extends LayoutStageBase {
   get gapRatio() {
     return this._gapRatio
   }
+
   constructor() {
     super()
     this._gapRatio = 0.25
   }
+
   /**
    * Arranges the given graph.
    * Note, the input graph is a {@link LayoutGraph}, which is a copy of the {@link IGraph} that
@@ -76,29 +83,37 @@ export class ChordDiagramLayout extends LayoutStageBase {
     // Retrieve the mapper that assigns a thickness to each edge. This has been set up
     // through the layout data
     const edgeThicknessMap = graph.context.getItemData(ChordDiagramLayout.EDGE_WEIGHT_KEY)
+
     // this mapper is used to make style information available to the EdgeStyle
     const edgeStyleHintMap = graph.context.getItemData(ChordDiagramLayout.STYLE_HINT_KEY)
+
     const radius = ChordDiagramLayout.RADIUS
+
     // compute the total thickness of all edges
     const totalEdgeWeights = graph.edges.reduce(
       (acc, current) => acc + edgeThicknessMap.get(current),
       0
     )
+
     // normalize the edge weights
     graph.edges.forEach((edge) => {
       const votesOnEdge = edgeThicknessMap.get(edge)
       const normalizedThickness = (votesOnEdge / totalEdgeWeights) * (Math.PI * (1 - this.gapRatio)) // reserve half the circle for gaps between nodes
       edgeThicknessMap.set(edge, normalizedThickness)
     })
+
     // nodes will be successively placed around a circle,
     // starting at an angle of 0° which corresponds to the rightmost point
     let startAngle = 0
+
     // gap between two nodes
     const gap = (Math.PI * 2 * this.gapRatio) / graph.nodes.size
+
     // compute a map of node sizes. The node size is equal to the compound size of all edges at the node
     const nodeSizes = graph.nodes
       .map((node) => node.edges.reduce((acc, curr) => acc + edgeThicknessMap.get(curr), 0))
       .toArray()
+
     // sort edges to prevent intra-node crossings
     graph.nodes.forEach((n, idx) => {
       n.sortOutEdges((edge0, edge1) => {
@@ -106,11 +121,13 @@ export class ChordDiagramLayout extends LayoutStageBase {
         const targetIndex1 = graph.nodes.findIndex((node) => node == edge1.target)
         return compareEdges(idx, targetIndex0, targetIndex1, nodeSizes, gap)
       })
+
       n.sortInEdges((edge0, edge1) => {
         const targetIndex0 = graph.nodes.findIndex((node) => node == edge0.source)
         const targetIndex1 = graph.nodes.findIndex((node) => node == edge1.source)
         return compareEdges(idx, targetIndex0, targetIndex1, nodeSizes, gap)
       })
+
       // observe how a different sorting strategy (or not sorting at all) influences the result
       // n.sortOutEdges(
       //   IComparer.create((edge0, edge1) => {
@@ -126,6 +143,7 @@ export class ChordDiagramLayout extends LayoutStageBase {
       //   })
       // )
     })
+
     graph.nodes.forEach((n, idx) => {
       const nodeSize = nodeSizes[idx]
       n.layout.width = nodeSize
@@ -135,13 +153,17 @@ export class ChordDiagramLayout extends LayoutStageBase {
         radius * Math.cos(startAngle + (nodeSize + gap) * 0.5),
         radius * Math.sin(startAngle + (nodeSize + gap) * 0.5)
       )
+
       let edgeSegmentStart = startAngle + gap / 2
+
       // compute where the start and end points of inbound edges lie on a node
       n.inEdges.forEach((edge) => {
         const thickness = edgeThicknessMap.get(edge)
         const edgeSegmentEnd = edgeSegmentStart + thickness
         const center = edgeSegmentStart + 0.5 * thickness
+
         edge.targetPortLocation = new Point(radius * Math.cos(center), radius * Math.sin(center))
+
         const hints = getHints(edgeStyleHintMap, edge)
         hints.targetStart = new Point(
           radius * Math.cos(edgeSegmentStart),
@@ -153,12 +175,15 @@ export class ChordDiagramLayout extends LayoutStageBase {
         )
         edgeSegmentStart = edgeSegmentEnd
       })
+
       // compute where the start and end points of outbound edges lie on a node
       n.outEdges.forEach((edge) => {
         const thickness = edgeThicknessMap.get(edge)
         const edgeSegmentEnd = edgeSegmentStart + thickness
         const center = edgeSegmentStart + 0.5 * thickness
+
         edge.sourcePortLocation = new Point(radius * Math.cos(center), radius * Math.sin(center))
+
         const hints = getHints(edgeStyleHintMap, edge)
         hints.sourceStart = new Point(
           radius * Math.cos(edgeSegmentStart),
@@ -168,13 +193,16 @@ export class ChordDiagramLayout extends LayoutStageBase {
           radius * Math.cos(edgeSegmentEnd),
           radius * Math.sin(edgeSegmentEnd)
         )
+
         edgeSegmentStart = edgeSegmentEnd
       })
+
       // forward to the next node position
       startAngle += nodeSize + gap
     })
   }
 }
+
 /**f
  * Gets the hints for the given edge.
  */
@@ -192,6 +220,7 @@ function getHints(map, edge) {
   }
   return hints
 }
+
 /**
  * Helper function to compute the distance between startIndex and targetIndex nodes
  * in clockwise direction.
@@ -208,6 +237,7 @@ function clockwiseDistance(startIndex, targetIndex, nodeSizes, gap) {
   }
   return distance
 }
+
 /**
  * Helper function to compute the distance between startIndex and targetIndex nodes
  * in counter-clockwise direction.
@@ -224,6 +254,7 @@ function counterclockwiseDistance(startIndex, targetIndex, nodeSizes, gap) {
   }
   return distance
 }
+
 /**
  * Helper function to compute which edge should precede another on a node. If the shortest paths from
  * the start node lead in the same direction, sort them by distance. Else, arrange them, so they
@@ -233,9 +264,11 @@ function compareEdges(startIndex, targetIndex0, targetIndex1, nodeSizes, gap) {
   const t0LeftDistance = clockwiseDistance(startIndex, targetIndex0, nodeSizes, gap)
   const t0RightDistance = counterclockwiseDistance(startIndex, targetIndex0, nodeSizes, gap)
   const t0IsLeft = t0LeftDistance < t0RightDistance
+
   const t1LeftDistance = clockwiseDistance(startIndex, targetIndex1, nodeSizes, gap)
   const t1RightDistance = counterclockwiseDistance(startIndex, targetIndex1, nodeSizes, gap)
   const t1IsLeft = t1LeftDistance < t1RightDistance
+
   if (t0IsLeft && t1IsLeft) {
     if (t0LeftDistance < t1LeftDistance) {
       return 1

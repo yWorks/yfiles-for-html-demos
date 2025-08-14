@@ -36,11 +36,13 @@ import {
   Point,
   SvgVisual
 } from '@yfiles/yfiles'
+
 export class CustomArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   distance
   anchor
   direction
   arrowPath
+
   /**
    * Initializes a new instance of the {@link CustomArrow} class.
    */
@@ -51,21 +53,26 @@ export class CustomArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvid
     this.direction = Point.ORIGIN
     this.arrowPath = null
   }
+
   get length() {
     return this.distance * 2
   }
+
   get cropLength() {
     return 1
   }
+
   getVisualCreator(edge, atSource, anchor, direction) {
     this.anchor = anchor
     this.direction = direction
     return this
   }
+
   createVisual(context) {
     if (this.arrowPath === null) {
       this.arrowPath = this.createArrowPath(this.distance)
     }
+
     const path = this.arrowPath.createSvgPath()
     path.setAttribute('fill', 'white')
     path.setAttribute('stroke', 'black')
@@ -81,21 +88,23 @@ export class CustomArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvid
         ${this.anchor.y}
       )`
     )
+
     const svgVisual = new SvgVisual(path)
-    svgVisual.cache = {
-      distance: this.distance
-    }
+    svgVisual.cache = { distance: this.distance }
     return svgVisual
   }
+
   updateVisual(context, oldVisual) {
     const svgVisual = oldVisual
     const cache = svgVisual.cache
     const path = svgVisual.svgElement
+
     if (this.distance !== cache.distance) {
       const arrowPath = this.createArrowPath(this.distance)
       path.setAttribute('d', arrowPath.createSvgPathData())
       cache.distance = this.distance
     }
+
     path.setAttribute(
       'transform',
       `matrix(
@@ -109,6 +118,7 @@ export class CustomArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvid
     )
     return svgVisual
   }
+
   createArrowPath(dist) {
     const path = new GeneralPath()
     path.moveTo(new Point(dist * 2 + 1, dist * 0.5))
@@ -118,11 +128,13 @@ export class CustomArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvid
     path.lineTo(new Point(dist * 2 + 1, -dist * 0.5))
     return path
   }
+
   getBoundsProvider(edge, atSource, anchor, direction) {
     this.anchor = anchor
     this.direction = direction
     return this
   }
+
   getBounds(context) {
     const bounds = this.createArrowPath(this.distance).getBounds()
     const matrix = new Matrix(
@@ -136,6 +148,7 @@ export class CustomArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvid
     matrix.scale(this.length, this.length)
     return matrix.calculateTransformedBounds(bounds)
   }
+
   get cropAtPort() {
     return false
   }

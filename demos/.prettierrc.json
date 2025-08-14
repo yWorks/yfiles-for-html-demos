@@ -4,12 +4,6 @@
   "singleQuote": true,
   "trailingComma": "none",
   "endOfLine": "auto",
-  "overrides": [
-    {
-      "files": ["tutorial-*/**/*.ts"],
-      "options": {
-        "printWidth": 80
-      }
-    }
-  ]
+  "objectWrap": "collapse",
+  "overrides": [{ "files": ["tutorial-*/**/*.ts"], "options": { "printWidth": 80 } }]
 }

@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { EdgeStyleBase, GeneralPath, HtmlCanvasVisual } from '@yfiles/yfiles'
 import { getNodeData } from '../data-types'
+
 /**
  * An edge style that draws a smooth Bézier curve with color and thickness interpolation
  * between the source and the target nodes.
@@ -45,12 +46,14 @@ export class MindMapEdgeStyle extends EdgeStyleBase {
     this.thicknessStart = thicknessStart
     this.thicknessEnd = thicknessEnd
   }
+
   /**
    * Creates the visual for the edge using an HTML canvas visual.
    */
   createVisual(context, edge) {
     return new MindMapCanvasVisual(edge, this.thicknessStart, this.thicknessEnd)
   }
+
   /**
    * Updates the visual for the edge.
    * If the edge thickness has changed, the edge visual has to be re-created.
@@ -66,6 +69,7 @@ export class MindMapEdgeStyle extends EdgeStyleBase {
     }
     return oldVisual
   }
+
   /**
    * Hit-test of the edge style.
    * Mind map edges should not be clicked, selected or hovered.
@@ -75,6 +79,7 @@ export class MindMapEdgeStyle extends EdgeStyleBase {
     return false
   }
 }
+
 /**
  * Contains the actual rendering logic of the edge.
  * This class uses HTML canvas rendering to visualize the edge.
@@ -89,10 +94,12 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
   cachedThicknessStart = 0
   // The cached end thickness to use during updates
   cachedThicknessEnd = 0
+
   /**
    * The array of points after flattening the path.
    */
   points = []
+
   /**
    * Creates the canvas visual.
    * @param edge The given edge.
@@ -108,6 +115,7 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
     this.thicknessStart = thicknessStart
     this.thicknessEnd = thicknessEnd
   }
+
   /**
    * Renders the edge as a flattened Bézier path.
    */
@@ -123,16 +131,20 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
       const flattenedPath = p.flatten(0.01)
       this.points = this.getPoints(flattenedPath)
     }
+
     // draw the edge path based on the color of the source/target node
     const startColor = MindMapCanvasVisual.hexToRgb(getNodeData(this.edge.sourceNode).color)
     const endColor = MindMapCanvasVisual.hexToRgb(getNodeData(this.edge.targetNode).color)
     this.drawEdgePath(startColor, endColor, ctx)
+
     ctx.restore()
+
     // save the data used to create the visualization
     this.cachedPath = p
     this.cachedThicknessStart = this.thicknessStart
     this.cachedThicknessEnd = this.thicknessEnd
   }
+
   /**
    * Returns equidistant points on the edge path.
    * The quality of the curve rendering may be adjusted by setting MAX_SEGMENTS.
@@ -141,12 +153,14 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
   getPoints(path) {
     const MAX_SEGMENTS = this.thicknessStart > 8 ? 100 : 15
     const points = []
+
     const lInc = 1.0 / MAX_SEGMENTS
     for (let i = 0; i <= MAX_SEGMENTS; i++) {
       points[i] = path.getPoint(lInc * i)
     }
     return points
   }
+
   /**
    * Draws the edge consisting of concatenated line segments of varying thickness and color.
    * Intermediate values of color components (r,g,b) and thickness (w) are computed using linear interpolation.
@@ -161,6 +175,7 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
     const gE = endColor.g
     const bS = startColor.b
     const bE = endColor.b
+
     const linc = 1.0 / this.points.length
     // compute the increments for thickness and color components for each step
     const wDelta = (this.thicknessEnd - this.thicknessStart) * linc
@@ -172,19 +187,24 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
     let r = rS
     let g = gS
     let b = bS
+
     ctx.lineCap = 'round'
+
     let x0
     let x1
     for (let i = 0; i < this.points.length - 1; i++) {
       x0 = this.points[i]
       x1 = this.points[i + 1]
+
       // compute the thickness and color values for the current line segment by adding increment
       w += wDelta
       r += rDelta
       g += gDelta
       b += bDelta
+
       ctx.strokeStyle = `rgb(${Math.floor(r)},${Math.floor(g)},${Math.floor(b)})`
       ctx.lineWidth = w
+
       // create the line segment
       ctx.beginPath()
       ctx.moveTo(x0.x, x0.y)
@@ -192,6 +212,7 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
       ctx.stroke()
     }
   }
+
   /**
    * Creates a curved path segment using edge bends as control points.
    * If no bends are available, a straight line is created.
@@ -212,6 +233,7 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
     }
     return p
   }
+
   /**
    * Converts a hex to rgb color.
    * @param hex The hex to be converted.
@@ -220,11 +242,7 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
   static hexToRgb(hex) {
     const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
     return rgb
-      ? {
-          r: parseInt(rgb[1], 16),
-          g: parseInt(rgb[2], 16),
-          b: parseInt(rgb[3], 16)
-        }
+      ? { r: parseInt(rgb[1], 16), g: parseInt(rgb[2], 16), b: parseInt(rgb[3], 16) }
       : { r: 255, g: 255, b: 255 }
   }
 }

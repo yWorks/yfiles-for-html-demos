@@ -36,6 +36,7 @@ import {
   SimpleLabel,
   Size
 } from '@yfiles/yfiles'
+
 /**
  * This class adds an HTML panel on top of the contents of the GraphComponent that can
  * display arbitrary information about a {@link INode node} or an {@link IEdge edge}.
@@ -50,6 +51,7 @@ export class HTMLPopupSupport {
   labelModelParameter
   _currentItem = null
   dirty = false
+
   /**
    * Initializes a new HTMLPopupSupport instance for the given graph component, pop-up container
    * div, and pop-up placement parameter.
@@ -65,14 +67,17 @@ export class HTMLPopupSupport {
     // make the popup invisible
     div.style.opacity = '0'
     div.style.display = 'none'
+
     this.registerListeners()
   }
+
   /**
    * Gets the node or edge to display information for.
    */
   get currentItem() {
     return this._currentItem
   }
+
   /**
    * Sets the node or edge to display information for.
    * Setting this property to a value other than null shows the pop-up.
@@ -89,6 +94,7 @@ export class HTMLPopupSupport {
       this.hide()
     }
   }
+
   /**
    * Registers viewport, node bounds changes, and visual tree listeners to the support's associated
    * graph component.
@@ -100,6 +106,7 @@ export class HTMLPopupSupport {
         this.dirty = true
       }
     })
+
     // Adds listeners for node bounds changes
     this.graphComponent.graph.addEventListener('node-layout-changed', (node, oldLayout) => {
       const item = this.currentItem
@@ -107,6 +114,7 @@ export class HTMLPopupSupport {
         this.dirty = true
       }
     })
+
     // Adds listener for updates of the visual tree
     this.graphComponent.addEventListener('updated-visual', () => {
       if (this.currentItem && this.dirty) {
@@ -115,6 +123,7 @@ export class HTMLPopupSupport {
       }
     })
   }
+
   /**
    * Makes this pop-up visible.
    */
@@ -125,6 +134,7 @@ export class HTMLPopupSupport {
     }, 0)
     this.updateLocation()
   }
+
   /**
    * Hides this pop-up.
    */
@@ -143,6 +153,7 @@ export class HTMLPopupSupport {
     this.div.style.opacity = '0'
     this.div.style.display = 'none'
   }
+
   /**
    * Changes the location of this pop-up to the location calculated by the
    * {@link HTMLPopupSupport.labelModelParameter}. Currently, this implementation does not support rotated pop-ups.
@@ -154,6 +165,7 @@ export class HTMLPopupSupport {
     const width = this.div.clientWidth
     const height = this.div.clientHeight
     const zoom = this.graphComponent.zoom
+
     const dummyLabel = new SimpleLabel(this.currentItem, '', this.labelModelParameter)
     dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
     const newLayout = this.labelModelParameter.model.getGeometry(
@@ -162,6 +174,7 @@ export class HTMLPopupSupport {
     )
     this.setLocation(newLayout.anchorX, newLayout.anchorY - (height + 10) / zoom)
   }
+
   /**
    * Sets the location of this pop-up to the given world coordinates.
    * @param x The target x-coordinate of the pop-up.
@@ -172,6 +185,7 @@ export class HTMLPopupSupport {
     const viewPoint = this.graphComponent.worldToViewCoordinates(new Point(x, y))
     this.div.style.setProperty('transform', `translate(${viewPoint.x}px, ${viewPoint.y}px)`)
   }
+
   /**
    * Determines if the given item is an IEdge connected to the given node.
    */

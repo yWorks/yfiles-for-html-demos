@@ -31,7 +31,6 @@ import {
   Cursor,
   GraphComponent,
   GraphItemTypes,
-  type IEnumerable,
   IGraph,
   IHitTester,
   IInputModeContext,

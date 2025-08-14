@@ -183,9 +183,7 @@ function createHierarchicalLayoutData(): HierarchicalLayoutData {
  * edges and a slightly increased layer distance.
  */
 function createCoreLayout(): HierarchicalLayout {
-  return new HierarchicalLayout({
-    minimumLayerDistance: 50
-  })
+  return new HierarchicalLayout({ minimumLayerDistance: 50 })
 }
 
 /**
@@ -225,10 +223,7 @@ async function createGraph(graph: IGraph): Promise<void> {
   graph.setStyle(nodes[10], greenNodeStyle)
   graph.setStyle(nodes[11], greenNodeStyle)
 
-  const blueNodeStyle = new ShapeNodeStyle({
-    fill: '#17BEBB',
-    stroke: '1.5px #407271'
-  })
+  const blueNodeStyle = new ShapeNodeStyle({ fill: '#17BEBB', stroke: '1.5px #407271' })
   graph.setStyle(nodes[7], blueNodeStyle)
   graph.setStyle(nodes[8], blueNodeStyle)
   nodes[7].tag = nodes[8].tag = { moveAside: true }
@@ -243,9 +238,7 @@ async function createGraph(graph: IGraph): Promise<void> {
   graph.createEdge(nodes[2], nodes[6])
   graph.createEdge(nodes[3], nodes[7])
   graph.createEdge(nodes[6], nodes[8])
-  const dashedEdgeStyle = new PolylineEdgeStyle({
-    stroke: '1.5px dashed darkgray'
-  })
+  const dashedEdgeStyle = new PolylineEdgeStyle({ stroke: '1.5px dashed darkgray' })
   const e1 = graph.createEdge(nodes[0], nodes[9], dashedEdgeStyle)
   const e2 = graph.createEdge(nodes[1], nodes[10], dashedEdgeStyle)
   const e3 = graph.createEdge(nodes[3], nodes[11], dashedEdgeStyle)

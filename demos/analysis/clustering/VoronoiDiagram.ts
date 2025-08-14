@@ -412,11 +412,7 @@ export class VoronoiDiagram {
 
     // mark outer face edges
     this.calculateOuterFace(outerFaceEdge, revMap, edge2Face)
-    return {
-      faces,
-      delaunayCoordinates: pointData,
-      edge2Face
-    }
+    return { faces, delaunayCoordinates: pointData, edge2Face }
   }
 
   /**

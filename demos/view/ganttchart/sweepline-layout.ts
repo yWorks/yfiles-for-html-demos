@@ -237,17 +237,9 @@ export function calculateMappingForTask(
       const xEnd = bounds.x + bounds.width
       const activity = getActivity(node)
       // push the information where the activity starts
-      sweeplineData.push({
-        x: xStart,
-        activity,
-        open: true
-      })
+      sweeplineData.push({ x: xStart, activity, open: true })
       // push the information where the task ends
-      sweeplineData.push({
-        x: xEnd,
-        activity,
-        open: false
-      })
+      sweeplineData.push({ x: xEnd, activity, open: false })
     })
 
     // sort by x-coordinates

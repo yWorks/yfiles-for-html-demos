@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  Graph,
   GraphComponent,
   GraphEditorInputMode,
   HierarchicalLayout,
@@ -76,12 +77,7 @@ async function run(): Promise<void> {
 function createGraphFromData(graph: IGraph): void {
   const id2node = new Map<number, INode>()
   for (const employee of people) {
-    id2node.set(
-      employee.id,
-      graph.createNode({
-        tag: employee
-      })
-    )
+    id2node.set(employee.id, graph.createNode({ tag: employee }))
   }
   for (const employee of people) {
     if (typeof employee.superior !== 'undefined') {
@@ -120,9 +116,7 @@ function initTagView(graphComponent: GraphComponent): void {
 }
 
 function createInputMode(): GraphEditorInputMode {
-  const inputMode = new GraphEditorInputMode({
-    allowAddLabel: false
-  })
+  const inputMode = new GraphEditorInputMode({ allowAddLabel: false })
 
   // When a node is created, we add default dummy data as the user tag.
   inputMode.addEventListener('node-created', (evt, inputMode) => {
@@ -150,9 +144,9 @@ function initLayout(graphComponent: GraphComponent): void {
 
 async function initExport(graphComponent: GraphComponent): Promise<void> {
   // Copy the CSS rules for our HTML node style to the generated SVG
-  const styles = await fetch('./style.css', {
-    headers: { Accept: 'text/css' }
-  }).then((r) => r.text())
+  const styles = await fetch('./style.css', { headers: { Accept: 'text/css' } }).then((r) =>
+    r.text()
+  )
 
   const exportBtn = document.querySelector<HTMLButtonElement>('#export-btn')!
 
@@ -168,6 +162,7 @@ async function initExport(graphComponent: GraphComponent): Promise<void> {
     const element = await exporter.exportSvgAsync(exportComponent)
 
     // Dispose of the component and remove its references to the graph
+    exportComponent.graph = new Graph()
     exportComponent.cleanUp()
     const exportString = SvgExport.exportSvgString(element)
 

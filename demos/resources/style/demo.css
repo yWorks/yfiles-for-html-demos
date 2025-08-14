@@ -1276,10 +1276,13 @@
 .demo-icon-yIconPlay {
   background-image: url('../icons/play2-16.svg');
 }
+.demo-icon-yIconPause {
+  background-image: url('../icons/pause.svg');
+}
 .demo-icon-yIconLayout {
   background-image: url('../icons/play2-16.svg');
 }
-.demo-icon-yIconLayoutHierarchic {
+.demo-icon-yIconLayoutHierarchical {
   background-image: url('../icons/layout-hierarchic-16.svg');
 }
 .demo-icon-yIconLayoutOrganic {
@@ -2647,19 +2650,6 @@ body:not(.loaded) .demo-page__toolbar:after {
 .demo-description button[class^='demo-icon-']:hover,
 .demo-description label[class^='demo-icon-']:hover {
   background-color: #dedede;
-}
-.demo-description__content kbd {
-  background: #fafafa;
-  border: 1px solid #c1c1c1;
-  border-radius: 0.25em;
-  box-shadow:
-    0 1px 0 #c1c1c1,
-    0 0 0 0.1em #fafafa inset;
-  font-size: 80%;
-  padding: 0.2em 0.5em 0.1em 0.5em;
-  line-height: 1;
-  white-space: nowrap;
-  vertical-align: middle;
 }
 .demo-main__sidebar {
   position: relative;

@@ -43,15 +43,21 @@ import {
 } from '@yfiles/yfiles'
 import { SchemaComponent } from './SchemaComponent'
 import samples from './samples'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+
 const samplesComboBox = document.querySelector('#samples')
+
 let layout
 let layoutData
 let layouting = false
+
 let graphComponent
 let schemaComponent
+
 let existingNodes
+
 /**
  * Shows building a graph from business data with class
  * {@link TreeBuilder}.
@@ -65,22 +71,29 @@ let existingNodes
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function run() {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('graphComponent')
   schemaComponent = new SchemaComponent('schemaGraphComponent', graphComponent.graph, () => {
     // noinspection JSIgnoredPromiseFromCall
     buildGraphFromData(true)
   })
+
   // configure the input mode
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // initialize the layout algorithm used in this demo
   initializeLayout()
+
   initializeSamplesComboBox()
+
   // load the initial data from samples
   // noinspection JSIgnoredPromiseFromCall
   loadSample(samples[0])
+
   // register toolbar and other GUI element actions
   initializeUI()
 }
+
 /**
  * Bind various UI elements to the appropriate actions
  */
@@ -95,6 +108,7 @@ function initializeUI() {
     await buildGraphFromData(true)
     samplesComboBox.disabled = false
   })
+
   addNavigationButtons(samplesComboBox).addEventListener('change', async () => {
     const i = samplesComboBox.selectedIndex
     if (samples && samples[i]) {
@@ -105,6 +119,7 @@ function initializeUI() {
     }
   })
 }
+
 /**
  * Builds the graph from data.
  * @param update `true` when the following layout should be incremental, `false`
@@ -114,6 +129,7 @@ async function buildGraphFromData(update) {
   if (layouting) {
     return
   }
+
   if (update) {
     // remember existing nodes
     existingNodes = graphComponent.graph.nodes.toList()
@@ -131,8 +147,10 @@ async function buildGraphFromData(update) {
     }
     await graphComponent.fitGraphBounds()
   }
+
   await applyLayout(update)
 }
+
 /**
  * Applies the layout.
  * @param update `true` when the following layout should be incremental, `false`
@@ -144,26 +162,31 @@ async function applyLayout(update) {
   }
   layout.fromSketchMode = update
   layouting = true
+
   try {
     // Ensure that the LayoutExecutor class is not removed by build optimizers
     // It is needed for the 'applyLayoutAnimated' method in this demo.
     LayoutExecutor.ensure()
+
     await graphComponent.applyLayoutAnimated(layout, '1s', layoutData)
   } finally {
     layouting = false
   }
 }
+
 /**
  * Loads the given sample data and builds the graph using the {@link SchemaComponent}
  * @param sample The sample to use for instantiation / initialization
  */
 async function loadSample(sample) {
   graphComponent.graph.clear()
+
   const sampleClone = JSON.parse(JSON.stringify(sample))
   schemaComponent.loadSample(sampleClone)
   schemaComponent.treeBuilder.buildGraph()
   await applyLayout(false)
 }
+
 /**
  * Initializes the samples combobox with the loaded sample data
  */
@@ -176,6 +199,7 @@ function initializeSamplesComboBox() {
     samplesComboBox.appendChild(option)
   }
 }
+
 /**
  * Configures the demo's layout algorithm as well as suitable layout data.
  */
@@ -184,6 +208,7 @@ function initializeLayout() {
   layout = new HierarchicalLayout({
     fromScratchLayeringStrategy: HierarchicalLayoutLayeringStrategy.HIERARCHICAL_TOPMOST
   })
+
   // initialize layout data
   // configure label placement
   layoutData = new HierarchicalLayoutData({
@@ -195,4 +220,5 @@ function initializeLayout() {
     incrementalNodes: (node) => !existingNodes.includes(node)
   })
 }
+
 run().then(finishLoading)

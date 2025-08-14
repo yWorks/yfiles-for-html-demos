@@ -32,23 +32,29 @@ import {
   createFeatureLayoutConfiguration
 } from './HierarchicalCompactGroups'
 import { loadLayoutSampleGraph } from '@yfiles/demo-utils/LoadLayoutFeaturesSampleGraph'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // load the graph and run the layout
   await loadLayoutSampleGraph(graphComponent.graph, './sample.json')
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   await graphComponent.applyLayoutAnimated(
     createFeatureLayoutConfiguration(graphComponent.graph),
     '0s'
   )
   initializeUI(graphComponent)
 }
+
 function initializeUI(graphComponent) {
   const toggleFeature = document.querySelector('#toggle-feature')
   toggleFeature.addEventListener('click', async () => {
@@ -65,4 +71,5 @@ function initializeUI(graphComponent) {
     }
   })
 }
+
 run().then(finishLoading)

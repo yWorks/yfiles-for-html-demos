@@ -72,10 +72,7 @@ async function isServerAlive(url: string, timeout = 5000): Promise<Response> {
     const controller = new AbortController()
     const id = setTimeout(() => controller.abort(), timeout)
 
-    const response = await fetch(url, {
-      ...initObject,
-      signal: controller.signal
-    })
+    const response = await fetch(url, { ...initObject, signal: controller.signal })
     clearTimeout(id)
     return Promise.resolve(response)
   } catch {
@@ -214,8 +211,8 @@ export async function exportSvg(
   )
 
   // Dispose of the component and remove its references to the graph
-  exportComponent.cleanUp()
   exportComponent.graph = new Graph()
+  exportComponent.cleanUp()
 
   return {
     element: svgElement as SVGElement,

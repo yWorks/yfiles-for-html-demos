@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { Animator, GraphComponent, TimeSpan } from '@yfiles/yfiles'
+
 /**
  * This controller manages the animation of the heatmap and process items.
  * It handles the state of the animation and updates the progress via a callback function.
@@ -37,6 +38,7 @@ export class AnimationController {
   animator
   running
   setProgress
+
   /**
    * Creates a new Animation controller.
    * @param graphComponent the graph component to which the animation belongs
@@ -54,30 +56,29 @@ export class AnimationController {
       autoInvalidation: true
     })
   }
+
   /**
    * Starts the animation.
+   * @param startTime start time in seconds to determine the duration of the animation
    */
-  async runAnimation() {
-    if (!this.running) {
-      await this.animator.animate(this.setProgress, this.maxTime)
-      this.running = false
-    }
-  }
-  /**
-   * Restarts the animation.
-   */
-  async restartAnimation() {
-    if (this.animator) {
-      this.animator.stop()
-      this.animator.paused = false
-    }
+  async startAnimation(startTime) {
+    if (!this.animator) return
+    this.animator.stop()
+    this.running = true
+    const duration = TimeSpan.fromSeconds(this.maxTime.totalSeconds - startTime)
+    await this.animator.animate((progress) => {
+      const currentTime = startTime + (this.maxTime.totalSeconds - startTime) * progress
+      this.setProgress(currentTime)
+    }, duration)
     this.running = false
-    await this.runAnimation()
   }
+
   /**
-   * Pauses the animation.
+   * Stops the animation.
    */
-  pauseAnimation() {
-    this.animator.paused = !this.animator.paused
+  stopAnimation() {
+    if (!this.animator) return
+    this.animator.stop()
+    this.running = false
   }
 }

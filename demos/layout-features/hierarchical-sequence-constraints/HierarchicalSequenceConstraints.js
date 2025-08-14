@@ -33,6 +33,7 @@ import {
   ILayoutAlgorithm,
   LayoutData
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to run a {@link HierarchicalLayout} with configured constraints.
  * @param graph The graph to be laid out
@@ -41,8 +42,10 @@ import {
 export function createFeatureLayoutConfiguration(graph) {
   const layout = new HierarchicalLayout()
   const layoutData = new HierarchicalLayoutData()
+
   // this is the factory that we apply the constraints to
   const sequenceConstraints = layoutData.sequenceConstraints
+
   // assign constraints to place nodes 2, 6 and 11 at the start of the sequence
   graph.nodes.forEach((node) => {
     switch (node.tag) {
@@ -52,8 +55,10 @@ export function createFeatureLayoutConfiguration(graph) {
         sequenceConstraints.placeNodeAtHead(node)
     }
   })
+
   return { layout, layoutData }
 }
+
 /**
  * Demonstrates how to run a {@link HierarchicalLayout} with the default configuration.
  * @param graph The graph to be laid out

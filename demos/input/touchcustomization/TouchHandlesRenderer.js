@@ -33,11 +33,13 @@ import {
   ObjectRendererBase,
   SvgVisual
 } from '@yfiles/yfiles'
+
 /**
  * Renders large handles for resize and move as circles.
  */
 export class TouchHandlesRenderer extends ObjectRendererBase {
   static handleRadius = 15
+
   resizeHandles = [
     HandleType.RESIZE,
     HandleType.RESIZE_BOTTOM,
@@ -49,23 +51,29 @@ export class TouchHandlesRenderer extends ObjectRendererBase {
     HandleType.RESIZE_LEFT,
     HandleType.RESIZE_RIGHT
   ]
+
   moveHandles = [HandleType.MOVE, HandleType.MOVE2, HandleType.MOVE3]
+
   createVisual(context, renderTag) {
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     group.customHandlesElement = true
     group.classList.add('demo-handles')
     return this.updateVisual(context, new SvgVisual(group), renderTag)
   }
+
   updateVisual(context, oldVisual, renderTag) {
     if (!('customHandlesElement' in oldVisual.svgElement)) {
       return this.createVisual(context, renderTag)
     }
+
     // Show the handles with zoom independent size
     const radius = TouchHandlesRenderer.handleRadius / context.canvasComponent.zoom
+
     const group = oldVisual.svgElement
     const children = group.children
     const numberOldChildren = children.length
     const newChildren = []
+
     let index = 0
     for (const handle of renderTag.handles) {
       const type = handle.type
@@ -73,6 +81,7 @@ export class TouchHandlesRenderer extends ObjectRendererBase {
         continue
       }
       let circle
+
       // If the number of current children is larger than the number of old children,
       // create a new circle element. Otherwise, reuse children already in the DOM.
       if (index >= numberOldChildren) {
@@ -81,9 +90,11 @@ export class TouchHandlesRenderer extends ObjectRendererBase {
       } else {
         circle = children[index]
       }
+
       // place the reshape handles on the selection rectangle of the node by considering the handle offset
       const handleOffset = renderTag.inputMode.getHandleOffset(handle).multiply(1 / context.zoom)
       const handleLocation = handle.location.toPoint().add(handleOffset)
+
       switch (type) {
         case HandleType.RESIZE:
         case HandleType.RESIZE_BOTTOM:
@@ -104,13 +115,17 @@ export class TouchHandlesRenderer extends ObjectRendererBase {
       }
       index++
     }
+
     group.append(...newChildren)
+
     // Remove child elements that are not used anymore.
     for (; index < numberOldChildren; index++) {
       group.lastChild?.remove()
     }
+
     return oldVisual
   }
+
   /**
    * Updates an {@link SVGCircleElement} by updating its position and type
    */

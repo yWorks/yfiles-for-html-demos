@@ -40,6 +40,7 @@ import {
   SvgVisual,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * A visual creator for orthogonal snap lines.
  */
@@ -56,6 +57,7 @@ export class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
     this.from = from
     this.to = to
   }
+
   /**
    * Creates the {@link OrthogonalSnapLine}s that are displayed by this visual creator.
    * Since items should be able to snap from both sides to this line, two snap lines with the same location and
@@ -118,6 +120,7 @@ export class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
     }
     return lines
   }
+
   /**
    * Creates the visual for the orthogonal snap lines.
    */
@@ -131,6 +134,7 @@ export class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
     line.setAttribute('stroke', '#CA0C3B')
     return new SvgVisual(line)
   }
+
   /**
    * Updates a previously created visual.
    */

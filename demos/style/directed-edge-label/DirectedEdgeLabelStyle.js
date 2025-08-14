@@ -40,10 +40,12 @@ import {
   TextWrapping
 } from '@yfiles/yfiles'
 import { colorSets } from '@yfiles/demo-resources/demo-styles'
+
 const HORIZONTAL_INSET = 3
 const VERTICAL_INSET = 2
 const ARROW_SIZE = 18
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
+
 /**
  * A label style for edges which renders a flow indicator.
  * The indicator points to the edge's source or target,
@@ -60,11 +62,10 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
   arrowFill = 'orange'
   /** The stroke for the indicator */
   arrowStroke = 'black'
+
   /** The text font */
-  font = new Font({
-    fontFamily: 'Arial',
-    fontSize: 12
-  })
+  font = new Font({ fontFamily: 'Arial', fontSize: 12 })
+
   /**
    * Creates a new instance.
    * @param toSource If set to true the indicator points to the source.
@@ -73,12 +74,14 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
     super()
     this.toSource = toSource
   }
+
   /**
    * Creates the visual for a label to be drawn.
    */
   createVisual(context, label) {
     // Create a 'g' element and uses it as base for the rendering of the label.
     const container = document.createElementNS(SVG_NAMESPACE, 'g')
+
     // Get the necessary data for rendering of the label
     const cache = DirectedEdgeLabelStyle.createRenderDataCache(
       context,
@@ -96,9 +99,11 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
     // move container to correct location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, false)
     transform.applyTo(container)
+
     // store information with the visual on how we created it
     return SvgVisual.from(container, cache)
   }
+
   /**
    * Determines the direction for the indicator.
    * Calculates it from the direction to the edge's port of interest relative to the center of the label layout.
@@ -126,6 +131,7 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
       return dx > 0 ? ArrowDirection.LEFT : ArrowDirection.RIGHT
     }
   }
+
   /**
    * Re-renders the label using the old visual for performance reasons.
    * @see Overrides {@link LabelStyleBase.updateVisual}
@@ -157,6 +163,7 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
     transform.applyTo(container)
     return oldVisual
   }
+
   /**
    * Creates the visual appearance of a label.
    */
@@ -175,6 +182,7 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
     rect.setAttribute('ry', '3')
     rect.setAttribute('stroke-width', '1')
     rect.setAttribute('fill', this.backgroundFill)
+
     // The text
     let text
     if (container.childElementCount > 1) {
@@ -191,17 +199,22 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
       labelLayout.toSize(),
       TextWrapping.NONE
     )
+
     // calculate the size of the text element
     const textSize = TextRenderSupport.measureText(textContent, cache.font)
+
     // if the indicator points to the source it is placed left, then
     // move the text to the right
     const translateX = cache.toSource ? 2 * HORIZONTAL_INSET + ARROW_SIZE : HORIZONTAL_INSET
+
     // calculate vertical offset for centered alignment
     const translateY = (labelLayout.height - textSize.height) * 0.5
+
     text.setAttribute('transform', `translate(${translateX} ${translateY})`)
     while (container.childElementCount > 2) {
       container.removeChild(container.lastChild)
     }
+
     const button = createArrow(cache.direction, cache.arrowStroke, cache.arrowFill)
     new Matrix(
       1,
@@ -213,6 +226,7 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
     ).applyTo(button)
     container.appendChild(button)
   }
+
   /**
    * Creates an object containing all necessary data to create a label visual.
    */
@@ -239,6 +253,7 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
       arrowFill
     )
   }
+
   /**
    * Calculates the preferred size for the given label if this style is used for the rendering.
    * The size is calculated from the label's text.
@@ -254,6 +269,7 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
     )
   }
 }
+
 function createArrow(direction, arrowStroke, arrowFill) {
   const path = document.createElementNS(SVG_NAMESPACE, 'path')
   switch (direction) {
@@ -275,6 +291,7 @@ function createArrow(direction, arrowStroke, arrowFill) {
   // path.setAttribute('stroke-width', '1')
   return path
 }
+
 var ArrowDirection
 ;(function (ArrowDirection) {
   ArrowDirection[(ArrowDirection['UP'] = 0)] = 'UP'
@@ -282,6 +299,7 @@ var ArrowDirection
   ArrowDirection[(ArrowDirection['DOWN'] = 2)] = 'DOWN'
   ArrowDirection[(ArrowDirection['LEFT'] = 3)] = 'LEFT'
 })(ArrowDirection || (ArrowDirection = {}))
+
 class LabelRenderDataCache {
   text
   toSource
@@ -301,6 +319,7 @@ class LabelRenderDataCache {
     this.arrowStroke = arrowStroke
     this.arrowFill = arrowFill
   }
+
   equals(other) {
     return (
       !!other &&

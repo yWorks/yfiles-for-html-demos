@@ -34,6 +34,7 @@ import {
   LayoutStageBase,
   NodeDataKey
 } from '@yfiles/yfiles'
+
 /**
  * A layout stage that tries to align a specified set of nodes by using critical edge
  * priorities when the core layout is {@link HierarchicalLayout}.
@@ -62,24 +63,31 @@ export class AlignmentStage extends LayoutStageBase {
    * be aligned are marked.
    */
   static ALIGNED_NODES_DATA_KEY = new NodeDataKey('AlignmentStage.ALIGNED_NODES_DATA_KEY')
+
   applyLayoutImpl(graph) {
     // Calculate an initial layout. This is needed so that the nodes to align
     // already have their proper vertical order as defined by the core layout.
     this.coreLayout?.applyLayout(graph)
+
     if (!(this.coreLayout instanceof HierarchicalLayout)) {
       // This stage is meant to be used with a hierarchical layout as its core layout algorithm
       // because it requires its critical path feature to realize the node alignment
       return
     }
+
     // Pre-processing: insert temporary alignment edges
     const alignmentEdges = this.insertAlignmentEdges(graph)
+
     // Use the layout data to mark the alignmentEdges edges as critical
     const layoutData = this.createLayoutData(graph, alignmentEdges)
+
     // Execute the hierarchical layout (core layout)
     graph.applyLayout(this.coreLayout, layoutData)
+
     // Post-processing: remove the temporary alignment edges
     this.restoreGraph(graph, alignmentEdges)
   }
+
   /**
    * Marks the edges that have to be aligned as critical using the layout data.
    */
@@ -91,6 +99,7 @@ export class AlignmentStage extends LayoutStageBase {
     const originalPriorities = graph.context.getItemData(
       HierarchicalLayout.CRITICAL_EDGE_PRIORITY_DATA_KEY
     )
+
     const alignmentEdgesSet = new Set(alignmentEdges)
     const layoutData = this.coreLayout.createLayoutData(graph)
     layoutData.criticalEdgePriorities = (edge) => {
@@ -105,6 +114,7 @@ export class AlignmentStage extends LayoutStageBase {
     }
     return layoutData
   }
+
   /**
    * Prepares the graph by introducing temporary alignment edges between nodes marked as
    * alignment nodes in the data map registered with key {@link ALIGNED_NODES_DATA_KEY}.
@@ -115,12 +125,14 @@ export class AlignmentStage extends LayoutStageBase {
       // If no provider is registered, there is nothing to do
       return []
     }
+
     const orderedAlignmentNodes = graph.nodes
       // Handle nodes where the data map indicates that it is an alignment node
       .filter((node) => dp.get(node))
       // Order them by y-coordinates
       .toSorted((a, b) => a.layout.y - b.layout.y)
       .toArray()
+
     const alignedEdges = []
     for (let i = 1; i < orderedAlignmentNodes.length; i++) {
       // Insert an edge between two consecutive alignment nodes. Since we performed the core
@@ -132,6 +144,7 @@ export class AlignmentStage extends LayoutStageBase {
     }
     return alignedEdges
   }
+
   /**
    * Restores the graph by removing the temporarily inserted alignment edges.
    */
@@ -140,6 +153,7 @@ export class AlignmentStage extends LayoutStageBase {
       // Nothing to do
       return
     }
+
     // Remove temporary edges
     for (const alignmentEdge of alignmentEdges) {
       graph.remove(alignmentEdge)

@@ -111,10 +111,7 @@ async function runLayout() {
 
   // mark partial elements for the layout algorithm
   const partialLayoutData = new PartialLayoutData({
-    scope: {
-      nodes: (node) => !isFixed(node),
-      edges: (edge) => !isFixed(edge)
-    }
+    scope: { nodes: (node) => !isFixed(node), edges: (edge) => !isFixed(edge) }
   })
 
   // Ensure that the LayoutExecutor class is not removed by build optimizers
@@ -139,20 +136,13 @@ function getSubgraphLayout(): ILayoutAlgorithm {
   const layout: string = document.querySelector<HTMLInputElement>(`#subgraph-layout`)!.value
   switch (layout) {
     case 'hierarchical': {
-      return new HierarchicalLayout({
-        minimumLayerDistance: distance,
-        nodeDistance: distance
-      })
+      return new HierarchicalLayout({ minimumLayerDistance: distance, nodeDistance: distance })
     }
     case 'orthogonal': {
-      return new OrthogonalLayout({
-        gridSpacing: distance
-      })
+      return new OrthogonalLayout({ gridSpacing: distance })
     }
     case 'organic': {
-      return new OrganicLayout({
-        defaultMinimumNodeDistance: distance
-      })
+      return new OrganicLayout({ defaultMinimumNodeDistance: distance })
     }
     case 'circular': {
       const circularLayout = new CircularLayout()
@@ -161,10 +151,7 @@ function getSubgraphLayout(): ILayoutAlgorithm {
       return circularLayout
     }
     default:
-      return new HierarchicalLayout({
-        minimumLayerDistance: distance,
-        nodeDistance: distance
-      })
+      return new HierarchicalLayout({ minimumLayerDistance: distance, nodeDistance: distance })
   }
 }
 
@@ -313,9 +300,7 @@ function createEdgeStyle(partial: boolean): IEdgeStyle {
  * Configures input modes to interact with the graph structure.
  */
 function initializeInputModes(): void {
-  const inputMode = new GraphEditorInputMode({
-    allowEditLabel: false
-  })
+  const inputMode = new GraphEditorInputMode({ allowEditLabel: false })
   inputMode.addEventListener('item-double-clicked', (evt) => {
     // a graph element was double-clicked => toggle its fixed/partial state
     setFixed(evt.item, !isFixed(evt.item))

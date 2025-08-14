@@ -94,9 +94,7 @@ export async function preloadWebglStyles(...styles: WebGLStyle[]): Promise<void>
 function createGraph(graph: IGraph, splitStyles: SplitWebGLStyles) {
   const { nodeStyles, edgeStyles, labelStyles, indicatorStyles } = splitStyles
   for (const nodeStyle of nodeStyles) {
-    graph.createNode({
-      tag: nodeStyle
-    })
+    graph.createNode({ tag: nodeStyle })
   }
   const n1 = graph.createNode()
   const n2 = graph.createNode()
@@ -111,11 +109,7 @@ function createGraph(graph: IGraph, splitStyles: SplitWebGLStyles) {
     })
   }
   for (const labelStyle of labelStyles) {
-    graph.addLabel({
-      owner: n1,
-      text: '',
-      tag: labelStyle
-    })
+    graph.addLabel({ owner: n1, text: '', tag: labelStyle })
   }
   const indicatorNode = graph.createNode()
   const indicatorEdge = graph.createEdge(indicatorNode, indicatorNode)
@@ -147,11 +141,7 @@ function createGraph(graph: IGraph, splitStyles: SplitWebGLStyles) {
     }
   }
 
-  return {
-    selection,
-    focus,
-    highlight
-  }
+  return { selection, focus, highlight }
 }
 
 function splitStylesByType(styles: WebGLStyle[]): SplitWebGLStyles {
@@ -159,11 +149,7 @@ function splitStylesByType(styles: WebGLStyle[]): SplitWebGLStyles {
     nodeStyles: [],
     edgeStyles: [],
     labelStyles: [],
-    indicatorStyles: {
-      node: [],
-      edge: [],
-      label: []
-    }
+    indicatorStyles: { node: [], edge: [], label: [] }
   }
 
   for (const style of styles) {

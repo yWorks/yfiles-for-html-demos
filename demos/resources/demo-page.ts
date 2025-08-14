@@ -32,6 +32,7 @@
  */
 import './demo-ui/demo-ui-init'
 
+export * from './demo-ui/BrowserDetection'
 export * from './demo-ui/element-utils'
 export * from './demo-ui/finish-loading'
 export * from './demo-ui/toolbar'

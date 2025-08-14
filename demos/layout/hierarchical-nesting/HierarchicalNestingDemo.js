@@ -37,17 +37,21 @@ import {
   License,
   Size
 } from '@yfiles/yfiles'
+
 import { graphData } from './sample-graph'
 import { initializeInteractiveHierarchicalNestingLayout } from './interactive-hierarchical-nesting-layout'
 import { DemoStyleOverviewRenderer, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent = null
+
 /**
  * This demo shows how to nicely expand and collapse sub-graphs organized in groups.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode({
@@ -56,13 +60,17 @@ async function run() {
   })
   // initialize Overview
   initializeOverviewComponent(graphComponent)
+
   // set up folding for this graph component
   initializeFolding(graphComponent)
+
   // set up the layout which is automatically applied when a group node is collapsed/expanded
   initializeInteractiveHierarchicalNestingLayout(graphComponent)
+
   // import the sample
   loadSampleGraph()
 }
+
 /**
  * Initializes folding for the graph in the given graph component and configures the corresponding
  * folder node converter.
@@ -72,14 +80,13 @@ function initializeFolding(graphComponent) {
   const foldingManager = new FoldingManager()
   const foldingView = foldingManager.createFoldingView()
   graphComponent.graph = foldingView.graph
+
   // managing the appearance of folder nodes
   foldingManager.folderNodeConverter = new FolderNodeConverter({
-    folderNodeDefaults: {
-      copyLabels: true,
-      size: new Size(110, 60)
-    }
+    folderNodeDefaults: { copyLabels: true, size: new Size(110, 60) }
   })
 }
+
 /**
  * Creates an overview component that is configured to show group nodes more prominently than usual.
  * @param graphComponent the current graph component
@@ -89,32 +96,36 @@ function initializeOverviewComponent(graphComponent) {
   // style the overviewComponent to make the group nodes stand out
   overviewComponent.graphOverviewRenderer = new DemoStyleOverviewRenderer()
 }
+
 /**
  * Create the hierarchical layout that we will be using initially.
  * @param fromSketchMode whether this is for the first run or the incremental run
  */
 function createHierarchicalLayout(fromSketchMode = false) {
-  const hierarchicalLayout = new HierarchicalLayout({
-    fromSketchMode
-  })
+  const hierarchicalLayout = new HierarchicalLayout({ fromSketchMode })
   hierarchicalLayout.defaultEdgeDescriptor.recursiveEdgePolicy = 'directed'
   return hierarchicalLayout
 }
+
 /**
  * Loads the sample graph from JSON data and applies an initial layout.
  */
 function loadSampleGraph() {
   // use the default demo styles for the sample graph items
   initDemoStyles(graphComponent.graph, { foldingEnabled: true })
+
   // build the graph from the JSON data
   buildGraph(graphComponent.graph)
+
   // Apply an initial layout with a configuration that fits the interactive layout when
   // expanding/collapsing group nodes.
   const hierarchicalLayout = createHierarchicalLayout(true)
   graphComponent.graph.applyLayout(hierarchicalLayout)
+
   // center the arranged graph in the visible area
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Builds the graph using the JSON Data
  * After building the graph a hierarchical layout is applied.
@@ -124,27 +135,23 @@ function buildGraph(graph) {
   // use the main graph to build the unfolded graph from the data
   const foldingView = graph.foldingView
   const mainGraph = foldingView.manager.masterGraph
+
   const builder = new GraphBuilder(mainGraph)
-  builder.createNodesSource({
-    data: graphData.nodesSource,
-    id: 'id',
-    parentId: 'group'
-  })
+  builder.createNodesSource({ data: graphData.nodesSource, id: 'id', parentId: 'group' })
   builder.createGroupNodesSource({
     data: graphData.groupsSource,
     id: 'id',
     labels: ['label'],
     parentId: 'parentGroup'
   })
-  builder.createEdgesSource({
-    data: graphData.edgesSource,
-    sourceId: 'from',
-    targetId: 'to'
-  })
+  builder.createEdgesSource({ data: graphData.edgesSource, sourceId: 'from', targetId: 'to' })
+
   builder.buildGraph()
+
   // no layout information available, yet
   // so we come up with an initial layout for the complete, expanded graph.
   mainGraph.applyLayout(createHierarchicalLayout())
+
   // collapsing the groups whose tags are collapsed
   graph.nodes
     .filter((node) => graph.isGroupNode(node))
@@ -156,4 +163,5 @@ function buildGraph(graph) {
       }
     })
 }
+
 void run().then(finishLoading)

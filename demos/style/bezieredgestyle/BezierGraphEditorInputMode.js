@@ -40,19 +40,23 @@ import {
   SelectionEventArgs
 } from '@yfiles/yfiles'
 import { BezierCreateEdgeInputMode } from './BezierCreateEdgeInputMode'
+
 export class BezierGraphEditorInputMode extends GraphEditorInputMode {
   config
+
   constructor(config) {
     super()
     this.config = config
     const bezierBendInputMode = new BezierCreateBendInputMode()
     bezierBendInputMode.priority = super.createBendInputMode.priority
     this.createBendInputMode = bezierBendInputMode
+
     const bezierEdgeInputMode = new BezierCreateEdgeInputMode()
     bezierEdgeInputMode.priority = super.createEdgeInputMode.priority
     bezierEdgeInputMode.createSmoothSplines = config.smoothSegments
     this.createEdgeInputMode = bezierEdgeInputMode
   }
+
   /**
    * Overridden to ensure when deleting bezier bends, the correct number is actually removed.
    * This method doe the following:
@@ -101,13 +105,16 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
         args.selection.add(owner.bends.get(1))
       }
     })
+
     super.onDeletingSelection(args)
   }
+
   onCreateBendInputModeDragSegmentFinished(event, sender) {
     const bend = event.item
     if (bend) {
       const edge = bend.owner
       const mode = sender
+
       if (
         mode instanceof BezierCreateBendInputMode &&
         edge.style instanceof BezierEdgeStyle &&
@@ -128,19 +135,23 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
     }
   }
 }
+
 /**
  * Custom input mode implementation that temporarily remembers all bend locations of the affected edge.
  * This is to make it easier to unroll the bend creation when the drag is canceled
  */
 class BezierCreateBendInputMode extends CreateBendInputMode {
   $locationMementos
+
   get locationMementos() {
     return this.$locationMementos
   }
+
   constructor() {
     super()
     this.$locationMementos = new Map()
   }
+
   createBend(edge, location) {
     this.locationMementos.clear()
     edge.bends.forEach((existingBend) => {
@@ -149,15 +160,20 @@ class BezierCreateBendInputMode extends CreateBendInputMode {
     return super.createBend(edge, location)
   }
 }
+
 class BendCreationHandler {
   bend
   graph
   bendInputMode
   initialized
   inputMode
+
   dragStartedListener
+
   dragCanceledListener
+
   dragFinishedListener
+
   constructor(bend, graph, bendInputMode) {
     this.bend = bend
     this.graph = graph
@@ -165,6 +181,7 @@ class BendCreationHandler {
     this.initialized = false
     this.inputMode = null
   }
+
   register(inputMode) {
     this.inputMode = inputMode
     this.dragStartedListener = this.inputModeOnDragStarted.bind(this)
@@ -174,9 +191,11 @@ class BendCreationHandler {
     inputMode.addEventListener('drag-canceled', this.dragCanceledListener)
     inputMode.addEventListener('drag-finished', this.dragFinishedListener)
   }
+
   inputModeOnDragFinished() {
     this.unregister()
   }
+
   inputModeOnDragCanceled() {
     this.unregister()
     if (this.graph.contains(this.bend)) {
@@ -221,14 +240,17 @@ class BendCreationHandler {
       }
     }
   }
+
   inputModeOnDragStarted() {
     this.initialized = true
   }
+
   dragged() {
     if (!this.initialized) {
       this.unregister()
     }
   }
+
   unregister() {
     this.inputMode.removeEventListener('drag-started', this.dragStartedListener)
     this.inputMode.removeEventListener('drag-canceled', this.dragCanceledListener)

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, HierarchicalLayout, LayoutExecutor, OrganicLayout } from '@yfiles/yfiles'
+
 /**
  * Calculates and applies a hierarchical layout.
  */
@@ -34,9 +35,11 @@ export function applyLayout(graphComponent) {
   const graph = graphComponent.graph
   const layout = new HierarchicalLayout()
   graph.applyLayout(layout)
+
   // Fit the graph bounds since they changed for the new layout
   graphComponent.fitGraphBounds()
 }
+
 /**
  * Calculates and animates an organic layout.
  */
@@ -44,8 +47,6 @@ export async function runLayout(graphComponent) {
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure() // doing this somewhere in your code should suffice
-  await graphComponent.applyLayoutAnimated({
-    layout: new OrganicLayout(),
-    animationDuration: '1s'
-  })
+
+  await graphComponent.applyLayoutAnimated({ layout: new OrganicLayout(), animationDuration: '1s' })
 }

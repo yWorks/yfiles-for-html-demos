@@ -38,28 +38,17 @@ export type GraphData = {
 /**
  * A type that describes the structure of the node data.
  */
-export type NodeData = {
-  id: string
-  group?: string
-}
+export type NodeData = { id: string; group?: string }
 
 /**
  * A type that describes the structure of the group node data.
  */
-export type GroupData = {
-  id: string
-  label: string
-  parentGroup?: string
-  collapsed?: boolean
-}
+export type GroupData = { id: string; label: string; parentGroup?: string; collapsed?: boolean }
 
 /**
  * A type that describes the structure of the edge data.
  */
-export type EdgeData = {
-  from: string
-  to: string
-}
+export type EdgeData = { from: string; to: string }
 
 export const graphData: GraphData = {
   nodesSource: [

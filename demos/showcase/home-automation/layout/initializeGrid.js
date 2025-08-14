@@ -38,17 +38,21 @@ import {
   INode,
   Stroke
 } from '@yfiles/yfiles'
+
 export function initializeGrid(graphComponent) {
   const gridInfo = new GridInfo(15, 15)
+
   const grid = new GridRenderer({
     gridStyle: GridStyle.DOTS,
     stroke: new Stroke('#4F4F4F', 0.5),
     visibilityThreshold: 10
   })
   graphComponent.renderTree.createElement(graphComponent.renderTree.backgroundGroup, gridInfo, grid)
+
   const gInputMode = graphComponent.inputMode
   const graphSnapContext = gInputMode.snapContext
   graphSnapContext.nodeGridConstraintProvider = new GridConstraintProvider(gridInfo)
   graphSnapContext.gridSnapType = GridSnapTypes.LINES
+
   return grid
 }

@@ -33,9 +33,7 @@ import { flowchartSamples } from './flowchart-samples'
 
 export type Sample = keyof typeof flowchartSamples
 
-type NodeData = {
-  type: FlowchartNodeType
-}
+type NodeData = { type: FlowchartNodeType }
 
 export function loadFlowchart(graphComponent: GraphComponent, sample: Sample): void {
   graphComponent.graph.clear()
@@ -56,14 +54,7 @@ export function loadFlowchart(graphComponent: GraphComponent, sample: Sample): v
         style: (dataItem: NodeData) => new FlowchartNodeStyle(dataItem.type)
       }
     ],
-    edges: [
-      {
-        data: data.edges,
-        sourceId: 'from',
-        targetId: 'to',
-        labels: ['label']
-      }
-    ]
+    edges: [{ data: data.edges, sourceId: 'from', targetId: 'to', labels: ['label'] }]
   })
 
   // create the graph

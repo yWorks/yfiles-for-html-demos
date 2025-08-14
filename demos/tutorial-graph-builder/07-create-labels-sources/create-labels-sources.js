@@ -27,51 +27,49 @@
  **
  ***************************************************************************/
 import { InteriorNodeLabelModel } from '@yfiles/yfiles'
+
 export function createNodeLabelsWithBinding(graphBuilder) {
   const nodeData = [
     { id: '0', name: 'Investment Capital' },
     { id: '1', name: 'Melissa Barner' }
   ]
   const nodesSource = graphBuilder.createNodesSource(nodeData, 'id')
+
   // create the label binding to the name property
   nodesSource.nodeCreator.createLabelBinding((data) => data.name)
 }
+
 export function createNodeLabelsWithProvider(graphBuilder) {
   const nodeData = [{ id: '2', name: 'Monster Inc' }]
   const nodesSource = graphBuilder.createNodesSource(nodeData, 'id')
+
   // create the text provider that will return the name of each node
   const labelCreator = nodesSource.nodeCreator.createLabelBinding()
   labelCreator.textProvider = (data) => data.name.toUpperCase()
 }
+
 export function createNodeLabelsWithSources(graphBuilder) {
   const nodeData = [
     { id: '3', owners: ['Local Group', 'Germany'] },
     { id: '4', owners: ['International Group'] }
   ]
   const nodesSource = graphBuilder.createNodesSource(nodeData, 'id')
+
   // create the label sources based on the `owners` property
   const labelsSource = nodesSource.nodeCreator.createLabelsSource((data) => data.owners)
   labelsSource.labelCreator.layoutParameterProvider = (data) =>
     data.endsWith('Group') ? InteriorNodeLabelModel.CENTER : InteriorNodeLabelModel.BOTTOM
 }
+
 export function createEdgeLabelsWithProvider(graphBuilder) {
   const edgeData = [
-    {
-      id: '0',
-      sourceId: '1',
-      targetId: '0',
-      ownership: 30
-    },
-    {
-      id: '1',
-      sourceId: '0',
-      targetId: '2',
-      ownership: 60
-    },
+    { id: '0', sourceId: '1', targetId: '0', ownership: 30 },
+    { id: '1', sourceId: '0', targetId: '2', ownership: 60 },
     { id: '2', sourceId: '4', targetId: '0', ownership: 5 },
     { id: '3', sourceId: '3', targetId: '0', ownership: 5 }
   ]
   const edgesSource = graphBuilder.createEdgesSource(edgeData, 'sourceId', 'targetId', 'id')
+
   // bind the label text data and add some more text information
   edgesSource.edgeCreator.createLabelBinding((data) => `Owns ${data.ownership}%`)
 }

@@ -37,6 +37,7 @@ import {
   ItemCopiedEventArgs,
   List
 } from '@yfiles/yfiles'
+
 /**
  *  A {@link GraphClipboard} that tries to store the z-order of cut, copied or duplicated nodes and to apply
  *  them for the corresponding duplicated or pasted nodes.
@@ -46,6 +47,7 @@ export class ZOrderGraphClipboard extends GraphClipboard {
   clipboardZOrders = new Map()
   newClipboardItems = new List()
   graphComponent
+
   constructor(zOrderSupport) {
     super()
     this.zOrderSupport = zOrderSupport
@@ -53,20 +55,24 @@ export class ZOrderGraphClipboard extends GraphClipboard {
     this.toClipboardCopier.addEventListener('node-copied', this.onCopiedToClipboard.bind(this))
     this.fromClipboardCopier.addEventListener('node-copied', this.onCopiedFromClipboard.bind(this))
     this.duplicateCopier.addEventListener('node-copied', this.onCopiedFromClipboard.bind(this))
+
     this.addEventListener('items-pasting', this.beforePaste.bind(this))
     this.addEventListener('items-pasted', this.afterPaste.bind(this))
     this.addEventListener('items-duplicated', this.afterDuplicate.bind(this))
   }
+
   onCopiedToClipboard(evt) {
     // transfer relative z-order from original node to the copy in the clipboard graph
     this.clipboardZOrders.set(evt.copy, this.getClipboardZOrder(evt.original))
   }
+
   onCopiedFromClipboard(evt) {
     // store new node to use in ArrangeItems
     this.newClipboardItems.add(evt.copy)
     // transfer relative z-order from node in the clipboard graph to the new node
     this.clipboardZOrders.set(evt.copy, this.getClipboardZOrder(evt.original))
   }
+
   /**
    * Returns the z-order previously stored for the `node`.
    * The z-order stored in the {@link ZOrderSupport} is used as fallback for items currently not in the view.
@@ -75,11 +81,13 @@ export class ZOrderGraphClipboard extends GraphClipboard {
     const zOrder = this.clipboardZOrders.get(node)
     return zOrder != null ? zOrder : this.zOrderSupport.getZOrder(node)
   }
+
   onCopy(copyContext, targetRootNode, itemCopiedCallback) {
     // store the relative z-order for cut or copied items
     this.storeInitialZOrder(copyContext)
     super.onCopy(copyContext, targetRootNode, itemCopiedCallback)
   }
+
   onDuplicate(duplicateContext, itemDuplicatedCallback) {
     // collect new items in the OnItemCopiedFromClipboard callbacks
     this.newClipboardItems.clear()
@@ -87,20 +95,24 @@ export class ZOrderGraphClipboard extends GraphClipboard {
     this.storeInitialZOrder(duplicateContext)
     super.onDuplicate(duplicateContext, itemDuplicatedCallback)
   }
+
   beforePaste(_evt) {
     // collect new items in the OnCopiedFromClipboard callbacks
     this.newClipboardItems.clear()
   }
+
   afterPaste(_evt) {
     const targetGraph = this.graphComponent.graph
     // set final z-orders of newItems depending on their new parent group
     this.arrangeItems(this.newClipboardItems, targetGraph.foldingView)
   }
+
   afterDuplicate(_evt) {
     const sourceGraph = this.graphComponent.graph
     // set final z-orders of newItems depending on their new parent group
     this.arrangeItems(this.newClipboardItems, sourceGraph.foldingView)
   }
+
   storeInitialZOrder(copyContext) {
     // determine the view items involved in the clipboard operation and sort them by their visual z-order
     const items = copyContext.allViewItems.ofType(INode).toList()
@@ -115,12 +127,14 @@ export class ZOrderGraphClipboard extends GraphClipboard {
       this.clipboardZOrders.set(item, i)
     }
   }
+
   arrangeItems(newMasterItems, foldingView) {
     // sort new items by the relative z-order transferred in onCopiedFromClipboard
     newMasterItems.sort(
       (node1, node2) => this.getClipboardZOrder(node1) - this.getClipboardZOrder(node2)
     )
     const gmm = this.graphComponent.graphModelManager
+
     // group new nodes by common parent canvas object groups of their main canvas objects
     const itemsNotInView = new List()
     const groupToItems = new HashMap()
@@ -148,9 +162,11 @@ export class ZOrderGraphClipboard extends GraphClipboard {
     for (let i = 0; i < itemsNotInView.size; i++) {
       this.zOrderSupport.setZOrder(itemsNotInView.get(i), i)
     }
+
     // for each common parent set ascending z-orders for new nodes
     for (const groupItemsPair of groupToItems) {
       const itemsInGroup = groupItemsPair.value
+
       // find the top-most node that wasn't just added and lookup its z-order
       let topNodeNotJustAdded = null
       let walker = groupItemsPair.key.lastChild
@@ -163,6 +179,7 @@ export class ZOrderGraphClipboard extends GraphClipboard {
         walker = walker.previousSibling
       }
       let nextZOrder = topNodeNotJustAdded ? this.getClipboardZOrder(topNodeNotJustAdded) + 1 : 0
+
       // set new z-orders starting from nextZOrder
       for (const node of itemsInGroup) {
         this.zOrderSupport.setZOrder(node, nextZOrder++)

@@ -40,9 +40,11 @@ import {
   TextWrapping
 } from '@yfiles/yfiles'
 import { SVGNS, XLINKNS } from './Namespaces'
+
 const HORIZONTAL_INSET = 2
 const VERTICAL_INSET = 2
 const BUTTON_SIZE = 16
+
 /**
  * This class is an example for a custom style based on the {@link LabelStyleBase}.
  * The font for the label text can be set. The label text is drawn with black letters inside a blue
@@ -51,10 +53,8 @@ const BUTTON_SIZE = 16
  * editing of the label text.
  */
 export class Sample1LabelStyle extends LabelStyleBase {
-  font = new Font({
-    fontFamily: 'Arial',
-    fontSize: 12
-  })
+  font = new Font({ fontFamily: 'Arial', fontSize: 12 })
+
   /**
    * Creates the visual for a label to be drawn.
    * @see Overrides {@link LabelStyleBase.createVisual}
@@ -71,10 +71,13 @@ export class Sample1LabelStyle extends LabelStyleBase {
     // move container to correct location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(container)
+
     // set data item
     container.setAttribute('data-internalId', 'Sample1Label')
+
     return visual
   }
+
   /**
    * Re-renders the label using the old visual for performance reasons.
    * @see Overrides {@link LabelStyleBase.updateVisual}
@@ -83,6 +86,7 @@ export class Sample1LabelStyle extends LabelStyleBase {
     const container = oldVisual.svgElement
     // get the data with which the oldVisual was created
     const oldCache = oldVisual.tag
+
     // get the data for the new visual
     const newCache = Sample1LabelStyle.createRenderDataCache(context, label, this.font)
     if (!newCache.equals(oldCache)) {
@@ -96,6 +100,7 @@ export class Sample1LabelStyle extends LabelStyleBase {
     transform.applyTo(container)
     return oldVisual
   }
+
   /**
    * Creates the visual appearance of a label.
    */
@@ -103,6 +108,7 @@ export class Sample1LabelStyle extends LabelStyleBase {
     const container = visual.svgElement
     const cache = visual.tag
     const labelLayout = label.layout
+
     // background rectangle
     let rect
     if (container.childElementCount > 0) {
@@ -118,6 +124,7 @@ export class Sample1LabelStyle extends LabelStyleBase {
     rect.setAttribute('stroke', 'skyblue')
     rect.setAttribute('stroke-width', '1')
     rect.setAttribute('fill', 'rgb(155,226,255)')
+
     let text
     if (container.childElementCount > 1) {
       text = container.childNodes[1]
@@ -138,14 +145,18 @@ export class Sample1LabelStyle extends LabelStyleBase {
       labelLayout.toSize(),
       TextWrapping.NONE
     )
+
     // calculate the size of the text element
     const textSize = TextRenderSupport.measureText(textContent, cache.font)
+
     // if edit button is visible align left, otherwise center
     const translateX = cache.buttonVisibility
       ? HORIZONTAL_INSET
       : (labelLayout.width - textSize.width) * 0.5
+
     // calculate vertical offset for centered alignment
     const translateY = (labelLayout.height - textSize.height) * 0.5
+
     text.setAttribute('transform', `translate(${translateX} ${translateY})`)
     while (container.childElementCount > 2) {
       container.removeChild(container.lastChild)
@@ -161,9 +172,11 @@ export class Sample1LabelStyle extends LabelStyleBase {
         VERTICAL_INSET
       ).applyTo(button)
       container.appendChild(button)
+
       button.addEventListener('click', () => onMouseDown(context.canvasComponent, label), false)
     }
   }
+
   /**
    * Creates an object containing all necessary data to create a label visual.
    */
@@ -171,6 +184,7 @@ export class Sample1LabelStyle extends LabelStyleBase {
     // Visibility of button changes dependent on the zoom level
     return new LabelRenderDataCache(label.text, context.zoom > 1, font)
   }
+
   /**
    * Calculates the preferred size for the given label if this style is used for the rendering.
    * The size is calculated from the label's text.
@@ -186,6 +200,7 @@ export class Sample1LabelStyle extends LabelStyleBase {
     )
   }
 }
+
 class LabelRenderDataCache {
   text
   buttonVisibility
@@ -195,6 +210,7 @@ class LabelRenderDataCache {
     this.buttonVisibility = buttonVisibility
     this.font = font
   }
+
   equals(other) {
     return (
       !!other &&
@@ -204,6 +220,7 @@ class LabelRenderDataCache {
     )
   }
 }
+
 function createButton() {
   const image = document.createElementNS(SVGNS, 'image')
   image.setAttributeNS(XLINKNS, 'href', 'resources/edit_label.png')
@@ -225,6 +242,7 @@ function createButton() {
   g.appendChild(image)
   return g
 }
+
 /**
  * Called when the edit label button inside a label has been clicked.
  */

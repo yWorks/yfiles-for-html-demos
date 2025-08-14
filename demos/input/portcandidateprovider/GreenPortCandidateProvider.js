@@ -37,6 +37,7 @@ import {
   PortCandidateProviderBase,
   PortCandidateValidity
 } from '@yfiles/yfiles'
+
 /**
  * This port candidate provider only allows connections from green nodes.
  * To achieve this, this class returns different port candidates for source
@@ -44,6 +45,7 @@ import {
  */
 export class GreenPortCandidateProvider extends PortCandidateProviderBase {
   node
+
   /**
    * Creates a new instance of {@link GreenPortCandidateProvider}.
    * @param node The given node.
@@ -52,6 +54,7 @@ export class GreenPortCandidateProvider extends PortCandidateProviderBase {
     super()
     this.node = node
   }
+
   /**
    * Returns a central port candidate if the owner node of the source
    * candidate is green, and an empty list otherwise.
@@ -70,6 +73,7 @@ export class GreenPortCandidateProvider extends PortCandidateProviderBase {
     }
     return IEnumerable.EMPTY
   }
+
   /**
    * Returns a list that contains a port candidate for each of the node's
    * ports. Each candidate has the same location as the port. If a port
@@ -84,6 +88,7 @@ export class GreenPortCandidateProvider extends PortCandidateProviderBase {
     const candidates = new List()
     let hasValid = false
     const graph = context.graph
+
     if (graph) {
       // Create a port candidate for each free port on the node
       this.node.ports.forEach((port) => {
@@ -94,6 +99,7 @@ export class GreenPortCandidateProvider extends PortCandidateProviderBase {
         candidates.add(portCandidate)
       })
     }
+
     // If no valid candidates have been created so far, use the ShapeGeometryPortCandidateProvider as fallback.
     // This provides a candidate in the middle of each of the four sides of the node.
     if (!hasValid) {
@@ -101,6 +107,7 @@ export class GreenPortCandidateProvider extends PortCandidateProviderBase {
         IPortCandidateProvider.fromShapeGeometry(this.node, 0.5).getAllSourcePortCandidates(context)
       )
     }
+
     return candidates
   }
 }

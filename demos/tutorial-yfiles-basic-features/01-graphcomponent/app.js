@@ -30,6 +30,9 @@ import { License } from '@yfiles/yfiles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { createView } from './creating-the-view'
+
 License.value = await fetchLicense()
+
 createView()
+
 finishLoading()

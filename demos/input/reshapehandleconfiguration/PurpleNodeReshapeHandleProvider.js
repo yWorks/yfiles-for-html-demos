@@ -38,6 +38,7 @@ import {
   NodeReshapeHandlerHandle,
   ReshapePolicy
 } from '@yfiles/yfiles'
+
 /**
  * A NodeReshapeHandleProvider for purple nodes that provides different handles for corners and borders.
  */
@@ -45,8 +46,10 @@ export class PurpleNodeReshapeHandleProvider extends NodeReshapeHandleProvider {
   constructor(node, reshapeHandler) {
     super(node, reshapeHandler, HandlePositions.BORDER)
   }
+
   getHandle(inputModeContext, position) {
     const handle = new NodeReshapeHandlerHandle(this.node, this.reshapeHandler, position)
+
     const atCorner = (position & HandlePositions.CORNERS) !== HandlePositions.NONE
     if (atCorner) {
       // handles at corners shall always keep the aspect ratio
@@ -59,6 +62,7 @@ export class PurpleNodeReshapeHandleProvider extends NodeReshapeHandleProvider {
       handle.ratioReshapeRecognizer = EventRecognizers.NEVER
       handle.type = HandleType.RESIZE
     }
+
     return handle
   }
 }

@@ -51,12 +51,7 @@ function configureDefaultStyles(graph: IGraph) {
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     smoothingLength: 25,
     stroke: '4px #66485B',
-    targetArrow: new Arrow({
-      fill: '#66485B',
-      lengthScale: 2,
-      widthScale: 2,
-      type: 'ellipse'
-    })
+    targetArrow: new Arrow({ fill: '#66485B', lengthScale: 2, widthScale: 2, type: 'ellipse' })
   })
   graph.edgeDefaults.labels.style = new ReactComponentLabelStyle(LabelTemplate)
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({

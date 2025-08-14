@@ -26,6 +26,6 @@ Change the render function of one or more nodes. Bind colors or text to properti
 ## Related Demos
 
 - [Template Styles Demo](../../style/templatestyles/)
-- [Vue Template Node Style Demo](../../../demos-ts/style/vue-template-node-style/)
+- [Vue Template Node Style Demo](../../../demos-ts/style/vue-template-node-style/README.html)
 - [Template Node Style Demo](../../style/template-node-style/)
 - [React JSX Component Style Demo](../../style/react-template-node-style/)

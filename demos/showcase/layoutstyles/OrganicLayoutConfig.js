@@ -56,6 +56,7 @@ import {
   Size,
   TimeSpan
 } from '@yfiles/yfiles'
+
 import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
@@ -72,6 +73,7 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
+
 /// <summary>
 ///   Enum constants that specify the scope for the <see cref="OrganicLayout"/>.
 /// </summary>
@@ -79,8 +81,10 @@ var OrganicLayoutScope
 ;(function (OrganicLayoutScope) {
   /// <summary>Scope mode indicating that the algorithm should place <em>all</em> nodes of the graph.</summary>
   OrganicLayoutScope[(OrganicLayoutScope['ALL'] = 0)] = 'ALL'
+
   /// Scope mode indicating that the algorithm should place the node.
   OrganicLayoutScope[(OrganicLayoutScope['AFFECTED'] = OrganicScope.AFFECTED)] = 'AFFECTED'
+
   /// <summary>
   ///   Scope mode indicating that the algorithm should place a node but may to a certain degree
   //    also move nodes that are geometrically close to a node from the subset.
@@ -88,6 +92,7 @@ var OrganicLayoutScope
   OrganicLayoutScope[
     (OrganicLayoutScope['INCLUDE_CLOSE_NODES'] = OrganicScope.INCLUDE_CLOSE_NODES)
   ] = 'INCLUDE_CLOSE_NODES'
+
   /// <summary>
   ///   Scope mode indicating that the algorithm should place a node but may to a certain degree
   //    also move nodes that are structurally close to the node.
@@ -97,6 +102,7 @@ var OrganicLayoutScope
       OrganicScope.INCLUDE_EXTENDED_NEIGHBORHOOD)
   ] = 'INCLUDE_EXTENDED_NEIGHBORHOOD'
 })(OrganicLayoutScope || (OrganicLayoutScope = {}))
+
 export var OutputRestrictions
 ;(function (OutputRestrictions) {
   OutputRestrictions[(OutputRestrictions['NONE'] = 0)] = 'NONE'
@@ -104,6 +110,7 @@ export var OutputRestrictions
   OutputRestrictions[(OutputRestrictions['OUTPUT_AR'] = 2)] = 'OUTPUT_AR'
   OutputRestrictions[(OutputRestrictions['OUTPUT_ELLIPTICAL_CAGE'] = 3)] = 'OUTPUT_ELLIPTICAL_CAGE'
 })(OutputRestrictions || (OutputRestrictions = {}))
+
 export var GroupLayoutPolicy
 ;(function (GroupLayoutPolicy) {
   GroupLayoutPolicy[(GroupLayoutPolicy['LAYOUT_GROUPS'] = 0)] = 'LAYOUT_GROUPS'
@@ -111,11 +118,13 @@ export var GroupLayoutPolicy
   GroupLayoutPolicy[(GroupLayoutPolicy['FIX_GROUP_CONTENTS'] = 2)] = 'FIX_GROUP_CONTENTS'
   GroupLayoutPolicy[(GroupLayoutPolicy['IGNORE_GROUPS'] = 3)] = 'IGNORE_GROUPS'
 })(GroupLayoutPolicy || (GroupLayoutPolicy = {}))
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     VisualGroup: [
       new LabelAttribute('General'),
@@ -643,6 +652,7 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
       new TypeAttribute(Number)
     ]
   },
+
   /**
    * Setup default values for various configuration parameters.
    */
@@ -658,6 +668,7 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     this.compactnessItem = layout.compactnessFactor
     this.orientationItem = null
     this.clusteringPolicy = layout.clusteringPolicy
+
     this.restrictOutputItem = OutputRestrictions.NONE
     this.rectCageUseViewItem = true
     this.cageXItem = 0.0
@@ -666,10 +677,13 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     this.cageHeightItem = 1000.0
     this.arCageUseViewItem = true
     this.cageRatioItem = 1.0
+
     this.groupLayoutPolicyItem = GroupLayoutPolicy.LAYOUT_GROUPS
+
     this.qualityTimeRatioItem = layout.qualityTimeRatio
     this.stopDurationItem = layout.stopDuration.totalSeconds
     this.activateDeterministicModeItem = true
+
     this.cycleSubstructureItem = OrganicLayoutCycleSubstructureStyle.NONE
     this.cycleSubstructureSizeItem = layout.cycleSubstructureSize
     this.chainSubstructureItem = OrganicLayoutChainSubstructureStyle.NONE
@@ -684,6 +698,7 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     this.groupSubstructureScopeItem = OrganicLayoutGroupSubstructureScope.NO_GROUPS
     this.groupSubstructureSizeItem = layout.groupSubstructureSize
     this.clusterAsGroupSubstructureItem = false
+
     this.nodeLabelingItem = layout.nodeLabelPlacement
     this.edgeLabelingItem = layout.edgeLabelPlacement
     this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
@@ -692,10 +707,12 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     this.labelPlacementDistanceItem = 10.0
     this.title = 'Organic Layout'
   },
+
   /**
    * @type {ILayoutStage}
    */
   $preStage: null,
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the configuration on.
@@ -713,18 +730,23 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     layout.deterministic = this.activateDeterministicModeItem
     layout.stopDuration = TimeSpan.fromSeconds(parseFloat(this.stopDurationItem))
     layout.qualityTimeRatio = this.qualityTimeRatioItem
+
     const labeling = layout.genericLabeling
     labeling.enabled = this.edgeLabelingItem === EdgeLabelPlacement.GENERIC
     labeling.scope = 'edge-labels'
     if (this.orientationItem !== null) {
       layout.layoutOrientation = this.orientationItem
     }
+
     layout.edgeLabelPlacement = this.edgeLabelingItem
     if (this.edgeLabelingItem === EdgeLabelPlacement.GENERIC && this.reduceAmbiguityItem) {
       labeling.defaultEdgeLabelingCosts.ambiguousPlacementCost = 1.0
     }
+
     layout.componentLayout.style = ComponentArrangementStyle.MULTI_ROWS
+
     this.configureOutputRestrictions(graphComponent, layout)
+
     layout.cycleSubstructureStyle = this.cycleSubstructureItem
     layout.cycleSubstructureSize = this.cycleSubstructureSizeItem
     layout.chainSubstructureStyle = this.chainSubstructureItem
@@ -739,8 +761,10 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     layout.groupSubstructureScope = this.groupSubstructureScopeItem
     layout.groupSubstructureSize = this.groupSubstructureSizeItem
     layout.allowClusterAsGroupSubstructure = this.clusterAsGroupSubstructureItem
+
     return layout
   },
+
   /**
    * Creates and configures the layout data.
    * @returns The configured layout data.
@@ -750,11 +774,13 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     if (this.groupLayoutPolicyItem == GroupLayoutPolicy.IGNORE_GROUPS) {
       layout.layoutStages.get(GroupHidingStage).enabled = true
     }
+
     if (this.scopeItem != OrganicLayoutScope.ALL) {
       layoutData.scope.nodes = graphComponent.selection.nodes
       layoutData.scope.scopeModes = (node) =>
         graphComponent.selection.nodes.includes(node) ? this.scopeItem : OrganicScope.FIXED
     }
+
     layoutData.scope.groupNodeHandlingPolicies = (node) => {
       if (graphComponent.graph.isGroupNode(node)) {
         switch (this.groupLayoutPolicyItem) {
@@ -768,6 +794,7 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
       }
       return GroupNodeHandlingPolicy.FREE
     }
+
     if (this.edgeDirectednessItem) {
       layoutData.edgeDirectedness = (edge) => {
         const style = edge.style
@@ -784,6 +811,7 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
       layoutData.substructureSourceGroupIds = 'Group'
       layoutData.substructureTargetGroupIds = 'Group'
     }
+
     if (this.orientationItem !== null) {
       layoutData.edgeOrientation.mapperFunction = (edge) => {
         const style = edge.style
@@ -796,6 +824,7 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         return 0
       }
     }
+
     return layoutData.combineWith(
       this.createLabelingLayoutData(
         graphComponent.graph,
@@ -806,6 +835,7 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
       )
     )
   },
+
   configureOutputRestrictions: function (graphComponent, layout) {
     let viewInfoIsAvailable = false
     const visibleRect = this.getVisibleRectangle(graphComponent)
@@ -858,6 +888,7 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         break
     }
   },
+
   getVisibleRectangle: function (graphComponent) {
     const visibleRect = [0, 0, 0, 0]
     if (graphComponent !== null) {
@@ -870,64 +901,88 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     }
     return null
   },
+
   /** @type {OptionGroup} */
   VisualGroup: null,
+
   /** @type {OptionGroup} */
   RestrictionsGroup: null,
+
   /** @type {OptionGroup} */
   CageGroup: null,
+
   /** @type {OptionGroup} */
   ARGroup: null,
+
   /** @type {OptionGroup} */
   GroupingGroup: null,
+
   /** @type {OptionGroup} */
   AlgorithmGroup: null,
+
   /** @type {OptionGroup} */
   SubstructureLayoutGroup: null,
+
   /** @type {OptionGroup} */
   LabelingGroup: null,
+
   /** @type {OptionGroup} */
   NodePropertiesGroup: null,
+
   /** @type {OptionGroup} */
   EdgePropertiesGroup: null,
+
   /** @type {OptionGroup} */
   PreferredPlacementGroup: null,
+
   /** @type {string} */
   descriptionText: {
     get: function () {
       return "<p style='margin-top:0'>The organic layout style is based on the force-directed layout paradigm. This algorithm simulates physical forces and rearranges the positions of the nodes in such a way that the sum of the forces emitted by the nodes and the edges reaches a (local) minimum.</p><p>This style is well suited for the visualization of highly connected backbone regions with attached peripheral ring or tree structures. In a diagram arranged by this algorithm, these regions of a network can be easily identified.</p><p>The organic layout style is a multi-purpose layout for undirected graphs. It produces clear representations of complex networks and is especially fitted for application domains such as:</p><ul><li>Bioinformatics</li><li>Enterprise networking</li><li>Knowledge representation</li><li>System management</li><li>WWW visualization</li><li>Mesh visualization</li></ul>"
     }
   },
+
   /** @type {OrganicLayoutScope} */
   scopeItem: null,
+
   /** @type {number} */
   preferredEdgeLengthItem: 0,
+
   /** @type {boolean} */
   allowNodeOverlapsItem: false,
+
   /** @type {boolean} */
   shouldDisableAllowNodeOverlapsItem: {
     get: function () {
       return this.nodeLabelingItem !== NodeLabelPlacement.IGNORE
     }
   },
+
   /** @type {number} */
   minimumNodeDistanceItem: 0,
+
   /** @type {boolean} */
   shouldDisableMinimumNodeDistanceItem: {
     get: function () {
       return this.allowNodeOverlapsItem && this.nodeLabelingItem === NodeLabelPlacement.IGNORE
     }
   },
+
   /** @type {boolean} */
   avoidNodeEdgeOverlapsItem: false,
+
   /** @type {number} */
   compactnessItem: 0,
+
   /** @type {LayoutOrientation} */
   orientationItem: null,
+
   /** @type {boolean} */
   clusteringPolicyItem: OrganicLayoutClusteringPolicy.NONE,
+
   /** @type {OutputRestrictions} */
   restrictOutputItem: null,
+
   /** @type {boolean} */
   shouldDisableCageGroup: {
     get: function () {
@@ -937,123 +992,162 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
       )
     }
   },
+
   /** @type {boolean} */
   rectCageUseViewItem: false,
+
   /** @type {number} */
   cageXItem: 0,
+
   /** @type {boolean} */
   shouldDisableCageXItem: {
     get: function () {
       return this.rectCageUseViewItem
     }
   },
+
   /** @type {number} */
   cageYItem: 0,
+
   /** @type {boolean} */
   shouldDisableCageYItem: {
     get: function () {
       return this.rectCageUseViewItem
     }
   },
+
   /** @type {number} */
   cageWidthItem: 0,
+
   /** @type {boolean} */
   shouldDisableCageWidthItem: {
     get: function () {
       return this.rectCageUseViewItem
     }
   },
+
   /** @type {number} */
   cageHeightItem: 0,
+
   /** @type {boolean} */
   shouldDisableCageHeightItem: {
     get: function () {
       return this.rectCageUseViewItem
     }
   },
+
   /** @type {boolean} */
   arCageUseViewItem: false,
+
   /** @type {number} */
   cageRatioItem: 0,
+
   /** @type {boolean} */
   shouldDisableCageRatioItem: {
     get: function () {
       return this.arCageUseViewItem
     }
   },
+
   /** @type {GroupLayoutPolicy} */
   groupLayoutPolicyItem: null,
+
   /** @type {number} */
   qualityTimeRatioItem: 0,
+
   /** @type {number} */
   stopDurationItem: 5,
+
   /** @type {boolean} */
   activateDeterministicModeItem: false,
+
   /** @type {NodeLabelPlacement} */
   nodeLabelingItem: null,
+
   /** @type {OrganicLayoutCycleSubstructureStyle} */
   cycleSubstructureItem: null,
+
   /** @type {number} */
   cycleSubstructureSizeItem: 4,
+
   shouldDisableCycleSubstructureSizeItem: {
     get: function () {
       return this.cycleSubstructureItem === OrganicLayoutCycleSubstructureStyle.NONE
     }
   },
+
   /** @type {OrganicLayoutChainSubstructureStyle} */
   chainSubstructureItem: null,
+
   /** @type {number} */
   chainSubstructureSizeItem: 4,
+
   shouldDisableChainSubstructureSizeItem: {
     get: function () {
       return this.chainSubstructureItem === OrganicLayoutChainSubstructureStyle.NONE
     }
   },
+
   /** @type {OrganicLayoutStarSubstructureStyle} */
   starSubstructureItem: null,
+
   /** @type {number} */
   starSubstructureSizeItem: 4,
+
   shouldDisableStarSubstructureSizeItem: {
     get: function () {
       return this.starSubstructureItem === OrganicLayoutStarSubstructureStyle.NONE
     }
   },
+
   /** @type {OrganicLayoutParallelSubstructureStyle  } */
   parallelSubstructureItem: null,
+
   /** @type {number} */
   parallelSubstructureSizeItem: 3,
+
   shouldDisableParallelSubstructureSizeItem: {
     get: function () {
       return this.parallelSubstructureItem === OrganicLayoutParallelSubstructureStyle.NONE
     }
   },
+
   /** @type {OrganicLayoutTreeSubstructureStyle} */
   treeSubstructureItem: null,
+
   /** @type {number} */
   treeSubstructureSizeItem: 4,
+
   shouldDisableTreeSubstructureSizeItem: {
     get: function () {
       return this.treeSubstructureItem === OrganicLayoutTreeSubstructureStyle.NONE
     }
   },
+
   /** @type {GroupSubstructureStyle} */
   groupSubstructureStyleItem: null,
+
   shouldDisableGroupSubstructureStyleItem: {
     get: function () {
       return this.groupSubstructureScopeItem === OrganicLayoutGroupSubstructureScope.NO_GROUPS
     }
   },
+
   /** @type {OrganicLayoutGroupSubstructureScope} */
   groupSubstructureScopeItem: null,
+
   /** @type {number} */
   groupSubstructureSizeItem: 4,
+
   shouldDisableGroupSubstructureSizeItem: {
     get: function () {
       return this.groupSubstructureScopeItem === OrganicLayoutGroupSubstructureScope.NO_GROUPS
     }
   },
+
   /** @type {boolean} */
   clusterAsGroupSubstructureItem: false,
+
   shouldDisableClusterAsGroupSubstructureItem: {
     get: function () {
       return (
@@ -1063,46 +1157,59 @@ export const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
       )
     }
   },
+
   /** @type {boolean} */
   edgeDirectednessItem: false,
+
   /** @type {boolean} */
   useEdgeGroupingItem: false,
+
   /** @type {EdgeLabelPlacement} */
   edgeLabelingItem: null,
+
   /** @type {boolean} */
   reduceAmbiguityItem: false,
+
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
     get: function () {
       return this.edgeLabelingItem !== EdgeLabelPlacement.GENERIC
     }
   },
+
   /** @type {LabelPlacementOrientation} */
   labelPlacementOrientationItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
     get: function () {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
   },
+
   /** @type {LabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
     get: function () {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
   },
+
   /** @type {LabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
     get: function () {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
   },
+
   /** @type {number} */
   labelPlacementDistanceItem: 0,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
     get: function () {

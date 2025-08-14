@@ -252,8 +252,8 @@ export class LensInputMode extends InputModeBase {
 
     // clean up
     canvasComponent.overlayPanel.removeChild(this.lensGraphComponent!.htmlElement)
-    this.lensGraphComponent!.cleanUp()
     this.lensGraphComponent!.graph = new Graph()
+    this.lensGraphComponent!.cleanUp()
     this.lensGraphComponent = null
 
     super.uninstall(context)

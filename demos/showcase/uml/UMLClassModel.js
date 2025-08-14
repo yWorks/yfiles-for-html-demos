@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { HandleSerializationEventArgs, ILookup, MarkupExtension } from '@yfiles/yfiles'
+
 /**
  * The data model of the UML node style.
  * A modification counter tracks if there have been modifications since the last drawing of this model.
@@ -42,6 +43,7 @@ export class UMLClassModel {
   selectedCategory
   $selectedIndex
   $modCount
+
   constructor(data) {
     this.stereotype = (data && data.stereotype) || ''
     this.constraint = (data && data.constraint) || ''
@@ -54,19 +56,24 @@ export class UMLClassModel {
     this.$selectedIndex = -1
     this.$modCount = 0
   }
+
   get modCount() {
     return this.$modCount
   }
+
   get selectedIndex() {
     return this.$selectedIndex
   }
+
   set selectedIndex(value) {
     this.$selectedIndex = value
     this.modify()
   }
+
   modify() {
     this.$modCount++
   }
+
   clone() {
     const clone = new UMLClassModel()
     clone.stereotype = this.stereotype
@@ -80,6 +87,7 @@ export class UMLClassModel {
     return clone
   }
 }
+
 /**
  * Markup extension needed to (de-)serialize the UML model.
  */
@@ -91,48 +99,63 @@ export class UMLClassModelExtension extends MarkupExtension {
   $operations = []
   $attributesOpen = false
   $operationsOpen = false
+
   get stereotype() {
     return this.$stereotype
   }
+
   set stereotype(value) {
     this.$stereotype = value
   }
+
   get constraint() {
     return this.$constraint
   }
+
   set constraint(value) {
     this.$constraint = value
   }
+
   get className() {
     return this.$className
   }
+
   set className(value) {
     this.$className = value
   }
+
   get attributes() {
     return this.$attributes
   }
+
   set attributes(value) {
     this.$attributes = value
   }
+
   get operations() {
     return this.$operations
   }
+
   set operations(value) {
     this.$operations = value
   }
+
   get attributesOpen() {
     return this.$attributesOpen
   }
+
   set attributesOpen(value) {
     this.$attributesOpen = value
   }
+
   get operationsOpen() {
     return this.$operationsOpen
   }
+
   set operationsOpen(value) {
     this.$operationsOpen = value
   }
+
   provideValue(serviceProvider) {
     const umlClassModel = new UMLClassModel()
     umlClassModel.stereotype = this.stereotype
@@ -145,6 +168,7 @@ export class UMLClassModelExtension extends MarkupExtension {
     return umlClassModel
   }
 }
+
 /**
  * Listener that handles the serialization of the UML model.
  */

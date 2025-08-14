@@ -30,6 +30,7 @@
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
 // @ts-ignore Import via URL
 import { svg } from 'lit-html'
+
 export function initializeStyles(graphComponent) {
   const defs = graphComponent.svgDefsManager.defs
   const element = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
@@ -43,11 +44,13 @@ export function initializeStyles(graphComponent) {
       <rect x="1" y="6" fill="#999999" stroke="none" width="16" height="6" />
     </g>`
   defs.appendChild(element)
+
   const templateLeafNodeStyle = new LitNodeStyle(
     () => svg`
   <rect stroke="none" fill="#76b041" rx="4" ry="4" width="58" height="28" transform="translate(1 1)"/>
 `
   )
+
   const templateInnerNodeStyle = new LitNodeStyle(
     ({ tag }) => svg`
       <g>
@@ -57,5 +60,6 @@ export function initializeStyles(graphComponent) {
              style="pointer-events:none" />
       </g>`
   )
+
   return { templateInnerNodeStyle, templateLeafNodeStyle }
 }

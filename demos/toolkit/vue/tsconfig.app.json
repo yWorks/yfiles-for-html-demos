@@ -4,9 +4,7 @@
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
+    "paths": { "@/*": ["./src/*"] },
     "preserveSymlinks": true
   }
 }

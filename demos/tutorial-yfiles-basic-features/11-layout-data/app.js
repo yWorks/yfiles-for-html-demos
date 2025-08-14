@@ -37,18 +37,25 @@ import {
   setDefaultLabelLayoutParameters
 } from '../common'
 import { runLayout } from './layout-data'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 setDefaultLabelLayoutParameters(graphComponent.graph)
+
 const graphEditorInputMode = configureInteraction(graphComponent)
 graphEditorInputMode.editLabelInputMode.addEventListener('label-edited', () =>
   runLayout(graphComponent)
 )
+
 createSampleGraphLayoutData(graphComponent.graph)
+
 await runLayout(graphComponent)
 finishLoading()
+
 const layoutButton = document.querySelector('#layoutAnimatedButton')
+
 addButtonListener('#layoutAnimatedButton', async () => {
   layoutButton.disabled = true
   await runLayout(graphComponent)

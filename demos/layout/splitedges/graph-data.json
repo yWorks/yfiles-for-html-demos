@@ -1,49 +1,19 @@
 {
   "nodeList": [
-    {
-      "id": 0,
-      "parentId": 8
-    },
-    {
-      "id": 1,
-      "parentId": 8
-    },
-    {
-      "id": 2,
-      "parentId": 9
-    },
-    {
-      "id": 3,
-      "parentId": 9
-    },
-    {
-      "id": 4,
-      "parentId": 9
-    },
+    { "id": 0, "parentId": 8 },
+    { "id": 1, "parentId": 8 },
+    { "id": 2, "parentId": 9 },
+    { "id": 3, "parentId": 9 },
+    { "id": 4, "parentId": 9 },
     { "id": 5 },
     { "id": 6 },
     { "id": 7 },
-    {
-      "id": 8,
-      "isGroup": true
-    },
-    {
-      "id": 9,
-      "isGroup": true,
-      "parentId": 10
-    },
-    {
-      "id": 10,
-      "isGroup": true
-    }
+    { "id": 8, "isGroup": true },
+    { "id": 9, "isGroup": true, "parentId": 10 },
+    { "id": 10, "isGroup": true }
   ],
   "edgeList": [
-    {
-      "id": 0,
-      "source": 0,
-      "target": 8,
-      "tag": { "targetSplitId": "split0", "color": "#DB3A34" }
-    },
+    { "id": 0, "source": 0, "target": 8, "tag": { "targetSplitId": "split0", "color": "#DB3A34" } },
     {
       "id": 1,
       "source": 8,
@@ -56,12 +26,7 @@
       "target": 9,
       "tag": { "sourceSplitId": "split0", "targetSplitId": "split0", "color": "#DB3A34" }
     },
-    {
-      "id": 3,
-      "source": 9,
-      "target": 2,
-      "tag": { "sourceSplitId": "split0", "color": "#DB3A34" }
-    },
+    { "id": 3, "source": 9, "target": 2, "tag": { "sourceSplitId": "split0", "color": "#DB3A34" } },
     {
       "id": 4,
       "source": 1,
@@ -98,20 +63,8 @@
       "target": 6,
       "tag": { "sourceSplitId": "split3", "color": "#FF6C00" }
     },
-    {
-      "id": 10,
-      "source": 0,
-      "target": 7
-    },
-    {
-      "id": 11,
-      "source": 2,
-      "target": 4
-    },
-    {
-      "id": 12,
-      "source": 3,
-      "target": 4
-    }
+    { "id": 10, "source": 0, "target": 7 },
+    { "id": 11, "source": 2, "target": 4 },
+    { "id": 12, "source": 3, "target": 4 }
   ]
 }

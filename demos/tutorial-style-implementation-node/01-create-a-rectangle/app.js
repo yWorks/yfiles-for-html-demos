@@ -36,11 +36,18 @@ import {
   initializeTutorialDefaults
 } from '../common'
 import { CustomNodeStyle } from './CustomNodeStyle'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
+
 graphComponent.graph.nodeDefaults.style = new CustomNodeStyle()
+
 createSimpleGraph(graphComponent.graph)
 enableGraphEditing(graphComponent)
+
 fitGraphBounds(graphComponent)
+
 finishLoading()

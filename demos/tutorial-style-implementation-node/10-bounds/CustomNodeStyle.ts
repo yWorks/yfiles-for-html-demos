@@ -117,13 +117,7 @@ export class CustomNodeStyle extends NodeStyleBase<CustomNodeStyleVisual> {
       g.append(text)
     }
 
-    return SvgVisual.from(g, {
-      width,
-      height,
-      fillColor,
-      showBadge,
-      title
-    })
+    return SvgVisual.from(g, { width, height, fillColor, showBadge, title })
   }
 
   protected updateVisual(
@@ -173,10 +167,9 @@ export class CustomNodeStyle extends NodeStyleBase<CustomNodeStyleVisual> {
     // Do we even have a badge?
     if (tag?.showBadge) {
       // If so, return a rectangle that's larger to the left and top
-      return node.layout.toRect().getEnlarged({
-        left: badgeRadius,
-        top: badgeRadius
-      })
+      return node.layout
+        .toRect()
+        .getEnlarged({ left: badgeRadius, top: badgeRadius })
     }
     return node.layout.toRect()
   }

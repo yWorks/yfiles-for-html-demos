@@ -110,11 +110,7 @@ function createDndPanelNodes(): SimpleNode[] {
     horizontalTextAlignment: 'center',
     verticalTextAlignment: 'center'
   })
-  rowSampleTable.addLabel({
-    owner: rowSampleRow,
-    text: 'Row',
-    style: labelStyle
-  })
+  rowSampleTable.addLabel({ owner: rowSampleRow, text: 'Row', style: labelStyle })
 
   const columnSampleRow = columnSampleTable.createRow({
     height: 160,
@@ -196,9 +192,6 @@ export function createGroupNodeStyle(): INodeStyle {
   return new ShapeNodeStyle({
     shape: ShapeNodeShape.ROUND_RECTANGLE,
     fill: 'transparent',
-    stroke: new Stroke({
-      dashStyle: DashStyle.DASH_DOT,
-      lineCap: LineCap.SQUARE
-    })
+    stroke: new Stroke({ dashStyle: DashStyle.DASH_DOT, lineCap: LineCap.SQUARE })
   })
 }

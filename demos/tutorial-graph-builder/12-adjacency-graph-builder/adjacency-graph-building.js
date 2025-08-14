@@ -27,15 +27,18 @@
  **
  ***************************************************************************/
 import { AdjacencyGraphBuilder, EdgeCreator } from '@yfiles/yfiles'
+
 export function configureGraphBuilder(graph, nodesData) {
   const adjacencyGraphBuilder = new AdjacencyGraphBuilder(graph)
+
   const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(nodesData, (item) => item.id)
+
   adjacencyNodesSource.addSuccessorIds(
     (data) => data.colleagues,
     new EdgeCreator({ defaults: graph.edgeDefaults })
   )
-  adjacencyNodesSource.nodeCreator.createLabelBinding({
-    text: (dataItem) => dataItem.name
-  })
+
+  adjacencyNodesSource.nodeCreator.createLabelBinding({ text: (dataItem) => dataItem.name })
+
   return adjacencyGraphBuilder
 }

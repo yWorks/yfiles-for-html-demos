@@ -27,7 +27,9 @@
  **
  ***************************************************************************/
 import { HtmlCanvasVisual, IEdge, INode, IVisualCreator } from '@yfiles/yfiles'
+
 const heatScale = 0.5
+
 /**
  * A visual that renders the heat map highlighting the nodes and edges with
  * a lot of events at the same time.
@@ -36,20 +38,25 @@ export class HeatmapBackground extends HtmlCanvasVisual {
   getHeat
   backBufferCanvas = null
   backBufferContext = null
+
   constructor(getHeat) {
     super()
     this.getHeat = getHeat || (() => 1)
   }
+
   /**
    * Renders the heat map on a canvas.
    */
   render(renderContext, ctx) {
     ctx.save()
     ctx.setTransform(1, 0, 0, 1, 0, 0)
+
     const { width, height } = ctx.canvas
     const devicePixelRatio = renderContext.canvasComponent.devicePixelRatio
+
     let canvas = this.backBufferCanvas
     let backBufferContext
+
     if (!canvas || canvas.width !== width || canvas.height !== height) {
       canvas = document.createElement('canvas')
       canvas.setAttribute('width', String(width))
@@ -61,8 +68,11 @@ export class HeatmapBackground extends HtmlCanvasVisual {
       backBufferContext = this.backBufferContext
       backBufferContext.clearRect(0, 0, width / devicePixelRatio, height / devicePixelRatio)
     }
+
     const scale = renderContext.zoom * heatScale
+
     backBufferContext.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
+
     let lastFillStyleHeat = -1
     for (const node of renderContext.canvasComponent.graph.nodes) {
       const center = renderContext.worldToViewCoordinates(node.layout.center)
@@ -74,6 +84,7 @@ export class HeatmapBackground extends HtmlCanvasVisual {
         }
         const w = Math.max(100, node.layout.width * 1.5)
         const h = Math.max(100, node.layout.height * 1.5)
+
         backBufferContext.beginPath()
         backBufferContext.ellipse(center.x, center.y, w * scale, h * scale, 0, 0, Math.PI * 2)
         backBufferContext.fill()
@@ -90,6 +101,7 @@ export class HeatmapBackground extends HtmlCanvasVisual {
           lastStrokeStyleHeat = heat
         }
         const path = edge.style.renderer.getPathGeometry(edge, edge.style).getPath().flatten(1)
+
         backBufferContext.beginPath()
         const cursor = path.createCursor()
         if (cursor.moveNext()) {
@@ -103,12 +115,15 @@ export class HeatmapBackground extends HtmlCanvasVisual {
         }
       }
     }
+
     ctx.filter = 'url(#heatmap)'
     ctx.drawImage(canvas, 0, 0)
     ctx.restore()
   }
 }
+
 let installedDivElement = null
+
 /**
  * Creates a heatmap visualization which displays the heat values for all nodes and edges
  * as a color map in the background.
@@ -140,8 +155,7 @@ export function addHeatmap(graphComponent, getHeat) {
         <feFuncG type="table" tableValues="0 0 1 1 1 0"></feFuncG>
         <feFuncB type="table" tableValues="0.5 1 0 0 0"></feFuncB>
         <!-- specify maximum opacity for the overlay here -->
-        <!-- less opaque: <feFuncA type="table" tableValues="0 0.1 0.4 0.6 0.7"></feFuncA> -->
-        <feFuncA type="table" tableValues="0 0.6 0.7 0.8 0.9"></feFuncA>
+        <feFuncA type="table" tableValues="0 0.5 0.6 0.7 0.8"></feFuncA>
       </feComponentTransfer>
     </filter>
   </defs>

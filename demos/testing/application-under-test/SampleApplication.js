@@ -28,18 +28,24 @@
  ***************************************************************************/
 import { GraphComponent, License, Rect } from '@yfiles/yfiles'
 import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
+
 async function run() {
   const response = await fetch(new URL('../../../lib/license.json', import.meta.url).toString())
   License.value = await response.json()
+
   const graphComponent = new GraphComponent('#graphComponent')
   window.graphComponent = graphComponent
+
   // create a sample graph
   const graph = graphComponent.graph
+
   graph.createNode(new Rect(100, 100, 30, 30))
   graph.createNode(new Rect(200, 200, 30, 30))
+
   // bind the createEdge function to the demo's single button
   document
     .querySelector('#create-edge')
     .addEventListener('click', () => graph.createEdge(graph.nodes.first(), graph.nodes.last()))
 }
+
 run().then(finishLoading)

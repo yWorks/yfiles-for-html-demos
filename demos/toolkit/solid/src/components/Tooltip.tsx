@@ -28,10 +28,7 @@
  ***************************************************************************/
 import './tooltip.css'
 
-type ToolbarProps = {
-  title: string
-  content: string
-}
+type ToolbarProps = { title: string; content: string }
 
 export const Tooltip = (props: ToolbarProps) => {
   return (

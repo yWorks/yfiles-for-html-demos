@@ -38,19 +38,26 @@ import {
   setDefaultLabelLayoutParameters
 } from '../common'
 import { adjustGroupNodeSize, configureGroupNodeStyles, createGroupNodes } from './grouping'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 const graph = graphComponent.graph
 setDefaultLabelLayoutParameters(graph)
+
 configureGroupNodeStyles(graph)
+
 createSampleGraph(graph)
 createGroupNodes(graph)
+
 configureInteraction(graphComponent)
 const nodes = graph.nodes.filter((node) => !graph.isGroupNode(node) && node.labels.size > 0)
 nodes.forEach((node) => graphComponent.selection.nodes.add(node))
+
 fitGraphBounds(graphComponent)
 finishLoading()
+
 addButtonListener('#groupButton', () => graphComponent.inputMode.groupSelection())
 addButtonListener('#ungroupButton', () => graphComponent.inputMode.ungroupSelection())
 addButtonListener('#adjustGroupButton', () => adjustGroupNodeSize(graph))

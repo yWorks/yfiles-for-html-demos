@@ -30,10 +30,12 @@
  * This file provides functions to {@link openStorageItem open} and {@link saveStorageItem save}
  * text in the browser's storage.
  */
+
 /**
  * The Web Storage to use, one of Window.localStorage or Window.sessionStorage.
  */
 export const currentStorage = window.localStorage
+
 /**
  * Gets the value of the item with the given {@link key} from storage.
  */
@@ -42,8 +44,10 @@ export function openStorageItem(key) {
   if (item == null) {
     throw new Error(`No item found in storage for key ${key}`)
   }
+
   return item
 }
+
 /**
  * Sets the given {@link value} with the given {@link key} to storage.
  */

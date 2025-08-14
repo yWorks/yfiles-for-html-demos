@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { PortStyleBase, Rect, SvgVisual } from '@yfiles/yfiles'
+
 /**
  * A basic port style that renders a circle.
  */
@@ -36,6 +37,7 @@ export class CustomPortStyle extends PortStyleBase {
     super()
     this.size = size
   }
+
   createVisual(context, port) {
     const ellipseElement = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     const { x, y } = port.location
@@ -47,26 +49,33 @@ export class CustomPortStyle extends PortStyleBase {
     ellipseElement.setAttribute('fill', '#6c9f44')
     ellipseElement.setAttribute('stroke', '#e6f8ff')
     ellipseElement.setAttribute('stroke-width', '1')
+
     const cache = { size: this.size }
+
     return SvgVisual.from(ellipseElement, cache)
   }
+
   updateVisual(context, oldVisual, port) {
     const { x, y } = port.location
     // get the ellipse element that needs updating from the old visual
     const ellipseElement = oldVisual.svgElement
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
+
     if (cache.size !== this.size) {
       const radius = this.size * 0.5
       ellipseElement.setAttribute('rx', String(radius))
       ellipseElement.setAttribute('ry', String(radius))
       cache.size = this.size
     }
+
     // move the visualization to the port location
     ellipseElement.setAttribute('cx', String(x))
     ellipseElement.setAttribute('cy', String(y))
+
     return oldVisual
   }
+
   getBounds(context, port) {
     const { x, y } = port.location
     const radius = this.size * 0.5

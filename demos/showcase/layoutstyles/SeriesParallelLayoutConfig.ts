@@ -330,9 +330,7 @@ export const SeriesParallelLayoutConfig = (Class as any)('SeriesParallelLayoutCo
     }
 
     if (this.routingStyleNonSeriesParallelItem === NonSeriesParallelRoutingStyle.ORTHOGONAL) {
-      layout.nonSeriesParallelEdgeRouter = new EdgeRouter({
-        rerouting: true
-      })
+      layout.nonSeriesParallelEdgeRouter = new EdgeRouter({ rerouting: true })
     } else if (this.routingStyleNonSeriesParallelItem === NonSeriesParallelRoutingStyle.ORGANIC) {
       layout.nonSeriesParallelEdgeRouter = new OrganicEdgeRouter()
     } else if (this.routingStyleNonSeriesParallelItem === NonSeriesParallelRoutingStyle.STRAIGHT) {

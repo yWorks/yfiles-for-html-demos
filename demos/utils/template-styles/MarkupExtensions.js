@@ -35,59 +35,80 @@ import {
   Point,
   Size
 } from '@yfiles/yfiles'
+
 import { StringTemplateNodeStyle } from './StringTemplateNodeStyle'
 import { StringTemplateLabelStyle } from './StringTemplateLabelStyle'
 import { StringTemplatePortStyle } from './StringTemplatePortStyle'
 import { TemplateLabelStyle, TemplateNodeStyle, TemplatePortStyle } from './TemplateStyles'
+
 const XMLNS = 'http://www.yworks.com/demos/template-node-style/3.0'
+
 class StringTemplateStyleExtension extends MarkupExtension {
   _normalizedOutline
+
   get normalizedOutline() {
     return this._normalizedOutline
   }
+
   set normalizedOutline(value) {
     this._normalizedOutline = value
   }
+
   _svgContent = ''
+
   get svgContent() {
     return this._svgContent
   }
+
   set svgContent(value) {
     this._svgContent = value
   }
+
   _cssClass = ''
+
   get cssClass() {
     return this._cssClass
   }
+
   set cssClass(value) {
     this._cssClass = value
   }
+
   _styleTag
+
   get styleTag() {
     return this._styleTag
   }
+
   set styleTag(value) {
     this._styleTag = value
   }
 }
+
 /**
  * A markup extension class used for (de-)serializing a StringTemplateNodeStyle.
  */
 export class StringTemplateNodeStyleExtension extends StringTemplateStyleExtension {
   _minimumSize = Size.EMPTY
+
   get minimumSize() {
     return this._minimumSize
   }
+
   set minimumSize(value) {
     this._minimumSize = value
   }
+
   _insets = new Insets(5)
+
   get insets() {
     return this._insets
   }
+
   set insets(value) {
     this._insets = value
   }
+
   static create(item) {
     const extension = new StringTemplateNodeStyleExtension()
     extension.svgContent = item.svgContent
@@ -98,6 +119,7 @@ export class StringTemplateNodeStyleExtension extends StringTemplateStyleExtensi
     extension.normalizedOutline = item.normalizedOutline ? item.normalizedOutline : null
     return extension
   }
+
   provideValue(_) {
     return new StringTemplateNodeStyle({
       svgContent: this.svgContent,
@@ -109,24 +131,31 @@ export class StringTemplateNodeStyleExtension extends StringTemplateStyleExtensi
     })
   }
 }
+
 /**
  * A markup extension class used for (de-)serializing a StringTemplateLabelStyle.
  */
 export class StringTemplateLabelStyleExtension extends StringTemplateStyleExtension {
   _preferredSize = Size.EMPTY
+
   get preferredSize() {
     return this._preferredSize
   }
+
   set preferredSize(value) {
     this._preferredSize = value
   }
+
   _autoFlip = true
+
   get autoFlip() {
     return this._autoFlip
   }
+
   set autoFlip(value) {
     this._autoFlip = value
   }
+
   static create(item) {
     const extension = new StringTemplateLabelStyleExtension()
     extension.svgContent = item.svgContent
@@ -137,6 +166,7 @@ export class StringTemplateLabelStyleExtension extends StringTemplateStyleExtens
     extension.normalizedOutline = item.normalizedOutline ? item.normalizedOutline : null
     return extension
   }
+
   provideValue(_) {
     return new StringTemplateLabelStyle({
       svgContent: this.svgContent,
@@ -148,24 +178,31 @@ export class StringTemplateLabelStyleExtension extends StringTemplateStyleExtens
     })
   }
 }
+
 /**
  * A markup extension class used for (de-)serializing a StringTemplatePortStyle.
  */
 export class StringTemplatePortStyleExtension extends StringTemplateStyleExtension {
   _renderSize = new Size(5, 5)
+
   get renderSize() {
     return this._renderSize
   }
+
   set renderSize(value) {
     this._renderSize = value
   }
+
   _offset = Point.ORIGIN
+
   get offset() {
     return this._offset
   }
+
   set offset(value) {
     this._offset = value
   }
+
   static create(item) {
     const extension = new StringTemplatePortStyleExtension()
     extension.svgContent = item.svgContent
@@ -176,6 +213,7 @@ export class StringTemplatePortStyleExtension extends StringTemplateStyleExtensi
     extension.normalizedOutline = item.normalizedOutline ? item.normalizedOutline : null
     return extension
   }
+
   provideValue(_) {
     return new StringTemplatePortStyle({
       svgContent: this.svgContent,
@@ -187,6 +225,7 @@ export class StringTemplatePortStyleExtension extends StringTemplateStyleExtensi
     })
   }
 }
+
 /**
  * Enable serialization of the various template styles - without a namespace mapping, serialization will fail
  */

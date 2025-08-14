@@ -27,12 +27,14 @@
  **
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode } from '@yfiles/yfiles'
+
 /**
  * Enables undo functionality.
  */
 export function enableUndo(graph) {
   graph.undoEngineEnabled = true
 }
+
 /**
  * Performs an undo operation
  */
@@ -41,6 +43,7 @@ export function undo(graph) {
     graph.undoEngine.undo()
   }
 }
+
 /**
  * Performs a redo operation
  */
@@ -49,6 +52,7 @@ export function redo(graph) {
     graph.undoEngine.redo()
   }
 }
+
 /**
  * Clears the undo entries.
  */
@@ -57,12 +61,14 @@ export function clearUndoQueue(graph) {
     graph.undoEngine.clear()
   }
 }
+
 /**
  * Demonstrates clipboard low-level functionality.
  */
 function enableClipboard(graphComponent) {
   const graphEditorInputMode = graphComponent.inputMode
   graphEditorInputMode.allowClipboardOperations = true // this is the default, already
+
   // programmatically copy the selected graph items
   if (graphComponent.selection.nodes.size > 0) {
     graphEditorInputMode.copy()

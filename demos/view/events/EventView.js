@@ -34,6 +34,7 @@ export class EventView {
   groupEvents = true
   messages = []
   startDate = new Date()
+
   /**
    * Returns the dom element that displays the log message.
    */
@@ -43,6 +44,7 @@ export class EventView {
     }
     return this._logElement
   }
+
   /**
    * Clears the log element.
    */
@@ -51,6 +53,7 @@ export class EventView {
     this.messages = []
     this.startDate = new Date()
   }
+
   /**
    * Adds the given text to the log element.
    * @param text The text to be added
@@ -61,19 +64,16 @@ export class EventView {
     if (!eventType) {
       eventType = text
     }
-    const message = {
-      isGroup: false,
-      message: text,
-      date: new Date(),
-      eventType,
-      category
-    }
+
+    const message = { isGroup: false, message: text, date: new Date(), eventType, category }
     this.messages.push(message)
     this.createElementForLogItem(message)
+
     if (this.groupEvents) {
       this.mergeEvents()
     }
   }
+
   /**
    * Creates a log element for the given message.
    * @param item The log message to create the element for
@@ -88,6 +88,7 @@ export class EventView {
     }
     this.appendElementToLog(item.element)
   }
+
   /**
    * Appends the given element to the current log element.
    * @param element The element to be added
@@ -100,6 +101,7 @@ export class EventView {
       logElement.insertBefore(element, logElement.firstChild)
     }
   }
+
   /**
    * Creates an element group for the given group.
    */
@@ -108,6 +110,7 @@ export class EventView {
     element.setAttribute('class', 'logGroup')
     return element
   }
+
   /**
    * Creates the log element for the given message.
    */
@@ -117,28 +120,35 @@ export class EventView {
     element.textContent = this.getLogText(message)
     return element
   }
+
   /**
    * Updates the given element group.
    */
   updateGroup(group) {
     const element = group.element
     element.innerHTML = ''
+
     const containerDiv = document.createElement('div')
     containerDiv.setAttribute('class', 'logGroup-container')
+
     const messageDiv = document.createElement('div')
     messageDiv.setAttribute('class', 'logGroup-messages')
+
     const groupedMessages = group.repeatedMessages
     for (let i = 0; i < groupedMessages.length; i++) {
       const message = groupedMessages[i]
       messageDiv.appendChild(message.element)
     }
     containerDiv.appendChild(messageDiv)
+
     const countDiv = document.createElement('div')
     countDiv.setAttribute('class', 'logGroup-count')
     countDiv.textContent = group.repeatCount.toString()
     containerDiv.appendChild(countDiv)
+
     element.appendChild(containerDiv)
   }
+
   /**
    * Returns the text of the given message.
    */
@@ -153,6 +163,7 @@ export class EventView {
     const seconds = (rest / 1000) | 0
     // calculate milliseconds
     const millis = rest - seconds * 1000
+
     function appendZeros(s, maxLength) {
       // append zeros to the string until it has the given length
       while (s.length < maxLength) {
@@ -160,8 +171,10 @@ export class EventView {
       }
       return s
     }
+
     return `[${appendZeros(`${minutes}`, 2)}:${appendZeros(`${seconds}`, 2)}.${appendZeros(`${millis}`, 3)}] ${message.message}`
   }
+
   /**
    * Removes the given message.
    */
@@ -170,6 +183,7 @@ export class EventView {
       this.removeLogItem(removeThese[i])
     }
   }
+
   /**
    * Removes the given log element from the dom.
    */
@@ -181,6 +195,7 @@ export class EventView {
       this.messages.splice(index, 1)
     }
   }
+
   /**
    * Merges the events.
    */
@@ -188,6 +203,7 @@ export class EventView {
     this.mergeWithLatestGroup()
     this.createNewGroup()
   }
+
   /**
    * Merges with the latest group log element.
    */
@@ -196,6 +212,7 @@ export class EventView {
     if (!latestGroup) {
       return
     }
+
     const ungroupedMessages = this.getLatestMessages()
     const groupCount = latestGroup.repeatedMessages.length
     if (ungroupedMessages.length < groupCount) {
@@ -208,6 +225,7 @@ export class EventView {
       this.updateGroup(latestGroup)
     }
   }
+
   /**
    * Creates a new group log element.
    */
@@ -220,11 +238,7 @@ export class EventView {
         const startIndex2 = start - 2 * length + 1
         const ungroupedMessagesRange2 = ungroupedMessages.slice(startIndex2, startIndex2 + length)
         if (this.compareTypes(ungroupedMessagesRange1, ungroupedMessagesRange2)) {
-          const group = {
-            isGroup: true,
-            repeatCount: 2,
-            repeatedMessages: ungroupedMessagesRange2
-          }
+          const group = { isGroup: true, repeatCount: 2, repeatedMessages: ungroupedMessagesRange2 }
           this.messages.push(group)
           this.removeMessages(ungroupedMessagesRange1)
           this.removeMessages(ungroupedMessagesRange2)
@@ -233,6 +247,7 @@ export class EventView {
       }
     }
   }
+
   /**
    * Returns the latest messages.
    */
@@ -248,6 +263,7 @@ export class EventView {
     }
     return r
   }
+
   /**
    * Returns the latest group.
    */
@@ -261,6 +277,7 @@ export class EventView {
     }
     return null
   }
+
   compareTypes(m1, m2) {
     if (m1.length !== m2.length) {
       return false

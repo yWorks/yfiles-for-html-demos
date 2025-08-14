@@ -49,43 +49,55 @@ import {
   Size,
   VerticalTextAlignment
 } from '@yfiles/yfiles'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 let graphComponent
 let graphOverviewComponent
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize a graph component with a custom theme
   graphComponent = new GraphComponent('#graphComponent')
+
   // initialize a GraphOverviewComponent
   graphOverviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
+
   // configure input mode, snapping and undo-engine
-  graphComponent.inputMode = new GraphEditorInputMode({
-    snapContext: new GraphSnapContext()
-  })
+  graphComponent.inputMode = new GraphEditorInputMode({ snapContext: new GraphSnapContext() })
+
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 50 }))
   await graphComponent.fitGraphBounds()
+
   // initial selection of a single node to make the handles visible
   graphComponent.selection.add(graphComponent.graph.nodes.at(2))
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
+
   initializeUI()
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder
     .createNodesSource({
       data: graphData.nodeList.filter((item) => !item.isGroup),
@@ -93,12 +105,14 @@ function buildGraph(graph, graphData) {
       parentId: (item) => item.parentId
     })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder
     .createEdgesSource({
       data: graphData.edgeList,
@@ -106,8 +120,10 @@ function buildGraph(graph, graphData) {
       targetId: (item) => item.target
     })
     .edgeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Switches between the light and dark mode of this demo application.
  */
@@ -115,19 +131,18 @@ function enableMode(mode) {
   const isDarkMode = mode === 'dark'
   const backgroundColor = isDarkMode ? '#3c4253' : '#fff'
   graphComponent.htmlElement.style.backgroundColor = backgroundColor
+
   // change the content area color of the group nodes
   const groupNodeStyle = graphComponent.graph.groupNodeDefaults.style
   groupNodeStyle.contentAreaFill = backgroundColor
+
   // change the stroke and target arrow color of the edges to a color which is
   // offers good visibility on the background
   const color = isDarkMode ? '#FCFDFE' : '#605003'
   const edgeStyle = graphComponent.graph.edgeDefaults.style
   edgeStyle.stroke = `1.5px ${color}`
-  edgeStyle.targetArrow = new Arrow({
-    fill: color,
-    stroke: color,
-    type: 'triangle'
-  })
+  edgeStyle.targetArrow = new Arrow({ fill: color, stroke: color, type: 'triangle' })
+
   // update CSS variables
   if (isDarkMode) {
     graphComponent.htmlElement.classList.add('dark')
@@ -136,9 +151,11 @@ function enableMode(mode) {
     graphComponent.htmlElement.classList.remove('dark')
     graphOverviewComponent.htmlElement.classList.remove('dark')
   }
+
   // indicate that the component needs to be updated
   graphComponent.invalidate()
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  *
@@ -163,6 +180,7 @@ function initializeGraph(graph) {
     stroke: `2px solid ${defaultNodeColor}`,
     contentAreaPadding: 15
   })
+
   // define default label styles for node, group nodes and edges
   const nodeLabelStyle = new LabelStyle()
   nodeLabelStyle.shape = LabelShape.ROUND_RECTANGLE
@@ -172,13 +190,16 @@ function initializeGraph(graph) {
   nodeLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
   nodeLabelStyle.padding = [2, 4, 1, 4]
   graph.nodeDefaults.labels.style = nodeLabelStyle
+
   graph.groupNodeDefaults.labels.style = new LabelStyle({
     verticalTextAlignment: 'center',
     textFill: 'white'
   })
+
   const edgeLabelStyle = nodeLabelStyle.clone()
   edgeLabelStyle.backgroundFill = '#bfb99a'
   graph.edgeDefaults.labels.style = edgeLabelStyle
+
   // set sizes and label locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
@@ -189,9 +210,11 @@ function initializeGraph(graph) {
   )
   graph.groupNodeDefaults.labels.layoutParameter =
     new GroupNodeLabelModel().createTabBackgroundParameter()
+
   // initially, enable the light mode styling variant
   enableMode('light')
 }
+
 /**
  * Sets up event listeners for theme buttons.
  */
@@ -200,10 +223,12 @@ function initializeUI() {
   const darkBtn = document.querySelector('#dark')
   lightBtn.addEventListener('click', () => switchMode('light'))
   darkBtn.addEventListener('click', () => switchMode('dark'))
+
   function switchMode(mode) {
     enableMode(mode)
     lightBtn.disabled = mode === 'light'
     darkBtn.disabled = mode === 'dark'
   }
 }
+
 run().then(finishLoading)

@@ -46,9 +46,8 @@ import {
 import { configureToolTips } from './ToolTipHelper'
 import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { BrowserDetection, finishLoading } from '@yfiles/demo-resources/demo-page'
 import { initializeSvgWebGlSwitchButton } from './svg-webgl-switch'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -288,10 +287,7 @@ function createSampleGraph(graph: IGraph): void {
   )
   // style for gray nodes
   labelStylesWithTabAtMiscPositions.push(
-    new LabelStyle({
-      verticalTextAlignment: 'center',
-      wrapping: 'wrap-character-ellipsis'
-    })
+    new LabelStyle({ verticalTextAlignment: 'center', wrapping: 'wrap-character-ellipsis' })
   )
   // style for light-green nodes
   labelStylesWithTabAtMiscPositions.push(
@@ -446,11 +442,7 @@ function collapseLast(graph: IGraph): void {
  */
 function configureFolding(graphComponent: GraphComponent): void {
   graphComponent.graph = new FoldingManager({
-    folderNodeConverter: new FolderNodeConverter({
-      folderNodeDefaults: {
-        copyLabels: true
-      }
-    }),
+    folderNodeConverter: new FolderNodeConverter({ folderNodeDefaults: { copyLabels: true } }),
     masterGraph: graphComponent.graph
   }).createFoldingView().graph
 }
@@ -465,9 +457,7 @@ function configureInteraction(graphComponent: GraphComponent): void {
     // give labels a higher priority, so that double-clicking labels will still trigger the label
     // editing, even though below we handle the double clicks for nodes
     doubleClickHitTestOrder: [GraphItemTypes.LABEL, GraphItemTypes.ALL],
-    navigationInputMode: {
-      autoGroupNodeAlignmentPolicy: NodeAlignmentPolicy.CENTER
-    }
+    navigationInputMode: { autoGroupNodeAlignmentPolicy: NodeAlignmentPolicy.CENTER }
   })
   // Provide a way to collapse group nodes or expand folder nodes even if their style does not
   // show an icon for collapsing or expanding.

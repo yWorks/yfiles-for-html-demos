@@ -26,14 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic'
-
-import { AppModule } from './app/app.module'
+import { bootstrapApplication } from '@angular/platform-browser'
+import { AppComponent } from './app/app.component'
+import { appComponentConfig } from './app/app.component.config'
 import licenseData from '../../../../lib/license.json'
 import { License } from '@yfiles/yfiles'
 
 License.value = licenseData
 
-platformBrowserDynamic()
-  .bootstrapModule(AppModule)
-  .catch((err) => console.error(err))
+bootstrapApplication(AppComponent, appComponentConfig).catch((err) => console.error(err))

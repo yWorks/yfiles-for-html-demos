@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { INode } from '@yfiles/yfiles'
 import { HierarchicalLayout, HierarchicalLayoutData } from '@yfiles/yfiles'
 
 /**
@@ -36,13 +35,7 @@ import { HierarchicalLayout, HierarchicalLayoutData } from '@yfiles/yfiles'
  * @param childDistance the distance between tabular group child nodes
  * @returns the configured hierarchical layout algorithm
  */
-export function createTabularGroupsHierarchicalLayout(
-  sorted = false,
-  childDistance = 0
-): {
-  layout: HierarchicalLayout
-  layoutData: HierarchicalLayoutData
-} {
+export function createTabularGroupsHierarchicalLayout(sorted = false, childDistance = 0) {
   const hl = new HierarchicalLayout({
     layoutOrientation: 'left-to-right',
     minimumLayerDistance: 50
@@ -56,7 +49,7 @@ export function createTabularGroupsHierarchicalLayout(
 
   // configure order of tabular group children, if desired
   if (sorted) {
-    data.tabularGroupChildComparators.constant = (node1: INode, node2: INode) => {
+    data.tabularGroupChildComparators.constant = (node1, node2) => {
       const label1 = node1.labels.at(0)
       const label2 = node2.labels.at(0)
       if (label1 && label2) {
@@ -78,9 +71,6 @@ export function createTabularGroupsHierarchicalLayout(
  * Returns a {@link HierarchicalLayout} with a left-to-right layout orientation.
  * @returns the configured hierarchical layout algorithm
  */
-export function createDefaultHierarchicalLayout(): HierarchicalLayout {
-  return new HierarchicalLayout({
-    layoutOrientation: 'left-to-right',
-    minimumLayerDistance: 50
-  })
+export function createDefaultHierarchicalLayout() {
+  return new HierarchicalLayout({ layoutOrientation: 'left-to-right', minimumLayerDistance: 50 })
 }

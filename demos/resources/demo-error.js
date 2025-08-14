@@ -27,11 +27,14 @@
  **
  ***************************************************************************/
 import { Exception, yfiles } from '@yfiles/yfiles'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+import { BrowserDetection } from './demo-ui/BrowserDetection'
+
 export const INVALID_LICENSE_MESSAGE =
   'This is an expected error caused by invalid or missing license data.'
+
 // Set to `true` when the dialog is open. Prevents opening of multiple error dialogs.
 let errorDialogOpen = false
+
 /**
  * Registers error handlers that show an error dialog that can send error reports to yWorks.
  *
@@ -52,10 +55,11 @@ export function registerErrorDialog() {
   } catch (ignored) {
     // do nothing if it didn't work
   }
+
   // Register a handler for unhandled errors
   window.addEventListener('error', (e) => {
     e.preventDefault()
-    if (inErrorState()) {
+    if (inErrorState() || isIgnoredError(e.error)) {
       return
     }
     if (BrowserDetection.safariVersion > 0 && e.error instanceof Error) {
@@ -63,10 +67,11 @@ export function registerErrorDialog() {
     }
     openErrorOverlay(e.error ?? e.message ?? 'Unhandled error')
   })
+
   // Register a handler for unhandled promise rejections
   window.addEventListener('unhandledrejection', (e) => {
     e.preventDefault()
-    if (inErrorState()) {
+    if (inErrorState() || isIgnoredError(e.reason)) {
       return
     }
     if (BrowserDetection.safariVersion > 0 && e.reason instanceof Error) {
@@ -74,16 +79,29 @@ export function registerErrorDialog() {
     }
     openErrorOverlay(e.reason ?? 'Unhandled promise rejection')
   })
+
   // In the following, we test/use some non-standard or new features, therefore we cast window to any
   const anyWindow = window
+
   // Forward errors occurring in internal event handlers of yFiles to the standard reportError function
   // https://docs.yworks.com/yfileshtml/#/api/Exception
   Exception.handler = (error) => openErrorOverlay(error)
+
   // Forward errors occurring during require.js module loading to the standard reportError function
   if (anyWindow.require != null) {
     anyWindow.onError = (error) => openErrorOverlay(error)
   }
 }
+
+/**
+ * Whether the error is not tracked, neither reported to the user.
+ */
+function isIgnoredError(error) {
+  const stack = error ? unwindStack(error) : ''
+
+  return stack.includes('chrome-extension')
+}
+
 function getInnermostError(error) {
   let inner = error
   while (inner.cause instanceof Error) {
@@ -91,10 +109,12 @@ function getInnermostError(error) {
   }
   return inner
 }
+
 function getInnermostMessage(error) {
   const inner = getInnermostError(error)
   return `${inner.name}: ${inner.message}`
 }
+
 function unwindStack(error) {
   const stack = error.stack
   return !stack || stack.length === 0
@@ -103,6 +123,7 @@ function unwindStack(error) {
       ? `${stack}\nCaused by:\n${unwindStack(error.cause)}`
       : stack
 }
+
 /**
  * Shows Vite's error overlay if the runtime-error plugin is registered, otherwise the browser's
  * default behavior is triggered.
@@ -118,10 +139,12 @@ async function openErrorOverlay(errorOrMessage) {
   } else {
     openErrorDialog(errorOrMessage)
   }
+
   // Don't move the App Status before the error dialog creation.
   // Otherwise, automatic sending will be disabled.
   setErrorState(errorOrMessage)
 }
+
 /**
  * Opens an error dialog that shows information about an error and allows sending of an error
  * report to yWorks.
@@ -132,6 +155,7 @@ function openErrorDialog(errorOrMessage) {
     return true
   }
   errorDialogOpen = true
+
   // No error reporting for GraphML parsing errors
   if (errorOrMessage instanceof Exception && errorOrMessage.message.includes('XML Parsing Error')) {
     window.alert(
@@ -141,13 +165,16 @@ function openErrorDialog(errorOrMessage) {
     )
     return true
   }
+
   const dialog =
     errorOrMessage instanceof Error && errorOrMessage.name === 'TypeInfoError'
       ? createSimpleErrorDialog(errorOrMessage)
       : createErrorDialog(errorOrMessage)
+
   document.body.appendChild(dialog)
   return true
 }
+
 /**
  * Creates a simplified error dialog that shows information about an error.
  *
@@ -156,9 +183,12 @@ function openErrorDialog(errorOrMessage) {
 function createSimpleErrorDialog(errorOrMessage) {
   const { dialogAnchor, dialogPanel, contentPanel } = createPlainDialog('Something Went Wrong')
   const parent = document.body
+
   dialogPanel.classList.add('demo-dialog--error')
   dialogAnchor.classList.add('demo-dialog-anchor--error')
+
   addErrorMessage(contentPanel, errorOrMessage)
+
   const closeButton = document.createElement('button')
   closeButton.addEventListener(
     'click',
@@ -170,8 +200,10 @@ function createSimpleErrorDialog(errorOrMessage) {
   )
   closeButton.textContent = 'Close'
   contentPanel.appendChild(closeButton)
+
   return dialogAnchor
 }
+
 /**
  * Creates an error dialog that shows information about an error and allows sending of an error
  * report to yWorks.
@@ -182,15 +214,19 @@ function createErrorDialog(errorOrMessage) {
   const actionUrl = 'https://www.yworks.com/actions/errorReportHtmlDemos'
   const { dialogAnchor, dialogPanel, contentPanel } = createPlainDialog('Something Went Wrong')
   const parent = document.body
+
   dialogPanel.classList.add('demo-dialog--error')
   dialogAnchor.classList.add('demo-dialog-anchor--error')
+
   addErrorMessage(contentPanel, errorOrMessage)
+
   const messageElement = document.createElement('div')
   messageElement.innerHTML = `
 <p><strong>Report to yWorks</strong></p>
 <p style="border-top: 0">If you think the cause is a problem in the yFiles for HTML library, you can use this dialog to send a bug report to yWorks.</p>
 <p>We may not respond to other reports. If there is a problem in your implementation or if you have a question regarding the usage of yFiles, please contact yWorks support via the <a href="https://my.yworks.com" target="_blank">yWorks Customer Center</a>.</p>`
   contentPanel.appendChild(messageElement)
+
   const form = document.createElement('form')
   form.classList.add('demo-dialog__form')
   form.setAttribute('method', 'POST')
@@ -207,17 +243,20 @@ function createErrorDialog(errorOrMessage) {
     addHiddenField(form, 'license_expiry', 'No License')
   }
   addHiddenField(form, 'version', yfilesInfo.version)
+
   if (typeof errorOrMessage === 'string') {
     addFormRow(form, 'error_message', 'Error Message', 'text', errorOrMessage)
   } else {
     // In Firefox, errors have some additional useful properties
     const error = errorOrMessage
+
     tryAddHiddenField(form, 'error_message', getInnermostMessage(error))
     tryAddHiddenField(form, 'stack', encode(unwindStack(error)))
     tryAddHiddenField(form, 'error_line', error.lineNumber ?? error.line ?? '')
     tryAddHiddenField(form, 'error_column', error.columnNumber ?? error.column ?? '')
     tryAddHiddenField(form, 'error_source', error.filename ?? error.sourceURL ?? '')
   }
+
   const inputEmail = addFormRow(
     form,
     'email',
@@ -228,7 +267,9 @@ function createErrorDialog(errorOrMessage) {
   )
   addHiddenField(form, 'system', `userAgent: ${window.navigator.userAgent}`)
   addHiddenField(form, 'url', window.top?.location.href)
+
   const inputComment = addFormRow(form, 'comment', 'Additional comments', 'textarea', '', true)
+
   const submitButton = document.createElement('button')
   submitButton.setAttribute('type', 'submit')
   submitButton.addEventListener(
@@ -243,6 +284,7 @@ function createErrorDialog(errorOrMessage) {
   )
   submitButton.textContent = 'Submit'
   form.appendChild(submitButton)
+
   const cancelButton = document.createElement('button')
   cancelButton.setAttribute('type', 'reset')
   cancelButton.addEventListener(
@@ -255,6 +297,7 @@ function createErrorDialog(errorOrMessage) {
   )
   cancelButton.textContent = 'Cancel'
   form.appendChild(cancelButton)
+
   // activate the submit button only if user enters custom information
   submitButton.setAttribute('type', 'button')
   inputEmail.addEventListener(
@@ -271,8 +314,10 @@ function createErrorDialog(errorOrMessage) {
     },
     false
   )
+
   return dialogAnchor
 }
+
 /**
  * Creates an empty general-purpose dialog with a title bar.
  *
@@ -281,35 +326,39 @@ function createErrorDialog(errorOrMessage) {
 export function createPlainDialog(titleText) {
   const dialogAnchor = document.createElement('div')
   dialogAnchor.classList.add('demo-dialog-anchor')
+
   const dialogPanel = document.createElement('div')
   dialogPanel.classList.add('demo-dialog')
+
   const title = document.createElement('h2')
   title.classList.add('demo-dialog__title')
   title.innerHTML = titleText
+
   const contentPanel = document.createElement('div')
   contentPanel.classList.add('demo-dialog__content')
+
   dialogAnchor.appendChild(dialogPanel)
   dialogPanel.appendChild(title)
   dialogPanel.appendChild(contentPanel)
-  return {
-    dialogAnchor,
-    dialogPanel,
-    title,
-    contentPanel
-  }
+
+  return { dialogAnchor, dialogPanel, title, contentPanel }
 }
+
 function inErrorState() {
   const state = window['data-demo-status']
   return typeof state === 'string' && !state.startsWith('OK')
 }
+
 function setErrorState(errorOrMessage) {
   window['data-demo-status'] = errorOrMessage != null ? `Error! ${errorOrMessage}` : 'Error!'
 }
+
 function encode(value) {
   return typeof value === 'string'
     ? value.replace(new RegExp('<', 'g'), '[').replace(new RegExp('>', 'g'), ']')
     : value
 }
+
 function addFormRow(form, id, label, type, value, editable) {
   let input
   if (type === 'textarea') {
@@ -324,19 +373,23 @@ function addFormRow(form, id, label, type, value, editable) {
   }
   input.setAttribute('id', `error_dialog_${id}`)
   input.setAttribute('name', `error_dialog_${id}`)
+
   if (!editable) {
     input.setAttribute('readonly', 'true')
   }
+
   form.appendChild(createLabelElement(id, label))
   form.appendChild(input)
   return input
 }
+
 function createLabelElement(id, label) {
   const labelElement = document.createElement('label')
   labelElement.setAttribute('for', `error_dialog_${id}`)
   labelElement.innerHTML = label
   return labelElement
 }
+
 function addHiddenField(form, id, value) {
   const input = document.createElement('input')
   input.setAttribute('type', 'hidden')
@@ -346,11 +399,13 @@ function addHiddenField(form, id, value) {
   form.appendChild(input)
   return input
 }
+
 function tryAddHiddenField(form, id, value) {
   if (value) {
     addHiddenField(form, id, value)
   }
 }
+
 function addErrorMessage(parent, errorOrMessage) {
   const element = document.createElement('div')
   if (typeof errorOrMessage === 'string') {

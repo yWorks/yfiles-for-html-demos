@@ -36,6 +36,7 @@ import {
   ShapeNodeStyle,
   Size
 } from '@yfiles/yfiles'
+
 /**
  * Set up default styles for graph elements.
  * Default styles apply only to elements created after the default style has been set,
@@ -52,12 +53,14 @@ export function setDefaultStyles(graph) {
   })
   // Also assign the default node size
   graph.nodeDefaults.size = new Size(40, 40)
+
   // Create a PolylineEdgeStyle which will be used as default for all edges
   // that don't have another style assigned explicitly
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '1.5px #662f01',
     targetArrow: '#662f01 small triangle'
   })
+
   // Create a label style using Tahoma as the label font and a black text color
   const defaultLabelStyle = new LabelStyle({
     font: '12px Tahoma',
@@ -66,16 +69,19 @@ export function setDefaultStyles(graph) {
     shape: 'round-rectangle',
     padding: [2, 5]
   })
+
   // Set the defined style as the default for both edge and node labels
   graph.edgeDefaults.labels.style = defaultLabelStyle
   graph.nodeDefaults.labels.style = defaultLabelStyle
 }
+
 /**
  * Creates a node, an edge and a label using specific styles,
  * i.e., styles different from the defaults.
  */
 export function createGraphItemsWithStyles(graph) {
   const sourceNode = graph.nodes.get(0)
+
   const node = graph.createNodeAt({
     location: new Point(30, 215),
     style: new ImageNodeStyle('resources/star-16.svg')
@@ -83,10 +89,7 @@ export function createGraphItemsWithStyles(graph) {
   graph.createEdge({
     source: sourceNode,
     target: node,
-    style: new PolylineEdgeStyle({
-      targetArrow: '#224556 medium triangle',
-      stroke: '2px #224556'
-    })
+    style: new PolylineEdgeStyle({ targetArrow: '#224556 medium triangle', stroke: '2px #224556' })
   })
   graph.addLabel({
     text: 'New Label',
@@ -94,6 +97,7 @@ export function createGraphItemsWithStyles(graph) {
     style: new LabelStyle({ backgroundFill: '#a6a6c0' })
   })
 }
+
 /**
  * Changes the styles of some of the graph items.
  */
@@ -103,25 +107,31 @@ export function setStyles(graph) {
   const node2 = graph.nodes.get(2)
   const edge = graph.edges.get(0)
   const label = graph.nodeLabels.at(2)
+
   const edgeStyle = new PolylineEdgeStyle({
     stroke: '2px dashed #224556',
     sourceArrow: '#224556 medium circle',
     targetArrow: '#224556 medium short'
   })
+
   graph.setStyle(edge, edgeStyle)
+
   // Creates a different style for the label with black text and a red border
   const labelStyle = new LabelStyle({
     backgroundStroke: '2px #46A8D5',
     backgroundFill: '#b4dbed',
     padding: [3, 5, 3, 5]
   })
+
   graph.setStyle(label, labelStyle)
+
   const nodeStyle1 = new ShapeNodeStyle({
     shape: 'ellipse',
     fill: '#a37ab3',
     stroke: '2px #433449'
   })
   graph.setStyle(node1, nodeStyle1)
+
   const nodeStyle2 = new RectangleNodeStyle({
     fill: '#46a8d5',
     stroke: '2px #224556',

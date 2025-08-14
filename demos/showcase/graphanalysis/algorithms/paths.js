@@ -35,6 +35,7 @@ import {
   SingleSourceShortestPaths
 } from '@yfiles/yfiles'
 import { markItem, setComponent, setGradient } from './algorithms'
+
 /**
  * Description of the algorithm which determines the shortest paths between nodes.
  */
@@ -46,6 +47,7 @@ export const shortestPathsDescription = `
   <em>edge length</em>. When the algorithm should use <em>Uniform costs</em> all edges are treated
   the same. For the sake of simplicity, in this demo we allow only positive edge-costs.</p>
   <p>This algorithm can take the direction of edges into account.</p>`
+
 /**
  * Calculates the shortest paths between start and end nodes.
  */
@@ -56,6 +58,7 @@ export function calculatedShortestPaths(graph, config) {
     // there are no start and edge nodes, hence there are no paths
     return
   }
+
   if (startNodes.length === 1 && endNodes.length === 1) {
     const result = new ShortestPath({
       directed: config.directed,
@@ -63,6 +66,7 @@ export function calculatedShortestPaths(graph, config) {
       source: startNodes[0],
       sink: endNodes[0]
     }).run(graph)
+
     result.nodes.forEach((node) => {
       markItem(node)
     })
@@ -76,6 +80,7 @@ export function calculatedShortestPaths(graph, config) {
       sources: startNodes,
       sinks: endNodes
     }).run(graph)
+
     result.paths.forEach((path, pathIndex) => {
       path.nodes.forEach((node) => {
         markItem(node, pathIndex)
@@ -86,6 +91,7 @@ export function calculatedShortestPaths(graph, config) {
     })
   }
 }
+
 /**
  * Description of the algorithm which determines the k shortest paths between nodes.
  */
@@ -98,6 +104,7 @@ export const kShortestPathsDescription = `
   <p>Currently, the k-shortest path algorithm only supports <em>directed</em> graphs. It may return
   fewer than k paths if there are no more distinct paths between the nodes. As the <em>simplePaths</em>
    parameter is set to be true, only paths where no node is repeated are returned.</p>`
+
 /**
  * Calculates the k shortest paths between start and end nodes.
  */
@@ -108,6 +115,7 @@ export function calculatedKShortestPaths(graph, config) {
   if (!startNodes || !endNodes || (startNodes.length === 0 && endNodes.length === 0)) {
     return
   }
+
   // run k-shortest path algorithm to obtain the k shortest paths
   const result = new KShortestPaths({
     costs: config.edgeWeights,
@@ -116,6 +124,7 @@ export function calculatedKShortestPaths(graph, config) {
     sink: endNodes[0],
     source: startNodes[0]
   }).run(graph)
+
   // iterate through the k shortest paths
   result.paths.forEach((path, pathIndex) => {
     // mark all nodes on this path
@@ -126,12 +135,14 @@ export function calculatedKShortestPaths(graph, config) {
         graph.addLabel({ owner: node, text: String(pathIndex + 1) })
       }
     })
+
     // mark all edges on this path
     path.edges.forEach((edge) => {
       markItem(edge, pathIndex)
     })
   })
 }
+
 /**
  * Description of the algorithm which determines all paths between nodes.
  */
@@ -141,6 +152,7 @@ export const allPathsDescription = `
   <p>The paths may share some parts and therefore can overlap. Which path is in focus can be
   specified at the nodes which belong to several paths.</p>
   <p>This algorithm can take the direction of edges into account.</p>`
+
 /**
  * Calculates all paths between start and edge nodes.
  */
@@ -151,11 +163,13 @@ export function calculateAllPaths(graph, config) {
     // there are no start and edge nodes, hence there are no paths
     return
   }
+
   const result = new Paths({
     directed: config.directed,
     startNodes: startNodes,
     endNodes: endNodes
   }).run(graph)
+
   result.paths.forEach((path, pathIndex) => {
     path.nodes.forEach((node) => {
       markItem(node, pathIndex)
@@ -165,6 +179,7 @@ export function calculateAllPaths(graph, config) {
     })
   })
 }
+
 /**
  * Description of the algorithm which determines all chains in the graph.
  */
@@ -173,11 +188,13 @@ export const allChainsDescription = `
   with degree 2 as well as their start and end node.</p>
   <p>Which path is focused in case a node belongs to several chains can be specified at these nodes.</p>
   <p>This algorithm can take the direction of edges into account.</p>`
+
 /**
  * Calculates all chains in the given graph.
  */
 export function calculateAllChains(graph, config) {
   const result = new Chains({ directed: config.directed }).run(graph)
+
   result.chains.forEach((chain, pathIndex) => {
     chain.nodes.forEach((node) => {
       markItem(node, pathIndex)
@@ -187,6 +204,7 @@ export function calculateAllChains(graph, config) {
     })
   })
 }
+
 /**
  * Description of all shortest paths from a single source to all other nodes.
  */
@@ -199,6 +217,7 @@ export const singleSourceShortestPathsDescription = `
   <em>edge length</em>. When the algorithm should <em>Uniform costs</em> all edges are treated the
   same. For the sake of simplicity, in this demo we allow only positive edge-costs.</p>
   <p>This algorithm can take the direction of edges into account.</p>`
+
 /**
  * Calculates all shortest paths from a single source to all other nodes.
  */
@@ -207,12 +226,14 @@ export function calculateSingleSourceShortestPaths(graph, config) {
   if (!startNodes || startNodes.length === 0) {
     return
   }
+
   const result = new SingleSourceShortestPaths({
     source: startNodes[0],
     sinks: graph.nodes,
     directed: config.directed,
     costs: config.edgeWeights
   }).run(graph)
+
   // determine the longest path length to be able to scale the distances later
   const longestPathLength = result.paths.reduce((maxPathLength, path) => {
     const pathLength = path.edges.reduce((edgeLength, edge) => {
@@ -220,6 +241,7 @@ export function calculateSingleSourceShortestPaths(graph, config) {
     }, 0)
     return Math.max(maxPathLength, pathLength)
   }, 0)
+
   const distances = result.distances
   const predecessors = result.predecessors
   result.paths
@@ -227,8 +249,10 @@ export function calculateSingleSourceShortestPaths(graph, config) {
     .forEach((path, pathIndex) => {
       path.nodes.forEach((node) => {
         const distance = distances.get(node) / longestPathLength
+
         setComponent(node, pathIndex)
         setGradient(node, distance)
+
         const inEdge = predecessors.get(node)
         if (inEdge) {
           setComponent(inEdge, pathIndex)

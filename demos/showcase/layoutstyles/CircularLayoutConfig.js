@@ -45,6 +45,7 @@ import {
   RadialNodeLabelPlacement,
   SubgraphLayoutStage
 } from '@yfiles/yfiles'
+
 import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
@@ -61,6 +62,7 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
+
 export var CircularPartitioningPolicy
 ;(function (CircularPartitioningPolicy) {
   CircularPartitioningPolicy[(CircularPartitioningPolicy['BCC_COMPACT'] = 0)] = 'BCC_COMPACT'
@@ -69,6 +71,7 @@ export var CircularPartitioningPolicy
   CircularPartitioningPolicy[(CircularPartitioningPolicy['CUSTOM_PARTITIONS'] = 3)] =
     'CUSTOM_PARTITIONS'
 })(CircularPartitioningPolicy || (CircularPartitioningPolicy = {}))
+
 var EdgeRoutingPolicy
 ;(function (EdgeRoutingPolicy) {
   EdgeRoutingPolicy[(EdgeRoutingPolicy['INTERIOR'] = 0)] = 'INTERIOR'
@@ -76,11 +79,13 @@ var EdgeRoutingPolicy
   EdgeRoutingPolicy[(EdgeRoutingPolicy['EXTERIOR'] = 2)] = 'EXTERIOR'
   EdgeRoutingPolicy[(EdgeRoutingPolicy['MARKED_EXTERIOR'] = 3)] = 'MARKED_EXTERIOR'
 })(EdgeRoutingPolicy || (EdgeRoutingPolicy = {}))
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 export const CircularLayoutConfig = Class('CircularLayoutConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     GeneralGroup: [
       new LabelAttribute('General'),
@@ -224,7 +229,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
     ],
     edgeRoutingItem: [
       new LabelAttribute(
-        'Edge Routing Style',
+        'Routing Style',
         '#/api/CircularLayout#CircularLayout-property-edgeRoutingPolicy'
       ),
       new OptionGroupAttribute('EdgesGroup', 30),
@@ -509,6 +514,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       new TypeAttribute(Number)
     ]
   },
+
   /**
    * Setup default values for various configuration parameters.
    */
@@ -517,24 +523,30 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
     LayoutConfiguration.call(this)
     const layout = new CircularLayout()
     const treeLayout = layout.backboneLayout
+
     this.partitioningPolicyItem = CircularPartitioningPolicy.BCC_COMPACT
     this.actOnSelectionOnlyItem = false
     this.fromSketchItem = false
+
     this.partitionStyleItem = CircularLayoutPartitionStyle.CYCLE
     this.minimumNodeDistanceItem = 30
     this.chooseRadiusAutomaticallyItem = true
     this.fixedRadiusItem = 200
+
     this.defaultBetweenCirclesRoutingItem = CircularLayoutRoutingStyle.STRAIGHT_LINE
     this.defaultInCircleRoutingStyleItem = CircularLayoutRoutingStyle.STRAIGHT_LINE
     this.defaultOnCircleRoutingStyleItem = CircularLayoutOnCircleRoutingStyle.STRAIGHT_LINE
+
     this.edgeRoutingItem = CircularLayoutEdgeRoutingPolicy.INTERIOR
     this.exteriorEdgeToCircleDistanceItem = 20
     this.exteriorEdgeToEdgeDistanceItem = 10
     this.exteriorEdgeCornerRadiusItem = 20
     this.exteriorEdgeAngleItem = 10
     this.exteriorEdgeSmoothnessItem = 0.7
+
     this.edgeBundlingItem = false
     this.edgeBundlingStrengthItem = 1.0
+
     this.preferredChildSectorAngleItem = treeLayout.preferredChildSectorAngle
     this.minimumEdgeLengthItem = treeLayout.minimumEdgeLength
     this.maximumDeviationAngleItem = layout.maximumDeviationAngle
@@ -542,16 +554,20 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
     this.minimumTreeNodeDistanceItem = treeLayout.minimumNodeDistance
     this.allowOverlapsItem = treeLayout.allowOverlaps
     this.placeChildrenOnCommonRadiusItem = true
+
     this.starSubstructureItem = CircularLayoutStarSubstructureStyle.NONE
     this.starSubstructureSizeItem = layout.starSubstructureSize
+
     this.edgeLabelingItem = layout.edgeLabelPlacement !== RadialEdgeLabelPlacement.IGNORE
     this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
     this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
     this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
     this.labelPlacementDistanceItem = 10.0
     this.title = 'Circular Layout'
+
     this.nodeLabelingStyleItem = layout.nodeLabelPlacement
   },
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
@@ -565,9 +581,11 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
     layout.fromSketchMode = this.fromSketchItem
     layout.partitionDescriptor.style = this.partitionStyleItem
     layout.placeChildrenOnCommonRadius = this.placeChildrenOnCommonRadiusItem
+
     layout.partitionDescriptor.minimumNodeDistance = this.minimumNodeDistanceItem
     layout.partitionDescriptor.automaticRadius = this.chooseRadiusAutomaticallyItem
     layout.partitionDescriptor.fixedRadius = this.fixedRadiusItem
+
     if (this.edgeLabelingItem) {
       layout.edgeLabelPlacement = 'generic'
       if (this.reduceAmbiguityItem) {
@@ -577,45 +595,55 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
     } else {
       layout.edgeLabelPlacement = 'ignore'
     }
+
     layout.edgeDescriptor.betweenCirclesRoutingStyle = this.defaultBetweenCirclesRoutingItem
     layout.edgeDescriptor.inCircleRoutingStyle = this.defaultInCircleRoutingStyleItem
     layout.edgeDescriptor.onCircleRoutingStyle = this.defaultOnCircleRoutingStyleItem
+
     layout.edgeRoutingPolicy = this.getEdgeRoutingPolicy(this.edgeRoutingItem)
     layout.exteriorEdgeDescriptor.circleDistance = this.exteriorEdgeToCircleDistanceItem
     layout.exteriorEdgeDescriptor.edgeDistance = this.exteriorEdgeToEdgeDistanceItem
     layout.exteriorEdgeDescriptor.preferredCurveLength = this.exteriorEdgeCornerRadiusItem
     layout.exteriorEdgeDescriptor.preferredAngle = this.exteriorEdgeAngleItem
     layout.exteriorEdgeDescriptor.smoothness = this.exteriorEdgeSmoothnessItem
+
     const subgraphLayout = layout.layoutStages.get(SubgraphLayoutStage)
     subgraphLayout.enabled = this.actOnSelectionOnlyItem
+
     const backboneLayout = layout.backboneLayout
     backboneLayout.preferredChildSectorAngle = this.preferredChildSectorAngleItem
     backboneLayout.minimumEdgeLength = this.minimumEdgeLengthItem
     backboneLayout.compactnessFactor = this.compactnessFactorItem
     backboneLayout.allowOverlaps = this.allowOverlapsItem
     backboneLayout.minimumNodeDistance = this.minimumTreeNodeDistanceItem
+
     const ebc = layout.edgeBundling
     ebc.bundlingStrength = this.edgeBundlingStrengthItem
-    ebc.defaultBundleDescriptor = new EdgeBundleDescriptor({
-      bundled: this.edgeBundlingItem
-    })
+    ebc.defaultBundleDescriptor = new EdgeBundleDescriptor({ bundled: this.edgeBundlingItem })
+
     layout.nodeLabelPlacement = this.nodeLabelingStyleItem
+
     layout.starSubstructureStyle = this.starSubstructureItem
     layout.starSubstructureSize = this.starSubstructureSizeItem
+
     return layout
   },
+
   /**
    * Creates and configures the layout data.
    * @returns The configured layout data.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new CircularLayoutData()
+
     if (this.partitioningPolicyItem === CircularPartitioningPolicy.CUSTOM_PARTITIONS) {
       layoutData.partitions = (node) => graphComponent.graph.getParent(node)
     }
+
     if (this.edgeRoutingItem === EdgeRoutingPolicy.MARKED_EXTERIOR) {
       layoutData.exteriorEdges = graphComponent.selection.edges.toList()
     }
+
     let resultData = layoutData.combineWith(
       this.createLabelingLayoutData(
         graphComponent.graph,
@@ -630,6 +658,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
     }
     return resultData
   },
+
   getPartitioningPolicy(style) {
     switch (style) {
       default:
@@ -642,6 +671,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
         return CircularLayoutPartitioningPolicy.SINGLE_CYCLE
     }
   },
+
   getEdgeRoutingPolicy(policy) {
     switch (policy) {
       default:
@@ -654,62 +684,85 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
         return CircularLayoutEdgeRoutingPolicy.EXTERIOR
     }
   },
+
   /** @type {OptionGroup} */
   GeneralGroup: null,
+
   /** @type {OptionGroup} */
   CycleGroup: null,
+
   /** @type {OptionGroup} */
   EdgesGroup: null,
+
   /** @type {OptionGroup} */
   DefaultEdgesGroup: null,
+
   /** @type {OptionGroup} */
   ExteriorEdgesGroup: null,
+
   /** @type {OptionGroup} */
   TreeGroup: null,
+
   /** @type {OptionGroup} */
   SubstructureLayoutGroup: null,
+
   /** @type {OptionGroup} */
   LabelingGroup: null,
+
   /** @type {OptionGroup} */
   NodePropertiesGroup: null,
+
   /** @type {OptionGroup} */
   EdgePropertiesGroup: null,
+
   /** @type {OptionGroup} */
   PreferredPlacementGroup: null,
+
   /** @type {string} */
   descriptionText: {
     get: function () {
       return "<p style='margin-top:0'>The circular layout style emphasizes group and tree structures within a network. It creates node partitions by analyzing the connectivity structure of the network, and arranges the partitions as separate circles. The circles themselves are arranged in a radial tree layout fashion.</p><p>This layout style portraits interconnected ring and star topologies and is excellent for applications in:</p><ul><li>Social networking (criminology, economics, fraud detection, etc.)</li><li>Network management</li><li>WWW visualization</li><li>eCommerce</li></ul>"
     }
   },
+
   /** @type {CircularPartitioningPolicy} */
   partitioningPolicyItem: null,
+
   /** @type {boolean} */
   actOnSelectionOnlyItem: false,
+
   /** @type {boolean} */
   fromSketchItem: false,
+
   /** @type {CircularLayoutPartitionStyle} */
   partitionStyleItem: null,
+
   /** @type {number} */
   minimumNodeDistanceItem: 0,
+
   /** @type {boolean} */
   shouldDisableMinimumNodeDistanceItem: {
     get: function () {
       return this.chooseRadiusAutomaticallyItem === false
     }
   },
+
   /** @type {boolean} */
   chooseRadiusAutomaticallyItem: false,
+
   /** @type {number} */
   fixedRadiusItem: 1,
+
   /** @type {boolean} */
   shouldDisableFixedRadiusItem: {
     get: function () {
       return this.chooseRadiusAutomaticallyItem
     }
   },
+
   /** @type {boolean} */
   edgeBundlingItem: false,
+
   /** @type {boolean} */
   shouldDisableEdgeBundlingItem: {
     get: function () {
@@ -719,150 +772,193 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       )
     }
   },
+
   /** @type {EdgeRoutingPolicy} */
   edgeRoutingItem: CircularLayoutEdgeRoutingPolicy.INTERIOR,
+
   /** @type {CircularLayoutRoutingStyle} */
   defaultBetweenCirclesRoutingItem: CircularLayoutRoutingStyle.STRAIGHT_LINE,
+
   /** @type {boolean} */
   shouldDisableDefaultBetweenCirclesRoutingItem: {
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.EXTERIOR
     }
   },
+
   /** @type {CircularLayoutRoutingStyle} */
   defaultInCircleRoutingStyleItem: CircularLayoutRoutingStyle.STRAIGHT_LINE,
+
   /** @type {boolean} */
   shouldDisableDefaultInCircleRoutingStyleItem: {
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.EXTERIOR
     }
   },
+
   /** @type {CircularLayoutOnCircleRoutingStyle} */
   defaultOnCircleRoutingStyleItem: CircularLayoutOnCircleRoutingStyle.STRAIGHT_LINE,
+
   /** @type {boolean} */
   shouldDisableDefaultOnCircleRoutingStyleItem: {
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.EXTERIOR
     }
   },
+
   /** @type {number} */
   exteriorEdgeToCircleDistanceItem: 20,
+
   /** @type {boolean} */
   shouldDisableExteriorEdgeToCircleDistanceItem: {
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
+
   /** @type {number} */
   exteriorEdgeToEdgeDistanceItem: 10,
+
   /** @type {boolean} */
   shouldDisableExteriorEdgeToEdgeDistanceItem: {
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
+
   /** @type {number} */
   exteriorEdgeCornerRadiusItem: 20,
+
   /** @type {boolean} */
   shouldDisableExteriorEdgeCornerRadiusItem: {
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
+
   /** @type {number} */
   exteriorEdgeAngleItem: 10,
+
   /** @type {boolean} */
   shouldDisableExteriorEdgeAngleItem: {
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
+
   /** @type {number} */
   exteriorEdgeSmoothnessItem: 0.7,
+
   /** @type {boolean} */
   shouldDisableExteriorEdgeSmoothnessItem: {
     get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
+
   /** @type {number} */
   edgeBundlingStrengthItem: 1.0,
+
   /** @type {boolean} */
   shouldDisableEdgeBundlingStrengthItem: {
     get: function () {
       return (
+        !this.edgeBundlingItem ||
         this.partitionStyleItem !== CircularLayoutPartitionStyle.CYCLE ||
         this.partitioningPolicyItem === CircularLayoutPartitioningPolicy.BCC_ISOLATED
       )
     }
   },
+
   /** @type {number} */
   preferredChildSectorAngleItem: 1,
+
   /** @type {number} */
   minimumEdgeLengthItem: 5,
+
   /** @type {number} */
   maximumDeviationAngleItem: 1,
+
   /** @type {number} */
   compactnessFactorItem: 0.1,
+
   /** @type {number} */
   minimumTreeNodeDistanceItem: 0,
+
   /** @type {boolean} */
   allowOverlapsItem: false,
+
   /** @type {boolean} */
   placeChildrenOnCommonRadiusItem: false,
+
   /** @type {boolean} */
   shouldDisableTreeGroupItem: {
     get: function () {
       return this.partitioningPolicyItem === CircularLayoutPartitioningPolicy.SINGLE_CYCLE
     }
   },
+
   /** @type {CircularLayoutStarSubstructureStyle} */
   starSubstructureItem: null,
+
   /** @type {number} */
   starSubstructureSizeItem: 4,
+
   shouldDisableStarSubstructureSizeItem: {
     get: function () {
       return this.starSubstructureItem === CircularLayoutStarSubstructureStyle.NONE
     }
   },
+
   /** @type {RadialNodeLabelPlacement} */
   nodeLabelingStyleItem: null,
+
   /** @type {boolean} */
   edgeLabelingItem: false,
+
   /** @type {boolean} */
   reduceAmbiguityItem: false,
+
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
     get: function () {
       return !this.edgeLabelingItem
     }
   },
+
   /** @type {LabelPlacementOrientation} */
   labelPlacementOrientationItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
     get: function () {
       return !this.edgeLabelingItem
     }
   },
+
   /** @type {LabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
     get: function () {
       return !this.edgeLabelingItem
     }
   },
+
   /** @type {LabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
     get: function () {
       return !this.edgeLabelingItem
     }
   },
+
   /** @type {number} */
   labelPlacementDistanceItem: 0,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
     get: function () {

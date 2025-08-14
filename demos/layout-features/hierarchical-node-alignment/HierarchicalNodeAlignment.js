@@ -36,6 +36,7 @@ import {
   LongestPath,
   ResultItemCollection
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to create and configure {@link HierarchicalLayout} so that the nodes that are
  * connected with edges that belong to the longest path are vertically aligned.
@@ -45,24 +46,25 @@ import {
 export function createFeatureLayoutConfiguration(graph) {
   // get the edges of the longest path
   const longestPathEdges = calculateLongestPath(graph)
+
   const layoutData = new HierarchicalLayoutData()
   // define as 'critical' the edges on the longest path - here any other predicate can be used, of course
   layoutData.criticalEdgePriorities = (edge) => (longestPathEdges.contains(edge) ? 10 : 1)
+
   const layout = new HierarchicalLayout()
+
   return { layout, layoutData }
 }
+
 /**
  * Calculates the longest path in the graph.
  * For this calculation, the graph must be acyclic.
  * @param graph The input graph
  */
 function calculateLongestPath(graph) {
-  return new LongestPath({
-    subgraphEdges: {
-      excludes: getCycleEdges(graph)
-    }
-  }).run(graph).edges
+  return new LongestPath({ subgraphEdges: { excludes: getCycleEdges(graph) } }).run(graph).edges
 }
+
 /**
  * Returns the edges of the graph whose removal or reversal would make the graph acyclic.
  * @param graph The input graph

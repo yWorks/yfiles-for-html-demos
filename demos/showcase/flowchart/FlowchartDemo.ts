@@ -137,9 +137,7 @@ function initializeGraphDefaults(): void {
   }).createParameterFromSource(0)
 
   const groupNodeDefaults = graph.groupNodeDefaults
-  groupNodeDefaults.style = new GroupNodeStyle({
-    tabFill: 'rgb(214, 229, 248)'
-  })
+  groupNodeDefaults.style = new GroupNodeStyle({ tabFill: 'rgb(214, 229, 248)' })
   groupNodeDefaults.labels.layoutParameter =
     new GroupNodeLabelModel().createTabBackgroundParameter()
 }

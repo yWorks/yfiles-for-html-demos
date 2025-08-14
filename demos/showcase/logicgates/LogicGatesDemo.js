@@ -36,6 +36,7 @@ import {
   SimpleNode,
   Size
 } from '@yfiles/yfiles'
+
 import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
@@ -51,29 +52,37 @@ import { createPortAwareGraphBuilder } from '../../databinding/port-aware-graph-
 import { sampleData } from './resources/sample-data'
 import { createInputMode } from './input'
 import { runLayout } from './logicgates-layout'
+
 /**
  * The main graph component
  */
 let graphComponent
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
   // initialize the drag and drop panel
   initializeDragAndDropPanel()
+
   // initialize the default styles
   initializeGraph()
+
   // create the input mode for this demo
   createInputMode(graphComponent)
+
   // create the sample graph
   await createSampleGraph()
+
   // wire up the UI
   initializeUI()
 }
+
 function initializeDragAndDropPanel() {
   const dndPanel = new DragAndDropPanel(document.getElementById('dnd-panel'))
   dndPanel.maxItemWidth = 160
   dndPanel.populatePanel(createDragAndDropPanelNodes())
 }
+
 /**
  * Creates the nodes that provide the visualizations for the style panel.
  */
@@ -88,17 +97,17 @@ function createDragAndDropPanelNodes() {
     new XOrNodeStyle(false, '#A4778B', '#62555B', '#FFFFFF'),
     new XOrNodeStyle(true, '#AA4586', '#66485B', '#FFFFFF')
   ]
+
   const nodeContainer = nodeStyles.map(
-    (style) =>
-      new SimpleNode({
-        layout: new Rect(0, 0, 100, 50),
-        style: style
-      })
+    (style) => new SimpleNode({ layout: new Rect(0, 0, 100, 50), style: style })
   )
+
   // create the port descriptor for the nodes
   createPortDescriptors(nodeContainer)
+
   return nodeContainer
 }
+
 /**
  * Initialize the graph's default styles and settings.
  */
@@ -106,6 +115,7 @@ function initializeGraph() {
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new AndGateNodeStyle(false, '#605C4E', '#201F1A', '#FFFFFF')
   graph.nodeDefaults.size = new Size(100, 50)
+
   // don't delete ports if a connected edge gets removed
   graph.nodeDefaults.ports.autoCleanUp = false
   // hide port labels
@@ -118,18 +128,19 @@ function initializeGraph() {
   graph.decorator.edges.reconnectionPortCandidateProvider.addFactory((edge) =>
     IEdgeReconnectionPortCandidateProvider.fromAllNodeAndEdgeCandidates(edge)
   )
+
   // enable the undo engine
   graph.undoEngineEnabled = true
+
   // add a listener to add the tags related to the highlighting to the new nodes
   graph.addEventListener('node-created', (evt) => {
-    evt.item.tag = {
-      sourceHighlight: false,
-      targetHighlight: false
-    }
+    evt.item.tag = { sourceHighlight: false, targetHighlight: false }
   })
+
   // disable edge cropping
   graph.decorator.ports.edgePathCropper.hide()
 }
+
 /**
  * Wires up the UI.
  */
@@ -141,15 +152,20 @@ function initializeUI() {
     .getElementById('layout-button')
     .addEventListener('click', () => runLayout(graphComponent, false))
 }
+
 /**
  * Creates the sample graph for this demo.
  */
 async function createSampleGraph() {
   const graph = graphComponent.graph
+
   const graphBuilder = createPortAwareGraphBuilder(graph, sampleData.gates, sampleData.connections)
   graphBuilder.buildGraph()
+
   createPortDescriptors(graph.nodes, graph)
+
   // run the layout
   await runLayout(graphComponent, true)
 }
+
 void run().then(finishLoading)

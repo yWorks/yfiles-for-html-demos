@@ -27,10 +27,11 @@
  **
  ***************************************************************************/
 import { Component } from '@angular/core'
+import { GraphComponentComponent } from '../graph.component'
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    standalone: false
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  imports: [GraphComponentComponent]
 })
 export class AppComponent {}

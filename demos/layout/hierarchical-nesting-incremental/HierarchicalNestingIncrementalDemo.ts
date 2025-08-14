@@ -94,10 +94,7 @@ function initializeFolding(graphComponent: GraphComponent): void {
 
   // managing the appearance of folder nodes
   foldingManager.folderNodeConverter = new FolderNodeConverter({
-    folderNodeDefaults: {
-      copyLabels: true,
-      size: new Size(110, 60)
-    }
+    folderNodeDefaults: { copyLabels: true, size: new Size(110, 60) }
   })
 }
 
@@ -136,11 +133,7 @@ async function loadSampleGraph(): Promise<void> {
     labels: ['label'],
     parentId: 'parentGroup'
   })
-  builder.createEdgesSource({
-    data: graphData.edgesSource,
-    sourceId: 'from',
-    targetId: 'to'
-  })
+  builder.createEdgesSource({ data: graphData.edgesSource, sourceId: 'from', targetId: 'to' })
   builder.buildGraph()
 
   // no layout information available, yet

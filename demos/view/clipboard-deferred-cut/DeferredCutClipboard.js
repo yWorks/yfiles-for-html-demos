@@ -35,6 +35,7 @@ import {
   INode,
   Point
 } from '@yfiles/yfiles'
+
 /**
  * A special clipboard implementation which doesn't cut elements immediately.
  * Instead, the elements are stored as "to be cut" and actually removed
@@ -50,12 +51,14 @@ export class DeferredCutClipboard extends GraphClipboard {
    * as a map which maps elements to their source graph.
    */
   _itemsToBeCut = new Map()
+
   /**
    * Whether the given element is marked as "to be cut".
    */
   isToBeCut(item) {
     return this._itemsToBeCut.has(item)
   }
+
   /**
    * Overrides the default cut implementation.
    * This override sets the pasteOffset of the clipboard to (15,15)
@@ -68,6 +71,7 @@ export class DeferredCutClipboard extends GraphClipboard {
     super.cut(sourceGraph, itemsToCut)
     this.pasteOffset = new Point(15, 15)
   }
+
   /**
    * This method is called by cut to remove the element from the source graph.
    * It is overridden to do nothing, since the actual removal will happen in
@@ -76,6 +80,7 @@ export class DeferredCutClipboard extends GraphClipboard {
   removeItems(graph, itemsToRemove) {
     // don't remove anything, instead remember the cut elements in onElementCut
   }
+
   /**
    * The method which actually copies elements from one graph to another.
    * Invoked by both cut and copy.
@@ -85,6 +90,7 @@ export class DeferredCutClipboard extends GraphClipboard {
     this._itemsToBeCut.clear()
     return super.onCopy(copyContext, targetRootNode, itemCopiedCallback)
   }
+
   /**
    * Called for each element after being cut.
    * Adds the element to the {@link _itemsToBeCut}.
@@ -92,6 +98,7 @@ export class DeferredCutClipboard extends GraphClipboard {
   onItemCut(context, original, copy) {
     this._itemsToBeCut.set(original, this.clipboardContext.sourceGraph)
   }
+
   /**
    * Called for each element after being pasted.
    * Removes the original if the original is in the {@link _itemsToBeCut} collection.

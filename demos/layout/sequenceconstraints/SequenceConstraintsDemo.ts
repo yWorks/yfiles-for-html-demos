@@ -214,10 +214,7 @@ function createNodeCallback(
   const bounds = Rect.fromCenter(location, graph.nodeDefaults.size)
   return graph.createNode({
     layout: bounds,
-    tag: {
-      value: Math.round(Math.random() * 7),
-      constraints: Math.random() < 0.9
-    }
+    tag: { value: Math.round(Math.random() * 7), constraints: Math.random() < 0.9 }
   })
 }
 

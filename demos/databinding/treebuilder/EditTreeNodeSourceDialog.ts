@@ -27,13 +27,8 @@
  **
  ***************************************************************************/
 import type { TreeNodesSourceDefinitionBuilderConnector } from './ModelClasses'
-import { basicSetup, EditorView } from 'codemirror'
-import { xml } from '@codemirror/lang-xml'
-import { javascript } from '@codemirror/lang-javascript'
-import { lintGutter } from '@codemirror/lint'
-import { getXmlLinter } from '../../resources/codeMirrorLinters'
+import { createCodemirrorEditor, EditorView } from '@yfiles/demo-resources/codemirror-editor'
 
-const xmlLinter = getXmlLinter()
 /**
  * Editing dialog for schema graph nodes business data ({@link TreeNodesSourceDefinition}
  */
@@ -73,24 +68,28 @@ export class EditTreeNodesSourceDialog {
 
     this.nameInput = this.createInputField('Name', 'The name of the nodes source.')
 
-    this.dataEditor = this.createEditorField(
-      'Data',
-      'The nodes business data in JSON format. Either an array of node objects or an object' +
-        ' with strings as keys and node objects as values. If any data is provided, this source is ' +
-        'automatically considered a root nodes source.',
-      'js'
+    this.dataEditor = createCodemirrorEditor(
+      'js',
+      this.createDescription(
+        'Data',
+        'The nodes business data in JSON format. Either an array of node objects or an object' +
+          ' with strings as keys and node objects as values. If any data is provided, this source is ' +
+          'automatically considered a root nodes source.'
+      )
     )
 
     this.idBindingInput = this.createInputField(
       'ID Binding',
       'ID binding as string or function definition.'
     )
-    this.templateEditor = this.createEditorField(
-      'Template',
-      'Defines the SVG template that is used to visualize a node. This may contain dynamic' +
-        ' bindings as demonstrated in the samples that allow visualizing arbitrary properties of the node' +
-        ' business data, such as the name or id properties.',
-      'xml'
+    this.templateEditor = createCodemirrorEditor(
+      'xml',
+      this.createDescription(
+        'Template',
+        'Defines the SVG template that is used to visualize a node. This may contain dynamic' +
+          ' bindings as demonstrated in the samples that allow visualizing arbitrary properties of the node' +
+          ' business data, such as the name or id properties.'
+      )
     )
 
     this.nameInput.value = this.nodesSourceConnector.sourceDefinition.name
@@ -201,26 +200,6 @@ export class EditTreeNodesSourceDialog {
     input.setAttribute('type', 'text')
     label.appendChild(input)
     return input
-  }
-
-  /**
-   * creates an CodeMirror text/code input field component adorned with heading and documentation
-   * @param labelText the heading label
-   * @param doc the documentation text. Can be longer as it is rendered as a HTML paragraph
-   * @param mode the language syntax configuration object for CodeMirror
-   */
-  private createEditorField(labelText: string, doc: string, mode: string | object): EditorView {
-    const container = this.createDescription(labelText, doc)
-    const extensions = [basicSetup]
-    if (mode == 'js') {
-      extensions.push(javascript())
-    } else {
-      extensions.push(xml(), xmlLinter, lintGutter())
-    }
-    return new EditorView({
-      parent: container,
-      extensions: extensions
-    })
   }
 
   /**

@@ -43,6 +43,7 @@ import {
   SvgVisualGroup,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * This node style decorator adds a circle with a native click listener representing a button.
  *
@@ -51,6 +52,7 @@ import {
  */
 export class NodeStyleDecorator extends NodeStyleBase {
   baseStyle
+
   /**
    * Initializes a new instance of this class.
    * @param baseStyle The optional base style.
@@ -59,6 +61,7 @@ export class NodeStyleDecorator extends NodeStyleBase {
     super()
     this.baseStyle = baseStyle || new ShapeNodeStyle()
   }
+
   /**
    * Creates a new visual as combination of the base node visualization and the decoration.
    * @param context The render context.
@@ -68,10 +71,12 @@ export class NodeStyleDecorator extends NodeStyleBase {
    */
   createVisual(context, node) {
     const layout = node.layout.toRect()
+
     // create the base visualization
     const baseVisual = this.baseStyle.renderer
       .getVisualCreator(node, this.baseStyle)
       .createVisual(context)
+
     // create the decoration
     const button = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     button.setAttribute('cx', `${layout.center.x}`)
@@ -79,6 +84,7 @@ export class NodeStyleDecorator extends NodeStyleBase {
     button.setAttribute('rx', '7')
     button.setAttribute('ry', '7')
     button.setAttribute('class', 'button')
+
     // register a native click listener on the SVG element
     button.addEventListener('click', showToast)
     // pointerdown causes the capturing of subsequent pointer events, thus we need to disable
@@ -86,17 +92,18 @@ export class NodeStyleDecorator extends NodeStyleBase {
     // this causes the input mode to not handle any event on the button where we registered
     // a native click listener
     button.addEventListener('pointerdown', (e) => e.preventDefault())
+
     const decorationVisual = new SvgVisual(button)
+
     // add both to a group
     const group = new SvgVisualGroup()
     group.add(baseVisual)
     group.add(decorationVisual)
-    group['render-data-cache'] = {
-      cx: layout.center.x,
-      cy: layout.center.y
-    }
+    group['render-data-cache'] = { cx: layout.center.x, cy: layout.center.y }
+
     return group
   }
+
   /**
    * Updates the provided visual.
    * @param context The render context.
@@ -108,11 +115,13 @@ export class NodeStyleDecorator extends NodeStyleBase {
    */
   updateVisual(context, oldVisual, node) {
     const layout = node.layout.toRect()
+
     // check whether the elements are as expected
     const children = oldVisual.children
     if (children.size !== 2) {
       return this.createVisual(context, node)
     }
+
     // update the base visual
     const baseVisual = this.baseStyle.renderer
       .getVisualCreator(node, this.baseStyle)
@@ -121,6 +130,7 @@ export class NodeStyleDecorator extends NodeStyleBase {
     if (baseVisual !== children.get(0)) {
       children.set(0, baseVisual)
     }
+
     // update the decoration visual
     const cache = oldVisual['render-data-cache']
     const center = layout.center
@@ -129,13 +139,12 @@ export class NodeStyleDecorator extends NodeStyleBase {
       const button = decorationVisual.svgElement
       button.setAttribute('cx', `${center.x}`)
       button.setAttribute('cy', `${center.y}`)
-      oldVisual['render-data-cache'] = {
-        cx: center.x,
-        cy: center.y
-      }
+      oldVisual['render-data-cache'] = { cx: center.x, cy: center.y }
     }
+
     return oldVisual
   }
+
   /**
    * Returns whether at least one of the base visualization and the decoration is visible.
    * @param context The canvas context.
@@ -149,6 +158,7 @@ export class NodeStyleDecorator extends NodeStyleBase {
       .getVisibilityTestable(node, this.baseStyle)
       .isVisible(context, rectangle)
   }
+
   /**
    * Returns whether the base visualization is hit.
    * @param context The context.
@@ -160,6 +170,7 @@ export class NodeStyleDecorator extends NodeStyleBase {
   isHit(context, location, node) {
     return this.baseStyle.renderer.getHitTestable(node, this.baseStyle).isHit(context, location)
   }
+
   /**
    * Returns whether the base visualization is in the box, we don't want the decoration to be marquee selectable.
    * @param context The input mode context.
@@ -173,6 +184,7 @@ export class NodeStyleDecorator extends NodeStyleBase {
       .getMarqueeTestable(node, this.baseStyle)
       .isInBox(context, rectangle)
   }
+
   /**
    * Gets the intersection of a line with the visual representation of the node.
    * @param node The node to which this style instance is assigned.
@@ -187,6 +199,7 @@ export class NodeStyleDecorator extends NodeStyleBase {
       .getShapeGeometry(node, this.baseStyle)
       .getIntersection(inner, outer)
   }
+
   /**
    * Returns whether the provided point is inside of the base visualization.
    * @param node The node to which this style instance is assigned.
@@ -198,6 +211,7 @@ export class NodeStyleDecorator extends NodeStyleBase {
     return this.baseStyle.renderer.getShapeGeometry(node, this.baseStyle).isInside(location)
   }
 }
+
 let hideTimer = null
 function showToast() {
   // Shows a toast to indicate the successful click, and hides it again.

@@ -35,17 +35,22 @@ import {
   showDecisionTree
 } from './decision-tree-component/decision-tree-component'
 import { initializeSwitchButton } from './switch-components-button/switch-components-button'
+
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the editor graph component
   // this component contains the input graph which is the model for the decision tree
   const graphComponent = new GraphComponent('#graphComponent')
+
   // initialize both components and the button that toggles between them
   initializeSwitchButton(graphComponent)
   initializeEditorComponent(graphComponent)
   initializeDecisionTreeComponent(graphComponent)
+
   // read the initial sample model and display the corresponding decision tree
   await readSampleGraph(graphComponent)
   showDecisionTree(graphComponent.graph)
 }
+
 void run().then(finishLoading)

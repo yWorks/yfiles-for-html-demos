@@ -73,14 +73,9 @@ function createDnDPanelItems(): DragAndDropPanelItem<INode | IEdge | ILabel | IP
   const groupNodeStyle = createDemoGroupStyle({})
 
   // A label model with insets for the expand/collapse button
-  const groupLabelStyle = new LabelStyle({
-    textFill: 'white'
-  })
+  const groupLabelStyle = new LabelStyle({ textFill: 'white' })
 
-  const groupNode = new SimpleNode({
-    layout: new Rect(0, 0, 80, 80),
-    style: groupNodeStyle
-  })
+  const groupNode = new SimpleNode({ layout: new Rect(0, 0, 80, 80), style: groupNodeStyle })
 
   const groupLabel = new SimpleLabel({
     owner: groupNode,
@@ -109,9 +104,7 @@ function createDnDPanelItems(): DragAndDropPanelItem<INode | IEdge | ILabel | IP
 
   const arrowNode = new SimpleNode({
     layout: new Rect(0, 0, 60, 40),
-    style: new ArrowNodeStyle({
-      fill: 'rgb(255, 140, 0)'
-    })
+    style: new ArrowNodeStyle({ fill: 'rgb(255, 140, 0)' })
   })
   itemContainer.push({ modelItem: arrowNode, tooltip: 'Arrow Node' })
 
@@ -125,11 +118,7 @@ function createDnDPanelItems(): DragAndDropPanelItem<INode | IEdge | ILabel | IP
   const port = new SimplePort({
     owner: demoStyleNode,
     locationParameter: FreeNodePortLocationModel.CENTER,
-    style: new ShapePortStyle({
-      fill: 'darkblue',
-      stroke: 'cornflowerblue',
-      shape: 'ellipse'
-    })
+    style: new ShapePortStyle({ fill: 'darkblue', stroke: 'cornflowerblue', shape: 'ellipse' })
   })
   itemContainer.push({ modelItem: port, tooltip: 'Port' })
 
@@ -189,22 +178,12 @@ function createDnDPanelItems(): DragAndDropPanelItem<INode | IEdge | ILabel | IP
   itemContainer.push({ modelItem: portLabel, tooltip: 'Port Label' })
 
   const edge1 = new SimpleEdge({
-    style: new PolylineEdgeStyle({
-      smoothingLength: 100,
-      targetArrow: 'triangle'
-    })
+    style: new PolylineEdgeStyle({ smoothingLength: 100, targetArrow: 'triangle' })
   })
   const edge2 = new SimpleEdge({
-    style: new PolylineEdgeStyle({
-      sourceArrow: 'triangle',
-      targetArrow: 'triangle'
-    })
+    style: new PolylineEdgeStyle({ sourceArrow: 'triangle', targetArrow: 'triangle' })
   })
-  const edge3 = new SimpleEdge({
-    style: new PolylineEdgeStyle({
-      stroke: '2px dashed gray'
-    })
-  })
+  const edge3 = new SimpleEdge({ style: new PolylineEdgeStyle({ stroke: '2px dashed gray' }) })
 
   itemContainer.push({ modelItem: edge1, tooltip: 'Default' })
   itemContainer.push({ modelItem: edge2, tooltip: 'Bidirectional' })

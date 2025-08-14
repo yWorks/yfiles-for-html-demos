@@ -28,6 +28,7 @@
  ***************************************************************************/
 const cssSelected = 'selected'
 const cssConnected = `connected`
+
 /**
  * Adds or removes CSS classes on the given node and its connected items to highlight these elements.
  */
@@ -35,6 +36,7 @@ function highlightConnectedItems({ graph, selection }) {
   for (const node of graph.nodes) {
     if (supportsCssClass(node.style)) {
       const baseCssClass = getBaseCssClass(node.style.cssClass)
+
       if (selection.includes(node)) {
         // selected nodes
         node.style.cssClass = `${baseCssClass} ${cssSelected}`
@@ -50,8 +52,10 @@ function highlightConnectedItems({ graph, selection }) {
   for (const edge of graph.edges) {
     if (supportsCssClass(edge.style)) {
       const baseCssClass = getBaseCssClass(edge.style.cssClass)
+
       const hasSelectedNode =
         selection.includes(edge.sourceNode) || selection.includes(edge.targetNode)
+
       edge.style.cssClass = hasSelectedNode ? `${baseCssClass} ${cssSelected}` : baseCssClass
     }
   }
@@ -65,6 +69,7 @@ function highlightConnectedItems({ graph, selection }) {
   }
   graph.invalidateDisplays()
 }
+
 /**
  * Adds a selection changed listener to add/remove CSS classes on the currently selected items.
  */
@@ -74,6 +79,7 @@ export function configureSelectionHighlight(graphComponent, inputMode) {
   // Schedule an update to the style's CSS classes, as those reflect the selection state
   inputMode.addEventListener('multi-selection-finished', () => {
     highlightConnectedItems(graphComponent)
+
     // propagate the selection state to the GraphComponent to easily fade out any non-selected items
     if (graphComponent.selection.size > 0) {
       graphComponent.htmlElement.classList.add('focus-selection')
@@ -82,9 +88,11 @@ export function configureSelectionHighlight(graphComponent, inputMode) {
     }
   })
 }
+
 function supportsCssClass(style) {
   return 'cssClass' in style && typeof style.cssClass === 'string'
 }
+
 function getBaseCssClass(cssClass) {
   return cssClass.replace(` ${cssConnected}`, '').replace(` ${cssSelected}`, '')
 }

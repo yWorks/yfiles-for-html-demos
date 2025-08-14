@@ -41,6 +41,7 @@ import {
   Point,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * A very basic high-performance node style implementation that uses HTML Canvas rendering.
  */
@@ -48,10 +49,12 @@ export class InteractiveOrganicFastNodeStyle extends NodeStyleBase {
   createVisual(renderContext, node) {
     return new NodeRenderVisual(node.layout)
   }
+
   updateVisual(renderContext, oldVisual, node) {
     return oldVisual
   }
 }
+
 /**
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
@@ -65,6 +68,7 @@ class NodeRenderVisual extends HtmlCanvasVisual {
     super()
     this.layout = layout
   }
+
   /**
    * Draws a rectangle with a solid orange fill.
    * @see Overrides {@link HtmlCanvasVisual.paint}
@@ -75,6 +79,7 @@ class NodeRenderVisual extends HtmlCanvasVisual {
     ctx.fillRect(l.x, l.y, l.width, l.height)
   }
 }
+
 /**
  * A very basic high-performance edge style that uses HTML 5 canvas rendering.
  * Arrows are not supported by this implementation.
@@ -87,11 +92,13 @@ export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
       edge.targetPort.dynamicLocation
     )
   }
+
   isHit(context, location, edge) {
     // we use a very simple hit logic here (the base implementation)
     if (!super.isHit(context, location, edge)) {
       return false
     }
+
     // but we exclude hits on the source and target node
     const s = edge.sourceNode
     const t = edge.targetNode
@@ -100,10 +107,12 @@ export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
       !t.style.renderer.getHitTestable(t, t.style).isHit(context, location)
     )
   }
+
   updateVisual(renderContext, oldVisual, edge) {
     return oldVisual
   }
 }
+
 /**
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
@@ -117,10 +126,12 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
     this.sourcePortLocation = sourcePortLocation
     this.targetPortLocation = targetPortLocation
   }
+
   render(renderContext, ctx) {
     // simply draw a blue line from the source port location via all bends to the target port location
     ctx.strokeStyle = '#662b00'
     ctx.lineWidth = 1.5
+
     ctx.beginPath()
     let location = this.sourcePortLocation
     ctx.moveTo(location.x, location.y)

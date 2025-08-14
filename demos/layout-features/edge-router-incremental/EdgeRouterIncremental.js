@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { EdgeRouter, EdgeRouterData, IGraph, ILayoutAlgorithm, LayoutData } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to configure {@link EdgeRouter} to route a predefined set of edges only.
  * @param graph The graph whose edges are to be routed.
@@ -37,6 +38,8 @@ export function createFeatureLayoutConfiguration(graph) {
   // whether an edge should be routed or not depends on the value stored in the edge's tag
   const layoutData = new EdgeRouterData()
   layoutData.scope.edges = (edge) => edge.tag && edge.tag.incremental
+
   const layout = new EdgeRouter()
+
   return { layout, layoutData }
 }

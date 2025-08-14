@@ -145,9 +145,7 @@ export type SerializedLabelModelParameter =
   | {
       model: 'InsideOutsidePortLabelModel'
       outside: boolean
-      modelProperties: {
-        distance: number
-      }
+      modelProperties: { distance: number }
     }
 export type SerializedBezierEdgePathLabelModel = {
   angle: number
@@ -159,10 +157,7 @@ export type SerializedBezierEdgeSegmentLabelModel = {
   autoRotation: boolean
   autoSnapping: boolean
 }
-export type SerializedNinePositionsEdgeLabelModel = {
-  angle: number
-  distance: number
-}
+export type SerializedNinePositionsEdgeLabelModel = { angle: number; distance: number }
 export type SerializedEdgePathLabelModel = {
   angle: number
   autoRotation: boolean
@@ -177,10 +172,5 @@ export type SerializedEdgeSegmentLabelModel = {
   offset: number
   sideOfEdge: EdgeSides
 }
-export type SerializedSmartEdgeLabelModel = {
-  angle: number
-  autoRotation: boolean
-}
-export type SerializedFreeEdgeLabelModel = {
-  edgeRelativeAngle: boolean
-}
+export type SerializedSmartEdgeLabelModel = { angle: number; autoRotation: boolean }
+export type SerializedFreeEdgeLabelModel = { edgeRelativeAngle: boolean }

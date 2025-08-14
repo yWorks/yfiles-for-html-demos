@@ -28,6 +28,7 @@
  ***************************************************************************/
 // maps each node type with an object containing information about its style
 import { getConnectionData, isFraud } from '../entity-data'
+
 export const nodeStyleMapping = {
   'Account Holder': { image: 'resources/icons/person.svg', fill: '#242265', stroke: '#242265' },
   Address: { image: 'resources/icons/address.svg', fill: '#4281a4', stroke: '#4281a4' },
@@ -43,6 +44,7 @@ export const nodeStyleMapping = {
   Car: { image: 'resources/icons/car.svg', fill: '#c1c1c1', stroke: '#f0c808' },
   Accident: { image: 'resources/icons/accident.svg', fill: '#c1c1c1', stroke: '#db3a34' }
 }
+
 export const edgeStyleMapping = {
   witnesses: '#56926e',
   involves: '#db3a34',
@@ -52,6 +54,7 @@ export const edgeStyleMapping = {
   heals: '#4281a4',
   untyped: '#c1c1c1'
 }
+
 /**
  * Returns the color of the edge according to its type.
  */

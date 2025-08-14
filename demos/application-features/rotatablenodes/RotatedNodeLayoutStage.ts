@@ -44,12 +44,7 @@ import {
   Size
 } from '@yfiles/yfiles'
 
-type Dimensions = {
-  offset: Point
-  size: Size
-  outline: GeneralPath
-  location: Point | null
-}
+type Dimensions = { offset: Point; size: Size; outline: GeneralPath; location: Point | null }
 
 /**
  * Layout Stage which handles {@link RotatableNodeStyleDecorator rotated nodes}.
@@ -162,12 +157,7 @@ export class RotatedNodeLayoutStage extends LayoutStageBase {
           const newLayout = orientedLayout.bounds
           const offset = new Point(newLayout.x - oldLayout.x, newLayout.y - oldLayout.y)
           const originalSize = new Size(oldLayout.width, oldLayout.height)
-          const oldDimensions: Dimensions = {
-            offset,
-            size: originalSize,
-            outline,
-            location: null
-          }
+          const oldDimensions: Dimensions = { offset, size: originalSize, outline, location: null }
           if (this.edgeRoutingMode === 'fixed-port') {
             // EdgeRoutingMode: FixedPort: keep the ports at their current location
 

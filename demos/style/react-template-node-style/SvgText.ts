@@ -139,14 +139,10 @@ export function SvgText(props: Partial<SvgTextProps>) {
   return props.visible !== false
     ? createElement(
         'g',
-        {
-          transform: props.transform
-        },
+        { transform: props.transform },
         createElement(
           'g',
-          {
-            transform: `translate(${props.x ?? 0} ${props.y ?? 0})`
-          },
+          { transform: `translate(${props.x ?? 0} ${props.y ?? 0})` },
           createElement('text', {
             ref: textRef,
             dy: '1em',
@@ -159,14 +155,8 @@ export function SvgText(props: Partial<SvgTextProps>) {
           clipPathUrl &&
             createElement(
               'clipPath',
-              {
-                id: clipId
-              },
-              createElement('rect', {
-                width: props.width,
-                height: props.height,
-                x: -dx
-              })
+              { id: clipId },
+              createElement('rect', { width: props.width, height: props.height, x: -dx })
             )
         )
       )

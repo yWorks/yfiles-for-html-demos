@@ -40,42 +40,18 @@ export default {
       name: 'Gary Roberts',
       children: ['0_0_0', '0_0_1']
     },
-    {
-      id: '0_0_0',
-      position: 'Senior Executive Assistant',
-      name: 'Alexander Burns'
-    },
-    {
-      id: '0_0_1',
-      position: 'Junior Executive Assistant',
-      name: 'Linda Newland'
-    },
+    { id: '0_0_0', position: 'Senior Executive Assistant', name: 'Alexander Burns' },
+    { id: '0_0_1', position: 'Junior Executive Assistant', name: 'Linda Newland' },
     {
       id: '0_1',
       position: 'Vice President of Production',
       name: 'Amy Kain',
       children: ['0_1_0', '0_1_1', '0_1_2', '0_1_3']
     },
-    {
-      id: '0_1_0',
-      position: 'Production Supervisor',
-      name: 'Kathy Maxwell'
-    },
-    {
-      id: '0_1_1',
-      position: 'Shipping and Receiving Supervisor',
-      name: 'Ray Hammond'
-    },
-    {
-      id: '0_1_2',
-      position: 'Facilities Manager',
-      name: 'Anne Binger'
-    },
-    {
-      id: '0_1_3',
-      position: 'Master Scheduler',
-      name: 'Larry Littlefield'
-    },
+    { id: '0_1_0', position: 'Production Supervisor', name: 'Kathy Maxwell' },
+    { id: '0_1_1', position: 'Shipping and Receiving Supervisor', name: 'Ray Hammond' },
+    { id: '0_1_2', position: 'Facilities Manager', name: 'Anne Binger' },
+    { id: '0_1_3', position: 'Master Scheduler', name: 'Larry Littlefield' },
     {
       id: '0_2',
       position: 'Vice President of Sales',
@@ -88,31 +64,15 @@ export default {
       name: 'Robert Hartman',
       children: ['0_2_0_0', '0_2_0_1']
     },
-    {
-      id: '0_2_0_0',
-      position: 'Sales Representative',
-      name: 'Michael Daniels'
-    },
-    {
-      id: '0_2_0_1',
-      position: 'Sales Representative',
-      name: 'Rebecca Polite'
-    },
+    { id: '0_2_0_0', position: 'Sales Representative', name: 'Michael Daniels' },
+    { id: '0_2_0_1', position: 'Sales Representative', name: 'Rebecca Polite' },
     {
       id: '0_2_1',
       position: 'North America Sales Manager',
       name: 'Joe Vargas',
       children: ['0_2_1_0', '0_2_1_1']
     },
-    {
-      id: '0_2_1_0',
-      position: 'Sales Representative',
-      name: 'Melissa Noren'
-    },
-    {
-      id: '0_2_1_1',
-      position: 'Sales Representative',
-      name: 'Robert Parson'
-    }
+    { id: '0_2_1_0', position: 'Sales Representative', name: 'Melissa Noren' },
+    { id: '0_2_1_1', position: 'Sales Representative', name: 'Robert Parson' }
   ]
 }

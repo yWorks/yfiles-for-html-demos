@@ -117,10 +117,7 @@ function selectRenderingOrder(order: string): void {
 function initDemoDefaults(): void {
   const graph = graphComponent.graph
   initDemoStyles(graph)
-  graph.nodeDefaults.ports.style = new ShapePortStyle({
-    fill: '#111D4A',
-    shape: 'ellipse'
-  })
+  graph.nodeDefaults.ports.style = new ShapePortStyle({ fill: '#111D4A', shape: 'ellipse' })
 }
 
 /**
@@ -142,21 +139,11 @@ function createOverlappingLabelSample(origin: Point): void {
   const graph = graphComponent.graph
   graph.createNode({
     layout: [origin.x, origin.y + 50, 50, 50],
-    labels: [
-      {
-        text: 'External Node Label 1',
-        layoutParameter: ExteriorNodeLabelModel.BOTTOM
-      }
-    ]
+    labels: [{ text: 'External Node Label 1', layoutParameter: ExteriorNodeLabelModel.BOTTOM }]
   })
   graph.createNode({
     layout: [origin.x + 60, origin.y + 80, 50, 50],
-    labels: [
-      {
-        text: 'External Node Label 2',
-        layoutParameter: ExteriorNodeLabelModel.BOTTOM
-      }
-    ]
+    labels: [{ text: 'External Node Label 2', layoutParameter: ExteriorNodeLabelModel.BOTTOM }]
   })
 
   graphComponent.renderTree.createElement(
@@ -177,29 +164,17 @@ function createOverlappingNodeSample(origin: Point): void {
   const graph = graphComponent.graph
 
   // overlapping nodes
-  const back1 = graph.createNode({
-    layout: [origin.x, origin.y + 20, 50, 50],
-    labels: ['Back']
-  })
-  graph.createNode({
-    layout: [origin.x + 20, origin.y + 35, 50, 50],
-    labels: ['Middle']
-  })
+  const back1 = graph.createNode({ layout: [origin.x, origin.y + 20, 50, 50], labels: ['Back'] })
+  graph.createNode({ layout: [origin.x + 20, origin.y + 35, 50, 50], labels: ['Middle'] })
   const front1 = graph.createNode({
     layout: [origin.x + 40, origin.y + 50, 50, 50],
     labels: ['Front']
   })
 
   // overlapping nodes with ports
-  const back2 = graph.createNode({
-    layout: [origin.x + 120, origin.y + 20, 50, 50]
-  })
-  const middle2 = graph.createNode({
-    layout: [origin.x + 140, origin.y + 35, 50, 50]
-  })
-  const front2 = graph.createNode({
-    layout: [origin.x + 160, origin.y + 50, 50, 50]
-  })
+  const back2 = graph.createNode({ layout: [origin.x + 120, origin.y + 20, 50, 50] })
+  const middle2 = graph.createNode({ layout: [origin.x + 140, origin.y + 35, 50, 50] })
+  const front2 = graph.createNode({ layout: [origin.x + 160, origin.y + 50, 50, 50] })
   const nodes = [back2, middle2, front2]
   nodes.forEach((node) => {
     graph.addPort(node, FreeNodePortLocationModel.BOTTOM)
@@ -243,29 +218,15 @@ function createOverlappingNodeSample(origin: Point): void {
 function createOverlappingEdgeSample(origin: Point): void {
   const graph = graphComponent.graph
 
-  const srcNode = graph.createNode({
-    layout: [origin.x, origin.y + 60, 50, 50]
-  })
-  const tgtNode1 = graph.createNode({
-    layout: [origin.x + 250, origin.y + 60, 50, 50]
-  })
-  const tgtNode2 = graph.createNode({
-    layout: [origin.x + 122.5, origin.y + 130, 50, 50]
-  })
-  const groupNode = graph.createGroupNode({
-    layout: [origin.x + 85, origin.y, 125, 200]
-  })
+  const srcNode = graph.createNode({ layout: [origin.x, origin.y + 60, 50, 50] })
+  const tgtNode1 = graph.createNode({ layout: [origin.x + 250, origin.y + 60, 50, 50] })
+  const tgtNode2 = graph.createNode({ layout: [origin.x + 122.5, origin.y + 130, 50, 50] })
+  const groupNode = graph.createGroupNode({ layout: [origin.x + 85, origin.y, 125, 200] })
   graph.addLabel(groupNode, 'Group Node')
   graph.setParent(tgtNode2, groupNode)
 
-  const edge = graph.createEdge({
-    source: srcNode,
-    target: tgtNode1
-  })
-  graph.addLabel({
-    owner: edge,
-    text: 'Edge Label'
-  })
+  const edge = graph.createEdge({ source: srcNode, target: tgtNode1 })
+  graph.addLabel({ owner: edge, text: 'Edge Label' })
   graph.createEdge({
     source: srcNode,
     target: tgtNode2,
@@ -392,10 +353,7 @@ class RectangleBorder extends BaseClass(IVisualCreator) {
     text.setAttribute('fill', 'gray')
     text.setAttribute('x', `${this.titleOrigin.x}`)
     text.setAttribute('y', `${this.titleOrigin.y}`)
-    new Font({
-      fontSize: 18,
-      fontWeight: 'bold'
-    }).applyTo(text)
+    new Font({ fontSize: 18, fontWeight: 'bold' }).applyTo(text)
     container.appendChild(text)
 
     return new SvgVisual(container)

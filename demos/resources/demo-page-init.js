@@ -31,17 +31,20 @@ import './demo-ui/fullscreen-button-component'
 import './demo-ui/theme-button-component'
 import { SMALL_WIDTH } from './demo-ui/variables'
 import { initDescriptionPanel, initSidebarPanel } from './demo-ui/sidebars'
+
 if (document.readyState !== 'loading') {
   initDemoPage()
 } else {
   addEventListener('DOMContentLoaded', initDemoPage)
 }
+
 function initDemoPage() {
   initDescriptionPanel()
   initSidebarPanel()
   initResponsiveRightSidebar()
   initOverlayCollapse()
 }
+
 function initOverlayCollapse() {
   const overlayHeader = document.querySelector('.demo-overlay__header')
   if (overlayHeader && overlayHeader.parentElement) {
@@ -51,6 +54,7 @@ function initOverlayCollapse() {
     overlayHeader.parentElement.classList.add('demo-overlay--collapsible')
   }
 }
+
 function initResponsiveRightSidebar() {
   const sidebar = document.querySelector('.demo-main__sidebar')
   if (!sidebar) {
@@ -61,6 +65,7 @@ function initResponsiveRightSidebar() {
     tryHideRightSidebar(sidebar)
   })
 }
+
 function tryHideRightSidebar(propertiesPanel) {
   if (window.innerWidth < SMALL_WIDTH && !document.body.classList.contains('demo-left-hidden')) {
     propertiesPanel.classList.add('demo-main__sidebar--hidden')

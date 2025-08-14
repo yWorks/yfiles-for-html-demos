@@ -119,38 +119,14 @@ function initializeToolBarElements(): void {
     graphComponent.invalidate()
   })
   const crossingStylesElements = [
-    {
-      text: 'Arc',
-      value: BridgeCrossingStyle.ARC
-    },
-    {
-      text: 'Gap',
-      value: BridgeCrossingStyle.GAP
-    },
-    {
-      text: 'TwoSidesScaled',
-      value: BridgeCrossingStyle.TWO_SIDES_SCALED
-    },
-    {
-      text: 'TwoSides',
-      value: BridgeCrossingStyle.TWO_SIDES
-    },
-    {
-      text: 'Custom',
-      value: BridgeCrossingStyle.CUSTOM
-    },
-    {
-      text: 'Rectangle',
-      value: BridgeCrossingStyle.RECTANGLE
-    },
-    {
-      text: 'RectangleScaled',
-      value: BridgeCrossingStyle.RECTANGLE_SCALED
-    },
-    {
-      text: 'ArcScaled',
-      value: BridgeCrossingStyle.ARC_SCALED
-    }
+    { text: 'Arc', value: BridgeCrossingStyle.ARC },
+    { text: 'Gap', value: BridgeCrossingStyle.GAP },
+    { text: 'TwoSidesScaled', value: BridgeCrossingStyle.TWO_SIDES_SCALED },
+    { text: 'TwoSides', value: BridgeCrossingStyle.TWO_SIDES },
+    { text: 'Custom', value: BridgeCrossingStyle.CUSTOM },
+    { text: 'Rectangle', value: BridgeCrossingStyle.RECTANGLE },
+    { text: 'RectangleScaled', value: BridgeCrossingStyle.RECTANGLE_SCALED },
+    { text: 'ArcScaled', value: BridgeCrossingStyle.ARC_SCALED }
   ]
   fillComboBox(crossingStylesComboBox, crossingStylesElements)
 
@@ -160,14 +136,8 @@ function initializeToolBarElements(): void {
     graphComponent.invalidate()
   })
   const crossingDeterminationElements = [
-    {
-      text: 'HorizontalBridgesVertical',
-      value: BridgeCrossingPolicy.HORIZONTAL_BRIDGES_VERTICAL
-    },
-    {
-      text: 'VerticalBridgesHorizontal',
-      value: BridgeCrossingPolicy.VERTICAL_BRIDGES_HORIZONTAL
-    },
+    { text: 'HorizontalBridgesVertical', value: BridgeCrossingPolicy.HORIZONTAL_BRIDGES_VERTICAL },
+    { text: 'VerticalBridgesHorizontal', value: BridgeCrossingPolicy.VERTICAL_BRIDGES_HORIZONTAL },
     {
       text: 'MoreHorizontalBridgesLessHorizontal',
       value: BridgeCrossingPolicy.MORE_HORIZONTAL_BRIDGES_LESS_HORIZONTAL
@@ -186,38 +156,14 @@ function initializeToolBarElements(): void {
     graphComponent.invalidate()
   })
   const bridgeOrientationElements = [
-    {
-      text: 'Up',
-      value: BridgeOrientationStyle.UP
-    },
-    {
-      text: 'Down',
-      value: BridgeOrientationStyle.DOWN
-    },
-    {
-      text: 'Left',
-      value: BridgeOrientationStyle.LEFT
-    },
-    {
-      text: 'Right',
-      value: BridgeOrientationStyle.RIGHT
-    },
-    {
-      text: 'FlowRight',
-      value: BridgeOrientationStyle.FLOW_RIGHT
-    },
-    {
-      text: 'Positive',
-      value: BridgeOrientationStyle.POSITIVE
-    },
-    {
-      text: 'Negative',
-      value: BridgeOrientationStyle.NEGATIVE
-    },
-    {
-      text: 'FlowLeft',
-      value: BridgeOrientationStyle.FLOW_LEFT
-    }
+    { text: 'Up', value: BridgeOrientationStyle.UP },
+    { text: 'Down', value: BridgeOrientationStyle.DOWN },
+    { text: 'Left', value: BridgeOrientationStyle.LEFT },
+    { text: 'Right', value: BridgeOrientationStyle.RIGHT },
+    { text: 'FlowRight', value: BridgeOrientationStyle.FLOW_RIGHT },
+    { text: 'Positive', value: BridgeOrientationStyle.POSITIVE },
+    { text: 'Negative', value: BridgeOrientationStyle.NEGATIVE },
+    { text: 'FlowLeft', value: BridgeOrientationStyle.FLOW_LEFT }
   ]
   fillComboBox(bridgeOrientationComboBox, bridgeOrientationElements)
 

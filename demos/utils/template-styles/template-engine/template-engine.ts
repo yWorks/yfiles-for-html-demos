@@ -139,11 +139,7 @@ export function parseTemplate(template: string, defaultNamespace?: string): Rend
   }
 
   return (context?: any, templateContext?: any, idPrefix?: string) => {
-    return renderTemplateCore(virtualNode, {
-      bindingContext: context,
-      templateContext,
-      idPrefix
-    })
+    return renderTemplateCore(virtualNode, { bindingContext: context, templateContext, idPrefix })
   }
 }
 
@@ -272,9 +268,9 @@ export function registerConverter(name: string, converter: ConverterFunction): v
  * Makes an object observable for the binding engine.
  * @param obj - The object to make observable.
  */
-export function makeObservable(obj: any): asserts obj is IPropertyObservable & {
-  firePropertyChanged: (propertyName: string) => void
-} {
+export function makeObservable(
+  obj: any
+): asserts obj is IPropertyObservable & { firePropertyChanged: (propertyName: string) => void } {
   const listeners: ((propertyName: string) => void)[] = []
 
   obj.addPropertyChangedListener = (listener: (propertyName: string) => void) => {

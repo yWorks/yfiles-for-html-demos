@@ -222,27 +222,19 @@ export class LayoutHelper implements PendingLayout {
   private createLayoutData(resizeState: ResizeState): LayoutData {
     const layoutData = new CompositeLayoutData(this.resetToOriginalGraphStageData!)
     if (resizeState === 'SHRINKING') {
-      const fillAreaLayoutData = new FillAreaLayoutData({
-        fixedNodes: this.nodes
-      })
+      const fillAreaLayoutData = new FillAreaLayoutData({ fixedNodes: this.nodes })
       layoutData.items.add(fillAreaLayoutData)
       if (this.state === 'FINISHING') {
-        const edgeRouterData = new EdgeRouterData({
-          scope: { incidentNodes: this.nodes }
-        })
+        const edgeRouterData = new EdgeRouterData({ scope: { incidentNodes: this.nodes } })
         // only route edges for the final layout
         layoutData.items.add(edgeRouterData)
       }
     } else {
       if (resizeState === 'BOTH') {
-        const fillAreaLayoutData = new FillAreaLayoutData({
-          fixedNodes: this.nodes
-        })
+        const fillAreaLayoutData = new FillAreaLayoutData({ fixedNodes: this.nodes })
         layoutData.items.add(fillAreaLayoutData)
       }
-      const clearAreaLayoutData = new ClearAreaLayoutData({
-        areaNodes: this.nodes
-      })
+      const clearAreaLayoutData = new ClearAreaLayoutData({ areaNodes: this.nodes })
       layoutData.items.add(clearAreaLayoutData)
     }
     return layoutData

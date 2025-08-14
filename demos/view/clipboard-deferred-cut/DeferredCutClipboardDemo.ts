@@ -78,10 +78,7 @@ async function run(): Promise<void> {
     const graphBuilder = new GraphBuilder(graph)
 
     graphBuilder
-      .createNodesSource({
-        data: graphData.nodeList,
-        id: (item) => item.id
-      })
+      .createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
       .nodeCreator.createLabelBinding((item) => item.label)
 
     graphBuilder

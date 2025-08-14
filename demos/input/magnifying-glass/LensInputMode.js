@@ -40,6 +40,7 @@ import {
   PointerEventArgs,
   ScrollBarVisibility
 } from '@yfiles/yfiles'
+
 // noinspection CssInvalidFunction
 /**
  * A specialized input mode that shows a floating magnifying lens that magnifies the cursor's
@@ -49,23 +50,27 @@ export class LensInputMode extends InputModeBase {
   lensElement
   lensGraphComponent = null
   $zoomFactor = 2
+
   constructor() {
     super()
     // The changeable radius of the lens
     const radius = 120
     // The changeable difference between the coordinates of the mouse and the border of the lens
     const margin = 0
+
     // Some derived values
     const center = margin + radius
     const diameter = 2 * radius
     // The size with a small offset to make sure that the lens stroke is fully visible
     const size = diameter + margin + 10
+
     // The SVG path of the "shadow" of the lens
     const lensShadowPath = `m ${margin} ${center} L 0 20 L 20 0 L ${center} ${margin} A ${radius} ${radius} 0 0 0 ${margin} ${center}`
     // THe SVG path of the cross in the center of the lens
     const crossPath = `M ${center - 10} ${center} h 7 m 6 0 h 7 M ${center} ${center - 10} v 7 m 0 6 v 7`
     // The placement of the lens graph component
     const lensComponentPlacement = `width: ${diameter}px; height: ${diameter}px; top: ${margin + 5}px; left: ${margin + 5}px;`
+
     // The DOM elements of the lens
     this.lensElement = document.createElement('div')
     this.lensElement.setAttribute(
@@ -105,18 +110,21 @@ export class LensInputMode extends InputModeBase {
         <path d='${crossPath}' stroke='#333' stroke-opacity='0.8' stroke-width='2' stroke-linecap='round' />
       </svg> `
   }
+
   /**
    * Hides the HTML element that represents the lens component.
    */
   hideLens() {
     this.lensElement.style.opacity = '0.0'
   }
+
   /**
    * Shows the HTML element that represents the lens component.
    */
   showLens() {
     this.lensElement.style.opacity = '1.0'
   }
+
   /**
    * Determines whether the lens element should be visible or not.
    * Normally, the magnifying glass should be hidden when the zoom level of the graphComponent is
@@ -139,6 +147,7 @@ export class LensInputMode extends InputModeBase {
       return false
     }
   }
+
   /**
    * Updates the location of the magnifying component.
    * @param component The source of the event
@@ -157,12 +166,14 @@ export class LensInputMode extends InputModeBase {
       this.lensElement.style.top = `${Math.round(viewCoords.y)}px`
     }
   }
+
   /**
    * Returns the zoom factor of the graphComponent of the LensInputMode.
    */
   get zoomFactor() {
     return this.$zoomFactor
   }
+
   /**
    * Set the zoom factor of the graphComponent of the LensInputMode.
    */
@@ -171,6 +182,7 @@ export class LensInputMode extends InputModeBase {
     this.parentInputModeContext.canvasComponent.invalidate()
     this.lensGraphComponent.zoom = this.zoomFactor
   }
+
   /**
    * Installs this LensInputMode.
    * @param context The context to install this mode into
@@ -178,35 +190,44 @@ export class LensInputMode extends InputModeBase {
    */
   install(context, controller) {
     super.install(context, controller)
+
     const graphComponent = context.canvasComponent
+
     // Initialize the lens graph component
     this.lensGraphComponent = new GraphComponent({
       // Get the div for the lens graphComponent
       htmlElement: this.lensElement.querySelector('.demo-lens-component'),
+
       // Re-use the same graph, selection, projection
       graph: graphComponent.graph,
       selection: graphComponent.selection,
       projection: graphComponent.projection,
+
       // Disable interaction and scrollbars
       mouseWheelBehavior: MouseWheelBehaviors.NONE,
       autoScrollOnBounds: false,
       horizontalScrollBarPolicy: ScrollBarVisibility.HIDDEN,
       verticalScrollBarPolicy: ScrollBarVisibility.HIDDEN,
+
       // Set the zoom factor of the graph component
       zoom: this.zoomFactor
     })
     graphComponent.overlayPanel.appendChild(this.lensElement)
+
     // Add the listeners to the initial graph component that will update the position and the zoom
     // of the lens
     const mouseMoveListener = delegate(this.updateLensLocation, this)
     graphComponent.addEventListener('pointer-move', mouseMoveListener)
     graphComponent.addEventListener('pointer-drag', mouseMoveListener)
+
     const visibilityChangeListener = delegate(this.updateLensVisibility, this)
     graphComponent.addEventListener('zoom-changed', visibilityChangeListener)
     graphComponent.addEventListener('pointer-leave', visibilityChangeListener)
     graphComponent.addEventListener('pointer-enter', visibilityChangeListener)
+
     this.hideLens()
   }
+
   /**
    * Uninstalls this LensInputMode.
    * @param context The context to install this mode into
@@ -214,19 +235,23 @@ export class LensInputMode extends InputModeBase {
   uninstall(context) {
     this.hideLens()
     const canvasComponent = context.canvasComponent
+
     // remove the listeners
     const mouseMoveListener = delegate(this.updateLensLocation, this)
     canvasComponent.removeEventListener('pointer-move', mouseMoveListener)
     canvasComponent.removeEventListener('pointer-drag', mouseMoveListener)
+
     const visibilityChangeListener = delegate(this.updateLensVisibility, this)
     canvasComponent.removeEventListener('zoom-changed', visibilityChangeListener)
     canvasComponent.removeEventListener('pointer-leave', visibilityChangeListener)
     canvasComponent.removeEventListener('pointer-enter', visibilityChangeListener)
+
     // clean up
     canvasComponent.overlayPanel.removeChild(this.lensGraphComponent.htmlElement)
-    this.lensGraphComponent.cleanUp()
     this.lensGraphComponent.graph = new Graph()
+    this.lensGraphComponent.cleanUp()
     this.lensGraphComponent = null
+
     super.uninstall(context)
   }
 }

@@ -106,10 +106,7 @@ const Y_AXIS_LABEL = 'm'
 /**
  * The desired font for the axes.
  */
-const AXIS_FONT = new Font({
-  fontFamily: 'Roboto,sans-serif',
-  fontSize: 14
-})
+const AXIS_FONT = new Font({ fontFamily: 'Roboto,sans-serif', fontSize: 14 })
 
 /**
  * Creates the visualization for the axes, draws the corresponding ticks, and their labels.

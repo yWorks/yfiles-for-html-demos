@@ -43,51 +43,68 @@ import {
   Size,
   ViewportLimitingPolicy
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
 import { RectangleVisualCreator } from './RectangleVisualCreator'
 import { ProjectionAnimation } from './ProjectionAnimation'
+
 const policySelect = document.querySelector('#policy-select')
 const strictBoundsContainmentCheckbox = document.querySelector(
   '#strict-bounds-containment-checkbox'
 )
+
 const marginsLeftInput = document.querySelector('#margins-left-input')
 const marginsTopInput = document.querySelector('#margins-top-input')
 const marginsRightInput = document.querySelector('#margins-right-input')
 const marginsBottomInput = document.querySelector('#margins-bottom-input')
 const ratioWidthInput = document.querySelector('#ratio-width-input')
 const ratioHeightInput = document.querySelector('#ratio-height-input')
+
 // Visuals for showing the various areas relevant for limiter calculations
 let contentMarginsVisual
 let limiterBoundsVisual
+
 let contentMarginsElement = null
 let limiterBoundsElement = null
+
 let graphComponent
 let isometricView
+
 /**
  * Runs this demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('#graphComponent')
+
   // Enable navigation
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // Configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
   await graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
+
   addRectangleVisuals()
+
   initializeUI(graphComponent)
+
   updateViewportLimiterSettings(graphComponent)
 }
+
 /**
  * Applies the UI settings to the viewport limiter
  */
@@ -103,6 +120,7 @@ function updateViewportLimiterSettings(graphComponent) {
     Number(ratioWidthInput.value),
     Number(ratioHeightInput.value)
   )
+
   switch (policySelect.value) {
     case 'WITHIN_MARGINS':
       graphComponent.viewportLimiter.policy = ViewportLimitingPolicy.WITHIN_MARGINS
@@ -117,31 +135,35 @@ function updateViewportLimiterSettings(graphComponent) {
       graphComponent.viewportLimiter.policy = ViewportLimitingPolicy.UNRESTRICTED
       break
   }
+
   updateRectangleVisualsRendering()
   graphComponent.invalidate()
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-  graphBuilder.createNodesSource({
-    data: graphData.nodeList,
-    id: (item) => item.id
-  })
+
+  graphBuilder.createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  */
 function initializeGraph(graph) {
   // Set styles for this demo
   initDemoStyles(graph)
+
   // Set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
@@ -152,11 +174,13 @@ function initializeGraph(graph) {
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
+
 /**
  * Adds rectangle visuals for content area, limiter ratio margins and ratio
  */
 function addRectangleVisuals() {
   const renderTree = graphComponent.renderTree
+
   renderTree.createElement(
     renderTree.backgroundGroup,
     new RectangleVisualCreator(
@@ -168,6 +192,7 @@ function addRectangleVisuals() {
       () => graphComponent.contentBounds
     )
   )
+
   contentMarginsVisual = new RectangleVisualCreator(
     'Margins',
     'bottom',
@@ -177,6 +202,7 @@ function addRectangleVisuals() {
     () => calculateMarginsRect(),
     true
   )
+
   limiterBoundsVisual = new RectangleVisualCreator(
     'Viewport Limiter Bounds',
     'top',
@@ -187,6 +213,7 @@ function addRectangleVisuals() {
     true
   )
 }
+
 /**
  * Calculates the rectangle defined by the GraphComponent size and
  * ViewportLimiter viewport margins.
@@ -196,15 +223,20 @@ function calculateMarginsRect() {
   if (viewportLimiter.policy === ViewportLimitingPolicy.UNRESTRICTED) {
     return null
   }
+
   const viewportContentMargins = viewportLimiter.viewportContentMargins
   const left = viewportContentMargins.left
   const top = viewportContentMargins.top
+
   const graphComponentSize = graphComponent.size
   const right = graphComponentSize.width - viewportContentMargins.right
   const bottom = graphComponentSize.height - viewportContentMargins.bottom
+
   const width = right - left
   const height = bottom - top
+
   const centerView = graphComponent.size.multiply(0.5)
+
   return new Rect(
     width <= 0 ? centerView.width : left,
     top <= 0 ? centerView.height : top,
@@ -212,6 +244,7 @@ function calculateMarginsRect() {
     height <= 0 ? 1 : height
   )
 }
+
 /**
  * Calculates the effective ViewportLimiter area (bounds) as the marginsRect scaled by the available
  * space as defined by the viewportContentRatio
@@ -242,12 +275,14 @@ function calculateEffectiveRect() {
     Math.min(effectiveMargins.verticalInsets, canvasComponent.innerSize.height)
   return new Rect(effectiveMargins.left, effectiveMargins.top, innerWidth, innerHeight)
 }
+
 /**
  * Enables/disables the rendering of the various rectangle visuals,
  * depending on the chosen limiter policy
  */
 function updateRectangleVisualsRendering() {
   const renderTree = graphComponent.renderTree
+
   if (policySelect.value === 'UNRESTRICTED' && contentMarginsElement !== null) {
     renderTree.remove(contentMarginsElement)
     contentMarginsElement = null
@@ -261,6 +296,7 @@ function updateRectangleVisualsRendering() {
     limiterBoundsElement = renderTree.createElement(renderTree.foregroundGroup, limiterBoundsVisual)
   }
 }
+
 /**
  * Animates the projection between two alpha and scale values.
  */
@@ -274,6 +310,7 @@ function animateProjection(fromAlpha, toAlpha, fromScale, toScale) {
   )
   new Animator(graphComponent).animate(projectionAnimation.createEasedAnimation())
 }
+
 /**
  * Toggles the isometric view.
  */
@@ -287,6 +324,7 @@ function toggleProjection() {
     animateProjection(-Math.PI / 4, 0, Math.sqrt(3) / 3, 1)
   }
 }
+
 /**
  * Initializes the UI elements that are specific to this demo.
  */
@@ -321,8 +359,10 @@ function initializeUI(graphComponent) {
   ratioHeightInput.addEventListener('change', () => {
     updateViewportLimiterSettings(graphComponent)
   })
+
   updateDescriptionText()
 }
+
 function getPolicyDescription() {
   switch (policySelect.value) {
     case 'WITHIN_MARGINS':
@@ -357,14 +397,18 @@ function getPolicyDescription() {
         <p style='margin-top:0'>This policy disables limiting of the viewport. The graph can be panned out completely.</p>`
   }
 }
+
 export function updateDescriptionText() {
   const descriptionContainer = document.querySelector('#policy-description-container')
   descriptionContainer.classList.remove('highlight-description')
+
   const policyDescription = document.querySelector('#policy-description')
   policyDescription.innerHTML = getPolicyDescription()
+
   // highlight the description once
   setTimeout(() => {
     descriptionContainer.classList.add('highlight-description')
   }, 0)
 }
+
 run().then(finishLoading)

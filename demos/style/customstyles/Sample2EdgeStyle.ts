@@ -52,12 +52,8 @@ import {
 import { type ColorSetName, isColorSetName } from '@yfiles/demo-resources/demo-styles'
 import { Sample2Arrow } from './Sample2Arrow'
 import { SVGNS } from './Namespaces'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 
-type EdgeRenderDataCache = {
-  path: GeneralPath
-  obstacleHash: number
-}
+type EdgeRenderDataCache = { path: GeneralPath; obstacleHash: number }
 
 /**
  * The type of the type argument of the creatVisual and updateVisual methods of the style implementation.
@@ -68,10 +64,7 @@ type Sample1EdgeStyleVisual = TaggedSvgVisual<SVGGElement | SVGPathElement, Edge
  * A custom demo edge style whose colors match the given well-known CSS style.
  */
 export class Sample2EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
-  private hiddenArrow: Arrow = new Arrow({
-    type: ArrowType.NONE,
-    cropLength: 6
-  })
+  private hiddenArrow: Arrow = new Arrow({ type: ArrowType.NONE, cropLength: 6 })
   private fallbackArrow: Sample2Arrow = new Sample2Arrow()
   private markerDefsSupport: MarkerDefsSupport | null = null
   showTargetArrows = true
@@ -89,10 +82,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
       return null
     }
     if (this.showTargetArrows) {
-      const dummyArrow =
-        !isBrowserWithBadMarkerSupport && this.useMarkerArrows
-          ? this.hiddenArrow
-          : this.fallbackArrow
+      const dummyArrow = this.useMarkerArrows ? this.hiddenArrow : this.fallbackArrow
       return this.cropPath(edge, IArrow.NONE, dummyArrow, gp)!
     }
     return this.cropPath(edge, IArrow.NONE, IArrow.NONE, gp)!
@@ -129,7 +119,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
       }
     }
 
-    if (!isBrowserWithBadMarkerSupport && this.useMarkerArrows) {
+    if (this.useMarkerArrows) {
       this.showTargetArrows &&
         path.setAttribute(
           'marker-end',
@@ -184,7 +174,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
       cache.obstacleHash = newObstacleHash
       const gp = this.createPathWithBridges(renderPath, renderContext)
       const pathData = gp.size === 0 ? '' : gp.createSvgPathData()
-      if (!isBrowserWithBadMarkerSupport && this.useMarkerArrows) {
+      if (this.useMarkerArrows) {
         // update code for marker arrows
         path.setAttribute('d', pathData)
         return oldVisual
@@ -496,5 +486,3 @@ export class Sample2EdgeStyleExtension extends MarkupExtension {
     return style
   }
 }
-
-const isBrowserWithBadMarkerSupport = BrowserDetection.safariVersion > 0

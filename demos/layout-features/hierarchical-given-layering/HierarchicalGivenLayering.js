@@ -32,6 +32,7 @@ import {
   HierarchicalLayoutLayeringStrategy,
   IGraph
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to create and configure {@link HierarchicalLayout} with a given layering.
  * @param graph The graph to be laid out
@@ -40,10 +41,13 @@ import {
 export function createFeatureLayoutConfiguration(graph) {
   const layoutData = new HierarchicalLayoutData()
   layoutData.givenLayersIndices = (node) => +node.tag
+
   const layout = new HierarchicalLayout()
   layout.fromScratchLayeringStrategy = HierarchicalLayoutLayeringStrategy.USER_DEFINED
+
   return { layout, layoutData }
 }
+
 /**
  * Demonstrates how to run {@link HierarchicalLayout} with the default configuration.
  * @param graph The graph to be laid out
@@ -52,5 +56,6 @@ export function createFeatureLayoutConfiguration(graph) {
 export function createDefaultLayoutConfiguration(graph) {
   const layoutData = new HierarchicalLayoutData()
   const layout = new HierarchicalLayout()
+
   return { layout, layoutData }
 }

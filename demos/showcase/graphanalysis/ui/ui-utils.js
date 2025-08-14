@@ -33,24 +33,28 @@ import { updateDescriptionText } from './algorithm-description'
 import { updateGraphInformation } from './graph-structure-information'
 import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'
 import { TagColoredShapeNodeStyle } from '../styles'
+
 const sampleComboBox = document.querySelector('#samples')
 const algorithmComboBox = document.querySelector('#algorithms')
 const directionComboBox = document.querySelector('#directions')
 const uniformEdgeWeightsComboBox = document.querySelector('#uniform-edge-weights')
 const clearButton = document.querySelector('#clear-graph')
 const layoutButton = document.querySelector('#layout-button')
+
 /**
  * Returns the algorithm that is currently selected.
  */
 export function getCurrentAlgorithm() {
   return algorithms[algorithmComboBox.value]
 }
+
 /**
  * Determines whether the current analysis algorithm should use uniform weight for all edges.
  */
 export function useUniformEdgeWeights() {
   return uniformEdgeWeightsComboBox.value === 'uniform'
 }
+
 /**
  * Determines whether the current analysis algorithm should take the direction of edges into account.
  */
@@ -62,18 +66,21 @@ export function useDirectedEdges() {
     return currentAlgorithm.supportsDirectedness && directionComboBox.value === 'directed'
   }
 }
+
 /**
  * Wires up the combo-boxes and buttons in the toolbar.
  * @yjs:keep = directed, uniform
  */
 export function initializeToolbar(graphComponent) {
   const graph = graphComponent.graph
+
   clearButton.addEventListener('click', async () => {
     graph.clear()
     graph.undoEngine.clear()
     await graphComponent.fitGraphBounds()
     updateGraphInformation(graphComponent)
   })
+
   fillComboBox(
     sampleComboBox,
     Object.entries(algorithms).map(([name, algorithm]) => ({
@@ -84,6 +91,7 @@ export function initializeToolbar(graphComponent) {
   addNavigationButtons(sampleComboBox).addEventListener('change', () =>
     switchSample(graphComponent)
   )
+
   fillComboBox(
     algorithmComboBox,
     Object.entries(algorithms).map(([name, algorithm]) => ({
@@ -94,6 +102,7 @@ export function initializeToolbar(graphComponent) {
   addNavigationButtons(algorithmComboBox).addEventListener('change', () =>
     switchAlgorithm(graphComponent)
   )
+
   fillComboBox(directionComboBox, [
     { key: 'undirected', name: 'Undirected' },
     { key: 'directed', name: 'Directed' }
@@ -103,6 +112,7 @@ export function initializeToolbar(graphComponent) {
     applyAlgorithm(graph)
     await runLayout(graphComponent, true)
   })
+
   fillComboBox(uniformEdgeWeightsComboBox, [
     { key: 'uniform', name: 'Uniform Edge Weights' },
     { key: 'non-uniform', name: 'Non-uniform Edge Weights' }
@@ -117,10 +127,12 @@ export function initializeToolbar(graphComponent) {
     applyAlgorithm(graph)
     await runLayout(graphComponent, true)
   })
+
   layoutButton.addEventListener('click', async () => {
     await runLayout(graphComponent, true)
   })
 }
+
 /**
  * Fills in a combo box with the values of the given array.
  */
@@ -133,27 +145,36 @@ function fillComboBox(combobox, content) {
     combobox.appendChild(el)
   }
 }
+
 /**
  * Handles a selection change in the sample combo box.
  */
 export async function switchSample(graphComponent) {
   setUIDisabled(true, graphComponent)
+
   algorithmComboBox.selectedIndex = sampleComboBox.selectedIndex
+
   const graph = graphComponent.graph
   const currentAlgorithm = getCurrentAlgorithm()
   uniformEdgeWeightsComboBox.selectedIndex = !currentAlgorithm.defaultSettings.supportsEdgeWeights
     ? 0
     : 1
   directionComboBox.selectedIndex = !currentAlgorithm.defaultSettings.directed ? 0 : 1
+
   loadGraph(graph, currentAlgorithm.sample)
+
   updateDescriptionText()
   updateGraphInformation(graphComponent)
+
   resetTypes(graph)
   applyAlgorithm(graph)
   await runLayout(graphComponent)
+
   graph.undoEngine.clear()
+
   setUIDisabled(false, graphComponent)
 }
+
 /**
  * Loads a graph from sample data. This demo uses the {@link AdjacencyGraphBuilder} because the
  * samples are provided as adjacency lists.
@@ -167,6 +188,7 @@ function loadGraph(graph, sample) {
   nodesSource.nodeCreator.defaults.style = new TagColoredShapeNodeStyle()
   // add an array to each node's tag to store the component to which it belongs
   nodesSource.nodeCreator.tagProvider = () => ({ components: [] })
+
   const edgeCreator = new EdgeCreator()
   edgeCreator.defaults.style = graph.edgeDefaults.style
   // add an array to each edge's tag to store the component to which it belongs
@@ -174,20 +196,25 @@ function loadGraph(graph, sample) {
   nodesSource.addSuccessorIds((item) => item, edgeCreator)
   graphBuilder.buildGraph()
 }
+
 /**
  * Handles a selection change in the algorithm combo box.
  */
 async function switchAlgorithm(graphComponent) {
   const graph = graphComponent.graph
+
   if (useUniformEdgeWeights()) {
     deleteWeightLabels(graph)
   }
+
   updateDescriptionText()
+
   resetTypes(graph)
   applyAlgorithm(graph)
   await runLayout(graphComponent, true)
   graph.undoEngine.clear()
 }
+
 /**
  * Disables or enables the HTML elements of the UI.
  * When enabling the UI elements, the current algorithm is considered and only suitable elements are enabled.
@@ -204,6 +231,7 @@ export function setUIDisabled(disabled, graphComponent) {
     // timeout to make sure the mutex can be acquired even if it was triggered by another input mode's event
     graphComponent.inputMode.waiting = disabled
   }, 0)
+
   if (!disabled) {
     const currentAlgorithm = getCurrentAlgorithm()
     uniformEdgeWeightsComboBox.disabled = !currentAlgorithm.supportsEdgeWeights
@@ -215,6 +243,7 @@ export function setUIDisabled(disabled, graphComponent) {
     }
   }
 }
+
 /**
  * Deletes all weight labels.
  */
@@ -226,6 +255,7 @@ function deleteWeightLabels(graph) {
       graph.remove(label)
     })
 }
+
 /**
  * Generates labels for each edge in the graph with a random weight.
  */

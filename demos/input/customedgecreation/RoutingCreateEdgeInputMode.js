@@ -40,6 +40,7 @@ import {
   Point,
   PortSides
 } from '@yfiles/yfiles'
+
 /**
  * The different edge routing strategies that the custom {@link RoutingCreateEdgeInputMode}
  * supports.
@@ -50,6 +51,7 @@ export var RoutingStrategy
   RoutingStrategy[(RoutingStrategy['EDGE_ROUTER'] = 1)] = 'EDGE_ROUTER'
   RoutingStrategy[(RoutingStrategy['PERFORMANCE_EDGE_ROUTER'] = 2)] = 'PERFORMANCE_EDGE_ROUTER'
 })(RoutingStrategy || (RoutingStrategy = {}))
+
 /**
  * A custom {@link CreateEdgeInputMode} that uses a
  * {@link RoutingCreateEdgeInputMode.routingStrategy} to determine how edges are routed during
@@ -58,18 +60,21 @@ export var RoutingStrategy
 export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
   _routingStrategy
   edgeRouter = null
+
   // state holding fields from the start to the end of the edge creation gesture
   layoutGraphAdapter
   layoutSourceNode
   layoutTargetNode
   layoutEdge
   targetPortCandidates
+
   /**
    * Gets the edge routing algorithm that is used during the edge creation gesture.
    */
   get routingStrategy() {
     return this._routingStrategy
   }
+
   /**
    * Sets the edge routing algorithm that is used during the edge creation gesture.
    * @yjs:keep = AUTO
@@ -96,6 +101,7 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
         break
     }
   }
+
   /**
    * Creates a new instance of this custom {@link CreateEdgeInputMode}. By default, no routing
    * algorithm is set.
@@ -104,6 +110,7 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
     super()
     this._routingStrategy = RoutingStrategy.NONE
   }
+
   /**
    * Called when the edge creation gesture has started. Initializes the state, depending on the
    * specified {@link RoutingStrategy}.
@@ -114,24 +121,32 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
       super.onGestureStarted(evt)
       return
     }
+
     // initialize the graph that is considered during the layout
     this.layoutGraphAdapter = new LayoutGraphAdapter(this.graph)
     const layoutGraph = this.layoutGraphAdapter.layoutGraph
+
     // find the source node of the gesture in the layout graph
     this.layoutSourceNode = this.layoutGraphAdapter.getLayoutNode(this.previewEdge.sourceNode)
+
     // use a dummy target node during the gesture for the edge that is currently created
     this.layoutTargetNode = layoutGraph.createNode()
     this.layoutTargetNode.layout.size = [1, 1]
+
     // create the edge that should be routed
     this.layoutEdge = layoutGraph.createEdge(this.layoutSourceNode, this.layoutTargetNode)
+
     // set source point of the edge to the start point of the edge creation gesture's edge
     this.layoutEdge.sourcePortLocation = this.previewEdge.sourcePort.location.toPoint()
+
     // the target point of the edge may be relative to the dummy node it is attached
     this.layoutEdge.targetPortLocation = this.layoutEdge.target.layout.center.add(Point.ORIGIN)
+
     // mark the dummy edge as affected
     const affectedEdges = layoutGraph.createEdgeDataMap()
     affectedEdges.set(this.layoutEdge, true)
     layoutGraph.context.addItemData(LayoutKeys.ROUTE_EDGES_DATA_KEY, affectedEdges)
+
     // the source port should not be adjusted by the layout
     const sourcePortCandidates = layoutGraph.createEdgeDataMap()
     sourcePortCandidates.set(
@@ -148,8 +163,10 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
       EdgePortCandidates.SOURCE_PORT_CANDIDATES_DATA_KEY,
       sourcePortCandidates
     )
+
     super.onGestureStarted(evt)
   }
+
   /**
    * Called after each move during the edge creation gesture. If a {@link RoutingStrategy} is
    * specified, a new edge routing is calculated for the edge of this gesture.
@@ -160,12 +177,15 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
       super.onMoved(evt)
       return
     }
+
     // clear any target port candidate
     const layoutGraph = this.layoutGraphAdapter.layoutGraph
     layoutGraph.context.remove(EdgePortCandidates.TARGET_PORT_CANDIDATES_DATA_KEY)
+
     const targetPortCandidate = this.endPortCandidate
     const targetNode = this.previewEdge.targetNode
     const targetPort = this.previewEdge.targetPort
+
     if (targetPortCandidate !== null) {
       // use target port location if possible and candidate the target port depending on the ingoing node side
       this.targetPortCandidates.set(
@@ -178,6 +198,7 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
         EdgePortCandidates.TARGET_PORT_CANDIDATES_DATA_KEY,
         this.targetPortCandidates
       )
+
       // adjust location and size of dummy target node to the actual hit target node
       this.layoutTargetNode.layout.bounds = targetNode.layout.toRect()
     } else {
@@ -185,9 +206,12 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
       this.layoutTargetNode.layout.size = [1, 1]
       this.layoutTargetNode.layout.topLeft = this.dragPoint.toPoint()
     }
+
     this.layoutEdge.targetPortLocation = targetPort.location
+
     // apply the layout
     this.edgeRouter.applyLayout(layoutGraph)
+
     // transfer the edge layout to the visible dummy edge of the gesture
     this.previewGraph.clearBends(this.previewEdge)
     for (const bend of this.layoutEdge.bends) {
@@ -195,6 +219,7 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
     }
     super.onMoved(evt)
   }
+
   /**
    * A helper function that determines the {@link PortSides} from the given point on the node.
    *
@@ -204,9 +229,11 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
   static getNodeSide(nodeLayout, point) {
     const deltaX = Math.abs(nodeLayout.center.x - point.x) / nodeLayout.width
     const deltaY = Math.abs(nodeLayout.center.y - point.y) / nodeLayout.height
+
     if (deltaX === 0 && deltaY === 0) {
       return PortSides.ANY
     }
+
     if (deltaX > deltaY) {
       if (point.x < nodeLayout.center.x) {
         return PortSides.LEFT

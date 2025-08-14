@@ -47,15 +47,18 @@ import {
   Point,
   Size
 } from '@yfiles/yfiles'
+
 export class FastNodeStyle extends NodeStyleBase {
   createVisual(renderContext, node) {
     return new NodeCanvasVisual(node.layout)
   }
+
   updateVisual(renderContext, oldVisual, node) {
     oldVisual.layout = node.layout
     return oldVisual
   }
 }
+
 /**
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
@@ -69,6 +72,7 @@ class NodeCanvasVisual extends HtmlCanvasVisual {
     super()
     this.layout = layout
   }
+
   /**
    * Draws a rectangle with a solid orange fill.
    * @see Overrides {@link HtmlCanvasVisual.paint}
@@ -79,6 +83,7 @@ class NodeCanvasVisual extends HtmlCanvasVisual {
     ctx.fillRect(l.x, l.y, l.width, l.height)
   }
 }
+
 /**
  * A very basic high-performance edge style that uses HTML 5 canvas rendering.
  * Arrows are not supported by this implementation.
@@ -87,6 +92,7 @@ export class FastEdgeStyle extends EdgeStyleBase {
   createVisual(renderContext, edge) {
     return new EdgeCanvasVisual(edge.bends, edge.sourcePort.location, edge.targetPort.location)
   }
+
   isHit(inputContext, location, edge) {
     // we use a very simple hit logic here (the base implementation)
     if (!super.isHit(inputContext, location, edge)) {
@@ -100,6 +106,7 @@ export class FastEdgeStyle extends EdgeStyleBase {
       !t.style.renderer.getHitTestable(t, t.style).isHit(inputContext, location)
     )
   }
+
   updateVisual(renderContext, oldVisual, edge) {
     oldVisual.bends = edge.bends
     oldVisual.sourcePortLocation = edge.sourcePort.location
@@ -107,6 +114,7 @@ export class FastEdgeStyle extends EdgeStyleBase {
     return oldVisual
   }
 }
+
 /**
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
@@ -126,9 +134,11 @@ class EdgeCanvasVisual extends HtmlCanvasVisual {
     this.sourcePortLocation = sourcePortLocation
     this.targetPortLocation = targetPortLocation
   }
+
   render(renderContext, ctx) {
     // simply draw a black line from the source port location via all bends to the target port location
     ctx.strokeStyle = 'rgb(51,102,153)'
+
     ctx.beginPath()
     let location = this.sourcePortLocation
     ctx.moveTo(location.x, location.y)
@@ -143,6 +153,7 @@ class EdgeCanvasVisual extends HtmlCanvasVisual {
     ctx.stroke()
   }
 }
+
 /**
  * A very basic high-performance label style that uses HTML 5 canvas rendering and level-of-detail rendering.
  * This style does not support multiline text.
@@ -150,21 +161,27 @@ class EdgeCanvasVisual extends HtmlCanvasVisual {
 export class FastLabelStyle extends LabelStyleBase {
   _zoomThreshold = 0.7
   _font = new Font()
+
   get zoomThreshold() {
     return this._zoomThreshold
   }
+
   set zoomThreshold(value) {
     this._zoomThreshold = value
   }
+
   get font() {
     return this._font
   }
+
   set font(value) {
     this._font = value
   }
+
   createVisual(renderContext, label) {
     return new LabelCanvasVisual(label.text, label.layout, this.font, this.zoomThreshold)
   }
+
   updateVisual(renderContext, oldVisual, label) {
     oldVisual.text = label.text
     oldVisual.layout = label.layout
@@ -172,6 +189,7 @@ export class FastLabelStyle extends LabelStyleBase {
     oldVisual.zoomThreshold = this.zoomThreshold
     return oldVisual
   }
+
   getPreferredSize(label) {
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
@@ -179,12 +197,14 @@ export class FastLabelStyle extends LabelStyleBase {
     const width = ctx.measureText(label.text).width
     return new Size(width, this.font.fontSize)
   }
+
   /**
    * Helper method to set a Font on the given context;
    */
   static setFont(ctx, font) {
     ctx.font = `${FastLabelStyle.fontStyleToString(font.fontStyle)} ${font.fontWeight} ${font.fontSize}px ${font.fontFamily}`
   }
+
   static fontStyleToString(fontStyle) {
     switch (fontStyle) {
       default:
@@ -199,6 +219,7 @@ export class FastLabelStyle extends LabelStyleBase {
     }
   }
 }
+
 /**
  * The CanvasVisual for label rendering
  */
@@ -222,6 +243,7 @@ class LabelCanvasVisual extends HtmlCanvasVisual {
     this.font = font
     this.zoomThreshold = zoomThreshold
   }
+
   render(renderContext, ctx) {
     if (renderContext.zoom > this.zoomThreshold) {
       FastLabelStyle.setFont(ctx, this.font)
@@ -241,5 +263,6 @@ class LabelCanvasVisual extends HtmlCanvasVisual {
     }
   }
 }
+
 // export a default object to be able to map a namespace to this module for serialization
 export default { FastEdgeStyle, FastLabelStyle, FastNodeStyle }

@@ -38,6 +38,7 @@ import {
 } from '@yfiles/yfiles'
 import { ArrowNodeStyleAngleHandle } from './ArrowNodeStyleAngleHandle'
 import { ArrowNodeStyleShaftRatioHandle } from './ArrowNodeStyleShaftRatioHandle'
+
 /**
  * An {@link IHandleProvider} for nodes using an {@link ArrowNodeStyle} that provides an
  * {@link ArrowNodeStyleAngleHandle}, an {@link ArrowNodeStyleShaftRatioHandle} and further
@@ -64,11 +65,14 @@ export class ArrowNodeStyleHandleProvider extends BaseClass(IHandleProvider) {
     this.stylePropertyChanged = stylePropertyChanged
     this.delegateProvider = delegateProvider
   }
+
   getHandles(context) {
     const handles = []
+
     if (this.delegateProvider) {
       handles.push(...this.delegateProvider.getHandles(context))
     }
+
     if (this.node.style instanceof ArrowNodeStyle) {
       handles.push(new ArrowNodeStyleAngleHandle(this.node, this.stylePropertyChanged))
       if (this.hasShaft(this.node.style)) {
@@ -77,6 +81,7 @@ export class ArrowNodeStyleHandleProvider extends BaseClass(IHandleProvider) {
     }
     return IEnumerable.from(handles)
   }
+
   hasShaft(style) {
     return (
       style.shape === ArrowStyleShape.ARROW ||

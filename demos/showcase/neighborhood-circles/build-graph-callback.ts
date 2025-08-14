@@ -76,8 +76,5 @@ function getTraversalDirection(mode: NeighborhoodType): TraversalDirection {
  */
 function createNeighborhoodEdgeStyle(): IEdgeStyle {
   const prototype = createDemoEdgeStyle()
-  return new BezierEdgeStyle({
-    stroke: prototype.stroke,
-    targetArrow: prototype.targetArrow
-  })
+  return new BezierEdgeStyle({ stroke: prototype.stroke, targetArrow: prototype.targetArrow })
 }

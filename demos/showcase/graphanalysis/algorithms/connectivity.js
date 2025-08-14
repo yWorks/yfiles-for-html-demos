@@ -34,22 +34,26 @@ import {
   StronglyConnectedComponents
 } from '@yfiles/yfiles'
 import { markItem } from './algorithms'
+
 /**
  * Description of the algorithm which finds connected components.
  */
 export const connectedComponentsDescription = `
   <p>This part of the demo shows the <em>connected components</em> of the given graph.</p>
   <p>Nodes and edges that belong to the same component share the same color.</p>`
+
 /**
  * Calculates the connected components of the given graph.
  */
 export function calculateConnectedComponents(graph) {
   const result = new ConnectedComponents().run(graph)
+
   result.components.forEach((component, componentIndex) => {
     component.nodes.forEach((node) => markItem(node, componentIndex))
     component.inducedEdges.forEach((edge) => markItem(edge, componentIndex))
   })
 }
+
 /**
  * Description of the algorithm which finds biconnected components.
  */
@@ -57,11 +61,13 @@ export const biconnectedComponentsDescription = `
   <p>This part of the demo shows the <em>biconnected components</em> of the given graph.</p>
   <p>Nodes and edges that belong to the same component share the same color. <em>Articulation points</em>
   present all colors of the corresponding components. A component can be brought to focus by selecting the color at an articulation point.</p>`
+
 /**
  * Calculates the biconnected components of the given graph.
  */
 export function calculateBiconnectedComponents(graph) {
   const result = new BiconnectedComponents().run(graph)
+
   result.components.forEach((component, componentIndex) => {
     component.nodes.forEach((node) => {
       markItem(node, componentIndex)
@@ -71,22 +77,26 @@ export function calculateBiconnectedComponents(graph) {
     })
   })
 }
+
 /**
  * Description of the algorithm which finds strongly connected components.
  */
 export const stronglyConnectedComponentsDescription = `
   <p>This part of the demo shows the <em>strongly connected components</em> of the given graph.</p>
   <p>Nodes and edges that belong to the same component share the same color.</p>`
+
 /**
  * Calculates the strongly connected components of the given graph.
  */
 export function calculateStronglyConnectedComponents(graph) {
   const result = new StronglyConnectedComponents().run(graph)
+
   result.components.forEach((component, componentIndex) => {
     component.nodes.forEach((node) => markItem(node, componentIndex))
     component.inducedEdges.forEach((edge) => markItem(edge, componentIndex))
   })
 }
+
 /**
  * Description of the algorithm which finds all reachable nodes from a marked node.
  */
@@ -95,6 +105,7 @@ export const reachabilityDescription = `
   graph when starting from the marked source. The source can be marked using the <em>Context Menu</em>.
   If no node is marked as the source, a random node will be selected.</p>
   <p>The algorithm can take the direction of edges into account.</p>`
+
 /**
  * Calculates the nodes reachable from the marked node.
  */
@@ -102,20 +113,24 @@ export function calculateReachableNodes(graph, config) {
   if (graph.nodes.size <= 0) {
     return
   }
+
   const markedSource = config.startNodes?.[0] || graph.nodes.last()
-  const result = new Reachability({
-    directed: config.directed,
-    startNodes: markedSource
-  }).run(graph)
+
+  const result = new Reachability({ directed: config.directed, startNodes: markedSource }).run(
+    graph
+  )
+
   result.reachableNodes.forEach((node) => {
     markItem(node, 0)
   })
+
   graph.edges
     .filter((edge) => result.isReachable(edge.sourceNode) && result.isReachable(edge.targetNode))
     .forEach((edge) => {
       markItem(edge, 0)
     })
 }
+
 /**
  * Description of the algorithm which finds k-core components.
  */
@@ -125,6 +140,7 @@ export const kCoreComponentsDescription = `
   <p>Nodes and edges can be members of multiple k-cores. Choose a nodes' color to highlight the k-core related to this color.</p>
   <p>The number in every node represents the <em>highest</em> k-Core the node belongs to.</p>
   <p>The k-Core for k=0 is not visualized in this demo, as <em>every</em> node is a member.</p>`
+
 /**
  * Calculates the k-core components of the given graph.
  */
@@ -132,18 +148,24 @@ export function calculateKCoreComponents(graph) {
   if (graph.nodes.size === 0) {
     return
   }
+
   const result = new KCoreComponents().run(graph)
+
   const maximumK = result.maximumK
   if (maximumK === 0) {
     return
   }
+
   for (let k = maximumK; k > 0; k--) {
     const kCore = result.getKCore(k)
+
     kCore.forEach((node) => markItem(node, k))
+
     graph.edges
       .filter((edge) => kCore.contains(edge.sourceNode) && kCore.contains(edge.targetNode))
       .forEach((edge) => markItem(edge, k))
   }
+
   const kCores = result.kCores
   graph.nodes.forEach((node) => graph.addLabel({ owner: node, text: String(kCores.get(node)) }))
 }

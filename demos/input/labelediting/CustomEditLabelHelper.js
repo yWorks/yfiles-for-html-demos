@@ -37,6 +37,7 @@ import {
   LabelEditingEventArgs,
   TextEditorInputMode
 } from '@yfiles/yfiles'
+
 /**
  * Custom label edit helper.
  *
@@ -63,6 +64,7 @@ export class CustomEditLabelHelper extends EditLabelHelper {
     this.firstLabelParam = firstLabelParam
     this.firstLabelStyle = firstLabelStyle
   }
+
   /**
    * This method is only called when a label should be added to owner.
    *
@@ -77,6 +79,7 @@ export class CustomEditLabelHelper extends EditLabelHelper {
     }
     super.onLabelAdding(context, args)
   }
+
   /**
    * Provides the label style for newly created labels.
    *
@@ -89,6 +92,7 @@ export class CustomEditLabelHelper extends EditLabelHelper {
     }
     return super.getLabelStyle(context, owner)
   }
+
   /**
    * Provides the label model parameter for newly created labels.
    *
@@ -104,6 +108,7 @@ export class CustomEditLabelHelper extends EditLabelHelper {
     }
     return super.getLabelParameter(context, owner)
   }
+
   /**
    * This method is called when label should be edited.
    *
@@ -119,6 +124,7 @@ export class CustomEditLabelHelper extends EditLabelHelper {
         args.cancel = true
         return
       }
+
       // We are not the first label
       // return the label and disallow editing
       // If we are editing the first label, the framework will then try to add label by calling addLabel
@@ -126,6 +132,7 @@ export class CustomEditLabelHelper extends EditLabelHelper {
       args.handled = true
       return
     }
+
     // Implicit editing - this is only reached if we are trying to edit labels for an owner which does not yet have
     // any labels
     if (!this.owner) {
@@ -137,6 +144,7 @@ export class CustomEditLabelHelper extends EditLabelHelper {
       this.onLabelAdding(context, args)
       return
     }
+
     // If more than one label, edit the second one
     args.label =
       this.owner.labels.get(0).style === this.firstLabelStyle
@@ -144,12 +152,14 @@ export class CustomEditLabelHelper extends EditLabelHelper {
         : this.owner.labels.get(0)
     args.handled = true
   }
+
   /**
    * Customize the text editor when we are using our helper.
    */
   configureTextEditorInputMode(context, mode, labelToEdit) {
     const textBox = mode.editorContainer
     textBox.classList.add('custom-label-editor')
+
     // Restore after editing
     const afterEditing = () => {
       textBox.classList.remove('custom-label-editor')

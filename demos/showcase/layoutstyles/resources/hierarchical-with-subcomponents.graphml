@@ -66,22 +66,6 @@
 	</data>
 	<graph id="G" edgedefault="directed">
 		<node id="n0">
-			<data key="d0">
-				<x:List>
-					<y:Label PreferredSize="0,14">
-						<y:Label.LayoutParameter>
-							<yx:FreeNodeLabelModelParameter LayoutOffset="38,18"/>
-						</y:Label.LayoutParameter>
-						<y:Label.Style>
-							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-								<yjs:LabelStyle.font>
-									<yjs:Font fontSize="12" fontFamily="Dialog"/>
-								</yjs:LabelStyle.font>
-							</yjs:LabelStyle>
-						</y:Label.Style>
-					</y:Label>
-				</x:List>
-			</data>
 			<data key="d1">
 				<y:RectD X="191.14999999999998" Y="447.9361702127659" Width="80" Height="40"/>
 			</data>
@@ -110,22 +94,6 @@
 			</port>
 		</node>
 		<node id="n1">
-			<data key="d0">
-				<x:List>
-					<y:Label PreferredSize="0,14">
-						<y:Label.LayoutParameter>
-							<yx:FreeNodeLabelModelParameter LayoutOffset="38,18"/>
-						</y:Label.LayoutParameter>
-						<y:Label.Style>
-							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-								<yjs:LabelStyle.font>
-									<yjs:Font fontSize="12" fontFamily="Dialog"/>
-								</yjs:LabelStyle.font>
-							</yjs:LabelStyle>
-						</y:Label.Style>
-					</y:Label>
-				</x:List>
-			</data>
 			<data key="d1">
 				<y:RectD X="191.14999999999998" Y="447.936170212766" Width="80" Height="40"/>
 			</data>
@@ -177,22 +145,6 @@
 			</port>
 		</node>
 		<node id="n3">
-			<data key="d0">
-				<x:List>
-					<y:Label PreferredSize="0,14">
-						<y:Label.LayoutParameter>
-							<yx:FreeNodeLabelModelParameter LayoutOffset="38,18"/>
-						</y:Label.LayoutParameter>
-						<y:Label.Style>
-							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-								<yjs:LabelStyle.font>
-									<yjs:Font fontSize="12" fontFamily="Dialog"/>
-								</yjs:LabelStyle.font>
-							</yjs:LabelStyle>
-						</y:Label.Style>
-					</y:Label>
-				</x:List>
-			</data>
 			<data key="d1">
 				<y:RectD X="191.14999999999998" Y="447.936170212766" Width="80" Height="40"/>
 			</data>
@@ -223,7 +175,7 @@
 		<node id="n4">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 4}" PreferredSize="15.34505450106595,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 4}">
 						<y:Label.Text>HL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -282,22 +234,6 @@
 			</port>
 		</node>
 		<node id="n5">
-			<data key="d0">
-				<x:List>
-					<y:Label PreferredSize="0,14">
-						<y:Label.LayoutParameter>
-							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
-						</y:Label.LayoutParameter>
-						<y:Label.Style>
-							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-								<yjs:LabelStyle.font>
-									<yjs:Font fontSize="12" fontFamily="Dialog"/>
-								</yjs:LabelStyle.font>
-							</yjs:LabelStyle>
-						</y:Label.Style>
-					</y:Label>
-				</x:List>
-			</data>
 			<data key="d1">
 				<y:RectD X="216.14999999999998" Y="452.936170212766" Width="30" Height="30"/>
 			</data>
@@ -318,7 +254,7 @@
 		<node id="n6">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="14.008663199979992,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>TL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -356,7 +292,7 @@
 		<node id="n7">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="14.008663199979992,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>TL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -383,7 +319,7 @@
 		<node id="n8">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="14.008663199979992,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>TL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -415,7 +351,7 @@
 		<node id="n9">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="15.34505450106595,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>HL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -451,7 +387,7 @@
 		<node id="n10">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="15.34505450106595,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>HL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -503,22 +439,6 @@
 			</port>
 		</node>
 		<node id="n12">
-			<data key="d0">
-				<x:List>
-					<y:Label PreferredSize="0,14">
-						<y:Label.LayoutParameter>
-							<yx:FreeNodeLabelModelParameter LayoutOffset="38,18"/>
-						</y:Label.LayoutParameter>
-						<y:Label.Style>
-							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-								<yjs:LabelStyle.font>
-									<yjs:Font fontSize="12" fontFamily="Dialog"/>
-								</yjs:LabelStyle.font>
-							</yjs:LabelStyle>
-						</y:Label.Style>
-					</y:Label>
-				</x:List>
-			</data>
 			<data key="d1">
 				<y:RectD X="191.14999999999998" Y="447.936170212766" Width="80" Height="40"/>
 			</data>
@@ -532,22 +452,6 @@
 			</port>
 		</node>
 		<node id="n13">
-			<data key="d0">
-				<x:List>
-					<y:Label PreferredSize="0,14">
-						<y:Label.LayoutParameter>
-							<yx:FreeNodeLabelModelParameter LayoutOffset="13,13"/>
-						</y:Label.LayoutParameter>
-						<y:Label.Style>
-							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-								<yjs:LabelStyle.font>
-									<yjs:Font fontSize="12" fontFamily="Dialog"/>
-								</yjs:LabelStyle.font>
-							</yjs:LabelStyle>
-						</y:Label.Style>
-					</y:Label>
-				</x:List>
-			</data>
 			<data key="d1">
 				<y:RectD X="216.14999999999998" Y="452.936170212766" Width="30" Height="30"/>
 			</data>
@@ -568,7 +472,7 @@
 		<node id="n14">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="16.01325015160893,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>OL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -606,7 +510,7 @@
 		<node id="n15">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="16.01325015160893,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>OL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -633,7 +537,7 @@
 		<node id="n16">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="16.01325015160893,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>OL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -660,7 +564,7 @@
 		<node id="n17">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="16.01325015160893,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>OL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -687,7 +591,7 @@
 		<node id="n18">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="16.01325015160893,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>OL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -714,7 +618,7 @@
 		<node id="n19">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 4}" PreferredSize="15.34505450106595,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 4}">
 						<y:Label.Text>HL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -755,7 +659,7 @@
 		<node id="n20">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 4}" PreferredSize="15.34505450106595,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 4}">
 						<y:Label.Text>HL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -796,7 +700,7 @@
 		<node id="n21">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="16.01325015160893,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>OL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -828,7 +732,7 @@
 		<node id="n22">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 4}" PreferredSize="15.34505450106595,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 4}">
 						<y:Label.Text>HL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -869,7 +773,7 @@
 		<node id="n23">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 4}" PreferredSize="15.34505450106595,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 4}">
 						<y:Label.Text>HL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -910,7 +814,7 @@
 		<node id="n24">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 4}" PreferredSize="15.34505450106595,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 4}">
 						<y:Label.Text>HL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle verticalTextAlignment="CENTER" horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -946,7 +850,7 @@
 		<node id="n25">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="14.008663199979992,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>TL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -973,7 +877,7 @@
 		<node id="n26">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="14.008663199979992,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>TL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -1000,7 +904,7 @@
 		<node id="n27">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="14.008663199979992,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>TL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -1027,7 +931,7 @@
 		<node id="n28">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="14.008663199979992,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>TL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -1059,7 +963,7 @@
 		<node id="n29">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="14.008663199979992,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>TL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -1104,7 +1008,7 @@
 		<node id="n31">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="16.01325015160893,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>OL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
@@ -1131,7 +1035,7 @@
 		<node id="n32">
 			<data key="d0">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 3}" PreferredSize="16.01325015160893,14">
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
 						<y:Label.Text>OL</y:Label.Text>
 						<y:Label.Style>
 							<yjs:LabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">

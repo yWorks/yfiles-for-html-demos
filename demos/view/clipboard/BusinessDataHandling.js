@@ -27,13 +27,16 @@
  **
  ***************************************************************************/
 import {} from '@yfiles/yfiles'
+
 let counter = 0
+
 /**
  * Creates an instance of ClipboardBusinessObject with a new name.
  */
 export function createNodeBusinessData() {
   return { name: `Name ${++counter}` }
 }
+
 /**
  * Returns the common name of the selected nodes if such a common name
  * exists, or the empty string otherwise.

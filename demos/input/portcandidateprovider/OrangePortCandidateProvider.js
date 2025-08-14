@@ -36,12 +36,14 @@ import {
   PortCandidate,
   PortCandidateProviderBase
 } from '@yfiles/yfiles'
+
 /**
  * This port candidate provider uses dynamic port candidates that allow
  * any location inside the node.
  */
 export class OrangePortCandidateProvider extends PortCandidateProviderBase {
   node
+
   /**
    * Creates a new instance of {@link OrangePortCandidateProvider}.
    * @param node The given node.
@@ -50,6 +52,7 @@ export class OrangePortCandidateProvider extends PortCandidateProviderBase {
     super()
     this.node = node
   }
+
   /**
    * Returns a list that contains a single dynamic port candidate. That candidate
    * allows any location inside the node layout.

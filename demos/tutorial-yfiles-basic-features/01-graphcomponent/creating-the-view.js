@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent } from '@yfiles/yfiles'
+
 export function createView() {
   // create a new graph component in the div element specified via the CSS selector
   const graphComponent = new GraphComponent('#graphComponent')

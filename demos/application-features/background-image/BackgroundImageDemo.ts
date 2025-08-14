@@ -159,6 +159,7 @@ function initializeGraph(graph: IGraph): void {
   // set the style, label and label parameter for group nodes
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: 'darkgray',
+    tabWidth: 60,
     tabPosition: 'top-trailing',
     contentAreaFill: 'white'
   })

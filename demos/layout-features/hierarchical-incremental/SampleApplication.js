@@ -29,8 +29,10 @@
 import { GraphComponent, GraphViewerInputMode, LayoutExecutor, License } from '@yfiles/yfiles'
 import { loadLayoutSampleGraph } from '@yfiles/demo-utils/LoadLayoutFeaturesSampleGraph'
 import { createFeatureLayoutConfiguration } from './HierarchicalIncremental'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
@@ -39,14 +41,17 @@ async function run() {
   graphComponent.fitGraphBounds()
   initializeUI(graphComponent)
 }
+
 function initializeUI(graphComponent) {
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   const layoutButton = document.getElementById('layout')
   layoutButton.addEventListener('click', async () => {
     const { layout, layoutData } = createFeatureLayoutConfiguration(graphComponent.graph)
     await graphComponent.applyLayoutAnimated(layout, '500ms', layoutData)
   })
 }
+
 run().then(finishLoading)

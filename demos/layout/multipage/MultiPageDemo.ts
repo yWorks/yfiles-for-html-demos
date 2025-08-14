@@ -354,14 +354,9 @@ function initializeUI(): void {
 function initializeCoreLayouts(): void {
   const hierarchicalLayout = new HierarchicalLayout()
 
-  const organicLayout = new OrganicLayout({
-    defaultMinimumNodeDistance: 10,
-    deterministic: true
-  })
+  const organicLayout = new OrganicLayout({ defaultMinimumNodeDistance: 10, deterministic: true })
 
-  const treeLayout = new TreeLayout({
-    defaultSubtreePlacer: new CompactSubtreePlacer()
-  })
+  const treeLayout = new TreeLayout({ defaultSubtreePlacer: new CompactSubtreePlacer() })
 
   const additionalParentCount = document.querySelector<HTMLInputElement>('#additionalParentCount')!
   const coreLayoutComboBox = document.querySelector<HTMLSelectElement>('#coreLayoutComboBox')!

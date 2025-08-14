@@ -28,10 +28,7 @@
  ***************************************************************************/
 import type { INode } from '@yfiles/yfiles'
 
-export type NodeHighlightInfo = {
-  sourceHighlight: boolean
-  targetHighlight: boolean
-}
+export type NodeHighlightInfo = { sourceHighlight: boolean; targetHighlight: boolean }
 
 export function getNodeHighlightInfo(node: INode): NodeHighlightInfo {
   if (node.tag === null || node.tag === undefined) {

@@ -38,6 +38,7 @@ import {
   TreeLayoutPortAssigner,
   TreeLayoutPortAssignmentMode
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to configure {@link TreeLayout}.
  * @param graph The graph to be laid out
@@ -47,8 +48,10 @@ import {
 export function createFeatureLayoutConfiguration(graph) {
   // instantiate the tree layout algorithm
   const layout = new TreeLayout()
+
   // change the orientation to left-to-right (horizontal flow)
   layout.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
+
   // configure the single layer subtree placer
   layout.defaultSubtreePlacer = new SingleLayerSubtreePlacer({
     // increase the distances the elements must keep from each other vertically and horizontally
@@ -65,13 +68,16 @@ export function createFeatureLayoutConfiguration(graph) {
     // grouped edge routing style)
     minimumChannelSegmentDistance: 6
   })
+
   // define a port assignment that distributes the ports (due to the global orientation change
   // evenly on the side of their nodes
   layout.defaultPortAssigner = new TreeLayoutPortAssigner({
     mode: TreeLayoutPortAssignmentMode.DISTRIBUTED
   })
+
   // create layout data object to specify item-individual settings
   const layoutData = new TreeLayoutData()
+
   // define a comparison function for the out-edges at a tree node such that the respective
   // child nodes are order with respect to the label text (if they have a label)
   layoutData.childOrder.outEdgeComparators = () => (edge1, edge2) => {
@@ -83,5 +89,6 @@ export function createFeatureLayoutConfiguration(graph) {
     }
     return 0
   }
+
   return { layout, layoutData }
 }

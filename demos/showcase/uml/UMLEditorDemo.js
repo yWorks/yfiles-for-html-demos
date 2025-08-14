@@ -52,6 +52,7 @@ import {
   Rect,
   Size
 } from '@yfiles/yfiles'
+
 import {
   createAggregationStyle,
   createGeneralizationStyle,
@@ -63,29 +64,38 @@ import { UMLClassModelExtension } from './UMLClassModel'
 import UMLStyle, { UMLNodeStyle, UMLNodeStyleSerializationListener } from './UMLNodeStyle'
 import { ButtonInputMode, ButtonTrigger } from '../../input/button-input-mode/ButtonInputMode'
 import { createEdgeCreationButtons, createExtensibilityButtons } from './UMLContextButtonFactory'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
+
 let graphComponent
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
   // configure the input mode
   graphComponent.inputMode = createInputMode()
+
   // use two finger panning to allow easier editing with touch gestures
   configureTwoPointerPanning(graphComponent)
+
   // configures default styles for newly created graph elements
   graphComponent.graph.nodeDefaults.style = new UMLNodeStyle(new umlModel.UMLClassModel())
   graphComponent.graph.nodeDefaults.shareStyleInstance = false
   graphComponent.graph.nodeDefaults.size = new Size(125, 100)
+
   // bootstrap the sample graph
   generateSampleGraph()
   await executeLayout()
+
   graphComponent.graph.undoEngineEnabled = true
+
   // bind the demo buttons to their functionality
   initializeUI()
 }
+
 function executeLayout() {
   // configures the hierarchical layout
   const layout = new HierarchicalLayout()
@@ -93,6 +103,7 @@ function executeLayout() {
   eld.minimumFirstSegmentLength = 25
   eld.minimumLastSegmentLength = 25
   eld.minimumDistance = 25
+
   const layoutData = new HierarchicalLayoutData({
     // mark all inheritance edges (generalization, realization) as directed so their target nodes
     // will be placed above their source nodes
@@ -104,8 +115,10 @@ function executeLayout() {
     sourceGroupIds: (edge) => getGroupId(edge, `src-${edge.sourceNode}`),
     targetGroupIds: (edge) => getGroupId(edge, `tgt-${edge.targetNode}`)
   })
+
   return graphComponent.applyLayoutAnimated(layout, '500ms', layoutData)
 }
+
 /**
  * Returns an edge group id according to the edge style.
  */
@@ -121,6 +134,7 @@ function getGroupId(edge, marker) {
   }
   return null
 }
+
 /**
  * Configure interaction.
  */
@@ -136,6 +150,7 @@ function createInputMode() {
     },
     allowAddLabel: false
   })
+
   // configure createEdgeInputMode to also create a node if edge creation ends on an empty canvas
   const createEdgeInputMode = mode.createEdgeInputMode
   createEdgeInputMode.previewGraph.nodeDefaults.style = new UMLNodeStyle(
@@ -179,6 +194,7 @@ function createInputMode() {
       templateEdge
     )
   }
+
   // add input mode that handles the edge creations buttons
   // const umlContextButtonsInputMode = new UMLContextButtonsInputMode()
   // umlContextButtonsInputMode.priority = mode.clickInputMode.priority - 1
@@ -196,23 +212,28 @@ function createInputMode() {
     }
   })
   mode.add(bim)
+
   // execute a layout after certain gestures
   mode.moveSelectedItemsInputMode.addEventListener('drag-finished', () => routeEdges())
   mode.moveUnselectedItemsInputMode.addEventListener('drag-finished', () => routeEdges())
   mode.handleInputMode.addEventListener('drag-finished', () => routeEdges())
   createEdgeInputMode.addEventListener('edge-created', () => routeEdges())
+
   // hide the edge creation buttons when the empty canvas was clicked
   mode.addEventListener('canvas-clicked', () => {
     graphComponent.currentItem = null
   })
+
   // the UMLNodeStyle should handle clicks itself
   mode.addEventListener('item-clicked', (evt, inputMode) => {
     if (evt.item instanceof INode && evt.item.style instanceof UMLNodeStyle) {
       evt.item.style.nodeClicked(inputMode, evt)
     }
   })
+
   return mode
 }
+
 /**
  * Routes edges which need to be re-routed. This is called after an input gesture.
  */
@@ -220,6 +241,7 @@ async function routeEdges() {
   const edgeRouter = new EdgeRouter()
   const edgeRouterData = new EdgeRouterData()
   edgeRouterData.scope.edgeMapping = EdgeRouterScope.SEGMENTS_AS_NEEDED
+
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
     layout: edgeRouter,
@@ -229,11 +251,13 @@ async function routeEdges() {
   })
   await layoutExecutor.start()
 }
+
 /**
  * Creates a sample graph.
  */
 function generateSampleGraph() {
   const graph = graphComponent.graph
+
   const iAddressable = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -245,6 +269,7 @@ function generateSampleGraph() {
       Color.SEA_GREEN
     )
   })
+
   const user = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -254,6 +279,7 @@ function generateSampleGraph() {
       })
     )
   })
+
   const sessionManager = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -263,6 +289,7 @@ function generateSampleGraph() {
       })
     )
   })
+
   const product = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -272,6 +299,7 @@ function generateSampleGraph() {
       })
     )
   })
+
   const category = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -281,6 +309,7 @@ function generateSampleGraph() {
       })
     )
   })
+
   const department = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -290,6 +319,7 @@ function generateSampleGraph() {
       })
     )
   })
+
   const customer = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -299,6 +329,7 @@ function generateSampleGraph() {
       })
     )
   })
+
   const administrator = graph.createNode({
     style: new UMLNodeStyle(
       new umlModel.UMLClassModel({
@@ -308,6 +339,7 @@ function generateSampleGraph() {
       })
     )
   })
+
   graph.createEdge(sessionManager, user, createAggregationStyle())
   graph.createEdge(department, sessionManager, createAggregationStyle())
   graph.createEdge(department, category, createAggregationStyle())
@@ -315,18 +347,22 @@ function generateSampleGraph() {
   graph.createEdge(user, customer, createGeneralizationStyle())
   graph.createEdge(user, administrator, createGeneralizationStyle())
   graph.createEdge(iAddressable, user, createRealizationStyle())
+
   graph.nodes.forEach((node) => {
     if (node.style instanceof UMLNodeStyle) {
       node.style.adjustSize(node, graphComponent.inputMode)
     }
   })
 }
+
 /**
  * Enables loading and saving the demo's model graph from and to GraphML.
  */
 function enableGraphML() {
   const graphMLIOHandler = new GraphMLIOHandler()
+
   const namespaceUri = 'http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0'
+
   // enable serialization of the UML styles - without a namespace mapping, serialization will fail
   graphMLIOHandler.addXamlNamespaceMapping(namespaceUri, UMLStyle)
   graphMLIOHandler.addXamlNamespaceMapping(namespaceUri, umlModel)
@@ -349,6 +385,7 @@ function enableGraphML() {
   })
   return graphMLIOHandler
 }
+
 function initializeUI() {
   const graphMLIOHandler = enableGraphML()
   document.querySelector('#layout').addEventListener('click', executeLayout)
@@ -359,4 +396,5 @@ function initializeUI() {
     await saveGraphML(graphComponent, 'umlEditor.graphml', graphMLIOHandler)
   })
 }
+
 run().then(finishLoading)

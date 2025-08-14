@@ -36,6 +36,7 @@ import {
   Visual
 } from '@yfiles/yfiles'
 import MarkdownIt from 'markdown-it'
+
 /**
  * A wrapper for {@link MarkupLabelStyle} that converts Markdown to markup on the fly.
  */
@@ -43,58 +44,70 @@ export class MarkdownLabelStyle extends LabelStyleBase {
   markupLabelStyle
   // the Markdown parser/renderer
   static markdownIt = new MarkdownIt()
+
   simpleLabel = new SimpleLabel()
   markupCache = new WeakMap()
+
   constructor(markupLabelStyle) {
     super()
     this.markupLabelStyle = markupLabelStyle
   }
+
   createVisual(context, label) {
     return this.markupLabelStyle.renderer
       .getVisualCreator(this.getMarkupLabel(label), this.markupLabelStyle)
       .createVisual(context)
   }
+
   updateVisual(context, oldVisual, label) {
     return this.markupLabelStyle.renderer
       .getVisualCreator(this.getMarkupLabel(label), this.markupLabelStyle)
       .updateVisual(context, oldVisual)
   }
+
   getBounds(context, label) {
     return this.markupLabelStyle.renderer
       .getBoundsProvider(this.getMarkupLabel(label), this.markupLabelStyle)
       .getBounds(context)
   }
+
   getPreferredSize(label) {
     return this.markupLabelStyle.renderer.getPreferredSize(
       this.getMarkupLabel(label),
       this.markupLabelStyle
     )
   }
+
   isHit(context, location, label) {
     return this.markupLabelStyle.renderer
       .getHitTestable(this.getMarkupLabel(label), this.markupLabelStyle)
       .isHit(context, location)
   }
+
   isInBox(context, rectangle, label) {
     return this.markupLabelStyle.renderer
       .getMarqueeTestable(this.getMarkupLabel(label), this.markupLabelStyle)
       .isInBox(context, rectangle)
   }
+
   isInPath(context, path, label) {
     return this.markupLabelStyle.renderer
       .getLassoTestable(this.getMarkupLabel(label), this.markupLabelStyle)
       .isInPath(context, path)
   }
+
   isVisible(context, rectangle, label) {
     return this.markupLabelStyle.renderer
       .getVisibilityTestable(this.getMarkupLabel(label), this.markupLabelStyle)
       .isVisible(context, rectangle)
   }
+
   lookup(label, type) {
     return this.markupLabelStyle.renderer
       .getContext(this.getMarkupLabel(label), this.markupLabelStyle)
       .lookup(type)
   }
+
   /**
    * Returns a new label with the Markdown text replaced with markup text.
    */
@@ -107,6 +120,7 @@ export class MarkdownLabelStyle extends LabelStyleBase {
     this.simpleLabel.tag = label.tag
     return this.simpleLabel
   }
+
   /**
    * Converts the Markdown text to markup and caches it for faster conversion
    * in the future.
@@ -114,14 +128,12 @@ export class MarkdownLabelStyle extends LabelStyleBase {
   getMarkupText(label) {
     let cacheEntry = this.markupCache.get(label)
     if (!cacheEntry || cacheEntry.markdown !== label.text) {
-      cacheEntry = {
-        markdown: label.text,
-        markup: MarkdownLabelStyle.getMarkupText(label.text)
-      }
+      cacheEntry = { markdown: label.text, markup: MarkdownLabelStyle.getMarkupText(label.text) }
       this.markupCache.set(label, cacheEntry)
     }
     return cacheEntry.markup
   }
+
   /**
    * Converts the given Markdown text into HTML markup.
    * @param markdownText The label Markdown text

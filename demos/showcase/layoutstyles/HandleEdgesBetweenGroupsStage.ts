@@ -112,9 +112,7 @@ export class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
 
         if (this.considerEdgeLabels) {
           // place marked labels
-          const labeling = new GenericLabeling({
-            scope: 'edge-labels'
-          })
+          const labeling = new GenericLabeling({ scope: 'edge-labels' })
           const labelingData = labeling.createLayoutData(graph)
           // all labels of hidden edges should be marked
           labelingData.scope.edgeLabels = (edgeLabel) =>

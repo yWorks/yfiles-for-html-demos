@@ -2,9 +2,7 @@
 import { defineComponent } from 'vue'
 import DiagramComponent from '@/components/DiagramComponent.vue'
 
-export default defineComponent({
-  components: { DiagramComponent }
-})
+export default defineComponent({ components: { DiagramComponent } })
 </script>
 
 <template>

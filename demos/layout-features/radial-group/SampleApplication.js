@@ -41,24 +41,31 @@ import { colorSets, createDemoNodeLabelStyle } from '@yfiles/demo-resources/demo
 import { createFeatureLayoutConfiguration } from './RadialGroup'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 const groupTheme = 'demo-palette-44'
 const nonOverlapTheme = 'demo-palette-47'
 const overlapTheme = 'demo-palette-48'
+
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // initialize the styles of the graph items to look good for the cactus layout
   initializeStyleDefaults(graphComponent.graph)
+
   // load the sample graph
   await loadSampleGraph(graphComponent.graph)
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   // configure and apply the cactus layout to the graph
   const { layout, layoutData } = createFeatureLayoutConfiguration(graphComponent.graph)
   await graphComponent.applyLayoutAnimated(layout, '0s', layoutData)
 }
+
 /**
  * Initializes the style defaults for the graph so that it uses group nodes
  * and bezier edges which are appropriate for the cactus group layout.
@@ -70,12 +77,14 @@ function initializeStyleDefaults(graph) {
     stroke: `1.5px ${colorSets[groupTheme].stroke}`,
     shape: 'ellipse'
   })
+
   // use BezierEdgeStyle for edges since the cactus layout can yield bezier control points (optional)
   graph.edgeDefaults.style = new BezierEdgeStyle({
     stroke: `1.5px ${colorSets[overlapTheme].stroke}`,
     targetArrow: `${colorSets[overlapTheme].stroke} small triangle`
   })
 }
+
 /**
  * Loads the sample graph from the json file.
  * @yjs:keep = nodeList, edgeList
@@ -84,8 +93,10 @@ async function loadSampleGraph(graph) {
   // get the currently selected sample data
   const response = await fetch('sample.json')
   const data = await response.json()
+
   // use the graph builder to create the graph items from the sample data
   const builder = new GraphBuilder(graph)
+
   // define source and creation options for nodes and group nodes
   const nodesSource = builder.createNodesSource({
     data: data.nodeList.filter((node) => !node.isGroup),
@@ -101,6 +112,7 @@ async function loadSampleGraph(graph) {
     layout: 'layout',
     parentId: 'parent'
   })
+
   nodesSource.nodeCreator.styleProvider = (item) => {
     const theme = item.tag && item.tag.avoidParentOverlap ? nonOverlapTheme : overlapTheme
     // use round nodes which are typical for cactus layouts
@@ -110,6 +122,7 @@ async function loadSampleGraph(graph) {
       shape: 'ellipse'
     })
   }
+
   const labelCreator = nodesSource.nodeCreator.createLabelsSource((item) => [
     !!(item.tag && item.tag.avoidParentOverlap)
   ]).labelCreator
@@ -121,6 +134,7 @@ async function loadSampleGraph(graph) {
     labelStyle.padding = [2, 6, 1, 5]
     return labelStyle
   }
+
   // define a source for creation of edges
   builder.createEdgesSource({
     data: data.edgeList,
@@ -129,7 +143,9 @@ async function loadSampleGraph(graph) {
     sourceId: 'source',
     targetId: 'target'
   })
+
   // build the graph
   builder.buildGraph()
 }
+
 run().then(finishLoading)

@@ -34,13 +34,16 @@ import {
   LayoutData,
   PortSides
 } from '@yfiles/yfiles'
+
 export function createHierarchicalLayoutConfiguration() {
   const layout = new HierarchicalLayout()
   const defaultEdgeDescriptor = layout.defaultEdgeDescriptor
   defaultEdgeDescriptor.minimumFirstSegmentLength = 5
   defaultEdgeDescriptor.minimumLastSegmentLength = 5
   defaultEdgeDescriptor.routingStyleDescriptor.defaultRoutingStyle = 'curved'
+
   layout.defaultNodeDescriptor.layerAlignment = 0.5
+
   layout.layoutOrientation = 'left-to-right'
   // specify a preferred maximum duration to prevent very long runtimes for LARGE graphs
   layout.stopDuration = '5s'
@@ -57,6 +60,7 @@ export function createHierarchicalLayoutConfiguration() {
   layout.coordinateAssigner.symmetryOptimizationStrategy = 'none'
   // reflects our standard spacing so that nodes end up aligned with the snap grid
   layout.gridSpacing = 15
+
   // create and configure layout data for the hierarchical layout algorithm
   // this makes sure that edges start and end in the correct ports
   const layoutData = new HierarchicalLayoutData()
@@ -64,5 +68,6 @@ export function createHierarchicalLayoutConfiguration() {
     PortSides.RIGHT
   )
   layoutData.ports.targetPortCandidates = new EdgePortCandidates().addFixedCandidate(PortSides.LEFT)
+
   return { layout, layoutData }
 }

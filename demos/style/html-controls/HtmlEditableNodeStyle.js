@@ -28,9 +28,11 @@
  ***************************************************************************/
 import { HtmlVisual, NodeStyleBase } from '@yfiles/yfiles'
 import { avatars, statusValues } from './data'
+
 const avatarImages = avatars
   .map((path) => `<img class='editable-node-style__avatar-select-image' src="${path}">`)
   .join('')
+
 /**
  * A custom HTML-based node style that uses both native HTML input elements and a custom
  * image selection grid to enable interactive editing of the node data.
@@ -46,19 +48,23 @@ export class HtmlEditableNodeStyle extends NodeStyleBase {
     this.createContent(context, div, node)
     return visual
   }
+
   updateVisual(context, oldVisual, node) {
     HtmlVisual.setLayout(oldVisual.element, node.layout)
     return oldVisual
   }
+
   /**
    * We only have to implement createContent() for this use case.
    * The base style takes care of updating the position of the container element in updateVisual().
    */
   createContent(context, element, node) {
     const data = node.tag
+
     const statusOptions = statusValues.map(
       (status) => `<option${status === data.status ? ' selected' : ''}>${status}</option>`
     )
+
     element.innerHTML = `
       <div class='editable-node-style'>
         <form class='editable-node-style__form'>
@@ -87,7 +93,9 @@ export class HtmlEditableNodeStyle extends NodeStyleBase {
        </form>
       </div>
     `
+
     setStatusClass(element.firstElementChild, data)
+
     const inputs = element.querySelectorAll('.editable-node-style__input')
     const submit = element.querySelector('.editable-node-style__submit')
     const form = element.querySelector('.editable-node-style__form')
@@ -95,9 +103,11 @@ export class HtmlEditableNodeStyle extends NodeStyleBase {
     const name = element.querySelector('.editable-node-style__name')
     const avatarImage = element.querySelector('.editable-node-style__avatar-image')
     const avatarSelectImages = element.querySelectorAll('.editable-node-style__avatar-select-image')
+
     function toggleAvatarSelecting() {
       avatar.classList.toggle('editable-node-style__avatar-selecting')
     }
+
     avatarImage.addEventListener('click', toggleAvatarSelecting, { capture: true })
     for (const selectImg of avatarSelectImages) {
       selectImg.addEventListener(
@@ -110,6 +120,7 @@ export class HtmlEditableNodeStyle extends NodeStyleBase {
         { capture: true }
       )
     }
+
     for (const input of [...inputs, avatarImage, ...avatarSelectImages]) {
       // Show the submit-button as soon as the content was edited
       input.addEventListener('input', function () {
@@ -127,16 +138,20 @@ export class HtmlEditableNodeStyle extends NodeStyleBase {
       data.since = since
       data.status = status
       data.description = description
+
       submit.disabled = true
+
       // Select the node (re-selecting it if necessary) to cause the node data view to update
       const graphComponent = context.canvasComponent
       graphComponent.selection.clear()
       graphComponent.selection.add(node)
+
       setStatusClass(element.firstElementChild, data)
       evt.preventDefault()
     })
   }
 }
+
 function setStatusClass(element, data) {
   for (const status of statusValues) {
     const className = `editable-node-style--${status}`
@@ -147,9 +162,11 @@ function setStatusClass(element, data) {
     }
   }
 }
+
 function stopPropagation(e) {
   e.stopPropagation()
 }
+
 function preventPropagation(element) {
   for (const eventName of [
     'click',
@@ -166,6 +183,7 @@ function preventPropagation(element) {
     element.addEventListener(eventName, stopPropagation)
   }
 }
+
 function extractName(path) {
   return path.substring(path.lastIndexOf('_') + 1, path.lastIndexOf('.'))
 }

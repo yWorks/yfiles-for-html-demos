@@ -41,14 +41,18 @@ import {
 } from '@yfiles/yfiles'
 import licenseData from '../../../lib/license.json'
 import { RotatedNodeLayoutStage } from './RotatedNodeLayoutStage'
+
 // register the yFiles license in the worker as well
 License.value = licenseData
+
 // initialize the helper class that handles the messaging between the main thread and the worker
 LayoutExecutorAsyncWorker.initializeWebWorker((graph, layoutDescriptor) => {
   let layout = null
+
   // The routing mode that suits the selected layout algorithm. Layout algorithms that place edge
   // ports in the center of the node don't need to add a routing step.
   let edgeRoutingMode = 'no-routing'
+
   const name = layoutDescriptor.name
   if (name === 'HierarchicalLayout') {
     // create and apply a new hierarchical layout using the given layout properties
@@ -83,6 +87,7 @@ LayoutExecutorAsyncWorker.initializeWebWorker((graph, layoutDescriptor) => {
   } else {
     throw new Error(`Unknown layoutDescriptor.name: ${name}`)
   }
+
   if (layout) {
     const rotatedNodeLayout = new RotatedNodeLayoutStage(layout)
     rotatedNodeLayout.edgeRoutingMode = edgeRoutingMode

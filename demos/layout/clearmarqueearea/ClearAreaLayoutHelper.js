@@ -44,6 +44,7 @@ import {
   LayoutExecutor,
   Rect
 } from '@yfiles/yfiles'
+
 /**
  * Performs layout and animation while dragging the marquee rectangle.
  */
@@ -52,34 +53,41 @@ export class ClearAreaLayoutHelper {
    * Performs the layout and the animation.
    */
   executor
+
   /**
    * The graph that is displayed.
    */
   get graph() {
     return this.graphComponent.graph
   }
+
   /**
    * The control that displays the graph.
    */
   graphComponent
+
   /**
    * The graph layout copy that stores the original layout before the marquee rectangle has been dragged.
    */
   resetToOriginalGraphStageData
+
   /**
    * The marquee rectangle.
    */
   clearRectangle
+
   /**
    * The group node within which the marquee was created, otherwise null.
    */
   groupNode
+
   /**
    * The {@link ILayoutAlgorithm} that makes space for the marquee rectangle.
    */
   clearAreaLayout
   componentAssignmentStrategy
   clearAreaStrategy
+
   /**
    * Initializes the helper.
    */
@@ -104,6 +112,7 @@ export class ClearAreaLayoutHelper {
     this.executor = null
     this.resetToOriginalGraphStageData = null
   }
+
   /**
    * Creates a {@link GivenCoordinatesLayoutData} that store the layout of nodes and edges.
    */
@@ -118,6 +127,7 @@ export class ClearAreaLayoutHelper {
     }
     return data
   }
+
   /**
    * A {@link LayoutExecutor} that is used while dragging the marquee rectangle.
    *
@@ -134,6 +144,7 @@ export class ClearAreaLayoutHelper {
       animateViewport: false
     })
   }
+
   /**
    * A {@link LayoutExecutor} that is used after the drag is canceled.
    *
@@ -147,6 +158,7 @@ export class ClearAreaLayoutHelper {
       animationDuration: '150ms'
     })
   }
+
   /**
    * Creates a {@link ILayoutAlgorithm} used while dragging and finishing the gesture.
    */
@@ -158,37 +170,42 @@ export class ClearAreaLayoutHelper {
     })
     return new GivenCoordinatesLayout(this.clearAreaLayout)
   }
+
   /**
    * Creates a {@link LayoutData} used while dragging and finishing the gesture.
    */
   createDraggingLayoutData() {
     return new CompositeLayoutData(
       this.resetToOriginalGraphStageData,
-      new ClearAreaLayoutData({
-        areaGroupNode: (node) => node === this.groupNode
-      })
+      new ClearAreaLayoutData({ areaGroupNode: (node) => node === this.groupNode })
     )
   }
+
   /**
    * A lock which prevents re-entrant layout execution.
    */
   layoutIsRunning
+
   /**
    * Indicates whether a layout run has been requested while running a layout calculation.
    */
   layoutPending
+
   /**
    * Indicates that the gesture has been canceled and the original layout should be restored.
    */
   canceled
+
   /**
    * Indicates that the gesture has been finished and the new layout should be applied.
    */
   stopped
+
   /**
    * Creates a single unit to undo and redo the complete reparent gesture.
    */
   layoutEdit
+
   /**
    * Starts a layout calculation if none is already running.
    */
@@ -213,6 +230,7 @@ export class ClearAreaLayoutHelper {
       // repeat if another layout has been requested in the meantime
     } while (this.layoutPending)
   }
+
   /**
    * Prepares the layout execution.
    */
@@ -221,6 +239,7 @@ export class ClearAreaLayoutHelper {
     this.resetToOriginalGraphStageData = this.createGivenCoordinateStageData()
     this.executor = this.createDraggingLayoutExecutor()
   }
+
   /**
    * Cancels the current layout calculation.
    */
@@ -229,6 +248,7 @@ export class ClearAreaLayoutHelper {
     this.canceled = true
     await this.runLayout()
   }
+
   /**
    * Stops the current layout calculation.
    */
@@ -237,6 +257,7 @@ export class ClearAreaLayoutHelper {
     this.stopped = true
     await this.runLayout()
   }
+
   /**
    * Called before a layout run starts.
    */
@@ -248,6 +269,7 @@ export class ClearAreaLayoutHelper {
       this.clearAreaLayout.area = this.clearRectangle
     }
   }
+
   /**
    * Called after the a layout run finished.
    */

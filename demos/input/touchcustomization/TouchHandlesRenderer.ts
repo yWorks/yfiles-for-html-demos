@@ -38,9 +38,7 @@ import {
 /**
  * Keep the information, whether this is our custom handles visualization.
  */
-type SVGTaggedGElement = SVGGElement & {
-  customHandlesElement?: boolean
-}
+type SVGTaggedGElement = SVGGElement & { customHandlesElement?: boolean }
 
 /**
  * Renders large handles for resize and move as circles.

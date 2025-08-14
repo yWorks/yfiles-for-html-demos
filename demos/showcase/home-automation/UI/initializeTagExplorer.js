@@ -29,6 +29,7 @@
 import { GraphComponent, INode } from '@yfiles/yfiles'
 import { hiddenProperties, isFlowNode, lockedProperties } from '../FlowNode/FlowNode'
 import { showErrorDialog } from './showErrorDialog'
+
 export function initializeTagExplorer(graphComponent) {
   // Use selection event instead of currentItemChanged event to be able to clear tag explorer when no item is selected
   graphComponent.selection.addEventListener('item-added', () => {
@@ -40,20 +41,24 @@ export function initializeTagExplorer(graphComponent) {
       if (!isFlowNode(node)) {
         return
       }
+
       populateTagExplorer(node)
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Error initializing node properties panel'
       showErrorDialog({ title: message, message })
     }
   })
+
   // Repopulate current tag manager view with updated tags whenever tag is changed by outside source, e.g. undo-redo
   graphComponent.graph.addEventListener('node-tag-changed', (evt) => {
     const graphSelection = graphComponent.selection
     if (graphSelection.nodes.size === 0) {
       return
     }
+
     const changedNode = evt.item
     const selectedNode = graphSelection.nodes.first()
+
     if (
       !selectedNode ||
       !changedNode ||
@@ -62,12 +67,15 @@ export function initializeTagExplorer(graphComponent) {
     ) {
       return
     }
+
     populateTagExplorer(selectedNode)
   })
 }
+
 function populateTagExplorer(selectedNode) {
   const list = document.getElementById('tags-explorer-list')
   list.innerHTML = ''
+
   const tagKeys = Object.keys(selectedNode.tag)
   tagKeys
     .filter((key) => !hiddenProperties.includes(key))
@@ -82,12 +90,14 @@ function populateTagExplorer(selectedNode) {
       )
     })
 }
+
 function createTagInputLine({ name, initValue, node, validate }) {
   const inputName = name
   const label = document.createElement('label')
   label.setAttribute('for', inputName)
   label.className = 'tags-explorer-list-label'
   label.innerHTML = inputName + ':'
+
   const item = document.createElement('li')
   const input = document.createElement('input')
   input.setAttribute('id', inputName)
@@ -96,6 +106,7 @@ function createTagInputLine({ name, initValue, node, validate }) {
   if (lockedProperties.includes(name)) {
     input.setAttribute('disabled', 'true')
   }
+
   input.addEventListener('change', (event) => {
     if (!event.target || !(event instanceof Event) || !(event.target instanceof HTMLInputElement)) {
       return
@@ -104,8 +115,10 @@ function createTagInputLine({ name, initValue, node, validate }) {
     // validate tags on each change of input
     const validation = validate(newTags)
     configureValidationClassOnListItem(item, validation, name)
+
     node.tag = newTags
   })
+
   input.className = 'tags-explorer-list-input'
   item.appendChild(label)
   item.appendChild(input)
@@ -113,8 +126,10 @@ function createTagInputLine({ name, initValue, node, validate }) {
   // validate tags on initial render of input
   const validation = validate(node.tag)
   configureValidationClassOnListItem(item, validation, name)
+
   return item
 }
+
 function configureValidationClassOnListItem(item, validation, name) {
   if (validation.invalidProperties.includes(String(name))) {
     item.classList.add('tags-explorer-list-item__invalid')

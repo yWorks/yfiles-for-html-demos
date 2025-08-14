@@ -56,9 +56,7 @@ async function run(): Promise<void> {
 
   const graphComponent = new GraphComponent('graphComponent')
   // Disable node creation since they wouldn't have an HTML label anyway
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowCreateNode: false
-  })
+  graphComponent.inputMode = new GraphEditorInputMode({ allowCreateNode: false })
 
   // Apply default styling
   const graph = graphComponent.graph
@@ -81,10 +79,7 @@ async function run(): Promise<void> {
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
     new HierarchicalLayout({
-      defaultEdgeDescriptor: {
-        minimumFirstSegmentLength: 30,
-        minimumLastSegmentLength: 30
-      }
+      defaultEdgeDescriptor: { minimumFirstSegmentLength: 30, minimumLastSegmentLength: 30 }
     })
   )
   await graphComponent.fitGraphBounds()
@@ -100,10 +95,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   const graphBuilder = new GraphBuilder(graph)
 
   graphBuilder
-    .createNodesSource({
-      data: graphData.nodeList,
-      id: (item) => item.id
-    })
+    .createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
     .nodeCreator.createLabelBinding((item) => item.label)
 
   graphBuilder.createEdgesSource({

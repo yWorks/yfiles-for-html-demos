@@ -236,9 +236,7 @@ export class ClearAreaLayoutHelper {
    */
   private createFinishedLayoutExecutor(): LayoutExecutor {
     const layout = new GivenCoordinatesLayout(
-      new ClearAreaLayout({
-        clearAreaStrategy: ClearAreaStrategy.PRESERVE_SHAPES
-      })
+      new ClearAreaLayout({ clearAreaStrategy: ClearAreaStrategy.PRESERVE_SHAPES })
     )
 
     const layoutData = new CompositeLayoutData(this.resetToOriginalGraphStageData)

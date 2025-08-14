@@ -34,20 +34,27 @@ import {
   fitGraphBounds,
   initializeTutorialDefaults
 } from '../common'
+
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { CustomEdgeStyle } from './CustomEdgeStyle'
 import { initializeInlineGraphComponent } from '../../tutorial-style-implementation-node/common'
 import { CustomEdgeStyle as OldCustomEdgeStyle } from '../07-hit-testing/CustomEdgeStyle'
 import { enableBridges } from './enable-bridges'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 enableBridges(graphComponent)
 initializeTutorialDefaults(graphComponent)
 createSampleGraphBridges(graphComponent.graph, new CustomEdgeStyle(2))
+
 enableGraphEditing(graphComponent)
+
 // Inline old state
 const oldState = initializeInlineGraphComponent('#old-state')
 createSampleGraphBridges(oldState.graph, new OldCustomEdgeStyle(2))
+
 fitGraphBounds(oldState)
+
 fitGraphBounds(graphComponent)
 finishLoading()

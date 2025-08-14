@@ -39,6 +39,7 @@ import {
   IPositionHandler,
   Point
 } from '@yfiles/yfiles'
+
 /**
  * An {@link IPositionHandler} which lets the user change the order of rows by dragging on them.
  * It uses the port's {@link IHandle}s to keep the adjacent edges orthogonal.
@@ -49,11 +50,13 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
   currentIndex = -1
   originalState = []
   portHandle = new Map()
+
   constructor(node, index) {
     super()
     this.node = node
     this.index = index
   }
+
   /**
    * The drag has been canceled: restore the original state and clean up.
    */
@@ -66,6 +69,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     }
     nodeInfo.draggingIndex = null
   }
+
   /**
    * The drag has been successfully finished.
    * Update the locations and clean up.
@@ -73,6 +77,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
   dragFinished(context, originalLocation, newLocation) {
     const nodeInfo = this.node.tag
     this.handleMove(context, originalLocation, newLocation)
+
     const nodeLocationY = this.node.layout.y
     for (let i = 0; i < this.originalState.length; i++) {
       const portMoveInfo = this.originalState[i]
@@ -95,6 +100,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
             )
           )
         }
+
         if (!incoming) {
           context.graph.setPortLocationParameter(
             port,
@@ -108,6 +114,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     }
     nodeInfo.draggingIndex = null
   }
+
   /**
    * Called during drag: update the locations.
    */
@@ -117,13 +124,16 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     if (newIndex < 0 || newIndex >= this.node.tag.rows.length || newIndex == this.currentIndex) {
       return
     }
+
     const nodeInfo = this.node.tag
     const rowInfo = nodeInfo.rows[this.currentIndex]
     const ports = getPortForData(this.node, rowInfo)
     const otherInfo = nodeInfo.rows[newIndex]
     const otherPorts = getPortForData(this.node, otherInfo)
+
     nodeInfo.rows[this.currentIndex] = otherInfo
     nodeInfo.rows[newIndex] = rowInfo
+
     ports.forEach((port) => {
       const newMoveInfo = this.portHandle.get(port)
       newMoveInfo.handle.handleMove(
@@ -149,6 +159,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     this.currentIndex = newIndex
     nodeInfo.draggingIndex = newIndex
   }
+
   /**
    * Called when the drag gesture is started.
    *
@@ -180,9 +191,11 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
       })
     }
   }
+
   get location() {
     return Point.ORIGIN
   }
+
   /**
    * Determines the index of the row that contains the given y-coordinate.
    * @param style the style to query.
@@ -195,6 +208,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
     return style.getRowIndex(this.node, new Point(nl.x + nl.width * 0.5, y))
   }
 }
+
 /**
  * Returns the port for the row identified by the given row information.
  * @param node the node whose is queried for a port.
@@ -203,6 +217,7 @@ export class RowPositionHandler extends BaseClass(IPositionHandler) {
 export function getPortForData(node, rowInfo) {
   return node.ports.filter((p) => p.tag.rowInfo === rowInfo)
 }
+
 /**
  * Creates a port location parameter for the row with the given index that is anchored at the
  * owner nodes top left or top right corner.

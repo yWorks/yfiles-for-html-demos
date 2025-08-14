@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { CollapsibleNodeStyleDecorator, IRenderContext, Size } from '@yfiles/yfiles'
+
 /**
  * Provides a customized visualization of the collapse/expand button of a group node.
  */
@@ -34,6 +35,7 @@ export class Sample1CollapsibleNodeStyleDecorator extends CollapsibleNodeStyleDe
   constructor(wrappedStyle) {
     super(wrappedStyle)
   }
+
   createButton(_context, expanded, size) {
     // create the svg element with the button image
     const buttonImage = document.createElementNS('http://www.w3.org/2000/svg', 'image')

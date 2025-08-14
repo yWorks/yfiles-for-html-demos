@@ -26,16 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ApplicationRef, ComponentFactoryResolver, Injector, NgZone } from '@angular/core'
+import { ApplicationRef, createComponent, EnvironmentInjector, NgZone } from '@angular/core'
 import { NodeComponent } from './node.component'
-import { Person } from './person'
 import { INode, IRenderContext, NodeStyleBase, SvgVisual, Visual } from '@yfiles/yfiles'
+import { Person } from '../person'
 
 export class NodeComponentStyle extends NodeStyleBase {
   constructor(
-    private readonly injector: Injector,
-    private resolver: ComponentFactoryResolver,
     private appRef: ApplicationRef,
+    private envInj: EnvironmentInjector,
     private zone: NgZone
   ) {
     super()
@@ -45,31 +44,31 @@ export class NodeComponentStyle extends NodeStyleBase {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     g.setAttribute('transform', 'translate(' + node.layout.x + ' ' + node.layout.y + ')')
 
-    // Retrieve the factory for NodeComponents
-    const componentFactory = this.resolver.resolveComponentFactory(NodeComponent)
-    // Have the factory create a new NodeComponent as a child of the new SVG g element.
-    const compRef = componentFactory.create(this.injector, undefined, g)
-    // Attach the component to the Angular component tree so that change detection will work
-    this.appRef.attachView(compRef.hostView)
+    // Create a new NodeComponent as a child of the new SVG g element.
+    const compRef = createComponent(NodeComponent, {
+      hostElement: g,
+      environmentInjector: this.envInj
+    })
+
     // Assign the NodeComponent's item input property
     this.zone.run(() => {
-      // run inside the zone so Angular will update the NodeComponent
+      // Run inside the zone so Angular will update the NodeComponent.
+      // See https://docs.yworks.com/yfileshtml/#/kb/article/848/Improving_performance_of_large_Angular_applications
       compRef.instance.item = node.tag as Person
       compRef.instance.zoom = renderContext.zoom
     })
+
+    // Attach the component to the Angular component tree so that change detection will work
+    this.appRef.attachView(compRef.hostView)
     ;(g as any)['data-compRef'] = compRef
 
     const svgVisual = new SvgVisual(g)
     renderContext.setDisposeCallback(
       svgVisual,
-      (context: IRenderContext, visual: Visual, dispose: boolean) => {
+      (_context: IRenderContext, _visual: Visual, _dispose: boolean) => {
         // need to clean up after the visual is actually removed
-        const listener = () => {
-          this.appRef.detachView(compRef.hostView)
-          compRef.destroy()
-          context.canvasComponent!.removeEventListener('updated-visual', listener)
-        }
-        context.canvasComponent!.addEventListener('updated-visual', listener)
+        this.appRef.detachView(compRef.hostView)
+        compRef.destroy()
         return null
       }
     )
@@ -81,7 +80,8 @@ export class NodeComponentStyle extends NodeStyleBase {
       const g = oldVisual.svgElement
       g.setAttribute('transform', 'translate(' + node.layout.x + ' ' + node.layout.y + ')')
       this.zone.run(() => {
-        // run inside the zone so Angular will update the NodeComponent
+        // Run inside the zone so Angular will update the NodeComponent.
+        // See https://docs.yworks.com/yfileshtml/#/kb/article/848/Improving_performance_of_large_Angular_applications
         ;(g as any)['data-compRef'].instance.zoom = renderContext.zoom
       })
       return oldVisual

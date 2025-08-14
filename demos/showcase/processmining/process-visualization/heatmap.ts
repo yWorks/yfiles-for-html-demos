@@ -167,8 +167,7 @@ export function addHeatmap(
         <feFuncG type="table" tableValues="0 0 1 1 1 0"></feFuncG>
         <feFuncB type="table" tableValues="0.5 1 0 0 0"></feFuncB>
         <!-- specify maximum opacity for the overlay here -->
-        <!-- less opaque: <feFuncA type="table" tableValues="0 0.1 0.4 0.6 0.7"></feFuncA> -->
-        <feFuncA type="table" tableValues="0 0.6 0.7 0.8 0.9"></feFuncA>
+        <feFuncA type="table" tableValues="0 0.5 0.6 0.7 0.8"></feFuncA>
       </feComponentTransfer>
     </filter>
   </defs>

@@ -34,6 +34,7 @@ import {
   RecursiveGroupLayout,
   RecursiveGroupLayoutData
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to configure the {@link CompactDiskLayout} algorithm in conjunction with the
  * {@link RecursiveGroupLayout} and {@link OrganicLayout} to arrange the group node children in a
@@ -47,22 +48,23 @@ export function createFeatureLayoutConfiguration(graph) {
     // add a little extra distance between nodes
     minimumNodeDistance: 4
   })
+
   // create the (optional) layout data to configure node types
   const compactDiskData = new CompactDiskLayoutData()
   // the node types are taken from an optional nodeType property on the node's tag
   compactDiskData.nodeTypes = (node) => (node.tag ? node.tag.nodeType : null)
+
   // create a recursive layout that will apply the compact disk layout to each grouping
   // hierarchy independently
   const recursiveGroupLayout = new RecursiveGroupLayout({
-    coreLayout: new OrganicLayout({
-      deterministic: true,
-      defaultMinimumNodeDistance: 20
-    })
+    coreLayout: new OrganicLayout({ deterministic: true, defaultMinimumNodeDistance: 20 })
   })
+
   // use the recursive group layout data to define that the content of each group node should
   // be arranged using the CompactDiskLayout algorithm configured above
   const recursiveLayoutData = new RecursiveGroupLayoutData()
   recursiveLayoutData.groupNodeLayouts = compactDiskLayout
+
   return {
     layout: recursiveGroupLayout,
     layoutData: compactDiskData.combineWith(recursiveLayoutData)

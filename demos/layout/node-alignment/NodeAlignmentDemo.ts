@@ -107,30 +107,12 @@ function createDragPanel(): void {
  */
 function createNodeTemplates(): DragAndDropPanelItem<INode>[] {
   return [
-    new SimpleNode({
-      layout: [0, 0, 30, 30],
-      style: createDemoShapeNodeStyle('round-rectangle')
-    }),
-    new SimpleNode({
-      layout: [0, 0, 90, 30],
-      style: createDemoShapeNodeStyle('round-rectangle')
-    }),
-    new SimpleNode({
-      layout: [0, 0, 30, 30],
-      style: createDemoShapeNodeStyle('diamond')
-    }),
-    new SimpleNode({
-      layout: [0, 0, 90, 30],
-      style: createDemoShapeNodeStyle('diamond')
-    }),
-    new SimpleNode({
-      layout: [0, 0, 30, 30],
-      style: createDemoShapeNodeStyle('ellipse')
-    }),
-    new SimpleNode({
-      layout: [0, 0, 90, 30],
-      style: createDemoShapeNodeStyle('ellipse')
-    })
+    new SimpleNode({ layout: [0, 0, 30, 30], style: createDemoShapeNodeStyle('round-rectangle') }),
+    new SimpleNode({ layout: [0, 0, 90, 30], style: createDemoShapeNodeStyle('round-rectangle') }),
+    new SimpleNode({ layout: [0, 0, 30, 30], style: createDemoShapeNodeStyle('diamond') }),
+    new SimpleNode({ layout: [0, 0, 90, 30], style: createDemoShapeNodeStyle('diamond') }),
+    new SimpleNode({ layout: [0, 0, 30, 30], style: createDemoShapeNodeStyle('ellipse') }),
+    new SimpleNode({ layout: [0, 0, 90, 30], style: createDemoShapeNodeStyle('ellipse') })
   ]
 }
 
@@ -295,18 +277,10 @@ function createSampleGraph(graph: IGraph): void {
   const graphBuilder = new GraphBuilder(graph)
 
   // create nodes
-  graphBuilder.createNodesSource({
-    data: sampleData.nodes,
-    id: 'id',
-    layout: 'layout'
-  })
+  graphBuilder.createNodesSource({ data: sampleData.nodes, id: 'id', layout: 'layout' })
 
   // create edges
-  graphBuilder.createEdgesSource({
-    data: sampleData.edges,
-    sourceId: 'source',
-    targetId: 'target'
-  })
+  graphBuilder.createEdgesSource({ data: sampleData.edges, sourceId: 'source', targetId: 'target' })
 
   graphBuilder.buildGraph()
 }

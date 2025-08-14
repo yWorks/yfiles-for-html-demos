@@ -61,7 +61,9 @@ import {
   checkNotCreatingEdge,
   checkOr
 } from './Preconditions'
+
 import { GraphWizardInputMode, WizardEventArgs } from './GraphWizardInputMode'
+
 /**
  * Creates a {@link WizardAction} that navigates to the next {@INode node} in the direction of
  * the pressed arrow key.
@@ -73,6 +75,7 @@ export function createSmartNavigate() {
     (mode, item, type, args) => {
       const graph = mode.graph
       const key = args.key
+
       let target = null
       if (item instanceof IEdge) {
         const edge = item
@@ -112,6 +115,7 @@ export function createSmartNavigate() {
               return dx < 0 && Math.abs(dx) >= Math.abs(dy)
           }
         }
+
         const condition2 = function (dx, dy) {
           switch (key) {
             case 'ArrowDown':
@@ -125,6 +129,7 @@ export function createSmartNavigate() {
               return dx < 0
           }
         }
+
         // check for connected hits in 90°
         let children = graph
           .outEdgesAt(item)
@@ -137,6 +142,7 @@ export function createSmartNavigate() {
             return condition(dx, dy)
           })
           .toArray()
+
         // check for unconnected hits in 90°
         if (children.length === 0) {
           children = graph.nodes
@@ -148,6 +154,7 @@ export function createSmartNavigate() {
             })
             .toArray()
         }
+
         // check for connected hits in general direction
         if (children.length === 0) {
           children = graph
@@ -162,6 +169,7 @@ export function createSmartNavigate() {
             })
             .toArray()
         }
+
         // check for unconnected hits in general direction
         if (children.length === 0) {
           children = graph.nodes
@@ -173,10 +181,12 @@ export function createSmartNavigate() {
             })
             .toArray()
         }
+
         const childScores = children.map((child) => {
           const childCenter = child.layout.center
           const dx = Math.abs(center.x - childCenter.x)
           const dy = Math.abs(center.y - childCenter.y)
+
           let angle = 0
           switch (key) {
             case 'ArrowDown':
@@ -225,6 +235,7 @@ export function createSmartNavigate() {
     true
   )
 }
+
 /**
  * Creates a {@link WizardAction} that navigates to the next incoming or outgoing edge relative to the
  * {@link GraphWizardInputMode.currentItem current item}.
@@ -298,11 +309,13 @@ export function createSmartNavigateEdge(direction) {
     true
   )
 }
+
 /**
  * Creates a {@link WizardAction} that starts label editing when `F2` or `F6+CTRL` is pressed.
  */
 export function createEditLabel() {
   const buttonType = 'edit-label-button'
+
   return new WizardAction(
     buttonType,
     checkAnd([checkNotCreatingEdge, checkOr([checkForNode, checkForEdge])]),
@@ -328,6 +341,7 @@ export function createEditLabel() {
     }
   )
 }
+
 /**
  * Creates a {@link WizardAction} that changes the {@link ColorSet} of the
  * {@link GraphWizardInputMode.currentItem current node}.
@@ -352,6 +366,7 @@ export function createChangeNodeColorSet(preCondition, colorTheme, getItemFill, 
     }
     return 0
   }
+
   return new WizardAction(
     'changeColorSet',
     preCondition,
@@ -391,6 +406,7 @@ export function createChangeNodeColorSet(preCondition, colorTheme, getItemFill, 
     }
   )
 }
+
 /**
  * Creates a {@link WizardAction} that starts interactive edge creation.
  * @param helpText An optional help text replacing the default one.
@@ -417,6 +433,7 @@ export function createStartEdgeCreation(helpText, buttonOptions) {
     true
   )
 }
+
 /**
  * Creates a {@link WizardAction} that ends an interactive edge creation gesture.
  */
@@ -442,6 +459,7 @@ export function createEndEdgeCreation(layoutProvider, layoutDataProvider) {
     (data, args) => args instanceof WizardEventArgs
   )
 }
+
 /**
  * Runs an animated layout calculation that considers newly added and removed nodes and keeps the
  * location of fixed nodes.

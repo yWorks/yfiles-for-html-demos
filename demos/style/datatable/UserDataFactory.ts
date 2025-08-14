@@ -57,13 +57,7 @@ const FAMILY_NAMES = [
 
 const UNITS = ['Development', 'Management', 'Marketing', 'R&D', 'Sales']
 
-export type UserData = {
-  name: string
-  unit: string
-  email: string
-  phone: string
-  fax: string
-}
+export type UserData = { name: string; unit: string; email: string; phone: string; fax: string }
 
 export function createNewRandomUserData(): UserData {
   const firstName = FIRST_NAMES[getRandomInt(FIRST_NAMES.length)]

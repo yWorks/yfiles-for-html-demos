@@ -136,7 +136,7 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
 
   // While preferred placement descriptors offer lots of configuration options, they cannot be used
   // to control the minimum distance of a label to the source or target node of its owner edge.
-  // However, node halos may be used towards this end. E.g. the halo defined here reserves enough
+  // However, node margins may be used towards this end. E.g. the halo defined here reserves enough
   // space above all nodes to prevent labels from overlapping the target arrows of their owner
   // edges.
   labelingData.nodeMargins = new Insets(5)

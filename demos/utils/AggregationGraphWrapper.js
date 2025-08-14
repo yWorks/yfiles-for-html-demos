@@ -84,15 +84,13 @@ import {
   Rect,
   Size
 } from '@yfiles/yfiles'
+
 /**
  * Determines what kind of edges should be created when replacing original edges with aggregation
  * edges in calls to methods of the {@link AggregationGraphWrapper}.
  */
-export const EdgeReplacementPolicy = {
-  NONE: 0,
-  UNDIRECTED: 1,
-  DIRECTED: 2
-}
+export const EdgeReplacementPolicy = { NONE: 0, UNDIRECTED: 1, DIRECTED: 2 }
+
 /**
  * An IGraph implementation that wraps another graph and can replace some of its items by other items.
  *
@@ -123,19 +121,25 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   // Events are forwarded from the wrapped graph to the filtered graph to this graph.
   // Most IGraph methods are overridden and "multiplex" between the filtered graph and the aggregation items.
   $filteredGraph
+
   // the set of hidden nodes and edges
   $filteredOriginalNodes
+
   $filteredAggregationItems
+
   aggregationNodes
   $aggregationEdges
+
   // live views of the currently visible items
   $nodes
   $edges
   $labels
   $ports
+
   $aggregationNodeDefaults
   $aggregationEdgeDefaults
   $lookupDecorator
+
   /**
    * Creates a new instance of this graph wrapper.
    * @param graph The graph to be wrapped ("original graph").
@@ -149,12 +153,17 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       )
     }
     this.onGraphChanged(null, this.wrappedGraph)
+
     this.edgeReplacementPolicy = EdgeReplacementPolicy.UNDIRECTED
+
     this.$lookupDecorator = new AggregationLookupDecorator(this)
+
     this.$filteredOriginalNodes = new Set()
+
     this.$filteredAggregationItems = new Set()
     this.aggregationNodes = new List()
     this.$aggregationEdges = new List()
+
     this.$nodes = new ListEnumerable(
       this.$filteredGraph.nodes.concat(
         this.aggregationNodes.filter(this.$aggregationItemPredicate.bind(this))
@@ -178,41 +187,51 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         )
     )
   }
+
   get nodes() {
     return this.$nodes
   }
+
   get edges() {
     return this.$edges
   }
+
   get labels() {
     return this.$labels
   }
+
   get ports() {
     return this.$ports
   }
+
   /**
    * Sets what kind of edges should be created when replacing original edges with aggregation edges.
    * The default value is {@link EdgeReplacementPolicy.UNDIRECTED}.
    */
   edgeReplacementPolicy = EdgeReplacementPolicy.NONE
+
   get aggregationNodeDefaults() {
     if (!this.$aggregationNodeDefaults) {
       this.$aggregationNodeDefaults = new NodeDefaults()
     }
     return this.$aggregationNodeDefaults
   }
+
   set aggregationNodeDefaults(value) {
     this.$aggregationNodeDefaults = value
   }
+
   get aggregationEdgeDefaults() {
     if (!this.$aggregationEdgeDefaults) {
       this.$aggregationEdgeDefaults = new EdgeDefaults()
     }
     return this.$aggregationEdgeDefaults
   }
+
   set aggregationEdgeDefaults(value) {
     this.$aggregationEdgeDefaults = value
   }
+
   /**
    * Calls the base method with the {@link AggregationGraphWrapper.$filteredGraph} instead of the passed graph for correct event forwarding.
    */
@@ -229,19 +248,24 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       super.onGraphChanged(this.$filteredGraph, null)
     }
   }
+
   dispose() {
     this.$filteredGraph.dispose()
     super.dispose()
   }
+
   $aggregationItemPredicate(item) {
     return !this.$filteredAggregationItems.has(item)
   }
+
   $nodePredicate(node) {
     return !this.$filteredOriginalNodes || !this.$filteredOriginalNodes.has(node)
   }
+
   $edgePredicate(edge) {
     return true
   }
+
   /**
    * Hides the `portOwner` and all items depending on it and raises the according removed events.
    * For nodes, their labels, ports and adjacent edges are hidden. For edges, their labels, ports and bends are hidden.
@@ -258,6 +282,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       this.onNodeRemoved(new NodeEventArgs(aggregationNode, oldParent, oldIsGroupNode))
       return
     }
+
     const aggregationEdge = portOwner instanceof AggregationEdge ? portOwner : null
     if (aggregationEdge) {
       this.$hideAdjacentEdges(aggregationEdge)
@@ -267,6 +292,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       this.onEdgeRemoved(new EdgeEventArgs(aggregationEdge))
       return
     }
+
     // hide adjacent aggregation edges (which are not hidden by filtered graph)
     this.edgesAt(portOwner, AdjacencyTypes.ALL)
       .filter((edge) => edge instanceof AggregationEdge)
@@ -276,9 +302,11 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     this.$filteredOriginalNodes.add(portOwner)
     this.$predicateChanged(portOwner)
   }
+
   $hideAdjacentEdges(portOwner) {
     this.edgesAt(portOwner, AdjacencyTypes.ALL).forEach((edge) => this.$hide(edge))
   }
+
   /**
    * Shows an item, their labels/ports/bends, and their adjacent edges. Raises all necessary events.
    */
@@ -298,6 +326,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       this.$raiseLabelAddedEvents(aggregationNode)
       return
     }
+
     if (item instanceof AggregationEdge) {
       const aggregationEdge = item
       this.$filteredAggregationItems.delete(aggregationEdge)
@@ -307,10 +336,12 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       this.$raiseLabelAddedEvents(aggregationEdge)
       return
     }
+
     this.$filteredOriginalNodes.delete(item)
     this.$predicateChanged(item)
     this.$showAdjacentEdges(item)
   }
+
   $showAdjacentEdges(portOwner) {
     // - cannot use EdgesAt() here, since hidden edges are not considered there
     const adjacentEdges = this.$edges.filter(
@@ -323,28 +354,33 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       }
     }
   }
+
   $raiseLabelAddedEvents(labelOwner) {
     for (const label of labelOwner.labels) {
       this.onLabelAdded(new LabelEventArgs(label, labelOwner))
     }
   }
+
   $raisePortAddedEvents(portOwner) {
     for (const port of portOwner.ports) {
       this.onPortAdded(new PortEventArgs(port, portOwner))
       this.$raiseLabelAddedEvents(port)
     }
   }
+
   $raiseLabelRemovedEvents(labelOwner) {
     for (const label of labelOwner.labels) {
       this.onLabelRemoved(new LabelEventArgs(label, labelOwner))
     }
   }
+
   $raisePortRemovedEvents(portOwner) {
     for (const port of portOwner.ports) {
       this.$raiseLabelRemovedEvents(port)
       this.onPortRemoved(new PortEventArgs(port, portOwner))
     }
   }
+
   $predicateChanged(item) {
     if (item instanceof INode) {
       this.$filteredGraph.nodePredicateChanged(item)
@@ -352,6 +388,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       this.$filteredGraph.edgePredicateChanged(item)
     }
   }
+
   /**
    * Aggregates the `nodes` to a new aggregation node.
    * This temporarily removes the `nodes` together with their labels, ports, and adjacent edges. Then a new
@@ -374,6 +411,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         `ArgumentError: Affected parameter nodes: Cannot aggregate node ${badNode} that is not in this graph.`
       )
     }
+
     const nodeLayout = layout
       ? new MutableRectangle(layout)
       : new MutableRectangle(Point.ORIGIN, this.aggregationNodeDefaults.size)
@@ -389,17 +427,22 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         aggregationNodeParent.children.add(aggregationNode)
       }
     }
+
     this.aggregationNodes.add(aggregationNode)
     this.onNodeCreated(new ItemEventArgs(aggregationNode))
+
     if (this.edgeReplacementPolicy !== EdgeReplacementPolicy.NONE) {
       this.$replaceAdjacentEdges(nodes, aggregationNode)
     }
+
     // hide not until here, so old graph structure is still intact when replacing edges
     for (const node of nodes) {
       this.$hide(node)
     }
+
     return aggregationNode
   }
+
   /**
    * Replaces adjacent edges by new aggregation edges. Prevents duplicate edges following {@link AggregationGraphWrapper.edgeReplacementPolicy}.
    */
@@ -423,21 +466,25 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         incomingReplacementEdges
       )
     }
+
     // raise edge created events not until here, so the aggregated items are complete
     for (const edge of outgoingReplacementEdges.values) {
       this.onEdgeCreated(new EdgeEventArgs(edge))
     }
+
     if (edgesAreDirected) {
       for (const edge of incomingReplacementEdges.values) {
         this.onEdgeCreated(new EdgeEventArgs(edge))
       }
     }
   }
+
   $replaceEdges(adjacencyType, node, aggregationPortOwner, items, replacementEdges) {
     const adjacentEdges = this.edgesAt(node, adjacencyType).toList()
     for (const edge of adjacentEdges) {
       const isIncoming = adjacencyType === AdjacencyTypes.INCOMING
       const otherPort = isIncoming ? edge.sourcePort : edge.targetPort
+
       const otherPortOwner = otherPort.owner
       if (items.includes(otherPortOwner)) {
         // don't create aggregation edges for edges between aggregated items
@@ -448,14 +495,17 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         existingReplacementEdge.aggregatedEdges.add(edge)
         continue
       }
+
       if (edge instanceof AggregationEdge) {
         // otherwise the edge is automatically hidden by filtered graph
         this.$hide(edge)
       }
+
       const replacementEdge = this.$replaceEdge(edge, aggregationPortOwner, otherPort, isIncoming)
       replacementEdges.set(otherPortOwner, replacementEdge)
     }
   }
+
   $replaceEdge(edge, newPortOwner, otherPort, isIncoming) {
     const aggregationPort = this.addPort(newPortOwner)
     let replacementEdge
@@ -464,9 +514,11 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     } else {
       replacementEdge = this.$createAggregationEdge(aggregationPort, otherPort)
     }
+
     replacementEdge.aggregatedEdges.add(edge)
     return replacementEdge
   }
+
   /**
    * Separates nodes again that were previously aggregated via {@link AggregationGraphWrapper.aggregate}.
    * Removes the aggregation node permanently together with its labels, ports, and adjacent edges. Then inserts the
@@ -490,22 +542,28 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         `ArgumentError: Affected parameter node: Cannot separate aggregation node ${node} that is not in this graph.`
       )
     }
+
     const aggregationNode = node
+
     const adjacentEdges = this.edgesAt(aggregationNode, AdjacencyTypes.ALL).toList()
     for (const edge of adjacentEdges) {
       this.$removeAggregationEdge(edge)
     }
+
     this.$removeAggregationNode(aggregationNode)
     for (const aggregatedNode of aggregationNode.aggregatedNodes) {
       this.$show(aggregatedNode)
     }
+
     for (const edge of adjacentEdges) {
       this.$showOrRemoveAggregatedEdges(edge)
     }
+
     if (this.edgeReplacementPolicy !== EdgeReplacementPolicy.NONE) {
       this.$replaceMissingEdges(aggregationNode)
     }
   }
+
   $showOrRemoveAggregatedEdges(aggregationEdge) {
     for (const aggregatedEdge of aggregationEdge.aggregatedEdges) {
       if (aggregatedEdge instanceof AggregationEdge) {
@@ -519,6 +577,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       }
     }
   }
+
   /**
    * When nodes are separated in a different order they were aggregated, we need to create new aggregation edges for the nodes that were just expanded.
    */
@@ -530,10 +589,12 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       const incomingReplacementEdges = edgesAreDirected ? new HashMap() : outgoingReplacementEdges
       this.$replaceMissingEdgesCore(AdjacencyTypes.OUTGOING, node, outgoingReplacementEdges)
       this.$replaceMissingEdgesCore(AdjacencyTypes.INCOMING, node, incomingReplacementEdges)
+
       // raise edge created events not until here, so the aggregated items are complete
       for (const edge of outgoingReplacementEdges.values) {
         this.onEdgeCreated(new EdgeEventArgs(edge))
       }
+
       if (edgesAreDirected) {
         for (const edge of incomingReplacementEdges.values) {
           this.onEdgeCreated(new EdgeEventArgs(edge))
@@ -541,19 +602,24 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       }
     }
   }
+
   $replaceMissingEdgesCore(adjacencyType, node, seenNodes) {
     const isIncoming = adjacencyType === AdjacencyTypes.INCOMING
+
     let edgesAt = this.$aggregationEdges.filter((edge) =>
       node.ports.includes(isIncoming ? edge.targetPort : edge.sourcePort)
     )
+
     if (!this.isAggregationItem(node)) {
       edgesAt = edgesAt.concat(super.edgesAt(node, AdjacencyTypes.ALL))
     }
+
     for (const edge of edgesAt.toList()) {
       if (this.contains(edge)) {
         // is already a proper edge
         continue
       }
+
       const thisPort = isIncoming ? edge.targetPort : edge.sourcePort
       const otherPort = isIncoming ? edge.sourcePort : edge.targetPort
       // the node is contained in another aggregation node -> find it
@@ -564,19 +630,23 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       if (!otherNode || !this.contains(otherNode)) {
         continue
       }
+
       let aggregationEdge = seenNodes.get(otherNode)
       if (aggregationEdge) {
         // we already created an edge between this and the other node
         aggregationEdge.aggregatedEdges.add(edge)
         continue
       }
+
       aggregationEdge = this.$replaceEdge(edge, otherNode, thisPort, isIncoming)
       seenNodes.set(otherNode, aggregationEdge)
     }
   }
+
   $findAggregationNode(node) {
     return this.aggregationNodes.find((n) => n.aggregatedNodes.includes(node))
   }
+
   /**
    * Separates all aggregation nodes such that this graph contains exactly the same items as the {@link GraphWrapperBase.wrappedGraph}.
    */
@@ -590,6 +660,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       }
     } while (this.aggregationNodes.size > 0)
   }
+
   /**
    * Returns `true` iff the `item` is an aggregation item and therefore not contained in the wrapped graph.
    * Does not check if the item is currently {@link AggregationGraphWrapper.contains contained} in the graph or whether
@@ -605,6 +676,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       item instanceof AggregationPort
     )
   }
+
   /**
    * Returns the items that are directly aggregated by the `item`.
    *
@@ -624,11 +696,14 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     if (item instanceof AggregationNode) {
       return new ListEnumerable(item.aggregatedNodes)
     }
+
     if (item instanceof AggregationEdge) {
       return new ListEnumerable(item.aggregatedEdges)
     }
+
     return IListEnumerable.EMPTY
   }
+
   /**
    * Returns the (recursively) aggregated original items of the `item`.
    * In contrast to {@link AggregationGraphWrapper.getAggregatedItems} this method returns only original items, but also
@@ -650,6 +725,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
     return new ListEnumerable(result)
   }
+
   /**
    * Removes the given item from the graph.
    * If `item` is an aggregation node or aggregation edge, all aggregated items are removed as well.
@@ -661,6 +737,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
     this.$removeCore(item)
   }
+
   $removeCore(item) {
     const aggregationNode = item instanceof AggregationNode ? item : null
     if (aggregationNode) {
@@ -674,19 +751,23 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       }
       return
     }
+
     const aggregationEdge = item instanceof AggregationEdge ? item : null
     if (aggregationEdge) {
       if (aggregationEdge.graph !== this) {
         return
       }
       this.$removeAggregationEdge(aggregationEdge)
+
       for (const aggregatedEdge of aggregationEdge.aggregatedEdges) {
         this.$removeCore(aggregatedEdge)
       }
+
       this.$cleanupPort(aggregationEdge.sourcePort)
       this.$cleanupPort(aggregationEdge.targetPort)
       return
     }
+
     if (item instanceof AggregationBend) {
       this.$removeAggregationBend(item)
     } else if (item instanceof AggregationPort) {
@@ -697,6 +778,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       super.remove(item)
     }
   }
+
   $cleanupPort(port) {
     const isAggregationItem = this.isAggregationItem(port)
     let tmp
@@ -721,6 +803,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       this.$removeCore(port)
     }
   }
+
   $removeAggregationNode(aggregationNode) {
     for (const port of aggregationNode.ports.toList()) {
       this.$removeAggregationPort(port)
@@ -734,6 +817,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     aggregationNode.graph = null
     this.onNodeRemoved(new NodeEventArgs(aggregationNode, oldParent, oldIsGroupNode))
   }
+
   $removeAggregationEdge(aggregationEdge) {
     for (const label of aggregationEdge.labels.toList()) {
       this.$removeAggregationLabel(label)
@@ -749,6 +833,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     aggregationEdge.graph = null
     this.onEdgeRemoved(new EdgeEventArgs(aggregationEdge))
   }
+
   $removeAggregationBend(aggregationBend) {
     const bendList = aggregationBend.owner.$bends
     const index = bendList.indexOf(aggregationBend)
@@ -756,6 +841,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     aggregationBend.graph = null
     this.onBendRemoved(new BendEventArgs(aggregationBend, aggregationBend.owner, index))
   }
+
   $removeAggregationPort(aggregationPort) {
     for (const edge of this.edgesAt(aggregationPort, AdjacencyTypes.ALL).toList()) {
       this.$removeAggregationEdge(edge)
@@ -767,15 +853,18 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     aggregationPort.graph = null
     this.onPortRemoved(new PortEventArgs(aggregationPort, aggregationPort.owner))
   }
+
   $removeAggregationLabel(aggregationLabel) {
     aggregationLabel.owner.$labels.remove(aggregationLabel)
     aggregationLabel.graph = null
     this.onLabelRemoved(new LabelEventArgs(aggregationLabel, aggregationLabel.owner))
   }
+
   edgesAt(owner, type) {
     if (!this.contains(owner)) {
       throw Error('ArgumentError: Affected parameter owner: Owner is not in this graph')
     }
+
     if (owner instanceof IPortOwner) {
       switch (type) {
         case AdjacencyTypes.NONE:
@@ -813,6 +902,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       }
     }
   }
+
   setEdgePorts(edge, sourcePort, targetPort) {
     if (!this.contains(edge)) {
       throw new Error(`ArgumentError: Affected parameter edge: Not in Graph: ${edge}`)
@@ -823,6 +913,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     if (!this.contains(targetPort)) {
       throw new Error(`ArgumentError: Affected parameter targetPort: Not in Graph: ${targetPort}`)
     }
+
     if (edge instanceof AggregationEdge) {
       throw new Error(`NotSupportedError: Cannot set ports of aggregation edge ${edge}`)
     }
@@ -834,6 +925,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
     super.setEdgePorts(edge, sourcePort, targetPort)
   }
+
   contains(item) {
     const node = item instanceof AggregationNode ? item : null
     if (node) {
@@ -857,6 +949,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
     return this.$filteredGraph.contains(item)
   }
+
   setNodeLayout(node, layout) {
     if (!this.contains(node)) {
       throw new Error('ArgumentError: Affected parameter node: Node is not in this graph.')
@@ -871,6 +964,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         `ArgumentError: Affected parameter layout: The layout must not contain a NaN value. ${layout}`
       )
     }
+
     const aggregationNode = node instanceof AggregationNode ? node : null
     if (aggregationNode) {
       const oldLayout = aggregationNode.layout.toRect()
@@ -880,6 +974,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       super.setNodeLayout(node, layout)
     }
   }
+
   addPort(owner, locationParameter, style, tag) {
     if (!(owner instanceof IPortOwner)) {
       const options = owner
@@ -888,6 +983,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       style = options.style
       tag = options.tag
     }
+
     if (!this.contains(owner)) {
       throw new Error(
         `ArgumentError: Affected parameter owner: Owner is not in this graph. ${owner}`
@@ -898,6 +994,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         `ArgumentError: Affected parameter owner: Edge ports are not supported for aggregated edges ${owner}`
       )
     }
+
     const aggregationNode = owner instanceof AggregationNode ? owner : null
     if (aggregationNode) {
       const portLocationParameter =
@@ -911,6 +1008,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       )
       aggregationPort.tag = tag
       aggregationNode.$ports.add(aggregationPort)
+
       this.onPortAdded(new ItemEventArgs(aggregationPort))
       return aggregationPort
     }
@@ -920,6 +1018,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       return super.addPort(owner)
     }
   }
+
   setPortLocationParameter(port, locationParameter) {
     if (port.locationParameter === locationParameter) {
       return
@@ -930,6 +1029,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     if (!locationParameter) {
       throw new Error('ArgumentError: Argument for parameter locationParameter is null')
     }
+
     const aggregationPort = port instanceof AggregationPort ? port : null
     if (aggregationPort) {
       const oldParameter = port.locationParameter
@@ -939,6 +1039,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       super.setPortLocationParameter(port, locationParameter)
     }
   }
+
   addBend(edge, location, index = -1) {
     if (!this.contains(edge)) {
       throw new Error('ArgumentError: Affected parameter edge: Edge is not in this graph.')
@@ -948,6 +1049,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         'ArgumentError: Affected parameter location: The location must not contain a NaN value.'
       )
     }
+
     const aggregationEdge = edge instanceof AggregationEdge ? edge : null
     if (aggregationEdge) {
       const aggregationBend = new AggregationBend(this, aggregationEdge, new MutablePoint(location))
@@ -962,6 +1064,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
     return super.addBend(edge, location, index)
   }
+
   setBendLocation(bend, location) {
     if (location.equals(bend.location)) {
       return
@@ -974,6 +1077,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         'ArgumentError: Affected parameter location: The location must not contain a NaN value.'
       )
     }
+
     const aggregationBend = bend instanceof AggregationBend ? bend : null
     if (aggregationBend) {
       const oldLocation = aggregationBend.location.toPoint()
@@ -983,6 +1087,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       super.setBendLocation(bend, location)
     }
   }
+
   addLabel(owner, text, layoutParameter, style, preferredSize, tag) {
     if (!(owner instanceof ILabelOwner)) {
       const options = owner
@@ -993,9 +1098,11 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       preferredSize = options.preferredSize
       tag = options.tag
     }
+
     if (preferredSize != null && !(preferredSize instanceof Size)) {
       preferredSize = Size.from(preferredSize)
     }
+
     const labelOwner =
       owner instanceof AggregationNode ||
       owner instanceof AggregationEdge ||
@@ -1014,11 +1121,13 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
           'ArgumentError: Affected parameter preferredSize: The size must not contain a NaN value.'
         )
       }
+
       const labelModelParameter = layoutParameter || this.$getLabelModelParameter(labelOwner)
       const labelStyle = style || this.$getLabelStyle(labelOwner)
       const labelPreferredSize =
         preferredSize ||
         this.calculateLabelPreferredSize(labelOwner, text, labelModelParameter, labelStyle)
+
       const aggregationLabel = new AggregationLabel(
         this,
         labelOwner,
@@ -1029,11 +1138,13 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       )
       aggregationLabel.tag = tag
       labelOwner.$labels.add(aggregationLabel)
+
       this.onLabelAdded(new ItemEventArgs(aggregationLabel))
       return aggregationLabel
     }
     return super.addLabel(owner, text, layoutParameter, style, preferredSize, tag)
   }
+
   $getLabelModelParameter(owner) {
     if (owner instanceof AggregationNode) {
       return this.aggregationNodeDefaults.labels.getLayoutParameterInstance(owner)
@@ -1048,6 +1159,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       }
     }
   }
+
   $getLabelStyle(owner) {
     if (owner instanceof AggregationNode) {
       return this.aggregationNodeDefaults.labels.getStyleInstance(owner)
@@ -1062,6 +1174,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       }
     }
   }
+
   setLabelText(label, text) {
     if (label.text === text) {
       return
@@ -1069,6 +1182,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     if (!this.contains(label)) {
       throw new Error('ArgumentError: Affected parameter label: Label is not in this graph.')
     }
+
     const aggregationLabel = label instanceof AggregationLabel ? label : null
     if (aggregationLabel) {
       const oldText = label.text
@@ -1078,6 +1192,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       super.setLabelText(label, text)
     }
   }
+
   setLabelPreferredSize(label, preferredSize) {
     if (label.preferredSize.equals(preferredSize)) {
       return
@@ -1090,6 +1205,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         'ArgumentError: Affected parameter preferredSize: The size must not contain a NaN value.'
       )
     }
+
     const aggregationLabel = label instanceof AggregationLabel ? label : null
     if (aggregationLabel) {
       const oldPreferredSize = label.preferredSize
@@ -1099,6 +1215,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       super.setLabelPreferredSize(label, preferredSize)
     }
   }
+
   setLabelLayoutParameter(label, layoutParameter) {
     if (label.layoutParameter === layoutParameter) {
       return
@@ -1111,6 +1228,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     if (!layoutParameter) {
       throw new Error('Argument Error: Argument for parameter layoutParameter is null.')
     }
+
     const aggregationLabel = label instanceof AggregationLabel ? label : null
     if (aggregationLabel) {
       const oldParameter = label.layoutParameter
@@ -1120,10 +1238,12 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       super.setLabelLayoutParameter(label, layoutParameter)
     }
   }
+
   setStyle(item, style) {
     if (!this.contains(item)) {
       throw new Error('ArgumentError: Affected parameter item: Item is not in this graph.')
     }
+
     if (item instanceof INode) {
       const aggregationNode = item instanceof AggregationNode ? item : null
       if (aggregationNode) {
@@ -1170,38 +1290,47 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       }
     }
   }
+
   getChildren(node) {
     if (!node) {
       // top-level nodes
       return new ListEnumerable(this.nodes.filter((n) => this.getParent(n) === null))
     }
+
     if (!this.contains(node)) {
       throw new Error('ArgumentError: Affected parameter node: Node is not in this graph.')
     }
+
     const aggregationNode = node instanceof AggregationNode ? node : null
     if (aggregationNode) {
       return new ListEnumerable(aggregationNode.children || IListEnumerable.EMPTY)
     }
+
     return new ListEnumerable(
       super.getChildren(node).concat(this.aggregationNodes.filter((an) => an.parent === node))
     )
   }
+
   getParent(node) {
     if (!this.contains(node)) {
       throw new Error('ArgumentError: Affected parameter node: Node is not in this graph.')
     }
+
     const aggregationNode = node instanceof AggregationNode ? node : null
     if (aggregationNode) {
       return aggregationNode.parent
     }
+
     const aggregationNodeParent = this.aggregationNodes.find(
       (parent) => !!parent.children && parent.children.includes(node)
     )
     if (aggregationNodeParent) {
       return aggregationNodeParent
     }
+
     return super.getParent(node)
   }
+
   setParent(node, parent) {
     if (!this.contains(node)) {
       throw new Error('ArgumentError: Affected parameter node: Node is not in this graph.')
@@ -1209,19 +1338,23 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     if (parent && !this.contains(parent)) {
       throw new Error('ArgumentError: Affected parameter parent: Parent is not in this graph.')
     }
+
     const oldParent = this.getParent(node)
     const oldAggregationParent = oldParent instanceof AggregationNode ? oldParent : null
     if (oldAggregationParent && oldAggregationParent.children) {
       oldAggregationParent.children.remove(node)
     }
+
     if (node instanceof AggregationNode || parent instanceof AggregationNode) {
       if (!(node instanceof AggregationNode) && !(oldParent instanceof AggregationNode)) {
         // if neither node nor oldParent are AggregationNode, notify WrappedGraph that this relationship is no longer valid
         super.setParent(node, null)
       }
+
       if (!this.isGroupNode(parent)) {
         this.setIsGroupNode(parent, true)
       }
+
       const aggregationNode = node instanceof AggregationNode ? node : null
       if (aggregationNode) {
         aggregationNode.parent = node
@@ -1230,11 +1363,13 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       if (aggregationParent) {
         aggregationParent.children.add(node)
       }
+
       this.onParentChanged(new NodeEventArgs(node, oldParent, this.isGroupNode(node)))
     } else {
       super.setParent(node, parent)
     }
   }
+
   setIsGroupNode(node, isGroupNode) {
     if (!node) {
       if (!isGroupNode) {
@@ -1246,6 +1381,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     if (!this.contains(node)) {
       throw new Error('ArgumentError: Affected parameter node: Node is not in this graph.')
     }
+
     const aggregationNode = node instanceof AggregationNode ? node : null
     if (aggregationNode) {
       if (isGroupNode && !aggregationNode.children) {
@@ -1264,20 +1400,24 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       super.setIsGroupNode(node, isGroupNode)
     }
   }
+
   isGroupNode(node) {
     if (!node) {
       // null represents the root which is always a group node
       return true
     }
+
     if (!this.contains(node)) {
       throw new Error('ArgumentError: Affected parameter node: Node is not in this graph')
     }
+
     const aggregationNode = node instanceof AggregationNode ? node : null
     if (aggregationNode) {
       return aggregationNode.children === null
     }
     return super.isGroupNode(node)
   }
+
   createEdge(source, target, style, tag) {
     if (!(source instanceof INode || source instanceof IPort)) {
       const options = source
@@ -1286,6 +1426,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       style = options.style
       tag = options.tag
     }
+
     if (!this.contains(source)) {
       throw new Error(
         "ArgumentError: Affected parameter source: Cannot create edge from a node that doesn't belong to this graph."
@@ -1296,6 +1437,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         "ArgumentError: Affected parameter target: Cannot create edge to a node that doesn't belong to this graph."
       )
     }
+
     if (source instanceof INode) {
       const sourceNode = source
       const targetNode = target
@@ -1319,6 +1461,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       return super.createEdge(sourcePort, targetPort, style, tag)
     }
   }
+
   /**
    * Does not raise EdgeCreated event!!
    */
@@ -1329,22 +1472,28 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     this.$aggregationEdges.add(aggregationEdge)
     return aggregationEdge
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return this.$lookupDecorator.lookup(type)
   }
+
   addLookup(lookup) {
     this.$lookupDecorator.addLookup(IGraph, lookup)
   }
+
   removeLookup(lookup) {
     this.$lookupDecorator.removeLookup(IGraph, lookup)
   }
+
   baseLookup(type) {
     return super.lookup(type)
   }
+
   delegateLookup(aggregationItem, type) {
     return this.$lookupDecorator.delegateLookup(aggregationItem, type)
   }
+
   onTagChanged(item, oldTag) {
     if (item instanceof INode) {
       this.onNodeTagChanged(new ItemChangedEventArgs(item, oldTag))
@@ -1359,36 +1508,47 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
   }
 }
+
 /**
  * An ILookupDecorator implementation that contains its own lookup chains.
  * New chain links are added to the chains of this decorator as well as to the decorator of the {@link GraphWrapperBase.wrappedGraph}.
  */
 class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
   $wrappedDecorator
+
   $graph
+
   $graphLookup = new ContextLookup(IGraph)
   $nodeLookup = new ContextLookup(INode)
   $edgeLookup = new ContextLookup(IEdge)
   $bendLookup = new ContextLookup(IBend)
   $portLookup = new ContextLookup(IPort)
   $labelLookup = new ContextLookup(ILabel)
+
   constructor(graph) {
     super()
     this.$graph = graph
+
     this.$wrappedDecorator = null
+
     this.$graphLookup.addLookup(new GraphFallBackLookup())
     this.$nodeLookup.addLookup(new ItemFallBackLookup())
     this.$nodeLookup.addLookup(new ItemDefaultLookup(Graph.DEFAULT_NODE_LOOKUP))
     this.$nodeLookup.addLookup(new BlockReshapeAndPositionHandlerLookup())
+
     this.$edgeLookup.addLookup(new ItemFallBackLookup())
     this.$edgeLookup.addLookup(new ItemDefaultLookup(Graph.DEFAULT_EDGE_LOOKUP))
+
     this.$bendLookup.addLookup(new ItemFallBackLookup())
     this.$bendLookup.addLookup(new ItemDefaultLookup(Graph.DEFAULT_BEND_LOOKUP))
+
     this.$portLookup.addLookup(new ItemFallBackLookup())
     this.$portLookup.addLookup(new ItemDefaultLookup(Graph.DEFAULT_PORT_LOOKUP))
+
     this.$labelLookup.addLookup(new ItemFallBackLookup())
     this.$labelLookup.addLookup(new ItemDefaultLookup(Graph.DEFAULT_LABEL_LOOKUP))
   }
+
   addLookup(t, lookup) {
     if (t === INode) {
       this.$nodeLookup.addLookup(lookup)
@@ -1405,10 +1565,12 @@ class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
     } else {
       throw new Error(`ArgumentError: Cannot decorate type ${t}`)
     }
+
     if (this.$wrappedDecorator) {
       this.$wrappedDecorator.addLookup(t, lookup)
     }
   }
+
   removeLookup(t, lookup) {
     if (t === INode) {
       this.$nodeLookup.removeLookup(lookup)
@@ -1423,18 +1585,22 @@ class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
     } else if (t === IGraph) {
       this.$graphLookup.removeLookup(lookup)
     }
+
     if (this.$wrappedDecorator) {
       this.$wrappedDecorator.removeLookup(t, lookup)
     }
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     if (type === ILookupDecorator) {
       this.$wrappedDecorator = this.$graph.baseLookup(type)
       return this
     }
+
     return this.$graphLookup.lookup(this.$graph, type)
   }
+
   delegateLookup(item, type) {
     if (item instanceof INode) {
       return this.$nodeLookup.contextLookup(item, type)
@@ -1451,25 +1617,31 @@ class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
     }
   }
 }
+
 class ContextLookupChainLinkBase extends BaseClass(IContextLookupChainLink) {
   $nextLink = null
+
   contextLookup(item, type) {
     return this.$nextLink ? this.$nextLink.contextLookup(item, type) : null
   }
+
   setNext(next) {
     this.$nextLink = next
   }
 }
+
 class GraphFallBackLookup extends ContextLookupChainLinkBase {
   contextLookup(item, type) {
     return item.baseLookup(type) || super.contextLookup(item, type)
   }
 }
+
 class ItemFallBackLookup extends ContextLookupChainLinkBase {
   contextLookup(item, type) {
     return item.innerLookup(type) || super.contextLookup(item, type)
   }
 }
+
 class BlockReshapeAndPositionHandlerLookup extends ContextLookupChainLinkBase {
   contextLookup(item, type) {
     // The default implementations of IPositionHandler and IReshapeHandler don't support AggregationNode, which is
@@ -1480,16 +1652,20 @@ class BlockReshapeAndPositionHandlerLookup extends ContextLookupChainLinkBase {
     return super.contextLookup(item, type)
   }
 }
+
 class ItemDefaultLookup extends ContextLookupChainLinkBase {
   $defaultLookup
+
   constructor(defaultLookup) {
     super()
     this.$defaultLookup = defaultLookup
   }
+
   contextLookup(item, type) {
     return this.$defaultLookup.contextLookup(item, type) || super.contextLookup(item, type)
   }
 }
+
 /**
  * A simple INode implementation for aggregation nodes.
  */
@@ -1505,27 +1681,33 @@ class AggregationNode extends BaseClass(INode) {
   $portsEnumerable = null
   $labels
   $ports
+
   get aggregatedNodes() {
     return this.$aggregatedNodes
   }
+
   get layout() {
     return this.$layout
   }
+
   get labels() {
     if (!this.$labelsEnumerable) {
       this.$labelsEnumerable = new ListEnumerable(this.$labels)
     }
     return this.$labelsEnumerable
   }
+
   get ports() {
     if (!this.$portsEnumerable) {
       this.$portsEnumerable = new ListEnumerable(this.$ports)
     }
     return this.$portsEnumerable
   }
+
   get tag() {
     return this.$tag
   }
+
   set tag(value) {
     const oldTag = this.$tag
     this.$tag = value
@@ -1533,30 +1715,39 @@ class AggregationNode extends BaseClass(INode) {
       this.graph.onTagChanged(this, oldTag)
     }
   }
+
   get graph() {
     return this.$graph
   }
+
   set graph(graph) {
     this.$graph = graph
   }
+
   get style() {
     return this.$style
   }
+
   set style(style) {
     this.$style = style
   }
+
   get children() {
     return this.$children
   }
+
   set children(children) {
     this.$children = children
   }
+
   get parent() {
     return this.$parent
   }
+
   set parent(value) {
     this.$parent = value
   }
+
   constructor(graph, aggregatedNodes, layout, style) {
     super(graph)
     this.$aggregatedNodes = aggregatedNodes
@@ -1565,9 +1756,11 @@ class AggregationNode extends BaseClass(INode) {
     this.$graph = graph
     this.$labels = new List()
     this.$ports = new List()
+
     this.$children = null
     this.$parent = null
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   innerLookup(type) {
     if (type === INodeStyle) {
@@ -1581,10 +1774,12 @@ class AggregationNode extends BaseClass(INode) {
     }
     return null
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return this.graph ? this.graph.delegateLookup(this, type) : null
   }
+
   toString() {
     return this.labels.size > 0
       ? this.$labels.size > 0
@@ -1593,6 +1788,7 @@ class AggregationNode extends BaseClass(INode) {
       : `Aggregation Node (${this.aggregatedNodes.size}) [${this.layout.x}, ${this.layout.y}, ${this.layout.width}, ${this.layout.height}]`
   }
 }
+
 /**
  * A simple IEdge implementation for aggregation edges.
  */
@@ -1609,57 +1805,72 @@ class AggregationEdge extends BaseClass(IEdge) {
   $labelsEnumerable = null
   $portsEnumerable = null
   $bendsEnumerable = null
+
   get isSelfLoop() {
     return this.sourcePort.owner === this.targetPort.owner
   }
+
   get aggregatedEdges() {
     return this.$aggregatedEdges
   }
+
   get bends() {
     if (!this.$bendsEnumerable) {
       this.$bendsEnumerable = new ListEnumerable(this.$bends)
     }
     return this.$bendsEnumerable
   }
+
   get labels() {
     if (!this.$labelsEnumerable) {
       this.$labelsEnumerable = new ListEnumerable(this.$labels)
     }
     return this.$labelsEnumerable
   }
+
   get ports() {
     if (!this.$portsEnumerable) {
       this.$portsEnumerable = new ListEnumerable(this.$ports)
     }
     return this.$portsEnumerable
   }
+
   get graph() {
     return this.$graph
   }
+
   set graph(graph) {
     this.$graph = graph
   }
+
   get sourcePort() {
     return this.$sourcePort
   }
+
   set sourcePort(value) {
     this.$sourcePort = value
   }
+
   get targetPort() {
     return this.$targetPort
   }
+
   set targetPort(value) {
     this.$targetPort = value
   }
+
   get style() {
     return this.$style
   }
+
   set style(value) {
     this.$style = value
   }
+
   get tag() {
     return this.$tag
   }
+
   set tag(value) {
     const oldTag = this.$tag
     this.$tag = value
@@ -1667,6 +1878,7 @@ class AggregationEdge extends BaseClass(IEdge) {
       this.graph.onTagChanged(this, oldTag)
     }
   }
+
   constructor(graph, sourcePort, targetPort, style) {
     super()
     this.$graph = graph
@@ -1678,16 +1890,19 @@ class AggregationEdge extends BaseClass(IEdge) {
     this.$labels = new List()
     this.$aggregatedEdges = new List()
   }
+
   opposite(port) {
     if (port instanceof IPort) {
       return port === this.sourcePort ? this.targetPort : this.sourcePort
     }
     return port === this.sourceNode ? this.targetNode : this.sourceNode
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return this.graph ? this.graph.delegateLookup(this, type) : null
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   innerLookup(type) {
     if (type === IEdgeStyle) {
@@ -1701,6 +1916,7 @@ class AggregationEdge extends BaseClass(IEdge) {
     }
     return null
   }
+
   toString() {
     if (this.labels.size > 0) {
       return this.$labels.size > 0 ? this.$labels.get(0).text : 'ILabelOwner'
@@ -1716,6 +1932,7 @@ class AggregationEdge extends BaseClass(IEdge) {
     }
   }
 }
+
 /**
  * A simple IBend implementation for bends of {@link AggregationEdge}s.
  */
@@ -1724,15 +1941,19 @@ class AggregationBend extends BaseClass(IBend) {
   $location
   $graph
   $tag
+
   get owner() {
     return this.$owner
   }
+
   get location() {
     return this.$location
   }
+
   get tag() {
     return this.$tag
   }
+
   set tag(value) {
     const oldTag = this.$tag
     this.$tag = value
@@ -1740,22 +1961,27 @@ class AggregationBend extends BaseClass(IBend) {
       this.graph.onTagChanged(this, oldTag)
     }
   }
+
   get graph() {
     return this.$graph
   }
+
   set graph(graph) {
     this.$graph = graph
   }
+
   constructor(graph, owner, location) {
     super()
     this.$owner = owner
     this.$location = location
     this.$graph = graph
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return this.graph ? this.graph.delegateLookup(this, type) : null
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   innerLookup(type) {
     if (type === IMutablePoint) {
@@ -1766,10 +1992,12 @@ class AggregationBend extends BaseClass(IBend) {
     }
     return null
   }
+
   toString() {
     return `Aggregation Bend [${this.location.x}, ${this.location.y}]`
   }
 }
+
 /**
  * A simple IPort implementation for ports of {@link AggregationNode}, {@link AggregationEdge}, or {@link AggregationPort}.
  */
@@ -1781,30 +2009,38 @@ class AggregationPort extends BaseClass(IPort) {
   $locationParameter
   $labelsEnumerable = null
   $labels
+
   get owner() {
     return this.$owner
   }
+
   get labels() {
     if (!this.$labelsEnumerable) {
       this.$labelsEnumerable = new ListEnumerable(this.$labels)
     }
     return this.$labelsEnumerable
   }
+
   get locationParameter() {
     return this.$locationParameter
   }
+
   set locationParameter(value) {
     this.$locationParameter = value
   }
+
   get style() {
     return this.$style
   }
+
   set style(value) {
     this.$style = value
   }
+
   get tag() {
     return this.$tag
   }
+
   set tag(value) {
     const oldTag = this.$tag
     this.$tag = value
@@ -1812,12 +2048,15 @@ class AggregationPort extends BaseClass(IPort) {
       this.graph.onTagChanged(this, oldTag)
     }
   }
+
   get graph() {
     return this.$graph
   }
+
   set graph(graph) {
     this.$graph = graph
   }
+
   constructor(graph, owner, locationParameter, style) {
     super()
     this.$owner = owner
@@ -1826,10 +2065,12 @@ class AggregationPort extends BaseClass(IPort) {
     this.$labels = new List()
     this.$graph = graph
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return this.graph ? this.graph.delegateLookup(this, type) : null
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   innerLookup(type) {
     if (type === IPortStyle) {
@@ -1846,8 +2087,10 @@ class AggregationPort extends BaseClass(IPort) {
     }
     return null
   }
+
   toString() {
     let text = 'Aggregation Port ['
+
     try {
       text += `Location: ${this.location}`
     } catch (e) {
@@ -1856,6 +2099,7 @@ class AggregationPort extends BaseClass(IPort) {
     return `${text}Parameter: ${this.locationParameter}; Owner: ${this.owner}]`
   }
 }
+
 /**
  * A simple ILabel implementation for labels of {@link AggregationNode}, {@link AggregationEdge}, or {@link AggregationPort}.
  */
@@ -1868,36 +2112,47 @@ class AggregationLabel extends BaseClass(ILabel) {
   $graph
   $tag
   $layout
+
   get owner() {
     return this.$owner
   }
+
   get layoutParameter() {
     return this.$layoutParameter
   }
+
   set layoutParameter(parameter) {
     this.$layoutParameter = parameter
   }
+
   get preferredSize() {
     return this.$preferredSize
   }
+
   set preferredSize(size) {
     this.$preferredSize = size
   }
+
   get style() {
     return this.$style
   }
+
   set style(style) {
     this.$style = style
   }
+
   get text() {
     return this.$text
   }
+
   set text(text) {
     this.$text = text
   }
+
   get tag() {
     return this.$tag
   }
+
   set tag(value) {
     const oldTag = this.$tag
     this.$tag = value
@@ -1905,18 +2160,23 @@ class AggregationLabel extends BaseClass(ILabel) {
       this.graph.onTagChanged(this, oldTag)
     }
   }
+
   get layout() {
     return this.$layout
   }
+
   set layout(value) {
     this.$layout = value
   }
+
   get graph() {
     return this.$graph
   }
+
   set graph(graph) {
     this.$graph = graph
   }
+
   constructor(graph, labelOwner, text, layoutParameter, preferredSize, style) {
     super(graph)
     this.$owner = labelOwner
@@ -1927,10 +2187,12 @@ class AggregationLabel extends BaseClass(ILabel) {
     this.$graph = graph
     this.$layout = new OrientedRectangle()
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return this.graph ? this.graph.delegateLookup(this, type) : null
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   innerLookup(type) {
     if (type === ILabelStyle) {
@@ -1944,6 +2206,7 @@ class AggregationLabel extends BaseClass(ILabel) {
     }
     return null
   }
+
   toString() {
     return `Aggregation Label ["${this.text}"; Owner: ${this.owner}]`
   }

@@ -31,6 +31,7 @@ export class PreConfigurator {
   warningRadios
   graphComponent
   modeMapping = ['view', 'move', 'edit']
+
   /**
    * These limits define up to which node count the specific setting is considered as practical.
    * It also defines a fall-back GraphModelManager setting that is used, if the default GMM
@@ -39,242 +40,63 @@ export class PreConfigurator {
   get preConfigurationLimits() {
     return {
       simpleSvgStyles: {
-        defaultGmm: {
-          view: 2000,
-          move: 500,
-          edit: 500
-        },
-        WebglGmm: {
-          view: 50000,
-          move: 50000,
-          edit: 50000
-        },
-        levelOfDetailGmm: {
-          view: 2000,
-          move: 500,
-          edit: 500
-        },
-        staticGmm: {
-          view: 2000,
-          move: 2000,
-          edit: 2000
-        },
-        svgImageGmm: {
-          view: 2000,
-          move: 2000,
-          edit: 2000
-        },
-        CanvasImageWithDrawCallbackGmm: {
-          view: 15000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithItemStylesGmm: {
-          view: 15000,
-          move: 15000,
-          edit: 15000
-        },
-        StaticCanvasImageGmm: {
-          view: 15000,
-          move: 15000,
-          edit: 15000
-        },
-        StaticWebglImageGmm: {
-          view: 20000,
-          move: 20000,
-          edit: 20000
-        }
+        defaultGmm: { view: 2000, move: 500, edit: 500 },
+        WebglGmm: { view: 50000, move: 50000, edit: 50000 },
+        levelOfDetailGmm: { view: 2000, move: 500, edit: 500 },
+        staticGmm: { view: 2000, move: 2000, edit: 2000 },
+        svgImageGmm: { view: 2000, move: 2000, edit: 2000 },
+        CanvasImageWithDrawCallbackGmm: { view: 15000, move: 15000, edit: 15000 },
+        CanvasImageWithItemStylesGmm: { view: 15000, move: 15000, edit: 15000 },
+        StaticCanvasImageGmm: { view: 15000, move: 15000, edit: 15000 },
+        StaticWebglImageGmm: { view: 20000, move: 20000, edit: 20000 }
       },
       complexSvgStyles: {
-        defaultGmm: {
-          view: 500,
-          move: 500,
-          edit: 500
-        },
-        WebglGmm: {
-          view: 50000,
-          move: 50000,
-          edit: 50000
-        },
-        levelOfDetailGmm: {
-          view: 2000,
-          move: 500,
-          edit: 500
-        },
-        staticGmm: {
-          view: 2000,
-          move: 2000,
-          edit: 2000
-        },
-        svgImageGmm: {
-          view: 2000,
-          move: 5000,
-          edit: 2000
-        },
-        CanvasImageWithDrawCallbackGmm: {
-          view: 15000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithItemStylesGmm: {
-          view: 15000,
-          move: 15000,
-          edit: 5000
-        },
-        StaticCanvasImageGmm: {
-          view: 15000,
-          move: 15000,
-          edit: 5000
-        },
-        StaticWebglImageGmm: {
-          view: 20000,
-          move: 20000,
-          edit: 20000
-        }
+        defaultGmm: { view: 500, move: 500, edit: 500 },
+        WebglGmm: { view: 50000, move: 50000, edit: 50000 },
+        levelOfDetailGmm: { view: 2000, move: 500, edit: 500 },
+        staticGmm: { view: 2000, move: 2000, edit: 2000 },
+        svgImageGmm: { view: 2000, move: 5000, edit: 2000 },
+        CanvasImageWithDrawCallbackGmm: { view: 15000, move: 15000, edit: 15000 },
+        CanvasImageWithItemStylesGmm: { view: 15000, move: 15000, edit: 5000 },
+        StaticCanvasImageGmm: { view: 15000, move: 15000, edit: 5000 },
+        StaticWebglImageGmm: { view: 20000, move: 20000, edit: 20000 }
       },
       simpleCanvasStyles: {
-        defaultGmm: {
-          view: 11000,
-          move: 5000,
-          edit: 5000
-        },
-        WebglGmm: {
-          view: 50000,
-          move: 50000,
-          edit: 50000
-        },
-        levelOfDetailGmm: {
-          view: 2000,
-          move: 500,
-          edit: 500
-        },
-        staticGmm: {
-          view: 11000,
-          move: 11000,
-          edit: 11000
-        },
-        svgImageGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithDrawCallbackGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithItemStylesGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        StaticCanvasImageGmm: {
-          view: 2000,
-          move: 2000,
-          edit: 2000
-        },
-        StaticWebglImageGmm: {
-          view: 20000,
-          move: 20000,
-          edit: 20000
-        }
+        defaultGmm: { view: 11000, move: 5000, edit: 5000 },
+        WebglGmm: { view: 50000, move: 50000, edit: 50000 },
+        levelOfDetailGmm: { view: 2000, move: 500, edit: 500 },
+        staticGmm: { view: 11000, move: 11000, edit: 11000 },
+        svgImageGmm: { view: 20000, move: 15000, edit: 15000 },
+        CanvasImageWithDrawCallbackGmm: { view: 20000, move: 15000, edit: 15000 },
+        CanvasImageWithItemStylesGmm: { view: 20000, move: 15000, edit: 15000 },
+        StaticCanvasImageGmm: { view: 2000, move: 2000, edit: 2000 },
+        StaticWebglImageGmm: { view: 20000, move: 20000, edit: 20000 }
       },
       complexCanvasStyles: {
-        defaultGmm: {
-          view: 500,
-          move: 500,
-          edit: 500
-        },
-        WebglGmm: {
-          view: 50000,
-          move: 50000,
-          edit: 50000
-        },
-        levelOfDetailGmm: {
-          view: 2000,
-          move: 500,
-          edit: 500
-        },
-        staticGmm: {
-          view: 500,
-          move: 500,
-          edit: 500
-        },
-        svgImageGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithDrawCallbackGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithItemStylesGmm: {
-          view: 20000,
-          move: 5000,
-          edit: 5000
-        },
-        StaticCanvasImageGmm: {
-          view: 2000,
-          move: 2000,
-          edit: 2000
-        },
-        StaticWebglImageGmm: {
-          view: 20000,
-          move: 20000,
-          edit: 20000
-        }
+        defaultGmm: { view: 500, move: 500, edit: 500 },
+        WebglGmm: { view: 50000, move: 50000, edit: 50000 },
+        levelOfDetailGmm: { view: 2000, move: 500, edit: 500 },
+        staticGmm: { view: 500, move: 500, edit: 500 },
+        svgImageGmm: { view: 20000, move: 15000, edit: 15000 },
+        CanvasImageWithDrawCallbackGmm: { view: 20000, move: 15000, edit: 15000 },
+        CanvasImageWithItemStylesGmm: { view: 20000, move: 5000, edit: 5000 },
+        StaticCanvasImageGmm: { view: 2000, move: 2000, edit: 2000 },
+        StaticWebglImageGmm: { view: 20000, move: 20000, edit: 20000 }
       },
       WebGLStyles: {
-        defaultGmm: {
-          view: 11000,
-          move: 5000,
-          edit: 5000
-        },
-        WebglGmm: {
-          view: 50000,
-          move: 50000,
-          edit: 50000
-        },
-        levelOfDetailGmm: {
-          view: 11000,
-          move: 5000,
-          edit: 5000
-        },
-        staticGmm: {
-          view: 11000,
-          move: 11000,
-          edit: 11000
-        },
-        svgImageGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithDrawCallbackGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithItemStylesGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        StaticCanvasImageGmm: {
-          view: 2000,
-          move: 2000,
-          edit: 2000
-        },
-        StaticWebglImageGmm: {
-          view: 20000,
-          move: 20000,
-          edit: 20000
-        }
+        defaultGmm: { view: 11000, move: 5000, edit: 5000 },
+        WebglGmm: { view: 50000, move: 50000, edit: 50000 },
+        levelOfDetailGmm: { view: 11000, move: 5000, edit: 5000 },
+        staticGmm: { view: 11000, move: 11000, edit: 11000 },
+        svgImageGmm: { view: 20000, move: 15000, edit: 15000 },
+        CanvasImageWithDrawCallbackGmm: { view: 20000, move: 15000, edit: 15000 },
+        CanvasImageWithItemStylesGmm: { view: 20000, move: 15000, edit: 15000 },
+        StaticCanvasImageGmm: { view: 2000, move: 2000, edit: 2000 },
+        StaticWebglImageGmm: { view: 20000, move: 20000, edit: 20000 }
       }
     }
   }
+
   /**
    * Constructs a new instance and registers listeners to the graph item styles radio buttons.
    */
@@ -287,17 +109,20 @@ export class PreConfigurator {
     }
     this.graphComponent = graphComponent
   }
+
   /**
    * On change of graph or graph item style, the pre configuration is loaded and applied.
    */
   updatePreConfiguration() {
     const nodeCount = this.graphComponent.graph.nodes.size
+
     // remove unrecommended classes
     const unrecommendedLabels = document.getElementsByClassName('unrecommended')
     while (unrecommendedLabels.length > 0) {
       const label = unrecommendedLabels[0]
       label.className = label.className.replace(/\s?\bunrecommended\b/, '')
     }
+
     // get current graph item style
     let graphItemStyle
     const radioButtons = this.graphItemStylesSettings.getElementsByTagName('input')
@@ -307,9 +132,12 @@ export class PreConfigurator {
         break
       }
     }
+
     const editMode = this.modeMapping[document.querySelector('#modeChooserBox').selectedIndex]
+
     // get style specific limits
     const styleLimits = this.preConfigurationLimits[graphItemStyle]
+
     // set unrecommended classes
     Object.keys(styleLimits).forEach((gmmOptimization) => {
       const styleLimit = styleLimits[gmmOptimization][editMode]
@@ -323,6 +151,7 @@ export class PreConfigurator {
       }
     })
   }
+
   /**
    * Adds the warning class to the respective items.
    */
@@ -334,6 +163,7 @@ export class PreConfigurator {
       }
     }
   }
+
   /**
    * Removes the warning class from the respective items.
    */

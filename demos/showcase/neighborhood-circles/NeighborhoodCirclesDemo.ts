@@ -78,10 +78,7 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData as unknown as JSONGraph)
 
   graphComponent.graph.applyLayout(
-    new OrganicLayout({
-      defaultMinimumNodeDistance: 60,
-      avoidNodeEdgeOverlap: true
-    })
+    new OrganicLayout({ defaultMinimumNodeDistance: 60, avoidNodeEdgeOverlap: true })
   )
   await graphComponent.fitGraphBounds()
 
@@ -117,10 +114,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   nodesSource.nodeCreator.defaults.labels.style = new LabelStyle({
     textFill: '#000000',
     backgroundFill: '#ffffffb0',
-    font: new Font({
-      fontFamily: 'Arial',
-      fontSize: 10
-    }),
+    font: new Font({ fontFamily: 'Arial', fontSize: 10 }),
     padding: 2
   })
   nodesSource.nodeCreator.defaults.labels.layoutParameter = InteriorNodeLabelModel.BOTTOM

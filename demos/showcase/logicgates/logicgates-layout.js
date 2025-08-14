@@ -35,6 +35,7 @@ import {
   LayoutExecutor
 } from '@yfiles/yfiles'
 import { disableUIElements, enableUIElements } from '@yfiles/demo-resources/demo-page'
+
 /**
  * Applies the selected layout algorithm.
  * @param graphComponent The GraphComponent where the layout is applied to
@@ -44,12 +45,12 @@ import { disableUIElements, enableUIElements } from '@yfiles/demo-resources/demo
 export async function runLayout(graphComponent, clearUndo, fitBounds = true) {
   const algorithmSelect = document.querySelector('#algorithm-select-box')
   const selectedIndex = algorithmSelect.selectedIndex
+
   let layout
   let layoutData
+
   if (selectedIndex === 0) {
-    layout = new HierarchicalLayout({
-      layoutOrientation: 'left-to-right'
-    })
+    layout = new HierarchicalLayout({ layoutOrientation: 'left-to-right' })
     const hierarchicalLayoutData = new HierarchicalLayoutData()
     hierarchicalLayoutData.ports.sourcePortCandidates = new EdgePortCandidates().addFixedCandidate(
       'right'
@@ -65,11 +66,13 @@ export async function runLayout(graphComponent, clearUndo, fitBounds = true) {
     edgeRouterData.ports.targetPortCandidates = new EdgePortCandidates().addFixedCandidate('left')
     layoutData = edgeRouterData
   }
+
   disableUIElements('#algorithm-select-box', '#layout-button')
   try {
     // Ensure that the LayoutExecutor class is not removed by build optimizers
     // It is needed for the 'applyLayoutAnimated' method in this demo.
     LayoutExecutor.ensure()
+
     await graphComponent.applyLayoutAnimated(layout, '0.5s', layoutData)
     if (fitBounds) {
       await graphComponent.fitGraphBounds()

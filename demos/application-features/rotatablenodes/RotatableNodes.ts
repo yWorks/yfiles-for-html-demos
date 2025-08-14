@@ -1132,10 +1132,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
         if (group) {
           group.nodes.push(node)
         } else {
-          groups.push({
-            angle,
-            nodes: [node]
-          })
+          groups.push({ angle, nodes: [node] })
         }
         return groups
       }, [])

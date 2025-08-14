@@ -85,9 +85,7 @@ export class LinkItemHoverInputMode extends ItemHoverInputMode {
     if (labelLink) {
       // underline the text of the link
       const clone = labelLink.style.clone() as LabelStyle
-      clone.font = clone.font.createCopy({
-        textDecoration: 'underline'
-      })
+      clone.font = clone.font.createCopy({ textDecoration: 'underline' })
       graph.setStyle(labelLink, clone)
     }
 

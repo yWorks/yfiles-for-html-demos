@@ -211,11 +211,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">export</span> type <span class="hljs-title class_">ItemData</span> = {
-  <span class="hljs-attr">id</span>: string
-  <span class="hljs-attr">path</span>: string
-  children?: <span class="hljs-title class_">ChildData</span>[]
-}</code></pre>
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">export</span> type <span class="hljs-title class_">ItemData</span> = { <span class="hljs-attr">id</span>: string; <span class="hljs-attr">path</span>: string; children?: <span class="hljs-title class_">ChildData</span>[] }</code></pre>
                 </div>
               </div>
               <div class="paragraph">
@@ -225,10 +221,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">export</span> type <span class="hljs-title class_">ChildData</span> = {
-  <span class="hljs-attr">id</span>: string
-  children?: <span class="hljs-title class_">ChildData</span>[]
-}</code></pre>
+                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">export</span> type <span class="hljs-title class_">ChildData</span> = { <span class="hljs-attr">id</span>: string; children?: <span class="hljs-title class_">ChildData</span>[] }</code></pre>
                 </div>
               </div>
               <div class="paragraph">
@@ -248,10 +241,7 @@
       {
         <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child1&#x27;</span>,
         <span class="hljs-attr">children</span>: [
-          {
-            <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child11&#x27;</span>,
-            <span class="hljs-attr">children</span>: [{ <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child14&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child15&#x27;</span> }]
-          },
+          { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child11&#x27;</span>, <span class="hljs-attr">children</span>: [{ <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child14&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child15&#x27;</span> }] },
           { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;child12&#x27;</span> }
         ]
       },

@@ -73,9 +73,7 @@ async function run(): Promise<void> {
   graphOverviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
 
   // configure input mode, snapping and undo-engine
-  graphComponent.inputMode = new GraphEditorInputMode({
-    snapContext: new GraphSnapContext()
-  })
+  graphComponent.inputMode = new GraphEditorInputMode({ snapContext: new GraphSnapContext() })
 
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
@@ -146,11 +144,7 @@ function enableMode(mode: Mode) {
   const color = isDarkMode ? '#FCFDFE' : '#605003'
   const edgeStyle = graphComponent.graph.edgeDefaults.style as PolylineEdgeStyle
   edgeStyle.stroke = `1.5px ${color}`
-  edgeStyle.targetArrow = new Arrow({
-    fill: color,
-    stroke: color,
-    type: 'triangle'
-  })
+  edgeStyle.targetArrow = new Arrow({ fill: color, stroke: color, type: 'triangle' })
 
   // update CSS variables
   if (isDarkMode) {

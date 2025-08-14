@@ -27,12 +27,11 @@
  **
  ***************************************************************************/
 import {} from './FlowNode'
+
 export function defaultFlowNodeValidationFn(_) {
-  return {
-    invalidProperties: [],
-    validationMessages: []
-  }
+  return { invalidProperties: [], validationMessages: [] }
 }
+
 export function validateStorageReadWriteNode(args) {
   const invalidProperties = []
   const validationMessages = []
@@ -40,11 +39,9 @@ export function validateStorageReadWriteNode(args) {
     invalidProperties.push('fileName')
     validationMessages.push('File name is not defined')
   }
-  return {
-    invalidProperties,
-    validationMessages
-  }
+  return { invalidProperties, validationMessages }
 }
+
 export function validateParserCsvNode(args) {
   const invalidProperties = []
   const validationMessages = []
@@ -56,11 +53,9 @@ export function validateParserCsvNode(args) {
     invalidProperties.push('newLine')
     validationMessages.push('New line symbol is not defined')
   }
-  return {
-    invalidProperties,
-    validationMessages
-  }
+  return { invalidProperties, validationMessages }
 }
+
 export function validateParserJsonNode(args) {
   const invalidProperties = []
   const validationMessages = []
@@ -68,11 +63,9 @@ export function validateParserJsonNode(args) {
     invalidProperties.push('property')
     validationMessages.push('Property value is not defined')
   }
-  return {
-    invalidProperties,
-    validationMessages
-  }
+  return { invalidProperties, validationMessages }
 }
+
 export function validateParserXmlNode(args) {
   const invalidProperties = []
   const validationMessages = []
@@ -80,11 +73,9 @@ export function validateParserXmlNode(args) {
     invalidProperties.push('property')
     validationMessages.push('Property value is not defined')
   }
-  return {
-    invalidProperties,
-    validationMessages
-  }
+  return { invalidProperties, validationMessages }
 }
+
 export function validateNetworkTcpNode(args) {
   const invalidProperties = []
   const validationMessages = []
@@ -92,11 +83,9 @@ export function validateNetworkTcpNode(args) {
     invalidProperties.push('server')
     validationMessages.push('Server is not defined')
   }
-  return {
-    invalidProperties,
-    validationMessages
-  }
+  return { invalidProperties, validationMessages }
 }
+
 export function validateFunctionFunctionNode(args) {
   const invalidProperties = []
   const validationMessages = []
@@ -104,11 +93,9 @@ export function validateFunctionFunctionNode(args) {
     invalidProperties.push('function')
     validationMessages.push('No function to execute')
   }
-  return {
-    invalidProperties,
-    validationMessages
-  }
+  return { invalidProperties, validationMessages }
 }
+
 export function validateFunctionDelayNode(args) {
   const invalidProperties = []
   const validationMessages = []
@@ -120,8 +107,5 @@ export function validateFunctionDelayNode(args) {
     invalidProperties.push('timeoutUnits')
     validationMessages.push('Timeout units are not defined')
   }
-  return {
-    invalidProperties,
-    validationMessages
-  }
+  return { invalidProperties, validationMessages }
 }

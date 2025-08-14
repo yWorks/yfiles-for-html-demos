@@ -64,10 +64,7 @@ export interface ReactComponentHtmlLabelStyleProps<TTag> {
   tag: TTag
 }
 
-type Cache<TTag> = {
-  props: ReactComponentHtmlLabelStyleProps<TTag>
-  root: Root
-}
+type Cache<TTag> = { props: ReactComponentHtmlLabelStyleProps<TTag>; root: Root }
 
 /**
  * Utility type for type-safe implementation of the Visual that stores the props

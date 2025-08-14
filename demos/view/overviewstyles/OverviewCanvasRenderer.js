@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { GraphOverviewRenderer } from '@yfiles/yfiles'
+
 /**
  * Custom HTML Canvas rendering for the overview.
  */
@@ -50,6 +51,7 @@ export class OverviewCanvasRenderer extends GraphOverviewRenderer {
         ctx.fillStyle = '#C1C1C1'
     }
     const layout = node.layout
+
     ctx.fillRect(layout.x, layout.y, layout.width, layout.height)
     const fullName = tag.name
     const shortName = fullName.replace(/^(.).*\s(.)\S*$/, '$1. $2.')
@@ -61,6 +63,7 @@ export class OverviewCanvasRenderer extends GraphOverviewRenderer {
       node.layout.center.y + node.layout.height / 6
     )
   }
+
   paintGroupNode(renderContext, ctx, node) {
     ctx.fillStyle = 'rgb(211, 211, 211)'
     ctx.strokeStyle = 'rgb(211, 211, 211)'
@@ -70,6 +73,7 @@ export class OverviewCanvasRenderer extends GraphOverviewRenderer {
     ctx.fillRect(x, y, width, 22)
     ctx.lineWidth = 1
   }
+
   paintEdge(renderContext, ctx, edge) {
     ctx.beginPath()
     ctx.moveTo(edge.sourcePort.location.x, edge.sourcePort.location.y)

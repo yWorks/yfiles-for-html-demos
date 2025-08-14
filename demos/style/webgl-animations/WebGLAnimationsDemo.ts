@@ -110,11 +110,7 @@ async function run(): Promise<void> {
 
   graphComponent.graphModelManager = new WebGLGraphModelManager()
   graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager({
-    nodeStyle: new WebGLNodeIndicatorStyle({
-      type: 'solid',
-      primaryColor: '#666',
-      thickness: 2
-    })
+    nodeStyle: new WebGLNodeIndicatorStyle({ type: 'solid', primaryColor: '#666', thickness: 2 })
   })
 
   // create an initial sample graph
@@ -320,7 +316,7 @@ function updateMagnitudeOptions(type: PulseType | ScaleType): any {
     case 'both':
     case 'shrink':
     case 'grow':
-      values = [1, 2, 5, 10, 20, 30, 60]
+      values = [2, 5, 10, 20, 30, 60]
       break
     case 'scale-shrink-relative':
     case 'shrink-relative':
@@ -328,10 +324,10 @@ function updateMagnitudeOptions(type: PulseType | ScaleType): any {
       break
     case 'scale-grow-relative':
     case 'grow-relative':
-      values = [1, 2, 3, 4]
+      values = [2, 3, 4, 5]
       break
     case 'both-relative':
-      values = [0, 0.5, 0.75, 1, 2, 3, 4]
+      values = [0.5, 0.75, 2, 3, 4, 5]
       break
     default:
       values = [1, 2, 5, 10, 20, 30, 60]
@@ -512,10 +508,7 @@ function startNewAnimation(graphComponent: GraphComponent, component: ConnectedC
  */
 function configureInteraction(graphComponent: GraphComponent) {
   // Allow only viewing of the graph
-  const gvim = new GraphViewerInputMode({
-    selectableItems: 'node',
-    focusableItems: 'none'
-  })
+  const gvim = new GraphViewerInputMode({ selectableItems: 'node', focusableItems: 'none' })
 
   gvim.itemHoverInputMode.enabled = true
   gvim.itemHoverInputMode.hoverItems =

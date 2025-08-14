@@ -178,11 +178,7 @@ export class OrNodeStyle extends GateNodeStyle {
     const text = createText(textContent, fontSize, this.labelColor)
     const textSize = TextRenderSupport.measureText(
       text.textContent ?? '',
-      new Font({
-        fontFamily: 'Arial',
-        fontSize,
-        fontWeight: 'bold'
-      })
+      new Font({ fontFamily: 'Arial', fontSize, fontWeight: 'bold' })
     )
     setAttribute(text, 'x', (node.layout.width - textSize.width) * 0.4)
     setAttribute(text, 'y', (node.layout.height - textSize.height) * 0.8)

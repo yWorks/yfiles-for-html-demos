@@ -156,12 +156,7 @@ export class CustomGroupNodeStyle extends NodeStyleBase<CustomGroupNodeStyleVisu
       g.append(text)
     }
 
-    return SvgVisual.from(g, {
-      width,
-      height,
-      fillColor,
-      title
-    })
+    return SvgVisual.from(g, { width, height, fillColor, title })
   }
 
   protected updateVisual(

@@ -48,6 +48,7 @@ import {
   SvgVisual,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * Sets the value of the attribute with the given name for the given element.
  * @param e The Element for which an attribute value is set.
@@ -57,6 +58,7 @@ import {
 function setAttribute(e, name, value) {
   e.setAttribute(name, value.toString())
 }
+
 /**
  * A NetworkFlowNodeStyle represents the flow that is regulated at the according node.
  * By setting a tag, the flow can be adjusted for this node.
@@ -64,6 +66,7 @@ function setAttribute(e, name, value) {
 export class NetworkFlowNodeStyle extends NodeStyleBase {
   flowColor1
   flowColor2
+
   /**
    * Creates a new instance of NetworkFlowNodeStyle.
    */
@@ -72,6 +75,7 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
     this.flowColor1 = color1 || Color.DARK_BLUE
     this.flowColor2 = color2 || Color.CORNFLOWER_BLUE
   }
+
   /**
    * Creates a new visual.
    * @param context The render context
@@ -80,15 +84,20 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
    */
   createVisual(context, node) {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     // Get the necessary data for rendering of the node
     const cache = NetworkFlowNodeStyle.createRenderDataCache(context, node)
+
     // Render the node
     this.render(context, node, g)
+
     // set the location
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
+
     // store information with the visual on how we created it
     return SvgVisual.from(g, cache)
   }
+
   /**
    * Updates the given visual if necessary.
    * @param context The render context
@@ -98,8 +107,10 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
    */
   updateVisual(context, oldVisual, node) {
     const container = oldVisual.svgElement
+
     const oldCache = oldVisual.tag
     const newCache = NetworkFlowNodeStyle.createRenderDataCache(context, node)
+
     // check if something changed except for the location of the node
     if (!newCache.equals(oldCache)) {
       // something changed - re-render the visual
@@ -113,6 +124,7 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
     return oldVisual
   }
+
   /**
    * Renders the node.
    * @param context The render context
@@ -127,12 +139,15 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
     const adjustable = node.tag.adjustable
     const supply = node.tag.supply
     const flow = node.tag.flow
+
     const svgNS = 'http://www.w3.org/2000/svg'
+
     const pipeGroup = document.createElementNS(svgNS, 'g')
     const pipe = document.createElementNS(svgNS, 'path')
     setAttribute(pipe, 'd', NetworkFlowNodeStyle.createPipePath(context, node))
     setAttribute(pipe, 'fill', 'lightgrey')
     pipeGroup.appendChild(pipe)
+
     if (!source) {
       const leftPipeBorder = document.createElementNS(svgNS, 'rect')
       setAttribute(leftPipeBorder, 'x', '0')
@@ -151,7 +166,9 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
       setAttribute(rightPipeBorder, 'fill', 'rgb(200,200,200)')
       pipeGroup.appendChild(rightPipeBorder)
     }
+
     container.appendChild(pipeGroup)
+
     const flowGroup = document.createElementNS(svgNS, 'g')
     // create the gradient
     if (document.getElementById('flow-gradient') === null) {
@@ -178,9 +195,11 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
       )
       setAttribute(stop2, 'offset', '1')
       gradient.appendChild(stop2)
+
       // puts the gradient in the container's defs section
       defs.appendChild(gradient)
     }
+
     // add background rectangle
     const rect = document.createElementNS(svgNS, 'rect')
     setAttribute(rect, 'x', '15')
@@ -189,6 +208,7 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
     setAttribute(rect, 'height', layout.height)
     setAttribute(rect, 'style', 'fill:lightgrey')
     flowGroup.appendChild(rect)
+
     // add rectangle to visualize the incoming flow
     const flowRect = document.createElementNS(svgNS, 'rect')
     setAttribute(flowRect, 'x', '15')
@@ -201,6 +221,7 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
     setAttribute(flowRect, 'height', flow)
     setAttribute(flowRect, 'fill', 'url(#flow-gradient)')
     flowGroup.appendChild(flowRect)
+
     // add rectangle to visualize supply/demand flow
     const demandSupplyRect = document.createElementNS(svgNS, 'rect')
     setAttribute(demandSupplyRect, 'x', '15')
@@ -223,6 +244,7 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
       )
     }
     flowGroup.appendChild(demandSupplyRect)
+
     // add text element that shows the incoming flow in addition to supply/demand
     const adjustedFlow = Math.round(flow + (adjustable ? layout.height * supply : 0))
     const text = document.createElementNS(svgNS, 'text')
@@ -232,6 +254,7 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
     setAttribute(text, 'fill', adjustedFlow > 7 ? 'white' : 'black')
     setAttribute(text, 'y', layout.height - 3)
     flowGroup.appendChild(text)
+
     const frame = document.createElementNS(svgNS, 'rect')
     setAttribute(frame, 'x', '15')
     setAttribute(frame, 'y', '0')
@@ -245,8 +268,10 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
     }
     setAttribute(frame, 'style', `fill:none; stroke:${strokeColor}; stroke-width:3`)
     flowGroup.appendChild(frame)
+
     container.appendChild(flowGroup)
   }
+
   /**
    * Creates the path for the pipe.
    * @param context The render context
@@ -256,10 +281,12 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
   static createPipePath(context, node) {
     const layout = node.layout
     let path
+
     const graph = context.canvasComponent.graph
     // we have to distinguish the real source/sink from the isolated nodes
     const source = node.tag.source && graph.inDegree(node) === 0 && graph.outDegree(node) !== 0
     const sink = node.tag.sink && graph.outDegree(node) === 0 && graph.inDegree(node) !== 0
+
     if (!source && !sink) {
       path = `M0,0 A${layout.width * 0.5},${layout.height * 0.33} 0 0,0 ${layout.width},0 L${layout.width},${layout.height} A${layout.width * 0.5},${layout.height * 0.33} 0 0,0 0,${layout.height} z`
     } else if (source) {
@@ -283,6 +310,7 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
     }
     return path
   }
+
   /**
    * Creates an object containing all necessary data to create a visual for the node.
    * @param context The render context
@@ -306,6 +334,7 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
     )
   }
 }
+
 /**
  * Holds the data fields necessary for visual caching in the network flow node style.
  * The equals method detects if the cache has changed.
@@ -329,6 +358,7 @@ class NodeRenderDataCache {
     this.inDegree = inDegree
     this.outDegree = outDegree
   }
+
   /**
    * Checks if the data stored in the given cache is equal to data in this cache.
    * @param other The render data cache that is compared to this cache.
@@ -348,8 +378,10 @@ class NodeRenderDataCache {
     )
   }
 }
+
 export class NetworkFlowEdgeStyle extends EdgeStyleBase {
   highlightColor
+
   /**
    * Creates a new instance of NetworkFlowEdgeStyle.
    */
@@ -357,6 +389,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     super()
     this.highlightColor = highlightColor || null
   }
+
   /**
    * Creates the visual for an edge.
    * @param context The render context
@@ -367,6 +400,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
   createVisual(context, edge) {
     // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     const selection = context.canvasComponent ? context.canvasComponent.selection : null
     const selected = !!selection && selection.includes(edge)
     // Get the necessary data for rendering of the edge
@@ -381,6 +415,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     // store information with the visual on how we created it
     return SvgVisual.from(g, cache)
   }
+
   /**
    * Re-renders the edge using the old visual for performance reasons.
    * @param context The render context
@@ -391,10 +426,13 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    */
   updateVisual(context, oldVisual, edge) {
     const container = oldVisual.svgElement
+
     // get the data with which the oldvisual was created
     const oldCache = oldVisual.tag
+
     const selection = context.canvasComponent ? context.canvasComponent.selection : null
     const selected = !!selection && selection.includes(edge)
+
     // get the data for the new visual
     const newCache = NetworkFlowEdgeStyle.createRenderDataCache(
       edge.tag,
@@ -402,10 +440,12 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
       this.highlightColor,
       selected
     )
+
     // check if something changed
     if (newCache.equals(oldCache)) {
       return oldVisual
     }
+
     // more than only the path changed - re-render the visual
     while (container.lastChild != null) {
       container.removeChild(container.lastChild)
@@ -414,6 +454,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     oldVisual.tag = newCache
     return oldVisual
   }
+
   /**
    * Creates the visual appearance of an edge.
    * @param context The render context
@@ -430,6 +471,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     setAttribute(backgroundPath, 'stroke-linecap', 'butt')
     setAttribute(backgroundPath, 'stroke', 'rgb(220, 220, 220)')
     container.appendChild(backgroundPath)
+
     if (cache.selected) {
       const selectionPath = cache.path.createSvgPath()
       setAttribute(selectionPath, 'fill', 'none')
@@ -439,16 +481,19 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
       setAttribute(selectionPath, 'stroke', 'indianred')
       container.appendChild(selectionPath)
     }
+
     let flowPercentage = Math.max(cache.capacity, 1)
     if (!this.highlightColor) {
       flowPercentage = cache.capacity !== 0 ? (cache.edgeFlow * cache.capacity) / cache.capacity : 0
     }
+
     const path = cache.path.createSvgPath()
     setAttribute(path, 'fill', 'none')
     setAttribute(path, 'stroke-width', flowPercentage)
     setAttribute(path, 'stroke-linejoin', 'round')
     setAttribute(path, 'stroke-linecap', 'butt')
     setAttribute(path, 'stroke', 'rgb(0,0,0)')
+
     if (edge.tag && edge.tag.color) {
       const linearGradient = new LinearGradient()
       linearGradient.gradientStops.add(new GradientStop(this.highlightColor || edge.tag.color))
@@ -458,9 +503,11 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
           1
         )
       )
+
       linearGradient.startPoint = new Point(0, 0)
       linearGradient.endPoint = new Point(30, 30)
       linearGradient.spreadMethod = GradientSpreadMethod.REFLECT
+
       const defs = context.canvasComponent.svgDefsManager.defs
       // convert the gradient to SvgElement
       const gradient = createAnimatedGradient(linearGradient)
@@ -471,6 +518,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
       this.removeGradientFromDefs(defs, edge)
       // store the new id to cache
       cache.id = gradient.id
+
       // append the gradient to the defs
       defs.appendChild(gradient)
       // sets the fill reference in the ellipse
@@ -480,6 +528,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     }
     container.appendChild(path)
   }
+
   /**
    * Removes any previous gradients related to the given edge from defs.
    * @param defs The defs element
@@ -494,6 +543,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     }
     gradientsToRemove.forEach((gradient) => defs.removeChild(gradient))
   }
+
   /**
    * Generates a color that is lighter or darker from the given one.
    * @param color The start color
@@ -503,12 +553,15 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
    */
   generateLighterOrDarkerColor(color, isLighter, percent) {
     const colorArray = [color.r, color.g, color.b]
+
     function generateColor(i) {
       const index = Math.round(percent || 0.2 * 256) * (isLighter ? -1 : 1)
       return Math[isLighter ? 'max' : 'min'](colorArray[i] + index, isLighter ? 0 : 255)
     }
+
     return new Color(generateColor(0), generateColor(1), generateColor(2), 255)
   }
+
   /**
    * Determines whether the visual representation of the edge has been hit at the given location.
    * @param canvasContext The render context
@@ -521,6 +574,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     let thickness = 0
     const sourcePortX = edge.sourcePort.location.x
     const targetPortX = edge.targetPort.location.x
+
     const sourcePortLeft = sourcePortX < targetPortX
     if (edge.tag && edge.tag.capacity) {
       if (
@@ -532,6 +586,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     }
     return this.getPath(edge).pathContains(p, canvasContext.hitTestRadius + thickness)
   }
+
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
    * @param edge The edge to create the path for.
@@ -548,6 +603,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     path.lineTo(edge.targetPort.location)
     return path
   }
+
   /**
    * Creates an object containing all necessary data to create a visual for the edge.
    * @param tag The tag of the edge.
@@ -567,6 +623,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     )
   }
 }
+
 /**
  * Holds the data fields necessary for visual caching in the network flow edge style.
  * The equals method detects if the cache has changed.
@@ -595,6 +652,7 @@ class EdgeRenderDataCache {
     this.color = color
     this.selected = selected
   }
+
   /**
    * Checks if the data stored in the given cache is equal to data in this cache.
    * @param other The render data cache that is compared to this cache.
@@ -612,6 +670,7 @@ class EdgeRenderDataCache {
     )
   }
 }
+
 /**
  * Creates a new animated SVG gradient that corresponds to the given linear gradient.
  * @param linearGradient The base, non-animated gradient.
@@ -620,10 +679,13 @@ class EdgeRenderDataCache {
 function createAnimatedGradient(linearGradient) {
   const svgGradient = linearGradient.toSvgGradient()
   setAttribute(svgGradient, 'gradientUnits', 'userSpaceOnUse')
+
   let offset = 0
   let animationFrameId = 0
   const ANIMATION_SPEED = 0.05
+
   let previousTime = null
+
   const frameRequestCallback = (timestamp) => {
     // calculate the time since the last animation frame
     if (previousTime == null) {
@@ -653,23 +715,27 @@ function createAnimatedGradient(linearGradient) {
   animationFrameId = requestAnimationFrame(frameRequestCallback)
   return svgGradient
 }
+
 /**
  * Background visual that draws a line visualizing the minimum cut of the flow-network.
  */
 export class MinCutLine extends BaseClass(IVisualCreator) {
   $bounds
   $visible
+
   constructor() {
     super()
     this.$bounds = Rect.EMPTY
     this.$visible = false
   }
+
   /**
    * Gets whether or not the min-cut line is visible.
    */
   get visible() {
     return this.$visible
   }
+
   /**
    * Sets whether or not the min-cut line is visible.
    * @param value True if the min-cut line is visible, false otherwise
@@ -677,12 +743,14 @@ export class MinCutLine extends BaseClass(IVisualCreator) {
   set visible(value) {
     this.$visible = value
   }
+
   /**
    * Gets the bounds of the min-cut line.
    */
   get bounds() {
     return this.$bounds
   }
+
   /**
    * Sets the bounds of the min-cut line.
    * @param value The bounds to be set
@@ -690,6 +758,7 @@ export class MinCutLine extends BaseClass(IVisualCreator) {
   set bounds(value) {
     this.$bounds = value
   }
+
   /**
    * Creates a visual that displays the min cut line.
    * @param context The context that describes where the visual will be used.
@@ -701,6 +770,7 @@ export class MinCutLine extends BaseClass(IVisualCreator) {
     this.render(container, cache)
     return new SvgVisual(container)
   }
+
   /**
    * Updates the min cut line visual if necessary.
    * @param context The context that describes where the visual will be used in.
@@ -709,8 +779,10 @@ export class MinCutLine extends BaseClass(IVisualCreator) {
    */
   updateVisual(context, oldVisual) {
     const container = oldVisual.svgElement
+
     const oldCache = container['data-renderDataCache']
     const newCache = MinCutLine.createRenderDataCache(this.bounds, this.visible)
+
     // if nothing has changed
     if (newCache.equals(oldCache)) {
       return oldVisual
@@ -720,9 +792,11 @@ export class MinCutLine extends BaseClass(IVisualCreator) {
       container.removeChild(container.firstElementChild)
     }
     this.render(container, newCache)
+
     // return new/updated visual
     return oldVisual
   }
+
   /**
    * Render the min-cut line.
    * @param container The svg container
@@ -731,6 +805,7 @@ export class MinCutLine extends BaseClass(IVisualCreator) {
   render(container, cache) {
     // store information with the visual on how we created it
     container['data-renderDataCache'] = cache
+
     // visual needs an update
     if (this.visible && !this.bounds.isEmpty) {
       // add/adjust the line element
@@ -742,6 +817,7 @@ export class MinCutLine extends BaseClass(IVisualCreator) {
         setAttribute(line, 'ry', '5')
         setAttribute(line, 'fill', 'gold')
         container.appendChild(line)
+
         text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
         text.textContent = 'MIN CUT'
         setAttribute(text, 'text-anchor', 'middle')
@@ -754,14 +830,17 @@ export class MinCutLine extends BaseClass(IVisualCreator) {
         line = container.firstElementChild
         text = container.lastElementChild
       }
+
       setAttribute(line, 'x', this.bounds.x)
       setAttribute(line, 'y', this.bounds.y)
       setAttribute(line, 'width', this.bounds.width)
       setAttribute(line, 'height', this.bounds.height)
+
       setAttribute(text, 'x', this.bounds.centerX)
       setAttribute(text, 'y', this.bounds.centerY)
     }
   }
+
   /**
    * Creates an object containing all necessary data to create a visual for the min cut line.
    * @param bounds The line bounds
@@ -772,6 +851,7 @@ export class MinCutLine extends BaseClass(IVisualCreator) {
     return new MclRenderDataCache(bounds.toRect(), visible)
   }
 }
+
 /**
  * Holds the data fields necessary for visual caching in the network flow min cut line visualization.
  * The equals method detects if the cache has changed.
@@ -783,6 +863,7 @@ class MclRenderDataCache {
     this.bounds = bounds
     this.visible = visible
   }
+
   /**
    * Checks if the data stored in the given cache is equal to data in this cache.
    * @param other The render data cache that is compared to this cache.

@@ -32,6 +32,7 @@ export const PARSING_PLACEHOLDER_XLINK_NS = 'http://www.example.com/template-bin
 export const ID_ATTRIBUTE = 'id'
 export const DATA_CONTENT_ATTRIBUTE = 'data-content'
 export const BINDING_REGEX = /\{(Binding|TemplateBinding)\s*([^}]+)\}/
+
 // ID reference attributes that need special handling
 export const ID_REFERENCE_ATTRIBUTES = [
   'for',

@@ -38,8 +38,10 @@ import {
   SvgVisual
 } from '@yfiles/yfiles'
 import { ChordDiagramLayout } from './ChordDiagramLayout'
+
 const SVG_NS = 'http://www.w3.org/2000/svg'
 const STROKE_WIDTH = 2
+
 /**
  * A custom edge style that draws the edges of a chord diagram.
  */
@@ -49,18 +51,22 @@ export class ChordEdgeStyle extends EdgeStyleBase {
    * Specifies whether to show the information about the underlying graph
    */
   showStyleHints = false
+
   // opacity of edges if not further specified
   static defaultOpacity = 0.8
+
   constructor(edgeStyleHints) {
     super()
     this.edgeStyleHints = edgeStyleHints
   }
+
   /**
    * Creates the visual appearance of an edge.
    */
   render(edge, container, cache) {
     const center = ChordDiagramLayout.CENTER
     const radius = ChordDiagramLayout.RADIUS
+
     // the arc where the edge touches the node
     const sourceArc =
       ` M ${cache.sourceEnd.x} ${cache.sourceEnd.y}` +
@@ -82,16 +88,20 @@ export class ChordEdgeStyle extends EdgeStyleBase {
       typeof edge.tag.opacity == 'undefined' ? ChordEdgeStyle.defaultOpacity : edge.tag.opacity
     )
     wholePath.setAttribute('fill-rule', 'even-odd')
+
     // construct a linear gradient between the source and target node color and add it to the svg
     const defs = document.createElementNS(SVG_NS, 'defs')
     const gradient = document.createElementNS(SVG_NS, 'linearGradient')
+
     const color1 = edge.sourcePort.owner.tag.color
     const color2 = edge.targetPort.owner.tag.color
+
     // stop information for the <linearGradient>
     const stops = [
       { color: color1, offset: '30%' },
       { color: color2, offset: '70%' }
     ]
+
     // appends <stop> elements to the <linearGradient>
     for (let i = 0, length = stops.length; i < length; i++) {
       const stop = document.createElementNS(SVG_NS, 'stop')
@@ -99,6 +109,7 @@ export class ChordEdgeStyle extends EdgeStyleBase {
       stop.setAttribute('stop-color', stops[i].color)
       gradient.appendChild(stop)
     }
+
     // center of the edge at source
     const sourcePoint = new Point(
       (cache.sourceStart.x + cache.sourceEnd.x) / 2,
@@ -109,27 +120,36 @@ export class ChordEdgeStyle extends EdgeStyleBase {
       (cache.targetStart.x + cache.targetEnd.x) / 2,
       (cache.targetStart.y + cache.targetEnd.y) / 2
     )
+
     const deltaY = sourcePoint.y - targetPoint.y
     const deltaX = targetPoint.x - sourcePoint.x
     const result = Math.atan2(deltaY, deltaX)
     let ang = result < 0 ? Math.PI * 2 + result : result
     ang -= Math.PI / 2
+
     // compute the positions as percentages
     const x1 = Math.round(50 + Math.sin(ang) * 50) / 100
     const y1 = Math.round(50 + Math.cos(ang) * 50) / 100
     const x2 = Math.round(50 + Math.sin(ang + Math.PI) * 50) / 100
     const y2 = Math.round(50 + Math.cos(ang + Math.PI) * 50) / 100
+
     gradient.setAttribute('x1', String(x1))
     gradient.setAttribute('x2', String(x2))
     gradient.setAttribute('y1', String(y1))
     gradient.setAttribute('y2', String(y2))
+
     // reference the gradient by its colors
     gradient.id = `Gradient_${color1}_${color2}`
+
     defs.appendChild(gradient)
+
     // set the gradient id to the edge path
     wholePath.setAttribute('fill', `url(#Gradient_${color1}_${color2})`)
+
     container.appendChild(defs)
+
     container.appendChild(wholePath)
+
     // displays information about what information the layoutGraph provided
     if (this.showStyleHints) {
       wholePath.setAttribute('opacity', '0.1')
@@ -147,6 +167,7 @@ export class ChordEdgeStyle extends EdgeStyleBase {
         typeof edge.tag.opacity == 'undefined' ? ChordEdgeStyle.defaultOpacity : edge.tag.opacity
       )
     }
+
     // if the edge is highlighted, display a dotted outline
     if (edge.tag.highlighted) {
       wholePath.setAttribute('opacity', '1')
@@ -154,6 +175,7 @@ export class ChordEdgeStyle extends EdgeStyleBase {
       wholePath.setAttribute('stroke-dasharray', '4')
     }
   }
+
   /**
    * Creates the visualization of an edge in a chord diagram.
    */
@@ -177,6 +199,7 @@ export class ChordEdgeStyle extends EdgeStyleBase {
     // store information with the visual on how we created it
     return SvgVisual.from(g, cache)
   }
+
   /**
    * It is generally recommended for performance reasons to avoid creating new Visuals and instead
    * update the existing one. Since chord diagrams are generally small, we will make ado
@@ -186,6 +209,7 @@ export class ChordEdgeStyle extends EdgeStyleBase {
   updateVisual(context, oldVisual, edge) {
     // get the data with which the oldvisual was created
     const oldCache = oldVisual.tag
+
     // create the data for the new visual
     const hint = this.getStyleHint(edge)
     const newCache = new EdgeRenderDataCache(
@@ -198,9 +222,11 @@ export class ChordEdgeStyle extends EdgeStyleBase {
       edge.tag.opacity,
       this.showStyleHints
     )
+
     // if nothing changed, reuse old visual, else rebuild
     return newCache.equals(oldCache) ? oldVisual : this.createVisual(context, edge)
   }
+
   /**
    * Determines if the given location lies on the visualization of an edge in a chord diagram.
    */
@@ -214,8 +240,10 @@ export class ChordEdgeStyle extends EdgeStyleBase {
     path.quadTo(edge.targetNode.layout.center, hint.targetEnd)
     path.quadTo(hint.circleCenter, hint.sourceStart)
     path.close()
+
     return path.areaContains(location)
   }
+
   /**
    * Determines whether the edge is to be drawn at all. Because the edge visualization differs
    * from the straight line that makes up the 'real' edge, this implementation checks
@@ -232,6 +260,7 @@ export class ChordEdgeStyle extends EdgeStyleBase {
     )
     return bounding.intersects(rectangle)
   }
+
   /**
    * Gets the hint object that the layout has provided.
    */
@@ -247,6 +276,7 @@ export class ChordEdgeStyle extends EdgeStyleBase {
     )
   }
 }
+
 class EdgeRenderDataCache {
   sourceStart
   sourceEnd
@@ -275,6 +305,7 @@ class EdgeRenderDataCache {
     this.opacity = opacity
     this.showStyleHints = showStyleHints
   }
+
   equals(other) {
     return other == null
       ? false

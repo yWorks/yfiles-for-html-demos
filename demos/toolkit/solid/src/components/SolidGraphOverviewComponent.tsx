@@ -29,9 +29,7 @@
 import { GraphComponent, GraphOverviewComponent } from '@yfiles/yfiles'
 import { onCleanup, onMount } from 'solid-js'
 
-type SolidGraphOverviewComponentProps = {
-  graphComponent: () => GraphComponent
-}
+type SolidGraphOverviewComponentProps = { graphComponent: () => GraphComponent }
 
 export const SolidGraphOverviewComponent = (props: SolidGraphOverviewComponentProps) => {
   let overviewDiv: HTMLDivElement = undefined!

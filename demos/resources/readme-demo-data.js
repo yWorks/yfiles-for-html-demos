@@ -141,7 +141,6 @@ function getDemoData() {
         'options',
         'overview',
         'hierarchical',
-        'hierarchic',
         'organic',
         'orthogonal',
         'circular',
@@ -185,7 +184,6 @@ function getDemoData() {
         'layout algorithm',
         'HierarchicalLayout',
         'hierarchy',
-        'hierarchic',
         'hierarchical',
         'sugiyama',
         'layered',
@@ -311,7 +309,6 @@ function getDemoData() {
         'root',
         'directed',
         'dendrogram',
-        'hierarchic',
         'hierarchical',
         'hierarchy',
         'data analysis'
@@ -420,7 +417,6 @@ function getDemoData() {
         'circles',
         'circular',
         'concentric',
-        'hierarchic',
         'hierarchical',
         'hierarchy',
         'layered',
@@ -467,7 +463,6 @@ function getDemoData() {
         'series parallel layout',
         'series',
         'parallel',
-        'hierarchic',
         'hierarchical',
         'orthogonal',
         'octilinear',
@@ -719,7 +714,6 @@ function getDemoData() {
         'v2.3.0.0',
         'groups',
         'folding',
-        'hierarchic',
         'hierarchical',
         'orthogonal',
         'labels',
@@ -812,7 +806,7 @@ function getDemoData() {
       tried out.`,
       category: 'showcase',
       tags: ['style', 'layout', 'drag and drop'],
-      keywords: ['hierarchical', 'hierarchic', 'palette', 'dnd', 'data management']
+      keywords: ['hierarchical', 'palette', 'dnd', 'data management']
     },
     {
       id: 'uml-editor',
@@ -832,7 +826,6 @@ function getDemoData() {
         'context menu',
         'labels',
         'edge router',
-        'hierarchic',
         'hierarchical',
         'structures',
         'data management'
@@ -850,7 +843,7 @@ function getDemoData() {
       step-by-step with the selected nodes.`,
       category: 'showcase',
       tags: ['layout', 'interaction'],
-      keywords: ['hierarchical', 'hierarchic', 'context menu', 'data management']
+      keywords: ['hierarchical', 'context menu', 'data management']
     },
     {
       id: 'mindmap-editor',
@@ -876,17 +869,10 @@ function getDemoData() {
       description: `This demo presents a sankey diagram, visualizing the voter's migration flow
       between different political parties over the course of four elections.
       From left to right, the thickness of the edges is proportional to the flow quantity. The
-      layout is realized with yFiles hierarchic layout algorithm.`,
+      layout is realized with yFiles hierarchical layout algorithm.`,
       category: 'layout',
       tags: ['edge thickness', 'style', 'layout'],
-      keywords: [
-        'context menu',
-        'hierarchical',
-        'hierarchic',
-        'generic labeling',
-        'labels',
-        'data analysis'
-      ]
+      keywords: ['context menu', 'hierarchical', 'generic labeling', 'labels', 'data analysis']
     },
     {
       id: 'tree-of-life',
@@ -975,7 +961,7 @@ function getDemoData() {
       The graph uses the Rank Assignment algorithm to calculate the critical path, and the hierarchic
       layout places the nodes in layers based on their ranking.`,
       category: 'analysis',
-      tags: ['analysis', 'hierarchical', 'hierarchic', 'rank'],
+      tags: ['analysis', 'hierarchical', 'rank'],
       keywords: [
         'critical',
         'paths',
@@ -1002,7 +988,6 @@ function getDemoData() {
         'ports',
         'candidates',
         'constraints',
-        'hierarchic',
         'hierarchical',
         'edge router',
         'drag and drop',
@@ -1065,7 +1050,7 @@ function getDemoData() {
       part of the graph is well-organized while remaining similar to the previous arrangement.`,
       category: 'layout',
       tags: ['layout', 'hierarchical', 'animation'],
-      keywords: ['overview', 'folding', 'hide', 'hierarchic', 'grouping', 'from sketch']
+      keywords: ['overview', 'folding', 'hide', 'grouping', 'from sketch']
     },
     {
       id: 'hierarchical-nesting-incremental',
@@ -1108,8 +1093,7 @@ function getDemoData() {
         'space',
         'clear area layout',
         'fill area layout',
-        'v2.3.0.2',
-        'hierarchic'
+        'v2.3.0.2'
       ]
     },
     {
@@ -1191,7 +1175,6 @@ function getDemoData() {
       distributionType: 'needs-layout',
       tags: ['layout', 'interaction', 'animation'],
       keywords: [
-        'hierarchic',
         'hierarchical',
         'organic',
         'tree',
@@ -1218,7 +1201,7 @@ function getDemoData() {
       summary: 'Shows the neighborhood of the currently selected node alongside the graph.',
       category: 'showcase',
       tags: ['layout', 'interaction'],
-      keywords: ['hierarchical', 'hierarchic', 'copy', 'detail', 'data analysis', 'data management']
+      keywords: ['hierarchical', 'copy', 'detail', 'data analysis', 'data management']
     },
     {
       id: 'neighborhood-circles',
@@ -1423,15 +1406,7 @@ function getDemoData() {
         'Showcases a selection of clustering algorithms such as edge betweenness, k-means, hierarchical and biconnected components clustering.',
       category: 'analysis',
       tags: ['analysis'],
-      keywords: [
-        'k-means',
-        'hierarchical',
-        'hierarchic',
-        'voronoi',
-        'dendrogram',
-        'background',
-        'data analysis'
-      ]
+      keywords: ['k-means', 'hierarchical', 'voronoi', 'dendrogram', 'background', 'data analysis']
     },
     {
       id: 'intersection-detection',
@@ -1512,7 +1487,6 @@ function getDemoData() {
       keywords: [
         'drag and drop',
         'palette',
-        'hierarchic',
         'hierarchical',
         'groups',
         'context menu',
@@ -1610,7 +1584,6 @@ function getDemoData() {
         'v2.1.0.1',
         'labels',
         'ports',
-        'hierarchic',
         'hierarchical',
         'organic',
         'orthogonal',
@@ -1701,7 +1674,7 @@ function getDemoData() {
     {
       id: 'vue-template-node-style',
       name: 'Vue Template Node Style',
-      demoPath: 'style/vue-template-node-style/',
+      demoPath: 'style/vue-template-node-style/README.html',
       summary: 'Presents a versatile and easily customizable template node style based on Vue.',
       category: 'style',
       languageType: 'ts-only',
@@ -2121,7 +2094,6 @@ function getDemoData() {
         'texts',
         'generic labeling',
         'tree',
-        'hierarchic',
         'hierarchical',
         'orthogonal',
         'edge router',
@@ -2151,7 +2123,6 @@ function getDemoData() {
         'layoutfeatures',
         'types',
         'tree',
-        'hierarchic',
         'hierarchical',
         'organic',
         'components',
@@ -2169,14 +2140,7 @@ function getDemoData() {
         'The from sketch mode of the hierarchical layout style can incrementally fit new nodes and edges into the existing drawing.',
       category: 'layout',
       tags: ['layout', 'hierarchical'],
-      keywords: [
-        'layoutfeatures',
-        'ports',
-        'background',
-        'incremental',
-        'from sketch',
-        'hierarchic'
-      ]
+      keywords: ['layoutfeatures', 'ports', 'background', 'incremental', 'from sketch']
     },
     {
       id: 'interactive-edge-routing',
@@ -2199,7 +2163,6 @@ function getDemoData() {
         'layoutfeatures',
         'edge groups',
         'port groups',
-        'hierarchic',
         'hierarchical',
         'ports',
         'context menu',
@@ -2416,8 +2379,7 @@ function getDemoData() {
         'gridcomponents',
         'bus structures',
         'orthogonal',
-        'compact',
-        'hierarchic'
+        'compact'
       ]
     },
     {
@@ -2427,7 +2389,7 @@ function getDemoData() {
       summary: 'The hierarchical layout can arrange subcomponents with different layout styles.',
       category: 'layout',
       tags: ['layout', 'hierarchical'],
-      keywords: ['v2.5.0.0', 'layoutfeatures', 'tree', 'organic', 'orthogonal', 'hierarchic']
+      keywords: ['v2.5.0.0', 'layoutfeatures', 'tree', 'organic', 'orthogonal']
     },
     {
       id: 'tabular-groups',
@@ -2436,7 +2398,7 @@ function getDemoData() {
       demoPath: 'layout/tabular-groups/',
       category: 'layout',
       tags: ['hierarchical', 'tabular', 'groups'],
-      keywords: ['v2.5.0.0', 'layoutfeatures', 'layout', 'table', 'column', 'compact', 'hierarchic']
+      keywords: ['v2.5.0.0', 'layoutfeatures', 'layout', 'table', 'column', 'compact']
     },
     {
       id: 'critical-paths',
@@ -2446,7 +2408,7 @@ function getDemoData() {
         'The hierarchical and tree layout styles can emphasize critical (important) paths by aligning their nodes.',
       category: 'layout',
       tags: ['layout', 'hierarchical', 'tree'],
-      keywords: ['layoutfeatures', 'data analysis', 'hierarchic']
+      keywords: ['layoutfeatures', 'data analysis']
     },
     {
       id: 'custom-layout-stage',
@@ -2484,7 +2446,7 @@ function getDemoData() {
         'Shows how to align edges at group nodes using RecursiveGroupLayout with HierarchicalLayout.',
       category: 'layout',
       tags: ['layout', 'hierarchical', 'tree'],
-      keywords: ['v2.1.0.3', 'layoutfeatures', 'context menu', 'recursive', 'hierarchic']
+      keywords: ['v2.1.0.3', 'layoutfeatures', 'context menu', 'recursive']
     },
     {
       id: 'layout-grid',
@@ -2493,7 +2455,7 @@ function getDemoData() {
       summary: 'Demonstrates the usage of a layout grid for hierarchical and organic layouts.',
       category: 'layout',
       tags: ['layout', 'layout grid', 'hierarchical', 'organic'],
-      keywords: ['layoutfeatures', 'data management', 'hierarchic', 'partition grid']
+      keywords: ['layoutfeatures', 'data management', 'partition grid', 'layout grid']
     },
     {
       id: 'simple-layout-grid',
@@ -2502,7 +2464,7 @@ function getDemoData() {
       summary: 'Shows how to create a simple layout grid.',
       category: 'layout',
       tags: ['layout', 'layout grid', 'hierarchical'],
-      keywords: ['v2.2.0.0', 'layoutfeatures', 'hierarchic', 'partition grid']
+      keywords: ['v2.2.0.0', 'layoutfeatures', 'partition grid', 'layout grid']
     },
     {
       id: 'interactive-graph-restructuring',
@@ -2521,7 +2483,7 @@ function getDemoData() {
         'fill area layout',
         'create space',
         'space maker',
-        'hierarchic'
+        'hierarchical'
       ]
     },
     {
@@ -2532,7 +2494,7 @@ function getDemoData() {
         'Shows how to use layer constraints to prescribe the node layering in hierarchical layouts.',
       category: 'layout',
       tags: ['layout', 'hierarchical'],
-      keywords: ['layoutfeatures', 'hierarchic']
+      keywords: ['layoutfeatures']
     },
     {
       id: 'sequence-constraints',
@@ -2542,7 +2504,7 @@ function getDemoData() {
         'Shows how to use sequence constraints to prescribe the node sequencing in hierarchical layouts.',
       category: 'layout',
       tags: ['layout', 'hierarchical'],
-      keywords: ['layoutfeatures', 'hierarchic']
+      keywords: ['layoutfeatures']
     },
     {
       id: 'interactive-organic-layout',
@@ -2572,8 +2534,7 @@ function getDemoData() {
         'split',
         'print',
         'data analysis',
-        'data management',
-        'hierarchic'
+        'data management'
       ]
     },
     {
@@ -2592,15 +2553,7 @@ function getDemoData() {
       summary: 'Shows how to integrate new graph elements into an existing graph layout.',
       category: 'layout',
       tags: ['layout', 'incremental', 'partial'],
-      keywords: [
-        'layoutfeatures',
-        'hierarchical',
-        'orthogonal',
-        'organic',
-        'circular',
-        'curves',
-        'hierarchic'
-      ]
+      keywords: ['layoutfeatures', 'hierarchical', 'orthogonal', 'organic', 'circular', 'curves']
     },
     {
       id: 'bridges',
@@ -2649,7 +2602,7 @@ function getDemoData() {
         'Interactively builds and modifies a graph from JSON business data using class <code>GraphBuilder</code>.',
       category: 'data-binding',
       tags: ['json', 'data binding', 'layout'],
-      keywords: ['hierarchical', 'hierarchic', 'structures', 'labels', 'v2.3.0.0']
+      keywords: ['hierarchical', 'structures', 'labels', 'v2.3.0.0']
     },
     {
       id: 'tree-graph-builder',
@@ -2659,7 +2612,7 @@ function getDemoData() {
         'Interactively builds and modifies a graph from JSON business data using class <code>TreeBuilder</code>.',
       category: 'data-binding',
       tags: ['json', 'data binding', 'layout'],
-      keywords: ['hierarchical', 'hierarchic', 'structures', 'labels', 'v2.3.0.0']
+      keywords: ['hierarchical', 'structures', 'labels', 'v2.3.0.0']
     },
     {
       id: 'adjacency-graph-builder',
@@ -2669,7 +2622,7 @@ function getDemoData() {
         'Interactively builds and modifies a graph from JSON business data using class <code>AdjacencyGraphBuilder</code>.',
       category: 'data-binding',
       tags: ['json', 'data binding', 'layout'],
-      keywords: ['hierarchical', 'hierarchic', 'structures', 'labels', 'v2.3.0.0']
+      keywords: ['hierarchical', 'structures', 'labels', 'v2.3.0.0']
     },
     {
       id: 'simple-graph-builder',
@@ -2679,7 +2632,7 @@ function getDemoData() {
         'Automatically builds a graph from JSON business data using <code>GraphBuilder</code>, <code>AdjacencyGraphBuilder</code> or <code>TreeBuilder</code>.',
       category: 'data-binding',
       tags: ['json', 'data binding', 'layout'],
-      keywords: ['hierarchical', 'hierarchic', 'labels', 'v2.3.0.0']
+      keywords: ['hierarchical', 'labels', 'v2.3.0.0']
     },
     {
       id: 'port-aware-graph-builder',
@@ -2689,7 +2642,7 @@ function getDemoData() {
         'Builds a graph using <code>GraphBuilder</code> and connects the items to specific ports.',
       category: 'data-binding',
       tags: ['json', 'data binding', 'layout'],
-      keywords: ['hierarchical', 'hierarchic', 'ports', 'v2.5.0.0']
+      keywords: ['hierarchical', 'ports', 'v2.5.0.0']
     },
     {
       id: 'port-aware-adjacency-graph-builder',
@@ -2699,7 +2652,7 @@ function getDemoData() {
         'Builds a graph using <code>AdjacencyGraphBuilder</code> and connects the items to specific ports.',
       category: 'data-binding',
       tags: ['json', 'data binding', 'layout'],
-      keywords: ['hierarchical', 'hierarchic', 'ports', 'v2.5.0.0']
+      keywords: ['hierarchical', 'ports', 'v2.5.0.0']
     },
     {
       id: 'port-aware-tree-builder',
@@ -2990,7 +2943,6 @@ function getDemoData() {
         'json',
         'folding',
         'hierarchical',
-        'hierarchic',
         'webpack'
       ]
     },
@@ -3009,8 +2961,7 @@ function getDemoData() {
         'background',
         'async',
         'modules',
-        'hierarchical',
-        'hierarchic'
+        'hierarchical'
       ]
     },
     {
@@ -3044,7 +2995,7 @@ function getDemoData() {
       category: 'loading',
       languageType: 'ts-only',
       tags: ['modules', 'esm', 'deployment'],
-      keywords: ['v3.0', 'hierarchical', 'hierarchic', 'dynamic imports', 'vite']
+      keywords: ['v3.0', 'hierarchical', 'dynamic imports', 'vite']
     },
     {
       id: 'web-dev-server',
@@ -3466,15 +3417,7 @@ function getDemoData() {
       category: 'layout',
       distributionType: 'no-viewer',
       tags: ['headless', 'layout', 'analysis'],
-      keywords: [
-        'v2.3.0.1',
-        'invisible',
-        'background',
-        'memory',
-        'centrality',
-        'hierarchical',
-        'hierarchic'
-      ]
+      keywords: ['v2.3.0.1', 'invisible', 'background', 'memory', 'centrality', 'hierarchical']
     },
     {
       id: 'background-image',
@@ -3854,7 +3797,6 @@ function getDemoData() {
       tags: ['hierarchical'],
       keywords: [
         'v2.4.0.4',
-        'hierarchic',
         'layout',
         'orthogonal',
         'octilinear',
@@ -3871,7 +3813,6 @@ function getDemoData() {
       tags: ['hierarchical', 'incremental'],
       keywords: [
         'v2.4.0.4',
-        'hierarchic',
         'layout',
         'subset',
         'layout',
@@ -3888,7 +3829,7 @@ function getDemoData() {
       demoPath: 'layout-features/hierarchical-node-port-candidates/',
       category: 'layout-features',
       tags: ['hierarchical', 'ports'],
-      keywords: ['v2.4.0.4', 'layout', 'hierarchic', 'ports', 'candidates', 'nodeportcandidates']
+      keywords: ['v2.4.0.4', 'layout', 'ports', 'candidates', 'nodeportcandidates']
     },
     {
       id: 'layout-hierarchical-edge-grouping',
@@ -3897,7 +3838,7 @@ function getDemoData() {
       demoPath: 'layout-features/hierarchical-edge-grouping/',
       category: 'layout-features',
       tags: ['hierarchical', 'edgegroups'],
-      keywords: ['v2.4.0.4', 'hierarchic', 'layout', 'groups']
+      keywords: ['v2.4.0.4', 'layout', 'groups']
     },
     {
       id: 'layout-hierarchical-with-given-layering',
@@ -3906,7 +3847,7 @@ function getDemoData() {
       demoPath: 'layout-features/hierarchical-given-layering/',
       category: 'layout-features',
       tags: ['hierarchical', 'given', 'layers'],
-      keywords: ['v2.4.0.4', 'layout', 'hierarchic', 'given', 'layering', 'layers']
+      keywords: ['v2.4.0.4', 'layout', 'given', 'layering', 'layers']
     },
     {
       id: 'layout-constraints',
@@ -3916,7 +3857,7 @@ function getDemoData() {
       demoPath: 'layout-features/hierarchical-constraints/',
       category: 'layout-features',
       tags: ['hierarchical', 'constraints'],
-      keywords: ['v2.4.0.4', 'hierarchic', 'layout']
+      keywords: ['v2.4.0.4', 'layout']
     },
     {
       id: 'layout-sequence-constraints',
@@ -3925,7 +3866,7 @@ function getDemoData() {
       demoPath: 'layout-features/hierarchical-sequence-constraints/',
       category: 'layout-features',
       tags: ['hierarchical', 'constraints'],
-      keywords: ['v2.4.0.4', 'hierarchic', 'layout', 'sequencing']
+      keywords: ['v2.4.0.4', 'layout', 'sequencing']
     },
     {
       id: 'layout-layer-constraints',
@@ -3934,7 +3875,7 @@ function getDemoData() {
       demoPath: 'layout-features/hierarchical-layer-constraints/',
       category: 'layout-features',
       tags: ['hierarchical', 'constraints'],
-      keywords: ['v2.4.0.4', 'layout', 'layering', 'hierarchic']
+      keywords: ['v2.4.0.4', 'layout', 'layering']
     },
     {
       id: 'layout-hierarchical-node-alignment',
@@ -3943,7 +3884,7 @@ function getDemoData() {
       demoPath: 'layout-features/hierarchical-node-alignment/',
       category: 'layout-features',
       tags: ['hierarchical', 'alignment'],
-      keywords: ['v2.4.0.4', 'layout', 'alignment', 'critical', 'paths', 'hierarchic']
+      keywords: ['v2.4.0.4', 'layout', 'alignment', 'critical', 'paths']
     },
     {
       id: 'layout-hierarchical-edge-labeling',
@@ -3952,14 +3893,7 @@ function getDemoData() {
       demoPath: 'layout-features/hierarchical-edge-labeling/',
       category: 'layout-features',
       tags: ['hierarchical', 'labeling'],
-      keywords: [
-        'v2.4.0.4',
-        'layout',
-        'hierarchic',
-        'integrated-labeling',
-        'label-placement',
-        'auto-flipping'
-      ]
+      keywords: ['v2.4.0.4', 'layout', 'integrated-labeling', 'label-placement', 'auto-flipping']
     },
     {
       id: 'layout-hierarchical-compact-groups',
@@ -3972,7 +3906,6 @@ function getDemoData() {
       keywords: [
         'v2.4.0.4',
         'layout',
-        'hierarchic',
         'recursive layering',
         'DefaultCoordinateAssignment',
         'bendReduction',
@@ -4105,7 +4038,7 @@ function getDemoData() {
       demoPath: 'layout-features/orthogonal/',
       category: 'layout-features',
       tags: ['orthogonal'],
-      keywords: ['v2.4.0.4', 'layout', 'directed', 'halo']
+      keywords: ['v2.4.0.4', 'layout', 'directed', 'nodemargin']
     },
     {
       id: 'layout-recursive-group-layout',

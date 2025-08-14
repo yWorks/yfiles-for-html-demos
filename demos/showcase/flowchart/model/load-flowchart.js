@@ -29,8 +29,10 @@
 import { GraphBuilder, Point, Rect, Size } from '@yfiles/yfiles'
 import { FlowchartNodeStyle } from '../style/FlowchartStyle'
 import { flowchartSamples } from './flowchart-samples'
+
 export function loadFlowchart(graphComponent, sample) {
   graphComponent.graph.clear()
+
   // initialize the graph builder
   const data = flowchartSamples[sample]
   const builder = new GraphBuilder({
@@ -47,15 +49,9 @@ export function loadFlowchart(graphComponent, sample) {
         style: (dataItem) => new FlowchartNodeStyle(dataItem.type)
       }
     ],
-    edges: [
-      {
-        data: data.edges,
-        sourceId: 'from',
-        targetId: 'to',
-        labels: ['label']
-      }
-    ]
+    edges: [{ data: data.edges, sourceId: 'from', targetId: 'to', labels: ['label'] }]
   })
+
   // create the graph
   builder.buildGraph()
 }

@@ -45,12 +45,15 @@ import {
   StretchNodeLabelModel,
   TextWrapping
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { RichTextEditorInputMode } from './RichTextEditorInputMode'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 let graphComponent
+
 /**
  * Simple demo that shows how to use MarkupLabelStyle to render labels.
  * The label text shows how to create headings, strong and emphasis text and line breaks,
@@ -61,18 +64,21 @@ let graphComponent
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode({
     // provide a WYSIWYG editor for the MarkupLabelStyle
     editLabelInputMode: { textEditorInputMode: new RichTextEditorInputMode() }
   })
+
   const graph = graphComponent.graph
   // set the defaults for nodes
   initDemoStyles(graph)
   graph.nodeDefaults.size = new Size(400, 200)
   graph.nodeDefaults.labels.layoutParameter = StretchNodeLabelModel.CENTER
   graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(0)
+
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '5px solid #66a3e0',
     targetArrow: new Arrow({
@@ -86,6 +92,7 @@ async function run() {
     smoothingLength: 30,
     orthogonalEditing: true
   })
+
   // node labels get markup label support
   const font = new Font('"Segoe UI", Arial', 12)
   graph.nodeDefaults.labels.style = new MarkupLabelStyle({
@@ -97,39 +104,45 @@ async function run() {
     padding: [10, 10]
   })
   graph.edgeDefaults.labels.style = new MarkupLabelStyle({ font: font })
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
     new HierarchicalLayout({
       automaticEdgeGrouping: true,
       minimumLayerDistance: 150,
-      defaultEdgeDescriptor: new HierarchicalLayoutEdgeDescriptor({
-        minimumLastSegmentLength: 75
-      })
+      defaultEdgeDescriptor: new HierarchicalLayoutEdgeDescriptor({ minimumLastSegmentLength: 75 })
     })
   )
   await graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder
     .createNodesSource({
       data: graphData.nodeList.filter((item) => !item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 run().then(finishLoading)

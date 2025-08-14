@@ -77,9 +77,7 @@ function getTreeAnalysis(graph: IGraph): TreeAnalysisResult {
   if (treeAnalysisResult != null) {
     return treeAnalysisResult
   }
-  const treeAnalysis = new TreeAnalysis({
-    customRootNode: getGlobalRoot(graph)
-  })
+  const treeAnalysis = new TreeAnalysis({ customRootNode: getGlobalRoot(graph) })
   treeAnalysisResult = treeAnalysis.run(graph)
   return treeAnalysisResult
 }

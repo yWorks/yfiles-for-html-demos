@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { Device } from './Device'
 import { Connection } from './Connection'
+
 /**
  * Models the network of devices and connections.
  */
@@ -37,6 +38,7 @@ export class Network {
   onDataUpdated
   onDeviceFailure
   onConnectionFailure
+
   /**
    * Deserializes the object model from some JSON data
    */
@@ -50,14 +52,18 @@ export class Network {
       device.kind = tag.type
       device.load = tag.load
       device.id = tag.id
+
       idMap.set(device.id, device)
       return device
     })
+
     const connections = data.edgeList.map(
       (edge) => new Connection(idMap.get(edge.source), idMap.get(edge.target))
     )
+
     return new Network(devices, connections)
   }
+
   /**
    * Initializes a new instance of the {@link Network} class with the given devices and connections.
    * @param devices The devices in the network.
@@ -67,6 +73,7 @@ export class Network {
     this.devices = devices
     this.connections = connections
   }
+
   /**
    * Returns the connections having the given device as either sender or receiver.
    * @param device The device to find connected connections of.
@@ -75,6 +82,7 @@ export class Network {
   getAdjacentConnections(device) {
     return this.connections.filter((connection) => Network.isAdjacentConnection(connection, device))
   }
+
   /**
    * Checks whether the given connection is adjacent to the given device.
    */

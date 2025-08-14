@@ -30,9 +30,7 @@ import { GraphComponent, PortLayerPolicy } from '@yfiles/yfiles'
 import { FlowNodePortCandidateProvider } from './FlowNodePortCandidateProvider'
 import { FlowEdgeReconnectionPortCandidateProvider } from './FlowEdgeReconnectionPortCandidateProvider'
 
-export type FlowNodePortProperties = {
-  side: 'left' | 'right'
-}
+export type FlowNodePortProperties = { side: 'left' | 'right' }
 
 /**
  * Modifies port-related graph configuration.

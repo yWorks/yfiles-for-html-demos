@@ -34,6 +34,7 @@ import {
   LayoutKeys,
   TableNodeStyle
 } from '@yfiles/yfiles'
+
 import { FlowchartNodeStyle, FlowchartNodeType } from '../style/FlowchartStyle'
 import {
   EDGE_TYPE_DATA_KEY,
@@ -41,7 +42,9 @@ import {
   MultiPageNodeType,
   NODE_TYPE_DATA_KEY
 } from './flowchart-elements'
+
 import { BranchDirection, FlowchartLayout } from './FlowchartLayout'
+
 const nodeActivityElements = new Set([
   FlowchartNodeType.Process,
   FlowchartNodeType.PredefinedProcess,
@@ -75,6 +78,7 @@ const nodeReferenceElements = new Set([
   FlowchartNodeType.OffPageReference
 ])
 const nodeStartElements = new Set([FlowchartNodeType.Start1, FlowchartNodeType.Start2])
+
 /**
  * Prepares flowchart specific layout hints for the flowchart styles and configures
  * the preferred direction of decision nodes' outgoing edges ('branch' edges).
@@ -85,18 +89,22 @@ export class FlowchartLayoutData {
   $preferredNegativeBranchDirection = 0
   $adjustedPositiveBranchDirection = 0
   $adjustedNegativeBranchDirection = 0
+
   constructor() {
     this.preferredPositiveBranchDirection = BranchDirection.WithTheFlow
     this.preferredNegativeBranchDirection = BranchDirection.Flatwise
   }
+
   /**
    * The label text that defines a negative branch.
    */
   negativeBranchLabel = 'No'
+
   /**
    * The label text that defines a positive branch.
    */
   positiveBranchLabel = 'Yes'
+
   /**
    * Returns the preferred direction for negative branches.
    * @returns the preferred direction for negative branches.
@@ -104,6 +112,7 @@ export class FlowchartLayoutData {
   get preferredNegativeBranchDirection() {
     return this.$preferredNegativeBranchDirection
   }
+
   /**
    * Sets the preferred direction for negative branches.
    * @param direction the preferred direction for negative branches.
@@ -113,6 +122,7 @@ export class FlowchartLayoutData {
     this.$adjustedPositiveBranchDirection = this.calculateAdjustedPositiveBranchDirection()
     this.$adjustedNegativeBranchDirection = this.calculateAdjustedNegativeBranchDirection()
   }
+
   /**
    * Returns the preferred direction for positive branches.
    * @returns the preferred direction for positive branches.
@@ -120,6 +130,7 @@ export class FlowchartLayoutData {
   get preferredPositiveBranchDirection() {
     return this.$preferredPositiveBranchDirection
   }
+
   /**
    * Sets the preferred direction for positive branches.
    * @param direction the preferred direction for positive branches.
@@ -129,6 +140,7 @@ export class FlowchartLayoutData {
     this.$adjustedPositiveBranchDirection = this.calculateAdjustedPositiveBranchDirection()
     this.$adjustedNegativeBranchDirection = this.calculateAdjustedNegativeBranchDirection()
   }
+
   /**
    * Returns the adjusted direction that is set to negative branches. If the preferred positive and negative branches
    * interfere, this class adjusts them.
@@ -137,6 +149,7 @@ export class FlowchartLayoutData {
   get adjustedNegativeBranchDirection() {
     return this.$adjustedNegativeBranchDirection
   }
+
   /**
    * Returns the adjusted direction that is set to positive branches. If the preferred positive and negative branches
    * interfere, this class adjusts them.
@@ -145,12 +158,14 @@ export class FlowchartLayoutData {
   get adjustedPositiveBranchDirection() {
     return this.$adjustedPositiveBranchDirection
   }
+
   /**
    * Specifies in which way incoming-edges are grouped. There is either no grouping, a full grouping or an optimized
    * grouping. The optimized grouping keeps the edges centered at the four sides of the node like in most flowchart
    * diagrams.
    */
   inEdgeGrouping = 'optimized'
+
   /**
    * Returns the flow direction for negative branches
    * according to the {@link FlowchartLayoutData.preferredNegativeBranchDirection}
@@ -159,11 +174,13 @@ export class FlowchartLayoutData {
   calculateAdjustedNegativeBranchDirection() {
     const positiveDir = this.adjustedPositiveBranchDirection
     const negativeDir = this.preferredNegativeBranchDirection
+
     switch (negativeDir) {
       case BranchDirection.Straight:
         return positiveDir !== BranchDirection.WithTheFlow
           ? BranchDirection.WithTheFlow
           : BranchDirection.Flatwise
+
       case BranchDirection.Flatwise:
         if (positiveDir === BranchDirection.RightInFlow) {
           return BranchDirection.LeftInFlow
@@ -171,17 +188,21 @@ export class FlowchartLayoutData {
           return BranchDirection.RightInFlow
         }
         return negativeDir
+
       default:
       case BranchDirection.AgainstTheFlow:
         return BranchDirection.Undefined
       case BranchDirection.WithTheFlow:
         return positiveDir !== negativeDir ? negativeDir : BranchDirection.Flatwise
+
       case BranchDirection.LeftInFlow:
         return positiveDir !== negativeDir ? negativeDir : BranchDirection.RightInFlow
+
       case BranchDirection.RightInFlow:
         return positiveDir !== negativeDir ? negativeDir : BranchDirection.LeftInFlow
     }
   }
+
   /**
    * Returns the flow direction for positive branches
    * according to the {@link FlowchartLayoutData.preferredPositiveBranchDirection}.
@@ -203,15 +224,19 @@ export class FlowchartLayoutData {
         return this.preferredPositiveBranchDirection
     }
   }
+
   /**
    * Creates the layout data for FlowChart layout
    */
   create(graph) {
     const data = new GenericLayoutData()
+
     data.addItemMapping(FlowchartLayout.PREFERRED_DIRECTION_DATA_KEY).mapperFunction = (edge) =>
       this.getBranchType(edge)
+
     data.addItemMapping(NODE_TYPE_DATA_KEY).mapperFunction = (node) => this.getType(node)
     data.addItemMapping(EDGE_TYPE_DATA_KEY).mapperFunction = (edge) => this.getType(edge)
+
     if (this.inEdgeGrouping !== 'none') {
       let inDegreeThreshold
       let degreeThreshold
@@ -222,6 +247,7 @@ export class FlowchartLayoutData {
         inDegreeThreshold = 3
         degreeThreshold = 4
       }
+
       data.addItemMapping(LayoutKeys.TARGET_EDGE_GROUP_ID_DATA_KEY).mapperFunction = (edge) => {
         const node = edge.targetNode
         return graph.inDegree(node) >= 2 &&
@@ -233,6 +259,7 @@ export class FlowchartLayoutData {
     }
     return data
   }
+
   /**
    * Returns the flowchart element type of the given model item.
    * @returns one of the node type constants in the FlowchartElements file.
@@ -275,6 +302,7 @@ export class FlowchartLayoutData {
     }
     return MultiPageNodeType.Invalid
   }
+
   /**
    * Returns the branch type of the given edge.
    * @returns one of the direction constants in {@link FlowchartLayout}.
@@ -287,6 +315,7 @@ export class FlowchartLayoutData {
     }
     return BranchDirection.Undefined
   }
+
   /**
    * Returns whether the given edge is a positive branch. This default implementation considers an edge
    *  as a positive branch if its source is a decision and if its label text equals 'Yes' (ignoring case considerations).
@@ -300,6 +329,7 @@ export class FlowchartLayoutData {
       FlowchartLayoutData.isMatchingLabelText(edge.labels.first(), this.positiveBranchLabel)
     )
   }
+
   /**
    * Returns whether the given edge is a positive branch. This default implementation considers an edge
    *  as a negative branch if its source is a decision and if its label text equals 'No' (ignoring case considerations).
@@ -313,6 +343,7 @@ export class FlowchartLayoutData {
       FlowchartLayoutData.isMatchingLabelText(edge.labels.first(), this.negativeBranchLabel)
     )
   }
+
   /**
    * Returns true if the text of the given label equals, case ignored, the given text.
    */

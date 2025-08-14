@@ -139,10 +139,7 @@ export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
         this.anchor.x
       } ${this.anchor.y})`
     )
-    ;(path as any)['data-renderDataCache'] = {
-      direction: this.direction,
-      anchor: this.anchor
-    }
+    ;(path as any)['data-renderDataCache'] = { direction: this.direction, anchor: this.anchor }
 
     return new SvgVisual(path)
   }

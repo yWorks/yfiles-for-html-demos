@@ -83,29 +83,9 @@ import {
   showLoadingIndicator
 } from '@yfiles/demo-resources/demo-page'
 
-type NodeData = {
-  id: number
-  layout: {
-    x: number
-    y: number
-    w: number
-    h: number
-  }
-}
+type NodeData = { id: number; layout: { x: number; y: number; w: number; h: number } }
 
-type GraphData = {
-  nodes: [
-    {
-      nodeData: NodeData
-    }
-  ]
-  edges: [
-    {
-      source: number
-      target: number
-    }
-  ]
-}
+type GraphData = { nodes: [{ nodeData: NodeData }]; edges: [{ source: number; target: number }] }
 
 /**
  * The GraphComponent
@@ -296,10 +276,7 @@ function countBundledEdges(edges: Array<IEdge>): { countBundled: number; countUn
       countUnbundled++
     }
   })
-  return {
-    countBundled,
-    countUnbundled
-  }
+  return { countBundled, countUnbundled }
 }
 
 /**
@@ -314,12 +291,7 @@ async function updateBundlingForSelectedEdges(
   edges.forEach((edge) => {
     bundlesMap.set(edge, isBundled)
     if (!isBundled) {
-      bundleDescriptorMap.set(
-        edge,
-        new EdgeBundleDescriptor({
-          bundled: isBundled
-        })
-      )
+      bundleDescriptorMap.set(edge, new EdgeBundleDescriptor({ bundled: isBundled }))
     } else {
       // if null is set, the default descriptor will be used
       bundleDescriptorMap.set(edge, null)
@@ -351,9 +323,7 @@ function initializeGraph(): void {
   )
 
   graph.decorator.edges.highlightRenderer.addConstant(
-    new EdgeStyleIndicatorRenderer({
-      edgeStyle: new DemoEdgeStyle(6, Color.RED, Color.GOLD)
-    })
+    new EdgeStyleIndicatorRenderer({ edgeStyle: new DemoEdgeStyle(6, Color.RED, Color.GOLD) })
   )
 
   // when a node is selected, select also the adjacent edges
@@ -432,13 +402,7 @@ async function loadGraph(graph: IGraph, graphData: GraphData): Promise<void> {
         labels: ['name']
       }
     ],
-    edges: [
-      {
-        data: graphData.edges,
-        sourceId: 'source',
-        targetId: 'target'
-      }
-    ]
+    edges: [{ data: graphData.edges, sourceId: 'source', targetId: 'target' }]
   })
   graph = builder.buildGraph()
 
@@ -462,31 +426,23 @@ async function runLayout() {
     case 0:
     case 1: {
       layoutAlgorithm = createCircularLayout(selectedIndex === 0)
-      layoutData = new CircularLayoutData({
-        edgeBundleDescriptors: bundleDescriptorMap
-      })
+      layoutData = new CircularLayoutData({ edgeBundleDescriptors: bundleDescriptorMap })
       break
     }
     case 2: {
       layoutAlgorithm = createRadialLayout()
-      layoutData = new RadialLayoutData({
-        edgeBundleDescriptors: bundleDescriptorMap
-      })
+      layoutData = new RadialLayoutData({ edgeBundleDescriptors: bundleDescriptorMap })
       break
     }
     case 3:
     case 4: {
       layoutAlgorithm = selectedIndex === 3 ? createRadialTreeLayout() : createTreeLayout()
-      layoutData = new TreeReductionStageData({
-        edgeBundleDescriptors: bundleDescriptorMap
-      })
+      layoutData = new TreeReductionStageData({ edgeBundleDescriptors: bundleDescriptorMap })
       break
     }
     case 5: {
       layoutAlgorithm = createBundleEdgeRouter()
-      layoutData = new BundledEdgeRouterData({
-        edgeBundleDescriptors: bundleDescriptorMap
-      })
+      layoutData = new BundledEdgeRouterData({ edgeBundleDescriptors: bundleDescriptorMap })
     }
   }
 
@@ -588,9 +544,7 @@ function configureEdgeBundling(
   // if we would like to adjust the approximation error
   // bundlingDescriptor.bezierFitting = true;
   layoutAlgorithm.edgeBundling.bundlingStrength = parseFloat(bundlingStrengthSlider.value)
-  layoutAlgorithm.edgeBundling.defaultBundleDescriptor = new EdgeBundleDescriptor({
-    bundled: true
-  })
+  layoutAlgorithm.edgeBundling.defaultBundleDescriptor = new EdgeBundleDescriptor({ bundled: true })
 }
 
 /**

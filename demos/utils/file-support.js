@@ -27,10 +27,6 @@
  **
  ***************************************************************************/
 /**
- * This file provides functions to {@link openFile open} and {@link downloadFile download}
- * a text file.
- */
-/**
  * Opens the file the user selected in a file input element.
  * @returns - A Promise that resolves with the file content and filename.
  */
@@ -40,6 +36,7 @@ export function openFile(encoding = 'utf-8') {
   fileInputElement.multiple = false
   fileInputElement.style.display = 'none'
   document.querySelector('body').appendChild(fileInputElement)
+
   return new Promise((resolve, reject) => {
     fileInputElement.addEventListener(
       'change',
@@ -49,14 +46,12 @@ export function openFile(encoding = 'utf-8') {
           reject(new Error('There is no file to open'))
           return
         }
+
         const reader = new FileReader()
         reader.addEventListener('loadend', (evt) => {
           const fileReader = evt.target
           if (fileReader.error == null) {
-            resolve({
-              filename: file.name,
-              content: fileReader.result
-            })
+            resolve({ filename: file.name, content: fileReader.result })
           } else {
             reject(fileReader.error)
           }
@@ -69,6 +64,7 @@ export function openFile(encoding = 'utf-8') {
     document.querySelector('body').removeChild(fileInputElement)
   })
 }
+
 /**
  * Downloads the given content as a file.
  * @param content - The file content.
@@ -78,6 +74,7 @@ export function openFile(encoding = 'utf-8') {
 export function downloadFile(content, filename, contentType) {
   const type = contentType ?? determineContentType(filename)
   const objectURL = URL.createObjectURL(createBlob(content, type))
+
   const aElement = document.createElement('a')
   aElement.setAttribute('href', objectURL)
   aElement.setAttribute('download', filename)
@@ -86,6 +83,7 @@ export function downloadFile(content, filename, contentType) {
   aElement.click()
   document.body.removeChild(aElement)
 }
+
 function createBlob(content, type) {
   switch (type) {
     case 'application/pdf': {
@@ -108,6 +106,7 @@ function createBlob(content, type) {
       return new Blob([content], { type })
   }
 }
+
 /**
  * Returns the file extension of the given {@link filename}.
  * This is the filename part after the last dot.
@@ -115,6 +114,7 @@ function createBlob(content, type) {
 export function getFileExtension(filename) {
   return filename?.match(/\.(?<extension>\w+)$/)?.groups?.extension
 }
+
 /**
  * Determines the content type of the given {@link filename} based on the file extension.
  * This implementation only knows some extensions that are used in the demos.

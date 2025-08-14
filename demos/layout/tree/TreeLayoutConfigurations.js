@@ -40,6 +40,7 @@ import {
   TreeLayout,
   TreeLayoutData
 } from '@yfiles/yfiles'
+
 /**
  * Creates a layout configuration that uses the subtree placers from the panel.
  * This configuration considers assistant nodes as well as an out-edge comparer.
@@ -55,6 +56,7 @@ export function createGenericConfiguration(graph, subtreePlacerPanel) {
     const treeReductionStage = layout.treeReductionStage
     treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
   }
+
   // configure layout data with subtree placers, assistant markers and edge order
   const layoutData = new TreeLayoutData({
     subtreePlacers: (node) => {
@@ -74,6 +76,7 @@ export function createGenericConfiguration(graph, subtreePlacerPanel) {
   })
   return { layout, layoutData }
 }
+
 /**
  * Returns the ordinal which describes where this edge fits in the edge order.
  * This implementation uses the label text if it is a number or 0.
@@ -88,6 +91,7 @@ function getOrdinal(edge) {
   }
   return 0
 }
+
 /**
  * Creates a layout configuration that uses a combination of {@link LeftRightSubtreePlacer} and
  * {@link SingleLayerSubtreePlacer}.
@@ -97,18 +101,23 @@ function getOrdinal(edge) {
 export function createDefaultTreeConfiguration(graph, subtreePlacerPanel) {
   // create layout algorithm
   const layout = new TreeLayout()
+
   // create layout data
   const layoutData = new TreeLayoutData()
+
   for (const node of graph.nodes) {
     // specify placer in layout data, depending on the layer value stored in the node's tag
     const placer =
       node.tag.layer === 3 ? new LeftRightSubtreePlacer() : new SingleLayerSubtreePlacer()
     layoutData.subtreePlacers.mapper.set(node, placer)
+
     // update subtree placers with the same values to keep the panel intact
     subtreePlacerPanel.subtreePlacers.set(node, placer)
   }
+
   return { layout, layoutData }
 }
+
 /**
  * Creates a layout configuration that places the first two levels horizontally and stacks the
  * remaining layers left-right.
@@ -118,22 +127,25 @@ export function createDefaultTreeConfiguration(graph, subtreePlacerPanel) {
 export function createCategoryTreeConfiguration(graph, subtreePlacerPanel) {
   // create layout algorithm
   const layout = new TreeLayout()
+
   // create layout data
   const layoutData = new TreeLayoutData()
+
   for (const node of graph.nodes) {
     //specify placer in layout data, depending on the layer value stored in the node's tag
     const placer =
       node.tag.layer === 0
         ? new SingleLayerSubtreePlacer()
-        : new LeftRightSubtreePlacer({
-            placeLastOnBottom: false
-          })
+        : new LeftRightSubtreePlacer({ placeLastOnBottom: false })
     layoutData.subtreePlacers.mapper.set(node, placer)
+
     // update subtree placers with the same values to keep the panel intact
     subtreePlacerPanel.subtreePlacers.set(node, placer)
   }
+
   return { layout, layoutData }
 }
+
 /**
  * Creates a layout configuration that can handle general graphs.
  * Non-tree edges are routed with organic style.
@@ -145,13 +157,17 @@ export function createGeneralGraphConfiguration(graph, subtreePlacerPanel) {
   const treeLayout = new TreeLayout()
   const treeReductionStage = treeLayout.treeReductionStage
   treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
+
   const layout = treeLayout
+
   // update subtree placers with the same values to keep the panel intact
   for (const node of graph.nodes) {
     subtreePlacerPanel.subtreePlacers.set(node, new SingleLayerSubtreePlacer())
   }
+
   return { layout }
 }
+
 /**
  * Creates a layout configuration that uses {@link CompactSubtreePlacer} for nodes with more than 5 children.
  * @param graph The graph
@@ -160,19 +176,22 @@ export function createGeneralGraphConfiguration(graph, subtreePlacerPanel) {
 export function createLargeTreeConfiguration(graph, subtreePlacerPanel) {
   // create layout algorithm
   const layout = new TreeLayout()
-  const layoutData = new TreeLayoutData({
-    compactSubtreePlacerStrategyMementos: new Mapper()
-  })
+
+  const layoutData = new TreeLayoutData({ compactSubtreePlacerStrategyMementos: new Mapper() })
+
   // select placer depending on out-degree and specify it in the layout data
   for (const node of graph.nodes) {
     const placer =
       graph.outDegree(node) > 5 ? new CompactSubtreePlacer() : new SingleLayerSubtreePlacer()
     layoutData.subtreePlacers.mapper.set(node, placer)
+
     // update subtree placers with the same values to keep the panel intact
     subtreePlacerPanel.subtreePlacers.set(node, placer)
   }
+
   return { layout, layoutData }
 }
+
 /**
  * Creates a layout configuration that uses {@link SingleLayerSubtreePlacer} for all nodes in the graph.
  * @param graph The graph
@@ -180,12 +199,11 @@ export function createLargeTreeConfiguration(graph, subtreePlacerPanel) {
  */
 export function createWideTreeConfiguration(graph, subtreePlacerPanel) {
   const singleLayerSubtreePlacer = new SingleLayerSubtreePlacer()
-  const layout = new TreeLayout({
-    defaultSubtreePlacer: singleLayerSubtreePlacer
-  })
+  const layout = new TreeLayout({ defaultSubtreePlacer: singleLayerSubtreePlacer })
   // update subtree placers with the same values to keep the panel intact
   for (const node of graph.nodes) {
     subtreePlacerPanel.subtreePlacers.set(node, singleLayerSubtreePlacer)
   }
+
   return { layout: layout }
 }

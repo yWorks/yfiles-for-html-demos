@@ -27,7 +27,9 @@
  **
  ***************************************************************************/
 import { daysInMonth, ganttDayWidth, GanttTimestamp, getVisualRange } from '../gantt-utils'
+
 const colors = ['#a7a7c1', '#242265']
+
 /**
  * Manages the timeline rendering using the html canvas.
  */
@@ -37,13 +39,17 @@ export class TimelineComponent {
   renderingContext2D
   constructor(parentElementId, graphComponent) {
     const parent = document.getElementById(parentElementId)
+
     this.canvas = document.createElement('canvas')
     this.renderingContext2D = this.canvas.getContext('2d')
     parent.append(this.canvas)
+
     this.update(graphComponent)
+
     // synchronize with x-axis with the graph component
     graphComponent.addEventListener('viewport-changed', (_, src) => this.update(src))
   }
+
   /**
    * Repaints the timeline with respect to the graphComponent's viewport position.
    */
@@ -53,6 +59,7 @@ export class TimelineComponent {
       this.paint(x, width)
     })
   }
+
   /**
    * Paints a timeline of months and days.
    */
@@ -62,13 +69,16 @@ export class TimelineComponent {
     this.canvas.width = width * ratio
     this.canvas.height = this.timelineHeight * ratio
     this.renderingContext2D.transform(ratio, 0, 0, ratio, -x * ratio, 0)
+
     const { startDate, startX, endX, oddStartDay, oddStartMonth } = getVisualRange(
       x - 100,
       x + width + 100
     )
+
     this.paintDays(startX, endX, startDate, oddStartDay)
     this.paintMonths(startX, endX, startDate, oddStartMonth)
   }
+
   /**
    * Paints the day cells.
    */
@@ -78,6 +88,7 @@ export class TimelineComponent {
     this.renderingContext2D.textAlign = 'center'
     this.renderingContext2D.textBaseline = 'middle'
     this.renderingContext2D.font = '14px sans-serif'
+
     const y = 35
     const height = 30
     const width = ganttDayWidth
@@ -97,6 +108,7 @@ export class TimelineComponent {
       )
     }
   }
+
   /**
    * Paints the month cells.
    */
@@ -106,6 +118,7 @@ export class TimelineComponent {
     this.renderingContext2D.textAlign = 'center'
     this.renderingContext2D.textBaseline = 'middle'
     this.renderingContext2D.font = '14px sans-serif'
+
     const y = 5
     const height = 30
     for (

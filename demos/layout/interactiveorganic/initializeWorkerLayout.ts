@@ -47,13 +47,9 @@ export type InteractionMessage =
 export async function initializeWorkerLayout(
   graphComponent: GraphComponent,
   moveInputMode: MoveInputMode
-): Promise<{
-  startLayout: () => void
-}> {
+): Promise<{ startLayout: () => void }> {
   // load worker immediately on startup
-  const worker = new Worker(new URL('./WorkerLayout', import.meta.url), {
-    type: 'module'
-  })
+  const worker = new Worker(new URL('./WorkerLayout', import.meta.url), { type: 'module' })
 
   await new Promise<void>((resolve) => {
     const readyListener = (evt: MessageEvent) => {
@@ -118,11 +114,7 @@ export async function initializeWorkerLayout(
     })
 
     moveInputMode.addEventListener('dragged', () => {
-      sendMessage({
-        type: 'dragged',
-        nodeId: draggedNodeId!,
-        componentIds: draggedComponentIds!
-      })
+      sendMessage({ type: 'dragged', nodeId: draggedNodeId!, componentIds: draggedComponentIds! })
     })
 
     moveInputMode.addEventListener('drag-canceled', () => {

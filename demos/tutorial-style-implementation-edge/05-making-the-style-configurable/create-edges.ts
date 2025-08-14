@@ -39,15 +39,9 @@ export function createEdges(graph: IGraph): void {
     fill: '#0b7189',
     stroke: '#042d37'
   })
-  const node1 = graph.createNode({
-    layout: [50, 0, 30, 30]
-  })
-  const node2 = graph.createNode({
-    layout: [100, 100, 30, 30]
-  })
-  const node3 = graph.createNode({
-    layout: [0, 200, 30, 30]
-  })
+  const node1 = graph.createNode({ layout: [50, 0, 30, 30] })
+  const node2 = graph.createNode({ layout: [100, 100, 30, 30] })
+  const node3 = graph.createNode({ layout: [0, 200, 30, 30] })
 
   // the distance can be specified in the constructor
   const style1 = new CustomEdgeStyle(5)
@@ -65,11 +59,7 @@ export function createEdges(graph: IGraph): void {
     style: style1,
     bends: [new Point(115, 60)]
   })
-  graph.createEdge({
-    source: node2,
-    target: node3,
-    style: style2
-  })
+  graph.createEdge({ source: node2, target: node3, style: style2 })
   graph.createEdge({
     source: node3,
     target: node1,

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { IUndoUnit } from '@yfiles/yfiles'
+
 /**
  * Provides undo/redo when changing tag data.
  * Since information about color, collapsed state, and layout side is stored in the tag, it is

@@ -43,41 +43,52 @@ import {
   PointerEventType,
   Size
 } from '@yfiles/yfiles'
+
 import { DraggableGraphComponent, NodeDragInputMode } from './NodeDragInputMode'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 let graphComponent = null
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   graphComponent = new DraggableGraphComponent('#graphComponent')
   // initialize the input modes and the Drag and Drop
   configureInputModes(graphComponent)
+
   // configure default styles and create a sample graph
   initDefaultStyles(graphComponent.graph)
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
   await graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id
   })
+
   nodesSource.nodeCreator.styleBindings.addBinding('fill', (item) => {
     if (item.label) {
       if (item.label.startsWith('Red')) {
@@ -91,6 +102,7 @@ function buildGraph(graph, graphData) {
       }
     }
   })
+
   nodesSource.nodeCreator.createLabelBinding((item) => item.label).styleProvider = (item) => {
     if (item.label) {
       if (item.label.startsWith('Red')) {
@@ -116,33 +128,40 @@ function buildGraph(graph, graphData) {
       }
     }
   }
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Configures drag and drop for this tutorial.
  */
 function configureInputModes(graphComponent) {
   const mode = new GraphEditorInputMode()
+
   // edge creation: start with drag + shift down
   // since drag without shift will start dragging a node from the component
   mode.createEdgeInputMode.beginRecognizer = (evt) =>
     evt instanceof PointerEventArgs && evt.eventType == PointerEventType.DOWN && evt.shiftKey
+
   // move nodes: start with drag + shift down,
   // so dragging a selected node without shift will start dragging a node from the component
   mode.moveSelectedItemsInputMode.beginRecognizer = (evt) =>
     evt instanceof PointerEventArgs && evt.eventType == PointerEventType.DOWN && evt.shiftKey
   mode.moveUnselectedItemsInputMode.beginRecognizer = (evt) =>
     evt instanceof PointerEventArgs && evt.eventType == PointerEventType.DOWN && evt.shiftKey
+
   // disable directional constraint editing (the shift key is the default modifier, which
   // conflicts with the gestures above)
   mode.moveSelectedItemsInputMode.directionalConstraintRecognizer = EventRecognizers.NEVER
   mode.moveUnselectedItemsInputMode.directionalConstraintRecognizer = EventRecognizers.NEVER
   mode.createEdgeInputMode.directionalConstraintRecognizer = EventRecognizers.NEVER
+
   // configure dragging from the component
   const dragMode = new NodeDragInputMode()
   // lower priority than moveInputMode, so
@@ -150,7 +169,9 @@ function configureInputModes(graphComponent) {
   // dragging an unselected node starts drag and drop
   dragMode.priority = mode.moveSelectedItemsInputMode.priority + 1
   mode.add(dragMode)
+
   // configure the drop targets to handle the item drop
+
   // target #1: the list
   const list = document.querySelector('#drop-list')
   dragMode.addDropTarget(list, (_evt, node) => {
@@ -158,6 +179,7 @@ function configureInputModes(graphComponent) {
       addDroppedItemToList(node, list)
     }
   })
+
   // target #2: the trashcan
   const trashcan = document.getElementById('drop-trashcan')
   dragMode.addDropTarget(trashcan, (_evt, node) => {
@@ -165,11 +187,13 @@ function configureInputModes(graphComponent) {
       graphComponent.graph.remove(node)
     }
   })
+
   // install the input mode
   graphComponent.inputMode = mode
   // enable undo and redo commands
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Adds the given node to the list.
  */
@@ -183,18 +207,16 @@ function addDroppedItemToList(node, list) {
   item.appendChild(NodeDragInputMode.createNodeImage(node))
   list.appendChild(item)
 }
+
 /**
  * Initializes the defaults for the styles in this demo.
  */
 function initDefaultStyles(graph) {
-  initDemoStyles(graph, {
-    theme: {
-      node: 'demo-orange',
-      edge: 'demo-orange'
-    }
-  })
+  initDemoStyles(graph, { theme: { node: 'demo-orange', edge: 'demo-orange' } })
+
   graph.nodeDefaults.size = new Size(70, 50)
   graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.labels.shareStyleInstance = false
 }
+
 run().then(finishLoading)

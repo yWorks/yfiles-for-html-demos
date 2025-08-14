@@ -29,14 +29,18 @@
 export function setDataAndUpdateGraph(nodesSource, graphBuilder, data) {
   // get the new data
   const newData = data.nodesSource.slice(0, 6)
+
   // assign the new data to the nodesSource
   graphBuilder.setData(nodesSource, newData)
   // tell GraphBuilder to update the graph structure
   graphBuilder.updateGraph()
 }
+
 let nodeTypes
+
 export async function createDynamicNodesSource(graphBuilder, data) {
   nodeTypes = new Set(['Corporation', 'Trust'])
+
   function* nodes() {
     for (const entity of data.nodesSource) {
       if (entity.type && nodeTypes.has(entity.type)) {
@@ -44,18 +48,22 @@ export async function createDynamicNodesSource(graphBuilder, data) {
       }
     }
   }
+
   // create nodes source from dynamic data
   return graphBuilder.createNodesSource(nodes, 'id')
 }
+
 export function updateGraph(graphBuilder) {
   // update displayed node types
   nodeTypes.delete('Corporation')
   nodeTypes.add('Branch')
   nodeTypes.add('PE_Risk')
+
   // since the nodesSource uses a generator function,
   // calling updateGraph is enough to update the graph structure
   graphBuilder.updateGraph()
 }
+
 export function resetGraph(graphBuilder) {
   // reset node types
   nodeTypes = new Set(['Corporation', 'Trust'])

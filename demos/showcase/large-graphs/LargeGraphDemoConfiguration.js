@@ -49,16 +49,20 @@ import {
 import { getSVGDataURL } from './SVGDataURLFetch'
 import { DemoConfiguration } from './DemoConfiguration'
 import { createDemoGroupStyle } from '@yfiles/demo-resources/demo-styles'
+
 class LargeGraphDemoConfiguration extends DemoConfiguration {
   svgThreshold = 0.5
+
   // Node styles used in WebGL rendering
   webGLNodeStyles = []
   // Node styles used in SVG rendering
   imageNodeStyles = []
+
   /**
    * Creates a random integer in the range [0, upper[.
    */
   getRandomInt = (upper) => Math.floor(Math.random() * upper)
+
   nodeStyleProvider = (node, graph) => {
     if (graph.isGroupNode(node)) {
       return graph.groupNodeDefaults.getStyleInstance()
@@ -70,35 +74,38 @@ class LargeGraphDemoConfiguration extends DemoConfiguration {
       )
     }
   }
+
   edgeStyleProvider = (edge, graph) => {
     return graph.edgeDefaults.getStyleInstance()
   }
+
   nodeCreator = (context, graph, location, parent) => {
     const node = graph.createNode({
       parent,
       layout: Rect.fromCenter(location, graph.nodeDefaults.size),
-      tag: {
-        id: graph.nodes.size,
-        type: this.getRandomInt(this.webGLNodeStyles.length)
-      }
+      tag: { id: graph.nodes.size, type: this.getRandomInt(this.webGLNodeStyles.length) }
     })
     graph.setStyle(node, this.nodeStyleProvider(node, graph))
     return node
   }
+
   /**
    * Sets default styles for nodes and labels
    */
   async initializeStyleDefaults(graph) {
     await this.initializeNodeStyles()
+
     graph.nodeDefaults.size = new Size(50, 50)
+
     graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
       margins: [0, 0, 5, 0]
     }).createParameter('bottom')
-    graph.nodeDefaults.labels.style = new LabelStyle({
-      backgroundFill: '#fffd'
-    })
+
+    graph.nodeDefaults.labels.style = new LabelStyle({ backgroundFill: '#fffd' })
+
     graph.groupNodeDefaults.style = createDemoGroupStyle({})
   }
+
   createNode(graph, id, layout, nodeData) {
     const node = graph.createNode({
       layout: layout,
@@ -108,6 +115,7 @@ class LargeGraphDemoConfiguration extends DemoConfiguration {
     graph.addLabel(node, `Item ${id}`)
     return node
   }
+
   /**
    * Returns a promise, which draws an image into the canvas after loading it.
    */
@@ -121,6 +129,7 @@ class LargeGraphDemoConfiguration extends DemoConfiguration {
       }
     })
   }
+
   /**
    * Creates a WebGLImageNodeStyle by awaiting the loading and drawing of the image
    * using {@link createImageDataPromise}
@@ -129,6 +138,7 @@ class LargeGraphDemoConfiguration extends DemoConfiguration {
     const promise = this.createImageDataPromise(ctx, image)
     image.src = dataURL
     const imageData = await promise
+
     return new WebGLImageNodeStyle({
       image: imageData,
       backgroundShape: WebGLShapeNodeShape.ELLIPSE,
@@ -137,6 +147,7 @@ class LargeGraphDemoConfiguration extends DemoConfiguration {
       effect: WebGLEffect.NONE
     })
   }
+
   /**
    * Initializes the nodes styles used for WebGL and SVG rendering
    */
@@ -161,14 +172,17 @@ class LargeGraphDemoConfiguration extends DemoConfiguration {
       }
     }
   }
+
   getIndex(node) {
     const type = typeof node.tag?.type === 'number' ? node.tag?.type : 0
     return Math.max(0, Math.min(type, this.webGLNodeStyles.length - 1))
   }
 }
+
 export class HierarchicalDemoConfiguration extends LargeGraphDemoConfiguration {
   graphResourcePath = 'resources/hierarchic-10000-11000-circles.json'
 }
+
 export class OrganicDemoConfiguration extends LargeGraphDemoConfiguration {
   graphResourcePath = 'resources/radial_tree_10000_9999.json'
 }

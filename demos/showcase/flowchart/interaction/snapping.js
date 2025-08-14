@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { GraphSnapContext, GridSnapTypes, SnappableItems } from '@yfiles/yfiles'
+
 export function initializeSnapping(graphEditorInputMode) {
   graphEditorInputMode.snapContext = new GraphSnapContext({
     snappableItems: SnappableItems.NODE | SnappableItems.EDGE,

@@ -40,25 +40,34 @@ import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
 import { InteractiveOrganicFastEdgeStyle, InteractiveOrganicFastNodeStyle } from './DemoStyles'
 import { initializeWorkerLayout } from './initializeWorkerLayout'
+
 /**
  * The GraphComponent.
  */
 let graphComponent
+
 /**
  * Runs the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('graphComponent')
+
   const graphEditorInputMode = createEditorMode()
   graphComponent.inputMode = graphEditorInputMode
+
   // initialize the interactive organic layout running in a web worker
   const moveInputMode = graphEditorInputMode.moveSelectedItemsInputMode
   const layout = await initializeWorkerLayout(graphComponent, moveInputMode)
+
   const graph = graphComponent.graph
+
   initializeDefaultStyles(graph)
+
   // build the graph from the given data set
   buildGraph(graph, graphData)
+
   // We start with a simple run of OrganicLayout to get a good starting result
   // the algorithm is optimized to "unfold" graphs quicker than
   // interactive organic, so we use this result as a starting solution. For
@@ -66,28 +75,33 @@ async function run() {
   // but the initial layout can also be run in the worker thread.
   const initialLayout = new OrganicLayout({ defaultMinimumNodeDistance: 50 })
   graph.applyLayout(initialLayout)
+
   // center the graph
   await graphComponent.fitGraphBounds()
+
   layout.startLayout()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graph.undoEngineEnabled = true
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
-  graphBuilder.createNodesSource({
-    data: graphData.nodeList,
-    id: (item) => item.id
-  })
+
+  graphBuilder.createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Initializes default styles for the given graph.
  */
@@ -98,6 +112,7 @@ function initializeDefaultStyles(graph) {
   graph.edgeDefaults.style = new InteractiveOrganicFastEdgeStyle()
   graph.edgeDefaults.shareStyleInstance = true
 }
+
 /**
  * Creates the input mode for the graphComponent.
  * @returns a new GraphEditorInputMode instance
@@ -108,20 +123,14 @@ function createEditorMode() {
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
     marqueeSelectableItems: GraphItemTypes.NODE,
     // make only the selected elements movable
-    moveUnselectedItemsInputMode: {
-      enabled: false
-    },
+    moveUnselectedItemsInputMode: { enabled: false },
     clickSelectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
     clickableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
     showHandleItems: GraphItemTypes.NONE,
     allowAddLabel: false,
-    createEdgeInputMode: {
-      allowCreateBend: false,
-      allowSelfLoops: false
-    },
-    createBendInputMode: {
-      enabled: false
-    }
+    createEdgeInputMode: { allowCreateBend: false, allowSelfLoops: false },
+    createBendInputMode: { enabled: false }
   })
 }
+
 run().then(finishLoading)

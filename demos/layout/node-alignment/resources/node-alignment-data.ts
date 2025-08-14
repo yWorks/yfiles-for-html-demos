@@ -27,14 +27,8 @@
  **
  ***************************************************************************/
 export const sampleData: {
-  nodes: {
-    id: number
-    layout: { x: number; y: number; width: number; height: number }
-  }[]
-  edges: {
-    source: number
-    target: number
-  }[]
+  nodes: { id: number; layout: { x: number; y: number; width: number; height: number } }[]
+  edges: { source: number; target: number }[]
 } = {
   nodes: [
     { id: 0, layout: { x: 435.12, y: 230.13, width: 203, height: 30 } },

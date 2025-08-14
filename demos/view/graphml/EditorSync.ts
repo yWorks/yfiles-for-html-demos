@@ -27,21 +27,17 @@
  **
  ***************************************************************************/
 import { HashMap, IGraph, ILabelOwner, IModelItem, ParseEventArgs } from '@yfiles/yfiles'
-import { EditorState, StateEffect, StateEffectType, StateField } from '@codemirror/state'
-import { Decoration, type DecorationSet, ViewUpdate } from '@codemirror/view'
-import { basicSetup, EditorView } from 'codemirror'
-import { xml } from '@codemirror/lang-xml'
-import { lintGutter } from '@codemirror/lint'
-import { getXmlLinter } from '@yfiles/demo-resources/codeMirrorLinters'
+import {
+  createGraphMLEditor,
+  type DecorationSet,
+  EditorView,
+  StateEffect,
+  StateEffectType,
+  StateField,
+  ViewUpdate
+} from '@yfiles/demo-resources/codemirror-editor'
 
-type Marker = {
-  from: number
-  to: number
-  className?: string
-  id: string
-}
-
-const xmlLinter = getXmlLinter()
+type Marker = { from: number; to: number; className?: string; id: string }
 
 /**
  * This class handles synchronization of the GraphML editor with the view graph.
@@ -64,6 +60,7 @@ export class EditorSync {
   private itemSelectedListener: (evt: { item: IModelItem }) => void
   private addMarker: StateEffectType<Marker> | undefined
   private removeMarker: StateEffectType<string> | undefined
+  private ignoreChanges = false
 
   constructor() {
     this.contentChanged = this.onContentChanged.bind(this)
@@ -100,6 +97,14 @@ export class EditorSync {
     this.itemSelectedListener = () => {}
   }
 
+  public hasValidText(): boolean {
+    const outputText = document.querySelector<HTMLTextAreaElement>('#outputText')
+    if (outputText) {
+      return !(outputText.textContent && outputText.textContent.length > 1)
+    }
+    return true
+  }
+
   /**
    * Initializes the graph and text editor.
    */
@@ -107,84 +112,23 @@ export class EditorSync {
   initialize(masterGraph: IGraph): void {
     this._graph = masterGraph
 
-    const addMarker = StateEffect.define<Marker>()
+    const textArea = document.querySelector<HTMLTextAreaElement>('#editorContainer')!
+
+    const { editor, markerField, addMarker, removeMarker } = createGraphMLEditor(
+      textArea,
+      (update: ViewUpdate) => this.contentChanged(update),
+      (update: ViewUpdate) => this.cursorActivity(update)
+    )
+
     this.addMarker = addMarker
-    const removeMarker = StateEffect.define<string>()
     this.removeMarker = removeMarker
-
-    this.markerField = StateField.define<{
-      decorations: DecorationSet
-      markers: Map<string, Marker>
-    }>({
-      create() {
-        return {
-          decorations: Decoration.none,
-          markers: new Map()
-        }
-      },
-      update(value, tr) {
-        let { decorations, markers } = value
-        decorations = decorations.map(tr.changes)
-
-        for (let e of tr.effects) {
-          if (e.is<Marker>(addMarker)) {
-            const marker = e.value
-            decorations = decorations.update({
-              add: [
-                Decoration.mark({
-                  class: marker.className
-                }).range(marker.from, marker.to)
-              ]
-            })
-            markers.set(marker.id, marker)
-          } else if (e.is<string>(removeMarker)) {
-            const markerId = e.value
-            const marker = markers.get(markerId)
-            if (marker) {
-              decorations = decorations.update({
-                filter: (from, to) => !(from === marker.from && to === marker.to)
-              })
-              markers.delete(marker.id)
-            }
-          }
-        }
-        return { decorations, markers }
-      },
-      provide: (f) => EditorView.decorations.from(f, (value) => value.decorations)
-    })
-
-    const textArea = document.querySelector('#editorContainer') as HTMLTextAreaElement
-
-    const startState = EditorState.create({
-      doc: textArea.value,
-      extensions: [
-        basicSetup,
-        this.markerField,
-        xml(),
-        xmlLinter,
-        lintGutter(),
-        EditorView.updateListener.of((update) => {
-          if (update.docChanged) {
-            this.contentChanged(update)
-          }
-        }),
-        EditorView.updateListener.of((update) => {
-          if (update.selectionSet) {
-            this.cursorActivity(update)
-          }
-        })
-      ]
-    })
-    this._editor = new EditorView({
-      parent: textArea,
-      state: startState
-    })
+    this.markerField = markerField
+    this._editor = editor
   }
 
   /**
    * generate a marker with the supplied parameters
    */
-
   private addMarkerWrapper(
     from: number,
     to: number,
@@ -194,19 +138,12 @@ export class EditorSync {
     scrollToView = false
   ): Marker {
     const effects: StateEffect<unknown>[] = [
-      this.addMarker!.of({
-        from: from,
-        to: to,
-        className: cssClass,
-        id: id
-      })
+      this.addMarker!.of({ from: from, to: to, className: cssClass, id: id })
     ]
     if (scrollToView) {
       effects.push(EditorView.scrollIntoView(from, { y: 'start' }))
     }
-    this.editor.dispatch({
-      effects: effects
-    })
+    this.editor.dispatch({ effects: effects })
 
     const newMarker = this.editor.state.field(this.markerField!).markers.get(id)!
     this.itemToMarkerMap.set(item, newMarker)
@@ -219,6 +156,10 @@ export class EditorSync {
    * The editor content has been edited: dispatch an event that notifies the view, and update the markers.
    */
   private onContentChanged(update: ViewUpdate): void {
+    if (this.ignoreChanges) {
+      return
+    }
+
     const value = update.state.doc.toString()
     this.editorContentChangedListener({ value })
     this.onCursorActivity(update)
@@ -230,14 +171,12 @@ export class EditorSync {
    */
   onGraphModified(event: { graphml: string; selectedItem: IModelItem | null }): void {
     // don't fire changes while replacing the content
+    this.ignoreChanges = true
     this.editor.dispatch({
-      changes: {
-        from: 0,
-        to: this.editor.state.doc.length,
-        insert: event.graphml
-      }
+      changes: { from: 0, to: this.editor.state.doc.length, insert: event.graphml }
     })
     setOutput('')
+    this.ignoreChanges = false
     this.setMarkers()
     this.onItemSelected(event.selectedItem)
   }
@@ -261,7 +200,7 @@ export class EditorSync {
   /**
    * Called when a document has been parsed.
    */
-  onParsed(args: ParseEventArgs): void {
+  onParsed(_args: ParseEventArgs): void {
     // clear text in output area
     setOutput('')
   }
@@ -300,9 +239,9 @@ export class EditorSync {
    */
   private setMarkers(): void {
     this.itemToMarkerMap.values.forEach((marker) => {
-      this.editor.dispatch({
-        effects: this.removeMarker!.of(marker.id)
-      })
+      if (marker) {
+        this.editor.dispatch({ effects: this.removeMarker!.of(marker.id) })
+      }
     })
     this.itemToMarkerMap.clear()
     this.markerToItemMap.clear()
@@ -400,13 +339,11 @@ export class EditorSync {
   }
 
   /**
-   * An view item has been selected by the user: identify the corresponding editor section and highlight it.
+   * The user has selected a view item: identify the corresponding editor section and highlight it.
    */
   onItemSelected(masterItem: IModelItem | null): void {
-    if (masterItem && this.itemToMarkerMap.keys.includes(masterItem)) {
-      const options = {
-        className: 'text-highlight'
-      }
+    if (masterItem && this.itemToMarkerMap.has(masterItem)) {
+      const options = { className: 'text-highlight' }
       this.replaceMarker(masterItem, options)
     }
   }
@@ -422,13 +359,11 @@ export class EditorSync {
    * Update a marker with the provided options (e.g. CSS class)
    */
   private replaceMarker(masterItem: IModelItem, options: any): Marker | null {
-    if (masterItem !== null && this.itemToMarkerMap.keys.includes(masterItem)) {
+    if (masterItem !== null && this.itemToMarkerMap.has(masterItem)) {
       const oldMarker = this.itemToMarkerMap.get(masterItem)!
       if (typeof oldMarker !== 'undefined') {
         this.markerToItemMap.delete(oldMarker)
-        this.editor.dispatch({
-          effects: this.removeMarker!.of(oldMarker.id)
-        })
+        this.editor.dispatch({ effects: this.removeMarker!.of(oldMarker.id) })
         return this.addMarkerWrapper(
           oldMarker.from,
           oldMarker.to,
@@ -470,7 +405,7 @@ function getInnermostMarker(position: number, markers: Marker[]): Marker {
  */
 function findMatchingTag(str: string, startIndex: number, tagName: string): number {
   const regExp = new RegExp(`<${tagName}.*>|</${tagName}>`, 'gi')
-  const substr = str.substr(startIndex)
+  const substr = str.substring(startIndex)
   let matches = regExp.exec(substr)
   let depth = 0
   while (matches) {

@@ -35,6 +35,7 @@ import {
   Point,
   Rect
 } from '@yfiles/yfiles'
+
 /**
  * A {@link ConstrainedPositionHandler} that limits the movement of a
  * node to be within an rectangle and delegates for other aspects to
@@ -44,6 +45,7 @@ export class OrangePositionHandler extends ConstrainedPositionHandler {
   boundaryRectangle
   node
   boundaryPositionRectangle = null
+
   /**
    * Creates a new instance of {@link OrangePositionHandler}
    * @param boundaryRectangle The boundary rectangle
@@ -55,6 +57,7 @@ export class OrangePositionHandler extends ConstrainedPositionHandler {
     this.boundaryRectangle = boundaryRectangle
     this.node = node
   }
+
   /**
    * Prepares the rectangle that is actually used to limit the node
    * position (and calls the base implementation). Since a position handler
@@ -74,6 +77,7 @@ export class OrangePositionHandler extends ConstrainedPositionHandler {
       this.boundaryRectangle.height - this.node.layout.height
     )
   }
+
   /**
    * Returns the position that is constrained by the rectangle.
    * @param context The context in which the drag will be performed

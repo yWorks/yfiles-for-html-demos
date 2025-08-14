@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import neo4j from 'neo4j-driver'
+
 /**
  * @yjs:keep = types,Node
  */
@@ -35,6 +36,7 @@ export const Neo4jNode = neo4j.types.Node
  * @yjs:keep = types,Relationship
  */
 export const Neo4jEdge = neo4j.types.Relationship
+
 /**
  * Establishes a connection to a Neo4j database.
  * @param url The URL to connect to (neo4j:// bolt:// neo4j+s://).
@@ -47,15 +49,19 @@ export async function connectToDB(url, databaseName, user, pass) {
   const neo4jDriver = neo4j.driver(url, neo4j.auth.basic(user, pass), {
     connectionAcquisitionTimeout: 5000
   })
+
   const runCypherQuery = createCypherQueryRunner(neo4jDriver, databaseName)
+
   try {
     // check connection
     await runCypherQuery('MATCH (n) RETURN n LIMIT 1')
   } catch (e) {
     throw new Error(`Could not connect to Neo4j: ${e}`)
   }
+
   return runCypherQuery
 }
+
 function createCypherQueryRunner(neo4jDriver, databaseName) {
   /**
    * Runs the Cypher query.

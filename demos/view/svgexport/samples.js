@@ -43,6 +43,7 @@ import {
 import ImageSwitch from './node-styles/switch.svg'
 import ImageWorkstation from './node-styles/workstation.svg'
 import { DelayedNodeStyle } from './node-styles/delayed-node-style'
+
 export async function createSampleGraph(graphComponent) {
   // add nodes and edges with different visualizations to demonstrate that the SVG export does not
   // depend on the styles used to visualize elements
@@ -52,13 +53,13 @@ export async function createSampleGraph(graphComponent) {
   addBezierEdgesSample(graphComponent.graph)
   addDelayedSample(graphComponent.graph)
 }
+
 /**
  * Adds sample nodes and edges representing a simple computer network.
  */
 async function addNetworkSample(graph) {
-  const edgeStyle = new PolylineEdgeStyle({
-    targetArrow: new Arrow(ArrowType.STEALTH)
-  })
+  const edgeStyle = new PolylineEdgeStyle({ targetArrow: new Arrow(ArrowType.STEALTH) })
+
   const imageSwitch = ImageSwitch
   const imageWorkstation = ImageWorkstation
   const switchStyle = new ImageNodeStyle({
@@ -71,20 +72,24 @@ async function addNetworkSample(graph) {
     // determine the intrinsic aspect ratio of the image
     aspectRatio: await ImageNodeStyle.getAspectRatio(imageWorkstation)
   })
+
   const labelModel = new ExteriorNodeLabelModel()
   const bottomLabelPosition = labelModel.createParameter('bottom')
   const topLabelPosition = labelModel.createParameter('top')
+
   // create sample nodes
   const n1 = graph.createNode([150, 0, 60, 40], switchStyle, { type: 'switch' })
   const n2 = graph.createNode([0, 80, 60, 40], workstationStyle, { type: 'workstation' })
   const n3 = graph.createNode([100, 80, 60, 40], workstationStyle, { type: 'workstation' })
   const n4 = graph.createNode([200, 80, 60, 40], workstationStyle, { type: 'workstation' })
   const n5 = graph.createNode([300, 80, 60, 40], workstationStyle, { type: 'workstation' })
+
   // create sample edges
   graph.createEdge(n1, n2, edgeStyle)
   graph.createEdge(n1, n3, edgeStyle)
   graph.createEdge(n1, n4, edgeStyle)
   graph.createEdge(n1, n5, edgeStyle)
+
   // create sample labels
   graph.addLabel(n1, 'Switch', topLabelPosition)
   graph.addLabel(n2, 'Workstation 1', bottomLabelPosition)
@@ -92,46 +97,41 @@ async function addNetworkSample(graph) {
   graph.addLabel(n4, 'Workstation 3', bottomLabelPosition)
   graph.addLabel(n5, 'Workstation 4', bottomLabelPosition)
 }
+
 /**
  * Adds sample nodes with labels that use a custom font.
  * @param graph The demo's graph.
  */
 function addCustomFontSample(graph) {
   const nodeStyle = new ShapeNodeStyle({ fill: 'orange' })
+
   const labelModel = new ExteriorNodeLabelModel({ margins: 10 })
+
   graph.createNode({
     style: nodeStyle,
     layout: [55, 210, 50, 50],
     labels: [
       {
         text: 'Кирилица',
-        style: new LabelStyle({
-          font: new Font({
-            fontFamily: 'Prata',
-            fontSize: 16
-          })
-        }),
+        style: new LabelStyle({ font: new Font({ fontFamily: 'Prata', fontSize: 16 }) }),
         layoutParameter: labelModel.createParameter('bottom')
       }
     ]
   })
+
   graph.createNode({
     style: nodeStyle,
     layout: [205, 210, 50, 50],
     labels: [
       {
         text: '平仮名',
-        style: new LabelStyle({
-          font: new Font({
-            fontFamily: 'Kosugi',
-            fontSize: 16
-          })
-        }),
+        style: new LabelStyle({ font: new Font({ fontFamily: 'Kosugi', fontSize: 16 }) }),
         layoutParameter: labelModel.createParameter('bottom')
       }
     ]
   })
 }
+
 /**
  * Adds sample nodes styled with CSS.
  */
@@ -161,17 +161,20 @@ function addCssStyleSample(graph) {
     new ShapeNodeStyle({ cssClass: 'demo-palette-21-node' })
   )
 }
+
 /**
  * Adds curved edges.
  */
 function addBezierEdgesSample(graph) {
   const nodeStyle = createDemoNodeStyle('demo-palette-21')
   const edgeStyle = new BezierEdgeStyle({ stroke: `28px ${colorSets['demo-palette-22'].stroke}33` })
+
   const node1 = graph.createNode([0, 550, 30, 60], nodeStyle)
   const node2 = graph.createNode([0, 625, 30, 90], nodeStyle)
   const node3 = graph.createNode([0, 730, 30, 60], nodeStyle)
   const node4 = graph.createNode([230, 550, 30, 110], nodeStyle)
   const node5 = graph.createNode([230, 680, 30, 110], nodeStyle)
+
   const edge1 = graph.createEdge({ source: node1, target: node4, bends: [], style: edgeStyle })
   graph.setPortLocation(edge1.sourcePort, new Point(30, 565))
   graph.setPortLocation(edge1.targetPort, new Point(230, 565))
@@ -211,6 +214,7 @@ function addBezierEdgesSample(graph) {
   graph.setPortLocation(edge6.sourcePort, new Point(30, 775))
   graph.setPortLocation(edge6.targetPort, new Point(230, 775))
 }
+
 function addDelayedSample(graph) {
   for (let i = 0; i < 5; i++) {
     const n = graph.createNode({

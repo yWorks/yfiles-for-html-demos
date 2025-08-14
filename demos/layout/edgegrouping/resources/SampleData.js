@@ -50,6 +50,7 @@ export default {
     { id: 19 },
     { id: 20 }
   ],
+
   edges: [
     { id: 0, from: 0, to: 20, groupIds: { sourceGroupId: 'st9', targetGroupId: 'st9' } },
     { id: 1, from: 1, to: 2, groupIds: { sourceGroupId: 's1' } },

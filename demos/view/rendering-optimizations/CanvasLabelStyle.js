@@ -42,6 +42,7 @@ import {
   TextWrapping,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * A simple label style that draws the text into the HTML Canvas. This
  * implementation auto-flips the drawing of the labels, if they're upside
@@ -49,6 +50,7 @@ import {
  */
 export class CanvasLabelStyle extends LabelStyleBase {
   font = new Font('Arial', 14)
+
   /**
    * Creates the visual representation for the given label.
    * @param context The render context.
@@ -59,6 +61,7 @@ export class CanvasLabelStyle extends LabelStyleBase {
   createVisual(context, label) {
     return new LabelRenderVisual(label.text, label.layout, this.font)
   }
+
   /**
    * Updates the visual representation for the given label.
    * @param context The render context.
@@ -72,6 +75,7 @@ export class CanvasLabelStyle extends LabelStyleBase {
     oldVisual.layout = label.layout
     return oldVisual
   }
+
   /**
    * Calculates the preferred {@link Size size} for the given label.
    * @param label The label to which this style instance is assigned.
@@ -86,6 +90,7 @@ export class CanvasLabelStyle extends LabelStyleBase {
     })
   }
 }
+
 /**
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
@@ -102,6 +107,7 @@ class LabelRenderVisual extends HtmlCanvasVisual {
     this.layout = layout
     this.font = font
   }
+
   /**
    * Paints onto the context using HTML Canvas operations.
    * Implementations should not destroy the context's state, but should make sure to restore the state to the
@@ -153,12 +159,14 @@ class LabelRenderVisual extends HtmlCanvasVisual {
     htmlCanvasContext.restore()
   }
 }
+
 /**
  * Sets the font on the context using HTML Canvas.
  */
 function setFont(htmlCanvasContext, font) {
   htmlCanvasContext.font = `${fontStyleToString(font.fontStyle)} ${font.fontWeight} ${font.fontSize}px ${font.fontFamily}`
 }
+
 /**
  * Converts the font style into a string.
  * @param fontStyle The font style to convert.

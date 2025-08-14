@@ -46,10 +46,7 @@ import ImageSwitch from './node-styles/switch.svg'
 import ImageWorkstation from './node-styles/workstation.svg'
 import { DelayedNodeStyle } from './node-styles/delayed-node-style'
 
-export type Tag = {
-  type?: string
-  css?: string
-}
+export type Tag = { type?: string; css?: string }
 
 export async function createSampleGraph(graphComponent: GraphComponent): Promise<void> {
   // add nodes and edges with different visualizations to demonstrate that the SVG export does not
@@ -65,9 +62,7 @@ export async function createSampleGraph(graphComponent: GraphComponent): Promise
  * Adds sample nodes and edges representing a simple computer network.
  */
 async function addNetworkSample(graph: IGraph): Promise<void> {
-  const edgeStyle = new PolylineEdgeStyle({
-    targetArrow: new Arrow(ArrowType.STEALTH)
-  })
+  const edgeStyle = new PolylineEdgeStyle({ targetArrow: new Arrow(ArrowType.STEALTH) })
 
   const imageSwitch = ImageSwitch as string
   const imageWorkstation = ImageWorkstation as string
@@ -122,12 +117,7 @@ function addCustomFontSample(graph: IGraph): void {
     labels: [
       {
         text: 'Кирилица',
-        style: new LabelStyle({
-          font: new Font({
-            fontFamily: 'Prata',
-            fontSize: 16
-          })
-        }),
+        style: new LabelStyle({ font: new Font({ fontFamily: 'Prata', fontSize: 16 }) }),
         layoutParameter: labelModel.createParameter('bottom')
       }
     ]
@@ -139,12 +129,7 @@ function addCustomFontSample(graph: IGraph): void {
     labels: [
       {
         text: '平仮名',
-        style: new LabelStyle({
-          font: new Font({
-            fontFamily: 'Kosugi',
-            fontSize: 16
-          })
-        }),
+        style: new LabelStyle({ font: new Font({ fontFamily: 'Kosugi', fontSize: 16 }) }),
         layoutParameter: labelModel.createParameter('bottom')
       }
     ]

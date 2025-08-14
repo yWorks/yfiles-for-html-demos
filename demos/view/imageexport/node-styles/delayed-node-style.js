@@ -28,14 +28,17 @@
  ***************************************************************************/
 import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 import './delayed-node-style.css'
+
 /**
  * This node style changes its color after a while.
  * This is used to showcase the render completion callback of the SVG export.
  */
 export class DelayedNodeStyle extends NodeStyleBase {
   static pendingPromises = new Set()
+
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
+
     const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
     text.setAttribute('text-anchor', 'middle')
     text.setAttribute('dominant-baseline', 'middle')
@@ -45,13 +48,16 @@ export class DelayedNodeStyle extends NodeStyleBase {
     text.setAttribute('y', `${height * 0.5}`)
     text.classList.add('loading-text')
     text.textContent = '↺'
+
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.setAttribute('width', width.toString())
     rect.setAttribute('height', height.toString())
     rect.setAttribute('fill', '#E0E0E0')
+
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     g.appendChild(rect)
     g.appendChild(text)
+
     const promise = new Promise((resolve) => {
       setTimeout(
         () => {
@@ -65,9 +71,12 @@ export class DelayedNodeStyle extends NodeStyleBase {
       )
     })
     DelayedNodeStyle.pendingPromises.add(promise)
+
     SvgVisual.setTranslate(g, x, y)
+
     return new SvgVisual(g)
   }
+
   updateVisual(context, oldVisual, node) {
     const { x, y, width, height } = node.layout
     const g = oldVisual.svgElement

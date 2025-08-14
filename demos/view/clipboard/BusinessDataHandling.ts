@@ -30,9 +30,7 @@ import { type INode, type IObservableCollection } from '@yfiles/yfiles'
 
 let counter = 0
 
-export type NodeBusinessData = {
-  name: string
-}
+export type NodeBusinessData = { name: string }
 
 /**
  * Creates an instance of ClipboardBusinessObject with a new name.

@@ -57,9 +57,7 @@ export async function runLayout(
   let layoutData: LayoutData
 
   if (selectedIndex === 0) {
-    layout = new HierarchicalLayout({
-      layoutOrientation: 'left-to-right'
-    })
+    layout = new HierarchicalLayout({ layoutOrientation: 'left-to-right' })
     const hierarchicalLayoutData = new HierarchicalLayoutData()
     hierarchicalLayoutData.ports.sourcePortCandidates = new EdgePortCandidates().addFixedCandidate(
       'right'

@@ -29,6 +29,7 @@
 import { NodeSnapResultProvider, Point } from '@yfiles/yfiles'
 import { getLeadWidth } from '../gantt-utils'
 import { getActivity } from '../resources/data-model'
+
 /**
  * Customizes the grid snapping behavior by providing a snap result for the left side of a node.
  */

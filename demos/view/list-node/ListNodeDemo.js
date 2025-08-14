@@ -58,17 +58,23 @@ import {
 } from './RowPositionHandler'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('graphComponent')
   configureGraph(graphComponent.graph)
+
   // create some graph elements
   createSampleGraph(graphComponent.graph)
+
   // center the sample graph in the visible area
   void graphComponent.fitGraphBounds()
+
   // configure user interaction
   initializeInteraction(graphComponent)
 }
+
 /**
  * Set up the {@link GraphEditorInputMode} and customize the editing gestures:
  * - do not delete labels and ports
@@ -92,10 +98,12 @@ function initializeInteraction(graphComponent) {
       GraphItemTypes.ALL
     ]
   })
+
   // prefer edge creation over moving elements but only if the creation starts over a candidate
   geim.createEdgeInputMode.priority = geim.moveUnselectedItemsInputMode.priority - 1
   geim.createEdgeInputMode.startOverCandidateOnly = true
   geim.createEdgeInputMode.edgeDirectionPolicy = EdgeDirectionPolicy.DETERMINE_FROM_PORT_CANDIDATES
+
   // register label changes in the model
   geim.editLabelInputMode.addEventListener('label-edited', (evt) => {
     const owner = evt.item.owner
@@ -105,6 +113,7 @@ function initializeInteraction(graphComponent) {
       }
     }
   })
+
   geim.addEventListener('deleted-item', (evt) => {
     if (evt.details instanceof LabelEventArgs && evt.details.owner instanceof IPort) {
       const port = evt.details.owner
@@ -116,6 +125,7 @@ function initializeInteraction(graphComponent) {
       }
     }
   })
+
   // disable normal move mode, enable unselected
   geim.moveSelectedItemsInputMode.enabled = false
   const oldHitTestable = geim.moveUnselectedItemsInputMode.hitTestable
@@ -141,17 +151,22 @@ function initializeInteraction(graphComponent) {
     }
     // if the cursor is not over a row: use the default, i.e. do nothing here
   })
+
   // do not let the user drag at ports
   graphComponent.graph.decorator.edges.reconnectionPortCandidateProvider.hide()
+
   registerContextMenu(graphComponent, geim)
+
   graphComponent.inputMode = geim
 }
+
 /**
  * Finds the first node whose bounds contain the given location.
  */
 function findNodeAt(mode, location) {
   return mode.findItems(location, [GraphItemTypes.NODE]).at(0)
 }
+
 /**
  * Creates a node with the special node style for row containers.
  * @param graph The graph to create the node in.
@@ -184,6 +199,7 @@ function createNode(graph, location, label, rows = null) {
   }
   return node
 }
+
 /**
  * Creates a new row.
  * The new row is always created at the bottom.
@@ -192,11 +208,9 @@ function createNode(graph, location, label, rows = null) {
  * @param rowInfo The info which describes the row to create.
  */
 function addRow(graph, node, rowInfo) {
-  const labelStyle = new LabelStyle({
-    padding: [1, 3, 1, 3],
-    textFill: '#0C313A'
-  })
+  const labelStyle = new LabelStyle({ padding: [1, 3, 1, 3], textFill: '#0C313A' })
   const portStyle = new ShapePortStyle({ fill: '#304048', shape: 'ellipse' })
+
   const nodeInfo = node.tag
   if (rowInfo.in) {
     // the row is represented as a port with a label
@@ -228,8 +242,10 @@ function addRow(graph, node, rowInfo) {
       labelStyle
     )
   }
+
   // register the row
   nodeInfo.rows.push(rowInfo)
+
   // make sure the new row fits into the node
   const nl = node.layout
   const minHeight = node.style.getMinimumHeight(node)
@@ -237,6 +253,7 @@ function addRow(graph, node, rowInfo) {
     graph.setNodeLayout(node, new Rect(nl.x, nl.y, nl.width, minHeight))
   }
 }
+
 /**
  * Removes the row at the given index.
  * This method assumes a valid row index.
@@ -247,11 +264,13 @@ function addRow(graph, node, rowInfo) {
 function removeRow(graph, node, rowIndex) {
   // remove port and row info
   const nodeInfo = node.tag
+
   const portForData = getPortForData(node, nodeInfo.rows[rowIndex])
   portForData.toArray().forEach((port) => {
     graph.remove(port)
   })
   nodeInfo.rows.splice(rowIndex, 1)
+
   // update subsequent rows
   for (let i = rowIndex; i < nodeInfo.rows.length; i++) {
     const ri = nodeInfo.rows[i]
@@ -276,6 +295,7 @@ function removeRow(graph, node, rowIndex) {
     })
   }
 }
+
 /**
  * Configures default styles and default behavior for the given graph.
  */
@@ -293,13 +313,16 @@ function configureGraph(graph) {
     backgroundFill: 'white',
     padding: 5
   })
+
   // do not remove ports when their adjacent edges are removed
   graph.nodeDefaults.ports.autoCleanUp = false
+
   // disallow moving main node label
   const compositeLabelModel = new CompositeLabelModel()
   compositeLabelModel.addParameter(StretchNodeLabelModel.TOP)
   graph.nodeDefaults.labels.layoutParameter = compositeLabelModel.parameters.first()
 }
+
 /**
  * Creates the initial sample graph.
  */
@@ -311,12 +334,14 @@ function createSampleGraph(graph) {
     { in: 'in 2', out: 'out 2' },
     { out: 'out 3' }
   ])
+
   const n2 = createNode(graph, new Point(400, 0), 'Node 2', [
     { in: 'in 0' },
     { in: 'in 1', out: 'out 1' },
     { in: 'in 2' },
     { in: 'in 3', out: 'out 3' }
   ])
+
   const out0 = n1.ports.get(1)
   const in0 = n2.ports.get(0)
   const out1 = n1.ports.get(2)
@@ -332,6 +357,7 @@ function createSampleGraph(graph) {
     bends: [new Point(250, out1.location.y), new Point(250, in2.location.y)]
   })
 }
+
 /**
  * Registers a context menu for the given graph component.
  * The context menu will provide the following actions:
@@ -344,11 +370,14 @@ function registerContextMenu(graphComponent, geim) {
     if (evt.handled) {
       return
     }
+
     const node = evt.item
     if (node instanceof INode && node.style instanceof ListNodeStyle) {
       // we have a row containing node at cursor location
       const style = node.style
+
       const graph = graphComponent.graph
+
       const menuItems = []
       // add menu entries for adding input and output rows
       menuItems.push({
@@ -364,6 +393,7 @@ function registerContextMenu(graphComponent, geim) {
         action: () =>
           addRow(graph, node, { in: `in ${node.ports.size}`, out: `out ${node.ports.size}` })
       })
+
       // if we are over a row add an entry for removing that row
       const portInfoIndex = style.getRowIndex(node, evt.queryLocation)
       if (portInfoIndex > -1) {
@@ -383,8 +413,10 @@ function registerContextMenu(graphComponent, geim) {
           })
         }
       }
+
       evt.contextMenu = menuItems
     }
   })
 }
+
 run().then(finishLoading)

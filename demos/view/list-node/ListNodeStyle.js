@@ -47,7 +47,9 @@ import {
   Stroke,
   SvgVisual
 } from '@yfiles/yfiles'
+
 const SVGNS = 'http://www.w3.org/2000/svg'
+
 /**
  * A node style with a header and a thick border and row separators.
  * Note that the row contents are not rendered. These are rendered as ports and port labels.
@@ -58,8 +60,10 @@ export class ListNodeStyle extends NodeStyleBase {
   backgroundFill = Fill.from('#9CC5CF')
   highlightFill = Fill.from('#6aa7b0')
   lineStroke = Stroke.WHITE
+
   headerHeight = 20
   rowHeight = 20
+
   /**
    * Create a new visual for the node.
    * Creates a SvgElement and a <g> element and delegates to {@link render}
@@ -82,6 +86,7 @@ export class ListNodeStyle extends NodeStyleBase {
     }
     return SvgVisual.from(g, cache)
   }
+
   /**
    * Updates an already created visual.
    */
@@ -119,16 +124,14 @@ export class ListNodeStyle extends NodeStyleBase {
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
     return oldVisual
   }
+
   /**
    * The actual render method: adds child elements to the given <g> element.
    */
   render(g, nodeSize, nodeInfo, context) {
     // draw the rect with a thick border
     const borderThickness = 4
-    const borderStroke = new Stroke({
-      fill: this.borderFill,
-      thickness: borderThickness
-    })
+    const borderStroke = new Stroke({ fill: this.borderFill, thickness: borderThickness })
     // rect around the border with backgroundFill
     const border = document.createElementNS(SVGNS, 'rect')
     border.width.baseVal.value = nodeSize.width
@@ -138,15 +141,18 @@ export class ListNodeStyle extends NodeStyleBase {
     borderStroke.applyTo(border, context)
     this.backgroundFill.applyTo(border, context)
     g.appendChild(border)
+
     if (nodeSize.height < this.headerHeight) {
       return g
     }
+
     // render a header which is used as background for the label
     const header = document.createElementNS(SVGNS, 'rect')
     header.width.baseVal.value = nodeSize.width
     header.height.baseVal.value = this.headerHeight
     this.borderFill.applyTo(header, context)
     g.appendChild(header)
+
     const borderInset = borderThickness / 2
     for (let i = 0; i < nodeInfo.rows.length; i++) {
       const y = this.headerHeight + this.rowHeight * i
@@ -171,8 +177,10 @@ export class ListNodeStyle extends NodeStyleBase {
         g.appendChild(line)
       }
     }
+
     return g
   }
+
   /**
    * Modify the node's lookup to provide special interaction behavior.
    */
@@ -189,6 +197,7 @@ export class ListNodeStyle extends NodeStyleBase {
     // return the defaults for all other types
     return super.lookup(node, type)
   }
+
   /**
    * Calculates the index of the row at the given location.
    * @returns the index of the row at the given location or `-1` if there is no such row.
@@ -207,6 +216,7 @@ export class ListNodeStyle extends NodeStyleBase {
     const index = ((y - this.headerHeight) / this.rowHeight) | 0
     return index < node.tag.rows.length ? index : -1
   }
+
   /**
    * Determines if the given location lies inside the header visualization of the given node.
    * @param node the node whose header is queried.
@@ -223,6 +233,7 @@ export class ListNodeStyle extends NodeStyleBase {
       location.y <= ny + this.headerHeight
     )
   }
+
   /**
    * Returns the relative y-coordinate of the center of the row at the given row index.
    * @param rowIndex the index of the row whose center coordinate is calculated.
@@ -230,10 +241,12 @@ export class ListNodeStyle extends NodeStyleBase {
   getRowCenterY(rowIndex) {
     return this.headerHeight + this.rowHeight / 2 + rowIndex * this.rowHeight
   }
+
   getMinimumHeight(node) {
     return this.headerHeight + node.tag.rows.length * this.rowHeight
   }
 }
+
 /**
  * An {@link IPortCandidateProvider} which returns candidates for all existing and free ports.
  */
@@ -247,36 +260,42 @@ class ExistingAndFreePortCandidateProvider extends PortCandidateProviderBase {
     super()
     this.node = node
   }
+
   /**
    * Returns possible source port candidates for edge creation.
    */
   getAllSourcePortCandidates(context) {
     return this.getPortCandidatesFor(context, false)
   }
+
   /**
    * Returns possible target port candidates for edge creation.
    */
   getAllTargetPortCandidates(context) {
     return this.getPortCandidatesFor(context, true)
   }
+
   /**
    * Returns possible source port candidates for a newly created edge which starts at target
    */
   getSourcePortCandidates(context, target) {
     return this.getPortCandidatesFor(context, false)
   }
+
   /**
    * Returns possible target port candidates for a newly created edge which starts at source
    */
   getTargetPortCandidates(context, source) {
     return this.getPortCandidatesFor(context, true)
   }
+
   /**
    * Default implementation of the abstract base class. Not used for edge creation.
    */
   getPortCandidates(context) {
     return this.getPortCandidatesFor(context, false)
   }
+
   /**
    * Returns a list that contains a port candidate for each of the node's
    * ports. Each candidate has the same location as the port. If a port
@@ -287,6 +306,7 @@ class ExistingAndFreePortCandidateProvider extends PortCandidateProviderBase {
   getPortCandidatesFor(context, incoming) {
     const candidates = new List()
     const graph = context.graph
+
     // Create the candidate for each port
     if (graph) {
       this.node.ports
@@ -298,6 +318,7 @@ class ExistingAndFreePortCandidateProvider extends PortCandidateProviderBase {
           candidates.add(portCandidate)
         })
     }
+
     return candidates
   }
 }

@@ -219,16 +219,12 @@ export class BpmnLayout extends BaseClass(ILayoutAlgorithm) {
         portCandidateSelector: new BalancingPortSelection(new PortCandidateSelector())
       },
       componentLayout: { enabled: false },
-      coordinateAssigner: {
-        straightenEdges: true
-      },
+      coordinateAssigner: { straightenEdges: true },
       edgeLabelPlacement: EdgeLabelPlacement.IGNORE,
       nodeLabelPlacement: NodeLabelPlacement.IGNORE
     })
     if (this.scope === 'SELECTED_ELEMENTS') {
-      hl.core.fixedElementsLayerAssigner = new FromSketchLayerAssigner({
-        maximumNodeSize: 5
-      })
+      hl.core.fixedElementsLayerAssigner = new FromSketchLayerAssigner({ maximumNodeSize: 5 })
       hl.fromSketchMode = true
     }
     hl.applyLayout(graph)

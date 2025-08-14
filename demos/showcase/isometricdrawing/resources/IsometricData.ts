@@ -145,20 +145,8 @@ export default {
       group: 'production',
       ...sizes.PC
     },
-    {
-      id: 'pc10',
-      color: { r: 153, g: 204, b: 0, a: 255 },
-      label: 'PC',
-      group: 'it',
-      ...sizes.PC
-    },
-    {
-      id: 'pc11',
-      color: { r: 153, g: 204, b: 0, a: 255 },
-      label: 'PC',
-      group: 'it',
-      ...sizes.PC
-    },
+    { id: 'pc10', color: { r: 153, g: 204, b: 0, a: 255 }, label: 'PC', group: 'it', ...sizes.PC },
+    { id: 'pc11', color: { r: 153, g: 204, b: 0, a: 255 }, label: 'PC', group: 'it', ...sizes.PC },
     {
       id: 'laptop1',
       color: { r: 0, g: 204, b: 255, a: 255 },
@@ -194,13 +182,7 @@ export default {
       group: 'it',
       ...sizes.Laptop
     },
-    {
-      id: 'db',
-      color: { r: 153, g: 51, b: 255, a: 255 },
-      label: 'DB',
-      group: 'it',
-      ...sizes.DB
-    },
+    { id: 'db', color: { r: 153, g: 51, b: 255, a: 255 }, label: 'DB', group: 'it', ...sizes.DB },
     {
       id: 'hub1',
       color: { r: 191, g: 191, b: 191, a: 255 },
@@ -237,12 +219,7 @@ export default {
       ...sizes.Hub
     },
     { id: 'switch', color: { r: 255, g: 102, b: 0, a: 255 }, label: 'Switch', ...sizes.Switch },
-    {
-      id: 'gateway',
-      color: { r: 153, g: 51, b: 255, a: 255 },
-      label: 'Gateway',
-      ...sizes.Gateway
-    },
+    { id: 'gateway', color: { r: 153, g: 51, b: 255, a: 255 }, label: 'Gateway', ...sizes.Gateway },
     { id: 'firewall', color: { r: 255, g: 0, b: 0, a: 255 }, label: 'Firewall', ...sizes.Firewall }
   ],
   edgesSource: [
@@ -278,30 +255,10 @@ export default {
     { from: 'gateway', to: 'firewall' }
   ],
   groupsSource: [
-    {
-      id: 'development',
-      label: 'Development',
-      color: groupColor
-    },
-    {
-      id: 'management',
-      label: 'Management',
-      color: groupColor
-    },
-    {
-      id: 'production',
-      label: 'Production',
-      color: groupColor
-    },
-    {
-      id: 'sales',
-      label: 'Sales',
-      color: groupColor
-    },
-    {
-      id: 'it',
-      label: 'IT',
-      color: groupColor
-    }
+    { id: 'development', label: 'Development', color: groupColor },
+    { id: 'management', label: 'Management', color: groupColor },
+    { id: 'production', label: 'Production', color: groupColor },
+    { id: 'sales', label: 'Sales', color: groupColor },
+    { id: 'it', label: 'IT', color: groupColor }
   ]
 }

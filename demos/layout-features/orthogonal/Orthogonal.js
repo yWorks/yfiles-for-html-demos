@@ -39,6 +39,7 @@ import {
   OrthogonalLayoutTreeSubstructureStyle,
   SubstructureOrientation
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates basic configuration for the {@link OrthogonalLayout}.
  * @param graph The graph to be laid out
@@ -47,38 +48,48 @@ import {
 export function createLayoutConfiguration(graph) {
   // create an organic layout algorithm
   const layout = new OrthogonalLayout()
+
   // there exist other styles that allow the layout to resize the nodes according to the number
   // and position of their neighbors to reduce the overall number of bends.
-  // However, note that this may be incompatible with other settings such as node halos.
+  // However, note that this may be incompatible with other settings such as node margins.
   layout.layoutMode = OrthogonalLayoutMode.STRICT
+
   // nodes and edges are laid out on a virtual grid, so that nodes are placed on grid points and edges run along the grid lines.
   // Modifying the size of these grid cells contracts or expands the graph
   layout.gridSpacing = 5
+
   // if disabled (default), the algorithm does not insert additional bends in order to obtain a more
   // uniform port assignment of edges incident to the same node side.
   layout.uniformPortAssignment = false
+
   // enable the tree substructure style to arrange sub-trees using a different special placement
   // algorithm - in this case a tree arrangement with a left-to-right arrangement is chosen
   layout.treeSubstructureStyle = OrthogonalLayoutTreeSubstructureStyle.COMPACT
   layout.treeSubstructureOrientation = SubstructureOrientation.LEFT_TO_RIGHT
   // trees starting with a size of 6 are detected as trees - smaller ones are ignored
   layout.treeSubstructureSize = 6
+
   // while the above configuration modifies the layout in general, the corresponding layoutData
   // holds configuration about specific graph items.
-  // E.g. to specify a halo around a certain node
+  // E.g. to specify a margin around a certain node
   const layoutData = new OrthogonalLayoutData()
+
   // define some edges to be directed: they must flow in the direction of the main layout
   // orientation - in this example we select a top-to-bottom orientation
   layoutData.edgeDirectedness = (edge) => (isDirectedEdge(edge) ? 1 : 0)
   layout.layoutOrientation = LayoutOrientation.TOP_TO_BOTTOM
+
   // increasing the bend cost for an edge causes the layout algorithm to prefer not creating bends
   // there (in favor of bending other edges instead) - in the example we want that the directed
-  // edges are not bended if possible
+  // edges are without bends if possible
   layoutData.edgeBendCosts = (edge) => (isDirectedEdge(edge) ? 4 : 1)
-  // node halos are reserving additional space around nodes.
+
+  // node margins are reserving additional space around nodes.
   layoutData.nodeMargins = (node) => new Insets(node.labels.get(0).text === 'Insets' ? 50 : 0)
+
   return { layoutAlgorithm: layout, layoutData: layoutData }
 }
+
 function isDirectedEdge(edge) {
   return edge.tag.directed
 }

@@ -48,24 +48,31 @@ template.innerHTML = `
   title='Toggle fullscreen mode'
 ></button>
 `
+
 class FullscreenButtonComponent extends HTMLElement {
   fullscreenButton = null
   fullscreenHandler
+
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
+
     if (this.shadowRoot) {
       this.shadowRoot.appendChild(template.content.cloneNode(true))
+
       this.fullscreenButton = this.shadowRoot.querySelector('.fullscreen-button')
       this.fullscreenHandler = () => this.toggleFullscreen()
     }
   }
+
   connectedCallback() {
     this.fullscreenButton?.addEventListener('click', this.fullscreenHandler)
   }
+
   disconnectedCallback() {
     this.fullscreenButton?.removeEventListener('click', this.fullscreenHandler)
   }
+
   toggleFullscreen() {
     // Before Safari 16.4 (2023-03-27), only the Fullscreen API is prefixed with webkit
     if (document.fullscreenElement) {
@@ -90,6 +97,8 @@ class FullscreenButtonComponent extends HTMLElement {
     }
   }
 }
+
 customElements.define('fullscreen-button', FullscreenButtonComponent)
+
 // Empty export to force TypeScript to threat this as a module
 export {}

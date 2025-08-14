@@ -34,14 +34,17 @@ import {
   Point,
   Rect
 } from '@yfiles/yfiles'
+
 /**
  * Sets up simple data binding by storing the creation date in the node tag.
  */
 export function enableDataBinding(graphComponent, graphEditorInputMode) {
   const graph = graphComponent.graph
+
   // typically you specify the tag of an item at creation time:
   // Store the current time as node creation time
   graph.createNode({ layout: new Rect(0, 80, 30, 30), tag: new Date() })
+
   // In this example we subscribe to the low-level node creation event to record the node creation time.
   graph.addEventListener('node-created', (evt) => {
     // Store the current time as node creation time
@@ -51,12 +54,14 @@ export function enableDataBinding(graphComponent, graphEditorInputMode) {
       node.tag = new Date()
     }
   })
+
   graphEditorInputMode.addEventListener('node-created', (evt) => {
     // Store the current time as node creation time
     const node = evt.item
     node.tag = new Date()
   })
 }
+
 /**
  * Setup tooltips that return the value that is stored in the tag of the nodes.
  * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for the 'query-item-tool-tip'
@@ -86,16 +91,19 @@ export function setupTooltips(graphEditorInputMode) {
               'seconds'
             )
           : 'Who knows?')
+
       // Indicate that the tooltip content has been set
       evt.handled = true
     }
   })
 }
+
 /**
  * Adds a context menu for nodes.
  */
 export function setupContextMenu(graphComponent, graphEditorInputMode) {
   graphEditorInputMode.contextMenuItems = GraphItemTypes.NODE
+
   // Add item-specific menu entries
   graphEditorInputMode.addEventListener('populate-item-context-menu', (evt) => {
     if (evt.item instanceof INode) {

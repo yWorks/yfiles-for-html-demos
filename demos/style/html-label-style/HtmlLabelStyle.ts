@@ -128,11 +128,7 @@ export class HtmlLabelStyle extends LabelStyleBase<TypedHtmlVisual<CachingHtmlEl
    */
   private updateElement(element: CachingHtmlElement, newData: Cache): void {
     // Get the data that describes the current state of the element
-    const currentData = element.cache ?? {
-      text: null,
-      font: null,
-      layout: null
-    }
+    const currentData = element.cache ?? { text: null, font: null, layout: null }
 
     if (currentData.layout?.width !== newData.layout.width) {
       element.style.width = `${newData.layout.width}px`

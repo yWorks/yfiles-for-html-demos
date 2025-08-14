@@ -108,6 +108,16 @@ export const LabelingConfig = (Class as any)('LabelingConfig', {
       new OptionGroupAttribute('GeneralGroup', 30),
       new TypeAttribute(Boolean)
     ],
+    qualityTimeRatioItem: [
+      new OptionGroupAttribute('QualityGroup', 10),
+      new MinMaxAttribute(0, 1, 0.01),
+      new LabelAttribute(
+        'Quality Time Ratio',
+        '#/api/GenericLabeling#GenericLabeling-property-qualityTimeRatio'
+      ),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
+    ],
     optimizationStrategyItem: [
       new LabelAttribute('Reduce Overlaps', '#/api/LabelingOptimizationStrategy'),
       new OptionGroupAttribute('QualityGroup', 40),
@@ -223,6 +233,7 @@ export const LabelingConfig = (Class as any)('LabelingConfig', {
     )
     labeling.defaultEdgeLabelingCosts = labelingPenalties
     labeling.defaultNodeLabelingCosts = labelingPenalties
+    labeling.qualityTimeRatio = this.qualityTimeRatioItem
     if (this.placeNodeLabelsItem && this.placeEdgeLabelsItem) {
       labeling.scope = 'all'
     } else {
@@ -318,6 +329,9 @@ export const LabelingConfig = (Class as any)('LabelingConfig', {
 
   /** @type {boolean} */
   considerSelectedFeaturesOnlyItem: false,
+
+  /** @type {number} */
+  qualityTimeRatioItem: 1.0,
 
   /** @type {LabelingOptimizationStrategy} */
   optimizationStrategyItem: null,

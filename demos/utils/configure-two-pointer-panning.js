@@ -35,6 +35,7 @@ import {
   PointerType
 } from '@yfiles/yfiles'
 import { BrowserDetection } from './BrowserDetection'
+
 /**
  * Configures two-finger panning on the given input mode by disabling
  * {@link MoveViewportInputMode.allowSinglePointerMovement} and additionally re-configures
@@ -46,6 +47,7 @@ export function configureTwoPointerPanning(graphComponent) {
     // start marquee selection on long press to allow other gestures to start on a simple single press
     inputMode.marqueeSelectionInputMode.beginRecognizerTouch =
       EventRecognizers.TOUCH_PRIMARY_LONG_PRESS
+
     // set gestures to an immediate touch-down recognizer instead of the long-press recognizer
     inputMode.moveSelectedItemsInputMode.beginRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DOWN
     inputMode.createEdgeInputMode.beginRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DOWN
@@ -53,9 +55,11 @@ export function configureTwoPointerPanning(graphComponent) {
     inputMode.handleInputMode.beginRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DOWN
     inputMode.moveUnselectedItemsInputMode.beginRecognizerTouch =
       EventRecognizers.TOUCH_PRIMARY_DOWN
+
     // make sure that starting the input modes above has higher priority than moving the viewport
     inputMode.moveViewportInputMode.priority = inputMode.marqueeSelectionInputMode.priority - 1
   }
+
   // iOS fires bogus mousewheel events during pinch zooming, so disable mousewheel behavior while
   // two pointers are pressed.
   if (BrowserDetection.iOSVersion > 0) {
@@ -67,6 +71,7 @@ export function configureTwoPointerPanning(graphComponent) {
         graphComponent.mouseWheelBehavior = MouseWheelBehaviors.NONE
       }
     })
+
     const resetWheelBehavior = (evt) => {
       if (evt.pointerType === PointerType.TOUCH && previousWheelBehavior !== null) {
         graphComponent.mouseWheelBehavior = previousWheelBehavior

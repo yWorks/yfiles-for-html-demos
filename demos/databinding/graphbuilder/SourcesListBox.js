@@ -33,11 +33,13 @@
 export class SourcesListBox {
   Factory
   DialogFactory
+
   sources
   lastSourceIndex
   rootElement
   addButton
   dataUpdatedCallback
+
   /**
    * Sources list box constructor
    * @param factory the arrow function providing an appropriate {@link SourceDefinitionBuilderConnector}
@@ -54,11 +56,13 @@ export class SourcesListBox {
     this.DialogFactory = dialogFactory
     this.rootElement = rootElement
     this.lastSourceIndex = 1
+
     this.addButton = document.createElement('button')
     this.addButton.textContent = 'Add Source'
     this.addButton.addEventListener('click', () => this.createDefinition())
     this.rootElement.appendChild(this.addButton)
   }
+
   /**
    * Event handler for "Add Source" button
    * Generates a new definition via the provided connector Factory
@@ -69,17 +73,21 @@ export class SourcesListBox {
     this.addDefinition(newDefinition)
     return newDefinition
   }
+
   /**
    * Adds a new definition using the provided {@link SourceDefinitionBuilderConnector} to the list box
    * @param newDefinition the {@link SourceDefinitionBuilderConnector}
    */
   addDefinition(newDefinition) {
     this.sources.push(newDefinition)
+
     const container = document.createElement('div')
     container.classList.add('sourceCard')
+
     const label = document.createElement('span')
     label.textContent = newDefinition.sourceDefinition.name
     label.classList.add('sourceLabel')
+
     const editButton = document.createElement('button')
     editButton.classList.add('editButton')
     editButton.addEventListener('click', () => {
@@ -89,15 +97,19 @@ export class SourcesListBox {
       }).show()
     })
     editButton.textContent = 'Edit'
+
     const removeButton = document.createElement('button')
     removeButton.classList.add('removeButton')
     removeButton.addEventListener('click', () => this.removeDefinition(newDefinition, container))
     removeButton.textContent = 'Remove'
+
     container.appendChild(label)
     container.appendChild(editButton)
     container.appendChild(removeButton)
+
     this.rootElement.insertBefore(container, this.addButton)
   }
+
   /**
    * Removes the provided definition from the list box
    * @param definition the {@link SourceDefinitionBuilderConnector}

@@ -41,6 +41,7 @@ import {
   Point
 } from '@yfiles/yfiles'
 import { ArrowNodeStyleAngleHandle } from './ArrowNodeStyleAngleHandle'
+
 /**
  * An {@link IHandle} for nodes with a {@link ArrowNodeStyle} to change the
  * {@link ArrowNodeStyle.shaftRatio} interactively.
@@ -52,6 +53,7 @@ export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
   xFactor = 0
   yFactor = 0
   initialShaftRatio = 0
+
   /**
    * Creates a new instance for the given node.
    * @param node The node whose style shall be changed.
@@ -63,6 +65,7 @@ export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
     this.shaftRatioChanged = shaftRatioChanged
     this.style = node.style
   }
+
   /**
    * Gets a live view of the handle location.
    *
@@ -71,6 +74,7 @@ export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
   get location() {
     return this
   }
+
   /**
    * Initializes the drag gesture.
    * @param context The current input mode context.
@@ -90,6 +94,7 @@ export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
     }
     this.initialShaftRatio = this.style.shaftRatio
   }
+
   /**
    * Calculates the new shaft ratio depending on the new mouse location and updates the node style.
    * @param context The current input mode context.
@@ -103,10 +108,12 @@ export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
       this.yFactor * (newLocation.y - originalLocation.y)
     // ... and clamp to valid values
     this.style.shaftRatio = Math.max(0, Math.min(this.initialShaftRatio + delta, 1))
+
     if (this.shaftRatioChanged) {
       this.shaftRatioChanged()
     }
   }
+
   /**
    * Resets the initial shaft ratio.
    * @param context The current input mode context.
@@ -115,6 +122,7 @@ export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
   cancelDrag(context, originalLocation) {
     this.style.shaftRatio = this.initialShaftRatio
   }
+
   /**
    * Sets the shaft ratio for the new location, and triggers the shaftRatioChanged action.
    * @param context The current input mode context.
@@ -124,18 +132,21 @@ export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
   dragFinished(context, originalLocation, newLocation) {
     this.handleMove(context, originalLocation, newLocation)
   }
+
   /**
    * Returns {@link HandleType.CUSTOM4} as handle type that determines the visualization of the handle.
    */
   get type() {
     return HandleType.CUSTOM4
   }
+
   /**
    * Returns an optional tag object associated with the handle.
    */
   get tag() {
     return null
   }
+
   /**
    * Returns a double-arrow cursor as cursor that shall be used during the drag gesture.
    *
@@ -149,10 +160,12 @@ export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
       this.style.direction === ArrowNodeDirection.LEFT
     return arrowIsHorizontal ? Cursor.NS_RESIZE : Cursor.EW_RESIZE
   }
+
   /**
    * This implementation does nothing special when clicked.
    */
   handleClick(evt) {}
+
   get x() {
     const nodeLayout = this.node.layout
     if (
@@ -164,12 +177,14 @@ export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
     if (this.style.shape === ArrowStyleShape.DOUBLE_ARROW) {
       return nodeLayout.x + nodeLayout.width / 2
     }
+
     const headLength = ArrowNodeStyleAngleHandle.getArrowHeadLength(nodeLayout, this.style)
     if (this.style.direction === ArrowNodeDirection.RIGHT) {
       return nodeLayout.x + (nodeLayout.width - headLength) / 2
     }
     return nodeLayout.x + headLength + (nodeLayout.width - headLength) / 2
   }
+
   get y() {
     const nodeLayout = this.node.layout
     if (
@@ -181,6 +196,7 @@ export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
     if (this.style.shape === ArrowStyleShape.DOUBLE_ARROW) {
       return nodeLayout.y + nodeLayout.height / 2
     }
+
     const headLength = ArrowNodeStyleAngleHandle.getArrowHeadLength(nodeLayout, this.style)
     if (this.style.direction === ArrowNodeDirection.DOWN) {
       return nodeLayout.y + (nodeLayout.height - headLength) / 2

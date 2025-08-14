@@ -70,9 +70,7 @@ export function initializeLabelModel(graphComponent: GraphComponent): void {
       distance: -5
     })
   graphComponent.graph.nodeDefaults.labels.layoutParameter =
-    new ExteriorNodeLabelModel({
-      margins: 5
-    }).createParameter('top')
+    new ExteriorNodeLabelModel({ margins: 5 }).createParameter('top')
 }
 
 export function initializeLabelModelHitTest(
@@ -84,9 +82,7 @@ export function initializeLabelModelHitTest(
       distance: -20
     })
   graphComponent.graph.nodeDefaults.labels.layoutParameter =
-    new ExteriorNodeLabelModel({
-      margins: 20
-    }).createParameter('top')
+    new ExteriorNodeLabelModel({ margins: 20 }).createParameter('top')
 }
 
 export function initializeLabelModelVisibility(
@@ -98,9 +94,7 @@ export function initializeLabelModelVisibility(
       distance: -50
     })
   graphComponent.graph.nodeDefaults.labels.layoutParameter =
-    new ExteriorNodeLabelModel({
-      margins: 50
-    }).createParameter('top')
+    new ExteriorNodeLabelModel({ margins: 50 }).createParameter('top')
 }
 
 export function createSimpleGraph(graph: IGraph): void {

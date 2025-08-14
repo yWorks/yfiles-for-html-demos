@@ -38,13 +38,16 @@ import {
   TextRenderSupport,
   TextWrapping
 } from '@yfiles/yfiles'
+
 const SVG_NS = 'http://www.w3.org/2000/svg'
+
 /**
  * A fast label style. It only renders the text but doesn't support features like text clipping and
  * trimming that are potentially costly.
  */
 export class SvgLabelStyle extends LabelStyleBase {
   font = new Font({ fontSize: 14 })
+
   /**
    * Creates the visual representation for the given label.
    * @param context The render context.
@@ -54,15 +57,20 @@ export class SvgLabelStyle extends LabelStyleBase {
    */
   createVisual(context, label) {
     const layout = label.layout
+
     const g = document.createElementNS(SVG_NS, 'g')
+
     // render the label
     this.render(label, layout, g)
+
     // move container to correct location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(g)
+
     // Cache the necessary data for rendering of the label
     return SvgVisual.from(g, { text: label.text })
   }
+
   /**
    * Updates the visual representation for the given label.
    * @param context The render context.
@@ -75,6 +83,7 @@ export class SvgLabelStyle extends LabelStyleBase {
   updateVisual(context, oldVisual, label) {
     const layout = label.layout
     const g = oldVisual.svgElement
+
     // if text changed, re-create the text element
     const oldText = oldVisual.tag.text
     if (oldText !== label.text) {
@@ -84,11 +93,14 @@ export class SvgLabelStyle extends LabelStyleBase {
       // update the cache
       oldVisual.tag.text = label.text
     }
+
     // move container to correct location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(g)
+
     return oldVisual
   }
+
   /**
    * Creates the text element and appends it to the given g element.
    * @param label The label to render.
@@ -98,9 +110,12 @@ export class SvgLabelStyle extends LabelStyleBase {
   render(label, layout, g) {
     const text = document.createElementNS(SVG_NS, 'text')
     text.setAttribute('fill', 'black')
+
     TextRenderSupport.addText(text, label.text, this.font, layout.toSize(), TextWrapping.NONE)
+
     g.appendChild(text)
   }
+
   /**
    * Calculates the preferred {@link Size size} for the given label.
    * @param label The label to which this style instance is assigned.

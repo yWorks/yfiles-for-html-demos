@@ -47,13 +47,14 @@ import {
   SvgVisual
 } from '@yfiles/yfiles'
 import { CustomPortStyle } from './05-hit-testing/CustomPortStyle'
+
 export function createSimpleGraph(graph) {
   const node1 = graph.createNode()
-  const node2 = graph.createNode({
-    layout: [100, 200, 30, 30]
-  })
+  const node2 = graph.createNode({ layout: [100, 200, 30, 30] })
+
   graph.createEdge({ source: node1, target: node2 })
 }
+
 export function createSampleGraphColoring(graph) {
   const nodeCount = 20
   const r = 200
@@ -61,10 +62,7 @@ export function createSampleGraphColoring(graph) {
     const x = Math.cos((i / nodeCount) * Math.PI * 2) * r
     const y = Math.sin((i / nodeCount) * Math.PI * 2) * r
     const node = graph.createNodeAt([x, y])
-    graph.addPort({
-      owner: node,
-      locationParameter: FreeNodePortLocationModel.CENTER
-    })
+    graph.addPort({ owner: node, locationParameter: FreeNodePortLocationModel.CENTER })
   }
   for (let i = 1; i < nodeCount; i++) {
     const sourceNode = graph.nodes.get(i)
@@ -98,37 +96,35 @@ export function createSampleGraphColoring(graph) {
     tag: { color: '#9e7cb5' }
   })
 }
+
 export function createSampleGraphIsHit(graph, oldCustomPortStyle) {
   const redNodeStyle = new ShapeNodeStyle({
     shape: 'round-rectangle',
     fill: '#b91c3b',
     stroke: '#042d37'
   })
-  const node3 = graph.createNode({
-    layout: [0, 0, 40, 40],
-    style: redNodeStyle
-  })
-  const node4 = graph.createNode({
-    layout: [100, 150, 40, 40],
-    style: redNodeStyle
-  })
+  const node3 = graph.createNode({ layout: [0, 0, 40, 40], style: redNodeStyle })
+  const node4 = graph.createNode({ layout: [100, 150, 40, 40], style: redNodeStyle })
   const port3 = graph.addPort(node3, FreeNodePortLocationModel.CENTER, oldCustomPortStyle)
   const port4 = graph.addPort(node4, FreeNodePortLocationModel.CENTER, oldCustomPortStyle)
   graph.createEdge({ sourcePort: port3, targetPort: port4 })
+
   const node1 = graph.createNode([100, 0, 40, 40])
   const node2 = graph.createNode([200, 150, 40, 40])
+
   graph.createEdge({ source: node1, target: node2 })
 }
+
 export function createSampleGraphEdgeCropping(graph) {
   const node1 = graph.createNode([100, 0, 40, 40])
   const node2 = graph.createNode([100, 80, 40, 40])
+
   addPorts(graph, node1)
   addPorts(graph, node2)
-  graph.createEdge({
-    sourcePort: node1.ports.get(1),
-    targetPort: node2.ports.get(0)
-  })
+
+  graph.createEdge({ sourcePort: node1.ports.get(1), targetPort: node2.ports.get(0) })
 }
+
 function addPorts(graph, node) {
   graph.addPort({
     owner: node,
@@ -151,13 +147,12 @@ function addPorts(graph, node) {
     tag: { color: 'rgba(108,159,68,0.5)' }
   })
 }
+
 export function enableGraphEditing(graphComponent) {
   const graphEditorInputMode = new GraphEditorInputMode({
     allowAddLabel: false,
     allowCreateNode: false,
-    createEdgeInputMode: new CreateEdgeInputMode({
-      startOverCandidateOnly: true
-    })
+    createEdgeInputMode: new CreateEdgeInputMode({ startOverCandidateOnly: true })
   })
   graphComponent.inputMode = graphEditorInputMode
   graphComponent.graph.nodeDefaults.ports.autoCleanUp = false
@@ -166,10 +161,12 @@ export function enableGraphEditing(graphComponent) {
   )
   return graphEditorInputMode
 }
+
 export function addHoverEffect(graphComponent, inputMode) {
   const itemHoverInputMode = inputMode.itemHoverInputMode
   itemHoverInputMode.hoverItems = GraphItemTypes.PORT
   let hoveredItemHighlight = null
+
   function addHighlight(port) {
     hoveredItemHighlight = graphComponent.renderTree.createElement(
       graphComponent.renderTree.inputModeGroup,
@@ -201,18 +198,21 @@ export function addHoverEffect(graphComponent, inputMode) {
           el.setAttribute('fill-opacity', '0.8')
           return new SvgVisual(el)
         }
+
         updateVisual(context, oldVisual) {
           return this.createVisual(context)
         }
       })()
     )
   }
+
   function removeHighlight() {
     if (hoveredItemHighlight) {
       graphComponent.renderTree.remove(hoveredItemHighlight)
       hoveredItemHighlight = null
     }
   }
+
   itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     removeHighlight()
     if (evt.item instanceof IPort) {
@@ -230,6 +230,7 @@ export function addHoverEffect(graphComponent, inputMode) {
     }
   })
 }
+
 export function initializeInlineGraphComponent(selector) {
   const graphComponent = new GraphComponent(selector)
   graphComponent.horizontalScrollBarPolicy = graphComponent.verticalScrollBarPolicy =
@@ -239,6 +240,7 @@ export function initializeInlineGraphComponent(selector) {
   initializeTutorialDefaults(graphComponent)
   return graphComponent
 }
+
 /**
  * Initializes the default styles for nodes, edges, and labels.
  */
@@ -261,11 +263,10 @@ export function initializeTutorialDefaults(graphComponent) {
     stroke: '1.5px #0b7189',
     targetArrow: '#0b7189 medium triangle'
   })
-  graph.groupNodeDefaults.style = new GroupNodeStyle({
-    tabFill: '#111d4a',
-    contentAreaPadding: 10
-  })
+
+  graph.groupNodeDefaults.style = new GroupNodeStyle({ tabFill: '#111d4a', contentAreaPadding: 10 })
 }
+
 /**
  * Fits the graph into the graph component with a minimum zoom value.
  * The graph will be slightly zoomed in to avoid that small graphs are displayed too small.

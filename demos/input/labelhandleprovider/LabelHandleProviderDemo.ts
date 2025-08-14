@@ -113,11 +113,7 @@ function initializeGraph(): void {
       }
     ]
   })
-  graph.createEdge({
-    source: n2,
-    target: n1,
-    labels: ['Rotated Edge Label']
-  })
+  graph.createEdge({ source: n2, target: n1, labels: ['Rotated Edge Label'] })
 
   graphComponent.fitGraphBounds()
 }

@@ -46,39 +46,51 @@ import {
   ShapeNodeStyle,
   Size
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 // Ensure that the LayoutExecutor class is not removed by build optimizers
 // It is needed for the 'applyLayoutAnimated' method in this demo.
 LayoutExecutor.ensure()
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // create graph component
   const graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
+
   const graph = graphComponent.graph
+
   // configure default styles for newly created graph elements
   initializeGraph(graph)
+
   // enable mouse hover effects for nodes and edges
   configureHoverHighlight(graphComponent)
+
   // build the graph from the given data set
   buildGraph(graph, graphData)
+
   // layout and center the graph
   graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
   await graphComponent.fitGraphBounds()
+
   // enable now the undo engine to prevent undoing of the graph creation
   graph.undoEngineEnabled = true
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder
     .createNodesSource({
       data: graphData.nodeList.filter((item) => !item.isGroup),
@@ -87,27 +99,33 @@ function buildGraph(graph, graphData) {
       tag: (item) => item.tag
     })
     .nodeCreator.styleBindings.addBinding('shape', (item) => item.tag)
+
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Registers highlight styles for the nodes and edges of the given graph.
  */
 function configureHoverHighlight(graphComponent) {
   const inputMode = graphComponent.inputMode
+
   // enable hover effects for nodes and edges
   inputMode.itemHoverInputMode.enabled = true
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
+
   // specify the hover effect: highlight a node whenever the mouse hovers over the respective node
   inputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     const highlights = graphComponent.highlights
@@ -116,6 +134,7 @@ function configureHoverHighlight(graphComponent) {
       highlights.add(evt.item)
     }
   })
+
   // configure the node highlight style -> each node highlight should have the shape of the node
   graphComponent.graph.decorator.nodes.highlightRenderer.addFactory(
     (node) =>
@@ -131,6 +150,7 @@ function configureHoverHighlight(graphComponent) {
       })
   )
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  *
@@ -139,6 +159,7 @@ function configureHoverHighlight(graphComponent) {
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph, { shape: ShapeNodeShape.ELLIPSE })
+
   // set the style, label and label parameter for group nodes
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#46a8d5',
@@ -149,6 +170,7 @@ function initializeGraph(graph) {
     horizontalTextAlignment: 'left',
     textFill: '#eee'
   })
+
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.shareStyleInstance = false
@@ -160,6 +182,7 @@ function initializeGraph(graph) {
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
+
 /**
  * Determines a suitable highlight shape depending on the given tag data.
  * @param tag the tag of the node to be highlighted.
@@ -167,4 +190,5 @@ function initializeGraph(graph) {
 function getShape(tag) {
   return tag === 'ellipse' || tag === 'triangle' ? tag : 'rectangle'
 }
+
 run().then(finishLoading)

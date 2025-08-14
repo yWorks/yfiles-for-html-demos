@@ -452,11 +452,7 @@ function calculateMaxFlowMinCut(minCut: boolean): number {
     const flow = (graph.inDegree(node) > 0 ? graph.inEdgesAt(node) : graph.outEdgesAt(node)).sum(
       (edge) => maxFlowMinCutResult.flow.get(edge) || 0
     )
-    node.tag = {
-      flow,
-      supply: 0,
-      adjustable: false
-    }
+    node.tag = { flow, supply: 0, adjustable: false }
   })
 
   sourceNodes.forEach((sourceNode) => (sourceNode.tag.source = true))
@@ -522,11 +518,7 @@ function calculateMinCostFlow(): number {
       if (graph.inDegree(node) > 0) {
         flow = graph.inEdgesAt(node).sum((edge) => edge.tag.flow)
       }
-      node.tag = {
-        flow,
-        supply: node.tag.supply,
-        adjustable: true
-      }
+      node.tag = { flow, supply: node.tag.supply, adjustable: true }
     })
 
     getSupplyNodes(graph).forEach((supplyNode) => (supplyNode.tag.source = true))
@@ -584,16 +576,12 @@ async function runLayout(fromSketch: boolean, additionalIncrementalNodes?: INode
     layoutOrientation: 'left-to-right',
     fromSketchMode: fromSketch,
     defaultEdgeDescriptor: {
-      routingStyleDescriptor: {
-        defaultRoutingStyle: 'octilinear'
-      },
+      routingStyleDescriptor: { defaultRoutingStyle: 'octilinear' },
       backLoopRouting: true
     }
   })
 
-  const layoutData = new HierarchicalLayoutData({
-    edgeThickness: (edge) => edge.tag.capacity
-  })
+  const layoutData = new HierarchicalLayoutData({ edgeThickness: (edge) => edge.tag.capacity })
 
   if (fromSketch && algorithmComboBox.selectedIndex !== MAX_FLOW_MIN_CUT) {
     // mark all sources and sinks as well as passed additional nodes as incremental
@@ -798,10 +786,7 @@ function calculateExtrema(graph: IGraph, useCapacity: boolean): { min: number; m
     max = Math.max(max, value)
   })
 
-  return {
-    min,
-    max
-  }
+  return { min, max }
 }
 
 /**
@@ -953,136 +938,19 @@ async function createSampleGraph(): Promise<void> {
   const node8 = graph.createNode()
 
   const color = Color.CORNFLOWER_BLUE
-  graph.createEdge({
-    source: node1,
-    target: node2,
-    tag: {
-      capacity: 19,
-      cost: 14,
-      color,
-      id: 1
-    }
-  })
-  graph.createEdge({
-    source: node2,
-    target: node3,
-    tag: {
-      capacity: 15,
-      cost: 16,
-      color,
-      id: 2
-    }
-  })
-  graph.createEdge({
-    source: node1,
-    target: node3,
-    tag: {
-      capacity: 16,
-      cost: 15,
-      color,
-      id: 3
-    }
-  })
-  graph.createEdge({
-    source: node1,
-    target: node4,
-    tag: {
-      capacity: 25,
-      cost: 13,
-      color,
-      id: 4
-    }
-  })
-  graph.createEdge({
-    source: node2,
-    target: node6,
-    tag: {
-      capacity: 10,
-      cost: 11,
-      color,
-      id: 5
-    }
-  })
-  graph.createEdge({
-    source: node4,
-    target: node3,
-    tag: {
-      capacity: 15,
-      cost: 13,
-      color,
-      id: 6
-    }
-  })
-  graph.createEdge({
-    source: node3,
-    target: node5,
-    tag: {
-      capacity: 23,
-      cost: 10,
-      color,
-      id: 7
-    }
-  })
-  graph.createEdge({
-    source: node4,
-    target: node7,
-    tag: {
-      capacity: 16,
-      cost: 10,
-      color,
-      id: 8
-    }
-  })
-  graph.createEdge({
-    source: node5,
-    target: node6,
-    tag: {
-      capacity: 10,
-      cost: 15,
-      color,
-      id: 9
-    }
-  })
-  graph.createEdge({
-    source: node5,
-    target: node7,
-    tag: {
-      capacity: 10,
-      cost: 16,
-      color,
-      id: 10
-    }
-  })
-  graph.createEdge({
-    source: node5,
-    target: node8,
-    tag: {
-      capacity: 16,
-      cost: 15,
-      color,
-      id: 11
-    }
-  })
-  graph.createEdge({
-    source: node6,
-    target: node8,
-    tag: {
-      capacity: 13,
-      cost: 15,
-      color,
-      id: 12
-    }
-  })
-  graph.createEdge({
-    source: node7,
-    target: node8,
-    tag: {
-      capacity: 15,
-      cost: 16,
-      color,
-      id: 13
-    }
-  })
+  graph.createEdge({ source: node1, target: node2, tag: { capacity: 19, cost: 14, color, id: 1 } })
+  graph.createEdge({ source: node2, target: node3, tag: { capacity: 15, cost: 16, color, id: 2 } })
+  graph.createEdge({ source: node1, target: node3, tag: { capacity: 16, cost: 15, color, id: 3 } })
+  graph.createEdge({ source: node1, target: node4, tag: { capacity: 25, cost: 13, color, id: 4 } })
+  graph.createEdge({ source: node2, target: node6, tag: { capacity: 10, cost: 11, color, id: 5 } })
+  graph.createEdge({ source: node4, target: node3, tag: { capacity: 15, cost: 13, color, id: 6 } })
+  graph.createEdge({ source: node3, target: node5, tag: { capacity: 23, cost: 10, color, id: 7 } })
+  graph.createEdge({ source: node4, target: node7, tag: { capacity: 16, cost: 10, color, id: 8 } })
+  graph.createEdge({ source: node5, target: node6, tag: { capacity: 10, cost: 15, color, id: 9 } })
+  graph.createEdge({ source: node5, target: node7, tag: { capacity: 10, cost: 16, color, id: 10 } })
+  graph.createEdge({ source: node5, target: node8, tag: { capacity: 16, cost: 15, color, id: 11 } })
+  graph.createEdge({ source: node6, target: node8, tag: { capacity: 13, cost: 15, color, id: 12 } })
+  graph.createEdge({ source: node7, target: node8, tag: { capacity: 15, cost: 16, color, id: 13 } })
 
   graph.edges.forEach((edge) => updateEdgeThickness(edge))
 

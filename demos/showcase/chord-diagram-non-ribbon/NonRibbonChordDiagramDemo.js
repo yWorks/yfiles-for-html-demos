@@ -47,11 +47,13 @@ import {
   ShapeNodeStyle,
   TimeSpan
 } from '@yfiles/yfiles'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { NonRibbonEdgeStyle } from './NonRibbonEdgeStyle'
 import { colorSets } from '@yfiles/demo-resources/demo-colors'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { configureHighlight } from './configure-highlight'
+
 const predefinedColorSets = new Map([
   ['Engineering', 'demo-palette-42'],
   ['Executive Unit', 'demo-palette-43'],
@@ -60,25 +62,32 @@ const predefinedColorSets = new Map([
   ['Accounting', 'demo-palette-47'],
   ['Marketing', 'demo-palette-48']
 ])
+
 /**
  * Runs this demo.
  */
 async function run() {
   LayoutExecutor.ensure()
+
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('#graphComponent')
   // configure the input mode to enable hovered tooltips
   configureInputMode(graphComponent)
   // configure the items to be highlighted on hover
   configureHighlight(graphComponent)
+
   // create an initial sample graph
   await initializeGraph(graphComponent)
+
   // create and run the initial layout
   document.querySelector('#labelStyleSelect').value = 'ray-like'
   await configureAndRunChordLayout(graphComponent, 'ray-like')
+
   // bind the buttons to their actions
   initializeUI(graphComponent)
 }
+
 /**
  * Creates and configures the input mode to display node information with tooltips.
  * @param graphComponent The given graphComponent
@@ -86,23 +95,29 @@ async function run() {
 function configureInputMode(graphComponent) {
   const gvim = new GraphViewerInputMode()
   gvim.itemHoverInputMode.enabled = true
+
   const toolTipInputMode = gvim.toolTipInputMode
   toolTipInputMode.toolTipLocationOffset = new Point(15, 15)
   toolTipInputMode.delay = TimeSpan.fromMilliseconds(500)
   toolTipInputMode.duration = TimeSpan.fromSeconds(5)
+
   // Register a listener for when a tooltip should be shown.
   gvim.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.handled || !(evt.item instanceof INode)) {
       // Tooltip content has already been assigned -> nothing to do.
       return
     }
+
     // Use a rich HTML element as tooltip content. Alternatively, a plain string would do as well.
     evt.toolTip = createTooltipContent(evt.item)
+
     // Indicate that the tooltip content has been set.
     evt.handled = true
   })
+
   graphComponent.inputMode = gvim
 }
+
 /**
  * Creates the node tooltips.
  * @param item The item for which the tooltip is created
@@ -115,6 +130,7 @@ function createTooltipContent(item) {
     `<div>Department: ${item.tag.department}</div>`
   return tooltip
 }
+
 /**
  * Loads the graph and sets the styles of the graph elements.
  * @param graphComponent The component containing the graph.
@@ -124,14 +140,18 @@ async function initializeGraph(graphComponent) {
   const graph = graphComponent.graph
   // set the FreeNodeLabelModel as default layout parameter for the labels so that ray-like labeling is supported
   graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.CENTER
+
   // use a custom style for the edges to support Bézier curves with two colors
   graph.edgeDefaults.style = new NonRibbonEdgeStyle()
+
   // hide the selection/focus indicators
   graph.decorator.nodes.selectionRenderer.hide()
   graph.decorator.edges.selectionRenderer.hide()
   graph.decorator.nodes.focusRenderer.hide()
   graph.decorator.edges.focusRenderer.hide()
+
   const graphData = await fetch('resources/GraphData.json').then((response) => response.json())
+
   const builder = new GraphBuilder(graph)
   const nodesSource = builder.createNodesSource({
     // use bracket notation to access 'nodes' to prevent yWorks obfuscator from renaming it
@@ -140,14 +160,12 @@ async function initializeGraph(graphComponent) {
     labels: ['tag.name'],
     tag: 'tag'
   })
+
   nodesSource.nodeCreator.styleProvider = (data) => {
     const colorSet = colorSets[predefinedColorSets.get(data.tag?.department) || 'demo-palette-41']
-    return new ShapeNodeStyle({
-      shape: 'ellipse',
-      fill: colorSet.fill,
-      stroke: colorSet.stroke
-    })
+    return new ShapeNodeStyle({ shape: 'ellipse', fill: colorSet.fill, stroke: colorSet.stroke })
   }
+
   builder.createEdgesSource({
     // use bracket notation to access 'edges' to prevent yWorks obfuscator from renaming it
     data: graphData['edges'],
@@ -155,7 +173,9 @@ async function initializeGraph(graphComponent) {
     targetId: 'target',
     tag: 'tag'
   })
+
   builder.buildGraph()
+
   // sets the style for the labels
   graph.labels.forEach((label) => {
     const colorSet =
@@ -170,6 +190,7 @@ async function initializeGraph(graphComponent) {
       })
     )
   })
+
   // normalizes the nodes based on the number of connections stored in the tag
   let minConnections = Number.MAX_VALUE
   let maxConnections = -Number.MAX_VALUE
@@ -179,6 +200,7 @@ async function initializeGraph(graphComponent) {
     maxConnections = Math.max(maxConnections, connections)
   })
   const connectionsDelta = maxConnections !== minConnections ? maxConnections - minConnections : 1
+
   const largest = 100
   const smallest = 40
   graph.nodes.forEach((node) => {
@@ -188,6 +210,7 @@ async function initializeGraph(graphComponent) {
     graph.setNodeLayout(node, new Rect(node.layout.x, node.layout.y, size, size))
   })
 }
+
 /**
  * Binds actions to the buttons in the toolbar.
  * @param graphComponent The given graphComponent
@@ -205,6 +228,7 @@ function initializeUI(graphComponent) {
     await configureAndRunChordLayout(graphComponent, 'horizontal')
   })
 }
+
 /**
  * Configures the CircularLayout algorithm to produce a non-ribbon chord diagram.
  * @param graphComponent The given graphComponent.
@@ -217,20 +241,24 @@ async function configureAndRunChordLayout(graphComponent, labelingPolicy) {
   // sets edges to be routed inside the circle
   chordLayout.edgeRoutingPolicy = CircularLayoutEdgeRoutingPolicy.INTERIOR
   chordLayout.partitionDescriptor.minimumNodeDistance = 3
+
   // defines settings for the non-exterior edges
   const defaultEdgeDescriptor = chordLayout.edgeDescriptor
   defaultEdgeDescriptor.inCircleRoutingStyle = CircularLayoutRoutingStyle.CURVED
   defaultEdgeDescriptor.onCircleRoutingStyle = CircularLayoutOnCircleRoutingStyle.CURVED
+
   // since we use the BezierEdgeStyle, we need to determine the control points for the curves
   defaultEdgeDescriptor.createControlPoints = true
+
   // enables and configures the labeling algorithm
   chordLayout.nodeLabelPlacement = labelingPolicy
   chordLayout.nodeLabelSpacing = 0
+
   // creates the layout data needed in order to sort the edges based on their type
-  const chordLayoutData = new CircularLayoutData({
-    nodeTypes: (node) => node.tag?.department
-  })
+  const chordLayoutData = new CircularLayoutData({ nodeTypes: (node) => node.tag?.department })
+
   // apply the layout
   await graphComponent.applyLayoutAnimated(chordLayout, '.5s', chordLayoutData)
 }
+
 run().then(finishLoading)

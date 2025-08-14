@@ -69,10 +69,13 @@ import {
   Stroke,
   StyleIndicatorZoomPolicy
 } from '@yfiles/yfiles'
+
 import { AxisVisual, CutoffVisual, generateColors } from './DemoVisuals'
 import { colorSets } from '@yfiles/demo-resources/demo-styles'
+
 const DENDROGRAM_GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
 const DENDROGRAM_GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
+
 /**
  * Responsible for building a dendrogram graph based on the result of the hierarchical clustering algorithm.
  * The dendrogram is rendered in its own {@link GraphComponent}, the {@link dendrogramComponent}.
@@ -95,6 +98,7 @@ export class DendrogramComponent {
   cutOffRenderTreeElement = null
   visited = new Set()
   dragFinishedListener = () => {}
+
   /**
    * Creates a new instance of a dendrogram component.
    * @param graphComponent The {@link GraphComponent} which renders the original graph.
@@ -102,8 +106,10 @@ export class DendrogramComponent {
   constructor(graphComponent) {
     this.graphComponent = graphComponent
     this.configureUserInteraction()
+
     this.configureGraph(this.dendrogramComponent.graph)
   }
+
   /**
    * Configures user interaction for the dendrogram component.
    */
@@ -118,58 +124,49 @@ export class DendrogramComponent {
       selectableItems: GraphItemTypes.NONE,
       focusableItems: GraphItemTypes.NONE,
       allowClipboardOperations: false,
-      itemHoverInputMode: {
-        hoverItems: GraphItemTypes.NODE
-      },
-      marqueeSelectionInputMode: {
-        enabled: false
-      },
-      moveSelectedItemsInputMode: {
-        moveCursor: Cursor.NS_RESIZE
-      }
+      itemHoverInputMode: { hoverItems: GraphItemTypes.NODE },
+      marqueeSelectionInputMode: { enabled: false },
+      moveSelectedItemsInputMode: { moveCursor: Cursor.NS_RESIZE }
     })
     mode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) =>
       this.onHoveredItemChanged(evt.item)
     )
+
     this.dendrogramComponent.inputMode = mode
     this.dendrogramComponent.autoScrollOnBounds = false
   }
+
   /**
    * Sets the default styles for the given graph.
    * @param graph The graph to configure.
    */
   configureGraph(graph) {
-    this.defaultNodeStyle = new ShapeNodeStyle({
-      shape: 'ellipse',
-      fill: 'gray',
-      stroke: null
-    })
+    this.defaultNodeStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: 'gray', stroke: null })
     graph.nodeDefaults.style = this.defaultNodeStyle
-    this.defaultEdgeStyle = new PolylineEdgeStyle({
-      stroke: '3px gray'
-    })
+
+    this.defaultEdgeStyle = new PolylineEdgeStyle({ stroke: '3px gray' })
+
     graph.edgeDefaults.style = this.defaultEdgeStyle
-    graph.nodeDefaults.labels.style = new LabelStyle({
-      textSize: 8
-    })
+
+    graph.nodeDefaults.labels.style = new LabelStyle({ textSize: 8 })
+
     graph.nodeDefaults.size = new Size(10, 10)
+
     graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
       margins: 3
     }).createParameter('top-right')
+
     // configure node highlighting style
     graph.decorator.nodes.highlightRenderer.addFactory(
       (node) =>
         new NodeStyleIndicatorRenderer({
-          nodeStyle: new ShapeNodeStyle({
-            shape: 'ellipse',
-            fill: node.style.fill,
-            stroke: null
-          }),
+          nodeStyle: new ShapeNodeStyle({ shape: 'ellipse', fill: node.style.fill, stroke: null }),
           margins: 3,
           zoomPolicy: 'mixed'
         })
     )
   }
+
   /**
    * Generates the dendrogram graph.
    * @param result The result of the clustering algorithm
@@ -179,19 +176,24 @@ export class DendrogramComponent {
     const hierarchicalGraph = this.dendrogramComponent.graph
     this.clearDendrogram(cutoff)
     const dendrogramRoot = result.dendrogramRoot
+
     // the idea is to create the hierarchical graph from the dendrogram structure that is returned from the
     // clustering algorithm
     this.dendro2hierarchical.clear()
     this.hierarchical2dendro.clear()
+
     const layers = new Mapper()
+
     let maxLayer = 0
     const stack = [dendrogramRoot]
     while (stack.length > 0) {
       const node = stack.pop()
+
       // for each node of the dendrogram, we create a node for the hierarchical clustered graph.
       const hierarchicalClusteredNode = hierarchicalGraph.createNode()
       this.dendro2hierarchical.set(node, hierarchicalClusteredNode)
       this.hierarchical2dendro.set(hierarchicalClusteredNode, node)
+
       // for each parent-child relationship, we create an edge,
       // and we store the layer to which each hierarchical node belongs.
       const parent = node.parent
@@ -204,10 +206,12 @@ export class DendrogramComponent {
       }
       layers.set(hierarchicalClusteredNode, layer)
       maxLayer = Math.max(layer, maxLayer)
+
       node.children.forEach((child) => {
         stack.push(child)
       })
     }
+
     // calculate the distance values and move all leaf-nodes to the bottommost layer
     const distanceValues = new Mapper()
     hierarchicalGraph.nodes.forEach((node) => {
@@ -223,6 +227,7 @@ export class DendrogramComponent {
       // adjust the distances
       distanceValues.set(node, Math.ceil(this.hierarchical2dendro.get(node).dissimilarityValue))
     })
+
     // run the custom layout
     const dendrogramLayout = new DendrogramLayout()
     const dendrogramLayoutData = new GenericLayoutData()
@@ -230,9 +235,11 @@ export class DendrogramComponent {
     dendrogramLayoutData.addItemMapping(DendrogramLayout.DISTANCE_VALUES_DATA_KEY).mapper =
       distanceValues
     dendrogramLayoutData.addItemMapping(DendrogramLayout.LAYER_ID_DATA_KEY).mapper = layers
+
     // apply the layout
     this.dendrogramComponent.graph.applyLayout(dendrogramLayout, dendrogramLayoutData)
     this.dendrogramComponent.updateContentBounds()
+
     // if there is no cutoff value, we do not have to create new visuals, only to update the nodes/edges styles to
     // match their corresponding clustering color
     if (!cutoff) {
@@ -248,6 +255,7 @@ export class DendrogramComponent {
     }
     this.updateDendrogram(result, cutoff)
   }
+
   /**
    * Create the axis visual.
    */
@@ -259,6 +267,7 @@ export class DendrogramComponent {
       axisVisual
     )
   }
+
   /**
    * Create the cut-off visual.
    */
@@ -266,6 +275,7 @@ export class DendrogramComponent {
     // creates the move input mode that manages the movement of the rectangle
     const moveSelectedItemsInputMode = this.dendrogramComponent.inputMode.moveSelectedItemsInputMode
     const contentRect = this.dendrogramComponent.contentBounds
+
     // create a rectangle with height 2
     const rectangle = new MutableRectangle(
       contentRect.x - 20,
@@ -273,16 +283,19 @@ export class DendrogramComponent {
       contentRect.width + 40,
       2
     )
+
     // configure the move input mode so that the rectangle is movable
     moveSelectedItemsInputMode.hitTestable = IHitTestable.create((context, location) => {
       const eps = context.hitTestRadius + 3 / context.zoom
       return rectangle.contains(location, eps)
     })
+
     // create the handlers to move the rectangle
     moveSelectedItemsInputMode.positionHandler = new CutOffPositionHandler(
       rectangle,
       this.dendrogramComponent.contentBounds
     )
+
     // add the dragging listener that will send the up-to-date cut-off value
     moveSelectedItemsInputMode.addEventListener('dragging', () => {
       if (this.cutOffVisual) {
@@ -292,13 +305,16 @@ export class DendrogramComponent {
         )
       }
     })
+
     // add the drag finished listener that will fire the drag finished event
     moveSelectedItemsInputMode.addEventListener('drag-finished', () => {
       if (this.cutOffVisual) {
         this.dragFinishedListener(this.cutOffVisual.cutOffValue)
       }
     })
+
     moveSelectedItemsInputMode.priority = 1
+
     // create the cut-off visual and add it to the highlight group of the graph component
     this.cutOffVisual = new CutoffVisual(rectangle, this.dendrogramMaxY)
     this.cutOffRenderTreeElement = this.dendrogramComponent.renderTree.createElement(
@@ -306,6 +322,7 @@ export class DendrogramComponent {
       this.cutOffVisual
     )
   }
+
   /**
    * Updates the style of the hierarchical clustered graph so that they much with the colors of the original graph
    * @param result The result of the clustering algorithm
@@ -317,6 +334,7 @@ export class DendrogramComponent {
       DENDROGRAM_GRADIENT_END,
       result.clusters.size + 1
     )
+
     this.visited = new Set()
     result.clusters.forEach((cluster) => {
       cluster.nodes.forEach((node) => {
@@ -331,6 +349,7 @@ export class DendrogramComponent {
             if (parent.dissimilarityValue < cutoff && !this.visited.has(parent)) {
               const hierarchicalParent = this.dendro2hierarchical.get(parent)
               this.updateNodeStyle(hierarchicalParent, color)
+
               // update the style of the out-edges
               this.dendrogramComponent.graph.outEdgesAt(hierarchicalParent).forEach((edge) => {
                 this.updateEdgeStyle(edge, color)
@@ -345,19 +364,17 @@ export class DendrogramComponent {
       })
     })
   }
+
   /**
    * Updates the color of the given color
    * @param node The node to update
    * @param color The color to be used
    */
   updateNodeStyle(node, color) {
-    const updatedNodeStyle = new ShapeNodeStyle({
-      shape: 'ellipse',
-      fill: color,
-      stroke: null
-    })
+    const updatedNodeStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: color, stroke: null })
     this.dendrogramComponent.graph.setStyle(node, updatedNodeStyle)
   }
+
   /**
    * Updates the color of the given edge
    * @param edge The edge to update
@@ -369,6 +386,7 @@ export class DendrogramComponent {
     })
     this.dendrogramComponent.graph.setStyle(edge, updatedEdgeStyle)
   }
+
   /**
    * Called when a node of the hierarchical clustered graph is hovered to highlight the corresponding nodes of the
    * original graph.
@@ -381,6 +399,7 @@ export class DendrogramComponent {
     if (item instanceof INode) {
       // highlight the node of the hierarchical clustered graph
       highlights.add(item)
+
       // get all descendants of this node from the dendrogram graph and highlight them too
       const dendrogramNode = this.hierarchical2dendro.get(item)
       const stack = [dendrogramNode]
@@ -393,9 +412,11 @@ export class DendrogramComponent {
       }
       nodesToHighlight = dendrogramNode.clusterNodes
     }
+
     // highlight also the nodes of the original graph that correspond to the highlighted node
     this.highlightNodes(nodesToHighlight)
   }
+
   /**
    * Highlights the given nodes of the original graph.
    * @param nodes The nodes of the original graph that will be highlighted.
@@ -407,6 +428,7 @@ export class DendrogramComponent {
       highlights.add(node)
     }
   }
+
   /**
    * Updates the highlight for the given node.
    * @param dendrogramNode The given node
@@ -419,6 +441,7 @@ export class DendrogramComponent {
       highlights.add(hierarchicalClusteredNode)
     }
   }
+
   /**
    * Clears the hierarchical clustered graph and removes the visuals.
    * @param cutoff the cut-off value
@@ -433,6 +456,7 @@ export class DendrogramComponent {
       }
     }
   }
+
   /**
    * Removes the visuals.
    */
@@ -442,11 +466,13 @@ export class DendrogramComponent {
       renderTree.remove(this.axisRenderTreeElement)
       this.axisRenderTreeElement = null
     }
+
     if (this.cutOffRenderTreeElement) {
       renderTree.remove(this.cutOffRenderTreeElement)
       this.cutOffRenderTreeElement = null
     }
   }
+
   /**
    * Adds a listener invoked when dragging has finished.
    * @param listener The listener to add
@@ -454,6 +480,7 @@ export class DendrogramComponent {
   setDragFinishedListener(listener) {
     this.dragFinishedListener = listener
   }
+
   /**
    * Removes the listener invoked when dragging has finished.
    * @param listener The listener to remove
@@ -463,6 +490,7 @@ export class DendrogramComponent {
       this.dragFinishedListener = () => {}
     }
   }
+
   /**
    * Determines whether the component should be visible or not.
    * @param showDendrogram True if the component should be visible, false otherwise
@@ -476,6 +504,7 @@ export class DendrogramComponent {
     }
   }
 }
+
 /**
  * This class creates the layout of the hierarchical clustered graph. The layout is based on the hierarchical layout
  * algorithm, but the minimum length of each edge has to be equal to the distance provided by the clustering
@@ -485,14 +514,17 @@ export class DendrogramComponent {
  */
 class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
   maxY = 0
+
   /**
    * Gets the data map key for storing the distances between the nodes.
    */
   static DISTANCE_VALUES_DATA_KEY = new NodeDataKey('DendrogramLayout.DISTANCE_VALUES_DATA_KEY')
+
   /**
    * Gets the data map key for storing the layer IDs.
    */
   static LAYER_ID_DATA_KEY = GivenLayersAssigner.LAYER_INDEX_DATA_KEY
+
   /**
    * Applies the layout to the given graph
    * @param graph The graph to apply the layout
@@ -510,6 +542,7 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
       edgeDistance: 0,
       fromScratchLayeringStrategy: HierarchicalLayoutLayeringStrategy.USER_DEFINED
     })
+
     const hierarchicalLayoutData = hierarchicalLayout.createLayoutData(graph)
     // edges at source node should use either the left or the right side
     hierarchicalLayoutData.ports.sourcePortCandidates = () => {
@@ -520,6 +553,7 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
     // edges at the target nodes are always connected from the top side
     hierarchicalLayoutData.ports.targetPortCandidates = () =>
       new EdgePortCandidates().addFixedCandidate(PortSides.TOP)
+
     // use the difference of the distances between the source and the target node as minimum length
     const distanceValues = graphContext.getItemData(DendrogramLayout.DISTANCE_VALUES_DATA_KEY)
     hierarchicalLayoutData.edgeDescriptors = (edge) => {
@@ -530,11 +564,14 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
         minimumFirstSegmentLength: 0
       })
     }
+
     // apply the layout
     graph.applyLayout(hierarchicalLayout, hierarchicalLayoutData)
+
     // now we have to adjust the y-coordinates of the nodes, so that the y-coordinate of each node
     // equals exactly the distance between the source and the target node
     const layersMap = new Map()
+
     let maxYValue = -Number.MIN_VALUE
     let maxDistanceValue = -Number.MIN_VALUE
     graph.nodes.forEach((node) => {
@@ -546,6 +583,7 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
       maxYValue = Math.max(node.layout.centerY, maxYValue)
       maxDistanceValue = Math.max(distanceValues.get(node), maxDistanceValue)
     })
+
     this.maxY = -Number.MIN_VALUE
     layersMap.forEach((layerNodes) => {
       layerNodes.forEach((node) => {
@@ -553,6 +591,7 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
         const newY = maxYValue - distanceValue
         // adjust the node center
         node.layout.center = new Point(node.layout.centerX, newY)
+
         node.outEdges.forEach((edge) => {
           // move also the bends
           edge.resetPath(false)
@@ -560,16 +599,20 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
             graph.addBend(edge, point.x, newY)
           })
         })
+
         this.maxY = Math.max(node.layout.centerY, this.maxY)
       })
     })
+
     // move each node to the x direction so that each node lies in the center of the distance between the two first
     // bends of the edge
     this.adjustXCoordinates(graph, graph.nodes.at(0))
+
     graph.edges.forEach((edge) => {
       graph.addBend(edge, edge.target.layout.centerX, edge.source.layout.centerY)
     })
   }
+
   /**
    * Move each node to the x-direction so that each node lies in the center of the distance between the two first
    * bends of the adjacent edges.
@@ -586,6 +629,7 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
     outEdges.forEach((edge) => {
       this.adjustXCoordinates(graph, edge.target)
     })
+
     if (root.outDegree > 1) {
       const target1X = outEdges.at(0).target.layout.centerX
       const target2X = outEdges.at(1).target.layout.centerX
@@ -593,6 +637,7 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
     }
   }
 }
+
 /**
  * Creates the position handles for the timeline component.
  */
@@ -600,6 +645,7 @@ export class CutOffPositionHandler extends BaseClass(IPositionHandler) {
   rectangle
   offset = new MutablePoint()
   boundaryRectangle
+
   /**
    * Creates a position handler for the timeline.
    * @param rectangle The rectangle to read and write its location to.
@@ -610,6 +656,7 @@ export class CutOffPositionHandler extends BaseClass(IPositionHandler) {
     this.rectangle = rectangle
     this.boundaryRectangle = boundaryRectangle
   }
+
   /**
    * The last "drag-location" during dragging.
    * It helps calculate the current position of the rectangle and find out if there was any movement.
@@ -617,6 +664,7 @@ export class CutOffPositionHandler extends BaseClass(IPositionHandler) {
   get location() {
     return this.rectangle.topLeft
   }
+
   /**
    * Stores the initial location of the movement for reference, and calls the base method.
    * @param context The context to retrieve information
@@ -624,6 +672,7 @@ export class CutOffPositionHandler extends BaseClass(IPositionHandler) {
   initializeDrag(context) {
     this.offset.y = this.location.y - context.canvasComponent.lastInputEvent.location.y
   }
+
   /**
    * Constrains the movement to the horizontal axis.
    * @param _context The context to retrieve information
@@ -635,6 +684,7 @@ export class CutOffPositionHandler extends BaseClass(IPositionHandler) {
     const newY = this.getY(newLocation.y + this.offset.y)
     this.rectangle.setLocation(new Point(this.rectangle.x, newY))
   }
+
   /**
    * Invoked when dragging has finished.
    * @param _context The context to retrieve information
@@ -646,6 +696,7 @@ export class CutOffPositionHandler extends BaseClass(IPositionHandler) {
     const newY = this.getY(newLocation.y + this.offset.y)
     this.rectangle.setLocation(new Point(this.rectangle.x, newY))
   }
+
   /**
    * Invoked when dragging was cancelled.
    * @param _context The context to retrieve information
@@ -655,6 +706,7 @@ export class CutOffPositionHandler extends BaseClass(IPositionHandler) {
   cancelDrag(_context, originalLocation) {
     this.rectangle.setLocation(originalLocation)
   }
+
   /**
    * Returns the next x position. If the rectangle reaches the borders of the boundary rectangle, the position
    * changes accordingly such that the rectangle fits in the timeline.
@@ -670,6 +722,7 @@ export class CutOffPositionHandler extends BaseClass(IPositionHandler) {
     } else if (nextPositionY + 2 * this.rectangle.height >= y2) {
       return y2 - 2 * this.rectangle.height
     }
+
     return nextPositionY
   }
 }

@@ -92,11 +92,7 @@ export class DeviceNodeStyle extends NodeStyleBase<DeviceNodeStyleVisual> {
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
 
     // cache the node's properties
-    const renderData = {
-      enabled: device.enabled,
-      failed: device.failed,
-      load: device.load
-    }
+    const renderData = { enabled: device.enabled, failed: device.failed, load: device.load }
 
     return SvgVisual.from(container, renderData)
   }
@@ -137,11 +133,7 @@ export class DeviceNodeStyle extends NodeStyleBase<DeviceNodeStyleVisual> {
     }
 
     // cache the node's properties
-    oldVisual.tag = {
-      enabled: device.enabled,
-      failed: device.failed,
-      load: device.load
-    }
+    oldVisual.tag = { enabled: device.enabled, failed: device.failed, load: device.load }
 
     // make sure that the location is up-to-date
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
@@ -186,11 +178,7 @@ export class DeviceNodeStyle extends NodeStyleBase<DeviceNodeStyleVisual> {
   }
 }
 
-type RenderData = {
-  enabled: boolean
-  failed: boolean
-  load: number
-}
+type RenderData = { enabled: boolean; failed: boolean; load: number }
 
 type DeviceNodeStyleVisual = TaggedSvgVisual<SVGGElement, RenderData>
 

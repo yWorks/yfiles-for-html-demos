@@ -36,6 +36,7 @@ import {
 } from '@yfiles/yfiles'
 import { setUIDisabled } from '../ui/ui-utils'
 import { CentralityStage } from './CentralityStage'
+
 /**
  * Runs a layout algorithm which calculates new positions and sizes for nodes, edges, and labels.
  * @param graphComponent the graph component containing the current graph
@@ -44,10 +45,12 @@ import { CentralityStage } from './CentralityStage'
  */
 export async function runLayout(graphComponent, animated = false, affectedNodes) {
   const { layout, layoutData } = getOrganicLayoutConfiguration(affectedNodes)
+
   setUIDisabled(true, graphComponent)
   await graphComponent.applyLayoutAnimated(layout, animated ? '0.5s' : '0s', layoutData)
   setUIDisabled(false, graphComponent)
 }
+
 /**
  * Returns a configuration of organic layout that considers centrality results and labels.
  * @param affectedNodes A list of affected nodes. If it is defined, the layout only runs on a subset of nodes.
@@ -55,16 +58,11 @@ export async function runLayout(graphComponent, animated = false, affectedNodes)
 function getOrganicLayoutConfiguration(affectedNodes) {
   const organicLayout = new OrganicLayout({
     deterministic: true,
-    componentLayout: {
-      style: ComponentArrangementStyle.TRY_KEEP_CENTERS
-    },
-    genericLabeling: {
-      enabled: true,
-      scope: 'edge-labels',
-      deterministic: true
-    }
+    componentLayout: { style: ComponentArrangementStyle.TRY_KEEP_CENTERS },
+    genericLabeling: { enabled: true, scope: 'edge-labels', deterministic: true }
   })
   organicLayout.layoutStages.prepend(new CentralityStage(organicLayout))
+
   const organicLayoutData = new OrganicLayoutData({
     preferredEdgeLengths: (edge) =>
       edge.labels.reduce((width, label) => {
@@ -79,6 +77,7 @@ function getOrganicLayoutConfiguration(affectedNodes) {
         : OrganicScope.FIXED
     }
   }
+
   const labelingData = new GenericLabelingData({
     edgeLabelPreferredPlacements: (label) => {
       return new EdgeLabelPreferredPlacement({
@@ -87,5 +86,6 @@ function getOrganicLayoutConfiguration(affectedNodes) {
       })
     }
   })
+
   return { layout: organicLayout, layoutData: organicLayoutData.combineWith(labelingData) }
 }

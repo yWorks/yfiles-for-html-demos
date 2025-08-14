@@ -27,25 +27,31 @@
  **
  ***************************************************************************/
 import { getProcessStepTag, getProcessTransitionTag, getSimulationGraph } from './simulation-graph'
+
 /**
  * Creates an event log for a simulated process.
  */
 export function createSimulatedEventLog() {
   const eventLog = []
+
   // get the graph that simulates steps and transitions as a base to create the events
   const graph = getSimulationGraph()
+
   // simulate multiple traversals through the graph
   // and add events to the log at each step and transition
   const simulationCount = graph.nodes.size * 30
   for (let i = 0; i < simulationCount; i++) {
     let time = Math.random() * 10
     const traversalDuration = Math.random() * 0.2 + 0.5
+
     let startNode = getRandom(graph.nodes.filter((node) => graph.inDegree(node) === 0).toList())
     if (startNode) {
       let startNodeTag = getProcessStepTag(startNode)
       const duration = Math.random() * Math.random() * 0.5
+
       // add an event for passing the first step
       eventLog.push({ caseId: i, activity: startNodeTag.label, timestamp: time, duration })
+
       let maxLength = graph.edges.size * 2
       while (maxLength > 0) {
         if (graph.degree(startNode) > 0) {
@@ -53,9 +59,11 @@ export function createSimulatedEventLog() {
           if (!nextEdge) {
             break
           }
+
           const pause = Math.random() * startNode.tag.duration
           startNode = nextEdge.opposite(startNode)
           startNodeTag = getProcessStepTag(startNode)
+
           // add an event to go to the next step
           eventLog.push({
             caseId: i,
@@ -63,6 +71,7 @@ export function createSimulatedEventLog() {
             timestamp: time + traversalDuration,
             duration: pause
           })
+
           time += traversalDuration + pause
         }
         maxLength--
@@ -71,6 +80,7 @@ export function createSimulatedEventLog() {
   }
   return eventLog
 }
+
 /**
  * Returns an out-edge at the given node which is chosen randomly.
  */
@@ -86,6 +96,7 @@ function getRandomOutEdge(graph, node) {
     return value <= 0
   })
 }
+
 /**
  * Returns a random integer value.
  * @param max the maximum value of the new integer value
@@ -93,6 +104,7 @@ function getRandomOutEdge(graph, node) {
 function nextInt(max) {
   return Math.floor(Math.random() * max)
 }
+
 /**
  * Returns a random element of the given list.
  */

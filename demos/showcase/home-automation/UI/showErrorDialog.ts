@@ -26,15 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-type ErrorDialogOptions = {
-  title: string
-  message: string
-}
+type ErrorDialogOptions = { title: string; message: string }
 
-type DialogElements = {
-  dialog: HTMLElement
-  dismissButton: HTMLButtonElement
-}
+type DialogElements = { dialog: HTMLElement; dismissButton: HTMLButtonElement }
 
 function createErrorDialog({ title, message }: ErrorDialogOptions): DialogElements {
   const htmlString = `

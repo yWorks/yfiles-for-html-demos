@@ -33,6 +33,7 @@ import {
   IModelItem,
   INode
 } from '@yfiles/yfiles'
+
 /**
  * This class is used to assign custom labels to pasted nodes.
  * {@link IClipboardHelper} implementations can be used to associate custom actions
@@ -43,6 +44,7 @@ import {
  */
 export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
   userData = null
+
   /**
    * If the copied node has at least one label, we store a variant of the label text
    * (see {@link CopyItem} implementation).
@@ -58,6 +60,7 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
       this.userData = new CopyItem(node.labels.at(0).text)
     }
   }
+
   /**
    * If the cut node has at least one label, we store a variant of the label text
    * (see {@link CopyItem} implementation).
@@ -68,6 +71,7 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
     // do the same for Cut, since it's essentially just a Copy and Delete in succession.
     this.onCopied(context, item)
   }
+
   /**
    * If the pasted node has at least one label, we change the text using the one that is provided
    * by `userData`.
@@ -85,6 +89,7 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
       }
     }
   }
+
   /**
    * If the original node has at least one label, we change the text of the duplicate node with
    * the one that is provided by the original node.
@@ -104,6 +109,7 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
       context.targetGraph.setLabelText(duplicate.labels.at(0), data.toString())
     }
   }
+
   shouldCopy(_context, _item) {
     return true
   }
@@ -117,6 +123,7 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
     return true
   }
 }
+
 /**
  * Instances of this class are used to store information about the clipboard operations as label text and number
  * of pasted elements.
@@ -129,7 +136,9 @@ class CopyItem {
   constructor(text) {
     this.text = text
   }
+
   pasteCount = 0
+
   /**
    * Returns the label text of the copied item and the number of pasted elements as string.
    */

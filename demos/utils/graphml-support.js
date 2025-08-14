@@ -30,9 +30,11 @@
  * This file provides functions to {@link openGraphML read} and {@link saveGraphML write}
  * a graph to GraphML.
  */
+
 import { downloadFile, getFileExtension, openFile } from './file-support'
 import { GraphMLIOHandler } from '@yfiles/yfiles'
 import { createConfiguredGraphMLIOHandler } from './FaultTolerantGraphMLIOHandler'
+
 /**
  * Opens a GraphML file and loads its content into {@link graphComponent} using the {@link graphMLIOHandler}
  * @param graphComponent
@@ -75,6 +77,7 @@ export async function saveGraphML(
     }
   }
 }
+
 /**
  * Reads a graph from the given GraphML {@link text} and sets it to the given {@link graphComponent}.
  */
@@ -90,6 +93,7 @@ export async function readGraphML(
     alert(`Error parsing GraphML. Cause: ${err.message}`)
   }
 }
+
 /**
  * Writes the graph of the given {@link graphComponent} to text.
  */

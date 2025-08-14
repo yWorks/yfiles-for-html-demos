@@ -95,6 +95,7 @@ import {
   shortestPathsDescription,
   singleSourceShortestPathsDescription
 } from './paths'
+
 /**
  * Resets the node types.
  */
@@ -103,20 +104,25 @@ export function resetTypes(graph) {
     resetType(node)
   })
 }
+
 /**
  * Applies the current algorithm with the correct configuration to the given graph.
  */
 export function applyAlgorithm(graph) {
   resetGraph(graph)
+
   const currentAlgorithm = getCurrentAlgorithm()
+
   currentAlgorithm.apply(graph, {
     directed: useDirectedEdges(),
     edgeWeights: getEdgeWeights(graph),
     startNodes: getStartNodes(graph),
     endNodes: getEndNodes(graph)
   })
+
   graph.invalidateDisplays()
 }
+
 /**
  * Resets the results of the previous algorithm.
  * Removes all result-labels and resets the tag.
@@ -136,6 +142,7 @@ export function resetGraph(graph) {
       graph.remove(label)
     })
 }
+
 /**
  * A set of graph analysis algorithms.
  */
@@ -367,6 +374,7 @@ export const algorithms = {
     description: cliquesSubstructuresDescription
   }
 }
+
 /**
  * Returns a map containing a weight value for each edge.
  */
@@ -388,6 +396,7 @@ function getEdgeWeights(graph) {
   })
   return weights
 }
+
 /**
  * Retrieves all nodes that are marked as start nodes.
  */
@@ -397,6 +406,7 @@ function getStartNodes(graph) {
   if (!needsStartNodes || graph.nodes.size === 0) {
     return []
   }
+
   const startNodes = graph.nodes.filter((node) => getTag(node)?.type === 'start').toArray()
   if (startNodes.length === 0) {
     const startNode = graph.nodes.first()
@@ -406,6 +416,7 @@ function getStartNodes(graph) {
   }
   return startNodes
 }
+
 /**
  * Retrieves all nodes that are marked as end nodes.
  */
@@ -415,6 +426,7 @@ function getEndNodes(graph) {
   if (!needsEndNodes || graph.nodes.size === 0) {
     return []
   }
+
   const endNodes = graph.nodes.filter((node) => getTag(node)?.type === 'end').toArray()
   if (endNodes.length === 0) {
     const endNode = graph.nodes.last()
@@ -424,12 +436,14 @@ function getEndNodes(graph) {
   }
   return endNodes
 }
+
 /**
  * Marks the item by adding the component to its tag.
  */
 export function markItem(item, componentId = 0) {
   setComponent(item, componentId)
 }
+
 /**
  * Adds the component to the item's tag.
  */
@@ -440,6 +454,7 @@ export function setComponent(item, componentId) {
     components.push(componentId)
   }
 }
+
 /**
  * Sets the centrality value on the item's tag.
  */
@@ -448,6 +463,7 @@ export function setCentrality(item, centrality) {
   tag.centrality = centrality
   tag.gradient = centrality
 }
+
 /**
  * Sets the gradient value on the item's tag.
  */

@@ -35,15 +35,20 @@ import {
   fitGraphBounds,
   initializeTutorialDefaults
 } from '../common'
+
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { CustomEdgeStyle } from './CustomEdgeStyle'
 import { CustomEdgeStyle as OldCustomEdgeStyle } from '../06-data-from-tag/CustomEdgeStyle'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 createSampleGraphHitTest(graphComponent.graph, new CustomEdgeStyle(5), new OldCustomEdgeStyle(5))
+
 const graphEditorInputMode = enableGraphEditing(graphComponent)
 graphEditorInputMode.selectableItems = GraphItemTypes.NONE
 addHoverEffect(graphComponent, graphEditorInputMode)
+
 fitGraphBounds(graphComponent)
 finishLoading()

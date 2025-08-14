@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { FreeNodePortLocationModel, Size } from '@yfiles/yfiles'
 import { CollapseExpandPortStyle } from './CollapseExpandPortStyle'
+
 /**
  * Sets the expand/collapse style for each edge's source port.
  *

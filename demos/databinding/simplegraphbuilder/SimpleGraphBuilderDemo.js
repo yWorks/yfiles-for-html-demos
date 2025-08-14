@@ -39,6 +39,7 @@ import {
   Size,
   TreeBuilder
 } from '@yfiles/yfiles'
+
 import TreeBuilderDataJson from './tree-builder-data-json'
 import TreeBuilderDataArray from './tree-builder-data-array'
 import AdjacentBuilderIdDataArray from './adjacent-builder-id-data-array'
@@ -49,64 +50,82 @@ import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 import { nodeTemplate } from './style-templates'
+
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
 // @ts-ignore Import via URL
 // eslint-disable-next-line import/no-unresolved
 import { nothing, svg } from 'lit-html'
+
 /**
  * Specifier that indicates using a {@link GraphBuilder}.
  */
 const TYPE_GRAPH_BUILDER = 'Graph Builder'
+
 /**
  * Specifier that indicates using a {@link GraphBuilder} with child lists.
  */
 const TYPE_GRAPH_BUILDER_PARENTS_AND_CHILDREN = 'Graph Builder (Implicit Grouping)'
+
 /**
  * Specifier that indicates using a {@link TreeBuilder} with an array input.
  */
 const TYPE_TREE_BUILDER_ARRAY = 'Tree Builder (Array)'
+
 /**
  * Specifier that indicates using a {@link TreeBuilder} with a JSON input.
  */
 const TYPE_TREE_BUILDER_JSON = 'Tree Builder (JSON)'
+
 /**
  * Specifier that indicates using a {@link AdjacencyGraphBuilder} with a JSON input.
  */
 const TYPE_ADJACENT_NODES_BUILDER = 'Adjacent Nodes Graph Builder'
+
 /**
  * Specifier that indicates using a {@link TreeBuilder} with an array input and node IDs.
  */
 const TYPE_ADJACENT_NODES_BUILDER_ID_ARRAY = 'Adjacent Nodes Graph Builder (with IDs)'
+
 const selectBox = document.querySelector('#select-builder')
+
 /**
  * This demo shows how to automatically build a graph from business data.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
   // use the viewer input mode since this demo should not allow interactive graph editing
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // assign the default demo styles for groups and edges
   configureGraph(graphComponent.graph)
+
   // initialize the source data view
   initDataView('#data-view')
+
   // build the graph from data
   buildGraph(graphComponent.graph, TYPE_GRAPH_BUILDER)
+
   arrangeGraph(graphComponent)
+
   // register toolbar actions
   initializeUI(graphComponent)
 }
+
 /**
  * Configures default styles for the given graph's elements.
  */
 function configureGraph(graph) {
   // use simple and efficient styles for all graph elements
   initDemoStyles(graph)
+
   // ... but use a style that supports data binding for normal nodes
   graph.nodeDefaults.style = new LitNodeStyle(createRenderFunction(nodeTemplate))
   graph.nodeDefaults.size = new Size(260, 60)
 }
+
 function createRenderFunction(template) {
   return new Function(
     'const svg = arguments[0]; const nothing = arguments[1]; const renderFunction = ' +
@@ -116,6 +135,7 @@ function createRenderFunction(template) {
       '\n return renderFunction'
   )(svg, nothing)
 }
+
 /**
  * Creates and configures the {@link GraphBuilder}.
  */
@@ -126,6 +146,7 @@ function createGraphBuilder(graph) {
     GraphBuilderData.groupsSource,
     GraphBuilderData.edgesSource
   )
+
   const graphBuilder = new GraphBuilder(graph)
   graphBuilder.createNodesSource({
     // stores the nodes of the graph
@@ -146,6 +167,7 @@ function createGraphBuilder(graph) {
   })
   // Add some labels to the group nodes
   groupsSource.nodeCreator.createLabelBinding((group) => group.id)
+
   graphBuilder.createEdgesSource({
     // stores the edges of the graph
     data: GraphBuilderData.edgesSource,
@@ -154,8 +176,10 @@ function createGraphBuilder(graph) {
     // identifies the property of an edge object that contains the target node's id
     targetId: 'toNode'
   })
+
   return graphBuilder
 }
+
 /**
  * Creates and configures the {@link GraphBuilder} defining children and parents of a {@link NodesSource}.
  */
@@ -168,6 +192,7 @@ function createGraphBuilderWithImplicitGrouping(graph) {
     GraphBuilderWithImplicitGroupsData.edgesSource
   )
   const graphBuilder = new GraphBuilder(graph)
+
   // In this sample, our core objects are the groups, that have
   // both a list of members (employees) and an additional attribute specifying the
   // location which gets turned into another hierarchy
@@ -177,6 +202,7 @@ function createGraphBuilderWithImplicitGrouping(graph) {
     // identifies the id property of a node object
     id: 'id'
   })
+
   // The children of each group are defined directly in the data
   const childSource = nodesSource.createChildNodesSource(
     // specifies how to retrieve the children for each group
@@ -186,6 +212,7 @@ function createGraphBuilderWithImplicitGrouping(graph) {
   )
   // And the groups are additionally grouped again by location
   const parentSource = nodesSource.createParentNodesSource((group) => group.location)
+
   // We want to set up reasonable defaults for the styles.
   // Since the entities in the nodesSource and the parentsSource are both group nodes, they
   // are styled with a group node
@@ -198,6 +225,7 @@ function createGraphBuilderWithImplicitGrouping(graph) {
     graph.groupNodeDefaults.labels
   // The nodes in the childSource are just plain leaf nodes and are styles with a normal node style
   childSource.nodeCreator.defaults.style = graph.nodeDefaults.style
+
   // The edges are defined as for the sample with explicit groups
   // even though the objects don't appear in the nodesSource
   graphBuilder.createEdgesSource({
@@ -208,38 +236,48 @@ function createGraphBuilderWithImplicitGrouping(graph) {
     // identifies the property of an edge object that contains the target node's id
     targetId: 'toNode'
   })
+
   return graphBuilder
 }
+
 /**
  * Creates and configures the {@link TreeBuilder}.
  */
 function createTreeBuilder(graph, builderType) {
   const treeBuilder = new TreeBuilder(graph)
+
   const nodesSource =
     builderType === TYPE_TREE_BUILDER_ARRAY
       ? TreeBuilderDataArray.nodesSource
       : TreeBuilderDataJson.nodesSource
+
   // update the data view with the current data
   updateDataView(nodesSource)
+
   // identifies the property of a node object that contains its child nodes
   const rootNodesSource = treeBuilder.createRootNodesSource(nodesSource, null)
   // configure the recursive tree structure
   rootNodesSource.addChildNodesSource((data) => data.children, rootNodesSource)
+
   return treeBuilder
 }
+
 /**
  * Creates and configures the {@link AdjacencyGraphBuilder}.
  */
 function createAdjacencyGraphBuilder(graph, builderType) {
   const adjacencyGraphBuilder = new AdjacencyGraphBuilder(graph)
+
   if (builderType === TYPE_ADJACENT_NODES_BUILDER) {
     // update the data view with the current data
     updateDataView(TreeBuilderDataArray.nodesSource)
+
     // stores the nodes of the graph
     const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(
       TreeBuilderDataArray.nodesSource,
       null
     )
+
     // configure the successor nodes
     adjacencyNodesSource.addSuccessorsSource(
       (data) => data.children,
@@ -249,6 +287,7 @@ function createAdjacencyGraphBuilder(graph, builderType) {
   } else if (builderType === TYPE_ADJACENT_NODES_BUILDER_ID_ARRAY) {
     // update the data view with the current data
     updateDataView(AdjacentBuilderIdDataArray.nodesSource)
+
     // stores the nodes of the graph
     const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(
       AdjacentBuilderIdDataArray.nodesSource,
@@ -260,14 +299,17 @@ function createAdjacencyGraphBuilder(graph, builderType) {
       new EdgeCreator({ defaults: graph.edgeDefaults })
     )
   }
+
   return adjacencyGraphBuilder
 }
+
 /**
  * Builds the graph using the selected builder type.
  */
 function buildGraph(graph, builderType) {
   // Clear the current graph
   graph.clear()
+
   // Create the builder
   let builder
   if (builderType === TYPE_GRAPH_BUILDER) {
@@ -282,9 +324,11 @@ function buildGraph(graph, builderType) {
   } else {
     builder = createTreeBuilder(graph, builderType)
   }
+
   // Build the graph from the data...
   builder.buildGraph()
 }
+
 /**
  * Arranges the graph of the given graph component and applies the new layout in an animated
  * fashion.
@@ -293,16 +337,20 @@ async function arrangeGraph(graphComponent) {
   // make sure the graph is centered in the view before arranging it
   // (this is the initial state of the layout animation)
   graphComponent.fitGraphBounds()
+
   const algorithm = new HierarchicalLayout()
   algorithm.layoutOrientation = 'left-to-right'
+
   selectBox.disabled = true
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   // arrange the graph with the chosen layout algorithm
   await graphComponent.applyLayoutAnimated(algorithm, '1s')
   selectBox.disabled = false
 }
+
 /**
  * Registers the actions for the toolbar buttons during the creation of this application.
  */
@@ -314,6 +362,8 @@ function initializeUI(graphComponent) {
     await arrangeGraph(graphComponent)
     selectBox.disabled = false
   })
+
   addNavigationButtons(selectBox)
 }
+
 run().then(finishLoading)

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {} from '@yfiles/yfiles'
+
 /**
  * Returns the angle (measured in radians) from vector1 to vector2 in clockwise order
  * (in regard to screen coordinates).
@@ -42,15 +43,18 @@ export function getAngle(vector1, vector2) {
   const a = cosA > 1 ? Math.acos(1) : cosA < -1 ? Math.acos(-1) : Math.acos(Math.min(1, cosA))
   return rightOf(vector1, vector2) ? a : 2 * Math.PI - a
 }
+
 function rightOf(v1, v2) {
   return v1.x * v2.y - v1.y * v2.x > 0
 }
+
 /**
  * Converts the given angle value from degree to radian.
  */
 export function toRadians(degree) {
   return (degree / 180.0) * Math.PI
 }
+
 /**
  * Converts the given degree value from radian to angular
  */

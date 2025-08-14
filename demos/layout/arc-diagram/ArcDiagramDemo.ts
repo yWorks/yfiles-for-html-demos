@@ -95,9 +95,7 @@ function configureGraph(graph: IGraph): void {
     stroke: '1.5px #662b00'
   })
 
-  graph.edgeDefaults.style = new BezierEdgeStyle({
-    stroke: '4px #662b00'
-  })
+  graph.edgeDefaults.style = new BezierEdgeStyle({ stroke: '4px #662b00' })
 
   graph.nodeDefaults.labels.style = new LabelStyle({
     backgroundFill: '#ffc499',
@@ -112,17 +110,8 @@ function configureGraph(graph: IGraph): void {
  */
 function createSampleGraph(graph: IGraph): void {
   const builder = new GraphBuilder(graph)
-  builder.createNodesSource({
-    data: SampleData.nodes,
-    id: 'id',
-    labels: ['id']
-  })
-  builder.createEdgesSource({
-    data: SampleData.edges,
-    id: 'id',
-    sourceId: 'src',
-    targetId: 'tgt'
-  })
+  builder.createNodesSource({ data: SampleData.nodes, id: 'id', labels: ['id'] })
+  builder.createEdgesSource({ data: SampleData.edges, id: 'id', sourceId: 'src', targetId: 'tgt' })
   builder.buildGraph()
 }
 

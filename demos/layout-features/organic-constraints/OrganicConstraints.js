@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { OrganicLayout, OrganicLayoutData } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to configure constraints for the {@link OrganicLayout} algorithm.
  * @param graph the graph to be laid out
@@ -35,6 +36,7 @@ export function createFeatureLayoutConfiguration(graph) {
   // force some nodes in the sample graph to lie on a circle
   const layoutData = new OrganicLayoutData()
   layoutData.constraints.addEllipse(false, 1.0).predicate = placeOnCircle
+
   return {
     layout: new OrganicLayout({
       deterministic: true,
@@ -44,12 +46,14 @@ export function createFeatureLayoutConfiguration(graph) {
     layoutData
   }
 }
+
 /**
  * Determines if the placement of the given node should be constrained.
  */
 function placeOnCircle(node) {
   return node.tag.type === 1
 }
+
 /**
  * Demonstrates how to configure the {@link OrganicLayout} algorithm without any constraints.
  * @param graph the graph to be laid out

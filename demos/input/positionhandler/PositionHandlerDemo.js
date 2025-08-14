@@ -43,6 +43,7 @@ import { OrangePositionHandler } from './OrangePositionHandler'
 import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link IPositionHandler} for each node.
@@ -61,6 +62,7 @@ function registerPositionHandler(graph, boundaryRectangle) {
     if (node == null || typeof node.tag !== 'string' || originalHandler == null) {
       return originalHandler
     }
+
     switch (node.tag) {
       case 'orange':
         // This implementation delegates certain behavior to the default implementation
@@ -83,11 +85,13 @@ function registerPositionHandler(graph, boundaryRectangle) {
     }
   })
 }
+
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   configureUserInteraction(graphComponent)
+
   // Create the rectangle that limits the movement of some nodes
   // and add it to the graphComponent.
   const boundaryRectangle = new MutableRectangle(20, 20, 480, 400)
@@ -97,9 +101,12 @@ async function run() {
     boundaryRectangle,
     new LimitingRectangleRenderer()
   )
+
   registerPositionHandler(graphComponent.graph, boundaryRectangle)
+
   createSampleGraph(graphComponent.graph)
 }
+
 /**
  * Restricts interactive editing to selecting and moving nodes for the given graph component.
  * @param graphComponent The demo's graph component.
@@ -107,15 +114,18 @@ async function run() {
 function configureUserInteraction(graphComponent) {
   // Create a default editor input mode
   const graphEditorInputMode = new GraphEditorInputMode()
+
   // Just for user convenience: disable node, edge creation and clipboard operations,
   graphEditorInputMode.allowCreateEdge = false
   graphEditorInputMode.allowCreateNode = false
   graphEditorInputMode.allowClipboardOperations = false
   // don't show resize handles,
   graphEditorInputMode.showHandleItems = GraphItemTypes.NONE
+
   // Finally, set the input mode to the graph component.
   graphComponent.inputMode = graphEditorInputMode
 }
+
 /**
  * Creates the sample graph for this demo.
  * @param graph The graph displayed in the demo's graph component.
@@ -135,6 +145,7 @@ function createSampleGraph(graph) {
     'Limited to Rectangle\nand One Axis'
   )
 }
+
 /**
  * Creates a sample node for this demo.
  * @param graph The given graph
@@ -152,10 +163,7 @@ function createNode(graph, x, y, w, h, color, tag, labelText) {
     style: createDemoNodeStyle(color),
     tag: tag
   })
-  graph.addLabel({
-    owner: node,
-    text: labelText,
-    style: createDemoNodeLabelStyle(color)
-  })
+  graph.addLabel({ owner: node, text: labelText, style: createDemoNodeLabelStyle(color) })
 }
+
 run().then(finishLoading)

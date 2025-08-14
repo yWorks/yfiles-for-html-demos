@@ -82,9 +82,9 @@ import samples from './resources/samples'
 import { createCanvasContext, createUrlIcon } from '@yfiles/demo-utils/IconCreation'
 import { FPSMeter } from './FPSMeter'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 import {
   addNavigationButtons,
+  BrowserDetection,
   finishLoading,
   showLoadingIndicator
 } from '@yfiles/demo-resources/demo-page'
@@ -416,10 +416,7 @@ async function loadGraph(fileName: string): Promise<void> {
  */
 function loadGraphCore(
   graph: IGraph,
-  graphData: {
-    nodeList: JsonNode[]
-    edgeList: JsonEdge[]
-  }
+  graphData: { nodeList: JsonNode[]; edgeList: JsonEdge[] }
 ): void {
   graph.clear()
 
@@ -490,9 +487,7 @@ function redrawGraph(): void {
  * @param isMoveMode Whether the input mode should be configured for "move only".
  */
 function createEditorInputMode(isMoveMode: boolean): IInputMode {
-  const graphEditorInputMode = new GraphEditorInputMode({
-    allowCreateBend: false
-  })
+  const graphEditorInputMode = new GraphEditorInputMode({ allowCreateBend: false })
 
   // disable anything besides moving of nodes
   if (isMoveMode) {
@@ -669,9 +664,7 @@ function onModeChanged(): void {
   switch (modeChooserBox.selectedIndex) {
     default:
     case 0: {
-      graphComponent.inputMode = new GraphViewerInputMode({
-        allowClipboardOperations: false
-      })
+      graphComponent.inputMode = new GraphViewerInputMode({ allowClipboardOperations: false })
       preConfigurator.removeWarningCssClass()
       break
     }
@@ -1191,10 +1184,7 @@ function onNodeLabelsChanged(graph: IGraph): void {
 function onEdgeLabelsChanged(graph: IGraph): void {
   if (edgeLabelsCheckbox.checked) {
     // add label on each edge
-    const edgeLabelModel = new EdgePathLabelModel({
-      distance: 5,
-      sideOfEdge: EdgeSides.ABOVE_EDGE
-    })
+    const edgeLabelModel = new EdgePathLabelModel({ distance: 5, sideOfEdge: EdgeSides.ABOVE_EDGE })
     const freeLabelModel = new FreeLabelModel()
     graph.edgeDefaults.labels.layoutParameter = edgeLabelModel.createRatioParameter()
     graph.edges.forEach((edge) => {
@@ -1396,10 +1386,7 @@ type WebGLStyles = {
   labelStyle: WebGLLabelStyle
 }
 
-type JsonNode = {
-  id: number
-  l: { x: number; y: number; w: number; h: number }
-}
+type JsonNode = { id: number; l: { x: number; y: number; w: number; h: number } }
 
 type JsonEdge = {
   s: number

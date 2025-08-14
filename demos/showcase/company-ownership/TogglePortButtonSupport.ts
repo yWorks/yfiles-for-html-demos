@@ -86,7 +86,7 @@ export class TogglePortButtonSupport {
     ]
 
     graphInputMode.addEventListener('item-clicked', (evt) => {
-      if (!(evt.item instanceof IPort)) {
+      if (!(evt.item instanceof IPort) || !(evt.item.style instanceof CollapseExpandPortStyle)) {
         return
       }
       const port = evt.item

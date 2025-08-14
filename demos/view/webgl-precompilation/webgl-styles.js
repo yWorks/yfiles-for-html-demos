@@ -38,6 +38,7 @@ import {
   WebGLShapeNodeStyle
 } from '@yfiles/yfiles'
 import { colorSets } from '@yfiles/demo-resources/demo-colors'
+
 export const webGLNodeStyles = [
   new WebGLShapeNodeStyle({ fill: colorSets['demo-palette-21'].fill, shape: 'ellipse' }),
   new WebGLShapeNodeStyle({ fill: colorSets['demo-palette-22'].fill, shape: 'pill' }),
@@ -49,11 +50,13 @@ export const webGLNodeStyles = [
     stroke: '1px dashed black'
   })
 ]
+
 export const webGLEdgeStyles = [
   new WebGLPolylineEdgeStyle({ stroke: '2px solid ' + colorSets['demo-red'].fill }),
   new WebGLPolylineEdgeStyle({ stroke: '2px dashed ' + colorSets['demo-blue'].fill }),
   new WebGLPolylineEdgeStyle({ stroke: '2px dotted ' + colorSets['demo-green'].fill })
 ]
+
 export const webGLLabelStyles = [
   new WebGLLabelStyle({
     shape: WebGLLabelShape.RECTANGLE,
@@ -70,6 +73,7 @@ export const webGLLabelStyles = [
     horizontalTextAlignment: 'center'
   })
 ]
+
 export const nodeSelectionStyle = new WebGLNodeIndicatorStyle({
   type: WebGLIndicatorType.DOUBLE_BORDER,
   thickness: 3,

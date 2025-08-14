@@ -34,10 +34,12 @@ import {
   Size
 } from '@yfiles/yfiles'
 import { getNodeData } from '../data-types'
+
 /**
  * The default size for a state icon.
  */
 const stateIconSize = new Size(16, 16)
+
 /**
  * A set of state icons.
  */
@@ -55,6 +57,7 @@ export const stateIcons = [
   'checkmark',
   'star'
 ]
+
 /**
  * A label style that renders an icon (the state label) next to a text.
  * The StateIcon property of the {@link NodeData} will determine the icon that will be rendered.
@@ -67,6 +70,7 @@ export class MindMapIconLabelStyle extends DelegatingLabelStyle {
     super()
     this.delegatingLabelStyle = delegatingLabelStyle
   }
+
   /**
    * Configures the inner icon label style used for rendering the icon.
    */
@@ -80,6 +84,7 @@ export class MindMapIconLabelStyle extends DelegatingLabelStyle {
     }
     return delegatingStyle
   }
+
   /**
    * Returns the icon stored in the node's data.
    */
@@ -87,6 +92,7 @@ export class MindMapIconLabelStyle extends DelegatingLabelStyle {
     const nodeData = getNodeData(label.owner)
     return `resources/icons/${stateIcons[nodeData.stateIcon]}.svg`
   }
+
   /**
    * Returns the position of the icon compared to the text.
    * Icons that belong to nodes placed on the left of the root will be placed after the text.
@@ -96,6 +102,7 @@ export class MindMapIconLabelStyle extends DelegatingLabelStyle {
     const nodeData = getNodeData(label.owner)
     return nodeData.left ? InteriorNodeLabelModel.RIGHT : InteriorNodeLabelModel.LEFT
   }
+
   /**
    * Returns the size of each icon or zero if no icon should be rendered.
    */
@@ -103,6 +110,7 @@ export class MindMapIconLabelStyle extends DelegatingLabelStyle {
     const nodeData = getNodeData(label.owner)
     return nodeData.stateIcon === 0 ? Size.EMPTY : stateIconSize
   }
+
   /**
    * Returns the padding for each icon based on the icon's position or zero
    * if no icon should be rendered.

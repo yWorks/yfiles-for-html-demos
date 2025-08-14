@@ -179,10 +179,7 @@ function configureUserInteraction(): void {
  * Creates a new radial tree layout algorithm instance.
  */
 function newRadialTreeLayout(): RadialTreeLayout {
-  return new RadialTreeLayout({
-    childOrderingPolicy: 'from-sketch',
-    allowOverlaps: true
-  })
+  return new RadialTreeLayout({ childOrderingPolicy: 'from-sketch', allowOverlaps: true })
 }
 
 /**
@@ -278,9 +275,7 @@ async function runLayout(toggledNode: INode | null, expand: boolean): Promise<vo
  * Builds a sample tree graph.
  */
 function buildTree(graph: IGraph, levelCount: number): void {
-  const root = graph.createNode({
-    tag: { level: 0, collapsed: true }
-  })
+  const root = graph.createNode({ tag: { level: 0, collapsed: true } })
   addChildren(graph, root, 3, levelCount)
 }
 
@@ -293,9 +288,7 @@ function addChildren(graph: IGraph, root: INode, childrenCount: number, levelCou
     return
   }
   for (let i = 0; i < childrenCount; ++i) {
-    const child = graph.createNode({
-      tag: { level: level, collapsed: true }
-    })
+    const child = graph.createNode({ tag: { level: level, collapsed: true } })
     graph.createEdge(root, child)
     addChildren(graph, child, Math.floor(4 * Math.random() + 1), levelCount)
   }

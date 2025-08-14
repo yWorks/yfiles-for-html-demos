@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { Point, RadialLayout, RadialLayoutData } from '@yfiles/yfiles'
+
 /**
  * Returns the layout callback suitable for the demo's neighborhood view.
  * @param onDone a callback that is invoked with geometry information about the circles on which
@@ -35,14 +36,10 @@ import { Point, RadialLayout, RadialLayoutData } from '@yfiles/yfiles'
 export function getApplyLayoutCallback(onDone) {
   return (view, nodes) => {
     // arrange the nodes in the neighborhood graph on concentric circles
-    const radialLayout = new RadialLayout({
-      createControlPoints: true,
-      edgeRoutingStyle: 'arc'
-    })
-    const radialLayoutData = new RadialLayoutData({
-      centerNodes: nodes
-    })
+    const radialLayout = new RadialLayout({ createControlPoints: true, edgeRoutingStyle: 'arc' })
+    const radialLayoutData = new RadialLayoutData({ centerNodes: nodes })
     view.neighborhoodGraph.applyLayout(radialLayout, radialLayoutData)
+
     // collect the geometry of the calculated circles
     const indices = new Set()
     const circles = []
@@ -51,7 +48,9 @@ export function getApplyLayoutCallback(onDone) {
       if (info) {
         if (!indices.has(info.circleIndex) && info.radius > 0) {
           indices.add(info.circleIndex)
+
           const nodeCenter = node.layout.center
+
           circles.push({
             center: new Point(
               nodeCenter.x - info.centerOffset.x,
@@ -72,6 +71,7 @@ export function getApplyLayoutCallback(onDone) {
         return 0
       }
     })
+
     // report the geometry of the calculated circles to interested parties
     // the demo uses this information to show the calculated circles in the background of the
     // neighborhood view

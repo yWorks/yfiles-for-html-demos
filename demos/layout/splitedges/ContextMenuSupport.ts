@@ -332,10 +332,7 @@ export class ContextMenuSupport {
         const splitEdge = this.createSplitEdge(
           lastNode,
           walkerGroup,
-          {
-            sourceSplitId: splitId,
-            targetSplitId: splitId
-          },
+          { sourceSplitId: splitId, targetSplitId: splitId },
           color
         )
         graph.setPortLocation(
@@ -360,10 +357,7 @@ export class ContextMenuSupport {
         const splitEdge = this.createSplitEdge(
           walkerGroup,
           lastNode,
-          {
-            sourceSplitId: splitId,
-            targetSplitId: splitId
-          },
+          { sourceSplitId: splitId, targetSplitId: splitId },
           color
         )
         graph.setPortLocation(
@@ -384,10 +378,7 @@ export class ContextMenuSupport {
       const splitEdge = this.createSplitEdge(
         lastSourceNode,
         lastNode,
-        {
-          sourceSplitId: splitId,
-          targetSplitId: splitId
-        },
+        { sourceSplitId: splitId, targetSplitId: splitId },
         color
       )
       graph.setPortLocation(
@@ -446,20 +437,14 @@ export class ContextMenuSupport {
       const sourceEdge = this.createSplitEdge(
         edge.sourceNode,
         group,
-        {
-          sourceSplitId: splitId,
-          targetSplitId: splitId
-        },
+        { sourceSplitId: splitId, targetSplitId: splitId },
         color
       )
       graph.setPortLocation(sourceEdge.targetPort, intersection)
       const targetEdge = this.createSplitEdge(
         group,
         edge.targetNode,
-        {
-          sourceSplitId: splitId,
-          targetSplitId: splitId
-        },
+        { sourceSplitId: splitId, targetSplitId: splitId },
         color
       )
       graph.setPortLocation(targetEdge.sourcePort, intersection)
@@ -554,11 +539,7 @@ export class ContextMenuSupport {
         }),
         smoothingLength: 15
       }),
-      tag: {
-        sourceSplitId: splitId.sourceSplitId,
-        targetSplitId: splitId.targetSplitId,
-        color
-      }
+      tag: { sourceSplitId: splitId.sourceSplitId, targetSplitId: splitId.targetSplitId, color }
     })
   }
 

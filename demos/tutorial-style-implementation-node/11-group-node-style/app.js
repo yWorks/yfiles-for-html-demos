@@ -38,15 +38,23 @@ import {
 } from '../common'
 import { CustomGroupNodeStyle } from './CustomGroupNodeStyle'
 import { CustomNodeStyle } from '../10-bounds/CustomNodeStyle'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
 enableGraphEditing(graphComponent)
+
 graphComponent.graph.groupNodeDefaults.style = new CustomGroupNodeStyle()
+
 createSampleGraphGroupNodeStyle(graphComponent.graph)
+
 const oldState = initializeInlineGraphComponent('#old-state')
 oldState.graph.groupNodeDefaults.style = new CustomNodeStyle()
 createSampleGraphGroupNodeStyle(oldState.graph)
+
 fitGraphBounds(graphComponent)
 fitGraphBounds(oldState)
+
 finishLoading()

@@ -34,7 +34,6 @@ import {
   GraphEditorInputMode,
   GraphSnapContext,
   IGraph,
-  type IModelItem,
   type INode,
   LabelStyle,
   License,
@@ -42,7 +41,6 @@ import {
   NinePositionsEdgeLabelModelPosition,
   Point,
   PolylineEdgeStyle,
-  type Rect,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
 import { colorSets } from '@yfiles/demo-resources/demo-colors'
@@ -106,36 +104,9 @@ async function run(): Promise<void> {
  * and adds them to the document.
  */
 function initGraphComponents() {
-  // re-build: keep the old selection and viewport
-  const oldViewport: Rect | undefined = graphComponents[0]?.viewport
-  const oldSelectedItems: IModelItem[] = graphComponents[0]?.selection.toArray() ?? []
-
-  // re-build: remove and dispose of the existing GraphComponents, first
-  while (graphComponents.length) {
-    const graphComponent = graphComponents.pop()!
-    graphComponent.htmlElement.parentNode!.removeChild(graphComponent.htmlElement)
-    graphComponent.graph = new Graph()
-    graphComponent.cleanUp()
-  }
-
   // one of each variant
   for (const variant of ['round', 'round-hatched', 'square', 'square-hatched'] as const) {
     createGraphComponent(variant)
-  }
-
-  // re-build: restore the old viewport
-  if (oldViewport) {
-    for (const graphComponent of graphComponents) {
-      void graphComponent.fitContent()
-      graphComponent.zoomTo(oldViewport)
-    }
-  }
-
-  // re-build: restore the old selection
-  for (const selectedItem of oldSelectedItems) {
-    for (const graphComponent of graphComponents) {
-      graphComponent.selection.add(selectedItem)
-    }
   }
 
   synchronizeGraphComponents()
@@ -325,7 +296,7 @@ function initializeUI(): void {
       slider: '#scale-slider',
       label: '#scale-label',
       cssClass: '--yfiles-theme-scale',
-      default: defaultScale
+      default: '1.5'
     },
     {
       slider: '#handle-offset-slider',

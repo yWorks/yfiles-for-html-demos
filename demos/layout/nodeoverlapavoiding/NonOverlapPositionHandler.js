@@ -43,33 +43,41 @@ import {
   WaitInputMode
 } from '@yfiles/yfiles'
 import { LayoutHelper } from './LayoutHelper'
+
 export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
   /**
    * The node we are currently moving.
    */
   node = null
+
   /**
    * The original {@link IPositionHandler}.
    */
   handler = null
+
   /**
    * Creates space at the new location.
    */
   layoutHelper = null
+
   /**
    * To check whether re-parenting is taking place.
    */
   reparentHandler = null
+
   timeoutHandle
+
   constructor(node, handler) {
     super()
     this.node = node
     this.handler = handler
     this.timeoutHandle = null
   }
+
   get location() {
     return this.handler.location
   }
+
   /**
    * The node is upon to be dragged.
    */
@@ -79,50 +87,62 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
     this.layoutHelper.initializeLayout()
     this.handler.initializeDrag(context)
   }
+
   /**
    * The node is dragged.
    */
   handleMove(context, originalLocation, newLocation) {
     this.clearTimeout()
+
     this.handler.handleMove(context, originalLocation, newLocation)
+
     if (!this.reparentHandler || !this.reparentHandler.isReparentGesture(context, this.node)) {
       this.timeoutHandle = setTimeout(async () => {
         await this.layoutHelper.runLayout()
       }, 50)
     }
   }
+
   /**
    * The drag is canceled.
    */
   async cancelDrag(context, originalLocation) {
     this.clearTimeout()
     this.handler.cancelDrag(context, originalLocation)
+
     const waitInputMode = context.lookup(WaitInputMode)
     if (waitInputMode) {
       // disable user interaction while the cancel layout is running
       waitInputMode.waiting = true
     }
+
     await this.layoutHelper.cancelLayout()
+
     if (waitInputMode) {
       waitInputMode.waiting = false
     }
   }
+
   /**
    * The drag is finished.
    */
   async dragFinished(context, originalLocation, newLocation) {
     this.clearTimeout()
     this.handler.dragFinished(context, originalLocation, newLocation)
+
     const waitInputMode = context.lookup(WaitInputMode)
     if (waitInputMode) {
       // disable user interaction while the finish layout is running
       waitInputMode.waiting = true
     }
+
     await this.layoutHelper.finishLayout()
+
     if (waitInputMode) {
       waitInputMode.waiting = false
     }
   }
+
   clearTimeout() {
     if (this.timeoutHandle !== null) {
       clearTimeout(this.timeoutHandle)

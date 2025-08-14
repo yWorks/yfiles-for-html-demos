@@ -68,9 +68,7 @@ export function registerLitNodeStyleSerialization(graphmlHandler: GraphMLIOHandl
   graphmlHandler.addTypeInformation(LitNodeStyleMarkupExtension, {
     name: 'LitNodeStyle',
     xmlNamespace: 'http://www.yworks.com/demos/yfiles-lit-node-style/1.0',
-    properties: {
-      renderFunction: { default: '', type: String }
-    }
+    properties: { renderFunction: { default: '', type: String } }
   })
   graphmlHandler.addNamespace('http://www.yworks.com/demos/yfiles-lit-node-style/1.0', 'lit')
   graphmlHandler.addEventListener('handle-serialization', (evt) => {

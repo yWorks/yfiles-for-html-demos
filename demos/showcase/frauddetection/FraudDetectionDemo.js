@@ -36,6 +36,7 @@ import {
   OrganicLayout,
   Size
 } from '@yfiles/yfiles'
+
 import {
   closeFraudDetectionView,
   openInspectionViewForItem
@@ -63,19 +64,23 @@ import { initializeHighlights } from './initialize-highlights'
 import { clearPropertiesView, initializePropertiesView } from './properties-view'
 import { enableTooltips } from './entity-tooltip'
 import { useSingleSelection } from '../mindmap/interaction/single-selection'
+
 /**
  * The main graph component that displays the graph.
  */
 let graphComponent
+
 /**
  * The methods that control the layout
  */
 let startLayout
 let stopLayout
+
 /**
  * The graph component that displays the timeline.
  */
 let timeline
+
 /**
  * Starts a demo which shows fraud detection on a graph with changing time-frames. Since the nodes
  * have different timestamps (defined in their tag object), they will only appear in some
@@ -83,21 +88,31 @@ let timeline
  */
 async function run() {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('graphComponent')
   initializeGraphComponent()
   initializeHighlights(graphComponent)
   initializeGraph()
+
   await enableWebGLRendering(graphComponent)
+
   enableTooltips(graphComponent)
+
   initializeTimelineComponent('timeline-component', graphComponent)
   const layout = initializeLayout(graphComponent)
+
   startLayout = layout.startLayout
   stopLayout = layout.stopLayout
+
   initializeFraudHighlights(graphComponent)
+
   initializePropertiesView(graphComponent)
+
   await loadSampleGraph(bankFraudData)
+
   initializeUI()
 }
+
 /**
  * Binds the UI elements in the toolbar to actions.
  */
@@ -120,6 +135,7 @@ function initializeUI() {
     }
   })
 }
+
 /**
  * Initializes the main graph component and its interactive behavior.
  */
@@ -143,15 +159,20 @@ function initializeGraphComponent() {
   })
   inputMode.moveSelectedItemsInputMode.enabled = false
   inputMode.marqueeSelectionInputMode.enabled = false
+
   inputMode.addEventListener('item-double-clicked', (evt) => {
     openInspectionViewForItem(evt.item, graphComponent)
   })
+
   graphComponent.inputMode = inputMode
+
   // limit the minimum and the maximum zoom of the graphComponent
   graphComponent.minimumZoom = 0.2
   graphComponent.maximumZoom = 3
+
   useSingleSelection(graphComponent)
 }
+
 /**
  * Initializes the graph with default styles and decorators for highlights and selections.
  */
@@ -160,10 +181,13 @@ function initializeGraph() {
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new EntityNodeStyle()
   graph.nodeDefaults.size = new Size(30, 30)
+
   // default edge style
   graph.edgeDefaults.style = new ConnectionEdgeStyle()
+
   graphComponent.graph.decorator.nodes.focusRenderer.hide()
 }
+
 /**
  * Builds the graph based on the given dataset.
  * @param graph The graph where the elements are added
@@ -171,9 +195,11 @@ function initializeGraph() {
  */
 async function buildGraph(graph, data) {
   graph.clear()
+
   function convertDates(dates) {
     return Array.isArray(dates) ? dates.map((e) => new Date(e)) : [new Date(dates)]
   }
+
   const builder = new GraphBuilder(graph)
   const entityNodesSource = builder.createNodesSource(data.nodesSource, 'id')
   entityNodesSource.nodeCreator.tagProvider = (entity) => ({
@@ -184,6 +210,7 @@ async function buildGraph(graph, data) {
   builder.createEdgesSource(data.edgesSource, 'from', 'to')
   builder.buildGraph()
 }
+
 /**
  * Runs an organic layout on the complete initial graph.
  */
@@ -193,13 +220,12 @@ async function runInitialLayout(graph) {
     deterministic: true,
     allowNodeOverlaps: false,
     defaultPreferredEdgeLength: 50,
-    componentLayout: {
-      style: 'packed-compact-circle'
-    }
+    componentLayout: { style: 'packed-compact-circle' }
   })
   graph.applyLayout(organicLayout)
   await graphComponent.fitGraphBounds()
 }
+
 /**
  * Loads a graph from the given JSON data.
  * @param data The JSON data from which the graph is retrieved.
@@ -207,33 +233,45 @@ async function runInitialLayout(graph) {
 async function loadSampleGraph(data) {
   // deactivate UI
   await setBusy(true)
+
   clearFraudHighlights()
+
   // stop the layout for the graph change
   stopLayout()
+
   // read the sample data and populate the wrapped graph,
   // so nodes outside the current timeframe are hidden and can appear later
   const wrappedGraph = graphComponent.graph.wrappedGraph
   await buildGraph(wrappedGraph, data)
+
   // calculate the connected components of the given graph
   calculateComponents()
+
   // if there is a timeline, add the new entities
   if (timeline) {
     timeline.stop()
     timeline.items = wrappedGraph.nodes.map(getEntityData).toArray()
   }
+
   // run a layout on the complete graph
   // to have nice initial locations even for the currently hidden nodes
   await runInitialLayout(wrappedGraph)
+
   // initializes the element styles using WebGL rendering if this is supported by the browser
   setWebGLStyles(graphComponent)
+
   void startLayout()
+
   // re-activate UI
   await setBusy(false)
+
   // focus on a component containing fraudsters
   void focusFraudComponent()
 }
+
 function initializeTimelineComponent(selector, graphComponent) {
   timeline = new Timeline(selector, getTimeEntry)
+
   // filter the elements that are not part of the current timeframe
   const filteredGraph = new FilteredGraphWrapper(graphComponent.graph, (node) =>
     timeline.filter(getEntityData(node))
@@ -241,15 +279,18 @@ function initializeTimelineComponent(selector, graphComponent) {
   graphComponent.graph = filteredGraph
   timeline.setFilterChangedListener(() => {
     filteredGraph.nodePredicateChanged()
+
     const bankFraud = document.querySelector('#samples').value === 'bank-fraud'
     const fraudsters = bankFraud
       ? detectBankFraud(graphComponent)
       : detectInsuranceFraud(graphComponent)
+
     updateFraudWarnings(fraudsters)
   })
   timeline.setBarSelectListener((items) => {
     const selection = graphComponent.selection
     selection.clear()
+
     const selectedItems = new Set(items.map((item) => item.id))
     graphComponent.graph.nodes.forEach((node) => {
       const entity = getEntityData(node)
@@ -261,7 +302,9 @@ function initializeTimelineComponent(selector, graphComponent) {
   timeline.setBarHoverListener((items) => {
     const highlights = graphComponent.highlights
     highlights.clear()
+
     const selected = new Set(items.map((item) => item.id))
+
     graphComponent.graph.nodes.forEach((node) => {
       const entity = getEntityData(node)
       if (selected.has(entity.id)) {
@@ -271,6 +314,7 @@ function initializeTimelineComponent(selector, graphComponent) {
   })
   return timeline
 }
+
 /**
  * Marks whether the demo is currently loading a sample graph.
  * When busy, the mouse cursor is changed and the toolbar as well as the input modes are disabled.
@@ -280,4 +324,5 @@ async function setBusy(state) {
   document.querySelector('#samples').disabled = state
   await showLoadingIndicator(state)
 }
+
 void run().then(finishLoading)

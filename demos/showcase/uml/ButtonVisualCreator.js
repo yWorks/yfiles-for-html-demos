@@ -50,6 +50,7 @@ import {
   TimeSpan,
   Visual
 } from '@yfiles/yfiles'
+
 import {
   createAggregationStyle,
   createAssociationStyle,
@@ -58,14 +59,17 @@ import {
   createGeneralizationStyle,
   createRealizationStyle
 } from './UMLEdgeStyleFactory'
+
 /**
  * Provides the visuals of the edge creation buttons.
  */
 export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
   node
   static buttons
+
   renderer
   animator
+
   /**
    * The provided edge creation buttons.
    */
@@ -79,6 +83,7 @@ export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
       createAssociationStyle()
     ]
   }
+
   /**
    * Creates the visual creator for the edge creation buttons.
    * @param node The node for which the buttons should be created.
@@ -93,15 +98,18 @@ export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     this.animator.allowUserInteraction = true
     ButtonVisualCreator.buttons = []
   }
+
   /**
    * @param ctx The context that describes where the visual will be used.
    */
   createVisual(ctx) {
     // save the button elements to conveniently use them for hit testing
     ButtonVisualCreator.buttons = []
+
     // the context button container
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     container.setAttribute('class', 'context-button')
+
     // create the edge creation buttons
     let first = -60
     const step = 40
@@ -125,6 +133,7 @@ export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     const layout = this.node.layout
     const topRight = layout.topRight
     SvgVisual.setTranslate(container, topRight.x, topRight.y)
+
     // add interface/abstract toggle buttons
     const interfaceButton = this.renderer.renderTextButton('I')
     SvgVisual.setTranslate(interfaceButton, layout.x - topRight.x, layout.y - topRight.y - 25)
@@ -132,6 +141,7 @@ export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     SvgVisual.setTranslate(abstractButton, layout.x - topRight.x + 25, layout.y - topRight.y - 25)
     container.appendChild(interfaceButton)
     container.appendChild(abstractButton)
+
     // visualize the button state
     const model = this.node.style.model
     if (model.stereotype === 'interface') {
@@ -140,11 +150,13 @@ export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     if (model.constraint === 'abstract') {
       abstractButton.setAttribute('class', 'abstract-toggle toggled')
     }
+
     // we fade the buttons via CSS
     container.setAttribute('opacity', '0')
     setTimeout(() => {
       container.setAttribute('opacity', '1')
     }, 0)
+
     // we animate the position 'manually' because doing it via CSS causes animation artifacts
     animations.forEach((animation) => {
       this.animator.animate(animation)
@@ -155,8 +167,10 @@ export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
       interfaceToggle: model.stereotype,
       constraintToggle: model.constraint
     }
+
     return new SvgVisual(container)
   }
+
   /**
    * @param ctx The context that describes where the visual will be used in.
    * @param oldVisual The visual instance that had been returned the last time the
@@ -167,20 +181,24 @@ export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     const topRight = layout.topRight
     const svgElement = oldVisual.svgElement
     const cache = svgElement['data-renderDataCache']
+
     // update the container layout
     SvgVisual.setTranslate(svgElement, topRight.x, topRight.y)
+
     // maybe update the toggle buttons
     const interfaceButton = svgElement.childNodes[svgElement.childNodes.length - 2]
     const abstractButton = svgElement.childNodes[svgElement.childNodes.length - 1]
     if (!interfaceButton || !abstractButton) {
       this.createVisual(ctx)
     }
+
     if (cache.width !== layout.width || cache.height !== layout.height) {
       SvgVisual.setTranslate(interfaceButton, layout.x - topRight.x, layout.y - topRight.y - 25)
       SvgVisual.setTranslate(abstractButton, layout.x - topRight.x + 25, layout.y - topRight.y - 25)
       cache.width = layout.width
       cache.height = layout.height
     }
+
     // update the button state if they have changed
     const model = this.node.style.model
     if (cache.interfaceToggle !== model.stereotype) {
@@ -197,8 +215,10 @@ export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
       )
       cache.constraintToggle = model.constraint
     }
+
     return oldVisual
   }
+
   /**
    * Helper method to get the edge style of the edge creation button if there is a button at the given location.
    * @param canvasComponent The canvas component in which the node resides.
@@ -223,6 +243,7 @@ export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     }
     return null
   }
+
   /**
    * Helper method to get the context button at the given location.
    * @param node The node who should be checked for a button.
@@ -250,6 +271,7 @@ export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     return null
   }
 }
+
 /**
  * Executes the button fan out animation.
  */
@@ -263,9 +285,11 @@ class ButtonAnimation extends BaseClass(IAnimation) {
     this.finishAngle = finishAngle
     this.translationElement = translationElement
   }
+
   get preferredDuration() {
     return TimeSpan.fromMilliseconds(200)
   }
+
   /**
    * @param time - the animation time [0,1]
    */
@@ -276,19 +300,24 @@ class ButtonAnimation extends BaseClass(IAnimation) {
     )
     this.translationElement.setAttribute('transform', `translate(${time * 50} 0)`)
   }
+
   cleanUp() {}
+
   initialize() {}
 }
+
 /**
  * Helper class that creates a round button visual containing a given edge style visualization.
  */
 class ButtonIconRenderer {
   gc
+
   constructor() {
     this.gc = new GraphComponent()
     this.gc.graphModelManager.hierarchicalNestingPolicy = HierarchicalNestingPolicy.NONE
     this.gc.graphModelManager.edgeGroup.above(this.gc.graphModelManager.nodeGroup)
   }
+
   renderButton(edgeStyle) {
     const graph = this.gc.graph
     graph.clear()
@@ -304,13 +333,11 @@ class ButtonIconRenderer {
     const svgExport = new SvgExport(new Rect(-18, -18, 36, 36))
     return svgExport.exportSvg(this.gc)
   }
+
   renderTextButton(text) {
     const textSize = TextRenderSupport.measureText(
       text,
-      new Font({
-        fontFamily: 'monospace',
-        fontSize: 18
-      })
+      new Font({ fontFamily: 'monospace', fontSize: 18 })
     )
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect')

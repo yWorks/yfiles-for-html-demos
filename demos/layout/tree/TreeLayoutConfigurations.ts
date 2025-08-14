@@ -148,9 +148,7 @@ export function createCategoryTreeConfiguration(
     const placer =
       node.tag.layer === 0
         ? new SingleLayerSubtreePlacer()
-        : new LeftRightSubtreePlacer({
-            placeLastOnBottom: false
-          })
+        : new LeftRightSubtreePlacer({ placeLastOnBottom: false })
     layoutData.subtreePlacers.mapper.set(node, placer)
 
     // update subtree placers with the same values to keep the panel intact
@@ -224,9 +222,7 @@ export function createWideTreeConfiguration(
   subtreePlacerPanel: SubtreePlacerPanel
 ): Configuration {
   const singleLayerSubtreePlacer = new SingleLayerSubtreePlacer()
-  const layout = new TreeLayout({
-    defaultSubtreePlacer: singleLayerSubtreePlacer
-  })
+  const layout = new TreeLayout({ defaultSubtreePlacer: singleLayerSubtreePlacer })
   // update subtree placers with the same values to keep the panel intact
   for (const node of graph.nodes) {
     subtreePlacerPanel.subtreePlacers.set(node, singleLayerSubtreePlacer)

@@ -36,10 +36,7 @@ export const nodeData: ItemData[] =
         {
           id: 'child1',
           children: [
-            {
-              id: 'child11',
-              children: [{ id: 'child14' }, { id: 'child15' }]
-            },
+            { id: 'child11', children: [{ id: 'child14' }, { id: 'child15' }] },
             { id: 'child12' }
           ]
         },
@@ -53,11 +50,7 @@ export const nodeData: ItemData[] =
       path: '/root/dir2/dir1',
       children: [{ id: 'child3' }, { id: 'child4' }, { id: 'child5' }]
     },
-    {
-      id: 'item5',
-      path: '/root/dir2/dir2',
-      children: [{ id: 'child6' }]
-    },
+    { id: 'item5', path: '/root/dir2/dir2', children: [{ id: 'child6' }] },
     {
       id: 'item6',
       path: '/root/dir2/dir2',
@@ -94,13 +87,6 @@ export const edgeData = [
   { from: '/root/dir1', to: '/root/dir2' }
 ]
 
-export type ChildData = {
-  id: string
-  children?: ChildData[]
-}
+export type ChildData = { id: string; children?: ChildData[] }
 
-export type ItemData = {
-  id: string
-  path: string
-  children?: ChildData[]
-}
+export type ItemData = { id: string; path: string; children?: ChildData[] }

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { EdgeStyleBase, IArrow, SvgVisual } from '@yfiles/yfiles'
+
 export class CustomEdgeStyle extends EdgeStyleBase {
   createVisual(context, edge) {
     const generalPath = this.getPath(edge)

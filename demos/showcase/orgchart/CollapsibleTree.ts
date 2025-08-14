@@ -413,11 +413,7 @@ export class CollapsibleTree {
     }
     if (collapse) {
       // configure PlaceNodesAtBarycenterStage for a smooth animation
-      layoutData.items.add(
-        new PlaceNodesAtBarycenterStageData({
-          affectedNodes: incrementalNodes
-        })
-      )
+      layoutData.items.add(new PlaceNodesAtBarycenterStageData({ affectedNodes: incrementalNodes }))
     }
 
     layoutData.items.add(
@@ -451,9 +447,7 @@ export class CollapsibleTree {
     const graph = this.graphComponent.graph
 
     // mark the new nodes and place them between their neighbors
-    const layoutData = new PlaceNodesAtBarycenterStageData({
-      affectedNodes: incrementalNodes
-    })
+    const layoutData = new PlaceNodesAtBarycenterStageData({ affectedNodes: incrementalNodes })
 
     const layout = new PlaceNodesAtBarycenterStage()
     graph.applyLayout(layout, layoutData)

@@ -27,35 +27,44 @@
  **
  ***************************************************************************/
 import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
+
 const tabWidth = 50
 const tabHeight = 14
+
 export class CustomNodeStyle extends NodeStyleBase {
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
+
     const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     // we render the path at 0,0 and translate the visual to it's final location
     pathElement.setAttribute('d', createPathData(0, 0, width, height))
     SvgVisual.setTranslate(pathElement, x, y)
+
     pathElement.setAttribute('fill', '#0b7189')
     pathElement.setAttribute('stroke', '#042d37')
+
     // we use the factory method to create a properly typed SvgVisual
     return SvgVisual.from(pathElement, { width, height })
   }
+
   updateVisual(context, oldVisual, node) {
     const { x, y, width, height } = node.layout
     // get the path element that needs updating from the old visual
     const pathElement = oldVisual.svgElement
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
+
     if (width !== cache.width || height !== cache.height) {
       // update the path data to fit the new width and height
       pathElement.setAttribute('d', createPathData(0, 0, width, height))
       oldVisual.tag = { width, height }
     }
+
     SvgVisual.setTranslate(pathElement, x, y)
     return oldVisual
   }
 }
+
 /**
  * Creates the path data for the SVG path element.
  */

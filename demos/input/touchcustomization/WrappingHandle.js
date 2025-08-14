@@ -37,6 +37,7 @@ import {
   IPoint,
   Point
 } from '@yfiles/yfiles'
+
 /**
  * A handle implementation that wraps another handle and overrides the handle type and cursor with
  * the ones given in the constructor. This makes it possible to use a different handle template.
@@ -57,27 +58,32 @@ export class WrappingHandle extends BaseClass(IHandle) {
     this.handleType = handleType
     this.handleCursor = handleCursor
   }
+
   /**
    * Gets the types of handles that determine how this handle is visualized.
    */
   get type() {
     return this.handleType || this.wrappedHandle.type
   }
+
   get tag() {
     return null
   }
+
   /**
    * Gets the cursor that is displayed when the mouse is over this handle.
    */
   get cursor() {
     return this.handleCursor || this.wrappedHandle.cursor
   }
+
   /**
    * Gets this handle's location.
    */
   get location() {
     return this.wrappedHandle.location
   }
+
   /**
    * Initializes additional state when a drag gesture is started.
    * @param context The context to retrieve information about the drag from.
@@ -85,6 +91,7 @@ export class WrappingHandle extends BaseClass(IHandle) {
   initializeDrag(context) {
     this.wrappedHandle.initializeDrag(context)
   }
+
   /**
    * Handles drag events for this handle.
    * @param context The context to retrieve information about the drag from.
@@ -97,6 +104,7 @@ export class WrappingHandle extends BaseClass(IHandle) {
   handleMove(context, originalLocation, newLocation) {
     this.wrappedHandle.handleMove(context, originalLocation, newLocation)
   }
+
   /**
    * Finishes the drag gesture for this handle.
    * @param context The context to retrieve information about the drag from.
@@ -110,6 +118,7 @@ export class WrappingHandle extends BaseClass(IHandle) {
   dragFinished(context, originalLocation, newLocation) {
     this.wrappedHandle.dragFinished(context, originalLocation, newLocation)
   }
+
   /**
    * Resets the effects of the previous drag gesture if the gesture is aborted.
    * @param context The context to retrieve information about the drag from.
@@ -119,6 +128,7 @@ export class WrappingHandle extends BaseClass(IHandle) {
   cancelDrag(context, originalLocation) {
     this.wrappedHandle.cancelDrag(context, originalLocation)
   }
+
   /**
    * Called to indicate that the handle has been clicked by the user.
    */

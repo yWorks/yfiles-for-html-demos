@@ -43,15 +43,18 @@ import {
   Visual
 } from '@yfiles/yfiles'
 import { toRadians } from '@yfiles/demo-utils/LegacyGeometryUtilities'
+
 /**
  * An {@link IVisualCreator} that manages and renders the sectors.
  */
 export class SectorVisual extends BaseClass(IVisualCreator) {
   highlightColor = '#e01a4f'
+
   center = Point.ORIGIN
   radius = 100
   sectors = []
   highlightedSector
+
   /**
    * Updates the sector drawing using the sector information from the layout algorithm.
    */
@@ -60,12 +63,14 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
       this.sectors = []
       return
     }
+
     // find the root node of the graph
     const root = graph.nodes.find((node) => graph.inDegree(node) === 0)
     if (!root) {
       this.sectors = []
       return
     }
+
     // determine the center of the circles which is identical to the root node's center
     const rootInfo = sectorMapper.get(root)
     this.center = rootInfo
@@ -74,11 +79,13 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
           rootInfo.centerOffset.y - root.layout.center.y
         )
       : Point.ORIGIN
+
     // determine sector radius
     this.radius = graph.nodes
       .map((node) => sectorMapper.get(node))
       .filter((info) => info != null)
       .reduce((previous, info) => Math.max(info.radius, previous), 100)
+
     // create one sector for each child of the root node
     let lastColor
     this.sectors = graph
@@ -100,8 +107,10 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
           root: child
         }
       })
+
     // sort the sectors by their start angle to get the neighbor information
     this.sectors = this.sectors.sort((sector1, sector2) => sector2.startAngle - sector1.startAngle)
+
     // fill sectors to get a full circle
     let lastSector
     this.sectors.forEach((sector) => {
@@ -113,6 +122,7 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
           sector.endAngle -= Math.PI * 2
         }
       }
+
       // enlarge the sectors if there is space between them by dividing this space
       const diff = Math.abs(sector.endAngle - lastSector.startAngle)
       if (diff > 0.000001) {
@@ -122,6 +132,7 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
       lastSector = sector
     })
   }
+
   /**
    * Creates a new visual that emphasizes the sectors of the subtrees.
    * @see overrides {@link IVisualCreator.createVisual}
@@ -130,6 +141,7 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     return this.updateVisual(context, new SvgVisual(g))
   }
+
   /**
    * Updates the visual that emphasizes the sectors of the subtrees.
    * @see overrides {@link IVisualCreator.updateVisual}
@@ -138,7 +150,9 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
     if (!(oldVisual instanceof SvgVisual)) {
       return this.createVisual(context)
     }
+
     const g = oldVisual.svgElement
+
     const cache = g['render-data-cache']
     if (
       cache &&
@@ -150,10 +164,12 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
       // visual needs no update
       return oldVisual
     }
+
     // remove all sector elements
     while (g.childElementCount > 0) {
       g.removeChild(g.lastChild)
     }
+
     if (this.sectors.length === 1) {
       const sectorPath = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
       sectorPath.setAttribute('cx', String(this.center.x))
@@ -170,6 +186,7 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
         // create new sector element
         const sectorPath = document.createElementNS('http://www.w3.org/2000/svg', 'path')
         g.appendChild(sectorPath)
+
         // update path and colors of the sector
         const sectorAngle = getSectorAngle(sector.startAngle, sector.endAngle)
         sectorPath.setAttribute(
@@ -190,6 +207,7 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
         sectorPath.style.cursor = 'pointer'
       })
     }
+
     g['render-data-cache'] = {
       sectors: this.sectors.slice(),
       highlightedSector: this.highlightedSector,
@@ -197,6 +215,7 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
     }
     return oldVisual
   }
+
   /**
    * Updates the highlighted sector. Returns true if the highlighted sector changes, otherwise false.
    */
@@ -208,6 +227,7 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
     this.highlightedSector = hitSector
     return true
   }
+
   /**
    * Returns the sector that contains the given location.
    */
@@ -217,20 +237,24 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
     if (!bounds.contains(location)) {
       return
     }
+
     // location is outside the circle
     const isInCircle = GeometryUtilities.ellipseContains(bounds, location, 0)
     if (!isInCircle) {
       return
     }
+
     // location is inside the circle and there is only one sector
     if (this.sectors.length === 1) {
       return this.sectors[0]
     }
+
     // location is inside the circle and there are multiple sectors
     // find the sector that contains the location
     const angle = getAngle(location, this.center)
     return this.sectors.find((sector) => isAngleBetween(angle, sector.startAngle, sector.endAngle))
   }
+
   /**
    * Returns the root of the subtree which is in the sector of the given location.
    */
@@ -239,12 +263,14 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
     return sector ? sector.root : null
   }
 }
+
 /**
  * Returns the angle between the start and end angle.
  */
 function getSectorAngle(startAngle, endAngle) {
   return startAngle <= endAngle ? endAngle - startAngle : endAngle + Math.PI * 2 - startAngle
 }
+
 /**
  * Checks if the given angle is in between the start and end angle.
  */
@@ -253,6 +279,7 @@ function isAngleBetween(angle, startAngle, endAngle) {
     ? angle >= startAngle && angle < endAngle
     : angle >= startAngle || angle < endAngle
 }
+
 /**
  * Get the angle of the location relative to the origin.
  */
@@ -261,6 +288,7 @@ function getAngle(location, origin) {
   const angle = -Math.atan2(-delta.y, delta.x)
   return normalizeAngle(angle)
 }
+
 /**
  * Normalizes the angle to a value between 0 and 2 * PI.
  */

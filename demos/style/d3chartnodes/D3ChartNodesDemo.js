@@ -40,13 +40,17 @@ import SampleData from './D3ChartNodesData'
 import { D3ChartNodeStyle } from './D3ChartNodeStyle'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent
+
 async function run() {
   License.value = await fetchLicense()
+
   // create a new graph component
   graphComponent = new GraphComponent('graphComponent')
   // load an initial graph
   loadSampleGraph()
+
   // initialize the input mode
   const graphEditorInputMode = new GraphEditorInputMode()
   graphEditorInputMode.addEventListener('node-created', (evt) => {
@@ -54,9 +58,11 @@ async function run() {
     evt.item.tag = createRandomSparklineData()
   })
   graphComponent.inputMode = graphEditorInputMode
+
   // set an interval to randomly change the sparkline data of some nodes
   setInterval(modifyData, 500)
 }
+
 /**
  * Continuously modifies the node data used as the input for the
  * sparkline visualization to simulate updating data from a server.
@@ -70,12 +76,14 @@ function modifyData() {
   // make the graphComponent repaint it's content
   graphComponent.invalidate()
 }
+
 /**
  * Creates an array with random data.
  */
 function createRandomSparklineData() {
   return Array.from({ length: 10 + Math.floor(Math.random() * 5) }, () => Math.random() * 10 + 1)
 }
+
 /**
  * Creates the initial sample graph.
  */
@@ -91,7 +99,9 @@ function loadSampleGraph() {
     backgroundFill: 'rgba(255, 255, 255, 0.6)',
     padding: [2, 3, 2, 3]
   })
+
   graph.edgeDefaults.style = new PolylineEdgeStyle()
+
   const defaultNodeSize = graphComponent.graph.nodeDefaults.size
   const builder = new GraphBuilder(graphComponent.graph)
   builder.createNodesSource({
@@ -103,7 +113,10 @@ function loadSampleGraph() {
     tag: () => createRandomSparklineData()
   })
   builder.createEdgesSource(SampleData.edges, 'source', 'target', 'id')
+
   builder.buildGraph()
+
   graphComponent.fitGraphBounds()
 }
+
 run().then(finishLoading)

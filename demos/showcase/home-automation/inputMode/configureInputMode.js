@@ -36,6 +36,7 @@ import {
 import { FlowMoveInputMode } from './FlowMoveInputMode'
 import { FlowCreateEdgeInputMode } from './FlowCreateEdgeInputMode'
 import { configureCreateEdgeInputMode } from '../FlowEdge/FlowEdge'
+
 export function configureInputMode(gc) {
   // Highlight any nodes/edges being hovered, and bring them
   // to the top of their respective group (particularly important for edges).
@@ -51,18 +52,22 @@ export function configureInputMode(gc) {
       gc.graphModelManager.toFront(item)
     }
   })
+
   gc.selection.addEventListener('item-added', ({ item }) => {
     if (item instanceof INode) {
       const connectedEdges = gc.graph.edgesAt(item)
       gc.graphModelManager.toFront(connectedEdges)
     }
   })
+
   // Custom CreateEdgeInputMode for overwriting onMoved method
   const createEdgeInputMode = new FlowCreateEdgeInputMode()
   configureCreateEdgeInputMode(gc, createEdgeInputMode)
+
   // Custom MoveInputMode for overwriting onDragging method
   const moveSelectedItemsInputMode = new FlowMoveInputMode()
   const moveUnselectedItemsInputMode = new FlowMoveInputMode()
+
   const inputMode = new GraphEditorInputMode({
     allowCreateNode: false,
     allowEditLabel: false,
@@ -77,10 +82,13 @@ export function configureInputMode(gc) {
     createEdgeInputMode,
     itemHoverInputMode
   })
+
   // Increase priority over handleInputMode to not block edge creation by dragging from ports
   inputMode.moveUnselectedItemsInputMode.priority = inputMode.handleInputMode.priority + 1
   inputMode.moveSelectedItemsInputMode.priority = inputMode.handleInputMode.priority + 1
+
   inputMode.marqueeSelectionInputMode.enabled = true
   inputMode.marqueeSelectionInputMode.priority = inputMode.moveUnselectedItemsInputMode.priority + 1
+
   gc.inputMode = inputMode
 }

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { LayoutStageBase, Size } from '@yfiles/yfiles'
+
 /**
  * A LayoutStage for changing the sizes of the nodes according to their centrality values.
  */
@@ -35,6 +36,7 @@ export class CentralityStage extends LayoutStageBase {
    * Whether the edges should be considered directed or undirected.
    */
   directed = false
+
   /**
    * Applies the layout to the given graph.
    * @param graph the given graph
@@ -43,6 +45,7 @@ export class CentralityStage extends LayoutStageBase {
     if (!this.coreLayout) {
       return
     }
+
     // change the node sizes if a centrality algorithm is applied
     const isCentralityAlgorithm = graph.nodes.some((node) => node.tag.centrality !== undefined)
     if (isCentralityAlgorithm) {
@@ -64,6 +67,7 @@ export class CentralityStage extends LayoutStageBase {
         node.layout.size = new Size(30, 30)
       })
     }
+
     // run the core layout
     this.coreLayout.applyLayout(graph)
   }

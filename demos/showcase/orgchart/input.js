@@ -30,6 +30,7 @@ import { GraphItemTypes, GraphViewerInputMode, INode, IPort, ModifierKeys } from
 import { showNodeProperties } from './ui/orgchart-properties-view'
 import { setOrgChartPortStyle } from './graph-style/orgchart-port-style'
 import { configureContextMenu } from './ui/orgchart-context-menu'
+
 /**
  * Set up the graph viewer input mode to and enables interactivity to expand and collapse subtrees.
  */
@@ -44,9 +45,11 @@ export function initializeInputMode(graphComponent, orgChartGraph) {
     clickHitTestOrder: [GraphItemTypes.PORT, GraphItemTypes.NODE]
   })
   graphViewerInputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
+
   graphViewerInputMode.addEventListener('item-double-clicked', () => {
     orgChartGraph.zoomToItem(graphComponent.currentItem)
   })
+
   graphViewerInputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     // we use the highlight manager to highlight hovered items
     if (evt.oldItem) {
@@ -57,15 +60,19 @@ export function initializeInputMode(graphComponent, orgChartGraph) {
     }
   })
   graphViewerInputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
+
   // display information about the current employee
   graphComponent.addEventListener('current-item-changed', () => {
     if (graphComponent.currentItem instanceof INode) {
       showNodeProperties(graphComponent.currentItem, orgChartGraph)
     }
   })
+
   initializeHighlights(graphComponent)
+
   graphComponent.inputMode = graphViewerInputMode
 }
+
 /**
  * Enables collapsing and expanding nodes by clicking on node ports and with keyboard commands.
  */
@@ -78,15 +85,18 @@ export function initializeInteractivity(graphComponent, orgChartGraph) {
   // add a context menu
   configureContextMenu(graphComponent, orgChartGraph)
 }
+
 /**
  * Initializes the highlights for selected or focused elements.
  */
 function initializeHighlights(graphComponent) {
   graphComponent.selectionIndicatorManager.enabled = false
+
   // Hide the default focus highlight in favor of the CSS highlighting from the template styles
   graphComponent.focusIndicatorManager.showFocusPolicy = 'always'
   graphComponent.graph.decorator.nodes.focusRenderer.hide()
 }
+
 /**
  * Modifies the given input mode to support the collapse/expand functionality on port clicks.
  */
@@ -94,6 +104,7 @@ function initializeClickablePorts(graphViewerInputMode, orgChartGraph) {
   // add ports to the clickable items
   graphViewerInputMode.clickableItems = GraphItemTypes.NODE | GraphItemTypes.PORT
   graphViewerInputMode.clickHitTestOrder = [GraphItemTypes.PORT, GraphItemTypes.NODE]
+
   // listen to clicks on items
   graphViewerInputMode.addEventListener('item-clicked', (evt) => {
     const port = evt.item
@@ -111,6 +122,7 @@ function initializeClickablePorts(graphViewerInputMode, orgChartGraph) {
     }
   })
 }
+
 /**
  * Adds key bindings for collapse/expand subtrees
  */
@@ -118,15 +130,19 @@ function initializeKeyboardInputMode(keyboardInputMode, graphComponent, orgChart
   keyboardInputMode.addKeyBinding('*', ModifierKeys.NONE, () => {
     void orgChartGraph.executeShowAll()
   })
+
   keyboardInputMode.addKeyBinding('-', ModifierKeys.NONE, () => {
     void orgChartGraph.executeHideChildren(graphComponent.currentItem)
   })
+
   keyboardInputMode.addKeyBinding('+', ModifierKeys.NONE, () => {
     void orgChartGraph.executeShowChildren(graphComponent.currentItem)
   })
+
   keyboardInputMode.addKeyBinding('PageDown', ModifierKeys.NONE, () => {
     void orgChartGraph.executeHideParent(graphComponent.currentItem)
   })
+
   keyboardInputMode.addKeyBinding('PageUp', ModifierKeys.NONE, () => {
     void orgChartGraph.executeShowParent(graphComponent.currentItem)
   })

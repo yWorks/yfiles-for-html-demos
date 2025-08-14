@@ -37,17 +37,20 @@ import {
   PortCandidateValidity
 } from '@yfiles/yfiles'
 import { assertPortTag } from './FlowNodePort'
+
 export class FlowNodePortCandidateProvider extends PortCandidateProviderBase {
   owner
   constructor(owner) {
     super()
     this.owner = owner
   }
+
   getPortCandidates(_context) {
     const candidates = new List()
     this.addExistingPorts(this.owner, candidates)
     return candidates
   }
+
   /**
    * A valid target port candidate must:
    *   - have a different side than the source port;
@@ -61,7 +64,9 @@ export class FlowNodePortCandidateProvider extends PortCandidateProviderBase {
       return candidates
     }
     assertPortTag(source.port.tag)
+
     const sourceSide = source.port.tag.side
+
     graph.ports
       // Exclude same-sided ports:
       .filter((port) => port.tag.side !== sourceSide)
@@ -85,6 +90,7 @@ export class FlowNodePortCandidateProvider extends PortCandidateProviderBase {
         portCandidate.validity = PortCandidateValidity.VALID
         candidates.add(portCandidate)
       })
+
     return candidates
   }
 }

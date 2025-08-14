@@ -54,21 +54,13 @@ initializeDesignerVueComponents()
 type State = {
   layout?: NodeLayout
   zoom?: number
-  tag?: {
-    fill: string
-    scale: string
-  }
+  tag?: { fill: string; scale: string }
   selected?: boolean
   highlighted?: boolean
   focused?: boolean
 }
 
-type NodeLayout = {
-  x: number
-  y: number
-  width: number
-  height: number
-}
+type NodeLayout = { x: number; y: number; width: number; height: number }
 
 /**
  * A context object that helps to enhance performance. There are some properties that are provided for binding
@@ -171,10 +163,7 @@ class ObservedContext {
         change = true
       }
     }
-    return {
-      change,
-      delta
-    }
+    return { change, delta }
   }
 
   /**
@@ -185,12 +174,7 @@ class ObservedContext {
       return this.observed.layout!
     }
     const layout = this.node.layout
-    const val = {
-      x: layout.x,
-      y: layout.y,
-      height: layout.height,
-      width: layout.width
-    }
+    const val = { x: layout.x, y: layout.y, height: layout.height, width: layout.width }
     return (this.observed.layout = val)
   }
 
@@ -261,9 +245,7 @@ type DataType = {
   tag: { fill: string; scale: number }
 }
 
-type DataMap = {
-  [key: string]: string
-}
+type DataMap = { [key: string]: string }
 
 /**
  * A node style which uses a Vue component to display a node.
@@ -309,11 +291,7 @@ export class Vue2NodeStyle extends NodeStyleBase {
         idMap: DataMap
         urlMap: DataMap
       } {
-        return {
-          yFilesContext: null,
-          idMap: {},
-          urlMap: {}
-        }
+        return { yFilesContext: null, idMap: {}, urlMap: {} }
       },
       methods: {
         localId(this: DataType, id: string): string {
@@ -341,12 +319,7 @@ export class Vue2NodeStyle extends NodeStyleBase {
             return yFilesContext.layout!
           }
           const layout = yFilesContext.observedContext.layout
-          return {
-            width: layout.width,
-            height: layout.height,
-            x: layout.x,
-            y: layout.y
-          }
+          return { width: layout.width, height: layout.height, x: layout.x, y: layout.y }
         },
         tag(this: DataType): object {
           const yFilesContext = this.yFilesContext!
@@ -791,96 +764,28 @@ function initializeDesignerVueComponents(): void {
     },
 
     props: {
-      x: {
-        type: [String, Number],
-        required: false,
-        default: undefined
-      },
-      y: {
-        type: [String, Number],
-        required: false,
-        default: undefined
-      },
-      width: {
-        type: [String, Number],
-        required: false,
-        default: undefined
-      },
-      height: {
-        type: [String, Number],
-        required: false,
-        default: undefined
-      },
-      clipped: {
-        type: Boolean,
-        required: false,
-        default: false
-      },
-      align: {
-        type: String,
-        required: false,
-        default: 'start'
-      },
-      fill: {
-        type: String,
-        required: false,
-        default: undefined
-      },
-      content: {
-        type: [String, Number, Boolean],
-        required: false,
-        default: undefined
-      },
-      opacity: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      visible: {
-        type: [String, Boolean],
-        default: true,
-        required: false
-      },
+      x: { type: [String, Number], required: false, default: undefined },
+      y: { type: [String, Number], required: false, default: undefined },
+      width: { type: [String, Number], required: false, default: undefined },
+      height: { type: [String, Number], required: false, default: undefined },
+      clipped: { type: Boolean, required: false, default: false },
+      align: { type: String, required: false, default: 'start' },
+      fill: { type: String, required: false, default: undefined },
+      content: { type: [String, Number, Boolean], required: false, default: undefined },
+      opacity: { type: [String, Number], default: undefined, required: false },
+      visible: { type: [String, Boolean], default: true, required: false },
       wrapping: {
         type: [String, Number],
         default: TextWrapping.WRAP_CHARACTER_ELLIPSIS,
         required: false
       },
-      transform: {
-        type: String,
-        default: '',
-        required: false
-      },
-      fontFamily: {
-        type: String,
-        default: undefined,
-        required: false
-      },
-      fontSize: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      fontWeight: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      fontStyle: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      textDecoration: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      lineSpacing: {
-        type: [String, Number],
-        default: 0.5,
-        required: false
-      }
+      transform: { type: String, default: '', required: false },
+      fontFamily: { type: String, default: undefined, required: false },
+      fontSize: { type: [String, Number], default: undefined, required: false },
+      fontWeight: { type: [String, Number], default: undefined, required: false },
+      fontStyle: { type: [String, Number], default: undefined, required: false },
+      textDecoration: { type: [String, Number], default: undefined, required: false },
+      lineSpacing: { type: [String, Number], default: 0.5, required: false }
     },
     computed: {
       $dx(this: TextPropsType): number {
@@ -918,66 +823,18 @@ function initializeDesignerVueComponents(): void {
     template:
       '<rect :transform="$transform" :x="x" :y="y" :width="width" :height="height" :rx="cornerRadius" :fill="fill" :stroke="stroke" :stroke-width="strokeWidth" :stroke-dasharray="strokeDasharray" :opacity="opacity" v-if="visible"></rect>',
     props: {
-      x: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      y: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      width: {
-        type: [String, Number],
-        default: 50,
-        required: false
-      },
-      height: {
-        type: [String, Number],
-        default: 50,
-        required: false
-      },
-      cornerRadius: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      fill: {
-        type: String,
-        required: false,
-        default: 'orange'
-      },
-      stroke: {
-        type: String,
-        required: false,
-        default: 'orange'
-      },
-      strokeWidth: {
-        type: [String, Number],
-        default: 1,
-        required: false
-      },
-      strokeDasharray: {
-        type: String,
-        default: '',
-        required: false
-      },
-      opacity: {
-        type: [String, Number],
-        default: 1,
-        required: false
-      },
-      visible: {
-        type: [String, Boolean],
-        default: true,
-        required: false
-      },
-      transform: {
-        type: String,
-        default: '',
-        required: false
-      }
+      x: { type: [String, Number], default: 0, required: false },
+      y: { type: [String, Number], default: 0, required: false },
+      width: { type: [String, Number], default: 50, required: false },
+      height: { type: [String, Number], default: 50, required: false },
+      cornerRadius: { type: [String, Number], default: 0, required: false },
+      fill: { type: String, required: false, default: 'orange' },
+      stroke: { type: String, required: false, default: 'orange' },
+      strokeWidth: { type: [String, Number], default: 1, required: false },
+      strokeDasharray: { type: String, default: '', required: false },
+      opacity: { type: [String, Number], default: 1, required: false },
+      visible: { type: [String, Boolean], default: true, required: false },
+      transform: { type: String, default: '', required: false }
     },
     computed: {
       $transform(this: ShapePropsType): string | boolean {
@@ -990,61 +847,17 @@ function initializeDesignerVueComponents(): void {
     template:
       '<ellipse :transform="$transform" :cx="$cx" :cy="$cy" :rx="$rx" :ry="$ry" :fill="fill" :stroke="stroke" :stroke-width="strokeWidth" :stroke-dasharray="strokeDasharray" :opacity="opacity" v-if="visible"></ellipse>',
     props: {
-      x: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      y: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      width: {
-        type: [String, Number],
-        default: 50,
-        required: false
-      },
-      height: {
-        type: [String, Number],
-        default: 50,
-        required: false
-      },
-      fill: {
-        type: String,
-        required: false,
-        default: 'orange'
-      },
-      stroke: {
-        type: String,
-        required: false,
-        default: 'orange'
-      },
-      strokeWidth: {
-        type: [String, Number],
-        default: 1,
-        required: false
-      },
-      strokeDasharray: {
-        type: String,
-        default: '',
-        required: false
-      },
-      opacity: {
-        type: [String, Number],
-        default: 1,
-        required: false
-      },
-      visible: {
-        type: [String, Boolean],
-        default: true,
-        required: false
-      },
-      transform: {
-        type: String,
-        default: '',
-        required: false
-      }
+      x: { type: [String, Number], default: 0, required: false },
+      y: { type: [String, Number], default: 0, required: false },
+      width: { type: [String, Number], default: 50, required: false },
+      height: { type: [String, Number], default: 50, required: false },
+      fill: { type: String, required: false, default: 'orange' },
+      stroke: { type: String, required: false, default: 'orange' },
+      strokeWidth: { type: [String, Number], default: 1, required: false },
+      strokeDasharray: { type: String, default: '', required: false },
+      opacity: { type: [String, Number], default: 1, required: false },
+      visible: { type: [String, Boolean], default: true, required: false },
+      transform: { type: String, default: '', required: false }
     },
     computed: {
       $cx(this: ShapePropsType): number {
@@ -1069,46 +882,14 @@ function initializeDesignerVueComponents(): void {
     template:
       '<image :transform="$transform" :x="x" :y="y" :width="width" :height="height" v-bind="{\'xlink:href\':src}" :opacity="opacity" v-if="visible"></image>',
     props: {
-      x: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      y: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      width: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      height: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      src: {
-        type: String,
-        default: undefined,
-        required: false
-      },
-      opacity: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      visible: {
-        type: [String, Boolean],
-        default: true,
-        required: false
-      },
-      transform: {
-        type: String,
-        default: '',
-        required: false
-      }
+      x: { type: [String, Number], default: undefined, required: false },
+      y: { type: [String, Number], default: undefined, required: false },
+      width: { type: [String, Number], default: undefined, required: false },
+      height: { type: [String, Number], default: undefined, required: false },
+      src: { type: String, default: undefined, required: false },
+      opacity: { type: [String, Number], default: undefined, required: false },
+      visible: { type: [String, Boolean], default: true, required: false },
+      transform: { type: String, default: '', required: false }
     },
     computed: {
       $transform(this: ShapePropsType): string | boolean {

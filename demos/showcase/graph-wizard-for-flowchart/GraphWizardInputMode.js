@@ -74,9 +74,11 @@ import {
   QueryButtonsEvent
 } from '../../input/button-input-mode/ButtonInputMode'
 import { OffsetLabelModelWrapper } from '../../input/button-input-mode/OffsetLabelModelWrapper'
+
 const PICKER_BUTTON_BACKGROUND_MARGIN = 8
 const PICKER_BUTTON_GRID_OFFSET = 17
 const PICKER_BUTTON_SPACING = 2
+
 /**
  * An input mode that simplifies the creation of a specific type of diagram by managing valid
  * {@link WizardAction actions} for modifying it.
@@ -100,29 +102,37 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     autoRotation: false,
     sideOfEdge: 'above-edge'
   }).createRatioParameter()
-  static DEFAULT_NODE_BUTTON_LAYOUT = new ExteriorNodeLabelModel({
-    margins: 10
-  }).createParameter('top')
+
+  static DEFAULT_NODE_BUTTON_LAYOUT = new ExteriorNodeLabelModel({ margins: 10 }).createParameter(
+    'top'
+  )
+
   _pointerHandler
   _keyHandler
   _itemChangedHandler
+
   _legendDiv = null
   _buttonMode
   _createEdgeMode
   _actions
+
   _activeActions
   _isHandlingAction
+
   activePickersAction = null
   showPickersOnly = false
   pickerButtons = null
+
   pickerSelectionAction = null
   pickerSelectionResolve = null
+
   /**
    * The {@link ButtonInputMode} used to show buttons for active actions.
    */
   get buttonMode() {
     return this._buttonMode
   }
+
   /**
    * The {@link CreateEdgeInputMode} used to interactively creates edges for the diagram.
    *
@@ -132,45 +142,55 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
   get createEdgeMode() {
     return this._createEdgeMode
   }
+
   /**
    * The {@link GraphComponent} the diagram belongs to.
    */
   get graphComponent() {
     return this.parentInputModeContext.canvasComponent
   }
+
   get graphEditorInputMode() {
     return this.parentInputModeContext.inputMode
   }
+
   /**
    * The diagram graph.
    */
   get graph() {
     return this.graphComponent.graph
   }
+
   /**
    * The {@link IModelItem} actions are activated and handled for.
    */
   get currentItem() {
     return this.graphComponent.currentItem
   }
+
   set currentItem(item) {
     this.graphComponent.currentItem = item
   }
+
   /**
    * Creates a new input mode instance.
    * @param legendDiv The legend to add the descriptions of the active actions to.
    */
   constructor(legendDiv) {
     super()
+
     this.priority = -10
     this.exclusive = true
     this._pointerHandler = this.handleEvent.bind(this)
     this._keyHandler = this.handleEvent.bind(this)
     this._itemChangedHandler = this.updateActiveActions.bind(this)
     this._legendDiv = legendDiv || null
+
     this._actions = new List()
     this._activeActions = new List()
+
     this._isHandlingAction = false
+
     // initialize child input modes
     this._buttonMode = new ButtonInputMode()
     // the button mode is used to show buttons for active actions
@@ -178,6 +198,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     this.buttonMode.buttonSize = new Size(30, 30)
     this.buttonMode.setQueryButtonsListener(this.queryButtons.bind(this))
     this.add(this.buttonMode)
+
     // A custom CreateEdgeInputMode is used, that allows for selecting the target node via keyboard
     this._createEdgeMode = new KeyboardCreateEdgeInputMode()
     this.createEdgeMode.addEventListener(
@@ -192,6 +213,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     )
     this.add(this.createEdgeMode)
   }
+
   /**
    * Adds a {@link WizardAction} to the actions managed by this mode.
    * @param action The action to add.
@@ -199,6 +221,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
   addAction(action) {
     this._actions.add(action)
   }
+
   /**
    * {@link WizardAction.handler Handles} the action and prevents automatic changes of the active
    * actions while the action is handled.
@@ -225,8 +248,10 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     if (wasEnabled) {
       kim.enabled = false
     }
+
     // handle action
     const successful = await action.handler(this, item, type, e)
+
     if (compoundEdit) {
       if (successful == undefined || successful) {
         compoundEdit.commit()
@@ -237,9 +262,11 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     if (wasEnabled) {
       kim.enabled = true
     }
+
     this._isHandlingAction = false
     this.updateActiveActions()
   }
+
   getKeyboardInputMode() {
     const ctx = this.parentInputModeContext
     if (ctx) {
@@ -250,6 +277,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     }
     return null
   }
+
   /**
    * Hides all buttons and shows the picker buttons of the provided action instead.
    *
@@ -263,6 +291,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       // if the action has no picker buttons, resolve instantly
       return Promise.resolve(false)
     }
+
     // remember action and resolve callback for later
     this.pickerSelectionAction = action
     this.showPickersOnly = true
@@ -277,6 +306,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     }
     return promise
   }
+
   /**
    * Updates the {@link Button buttons} displayed for the active actions.
    * @param item The mode item to show the buttons for. If not specified, the {@link currentItem}
@@ -290,6 +320,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       this.buttonMode.hideButtons()
     }
   }
+
   /**
    * Hides the mode's action buttons and its legend.
    */
@@ -300,6 +331,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     }
     this.buttonMode.hideButtons()
   }
+
   /**
    * Updates which actions are active as well as the buttons and legend for these actions.
    */
@@ -308,14 +340,18 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       // don't update the active actions while an action is handled
       return
     }
+
     // clear all active actions and find new ones whose pre-condition is met
     this.clear()
     this._activeActions = this._actions.filter((action) => action.preCondition(this)).toList()
+
     // update the buttons and the legend for the active actions
     this.updateButtons()
     this.updateLegend()
+
     this.parentInputModeContext.canvasComponent.focus()
   }
+
   /**
    * Updates the legend with the descriptions of the active actions.
    */
@@ -337,6 +373,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
         })
     }
   }
+
   /**
    * Clears the given {@link HTMLDivElement} and sets its visibility to the given state.
    */
@@ -344,6 +381,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     legendDiv.innerHTML = ''
     legendDiv.parentElement.parentElement.hidden = !visible
   }
+
   /**
    * Handle pointer, keyboard and custom {@link WizardEventArgs wizard} events.
    * @param source The source that dispatched the event.
@@ -354,15 +392,19 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     if (!controller || (!controller.hasMutex() && !controller.canRequestMutex())) {
       return Promise.resolve()
     }
+
     return this.handleEventImpl(evt, source)
   }
+
   async handleEventImpl(evt, source) {
     if (this.pickerSelectionAction) {
       // picker selection is displayed, so only accept moving the button focus and closing the pickers
+
       if (this.tryMovePickerButtonFocus(evt)) {
         // an arrow key was pressed and the focused moved to another picker button
         return
       }
+
       if (evt instanceof KeyEventArgs && evt.key == 'Escape' && evt.eventType == KeyEventType.UP) {
         // Escape was pressed and so the picker buttons were hidden
         this.resolvePickerSelection(false)
@@ -374,6 +416,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
         this.resolvePickerSelection(true)
         return
       }
+
       // ignore other input while pickerSelection is active
       return
     }
@@ -381,18 +424,22 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       // prevent event handling while an action is handled
       return
     }
+
     if (this.tryMovePickerButtonFocus(evt)) {
       // an arrow key was pressed and the focused moved to another picker button
       return
     }
+
     if (this.tryClosePickerButtons(evt)) {
       // Escape was pressed and so the picker buttons were hidden
       return
     }
+
     if (this.tryResetCurrentItem(evt)) {
       // Escape was pressed and so the current items was reset to null
       return
     }
+
     // find an active action that is triggered by the source/event combination
     const triggeredAction = this._activeActions.find((action) => action.trigger(evt, source))
     if (triggeredAction !== null) {
@@ -402,6 +449,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       await this.handleAction(triggeredAction, this.currentItem, triggeredAction.type, evt)
     }
   }
+
   /**
    * If an arrow key was pressed and the focused button was one of the picker buttons,
    * the next picker button in arrow direction gets focused.
@@ -436,6 +484,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
         // picker button indices in arrow key direction
         let newRow = rowIndex
         let newColumn = colIndex
+
         switch (e.key) {
           case 'ArrowDown':
             do {
@@ -467,12 +516,14 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     }
     return false
   }
+
   tryClosePickerButtons(e) {
     if (e instanceof KeyEventArgs && e.key == 'Escape' && e.eventType == KeyEventType.UP) {
       return this.tryClosePickerButtonsCore()
     }
     return false
   }
+
   tryClosePickerButtonsCore() {
     if (this.pickerButtons) {
       this.togglePickerButtons()
@@ -482,6 +533,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       return false
     }
   }
+
   tryResetCurrentItem(e) {
     if (this.createEdgeMode.isCreationInProgress) {
       // don't reset current item when edge creation is in progress
@@ -489,17 +541,20 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     }
     const keyTriggeredReset =
       e instanceof KeyEventArgs && e.key === 'Escape' && e.eventType == KeyEventType.UP
+
     const pointerTriggeredReset =
       e instanceof PointerEventArgs &&
       e.eventType === PointerEventType.CLICK &&
       e.modifiers === ModifierKeys.NONE &&
       !this.graphComponent.renderTree.hitElementsAt(e.location).some()
+
     if (this.currentItem && (keyTriggeredReset || pointerTriggeredReset)) {
       this.currentItem = null
       return true
     }
     return false
   }
+
   /**
    * A callback for {@link ButtonInputMode.queryButtons} where buttons are added for each active
    * action that has {@link WizardAction.buttonOptions}.
@@ -529,6 +584,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
         }
       }
     }
+
     // place all auto-placed buttons in a row
     this.addAutoPlacedButtons(
       autoPlacedActions.map((action) => action.buttonOptions),
@@ -541,6 +597,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       (index) => autoPlacedActions[index].shortcuts,
       evt
     )
+
     // if pickers are active for an action, add buttons for those pickers
     if (this.activePickersAction) {
       // calculate layout of the main button to place picker buttons relative to it
@@ -568,6 +625,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       )
     }
   }
+
   /**
    * Adds the picker buttons for action to the {@link QueryButtonsEvent}.
    * @param action the action to add buttons for.
@@ -598,6 +656,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       evt
     )
   }
+
   /**
    * Hides picker buttons and resolves the promise that was returned by {@link showPickerSelection}.
    * @param success `true` if a picker button was selected, or `false` if the picker
@@ -613,6 +672,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       resolve(success)
     }
   }
+
   /**
    * Add button for the action.
    * @param action The action to the button for.
@@ -634,6 +694,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       })
     }
   }
+
   /**
    * Returns a {@link ButtonActionListener} that either {@link togglePickerButtons toggles the picker buttons}
    * if the action has those or just calls the {@link createDefaultButtonHandler default action} handler.
@@ -646,6 +707,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       ? (_) => this.togglePickerButtons(action)
       : this.createDefaultButtonHandler(action)
   }
+
   /**
    * Returns a {@link ButtonActionListener} that calls {@link handleAction} for the given action.
    * @param action The action to create the button handling for.
@@ -659,6 +721,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
         this.parentInputModeContext.canvasComponent.lastInputEvent
       )
   }
+
   /**
    * Adds buttons for all button options and a common background if necessary.
    * @param options The button options used to create the buttons.
@@ -684,6 +747,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     // use the default button size
     const defaultButtonSize = this.buttonMode.buttonSize
     const buttonCount = options.length
+
     // calculate: - number of rows and columns
     let colCount
     // - accumulated heights (pickerLayout == 'column') or widths (pickerLayout == 'rows') of the buttons
@@ -716,6 +780,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       bgSize = new Size(sizes[sizes.length - 1] + marginBothSides, maxHeight + marginBothSides)
     } else {
       // case PickerLayout.Column
+
       colCount = 1
       let maxWidth = 0
       options.forEach((value, index) => {
@@ -727,6 +792,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       })
       bgSize = new Size(maxWidth + marginBothSides, sizes[sizes.length - 1] + marginBothSides)
     }
+
     // if no picker button has its own layout parameter set, add a common background 'button'
     if (options.every((opt) => !opt.layout && !opt.layoutFactory)) {
       // add background button
@@ -738,6 +804,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
         ignoreFocus: true
       })
     }
+
     // add a button for each ButtonOptions configuration
     options.forEach((options, index) => {
       let buttonLayout
@@ -767,6 +834,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       onButtonCreated(button, index, colCount)
     })
   }
+
   /**
    * Stores the button in the pickerButtons array for later use.
    * @param button The button to store.
@@ -782,6 +850,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     }
     this.pickerButtons[row][column] = button
   }
+
   /**
    * Returns the {@link ILabelModelParameter layout} used for a button considering its index and the
    * pickerLayout.
@@ -815,6 +884,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
         dy += index > 0 ? sizes[index - 1] : 0
       }
     }
+
     // calculate the layout relative to the top-left corner using the calculated offset
     return OffsetLabelModelWrapper.INSTANCE.createOffsetParameter(
       relativeLayout,
@@ -824,6 +894,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       Point.ORIGIN
     )
   }
+
   /**
    * Returns the default placement of a button for the given owner.
    * @param owner The owner to return the placement for.
@@ -835,6 +906,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       return GraphWizardInputMode.DEFAULT_NODE_BUTTON_LAYOUT
     }
   }
+
   /**
    * Toggles whether picker buttons are shown for the activePickersAction or another given action.
    *
@@ -848,6 +920,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     const hidePickers = this.pickerButtons
     // show new pickers only if action wasn't the activePickersAction or if there was no activePickersAction
     const showPickers = (action && action != this.activePickersAction) || !this.activePickersAction
+
     if (hidePickers) {
       const pickerButtonWasFocused =
         this.pickerButtons &&
@@ -865,6 +938,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
         this.buttonMode.focusedButton = newFocusedAction.button
       }
     }
+
     if (showPickers) {
       let newActivePickersAction = action ? action : null
       if (!newActivePickersAction && this.buttonMode.focusedButton) {
@@ -879,6 +953,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
         this.cleanupActiveAction()
         this.activePickersAction = newActivePickersAction
         this.updateButtons()
+
         if (this.pickerButtons) {
           const mainTag = this.activePickersAction.button.tag
           this.buttonMode.focusedButton = this.findPickerButtonToFocus(mainTag)
@@ -888,12 +963,14 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       }
     }
   }
+
   findPickerButtonToFocus(mainTag) {
     const foundButton = this.pickerButtons
       .flatMap((row) => row)
       .find((button) => button.tag === mainTag)
     return foundButton ?? this.pickerButtons[0][0]
   }
+
   /**
    * @param context - the context to install this mode into
    * @param controller - The {@link InputModeBase.controller} for this mode.
@@ -915,6 +992,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       canvas.addEventListener('current-item-changed', this._itemChangedHandler)
     }
   }
+
   /**
    * @param context - The context to remove this mode from. This is the same instance that has been passed to {@link InputModeBase.install}.
    */
@@ -936,6 +1014,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     }
     this.clear()
   }
+
   /**
    * Clears the active actions.
    */
@@ -943,6 +1022,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     this.cleanupActiveAction()
     this._activeActions.clear()
   }
+
   /**
    * Calls {@link WizardAction.clear clear} for all active actions.
    */
@@ -952,6 +1032,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     this.pickerButtons = null
   }
 }
+
 /**
  * A {@link CreateEdgeInputMode} with keyboard support to finish the edge creation gesture on the
  * {@link GraphComponent.currentItem currentItem}.
@@ -960,6 +1041,7 @@ export class KeyboardCreateEdgeInputMode extends CreateEdgeInputMode {
   useCurrentItem
   keyListener
   pointerListener
+
   constructor() {
     super()
     this.useCurrentItem = false
@@ -974,6 +1056,7 @@ export class KeyboardCreateEdgeInputMode extends CreateEdgeInputMode {
     this.pointerListener = () => {
       this.useCurrentItem = false
     }
+
     const endPointMovedRecognizer = this.endPointMoveRecognizer
     this.endPointMoveRecognizer = (event, sender) => {
       if (this.useCurrentItem) {
@@ -992,6 +1075,7 @@ export class KeyboardCreateEdgeInputMode extends CreateEdgeInputMode {
     }
     this.showPortCandidates = ShowPortCandidates.END
   }
+
   /**
    * @param graph - The graph to create the edge for.
    * @param startPortCandidate - The candidate to use for the source end of the edge.
@@ -1010,11 +1094,13 @@ export class KeyboardCreateEdgeInputMode extends CreateEdgeInputMode {
     }
     return super.createEdge(graph, startPortCandidate, new PortCandidate(this.currentItem))
   }
+
   updateEndLocation(location) {
     if (!this.useCurrentItem) {
       super.updateEndLocation(location)
     }
   }
+
   /**
    * @param context - The context that this instance shall be installed into.
    * The same instance will be passed to this instance during {@link IInputMode.uninstall}.
@@ -1026,6 +1112,7 @@ export class KeyboardCreateEdgeInputMode extends CreateEdgeInputMode {
     context.canvasComponent.addEventListener('key-down', this.keyListener)
     context.canvasComponent.addEventListener('pointer-move', this.pointerListener)
   }
+
   /**
    * @param context - The context to deregister from. This is the same instance
    * that had been passed to {@link IInputMode.install} during installation.
@@ -1035,10 +1122,12 @@ export class KeyboardCreateEdgeInputMode extends CreateEdgeInputMode {
     context.canvasComponent.removeEventListener('pointer-move', this.pointerListener)
     super.uninstall(context)
   }
+
   get currentItem() {
     return this.parentInputModeContext.canvasComponent.currentItem
   }
 }
+
 /**
  * Custom {@link EventArgs} that are dispatched when an interactive edge creation is cancelled or
  * finished.
@@ -1046,6 +1135,7 @@ export class KeyboardCreateEdgeInputMode extends CreateEdgeInputMode {
 export class WizardEventArgs extends EventArgs {
   _type
   _originalEvent
+
   /**
    * Creates a new event args instance.
    * @param type The type of the event.
@@ -1056,12 +1146,14 @@ export class WizardEventArgs extends EventArgs {
     this._type = type
     this._originalEvent = originalEvent
   }
+
   /**
    * The type of the event.
    */
   get type() {
     return this._type
   }
+
   /**
    * The original event that triggered this event.
    */
@@ -1069,11 +1161,13 @@ export class WizardEventArgs extends EventArgs {
     return this._originalEvent
   }
 }
+
 /**
  * A label style that adds the __container-drop-shadow__ style class to the {@link SVGElement} of the created visual.
  */
 class DropShadowLabelStyle extends LabelStyleBase {
   labelStyle = new LabelStyle({ backgroundFill: Color.WHITE_SMOKE })
+
   createVisual(context, label) {
     const visual = this.labelStyle.renderer
       .getVisualCreator(label, this.labelStyle)
@@ -1081,6 +1175,7 @@ class DropShadowLabelStyle extends LabelStyleBase {
     visual.svgElement.setAttribute('class', 'container-drop-shadow')
     return visual
   }
+
   getPreferredSize(label) {
     throw this.labelStyle.renderer.getPreferredSize(label, this.labelStyle)
   }

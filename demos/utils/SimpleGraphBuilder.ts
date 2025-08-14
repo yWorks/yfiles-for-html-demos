@@ -3233,11 +3233,7 @@ class GraphBuilderHelper {
     }
     const edge = graph.createEdge(source, target, graph.edgeDefaults.getStyleInstance(), edgeObject)
     if (labelData != null) {
-      graph.addLabel({
-        owner: edge,
-        text: labelData.toString(),
-        tag: labelData
-      })
+      graph.addLabel({ owner: edge, text: labelData.toString(), tag: labelData })
     }
     return this.$onEdgeCreated(edge, edgeObject)
   }
@@ -3251,11 +3247,7 @@ class GraphBuilderHelper {
       groupObject
     )
     if (labelData != null) {
-      this.$graph.addLabel({
-        owner: groupNode,
-        text: labelData.toString(),
-        tag: labelData
-      })
+      this.$graph.addLabel({ owner: groupNode, text: labelData.toString(), tag: labelData })
     }
     return this.$onGroupCreated(groupNode, groupObject)
   }
@@ -3277,11 +3269,7 @@ class GraphBuilderHelper {
       )
 
       if (labelData != null) {
-        this.$graph.addLabel({
-          owner: node,
-          text: labelData.toString(),
-          tag: labelData
-        })
+        this.$graph.addLabel({ owner: node, text: labelData.toString(), tag: labelData })
       }
 
       return this.$onNodeCreated(node, nodeObject)

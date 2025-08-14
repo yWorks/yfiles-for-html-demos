@@ -57,12 +57,14 @@ import {
   yfiles
 } from '@yfiles/yfiles'
 import { YfilesCommon_3_0_XamlNS, YfilesCommonXamlNS } from './GraphMLCompatibility'
+
 /**
  * The usage of yfiles.lang.Enum here is only for GraphML compatibility, and shouldn't be needed
  * elsewhere. For enums in your own application, use either TypeScript enums or a simple keyed
  * object with constants.
  */
 const Enum = yfiles.lang.Enum
+
 export function configureRenamings(callback) {
   const nameMappings = new Map()
   nameMappings.set(
@@ -83,6 +85,7 @@ export function configureRenamings(callback) {
     callback(new XmlName(key, YfilesCommon_3_0_XamlNS), new XmlName(value, YfilesCommonXamlNS))
   )
 }
+
 export function configureExtensions(callback) {
   createMetadata(
     EdgePathLabelModelExtension,
@@ -129,154 +132,82 @@ export function configureExtensions(callback) {
   createMetadata(
     NinePositionsEdgeLabelModelExtension,
     {
-      properties: {
-        Angle: { default: 0, type: Number },
-        Distance: { default: 10.0, type: Number }
-      }
+      properties: { Angle: { default: 0, type: Number }, Distance: { default: 10.0, type: Number } }
     },
     callback
   )
   createMetadata(
     ExteriorLabelModelExtension,
-    {
-      properties: {
-        Insets: { type: Insets }
-      }
-    },
+    { properties: { Insets: { type: Insets } } },
     callback
   )
   createMetadata(
     ExteriorLabelModelParameterExtension,
     {
-      properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Position: {
-          type: ExteriorLabelModelPosition
-        }
-      }
+      properties: { Model: { type: ILabelModel }, Position: { type: ExteriorLabelModelPosition } }
     },
     callback
   )
   createMetadata(
     InteriorLabelModelExtension,
-    {
-      properties: {
-        Insets: { type: Insets }
-      }
-    },
+    { properties: { Insets: { type: Insets } } },
     callback
   )
   createMetadata(
     InteriorLabelModelParameterExtension,
     {
-      properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Position: {
-          type: InteriorLabelModelPosition
-        }
-      }
+      properties: { Model: { type: ILabelModel }, Position: { type: InteriorLabelModelPosition } }
     },
     callback
   )
   createMetadata(
     InteriorStretchLabelModelExtension,
-    {
-      properties: {
-        Insets: { type: Insets }
-      }
-    },
+    { properties: { Insets: { type: Insets } } },
     callback
   )
   createMetadata(
     InteriorStretchLabelModelParameterExtension,
     {
       properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Position: {
-          type: InteriorStretchLabelModelPosition
-        }
+        Model: { type: ILabelModel },
+        Position: { type: InteriorStretchLabelModelPosition }
       }
     },
     callback
   )
   createMetadata(
     StripeLabelModelExtension,
-    {
-      properties: {
-        UseActualInsets: { type: Boolean },
-        Ratio: { type: Number }
-      }
-    },
+    { properties: { UseActualInsets: { type: Boolean }, Ratio: { type: Number } } },
     callback
   )
   createMetadata(
     StripeLabelModelParameterExtension,
-    {
-      properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Position: {
-          type: StripeLabelModelPosition
-        }
-      }
-    },
+    { properties: { Model: { type: ILabelModel }, Position: { type: StripeLabelModelPosition } } },
     callback
   )
   createMetadata(
     StretchStripeLabelModelExtension,
-    {
-      properties: {
-        UseActualInsets: { type: Boolean },
-        Insets: { type: Insets }
-      }
-    },
+    { properties: { UseActualInsets: { type: Boolean }, Insets: { type: Insets } } },
     callback
   )
   createMetadata(
     StretchStripeLabelModelParameterExtension,
     {
       properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Position: {
-          type: StretchStripeLabelModelPosition
-        }
+        Model: { type: ILabelModel },
+        Position: { type: StretchStripeLabelModelPosition }
       }
     },
     callback
   )
   createMetadata(
     CompositeLabelModelExtension,
-    {
-      properties: {
-        LabelModels: {
-          type: IList,
-          visibility: GraphMLMemberVisibility.CONTENT
-        }
-      }
-    },
+    { properties: { LabelModels: { type: IList, visibility: GraphMLMemberVisibility.CONTENT } } },
     callback
   )
   createMetadata(
     CompositeLabelModelParameterExtension,
-    {
-      properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Parameter: {
-          type: ILabelModelParameter
-        }
-      }
-    },
+    { properties: { Model: { type: ILabelModel }, Parameter: { type: ILabelModelParameter } } },
     callback
   )
   createMetadata(
@@ -284,10 +215,7 @@ export function configureExtensions(callback) {
     {
       contentProperty: 'Parameters',
       properties: {
-        Parameters: {
-          type: IList,
-          visibility: GraphMLMemberVisibility.CONTENT
-        },
+        Parameters: { type: IList, visibility: GraphMLMemberVisibility.CONTENT },
         Default: { type: Number }
       }
     },
@@ -295,28 +223,15 @@ export function configureExtensions(callback) {
   )
   createMetadata(
     GenericLabelModelParameterExtension,
-    {
-      properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Index: {
-          type: Number
-        }
-      }
-    },
+    { properties: { Model: { type: ILabelModel }, Index: { type: Number } } },
     callback
   )
   createMetadata(
     GenericLabelModelParameterPair,
     {
       properties: {
-        Parameter: {
-          type: ILabelModelParameter
-        },
-        Descriptor: {
-          type: LabelCandidateDescriptor
-        }
+        Parameter: { type: ILabelModelParameter },
+        Descriptor: { type: LabelCandidateDescriptor }
       }
     },
     callback
@@ -325,44 +240,23 @@ export function configureExtensions(callback) {
     LabelCandidateDescriptor,
     {
       properties: {
-        Profit: {
-          type: Number
-        },
-        EdgeOverlapPenalty: {
-          type: Number
-        },
-        NodeOverlapPenalty: {
-          type: Number
-        },
-        ExternalCandidate: {
-          type: Boolean
-        }
+        Profit: { type: Number },
+        EdgeOverlapPenalty: { type: Number },
+        NodeOverlapPenalty: { type: Number },
+        ExternalCandidate: { type: Boolean }
       }
     },
     callback
   )
   createMetadata(
     SandwichLabelModelExtension,
-    {
-      properties: {
-        YOffset: {
-          type: Number
-        }
-      }
-    },
+    { properties: { YOffset: { type: Number } } },
     callback
   )
   createMetadata(
     SandwichParameterExtension,
     {
-      properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Position: {
-          type: ExteriorLabelModelPosition
-        }
-      }
+      properties: { Model: { type: ILabelModel }, Position: { type: ExteriorLabelModelPosition } }
     },
     callback
   )
@@ -370,9 +264,7 @@ export function configureExtensions(callback) {
     DescriptorWrapperLabelModelExtension,
     {
       properties: {
-        InnerModel: {
-          type: ILabelModel
-        },
+        InnerModel: { type: ILabelModel },
         Descriptor: { type: LabelCandidateDescriptor }
       }
     },
@@ -380,36 +272,24 @@ export function configureExtensions(callback) {
   )
   createMetadata(
     DescriptorWrapperLabelModelParameterExtension,
-    {
-      properties: {
-        Model: {
-          type: ILabelModel
-        },
-        Parameter: {
-          type: ILabelModelParameter
-        }
-      }
-    },
+    { properties: { Model: { type: ILabelModel }, Parameter: { type: ILabelModelParameter } } },
     callback
   )
   createMetadata(
     GroupNodeLabelModelExtension,
-    {
-      properties: {
-        ConsiderTabInset: {
-          type: Boolean
-        }
-      }
-    },
+    { properties: { ConsiderTabInset: { type: Boolean } } },
     callback
   )
 }
+
 function createMetadata(type, metadata, callback, ns = YfilesCommon_3_0_XamlNS) {
   metadata.name = type.name
   metadata.xmlNamespace = ns
   callback(type, metadata)
 }
+
 // region Compatibility classes for ExteriorLabelModel
+
 const ExteriorLabelModelPosition = Enum('ExteriorLabelModelPosition', {
   North: ExteriorNodeLabelModelPosition.TOP,
   East: ExteriorNodeLabelModelPosition.RIGHT,
@@ -420,21 +300,28 @@ const ExteriorLabelModelPosition = Enum('ExteriorLabelModelPosition', {
   NorthWest: ExteriorNodeLabelModelPosition.TOP_LEFT,
   SouthWest: ExteriorNodeLabelModelPosition.BOTTOM_LEFT
 })
+
 class ExteriorLabelModelParameterExtension extends MarkupExtension {
   _Position = ExteriorLabelModelPosition.North
+
   get Position() {
     return this._Position
   }
+
   set Position(value) {
     this._Position = value
   }
+
   _Model = null
+
   get Model() {
     return this._Model
   }
+
   set Model(value) {
     this._Model = value
   }
+
   provideValue() {
     let model = this._Model
     if (model === null) {
@@ -443,6 +330,7 @@ class ExteriorLabelModelParameterExtension extends MarkupExtension {
     return model.createParameter(this._Position.valueOf())
   }
 }
+
 class ExteriorLabelModelExtension extends MarkupExtension {
   static _northWest
   static _north
@@ -453,9 +341,7 @@ class ExteriorLabelModelExtension extends MarkupExtension {
   static _south
   static _southEast
   static {
-    const umModel = new ExteriorNodeLabelModel({
-      margins: new Insets(0)
-    })
+    const umModel = new ExteriorNodeLabelModel({ margins: new Insets(0) })
     ExteriorLabelModelExtension._northWest = umModel.createParameter(
       ExteriorNodeLabelModelPosition.TOP_LEFT
     )
@@ -477,42 +363,57 @@ class ExteriorLabelModelExtension extends MarkupExtension {
       ExteriorNodeLabelModelPosition.BOTTOM_RIGHT
     )
   }
+
   static get North() {
     return ExteriorLabelModelExtension._north
   }
+
   static get West() {
     return ExteriorLabelModelExtension._west
   }
+
   static get East() {
     return ExteriorLabelModelExtension._east
   }
+
   static get South() {
     return ExteriorLabelModelExtension._south
   }
+
   static get NorthWest() {
     return ExteriorLabelModelExtension._northWest
   }
+
   static get NorthEast() {
     return ExteriorLabelModelExtension._northEast
   }
+
   static get SouthEast() {
     return ExteriorLabelModelExtension._southEast
   }
+
   static get SouthWest() {
     return ExteriorLabelModelExtension._southWest
   }
+
   _Insets = new Insets(0)
+
   get Insets() {
     return this._Insets
   }
+
   set Insets(value) {
     this._Insets = value
   }
+
   provideValue() {
     return new ExteriorNodeLabelModel({ margins: this.Insets })
   }
 }
+
+
 // region Compatibility classes for InteriorLabelModel
+
 const InteriorLabelModelPosition = Enum('InteriorLabelModelPosition', {
   North: InteriorNodeLabelModelPosition.TOP,
   East: InteriorNodeLabelModelPosition.RIGHT,
@@ -524,21 +425,28 @@ const InteriorLabelModelPosition = Enum('InteriorLabelModelPosition', {
   SouthWest: InteriorNodeLabelModelPosition.BOTTOM_LEFT,
   Center: InteriorNodeLabelModelPosition.CENTER
 })
+
 class InteriorLabelModelParameterExtension extends MarkupExtension {
   _Position = InteriorLabelModelPosition.North
+
   get Position() {
     return this._Position
   }
+
   set Position(value) {
     this._Position = value
   }
+
   _Model = null
+
   get Model() {
     return this._Model
   }
+
   set Model(value) {
     this._Model = value
   }
+
   provideValue() {
     let model = this._Model
     if (model === null) {
@@ -547,6 +455,7 @@ class InteriorLabelModelParameterExtension extends MarkupExtension {
     return model.createParameter(this._Position.valueOf())
   }
 }
+
 class InteriorLabelModelExtension extends MarkupExtension {
   static _northWest
   static _north
@@ -557,10 +466,9 @@ class InteriorLabelModelExtension extends MarkupExtension {
   static _southWest
   static _south
   static _southEast
+
   static {
-    const umModel = new InteriorNodeLabelModel({
-      padding: new Insets(0)
-    })
+    const umModel = new InteriorNodeLabelModel({ padding: new Insets(0) })
     InteriorLabelModelExtension._northWest = umModel.createParameter(
       InteriorNodeLabelModelPosition.TOP_LEFT
     )
@@ -585,45 +493,61 @@ class InteriorLabelModelExtension extends MarkupExtension {
       InteriorNodeLabelModelPosition.BOTTOM_RIGHT
     )
   }
+
   static get North() {
     return InteriorLabelModelExtension._north
   }
+
   static get West() {
     return InteriorLabelModelExtension._west
   }
+
   static get East() {
     return InteriorLabelModelExtension._east
   }
+
   static get South() {
     return InteriorLabelModelExtension._south
   }
+
   static get NorthWest() {
     return InteriorLabelModelExtension._northWest
   }
+
   static get NorthEast() {
     return InteriorLabelModelExtension._northEast
   }
+
   static get SouthEast() {
     return InteriorLabelModelExtension._southEast
   }
+
   static get SouthWest() {
     return InteriorLabelModelExtension._southWest
   }
+
   static get Center() {
     return InteriorLabelModelExtension._center
   }
+
   _Insets = new Insets(0)
+
   get Insets() {
     return this._Insets
   }
+
   set Insets(value) {
     this._Insets = value
   }
+
   provideValue() {
     return new InteriorNodeLabelModel({ padding: this.Insets })
   }
 }
+
+
 // region Compatibility classes for InteriorStretchLabelModel
+
 const InteriorStretchLabelModelPosition = Enum('InteriorStretchLabelModelPosition', {
   North: StretchNodeLabelModelPosition.TOP,
   East: StretchNodeLabelModelPosition.RIGHT,
@@ -633,21 +557,28 @@ const InteriorStretchLabelModelPosition = Enum('InteriorStretchLabelModelPositio
   CenterHorizontal: StretchNodeLabelModelPosition.CENTER_HORIZONTAL,
   CenterVertical: StretchNodeLabelModelPosition.CENTER_VERTICAL
 })
+
 class InteriorStretchLabelModelParameterExtension extends MarkupExtension {
   _Position = InteriorStretchLabelModelPosition.North
+
   get Position() {
     return this._Position
   }
+
   set Position(value) {
     this._Position = value
   }
+
   _Model = null
+
   get Model() {
     return this._Model
   }
+
   set Model(value) {
     this._Model = value
   }
+
   provideValue() {
     let model = this._Model
     if (model === null) {
@@ -656,6 +587,7 @@ class InteriorStretchLabelModelParameterExtension extends MarkupExtension {
     return model.createParameter(this._Position.valueOf())
   }
 }
+
 class InteriorStretchLabelModelExtension extends MarkupExtension {
   static _north
   static _south
@@ -664,10 +596,9 @@ class InteriorStretchLabelModelExtension extends MarkupExtension {
   static _center
   static _centerHorizontal
   static _centerVertical
+
   static {
-    const umModel = new StretchNodeLabelModel({
-      padding: new Insets(0)
-    })
+    const umModel = new StretchNodeLabelModel({ padding: new Insets(0) })
     InteriorStretchLabelModelExtension._north = umModel.createParameter(
       StretchNodeLabelModelPosition.TOP
     )
@@ -690,39 +621,53 @@ class InteriorStretchLabelModelExtension extends MarkupExtension {
       StretchNodeLabelModelPosition.CENTER_VERTICAL
     )
   }
+
   static get North() {
     return InteriorStretchLabelModelExtension._north
   }
+
   static get West() {
     return InteriorStretchLabelModelExtension._west
   }
+
   static get East() {
     return InteriorStretchLabelModelExtension._east
   }
+
   static get South() {
     return InteriorStretchLabelModelExtension._south
   }
+
   static get CenterVertical() {
     return InteriorStretchLabelModelExtension._centerVertical
   }
+
   static get CenterHorizontal() {
     return InteriorStretchLabelModelExtension._centerHorizontal
   }
+
   static get Center() {
     return InteriorStretchLabelModelExtension._center
   }
+
   _Insets = new Insets(0)
+
   get Insets() {
     return this._Insets
   }
+
   set Insets(value) {
     this._Insets = value
   }
+
   provideValue() {
     return new StretchNodeLabelModel({ padding: this.Insets })
   }
 }
+
+
 // region Compatibility classes for StripeLabelModel
+
 const StripeLabelModelPosition = Enum('StripeLabelModelPosition', {
   //@ts-ignore
   North: yfiles.graph.StripeLabelModelPosition.TOP,
@@ -733,21 +678,28 @@ const StripeLabelModelPosition = Enum('StripeLabelModelPosition', {
   //@ts-ignore
   West: yfiles.graph.StripeLabelModelPosition.LEFT
 })
+
 class StripeLabelModelParameterExtension extends MarkupExtension {
   _Position = StripeLabelModelPosition.North
+
   get Position() {
     return this._Position
   }
+
   set Position(value) {
     this._Position = value
   }
+
   _Model = null
+
   get Model() {
     return this._Model
   }
+
   set Model(value) {
     this._Model = value
   }
+
   provideValue() {
     let model = this._Model
     if (model === null) {
@@ -756,38 +708,52 @@ class StripeLabelModelParameterExtension extends MarkupExtension {
     return model.createParameter(this._Position.valueOf())
   }
 }
+
 class StripeLabelModelExtension extends MarkupExtension {
   static get North() {
     return StripeLabelModel.TOP
   }
+
   static get West() {
     return StripeLabelModel.LEFT
   }
+
   static get East() {
     return StripeLabelModel.RIGHT
   }
+
   static get South() {
     return StripeLabelModel.BOTTOM
   }
+
   _UseActualInsets = false
+
   get UseActualInsets() {
     return this._UseActualInsets
   }
+
   set UseActualInsets(value) {
     this._UseActualInsets = value
   }
+
   _Ratio = 0.5
+
   get Ratio() {
     return this._Ratio
   }
+
   set Ratio(value) {
     this._Ratio = value
   }
+
   provideValue() {
     return new StripeLabelModel({ useTotalPadding: this.UseActualInsets, ratio: this.Ratio })
   }
 }
+
+
 // region Compatibility classes for StretchStripeLabelModel
+
 const StretchStripeLabelModelPosition = Enum('StretchStripeLabelModelPosition', {
   //@ts-ignore
   North: yfiles.graph.StretchStripeLabelModelPosition.TOP,
@@ -798,21 +764,28 @@ const StretchStripeLabelModelPosition = Enum('StretchStripeLabelModelPosition', 
   //@ts-ignore
   West: yfiles.graph.StretchStripeLabelModelPosition.LEFT
 })
+
 class StretchStripeLabelModelParameterExtension extends MarkupExtension {
   _Position = StretchStripeLabelModelPosition.North
+
   get Position() {
     return this._Position
   }
+
   set Position(value) {
     this._Position = value
   }
+
   _Model = null
+
   get Model() {
     return this._Model
   }
+
   set Model(value) {
     this._Model = value
   }
+
   provideValue() {
     let model = this._Model
     if (model === null) {
@@ -821,33 +794,44 @@ class StretchStripeLabelModelParameterExtension extends MarkupExtension {
     return model.createParameter(this._Position.valueOf())
   }
 }
+
 class StretchStripeLabelModelExtension extends MarkupExtension {
   static get North() {
     return StretchStripeLabelModel.TOP
   }
+
   static get West() {
     return StretchStripeLabelModel.LEFT
   }
+
   static get East() {
     return StretchStripeLabelModel.RIGHT
   }
+
   static get South() {
     return StretchStripeLabelModel.BOTTOM
   }
+
   _UseActualInsets = false
+
   get UseActualInsets() {
     return this._UseActualInsets
   }
+
   set UseActualInsets(value) {
     this._UseActualInsets = value
   }
+
   _Insets = new Insets(0)
+
   get Insets() {
     return this._Insets
   }
+
   set Insets(value) {
     this._Insets = value
   }
+
   provideValue() {
     return new StretchStripeLabelModel({
       useTotalPadding: this.UseActualInsets,
@@ -855,22 +839,31 @@ class StretchStripeLabelModelExtension extends MarkupExtension {
     })
   }
 }
+
+
 // region Compatibility classes for CompositeLabelModel
+
 class CompositeLabelModelParameterExtension extends MarkupExtension {
   _Parameter = null
+
   get Parameter() {
     return this._Parameter
   }
+
   set Parameter(value) {
     this._Parameter = value
   }
+
   _Model = null
+
   get Model() {
     return this._Model
   }
+
   set Model(value) {
     this._Model = value
   }
+
   provideValue(serviceProvider) {
     //@ts-ignore
     const ext = new yfiles.graphml.CompositeLabelModelParameterExtension()
@@ -879,92 +872,126 @@ class CompositeLabelModelParameterExtension extends MarkupExtension {
     return ext.provideValue(serviceProvider)
   }
 }
+
 class CompositeLabelModelExtension extends MarkupExtension {
   _LabelModels = new List()
+
   get LabelModels() {
     return this._LabelModels
   }
+
   provideValue() {
     const compositeLabelModel = new CompositeLabelModel()
     this._LabelModels.forEach((m) => compositeLabelModel.addModel(m))
     return compositeLabelModel
   }
 }
+
+
 // region Compatibility classes for GenericLabelModel
+
 class GenericLabelModelParameterPair extends BaseClass() {
   _Parameter = null
+
   get Parameter() {
     return this._Parameter
   }
+
   set Parameter(value) {
     this._Parameter = value
   }
+
   _Descriptor = null
+
   get Descriptor() {
     return this._Descriptor
   }
+
   set Descriptor(value) {
     this._Descriptor = value
   }
 }
+
 class LabelCandidateDescriptor extends BaseClass() {
   static _externalDescriptor
   static _internalDescriptor
+
   static get ExternalDescriptor() {
     return LabelCandidateDescriptor._externalDescriptor
   }
+
   static get InternalDescriptor() {
     return LabelCandidateDescriptor._internalDescriptor
   }
+
   static {
     LabelCandidateDescriptor._externalDescriptor = new LabelCandidateDescriptor()
     LabelCandidateDescriptor._externalDescriptor.ExternalCandidate = true
     LabelCandidateDescriptor._internalDescriptor = new LabelCandidateDescriptor()
   }
+
   _ExternalCandidate = false
+
   get ExternalCandidate() {
     return this._ExternalCandidate
   }
+
   set ExternalCandidate(value) {
     this._ExternalCandidate = value
   }
+
   _EdgeOverlapPenalty = 1.0
+
   get EdgeOverlapPenalty() {
     return this._EdgeOverlapPenalty
   }
+
   set EdgeOverlapPenalty(value) {
     this._EdgeOverlapPenalty = value
   }
+
   _NodeOverlapPenalty = 1.0
+
   get NodeOverlapPenalty() {
     return this._NodeOverlapPenalty
   }
+
   set NodeOverlapPenalty(value) {
     this._NodeOverlapPenalty = value
   }
+
   _Profit = 1.0
+
   get Profit() {
     return this._Profit
   }
+
   set Profit(value) {
     this._Profit = value
   }
 }
+
 class GenericLabelModelParameterExtension extends MarkupExtension {
   _Index = 0
+
   get Index() {
     return this._Index
   }
+
   set Index(value) {
     this._Index = value
   }
+
   _Model = null
+
   get Model() {
     return this._Model
   }
+
   set Model(value) {
     this._Model = value
   }
+
   provideValue() {
     if (!this._Model) {
       return GenericLabelModelExtension.absolute
@@ -972,30 +999,38 @@ class GenericLabelModelParameterExtension extends MarkupExtension {
     return this._Model.parameters.at(this._Index)
   }
 }
+
 class GenericLabelModelExtension extends MarkupExtension {
   static absolute = FreeLabelModel.INSTANCE.createAbsolute([0, 0])
+
   _Parameters = new List()
+
   get Parameters() {
     return this._Parameters
   }
+
   _Default = 0
+
   get Default() {
     return this._Default
   }
+
   set Default(value) {
     this._Default = value
   }
+
   provideValue() {
     const compositeLabelModel = new CompositeLabelModel()
     const dParam =
       this._Default >= this._Parameters.size || this._Default < 0
-        ? this._Parameters.first() ?? GenericLabelModelExtension.absolute
+        ? (this._Parameters.first() ?? GenericLabelModelExtension.absolute)
         : this._Parameters.at(this._Default)
     if (dParam instanceof GenericLabelModelParameterPair) {
       compositeLabelModel.addParameter(dParam.Parameter, dParam.Descriptor?.Profit ?? 1.0)
     } else {
       compositeLabelModel.addParameter(dParam)
     }
+
     this._Parameters.forEach((m) => {
       if (m !== dParam) {
         if (m instanceof GenericLabelModelParameterPair) {
@@ -1008,22 +1043,31 @@ class GenericLabelModelExtension extends MarkupExtension {
     return compositeLabelModel
   }
 }
+
+
 // region Compatibility classes for SandwichLabelModel
+
 class SandwichParameterExtension extends MarkupExtension {
   _Position = ExteriorLabelModelPosition.North
+
   get Position() {
     return this._Position
   }
+
   set Position(value) {
     this._Position = value
   }
+
   _Model = null
+
   get Model() {
     return this._Model
   }
+
   set Model(value) {
     this._Model = value
   }
+
   provideValue() {
     let model = this._Model
     if (model === null) {
@@ -1032,9 +1076,11 @@ class SandwichParameterExtension extends MarkupExtension {
     return model.parameters.find((p) => p.wrappedParameter.position == this.Position)
   }
 }
+
 class SandwichLabelModelExtension extends MarkupExtension {
   static _north
   static _south
+
   static {
     const noMarginsFactory = new ExteriorNodeLabelModel({ margins: new Insets(0) })
     const umModel = new CompositeLabelModel()
@@ -1045,19 +1091,25 @@ class SandwichLabelModelExtension extends MarkupExtension {
       noMarginsFactory.createParameter(ExteriorNodeLabelModelPosition.TOP)
     )
   }
+
   static get North() {
     return SandwichLabelModelExtension._north
   }
+
   static get South() {
     return SandwichLabelModelExtension._south
   }
+
   _YOffset = 0
+
   get YOffset() {
     return this._YOffset
   }
+
   set YOffset(value) {
     this._YOffset = value
   }
+
   provideValue() {
     const wrappedModel = new ExteriorNodeLabelModel({ margins: this._YOffset })
     const model = new CompositeLabelModel()
@@ -1066,65 +1118,91 @@ class SandwichLabelModelExtension extends MarkupExtension {
     return model
   }
 }
+
+
 // region Compatibility classes for DescriptorWrapperModel
+
 class DescriptorWrapperLabelModelParameterExtension extends MarkupExtension {
   _Parameter = null
+
   get Parameter() {
     return this._Parameter
   }
+
   set Parameter(value) {
     this._Parameter = value
   }
+
   _Model = null
+
   get Model() {
     return this._Model
   }
+
   set Model(value) {
     this._Model = value
   }
+
   provideValue() {
     return this._Parameter
   }
 }
+
 class DescriptorWrapperLabelModelExtension extends MarkupExtension {
   _InnerModel = null
+
   get InnerModel() {
     return this._InnerModel
   }
+
   set InnerModel(value) {
     this._InnerModel = value
   }
+
   _Descriptor = null
+
   get Descriptor() {
     return this._Descriptor
   }
+
   set Descriptor(value) {
     this._Descriptor = value
   }
+
   provideValue() {
     return this._InnerModel
   }
 }
+
+
 // region Compatibility classes for GroupNodeLabelModel
+
 class GroupNodeLabelModelExtension extends MarkupExtension {
   _ConsiderTabInset = true
+
   get ConsiderTabInset() {
     return this._ConsiderTabInset
   }
+
   set ConsiderTabInset(value) {
     this._ConsiderTabInset = value
   }
+
   provideValue() {
     return new GroupNodeLabelModel({ considerTabPadding: this._ConsiderTabInset })
   }
 }
+
+
 // region Compatibility class for rotating edge label models
+
 class EdgePathBasedLabelModelExtension extends MarkupExtension {
   angle
   autoRotationEnabled
   distance
   offset
   sideOfEdge
+
   constructor() {
     super()
     this.angle = 0
@@ -1133,37 +1211,48 @@ class EdgePathBasedLabelModelExtension extends MarkupExtension {
     this.offset = 0
     this.sideOfEdge = EdgeSides.ON_EDGE | EdgeSides.LEFT_OF_EDGE | EdgeSides.RIGHT_OF_EDGE
   }
+
   get Angle() {
     return this.angle
   }
+
   set Angle(value) {
     this.angle = value
   }
+
   get AutoRotationEnabled() {
     return this.autoRotationEnabled
   }
+
   set AutoRotationEnabled(value) {
     this.autoRotationEnabled = value
   }
+
   get Distance() {
     return this.distance
   }
+
   set Distance(value) {
     this.distance = value
   }
+
   get Offset() {
     return this.offset
   }
+
   set Offset(value) {
     this.offset = value
   }
+
   get SideOfEdge() {
     return this.sideOfEdge
   }
+
   set SideOfEdge(value) {
     this.sideOfEdge = value
   }
 }
+
 class EdgePathLabelModelExtension extends EdgePathBasedLabelModelExtension {
   provideValue(serviceProvider) {
     const _autoRotationEnabled = this.AutoRotationEnabled
@@ -1176,6 +1265,7 @@ class EdgePathLabelModelExtension extends EdgePathBasedLabelModelExtension {
     })
   }
 }
+
 class EdgeSegmentLabelModelExtension extends EdgePathBasedLabelModelExtension {
   provideValue(serviceProvider) {
     const _autoRotationEnabled = this.AutoRotationEnabled
@@ -1188,26 +1278,33 @@ class EdgeSegmentLabelModelExtension extends EdgePathBasedLabelModelExtension {
     })
   }
 }
+
 class SmartEdgeLabelModelExtension extends MarkupExtension {
   angle
   autoRotation
+
   constructor() {
     super()
     this.angle = 0
     this.autoRotation = true
   }
+
   get Angle() {
     return this.angle
   }
+
   set Angle(value) {
     this.angle = value
   }
+
   get AutoRotation() {
     return this.autoRotation
   }
+
   set AutoRotation(value) {
     this.autoRotation = value
   }
+
   provideValue(serviceProvider) {
     const _autoRotation = this.AutoRotation
     return new SmartEdgeLabelModel({
@@ -1216,30 +1313,35 @@ class SmartEdgeLabelModelExtension extends MarkupExtension {
     })
   }
 }
+
 class NinePositionsEdgeLabelModelExtension extends MarkupExtension {
   angle
   distance
+
   constructor() {
     super()
     this.angle = 0
     this.distance = 10.0
   }
+
   get Angle() {
     return this.angle
   }
+
   set Angle(value) {
     this.angle = value
   }
+
   get Distance() {
     return this.distance
   }
+
   set Distance(value) {
     this.distance = value
   }
+
   provideValue(serviceProvider) {
-    return new NinePositionsEdgeLabelModel({
-      angle: -this.Angle,
-      distance: this.Distance
-    })
+    return new NinePositionsEdgeLabelModel({ angle: -this.Angle, distance: this.Distance })
   }
 }
+

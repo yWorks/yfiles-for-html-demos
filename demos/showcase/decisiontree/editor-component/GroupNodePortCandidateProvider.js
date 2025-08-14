@@ -32,6 +32,7 @@ import {
   PortCandidate,
   PortCandidateProviderBase
 } from '@yfiles/yfiles'
+
 /**
  * A port candidate provider that returns just a single port candidate at the top of the node.
  */
@@ -41,6 +42,7 @@ export class GroupNodePortCandidateProvider extends PortCandidateProviderBase {
     super()
     this.node = node
   }
+
   /**
    * Returns a single port candidate at the top of the node.
    */
@@ -53,6 +55,7 @@ export class GroupNodePortCandidateProvider extends PortCandidateProviderBase {
       })
     ])
   }
+
   /**
    * Returns an empty list.
    */

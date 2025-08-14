@@ -70,10 +70,7 @@ export class RoutingEdgeStyle extends PathEdgeStyleBase {
   ) {
     super()
     this.sourceArrow = IArrow.NONE
-    this.targetArrow = new Arrow({
-      fill: stroke.fill,
-      type: ArrowType.TRIANGLE
-    })
+    this.targetArrow = new Arrow({ fill: stroke.fill, type: ArrowType.TRIANGLE })
   }
 
   protected getPath(edge: IEdge): GeneralPath | null {
@@ -84,7 +81,7 @@ export class RoutingEdgeStyle extends PathEdgeStyleBase {
     for (const item of points) {
       generalPath.lineTo(item)
     }
-    return PathEdgeStyleBase.cropPath(edge, generalPath, this.sourceArrow, this.targetArrow)
+    return generalPath
   }
 
   protected getSmoothingLength(edge: IEdge): number {

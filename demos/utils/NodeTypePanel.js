@@ -36,6 +36,7 @@ import {
   SimpleLabel,
   Size
 } from '@yfiles/yfiles'
+
 /**
  * This class adds an HTML panel on top of the contents of the GraphComponent that can display arbitrary information
  * about an {@link INode}. In order to not interfere with the positioning of the pop-up, HTML content should be added
@@ -49,6 +50,7 @@ export class NodeTypePanel {
   div
   dirty = false
   _currentItems = null
+
   /**
    * Creates a new instance of {@link NodeTypePanel}.
    */
@@ -57,12 +59,15 @@ export class NodeTypePanel {
     this.typeColors = typeColors
     this.colorSets = colorSets
     this.div = document.getElementById('node-type-panel')
+
     // make the popup invisible
     this.div.style.opacity = '0'
     this.div.style.display = 'none'
+
     this.registerListeners()
     this.registerClickListeners()
   }
+
   /**
    * Sets the {@link INode nodes} to display the type choice pop-up for.
    * Setting this property to a value other than `null` shows the pop-up.
@@ -79,12 +84,14 @@ export class NodeTypePanel {
       this.hide()
     }
   }
+
   /**
    * Returns all {@link INode}s to display the pop-up for.
    */
   get currentItems() {
     return this._currentItems
   }
+
   /**
    * Registers listeners for viewport, node bounds and visual tree changes to the {@link GraphComponent}.
    */
@@ -95,6 +102,7 @@ export class NodeTypePanel {
         this.dirty = true
       }
     })
+
     // Adds listener for updates of the visual tree
     this.graphComponent.addEventListener('updated-visual', () => {
       if (this.currentItems && this.currentItems.length > 0 && this.dirty) {
@@ -103,6 +111,7 @@ export class NodeTypePanel {
       }
     })
   }
+
   /**
    * Registers click listeners for all buttons of this {@link NodeTypePanel}.
    */
@@ -116,6 +125,7 @@ export class NodeTypePanel {
       }
     }
   }
+
   static findType(cssClasses) {
     if (cssClasses != null && cssClasses.length > 0) {
       for (const cssClass of cssClasses.split(' ')) {
@@ -126,6 +136,7 @@ export class NodeTypePanel {
     }
     return -1
   }
+
   /**
    * Registers a click listener to given element which will invoke the callback {@link nodeTypeChanged} and
    * {@link typeChanged} in case the type of the current item changed.
@@ -147,6 +158,7 @@ export class NodeTypePanel {
       }
     })
   }
+
   /**
    * Makes this pop-up visible.
    */
@@ -165,6 +177,7 @@ export class NodeTypePanel {
     }
     this.updateLocation()
   }
+
   /**
    * Hides this pop-up.
    */
@@ -172,6 +185,7 @@ export class NodeTypePanel {
     this.div.style.opacity = '0'
     this.div.style.display = 'none'
   }
+
   /**
    * Changes the location of this pop-up to the location calculated by the
    * {@link NodeTypePanel.labelModelParameter}.
@@ -183,6 +197,7 @@ export class NodeTypePanel {
     const width = this.div.offsetWidth
     const height = this.div.offsetHeight
     const zoom = this.graphComponent.zoom
+
     const labelModelParameter = new ExteriorNodeLabelModel({
       margins: [20, 0, 0, 0]
     }).createParameter(ExteriorNodeLabelModelPosition.TOP)
@@ -194,6 +209,7 @@ export class NodeTypePanel {
     )
     this.setLocation(anchorX, anchorY - height / zoom)
   }
+
   /**
    * Sets the location of this pop-up to the given world coordinates.
    */
@@ -203,15 +219,18 @@ export class NodeTypePanel {
     this.div.style.left = `${viewPoint.x}px`
     this.div.style.top = `${viewPoint.y}px`
   }
+
   /**
    * Callback for when the type changed for a specific node
    */
   nodeTypeChanged(item, newType, oldType) {}
+
   /**
    * Callback for when the type changed for some or all nodes in the graph.
    */
   typeChanged() {}
 }
+
 /**
  * Checks the given arrays for equality.
  */
@@ -225,6 +244,7 @@ function equals(nodes1, nodes2) {
   if (nodes1.length !== nodes2.length) {
     return false
   }
+
   nodes1.sort()
   nodes2.sort()
   for (let i = 0; i < nodes1.length; i++) {

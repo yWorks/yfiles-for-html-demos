@@ -28,14 +28,17 @@
  ***************************************************************************/
 import { MarkupLabelStyle, TextEditorInputMode } from '@yfiles/yfiles'
 import Quill from 'quill'
+
 // Quill snow theme
 import 'quill/dist/quill.snow.css'
+
 /**
  * A custom {@link TextEditorInputMode} which utilizes Quill to provide a WYSIWYG text editor that
  * allows to easily create labels with the {@link MarkupLabelStyle}.
  */
 export class RichTextEditorInputMode extends TextEditorInputMode {
   quill
+
   /**
    * Wire up Quill with the {@link TextEditorInputMode.editorText}.
    * @yjs:keep = root
@@ -43,6 +46,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
   get editorText() {
     return this.quill.getSemanticHTML()
   }
+
   /**
    * Wire up Quill with the {@link TextEditorInputMode.editorText}.
    * @yjs:keep = root
@@ -51,6 +55,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
     this.quill.setContents([])
     this.quill.root.innerHTML = value
   }
+
   /**
    * Creates a new instance of the {@link RichTextEditorInputMode} which utilizes Quill to provide a WYSIWYG text editor that
    * allows to easily create labels with the {@link MarkupLabelStyle}.
@@ -59,6 +64,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
   constructor() {
     const container = RichTextEditorInputMode.initializeQuillContainer()
     super(container)
+
     // initialize Quill in the editor container
     this.quill = new Quill(container.firstElementChild, {
       theme: 'snow',
@@ -93,6 +99,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
     // edits should not be discarded when the editor is closed due to focus lost
     this.autoCommitOnFocusLost = true
   }
+
   /**
    * Select the content in the Quill editor when the editor is opened.
    */
@@ -100,6 +107,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
     super.installTextBox()
     setTimeout(() => this.quill.setSelection(0, Number.POSITIVE_INFINITY), 0)
   }
+
   /**
    * Initializes an {@link HTMLDivElement} in which Quill can be
    */

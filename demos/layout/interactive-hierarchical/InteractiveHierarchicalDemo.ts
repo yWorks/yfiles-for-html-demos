@@ -83,9 +83,7 @@ async function run(): Promise<void> {
   buildGraph(graphComponent.graph, graphData)
 
   // calculate the initial layout
-  const hierarchicalLayout = new HierarchicalLayout({
-    groupLayeringPolicy: 'ignore-groups'
-  })
+  const hierarchicalLayout = new HierarchicalLayout({ groupLayeringPolicy: 'ignore-groups' })
   const layoutData = new HierarchicalLayoutData()
   graphComponent.graph.applyLayout(hierarchicalLayout, layoutData)
 
@@ -105,10 +103,7 @@ async function run(): Promise<void> {
 function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   const graphBuilder = new GraphBuilder(graph)
 
-  graphBuilder.createNodesSource({
-    data: graphData.nodeList,
-    id: (item) => item.id
-  })
+  graphBuilder.createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
@@ -229,17 +224,12 @@ async function updateLayout() {
   const layout = new HierarchicalLayout({
     groupLayeringPolicy: 'ignore-groups',
     fromSketchMode: true,
-    core: {
-      fixedElementsLayerAssigner: new GivenLayersAssigner()
-    }
+    core: { fixedElementsLayerAssigner: new GivenLayersAssigner() }
   })
 
   const layoutData = new HierarchicalLayoutData({
     givenLayersIndices: layerMapper,
-    ports: {
-      sourcePortCandidates,
-      targetPortCandidates
-    },
+    ports: { sourcePortCandidates, targetPortCandidates },
     // now pass the incremental nodes to the layout algorithm
     incrementalNodes,
     // the same for edges

@@ -30,11 +30,7 @@ const YWorksOptimizerPlugin = require('@yworks/optimizer/webpack-plugin')
 
 module.exports = (config) => {
   if (config.mode === 'production') {
-    config.plugins.push(
-      new YWorksOptimizerPlugin({
-        blacklist: ['run', 'update', 'template']
-      })
-    )
+    config.plugins.push(new YWorksOptimizerPlugin({ blacklist: ['run', 'update', 'template'] }))
   }
 
   return config

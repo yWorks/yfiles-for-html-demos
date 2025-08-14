@@ -34,35 +34,45 @@ import {
   registerConverter
 } from './template-engine/template-engine'
 import { createSVG, TemplateContext, updateSVG } from './StringTemplateSupport'
+
 class LabelTemplateContext extends TemplateContext {
   style
+
   constructor(label, style) {
     super(label)
     this.style = style
   }
+
   get label() {
     return this.item
   }
+
   get width() {
     return this.label.layout.width
   }
+
   get height() {
     return this.label.layout.height
   }
+
   get labelText() {
     return this.label.text
   }
+
   get isUpsideDown() {
     return this.label.layout.upY > 0
   }
+
   get isFlipped() {
     return this.isUpsideDown && this.style.autoFlip
   }
+
   // noinspection JSUnusedGlobalSymbols
   get styleTag() {
     return this.style.tag
   }
 }
+
 export class StringTemplateLabelStyle extends LabelStyleBase {
   static CONVERTERS = converters
   tag
@@ -72,6 +82,7 @@ export class StringTemplateLabelStyle extends LabelStyleBase {
   svgContent
   autoFlip
   renderFunction
+
   constructor() {
     super()
     const arg = arguments[0]
@@ -92,6 +103,7 @@ export class StringTemplateLabelStyle extends LabelStyleBase {
       this.preferredSize = options.preferredSize ? Size.from(options.preferredSize) : Size.EMPTY
     }
   }
+
   /**
    * This mimics the old yFiles 2.x API
    * Registers a global converter.
@@ -101,6 +113,7 @@ export class StringTemplateLabelStyle extends LabelStyleBase {
   static registerConverter(name, converter) {
     registerConverter(name, converter)
   }
+
   /**
    * This mimics the old yFiles 2.x API
    * @param obj
@@ -109,6 +122,7 @@ export class StringTemplateLabelStyle extends LabelStyleBase {
     makeObservable(obj)
     return obj
   }
+
   createVisual(renderContext, label) {
     return createSVG(
       label,
@@ -126,6 +140,7 @@ export class StringTemplateLabelStyle extends LabelStyleBase {
       }
     )
   }
+
   updateVisual(renderContext, oldVisual, label) {
     return updateSVG(oldVisual, label, renderContext, this.cssClass, (element) => {
       const transform = LabelStyleBase.createLayoutTransform(
@@ -136,6 +151,7 @@ export class StringTemplateLabelStyle extends LabelStyleBase {
       transform.applyTo(element)
     })
   }
+
   getPreferredSize(label) {
     return this.preferredSize
   }

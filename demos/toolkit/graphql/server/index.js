@@ -45,12 +45,6 @@ const schema = buildSchema(
 )
 const app = express()
 app.use(cors())
-app.use(
-  '/graphql',
-  createHandler({
-    schema: schema,
-    rootValue: root
-  })
-)
+app.use('/graphql', createHandler({ schema: schema, rootValue: root }))
 app.listen(port)
 console.log(`Running a GraphQL API server at localhost:${port}/graphql`)

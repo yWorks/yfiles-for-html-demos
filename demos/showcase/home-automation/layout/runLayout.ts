@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { createHierarchicalLayoutConfiguration } from './HierarchicLayout'
+import { createHierarchicalLayoutConfiguration } from './HierarchicalLayout'
 import { GraphComponent, LayoutExecutor } from '@yfiles/yfiles'
 
 export async function runLayout(graphComponent: GraphComponent): Promise<void> {

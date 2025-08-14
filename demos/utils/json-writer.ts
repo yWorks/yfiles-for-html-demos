@@ -128,9 +128,7 @@ function createNodeData(
   nodeIdProvider: NodeIdProvider,
   options: WriterOptions
 ): JSONNode {
-  const nodeData: JSONNode = {
-    id: nodeIdProvider(node)
-  }
+  const nodeData: JSONNode = { id: nodeIdProvider(node) }
   if (graph.isGroupNode(node)) {
     nodeData.isGroup = true
   }

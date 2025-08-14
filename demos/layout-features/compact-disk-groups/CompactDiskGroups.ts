@@ -61,10 +61,7 @@ export function createFeatureLayoutConfiguration(graph: IGraph): {
   // create a recursive layout that will apply the compact disk layout to each grouping
   // hierarchy independently
   const recursiveGroupLayout = new RecursiveGroupLayout({
-    coreLayout: new OrganicLayout({
-      deterministic: true,
-      defaultMinimumNodeDistance: 20
-    })
+    coreLayout: new OrganicLayout({ deterministic: true, defaultMinimumNodeDistance: 20 })
   })
 
   // use the recursive group layout data to define that the content of each group node should

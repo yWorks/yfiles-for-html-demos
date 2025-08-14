@@ -34,22 +34,30 @@ import {
   fitGraphBounds,
   initializeTutorialDefaults
 } from '../common'
+
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { CustomEdgeStyle } from './CustomEdgeStyle'
 import { initializeInlineGraphComponent } from '../../tutorial-style-implementation-node/common'
 import { CustomEdgeStyle as OldCustomEdgeStyle } from '../08-visibility/CustomEdgeStyle'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 createSampleGraphBounds(graphComponent.graph, new CustomEdgeStyle(2))
+
 graphComponent.renderTree.createElement(
   graphComponent.renderTree.inputModeGroup,
   new BoundsVisual()
 )
+
 // Inline old state
 const oldState = initializeInlineGraphComponent('#old-state')
 createSampleGraphBounds(oldState.graph, new OldCustomEdgeStyle(2))
+
 fitGraphBounds(oldState)
+
 oldState.renderTree.createElement(oldState.renderTree.inputModeGroup, new BoundsVisual())
+
 fitGraphBounds(graphComponent)
 finishLoading()

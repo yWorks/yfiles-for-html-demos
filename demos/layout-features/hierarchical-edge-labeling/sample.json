@@ -48,18 +48,8 @@
       "targetArrow": "stealth",
       "labels": [{ "text": "Upwards" }, { "text": "Downwards" }]
     },
-    {
-      "id": 5,
-      "source": 7,
-      "target": 8,
-      "targetArrow": "stealth"
-    },
-    {
-      "id": 6,
-      "source": 8,
-      "target": 9,
-      "targetArrow": "stealth"
-    },
+    { "id": 5, "source": 7, "target": 8, "targetArrow": "stealth" },
+    { "id": 6, "source": 8, "target": 9, "targetArrow": "stealth" },
     {
       "id": 7,
       "source": 7,

@@ -39,9 +39,12 @@ import { changeStateLabel, executeCreateChild, executeDeleteItem } from './inter
 import { HTMLPopupSupport } from './HTMLPopupSupport'
 import { isInLayout } from './mind-map-layout'
 import { getNodeData } from './data-types'
+
 // we use font-awesome icons for the contextual toolbar in this demo
 import '@fortawesome/fontawesome-free/js/all.min.js'
+
 let nodePopup
+
 /**
  * Creates and initializes the node popup.
  * This popup provides the means to:
@@ -52,21 +55,25 @@ let nodePopup
 export function initializeNodePopups(graphComponent) {
   // creates the HTML elements for the node popup
   createNodePopup(graphComponent)
+
   // creates the HTML panel that will display the node popup
   nodePopup = new HTMLPopupSupport(
     graphComponent,
     document.getElementById('contextualToolbar'),
     ExteriorNodeLabelModel.TOP
   )
+
   graphComponent.selection.addEventListener('item-added', (evt) => {
     hidePopup(graphComponent)
     if (evt.item instanceof INode) {
       showToolbar(evt.item)
     }
   })
+
   graphComponent.selection.addEventListener('item-removed', () => {
     hidePopup(graphComponent)
   })
+
   const inputMode = graphComponent.inputMode
   inputMode.addEventListener('item-right-clicked', (evt) => {
     if (!(evt.item instanceof INode)) {
@@ -74,11 +81,13 @@ export function initializeNodePopups(graphComponent) {
     }
     showToolbar(evt.item)
   })
+
   inputMode.moveSelectedItemsInputMode.addEventListener('drag-started', () =>
     hidePopup(graphComponent)
   )
   inputMode.addEventListener('canvas-clicked', () => hidePopup(graphComponent))
 }
+
 /**
  * Configures which buttons should be visible based on the clicked node and shows the toolbar.
  */
@@ -89,6 +98,7 @@ function showToolbar(node) {
   document.getElementById('node-removal-label').style.display = isRoot ? 'none' : 'inline-block'
   nodePopup.currentItem = node
 }
+
 /**
  * Creates the HTML elements for the node popup and registers the required listeners to the
  * button components.
@@ -96,12 +106,14 @@ function showToolbar(node) {
 function createNodePopup(graphComponent) {
   createColorPicker(graphComponent)
   createStateIconPicker(graphComponent)
+
   document
     .getElementById('state-icon-picker')
     .addEventListener('click', (evt) => showPickerContainer(graphComponent, evt.target))
   document
     .getElementById('color-picker')
     .addEventListener('click', (evt) => showPickerContainer(graphComponent, evt.target))
+
   document.getElementById('cross-edge-creation').addEventListener(
     'click',
     async (evt) => {
@@ -114,6 +126,7 @@ function createNodePopup(graphComponent) {
     },
     false
   )
+
   document.getElementById('child-creation').addEventListener(
     'click',
     async (evt) => {
@@ -142,6 +155,7 @@ function createNodePopup(graphComponent) {
     false
   )
 }
+
 /**
  * Starts interactive creation of a new cross-reference edge.
  */
@@ -153,6 +167,7 @@ async function startCrossReferenceEdgeCreation(sourceNode, graphComponent) {
   createEdgeInputMode.enabled = true
   await createEdgeInputMode.startEdgeCreation(portCandidate)
 }
+
 /**
  * Shows the color picker associated with the pressed button.
  * Before showing the color-picker, hides any previously opened picker and calculates the position
@@ -161,12 +176,15 @@ async function startCrossReferenceEdgeCreation(sourceNode, graphComponent) {
 export function showPickerContainer(graphComponent, toggleButton) {
   const pickerContainer = document.getElementById(toggleButton.getAttribute('data-container-id'))
   const show = toggleButton.checked
+
   if (!show) {
     hideAllPickerContainer()
     return
   }
+
   // hide all picker containers except for the one that should be toggled
   hideAllPickerContainer(toggleButton, pickerContainer)
+
   // position the container above/below the toggle button
   pickerContainer.style.display = 'block'
   const labelElement = document.querySelector(`label[for="${toggleButton.id}"]`)
@@ -187,11 +205,13 @@ export function showPickerContainer(graphComponent, toggleButton) {
     pickerContainer.style.top = `-${pickerClientRect.height + 12}px`
     pickerContainer.classList.remove('bottom')
   }
+
   // timeout the fading animation to make sure that the element is visible
   setTimeout(() => {
     pickerContainer.style.opacity = '1'
   }, 0)
 }
+
 /**
  * Resets the picker container.
  * Hides all pickers except the given one, if exists and unchecks all buttons.
@@ -204,6 +224,7 @@ export function hideAllPickerContainer(exceptToggleButton, exceptContainer) {
       btn.checked = false
     }
   }
+
   const pickerContainers = document.querySelectorAll('.picker-container')
   for (let i = 0; i < pickerContainers.length; i++) {
     const container = pickerContainers[i]
@@ -215,6 +236,7 @@ export function hideAllPickerContainer(exceptToggleButton, exceptContainer) {
     }
   }
 }
+
 /**
  * Creates the div container for the color picker.
  * Adds the necessary buttons and registers the listeners for the change of the color.
@@ -234,6 +256,7 @@ function createColorPicker(graphComponent) {
     '#f0c808',
     '#2d4d3a'
   ]
+
   const colorContainer = document.querySelector('#color-picker-colors')
   colorPickerColors.forEach((color) => {
     const colorButton = document.createElement('button')
@@ -254,6 +277,7 @@ function createColorPicker(graphComponent) {
     )
   })
 }
+
 /**
  * Creates the div container for the state-icon picker.
  * Adds the necessary buttons and registers the listeners for the change of the icon.
@@ -274,6 +298,7 @@ function createStateIconPicker(graphComponent) {
     })
   })
 }
+
 /**
  * Hides the popup element along with its components.
  */

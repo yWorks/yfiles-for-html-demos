@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { Size } from '@yfiles/yfiles'
+
 /**
  * Creates the visual appearance for data tables.
  */
@@ -44,6 +45,7 @@ export class DataTableRenderSupport {
       cssClass
     )
   }
+
   /**
    * Creates the HTML text for the data table
    * @param names the property names of the data
@@ -63,6 +65,7 @@ export class DataTableRenderSupport {
     tableText += '</table>'
     return tableText
   }
+
   /**
    * Converts the given string to title case.
    */
@@ -72,6 +75,7 @@ export class DataTableRenderSupport {
       (txt) => txt.substring(0, 1).toUpperCase() + txt.substring(1).toLowerCase()
     )
   }
+
   static calculateTableSize(userData, cssClass) {
     const div = document.createElement('div')
     div.style.setProperty('display', 'inline-block')
@@ -87,22 +91,26 @@ export class DataTableRenderSupport {
     return new Size(clientRect.width, clientRect.height)
   }
 }
+
 /**
  * Saves the data to speed up node/label style rendering.
  */
 export class RenderDataCache {
   data
   propertyNames
+
   constructor(data) {
     this.data = data
     this.propertyNames = this.data ? Object.keys(data) : []
   }
+
   /**
    * Returns whether this data has the same visual representation as the given other data.
    */
   hasSameVisual(other) {
     return this.data === other.data
   }
+
   equals(obj) {
     return !!obj && obj instanceof RenderDataCache && this.hasSameVisual(obj)
   }

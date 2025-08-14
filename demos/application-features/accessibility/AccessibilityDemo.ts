@@ -66,9 +66,7 @@ async function run(): Promise<void> {
   License.value = await fetchLicense()
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
-  graphComponent.inputMode = new GraphEditorInputMode({
-    focusableItems: 'all'
-  })
+  graphComponent.inputMode = new GraphEditorInputMode({ focusableItems: 'all' })
 
   const graph = graphComponent.graph
 

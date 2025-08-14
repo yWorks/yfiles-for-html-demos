@@ -72,9 +72,7 @@ export function serializeLabelModelParameter(
       angle: parameter.angle,
       ratio: parameter.ratio,
       distance: parameter.distance,
-      modelProperties: {
-        edgeRelativeAngle: parameter.model.edgeRelativeAngle
-      }
+      modelProperties: { edgeRelativeAngle: parameter.model.edgeRelativeAngle }
     }
   } else if (parameter instanceof EdgePathLabelModelParameter) {
     return {
@@ -133,10 +131,7 @@ export function serializeLabelModelParameter(
     return {
       model: 'NinePositionsEdgeLabelModel',
       position: parameter.position,
-      modelProperties: {
-        angle: parameter.model.angle,
-        distance: parameter.model.distance
-      }
+      modelProperties: { angle: parameter.model.angle, distance: parameter.model.distance }
     }
   } else if (parameter instanceof SmartEdgeLabelModelParameter) {
     return {
@@ -145,10 +140,7 @@ export function serializeLabelModelParameter(
       distance: parameter.distance,
       placeAlongEdge: parameter.placeAlongEdge,
       segment: parameter.segment,
-      modelProperties: {
-        angle: parameter.model.angle,
-        autoRotation: parameter.model.autoRotation
-      }
+      modelProperties: { angle: parameter.model.angle, autoRotation: parameter.model.autoRotation }
     }
   } else if (parameter instanceof FreeNodeLabelModelParameter) {
     return {

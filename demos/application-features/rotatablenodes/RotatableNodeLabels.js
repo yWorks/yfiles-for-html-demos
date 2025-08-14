@@ -45,7 +45,9 @@ import {
   MarkupExtension,
   OrientedRectangle
 } from '@yfiles/yfiles'
+
 import { RotatableNodeStyleDecorator } from './RotatableNodes'
+
 /**
  * A {@link ILabelModel} decorator for node labels that wraps another label model and considers the
  * {@link RotatableNodeStyleDecorator.angle rotation angle} of the label owner when a
@@ -68,6 +70,7 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
     this.wrapped = wrapped || FreeNodeLabelModel.INSTANCE
     this.useNodeRotation = useNodeRotation
   }
+
   /**
    * Returns the current geometry of the given label.
    */
@@ -83,25 +86,30 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
     ) {
       return orientedRectangle
     }
+
     const rotatedCenter = styleWrapper.getRotatedPoint(orientedRectangle.center, label.owner, true)
     const rotatedLayout = styleWrapper.getRotatedLayout(label.owner)
+
     const rectangle = new OrientedRectangle(orientedRectangle)
     rectangle.angle += rotatedLayout.getRadians()
     rectangle.setCenter(rotatedCenter)
     return rectangle
   }
+
   /**
    * Creates a wrapped parameter containing the given parameter.
    */
   createWrappingParameter(wrapped) {
     return new RotatableNodeLabelModelDecoratorParameter(wrapped, this)
   }
+
   /**
    * Provides a lookup context for the given combination of label and parameter.
    */
   getContext(label) {
     return new RotatableNodeLabelModelLookup(label, this)
   }
+
   /**
    * Returns the wrapped label model parameter
    */
@@ -110,6 +118,7 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
       ? parameter.wrapped
       : parameter
   }
+
   /**
    * Returns the wrapping style for nodes when {@link RotatableNodeStyleDecorator}
    * is used, null otherwise.
@@ -121,12 +130,14 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
     }
     return null
   }
+
   /**
    * Returns that this label model can be converted.
    */
   canConvert(_context, _value) {
     return true
   }
+
   /**
    * Converts this label model using the {@link RotatableNodeLabelModelDecoratorExtension}.
    */
@@ -138,6 +149,7 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
     return rotatableNodeLabelModelDecoratorExtension
   }
 }
+
 class RotatableNodeLabelModelLookup extends BaseClass(ILookup) {
   label
   model
@@ -146,6 +158,7 @@ class RotatableNodeLabelModelLookup extends BaseClass(ILookup) {
     this.label = label
     this.model = model
   }
+
   /**
    * Provides custom implementations of {@link ILabelModelParameterProvider} and
    * {@link ILabelModelParameterFinder} that consider the nodes' rotation.
@@ -170,6 +183,7 @@ class RotatableNodeLabelModelLookup extends BaseClass(ILookup) {
     return null
   }
 }
+
 /**
  * A {@link ILabelModelParameter} decorator for node labels using
  * {@link RotatableNodeLabelModelDecorator} to adjust the label rotation to the node rotation.
@@ -177,6 +191,7 @@ class RotatableNodeLabelModelLookup extends BaseClass(ILookup) {
 export class RotatableNodeLabelModelDecoratorParameter extends BaseClass(ILabelModelParameter) {
   _model
   _wrapped
+
   /**
    * Creates a new instance wrapping the given parameter.
    */
@@ -185,30 +200,37 @@ export class RotatableNodeLabelModelDecoratorParameter extends BaseClass(ILabelM
     this._wrapped = wrapped
     this._model = model
   }
+
   get wrapped() {
     return this._wrapped
   }
+
   set wrapped(value) {
     this._wrapped = value
   }
+
   get model() {
     return this._model
   }
+
   set model(value) {
     this._model = value
   }
+
   /**
    * Returns a copy of this label model parameter.
    */
   clone() {
     return new RotatableNodeLabelModelDecoratorParameter(this._wrapped, this._model)
   }
+
   /**
    * Returns that this label model parameter can be converted.
    */
   canConvert(_context, _value) {
     return true
   }
+
   /**
    * Converts this label model parameter using the {@link RotatableNodeLabelModelDecoratorParameterExtension}.
    */
@@ -220,6 +242,7 @@ export class RotatableNodeLabelModelDecoratorParameter extends BaseClass(ILabelM
     return rotatableNodeLabelModelDecoratorParameterExtension
   }
 }
+
 /**
  * Provides candidate parameters for rotated label models.
  */
@@ -236,6 +259,7 @@ class RotatedNodeLabelModelParameterProvider extends BaseClass(ILabelModelParame
     this.decorator = decorator
     this.wrappedProvider = wrappedProvider
   }
+
   /**
    * Returns a set of possible wrapped {@link ILabelModelParameter} instances.
    */
@@ -248,6 +272,7 @@ class RotatedNodeLabelModelParameterProvider extends BaseClass(ILabelModelParame
     return result
   }
 }
+
 /**
  * Finds the best {@link ILabelModelParameter} to approximate a specific rotated layout.
  */
@@ -270,6 +295,7 @@ class RotatedNodeLabelModelParameterFinder extends BaseClass(ILabelModelParamete
       throw new Error(`This model only supports node labels: ${label.text}`)
     }
   }
+
   /**
    * Finds the label model parameter that describes the given label layout best. Sometimes the
    * layout cannot be met exactly, then the nearest location is used.
@@ -281,38 +307,48 @@ class RotatedNodeLabelModelParameterFinder extends BaseClass(ILabelModelParamete
         this.wrappedFinder.findBestParameter(labelLayout)
       )
     }
+
     const node = this.label.owner
     const rotatedCenter = styleWrapper.getRotatedPoint(labelLayout.center, node, false)
     const rotatedLayout = styleWrapper.getRotatedLayout(node)
+
     const rectangle = new OrientedRectangle(labelLayout)
     rectangle.angle -= rotatedLayout.getRadians()
     rectangle.setCenter(rotatedCenter)
+
     return this.decorator.createWrappingParameter(this.wrappedFinder.findBestParameter(rectangle))
   }
 }
+
 /**
  * Markup extension that helps (de-)serializing a {@link RotatableNodeLabelModelDecorator).
  */
 export class RotatableNodeLabelModelDecoratorExtension extends MarkupExtension {
   _useNodeRotation = true
   _wrapped = null
+
   get useNodeRotation() {
     return this._useNodeRotation
   }
+
   set useNodeRotation(value) {
     this._useNodeRotation = value
   }
+
   get wrapped() {
     return this._wrapped
   }
+
   set wrapped(value) {
     this._wrapped = value
   }
+
   provideValue(_serviceProvider) {
     const labelModel = new RotatableNodeLabelModelDecorator(this._wrapped)
     labelModel.useNodeRotation = this.useNodeRotation
     return labelModel
   }
+
   static create(item) {
     const extension = new RotatableNodeLabelModelDecoratorExtension()
     extension.wrapped = item.wrapped
@@ -320,24 +356,30 @@ export class RotatableNodeLabelModelDecoratorExtension extends MarkupExtension {
     return extension
   }
 }
+
 /**
  * Markup extension that helps (de-)serializing a {@link RotatableNodeLabelModelDecoratorParameter}.
  */
 export class RotatableNodeLabelModelDecoratorParameterExtension extends MarkupExtension {
   _model = null
   _wrapped = null
+
   get model() {
     return this._model
   }
+
   set model(value) {
     this._model = value
   }
+
   get wrapped() {
     return this._wrapped
   }
+
   set wrapped(value) {
     this._wrapped = value
   }
+
   provideValue(serviceProvider) {
     const rotatableModel = this.model
     if (rotatableModel instanceof RotatableNodeLabelModelDecorator) {
@@ -345,6 +387,7 @@ export class RotatableNodeLabelModelDecoratorParameterExtension extends MarkupEx
     }
     return this.wrapped
   }
+
   static create(item) {
     const extension = new RotatableNodeLabelModelDecoratorParameterExtension()
     extension.model = item.model

@@ -34,6 +34,7 @@ import {
   Rect,
   Size
 } from '@yfiles/yfiles'
+
 /**
  * An {@link INodeSizeConstraintProvider} that returns the size of the
  * first label as minimum size. The maximum size is not limited.
@@ -44,6 +45,7 @@ export class GreenSizeConstraintProvider extends BaseClass(INodeSizeConstraintPr
     super()
     this.node = node
   }
+
   /**
    * Returns the label size to prevent the shrinking of nodes beyond their
    * label's size.
@@ -55,12 +57,14 @@ export class GreenSizeConstraintProvider extends BaseClass(INodeSizeConstraintPr
       if (labelProvider instanceof INodeSizeConstraintProvider) {
         return labelProvider.getMinimumSize()
       }
+
       if (label.layoutParameter.model instanceof InteriorNodeLabelModel) {
         return label.preferredSize
       }
     }
     return new Size(1, 1)
   }
+
   /**
    * Returns the infinite size since the maximum size is not limited.
    * @see Specified by {@link INodeSizeConstraintProvider.getMaximumSize}.
@@ -68,6 +72,7 @@ export class GreenSizeConstraintProvider extends BaseClass(INodeSizeConstraintPr
   getMaximumSize() {
     return Size.INFINITE
   }
+
   /**
    * Returns an empty rectangle since this area is not constraint.
    * @see Specified by {@link INodeSizeConstraintProvider.getMinimumEnclosedArea}.

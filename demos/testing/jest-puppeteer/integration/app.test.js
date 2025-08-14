@@ -125,9 +125,7 @@ describe('app', () => {
 
     await page.mouse.move(box.x + node1Loc.x, box.y + node1Loc.y)
     await page.mouse.down()
-    await page.mouse.move(box.x + node2Loc.x, box.y + node2Loc.y, {
-      steps: 5
-    })
+    await page.mouse.move(box.x + node2Loc.x, box.y + node2Loc.y, { steps: 5 })
     await page.mouse.up()
     expect(await getEdgeCount()).toBe(1)
   })
@@ -149,24 +147,18 @@ describe('app', () => {
     await page.mouse.move(box.x + node1Loc.x, box.y + node1Loc.y)
     await page.mouse.down()
     // // move to first bend location
-    await page.mouse.move(box.x + bend1Loc.x, box.y + bend1Loc.y, {
-      steps: 5
-    })
+    await page.mouse.move(box.x + bend1Loc.x, box.y + bend1Loc.y, { steps: 5 })
     // // create first bend
     await page.mouse.up()
     await page.mouse.down()
     await page.mouse.up()
     // move to second bend location
-    await page.mouse.move(box.x + bend2Loc.x, box.y + bend2Loc.y, {
-      steps: 5
-    })
+    await page.mouse.move(box.x + bend2Loc.x, box.y + bend2Loc.y, { steps: 5 })
     // create second bend
     await page.mouse.down()
     await page.mouse.up()
     // move to target node
-    await page.mouse.move(box.x + node2Loc.x, box.y + node2Loc.y, {
-      steps: 5
-    })
+    await page.mouse.move(box.x + node2Loc.x, box.y + node2Loc.y, { steps: 5 })
     await page.mouse.down()
     await page.mouse.up()
     expect(await getEdgeCount()).toBe(1)

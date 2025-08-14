@@ -34,6 +34,7 @@ export async function getSVGDataURL(url) {
   const svgXml = await (await fetch(url)).text()
   return encodeSvgDataUrl(svgXml)
 }
+
 /**
  * Encodes a string into an SVG Data URL
  * @param data the string to encode
@@ -41,9 +42,11 @@ export async function getSVGDataURL(url) {
 function encodeSvgDataUrl(data) {
   data = escapeUnicodeSurrogatePair(data)
   data = escapeNonLatin1(data)
+
   const base64 = window.btoa(data)
   return 'data:image/svg+xml;base64,' + base64
 }
+
 /**
  * Escapes Unicode surrogate pairs
  * @param text the text to escape
@@ -56,6 +59,7 @@ function escapeUnicodeSurrogatePair(text) {
     return `&#${codepoint};`
   })
 }
+
 /**
  * Escapes non-Latin-1-characters
  * @param text the text to escape

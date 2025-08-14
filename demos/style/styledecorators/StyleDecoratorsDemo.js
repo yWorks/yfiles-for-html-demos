@@ -42,6 +42,7 @@ import {
   Size,
   SmartEdgeLabelModel
 } from '@yfiles/yfiles'
+
 import { LabelStyleDecorator } from './LabelStyleDecorator'
 import { EdgeStyleDecorator } from './EdgeStyleDecorator'
 import { NodeStyleDecorator } from './NodeStyleDecorator'
@@ -49,35 +50,44 @@ import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = createInputMode()
   configureGraph(graphComponent.graph)
   loadGraph(graphComponent)
+
   initializeUI(graphComponent)
 }
+
 function loadGraph(graphComponent) {
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new OrganicLayout({ defaultMinimumNodeDistance: 100 }))
   void graphComponent.fitGraphBounds()
+
   // add some bends
   for (const edge of graphComponent.graph.edges) {
     const sp = edge.sourcePort
     const tp = edge.targetPort
     graphComponent.graph.addBend(edge, sp.location.add(tp.location).multiply(0.5))
   }
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Iterates through the given data set and creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id
@@ -90,6 +100,7 @@ function buildGraph(graph, graphData) {
         )
       : undefined
   nodesSource.nodeCreator.createLabelBinding((item) => item.label)
+
   const edgesSource = graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
@@ -98,16 +109,17 @@ function buildGraph(graph, graphData) {
   edgesSource.edgeCreator.tagProvider = (item) => item.tag
   edgesSource.edgeCreator.styleProvider = (item) =>
     item.tag ? graph.edgeDefaults.getStyleInstance() : undefined
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Creates an input mode that supports interactive editing like e.g., creating new nodes and edges or
  * editing labels.
  */
 function createInputMode() {
-  const geim = new GraphEditorInputMode({
-    allowEditLabel: true
-  })
+  const geim = new GraphEditorInputMode({ allowEditLabel: true })
+
   // set a random traffic value to edges created interactively
   geim.createEdgeInputMode.addEventListener('edge-creation-started', (evt) => {
     switch (Math.floor(Math.random() * 4)) {
@@ -126,39 +138,35 @@ function createInputMode() {
         break
     }
   })
+
   return geim
 }
+
 /**
  * Configures default styles for nodes and edges.
  */
 function configureGraph(graph) {
   initDemoStyles(graph)
+
   graph.nodeDefaults.style = new NodeStyleDecorator(
-    new ShapeNodeStyle({
-      fill: '#46A8D5',
-      stroke: null,
-      shape: 'rectangle'
-    }),
+    new ShapeNodeStyle({ fill: '#46A8D5', stroke: null, shape: 'rectangle' }),
     'resources/workstation.svg'
   )
   graph.nodeDefaults.size = new Size(80, 40)
   graph.nodeDefaults.shareStyleInstance = false
   graph.edgeDefaults.style = new EdgeStyleDecorator(
-    new ShapePortStyle({
-      fill: 'lightgray',
-      stroke: null,
-      shape: 'ellipse',
-      renderSize: [5, 5]
-    })
+    new ShapePortStyle({ fill: 'lightgray', stroke: null, shape: 'ellipse', renderSize: [5, 5] })
   )
   graph.nodeDefaults.labels.style = new LabelStyleDecorator(
     new LabelStyle({ textFill: '224556', backgroundFill: '#B4DBED' })
   )
   graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
+
   graph.edgeDefaults.labels.style = new LabelStyleDecorator(new LabelStyle())
   graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(0)
   graph.edgeDefaults.shareStyleInstance = false
 }
+
 /**
  * Binds actions to the demo's UI controls.
  */
@@ -168,4 +176,5 @@ function initializeUI(graphComponent) {
     loadGraph(graphComponent)
   })
 }
+
 run().then(finishLoading)

@@ -83,11 +83,7 @@ export class PreactComponentNodeStyle<TTag> extends NodeStyleBase<
   }
 
   createProps(node: INode): PreactComponentNodeStyleProps<TTag> {
-    return {
-      width: node.layout.width,
-      height: node.layout.height,
-      tag: node.tag as TTag
-    }
+    return { width: node.layout.width, height: node.layout.height, tag: node.tag as TTag }
   }
 
   createVisual(context: IRenderContext, node: INode): PreactComponentNodeStyleVisual<TTag> {

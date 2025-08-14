@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { EventRecognizers, KeyEventType, ModifierKeys } from '@yfiles/yfiles'
+
 /**
  * Creates a {@link Trigger} that reacts on a pressed key.
  * @param key The key that has to be pressed.

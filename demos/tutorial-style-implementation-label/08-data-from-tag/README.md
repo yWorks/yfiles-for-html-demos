@@ -27,10 +27,7 @@ In this example, we adjust the style implementation to use an icon url stored in
 graph.addLabel({
   owner: node3,
   text: 'Label with background color and icon',
-  tag: {
-    iconUrl: 'resources/settings-16.svg',
-    backgroundColor: '#9DC6D0'
-  }
+  tag: { iconUrl: 'resources/settings-16.svg', backgroundColor: '#9DC6D0' }
 })
 ```
 

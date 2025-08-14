@@ -79,12 +79,7 @@ export const config: WebdriverIO.Config = {
         args: ['-headless']
       }
     },
-    {
-      browserName: 'chrome',
-      'goog:chromeOptions': {
-        args: ['--headless']
-      }
-    }
+    { browserName: 'chrome', 'goog:chromeOptions': { args: ['--headless'] } }
   ],
   //
   // ===================
@@ -160,10 +155,7 @@ export const config: WebdriverIO.Config = {
   //
   // Options to be passed to Mocha.
   // See the full list at http://mochajs.org/
-  mochaOpts: {
-    ui: 'bdd',
-    timeout: 60000
-  },
+  mochaOpts: { ui: 'bdd', timeout: 60000 },
   //
   // =====
   // Hooks

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { HierarchicalLayout, IGraph, ILayoutAlgorithm } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to configure a left-to-right {@link HierarchicalLayout} such that it
  * yields maximally compact group nodes.
@@ -43,20 +44,21 @@ export function createFeatureLayoutConfiguration(graph) {
     nodeDistance: 10,
     layoutOrientation: 'left-to-right'
   })
+
   // enable the horizontal compaction strategy ...
   // (horizontal compaction means smaller group height in left-to-right layout)
   hl.coordinateAssigner.groupCompaction = true
   // ... and disable the reduction of bends such that compactness has priority over bend reduction
   hl.coordinateAssigner.bendReduction = false
+
   return hl
 }
+
 /**
  * Demonstrates how to run a left-to-right {@link HierarchicalLayout} with the default configuration.
  * @param graph The graph to be laid out
  * @returns the configured hierarchical layout algorithm
  */
 export function createDefaultLayoutConfiguration(graph) {
-  return new HierarchicalLayout({
-    layoutOrientation: 'left-to-right'
-  })
+  return new HierarchicalLayout({ layoutOrientation: 'left-to-right' })
 }

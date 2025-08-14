@@ -43,16 +43,7 @@ export function createNodes(graph: IGraph): void {
   // not specifying the fill color will use the default color
   const styleWithDefaultFill = new CustomNodeStyle()
 
-  graph.createNode({
-    layout: [0, 0, 100, 70],
-    style: styleWithRedFill
-  })
-  graph.createNode({
-    layout: [140, 0, 100, 70],
-    style: styleWithPurpleFill
-  })
-  graph.createNode({
-    layout: [70, 150, 100, 70],
-    style: styleWithDefaultFill
-  })
+  graph.createNode({ layout: [0, 0, 100, 70], style: styleWithRedFill })
+  graph.createNode({ layout: [140, 0, 100, 70], style: styleWithPurpleFill })
+  graph.createNode({ layout: [70, 150, 100, 70], style: styleWithDefaultFill })
 }

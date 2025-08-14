@@ -28,221 +28,41 @@
  ***************************************************************************/
 export default {
   nodes: [
-    {
-      id: 1,
-      x: 540,
-      y: 420,
-      label: 'Miami'
-    },
-    {
-      id: 2,
-      x: 35,
-      y: 280,
-      label: 'San Diego'
-    },
-    {
-      id: 3,
-      x: 20,
-      y: 249,
-      label: 'Santa Barbara'
-    },
-    {
-      id: 4,
-      x: 23,
-      y: 265,
-      label: 'Los Angeles'
-    },
-    {
-      id: 5,
-      x: 3,
-      y: 220,
-      label: 'Monterey'
-    },
-    {
-      id: 6,
-      x: 3,
-      y: 191,
-      label: 'San Francisco'
-    },
-    {
-      id: 7,
-      x: 65,
-      y: 230,
-      label: 'Las Vegas'
-    },
-    {
-      id: 8,
-      x: 117,
-      y: 277,
-      label: 'Phoenix'
-    },
-    {
-      id: 9,
-      x: 43,
-      y: 90,
-      label: 'Portland'
-    },
-    {
-      id: 10,
-      x: 55,
-      y: 60,
-      label: 'Seattle'
-    },
-    {
-      id: 11,
-      x: 316,
-      y: 370,
-      label: 'Houston'
-    },
-    {
-      id: 12,
-      x: 305,
-      y: 320,
-      label: 'Dallas'
-    },
-    {
-      id: 13,
-      x: 194,
-      y: 253,
-      label: 'Sante Fe'
-    },
-    {
-      id: 14,
-      x: 395,
-      y: 365,
-      label: 'New Orleans'
-    },
-    {
-      id: 15,
-      x: 525,
-      y: 393,
-      label: 'Fort Lauderdale'
-    },
-    {
-      id: 16,
-      x: 510,
-      y: 380,
-      label: 'Fort Myers'
-    },
-    {
-      id: 17,
-      x: 505,
-      y: 354,
-      label: 'Orlando'
-    },
-    {
-      id: 18,
-      x: 525,
-      y: 310,
-      label: 'Charleston'
-    },
-    {
-      id: 19,
-      x: 460,
-      y: 310,
-      label: 'Atlanta'
-    },
-    {
-      id: 20,
-      x: 395,
-      y: 268,
-      label: 'Memphis'
-    },
-    {
-      id: 21,
-      x: 207,
-      y: 202,
-      label: 'Denver'
-    },
-    {
-      id: 22,
-      x: 135,
-      y: 173,
-      label: 'Salt Lake City'
-    },
-    {
-      id: 23,
-      x: 48,
-      y: 275,
-      label: 'Palm Springs'
-    },
-    {
-      id: 24,
-      x: 169,
-      y: 136,
-      label: 'Jackson'
-    },
-    {
-      id: 25,
-      x: 360,
-      y: 135,
-      label: 'Minneapolis'
-    },
-    {
-      id: 26,
-      x: 415,
-      y: 180,
-      label: 'Chicago'
-    },
-    {
-      id: 27,
-      x: 465,
-      y: 170,
-      label: 'Detroit'
-    },
-    {
-      id: 28,
-      x: 560,
-      y: 199,
-      label: 'Washington'
-    },
-    {
-      id: 29,
-      x: 565,
-      y: 171,
-      label: 'Philadelphia'
-    },
-    {
-      id: 30,
-      x: 600,
-      y: 158,
-      label: 'New York'
-    },
-    {
-      id: 31,
-      x: 585,
-      y: 130,
-      label: 'Boston'
-    },
-    {
-      id: 32,
-      x: 274,
-      y: 375,
-      label: 'San Antonio'
-    },
-    {
-      id: 33,
-      x: 288,
-      y: 345,
-      label: 'Austin'
-    },
-    {
-      id: 34,
-      x: 580,
-      y: 183,
-      label: 'Atlantic City'
-    },
-    {
-      id: 35,
-      x: 465,
-      y: 201,
-      label: 'Cincinnati'
-    },
-    {
-      id: 36,
-      x: 331,
-      y: 212,
-      label: 'Kansas City'
-    }
+    { id: 1, x: 540, y: 420, label: 'Miami' },
+    { id: 2, x: 35, y: 280, label: 'San Diego' },
+    { id: 3, x: 20, y: 249, label: 'Santa Barbara' },
+    { id: 4, x: 23, y: 265, label: 'Los Angeles' },
+    { id: 5, x: 3, y: 220, label: 'Monterey' },
+    { id: 6, x: 3, y: 191, label: 'San Francisco' },
+    { id: 7, x: 65, y: 230, label: 'Las Vegas' },
+    { id: 8, x: 117, y: 277, label: 'Phoenix' },
+    { id: 9, x: 43, y: 90, label: 'Portland' },
+    { id: 10, x: 55, y: 60, label: 'Seattle' },
+    { id: 11, x: 316, y: 370, label: 'Houston' },
+    { id: 12, x: 305, y: 320, label: 'Dallas' },
+    { id: 13, x: 194, y: 253, label: 'Sante Fe' },
+    { id: 14, x: 395, y: 365, label: 'New Orleans' },
+    { id: 15, x: 525, y: 393, label: 'Fort Lauderdale' },
+    { id: 16, x: 510, y: 380, label: 'Fort Myers' },
+    { id: 17, x: 505, y: 354, label: 'Orlando' },
+    { id: 18, x: 525, y: 310, label: 'Charleston' },
+    { id: 19, x: 460, y: 310, label: 'Atlanta' },
+    { id: 20, x: 395, y: 268, label: 'Memphis' },
+    { id: 21, x: 207, y: 202, label: 'Denver' },
+    { id: 22, x: 135, y: 173, label: 'Salt Lake City' },
+    { id: 23, x: 48, y: 275, label: 'Palm Springs' },
+    { id: 24, x: 169, y: 136, label: 'Jackson' },
+    { id: 25, x: 360, y: 135, label: 'Minneapolis' },
+    { id: 26, x: 415, y: 180, label: 'Chicago' },
+    { id: 27, x: 465, y: 170, label: 'Detroit' },
+    { id: 28, x: 560, y: 199, label: 'Washington' },
+    { id: 29, x: 565, y: 171, label: 'Philadelphia' },
+    { id: 30, x: 600, y: 158, label: 'New York' },
+    { id: 31, x: 585, y: 130, label: 'Boston' },
+    { id: 32, x: 274, y: 375, label: 'San Antonio' },
+    { id: 33, x: 288, y: 345, label: 'Austin' },
+    { id: 34, x: 580, y: 183, label: 'Atlantic City' },
+    { id: 35, x: 465, y: 201, label: 'Cincinnati' },
+    { id: 36, x: 331, y: 212, label: 'Kansas City' }
   ]
 }

@@ -106,9 +106,7 @@ createVisual(context: IRenderContext): SvgVisual {
   )
 
   const svgVisual: Cache = new SvgVisual(path)
-  svgVisual.cache = {
-    distance: this.distance
-  }
+  svgVisual.cache = { distance: this.distance }
   return svgVisual
 }
 ```

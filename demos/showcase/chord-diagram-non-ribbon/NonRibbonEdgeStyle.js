@@ -38,6 +38,7 @@ import {
   ShapeNodeStyle,
   SvgVisual
 } from '@yfiles/yfiles'
+
 /**
  * A custom edge style implementation for cubic Bézier curves. The curves are subdivided and each
  * edge is drawn with two colors (one from the source node and one from the target node).
@@ -45,6 +46,7 @@ import {
 export class NonRibbonEdgeStyle extends EdgeStyleBase {
   // meant to be used to create thicker edges
   thicknessOffset
+
   constructor(thickness) {
     super()
     this.thicknessOffset = thickness || 0
@@ -59,6 +61,7 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
     // store the path of the edge, so that we can check whether something has changed if an update is needed
     const generalPath = this.getPath(edge)
+
     // subdivide the Bézier curve in two curves so that we can apply the different colors
     const controlPoints = NonRibbonEdgeStyle.subdivideBezierCurve(edge)
     if (controlPoints.length === 0) {
@@ -66,6 +69,7 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
       // two control points for each edge
       return null
     }
+
     const sourceColor = NonRibbonEdgeStyle.getColor(edge.sourceNode)
     const targetColor = NonRibbonEdgeStyle.getColor(edge.targetNode)
     // for the two parts of the curve, create a new path
@@ -83,8 +87,10 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
       path.setAttribute('stroke-width', `${edge.tag.connections * 0.5 + this.thicknessOffset}`)
       g.appendChild(path)
     }
+
     return SvgVisual.from(g, { generalPath })
   }
+
   /**
    * Re-renders the edge using the old visual for performance reasons.
    * @param context The render context
@@ -96,6 +102,7 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
     const oldCache = oldVisual.tag.generalPath
     // get the data for the new visual
     const newCache = this.getPath(edge)
+
     // check if something changed
     if (newCache.hasSameValue(oldCache)) {
       // nothing changed, return the old visual
@@ -103,6 +110,7 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
     }
     return this.createVisual(context, edge)
   }
+
   /**
    * Returns the original edge path as cubic Bézier curve.
    * @param edge The given edge
@@ -113,11 +121,13 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
       // two control points for each edge
       return null
     }
+
     const path = new GeneralPath()
     path.moveTo(edge.sourcePort.location)
     path.cubicTo(edge.bends.get(0).location, edge.bends.get(1).location, edge.targetPort.location)
     return path
   }
+
   /**
    * Determines whether the visual representation of the edge has been hit at the given location.
    * @param canvasContext The input mode context
@@ -130,6 +140,7 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
     const thickness = edge.tag.connections * 0.5 + this.thicknessOffset
     return this.getPath(edge).pathContains(p, canvasContext.hitTestRadius + thickness * 0.5)
   }
+
   /**
    * Subdivides the cubic curve in 2 sub-curves to apply the gradient.
    * @param edge The edge to be subdivided
@@ -145,6 +156,7 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
     const p1 = edge.bends.get(0).location.toPoint()
     const p2 = edge.bends.get(1).location.toPoint()
     const p3 = edge.targetPort.location.toPoint()
+
     // use the De Casteljau's algorithm
     const p4 = NonRibbonEdgeStyle.lerp(p0, p1)
     const p5 = NonRibbonEdgeStyle.lerp(p1, p2)
@@ -152,8 +164,10 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
     const p7 = NonRibbonEdgeStyle.lerp(p4, p5)
     const p8 = NonRibbonEdgeStyle.lerp(p5, p6)
     const p9 = NonRibbonEdgeStyle.lerp(p7, p8)
+
     return [p0, p4, p7, p9, p9, p8, p6, p3]
   }
+
   /**
    * Calculates the new bezier point that lies between the two original control points of the edge
    * @param c1 The first original control point
@@ -163,6 +177,7 @@ export class NonRibbonEdgeStyle extends EdgeStyleBase {
     const t = 0.5
     return new Point(c1.x * (1 - t) + c2.x * t, c1.y * (1 - t) + c2.y * t)
   }
+
   /**
    * Returns the color of the given node.
    * In this demo, the node's style is ShapeNodeStyle.

@@ -36,6 +36,7 @@ import {
   TreeLayout,
   TreeLayoutData
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to run a {@link TreeLayout} with configured subtree placers.
  * @param graph The graph to be laid out
@@ -58,5 +59,6 @@ export function createFeatureLayoutConfiguration(graph) {
       }
     }
   })
+
   return { layout, layoutData }
 }

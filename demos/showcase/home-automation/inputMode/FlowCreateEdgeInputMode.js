@@ -29,20 +29,25 @@
 import { CreateEdgeInputMode, InputModeEventArgs, Point } from '@yfiles/yfiles'
 import { getSmoothEdgeControlPoints } from '../FlowEdge/FlowEdge'
 import { validatePortTag } from '../FlowNode/FlowNodePort'
+
 export class FlowCreateEdgeInputMode extends CreateEdgeInputMode {
   onMoved(evt) {
     super.onMoved(evt)
+
     const previewEdge = this.previewEdge
     const previewGraph = this.previewGraph
+
     const portTag = previewEdge.sourcePort.tag
     if (!validatePortTag(portTag)) {
       return
     }
+
     const bends = getSmoothEdgeControlPoints({
       start: this.startPoint,
       end: Point.from(this.dragPoint),
       fromSide: portTag.side
     })
+
     previewGraph.clearBends(previewEdge)
     previewGraph.addBends(previewEdge, bends)
   }

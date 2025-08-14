@@ -29,6 +29,7 @@
 import { GraphComponent, PortLayerPolicy } from '@yfiles/yfiles'
 import { FlowNodePortCandidateProvider } from './FlowNodePortCandidateProvider'
 import { FlowEdgeReconnectionPortCandidateProvider } from './FlowEdgeReconnectionPortCandidateProvider'
+
 /**
  * Modifies port-related graph configuration.
  */
@@ -42,6 +43,7 @@ export function configureFlowNodePorts(gc) {
     (edge) => new FlowEdgeReconnectionPortCandidateProvider(edge)
   )
 }
+
 export function assertPortTag(tag) {
   if (validatePortTag(tag)) {
     return
@@ -49,6 +51,7 @@ export function assertPortTag(tag) {
     throw new Error('Tag value does not satisfy type FlowNodePortProperties')
   }
 }
+
 export function validatePortTag(tag) {
   return (
     (typeof tag === 'object' && tag !== null && 'side' in tag && tag.side === 'left') ||

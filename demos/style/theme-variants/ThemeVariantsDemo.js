@@ -45,8 +45,11 @@ import {
 import { colorSets } from '@yfiles/demo-resources/demo-colors'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 const graphComponents = []
+
 const graphComponentsContainer = document.getElementById('graphComponents')
+
 const colorPalettes = {
   Blue: {
     primaryColor: colorSets['demo-lightblue'].stroke,
@@ -74,50 +77,37 @@ const colorPalettes = {
     backgroundColor: colorSets['demo-palette-22'].fill
   }
 }
+
 let sharedGraph
+
 async function run() {
   License.value = await fetchLicense()
+
   sharedGraph = createSampleGraph()
+
   initGraphComponents()
+
   void graphComponents[0].fitGraphBounds()
+
   selectSampleItems()
+
   initializeUI()
   initColorButtons()
 }
+
 /**
  * Creates the GraphComponents with the different theme variants
  * and adds them to the document.
  */
 function initGraphComponents() {
-  // re-build: keep the old selection and viewport
-  const oldViewport = graphComponents[0]?.viewport
-  const oldSelectedItems = graphComponents[0]?.selection.toArray() ?? []
-  // re-build: remove and dispose of the existing GraphComponents, first
-  while (graphComponents.length) {
-    const graphComponent = graphComponents.pop()
-    graphComponent.htmlElement.parentNode.removeChild(graphComponent.htmlElement)
-    graphComponent.graph = new Graph()
-    graphComponent.cleanUp()
-  }
   // one of each variant
   for (const variant of ['round', 'round-hatched', 'square', 'square-hatched']) {
     createGraphComponent(variant)
   }
-  // re-build: restore the old viewport
-  if (oldViewport) {
-    for (const graphComponent of graphComponents) {
-      void graphComponent.fitContent()
-      graphComponent.zoomTo(oldViewport)
-    }
-  }
-  // re-build: restore the old selection
-  for (const selectedItem of oldSelectedItems) {
-    for (const graphComponent of graphComponents) {
-      graphComponent.selection.add(selectedItem)
-    }
-  }
+
   synchronizeGraphComponents()
 }
+
 /**
  * Creates a GraphComponent with the given theme and the shared graph and selection.
  */
@@ -137,7 +127,9 @@ function createGraphComponent(themeVariant) {
   graphComponent.updateContentBounds()
   graphComponents.push(graphComponent)
 }
+
 let changing = false
+
 /**
  * Synchronizes the graph components so that changes in one will be mirrored in the others.
  */
@@ -165,6 +157,7 @@ function synchronizeGraphComponents() {
         otherComponent.selection.add(evt.item)
       }
     })
+
     graphComponent.selection.addEventListener('item-removed', (evt) => {
       for (const otherComponent of otherComponents) {
         otherComponent.selection.remove(evt.item)
@@ -172,11 +165,13 @@ function synchronizeGraphComponents() {
     })
   }
 }
+
 /**
  * Creates a sample graph.
  */
 function createSampleGraph() {
   const graph = new Graph()
+
   graph.nodeDefaults.style = new ShapeNodeStyle({ fill: '#CCCCCC', stroke: '1px black' })
   graph.nodeDefaults.labels.style = new LabelStyle({ padding: 2 })
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
@@ -192,12 +187,15 @@ function createSampleGraph() {
     targetArrow: '#AAAAAA small triangle'
   })
   graph.edgeDefaults.labels.style = new LabelStyle({ padding: 2 })
+
   const node1 = graph.createNodeAt({ location: [20, 110] })
   const node2 = graph.createNodeAt({ location: [120, 145] })
   const node3 = graph.createNodeAt({ location: [120, 75] })
   const node4 = graph.createNodeAt({ location: [220, 30], labels: ['Node'] })
   const node5 = graph.createNodeAt({ location: [220, 100], labels: ['Node'] })
+
   graph.groupNodes({ children: [node1, node2, node3], labels: ['Group'] })
+
   const edge1 = graph.createEdge(node1, node2)
   const edge2 = graph.createEdge(node1, node3)
   const edge3 = graph.createEdge(node3, node4)
@@ -224,8 +222,10 @@ function createSampleGraph() {
   graph.addBends(edge2, [new Point(70, 96.67), new Point(70, 75)])
   graph.addBends(edge3, [new Point(170, 65), new Point(170, 30)])
   graph.addBends(edge4, [new Point(170, 85), new Point(170, 90)])
+
   return graph
 }
+
 /**
  * Selects some items for illustration, but only if no elements are currently selected.
  */
@@ -235,10 +235,12 @@ function selectSampleItems() {
     // Something is already selected, don't change it
     return
   }
+
   const node = sharedGraph.nodes.at(0)
   if (node == null) {
     return
   }
+
   selection.add(node)
   for (const edge of graphComponents[0].graph.edgesAt(node)) {
     selection.add(edge)
@@ -248,6 +250,7 @@ function selectSampleItems() {
     }
   }
 }
+
 function initColorButtons() {
   const toolbar = document.querySelector('.demo-page__toolbar')
   Object.keys(colorPalettes).forEach((paletteName) => {
@@ -266,6 +269,7 @@ function initColorButtons() {
     toolbar.appendChild(button)
   })
 }
+
 /**
  * Binds actions the buttons in the tutorial's toolbar.
  */
@@ -275,16 +279,18 @@ function initializeUI() {
     .addEventListener('click', async () => {
       await graphComponents[0].fitGraphBounds()
     })
+
   document.querySelector("[data-command='ZOOM_ORIGINAL']").addEventListener('click', () => {
     graphComponents[0].executeCommand(Command.ZOOM)
   })
+
   const { defaultScale, defaultHandleOffset, defaultIndicatorOffset } = getThemeDefaults()
   const sliders = [
     {
       slider: '#scale-slider',
       label: '#scale-label',
       cssClass: '--yfiles-theme-scale',
-      default: defaultScale
+      default: '1.5'
     },
     {
       slider: '#handle-offset-slider',
@@ -312,6 +318,7 @@ function initializeUI() {
     })
   })
 }
+
 function getThemeDefaults() {
   const tempGC = new GraphComponent()
   document.body.appendChild(tempGC.htmlElement)
@@ -322,4 +329,5 @@ function getThemeDefaults() {
   document.body.removeChild(tempGC.htmlElement)
   return { defaultScale, defaultHandleOffset, defaultIndicatorOffset }
 }
+
 run().then(finishLoading)

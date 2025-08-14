@@ -38,18 +38,25 @@ import {
   setDefaultLabelLayoutParameters
 } from '../common'
 import { clearUndoQueue, enableUndo, redo, undo } from './undo-clipboard-support'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 setDefaultLabelLayoutParameters(graphComponent.graph)
+
 createSampleGraph(graphComponent.graph)
+
 configureInteraction(graphComponent)
 enableUndo(graphComponent.graph)
+
 fitGraphBounds(graphComponent)
 finishLoading()
+
 addButtonListener('#undoButton', () => undo(graphComponent.graph))
 addButtonListener('#redoButton', () => redo(graphComponent.graph))
 addButtonListener('#clearUndoQueueButton', () => clearUndoQueue(graphComponent.graph))
+
 const inputMode = graphComponent.inputMode
 addButtonListener('#cutButton', () => inputMode.cut())
 addButtonListener('#copyButton', () => inputMode.copy())

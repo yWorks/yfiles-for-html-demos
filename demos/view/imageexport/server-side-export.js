@@ -37,11 +37,13 @@ import {
 } from '@yfiles/yfiles'
 import { useWebGLRendering } from './webgl-support'
 import { hideExportDialog } from './export-dialog/export-dialog'
+
 /**
  * Enables the server-side export checkbox in a non-blocking way, if that export mode is available.
  */
 export function initializeServerSideExport(url) {
   initializeForm()
+
   // if a server is available, enable the server export button
   isServerAlive(url)
     .then((response) => {
@@ -51,6 +53,7 @@ export function initializeServerSideExport(url) {
       // don't enable the button in case of errors
     })
 }
+
 /**
  * Checks if the server at the given URL is alive.
  * @param url The URL of the service to check.
@@ -63,19 +66,19 @@ async function isServerAlive(url, timeout = 5000) {
     body: 'isAlive',
     mode: 'no-cors'
   }
+
   try {
     const controller = new AbortController()
     const id = setTimeout(() => controller.abort(), timeout)
-    const response = await fetch(url, {
-      ...initObject,
-      signal: controller.signal
-    })
+
+    const response = await fetch(url, { ...initObject, signal: controller.signal })
     clearTimeout(id)
     return Promise.resolve(response)
   } catch {
     return Promise.reject(new Error(`Fetch timed out after ${timeout}ms`))
   }
 }
+
 /**
  * Requests a server-side export.
  * @param svgData a string representation of the SVG document to be exported.
@@ -87,6 +90,7 @@ export function requestServerExport(svgData, format, size, url) {
   requestFile(url, format, svgData, size)
   hideExportDialog()
 }
+
 /**
  * Send the request to the server which initiates a file download.
  */
@@ -110,10 +114,12 @@ function requestFile(
   margin.setAttribute('value', `${margins.left}`)
   const pSize = document.querySelector('#postPaperSize')
   pSize.setAttribute('value', paperSize === PaperSize.AUTO ? '' : paperSize)
+
   const form = document.querySelector('#postForm')
   form.setAttribute('action', url)
   form.submit()
 }
+
 /**
  * Adds a form to the document body that is used to request the image from the server.
  */
@@ -152,8 +158,10 @@ function initializeForm() {
   paperSize.name = 'paperSize'
   paperSize.type = 'hidden'
   form.appendChild(paperSize)
+
   document.body.appendChild(form)
 }
+
 /**
  * Exports an SVG element of the passed {@link IGraph} on the server-side.
  * The {@link SvgExport} exports an SVG element of a {@link GraphComponent} into an
@@ -171,11 +179,14 @@ export async function exportSvg(
   // ... and assign it the same graph.
   exportComponent.graph = graphComponent.graph
   exportComponent.updateContentBounds()
+
   if (graphComponent.graphModelManager instanceof WebGLGraphModelManager) {
     useWebGLRendering(exportComponent)
   }
+
   // Determine the bounds of the exported area
   const targetRect = exportRect || exportComponent.contentBounds
+
   // Create the exporter class
   const exporter = new SvgExport({
     worldBounds: targetRect,
@@ -184,17 +195,18 @@ export async function exportSvg(
     encodeImagesBase64: true,
     inlineSvgImages: true
   })
+
   // set cssStyleSheets to null so the SvgExport will automatically collect all style sheets
   exporter.cssStyleSheet = null
+
   const svgElement = await exporter.exportSvgAsync(
     exportComponent,
     renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
   )
+
   // Dispose of the component and remove its references to the graph
-  exportComponent.cleanUp()
   exportComponent.graph = new Graph()
-  return {
-    element: svgElement,
-    size: new Size(exporter.viewWidth, exporter.viewHeight)
-  }
+  exportComponent.cleanUp()
+
+  return { element: svgElement, size: new Size(exporter.viewWidth, exporter.viewHeight) }
 }

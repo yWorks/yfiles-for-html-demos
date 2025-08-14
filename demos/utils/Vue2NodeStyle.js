@@ -41,12 +41,14 @@ import {
   TextRenderSupport,
   TextWrapping
 } from '@yfiles/yfiles'
+
 /**
  * Initializes custom components that can be used in the template. Those components can either be used directly or
  * originate from a style created by 'Node Template Designer', currently used in the data explorer for neo4j
  * (https://www.yworks.com/neo4j-explorer/).
  */
 initializeDesignerVueComponents()
+
 /**
  * A context object that helps to enhance performance. There are some properties that are provided for binding
  * but do not necessarily have to be used. We will only check those properties if they were changed.
@@ -57,6 +59,7 @@ class ObservedContext {
   defsSupport
   contextZoom
   observed = {}
+
   constructor(node, renderContext) {
     this.node = node
     this.graphComponent = renderContext.canvasComponent
@@ -64,10 +67,12 @@ class ObservedContext {
     this.contextZoom = renderContext.zoom
     this.reset()
   }
+
   update(renderContext) {
     this.defsSupport = renderContext.svgDefsManager
     this.contextZoom = renderContext.zoom
   }
+
   /**
    * Resets the context object to an empty object if none of the properties is used.
    */
@@ -84,6 +89,7 @@ class ObservedContext {
     }
     return null
   }
+
   /**
    * Checks the current state for changes and returns the differences to the old state.
    */
@@ -92,12 +98,7 @@ class ObservedContext {
     let change = false
     if (oldState.hasOwnProperty('layout')) {
       const layout = this.node.layout
-      const newValue = {
-        x: layout.x,
-        y: layout.y,
-        width: layout.width,
-        height: layout.height
-      }
+      const newValue = { x: layout.x, y: layout.y, width: layout.width, height: layout.height }
       const oldLayout = oldState.layout
       if (
         newValue.x !== oldLayout.x ||
@@ -144,11 +145,9 @@ class ObservedContext {
         change = true
       }
     }
-    return {
-      change,
-      delta
-    }
+    return { change, delta }
   }
+
   /**
    * Returns the layout.
    */
@@ -157,14 +156,10 @@ class ObservedContext {
       return this.observed.layout
     }
     const layout = this.node.layout
-    const val = {
-      x: layout.x,
-      y: layout.y,
-      height: layout.height,
-      width: layout.width
-    }
+    const val = { x: layout.x, y: layout.y, height: layout.height, width: layout.width }
     return (this.observed.layout = val)
   }
+
   /**
    * Returns the zoom level.
    */
@@ -174,6 +169,7 @@ class ObservedContext {
     }
     return (this.observed.zoom = this.contextZoom)
   }
+
   /**
    * Returns the tag.
    */
@@ -183,6 +179,7 @@ class ObservedContext {
     }
     return (this.observed.tag = this.node.tag)
   }
+
   /**
    * Returns the selected state.
    */
@@ -192,6 +189,7 @@ class ObservedContext {
     }
     return (this.observed.selected = this.graphComponent.selection.nodes.includes(this.node))
   }
+
   /**
    * Returns the highlighted state.
    */
@@ -201,6 +199,7 @@ class ObservedContext {
     }
     return (this.observed.highlighted = this.graphComponent.highlights.includes(this.node))
   }
+
   /**
    * Returns the focused state.
    */
@@ -211,6 +210,7 @@ class ObservedContext {
     return (this.observed.focused =
       this.graphComponent.focusIndicatorManager.focusedItem === this.node)
   }
+
   /**
    * Generates an id for use in SVG defs elements that is unique for the current rendering context.
    */
@@ -218,6 +218,7 @@ class ObservedContext {
     return this.defsSupport.generateUniqueDefsId()
   }
 }
+
 /**
  * A node style which uses a Vue component to display a node.
  */
@@ -225,22 +226,27 @@ export class Vue2NodeStyle extends NodeStyleBase {
   _template = ''
   _styleTag = null
   constructorFunction
+
   constructor(template) {
     super()
     this.template = template
   }
+
   get styleTag() {
     return this._styleTag
   }
+
   set styleTag(val) {
     this._styleTag = val
   }
+
   /**
    * Returns the Vue template.
    */
   get template() {
     return this._template
   }
+
   /**
    * Sets the Vue template.
    */
@@ -248,15 +254,12 @@ export class Vue2NodeStyle extends NodeStyleBase {
     if (value === this._template) {
       return
     }
+
     this._template = value
     this.constructorFunction = Vue.extend({
       template: value,
       data() {
-        return {
-          yFilesContext: null,
-          idMap: {},
-          urlMap: {}
-        }
+        return { yFilesContext: null, idMap: {}, urlMap: {} }
       },
       methods: {
         localId(id) {
@@ -284,12 +287,7 @@ export class Vue2NodeStyle extends NodeStyleBase {
             return yFilesContext.layout
           }
           const layout = yFilesContext.observedContext.layout
-          return {
-            width: layout.width,
-            height: layout.height,
-            x: layout.x,
-            y: layout.y
-          }
+          return { width: layout.width, height: layout.height, x: layout.x, y: layout.y }
         },
         tag() {
           const yFilesContext = this.yFilesContext
@@ -335,6 +333,7 @@ export class Vue2NodeStyle extends NodeStyleBase {
       }
     })
   }
+
   /**
    * Creates a visual that uses a Vue component to display a node.
    * @see Overrides {@link LabelStyleBase.createVisual}
@@ -342,24 +341,31 @@ export class Vue2NodeStyle extends NodeStyleBase {
   createVisual(context, node) {
     // eslint-disable-next-line new-cap
     const component = new this.constructorFunction()
+
     this.prepareVueComponent(component, context, node)
+
     // mount the component without passing in a DOM element
     component.$mount()
     const svgElement = component.$el
+
     if (!(svgElement instanceof SVGElement)) {
       throw 'Vue2NodeStyle: Invalid template!'
     }
+
     const yFilesContext = component.yFilesContext
     const observedContext = yFilesContext.observedContext
+
     if (observedContext) {
       const changes = observedContext.reset()
       if (changes) {
         observedContext.changes = changes
       }
     }
+
     // set the location
     this.updateLocation(node, svgElement)
     svgElement['data-vueComponent'] = component
+
     // return an SvgVisual that uses the DOM element of the component
     const svgVisual = new SvgVisual(svgElement)
     context.setDisposeCallback(svgVisual, (context, visual) => {
@@ -370,6 +376,7 @@ export class Vue2NodeStyle extends NodeStyleBase {
     })
     return svgVisual
   }
+
   /**
    * Updates the visual by returning the old visual, as Vue handles updating the component.
    * @see Overrides {@link LabelStyleBase.updateVisual}
@@ -405,35 +412,44 @@ export class Vue2NodeStyle extends NodeStyleBase {
     }
     return this.createVisual(context, node)
   }
+
   /**
    * Prepares the Vue component for rendering.
    */
   prepareVueComponent(component, context, node) {
     const yFilesContext = {}
+
     const ctx = new ObservedContext(node, context)
+
     // Values added using Object.defineProperty() are immutable and not enumerable and thus are not observed by Vue.
     Object.defineProperty(yFilesContext, 'observedContext', {
       configurable: false,
       enumerable: false,
       value: ctx
     })
+
     component.yFilesContext = yFilesContext
   }
+
   /**
    * Updates the Vue component for rendering.
    */
   updateVueComponent(component, context, node) {
     const yFilesContext = {}
+
     const ctx = component.yFilesContext.observedContext
+
     // Values added using Object.defineProperty() are immutable and not enumerable and thus are not observed by Vue.
     Object.defineProperty(yFilesContext, 'observedContext', {
       configurable: false,
       enumerable: false,
       value: ctx
     })
+
     component.yFilesContext = yFilesContext
     component.$forceUpdate()
   }
+
   /**
    * Updates the location of the given visual.
    */
@@ -443,9 +459,11 @@ export class Vue2NodeStyle extends NodeStyleBase {
     }
   }
 }
+
 function hasText(el) {
   return el && el.querySelector && el.querySelector('text')
 }
+
 /**
  * Initializes the Vue components that are used in the 'Node Template Designer'.
  * @yjs:keep = visible,Node
@@ -454,6 +472,7 @@ function initializeDesignerVueComponents() {
   Vue.config.warnHandler = (err, vm, info) => {
     throw new Error(`${err}\n${info}`)
   }
+
   function addText(
     value,
     w,
@@ -474,6 +493,7 @@ function initializeDesignerVueComponents() {
     ) {
       return null
     }
+
     const text = String(value)
     // create the font which determines the visual text properties
     const fontSettings = {}
@@ -497,6 +517,7 @@ function initializeDesignerVueComponents() {
     }
     const font = new Font(fontSettings)
     let textWrapping = TextWrapping.WRAP_CHARACTER_ELLIPSIS
+
     if (typeof wrapping !== 'undefined' && wrapping !== null) {
       switch (Number(wrapping)) {
         case TextWrapping.NONE:
@@ -515,17 +536,21 @@ function initializeDesignerVueComponents() {
           textWrapping = TextWrapping.NONE
       }
     }
+
     if (typeof w === 'undefined' || w === null) {
       w = Number.POSITIVE_INFINITY
     }
     if (typeof h === 'undefined' || h === null) {
       h = Number.POSITIVE_INFINITY
     }
+
     // do the text wrapping
     // This sample uses the strategy WRAP_CHARACTER_ELLIPSIS. You can use any other setting.
     TextRenderSupport.addText(textElement, text, font, new Size(Number(w), Number(h)), textWrapping)
+
     return textElement
   }
+
   function updateText(
     value,
     w,
@@ -556,7 +581,9 @@ function initializeDesignerVueComponents() {
       textElement
     )
   }
+
   let clipId = 0
+
   Vue.component('svg-text', {
     template: `
       <g v-if="visible" :transform="$transform">
@@ -651,97 +678,30 @@ function initializeDesignerVueComponents() {
         )
       }
     },
+
     props: {
-      x: {
-        type: [String, Number],
-        required: false,
-        default: undefined
-      },
-      y: {
-        type: [String, Number],
-        required: false,
-        default: undefined
-      },
-      width: {
-        type: [String, Number],
-        required: false,
-        default: undefined
-      },
-      height: {
-        type: [String, Number],
-        required: false,
-        default: undefined
-      },
-      clipped: {
-        type: Boolean,
-        required: false,
-        default: false
-      },
-      align: {
-        type: String,
-        required: false,
-        default: 'start'
-      },
-      fill: {
-        type: String,
-        required: false,
-        default: undefined
-      },
-      content: {
-        type: [String, Number, Boolean],
-        required: false,
-        default: undefined
-      },
-      opacity: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      visible: {
-        type: [String, Boolean],
-        default: true,
-        required: false
-      },
+      x: { type: [String, Number], required: false, default: undefined },
+      y: { type: [String, Number], required: false, default: undefined },
+      width: { type: [String, Number], required: false, default: undefined },
+      height: { type: [String, Number], required: false, default: undefined },
+      clipped: { type: Boolean, required: false, default: false },
+      align: { type: String, required: false, default: 'start' },
+      fill: { type: String, required: false, default: undefined },
+      content: { type: [String, Number, Boolean], required: false, default: undefined },
+      opacity: { type: [String, Number], default: undefined, required: false },
+      visible: { type: [String, Boolean], default: true, required: false },
       wrapping: {
         type: [String, Number],
         default: TextWrapping.WRAP_CHARACTER_ELLIPSIS,
         required: false
       },
-      transform: {
-        type: String,
-        default: '',
-        required: false
-      },
-      fontFamily: {
-        type: String,
-        default: undefined,
-        required: false
-      },
-      fontSize: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      fontWeight: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      fontStyle: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      textDecoration: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      lineSpacing: {
-        type: [String, Number],
-        default: 0.5,
-        required: false
-      }
+      transform: { type: String, default: '', required: false },
+      fontFamily: { type: String, default: undefined, required: false },
+      fontSize: { type: [String, Number], default: undefined, required: false },
+      fontWeight: { type: [String, Number], default: undefined, required: false },
+      fontStyle: { type: [String, Number], default: undefined, required: false },
+      textDecoration: { type: [String, Number], default: undefined, required: false },
+      lineSpacing: { type: [String, Number], default: 0.5, required: false }
     },
     computed: {
       $dx() {
@@ -759,70 +719,23 @@ function initializeDesignerVueComponents() {
       }
     }
   })
+
   Vue.component('svg-rect', {
     template:
       '<rect :transform="$transform" :x="x" :y="y" :width="width" :height="height" :rx="cornerRadius" :fill="fill" :stroke="stroke" :stroke-width="strokeWidth" :stroke-dasharray="strokeDasharray" :opacity="opacity" v-if="visible"></rect>',
     props: {
-      x: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      y: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      width: {
-        type: [String, Number],
-        default: 50,
-        required: false
-      },
-      height: {
-        type: [String, Number],
-        default: 50,
-        required: false
-      },
-      cornerRadius: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      fill: {
-        type: String,
-        required: false,
-        default: 'orange'
-      },
-      stroke: {
-        type: String,
-        required: false,
-        default: 'orange'
-      },
-      strokeWidth: {
-        type: [String, Number],
-        default: 1,
-        required: false
-      },
-      strokeDasharray: {
-        type: String,
-        default: '',
-        required: false
-      },
-      opacity: {
-        type: [String, Number],
-        default: 1,
-        required: false
-      },
-      visible: {
-        type: [String, Boolean],
-        default: true,
-        required: false
-      },
-      transform: {
-        type: String,
-        default: '',
-        required: false
-      }
+      x: { type: [String, Number], default: 0, required: false },
+      y: { type: [String, Number], default: 0, required: false },
+      width: { type: [String, Number], default: 50, required: false },
+      height: { type: [String, Number], default: 50, required: false },
+      cornerRadius: { type: [String, Number], default: 0, required: false },
+      fill: { type: String, required: false, default: 'orange' },
+      stroke: { type: String, required: false, default: 'orange' },
+      strokeWidth: { type: [String, Number], default: 1, required: false },
+      strokeDasharray: { type: String, default: '', required: false },
+      opacity: { type: [String, Number], default: 1, required: false },
+      visible: { type: [String, Boolean], default: true, required: false },
+      transform: { type: String, default: '', required: false }
     },
     computed: {
       $transform() {
@@ -830,65 +743,22 @@ function initializeDesignerVueComponents() {
       }
     }
   })
+
   Vue.component('svg-ellipse', {
     template:
       '<ellipse :transform="$transform" :cx="$cx" :cy="$cy" :rx="$rx" :ry="$ry" :fill="fill" :stroke="stroke" :stroke-width="strokeWidth" :stroke-dasharray="strokeDasharray" :opacity="opacity" v-if="visible"></ellipse>',
     props: {
-      x: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      y: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      width: {
-        type: [String, Number],
-        default: 50,
-        required: false
-      },
-      height: {
-        type: [String, Number],
-        default: 50,
-        required: false
-      },
-      fill: {
-        type: String,
-        required: false,
-        default: 'orange'
-      },
-      stroke: {
-        type: String,
-        required: false,
-        default: 'orange'
-      },
-      strokeWidth: {
-        type: [String, Number],
-        default: 1,
-        required: false
-      },
-      strokeDasharray: {
-        type: String,
-        default: '',
-        required: false
-      },
-      opacity: {
-        type: [String, Number],
-        default: 1,
-        required: false
-      },
-      visible: {
-        type: [String, Boolean],
-        default: true,
-        required: false
-      },
-      transform: {
-        type: String,
-        default: '',
-        required: false
-      }
+      x: { type: [String, Number], default: 0, required: false },
+      y: { type: [String, Number], default: 0, required: false },
+      width: { type: [String, Number], default: 50, required: false },
+      height: { type: [String, Number], default: 50, required: false },
+      fill: { type: String, required: false, default: 'orange' },
+      stroke: { type: String, required: false, default: 'orange' },
+      strokeWidth: { type: [String, Number], default: 1, required: false },
+      strokeDasharray: { type: String, default: '', required: false },
+      opacity: { type: [String, Number], default: 1, required: false },
+      visible: { type: [String, Boolean], default: true, required: false },
+      transform: { type: String, default: '', required: false }
     },
     computed: {
       $cx() {
@@ -908,50 +778,19 @@ function initializeDesignerVueComponents() {
       }
     }
   })
+
   Vue.component('svg-image', {
     template:
       '<image :transform="$transform" :x="x" :y="y" :width="width" :height="height" v-bind="{\'xlink:href\':src}" :opacity="opacity" v-if="visible"></image>',
     props: {
-      x: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      y: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      width: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      height: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      src: {
-        type: String,
-        default: undefined,
-        required: false
-      },
-      opacity: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      visible: {
-        type: [String, Boolean],
-        default: true,
-        required: false
-      },
-      transform: {
-        type: String,
-        default: '',
-        required: false
-      }
+      x: { type: [String, Number], default: undefined, required: false },
+      y: { type: [String, Number], default: undefined, required: false },
+      width: { type: [String, Number], default: undefined, required: false },
+      height: { type: [String, Number], default: undefined, required: false },
+      src: { type: String, default: undefined, required: false },
+      opacity: { type: [String, Number], default: undefined, required: false },
+      visible: { type: [String, Boolean], default: true, required: false },
+      transform: { type: String, default: '', required: false }
     },
     computed: {
       $transform() {

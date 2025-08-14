@@ -102,8 +102,8 @@ export async function exportImage(
   )
 
   // Dispose of the component and remove its references to the graph
-  exportComponent.cleanUp()
   exportComponent.graph = new Graph()
+  exportComponent.cleanUp()
 
   return renderSvgToPng(
     svgElement as SVGElement,

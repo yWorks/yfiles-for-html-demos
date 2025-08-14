@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/layoutgrid/).
 
-This demo application lets you experience the usage of a [PartitionGrid](https://docs.yworks.com/yfileshtml/#/api/PartitionGrid) for hierarchical and organic layout calculations.
+This demo application lets you experience the usage of a [LayoutGrid](https://docs.yworks.com/yfileshtml/#/api/LayoutGrid) for hierarchical and organic layout calculations.
 
 Nodes are assigned to columns/rows by their fill color (gray nodes are unassigned) and the calculated layout grid is visualized after a layout run to show the effect of the node assignment to the layout.
 

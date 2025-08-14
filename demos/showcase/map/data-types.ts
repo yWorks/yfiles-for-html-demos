@@ -31,21 +31,12 @@ import type { IEdge, INode } from '@yfiles/yfiles'
 /**
  * Type describing an airport with IATA-code and location.
  */
-export type Airport = {
-  iata: string
-  name: string
-  lat: number
-  lng: number
-  passengers: number
-}
+export type Airport = { iata: string; name: string; lat: number; lng: number; passengers: number }
 
 /**
  * Type describing a connection between airports.
  */
-export type Connection = {
-  from: string
-  to: string
-}
+export type Connection = { from: string; to: string }
 
 /**
  * Returns the business data for an airport type-safe.

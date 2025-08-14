@@ -50,10 +50,7 @@ type Range = { min: number; max: number }
 /**
  * Stores the coordinates of the currently highlighted column and/or row.
  */
-type RenderDataCache = {
-  highlightColumn: Range
-  highlightRow: Range
-}
+type RenderDataCache = { highlightColumn: Range; highlightRow: Range }
 
 /**
  * Specifies the contract for storing and accessing the visualization's render data cache.

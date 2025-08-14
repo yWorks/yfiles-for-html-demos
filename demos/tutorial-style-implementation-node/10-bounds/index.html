@@ -168,10 +168,9 @@
   <span class="hljs-comment">// Do we even have a badge?</span>
   <span class="hljs-keyword">if</span> (tag?.<span class="hljs-property">showBadge</span>) {
     <span class="hljs-comment">// If so, return a rectangle that&#x27;s larger to the left and top</span>
-    <span class="hljs-keyword">return</span> node.<span class="hljs-property">layout</span>.<span class="hljs-title function_">toRect</span>().<span class="hljs-title function_">getEnlarged</span>({
-      <span class="hljs-attr">left</span>: badgeRadius,
-      <span class="hljs-attr">top</span>: badgeRadius
-    })
+    <span class="hljs-keyword">return</span> node.<span class="hljs-property">layout</span>
+      .<span class="hljs-title function_">toRect</span>()
+      .<span class="hljs-title function_">getEnlarged</span>({ <span class="hljs-attr">left</span>: badgeRadius, <span class="hljs-attr">top</span>: badgeRadius })
   }
   <span class="hljs-keyword">return</span> node.<span class="hljs-property">layout</span>.<span class="hljs-title function_">toRect</span>()
 }</code></pre>

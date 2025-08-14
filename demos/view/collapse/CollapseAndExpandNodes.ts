@@ -248,9 +248,7 @@ export class CollapseAndExpandNodes {
       } else if (currentLayout instanceof HierarchicalLayout) {
         currentLayout.fromSketchMode = true
 
-        const hierarchicalLayoutData = new HierarchicalLayoutData({
-          incrementalNodes
-        })
+        const hierarchicalLayoutData = new HierarchicalLayoutData({ incrementalNodes })
         currentLayoutData.items.add(hierarchicalLayoutData)
       }
     } else {

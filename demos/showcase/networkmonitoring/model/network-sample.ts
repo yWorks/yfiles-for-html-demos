@@ -40,10 +40,7 @@ type NodeObject = {
 
 type EdgeObject = { source: NodeId; target: NodeId }
 
-export type NetworkData = {
-  nodeList: NodeObject[]
-  edgeList: EdgeObject[]
-}
+export type NetworkData = { nodeList: NodeObject[]; edgeList: EdgeObject[] }
 
 export const networkData: NetworkData = {
   nodeList: [

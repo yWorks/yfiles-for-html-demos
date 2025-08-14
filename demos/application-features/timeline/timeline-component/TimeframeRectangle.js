@@ -46,6 +46,7 @@ import {
   SvgVisual
 } from '@yfiles/yfiles'
 import { defaultStyling } from './Styling'
+
 /**
  * The rectangular window element of the timeline with support for user interaction.
  */
@@ -53,17 +54,22 @@ export class TimeframeRectangle {
   graphComponent
   style
   rect = new MutableRectangle(0, 0, 0, 0)
+
   visual
   renderTreeElement = null
+
   handleInputMode
   moveInputMode
   positionHandler
+
   boundsChangedListener = null
+
   constructor(graphComponent, style) {
     this.graphComponent = graphComponent
     this.style = style
     // the actual visualization of the timeframe
     this.visual = new RectangleVisual(this.rect, style)
+
     // creates the handle input mode that manages the handles of the rectangle
     const rectangle = this.rect
     this.handleInputMode = new HandleInputMode({
@@ -74,10 +80,13 @@ export class TimeframeRectangle {
         new RectangleHandle(HandlePositions.LEFT, rectangle)
       ])
     })
+
     const onBoundsChanged = this.onBoundsChanged.bind(this)
+
     // add the listeners of dragging events
     this.handleInputMode.addEventListener('drag-finished', onBoundsChanged)
     this.handleInputMode.addEventListener('dragging', onBoundsChanged)
+
     // creates the move input mode that manages the movement of the rectangle
     this.positionHandler = new RectanglePositionHandler(rectangle)
     this.moveInputMode = new MoveInputMode({
@@ -89,44 +98,56 @@ export class TimeframeRectangle {
     })
     this.moveInputMode.addEventListener('drag-finished', onBoundsChanged)
     this.moveInputMode.addEventListener('dragging', onBoundsChanged)
+
     this.arm()
   }
+
   setBounds(bounds, silent = false) {
     this.rect.setShape(bounds)
     if (!silent) {
       this.onBoundsChanged()
     }
   }
+
   get bounds() {
     return this.rect.toRect()
   }
+
   set limits(limits) {
     this.positionHandler.limits = limits
   }
+
   get limits() {
     return this.positionHandler.limits
   }
+
   setBoundsChangedListener(listener) {
     this.boundsChangedListener = delegate.combine(this.boundsChangedListener, listener)
   }
+
   removeBoundsChangedListener(listener) {
     this.boundsChangedListener = delegate.remove(this.boundsChangedListener, listener)
   }
+
   onBoundsChanged() {
     this.boundsChangedListener?.(this.rect.toRect())
   }
+
   arm() {
     this.renderTreeElement = this.graphComponent.renderTree.createElement(
       this.graphComponent.renderTree.backgroundGroup,
       this.visual
     )
+
     const inputMode = this.graphComponent.inputMode
     if (!(inputMode instanceof MultiplexingInputMode)) {
       throw new Error('RectangleIndicator requires a MultiplexingInputMode')
     }
+
     inputMode.add(this.handleInputMode)
     inputMode.add(this.moveInputMode)
   }
+
   cleanup() {
     if (this.renderTreeElement) {
       this.graphComponent.renderTree.remove(this.renderTreeElement)
@@ -137,6 +158,7 @@ export class TimeframeRectangle {
     inputMode.remove(this.moveInputMode)
   }
 }
+
 class RectangleVisual extends BaseClass(IVisualCreator) {
   rectangle
   style
@@ -151,6 +173,7 @@ class RectangleVisual extends BaseClass(IVisualCreator) {
     this.rectangle = rectangle
     this.style = style
   }
+
   /**
    * Creates the rectangle.
    */
@@ -168,8 +191,11 @@ class RectangleVisual extends BaseClass(IVisualCreator) {
     rect.setAttribute('stroke-opacity', '1')
     rect.setAttribute('fill', this.style?.fill ?? defaultStyling.timeframe.fill)
     rect.setAttribute('fill-opacity', '1')
+
     container.appendChild(rect)
+
     container.setAttribute('transform', `translate(${this.rectangle.x} ${this.rectangle.y})`)
+
     const svgVisual = new SvgVisual(container)
     svgVisual.cache = {
       location: new Point(this.rectangle.x, this.rectangle.y),
@@ -177,6 +203,7 @@ class RectangleVisual extends BaseClass(IVisualCreator) {
     }
     return svgVisual
   }
+
   /**
    * Updates the rectangle to improve performance.
    */
@@ -188,45 +215,58 @@ class RectangleVisual extends BaseClass(IVisualCreator) {
       location: new Point(this.rectangle.x, this.rectangle.y),
       size: this.rectangle.toSize()
     }
+
     if (!newDataCache.size.equals(oldDataCache?.size)) {
       container.firstElementChild.setAttribute('width', String(this.rectangle.width))
       container.firstElementChild.setAttribute('height', String(this.rectangle.height))
     }
+
     if (!newDataCache.location.equals(oldDataCache?.location)) {
       container.setAttribute('transform', `translate(${this.rectangle.x} ${this.rectangle.y})`)
     }
+
     svgVisual.cache = newDataCache
+
     return svgVisual
   }
 }
+
 class RectanglePositionHandler extends BaseClass(IPositionHandler) {
   rectangle
   limits
   initialPosition = new Point(0, 0)
+
   constructor(rectangle, limits = Rect.INFINITE) {
     super()
     this.rectangle = rectangle
     this.limits = limits
   }
+
   get location() {
     return this.rectangle.topLeft
   }
+
   initializeDrag(context) {
     this.initialPosition = this.location.toPoint()
   }
+
   handleMove(context, originalLocation, newLocation) {
     this.updatePosition(originalLocation, newLocation)
   }
+
   dragFinished(context, originalLocation, newLocation) {
     this.updatePosition(originalLocation, newLocation)
   }
+
   cancelDrag(context, originalLocation) {
     this.rectangle.setLocation(originalLocation)
   }
+
   updatePosition(originalLocation, newLocation) {
     const delta = newLocation.subtract(originalLocation)
     this.rectangle.setLocation(this.limit(this.initialPosition.add(delta)))
   }
+
   limit(newLocation) {
     return new Point(
       RectanglePositionHandler.limitNumber(
@@ -243,6 +283,7 @@ class RectanglePositionHandler extends BaseClass(IPositionHandler) {
       )
     )
   }
+
   static limitNumber(pos, length, limitMin, limitMax) {
     if (pos < limitMin) {
       return limitMin

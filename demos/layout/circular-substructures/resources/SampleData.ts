@@ -29,18 +29,13 @@
 /**
  * The type of the nodes used for the layout
  */
-export type MultiPageNodeType = {
-  type: number
-}
+export type MultiPageNodeType = { type: number }
 
 /**
  * The type of the input data for nodes and edges
  */
 export type DataType = {
-  nodes: {
-    id: number
-    tag: MultiPageNodeType
-  }[]
+  nodes: { id: number; tag: MultiPageNodeType }[]
   edges: { source: number; target: number }[]
 }
 

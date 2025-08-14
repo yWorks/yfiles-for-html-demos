@@ -48,13 +48,16 @@ import {
   TreeLayout,
   TreeReductionStage
 } from '@yfiles/yfiles'
+
 import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * The collection of subcomponents contains all currently assigned subcomponents.
  */
 const subcomponents = []
+
 /**
  * The collection of node styles that are assigned to nodes that are members of the subcomponents.
  */
@@ -65,23 +68,33 @@ const nodeStyles = [
   createDemoNodeStyle('demo-green'),
   createDemoNodeStyle('demo-lightblue')
 ]
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('graphComponent')
   configureUserInteraction(graphComponent)
+
   initializeGraph(graphComponent.graph)
+
   await createSampleGraph(graphComponent.graph)
+
   initializeSubcomponents(graphComponent)
+
   await runLayout(graphComponent)
+
   registerSelectionListener(graphComponent)
+
   initializeUI(graphComponent)
 }
+
 /**
  * Arranges the graph in the given graph component.
  */
 function runLayout(graphComponent) {
   // initialize a hierarchical layout
   const hierarchicalLayout = new HierarchicalLayout()
+
   // assign subcomponents with their own layout algorithm and placement policy
   const hierarchicalLayoutData = new HierarchicalLayoutData()
   for (const component of subcomponents) {
@@ -96,11 +109,14 @@ function runLayout(graphComponent) {
     // and assign the nodes to this subcomponent
     subcomponent.items = component.nodes
   }
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   return graphComponent.applyLayoutAnimated(hierarchicalLayout, '700ms', hierarchicalLayoutData)
 }
+
 /**
  * Creates a new subcomponent that gets a specific layout from the given nodes.
  */
@@ -114,10 +130,7 @@ function createSubcomponent(graph, nodes, layout) {
     )
     if (newSubcomponentIndex < 0) {
       // add a new subcomponent
-      newSubcomponent = {
-        nodes: [],
-        layout
-      }
+      newSubcomponent = { nodes: [], layout }
       subcomponents.push(newSubcomponent)
       newSubcomponentIndex = subcomponents.length - 1
     } else {
@@ -126,6 +139,7 @@ function createSubcomponent(graph, nodes, layout) {
       newSubcomponent.nodes = []
       newSubcomponent.layout = layout
     }
+
     // update the subcomponents from which the nodes are taken as well as the new subcomponent
     for (const node of nodes) {
       const oldSubcomponentIndex = node.tag
@@ -141,6 +155,7 @@ function createSubcomponent(graph, nodes, layout) {
     }
   }
 }
+
 /**
  * Removes the given nodes from every subcomponent.
  */
@@ -154,6 +169,7 @@ function removeSubcomponent(graph, nodes) {
     }
   }
 }
+
 /**
  * Enables interactive editing for the given graph component.
  * Restricts marquee selection to nodes.
@@ -163,6 +179,7 @@ function configureUserInteraction(graphComponent) {
     marqueeSelectableItems: GraphItemTypes.NODE
   })
 }
+
 /**
  * Sets default styles for nodes and edges.
  */
@@ -171,6 +188,7 @@ function initializeGraph(graph) {
   graph.nodeDefaults.shareStyleInstance = false
   graph.edgeDefaults.style = createDemoEdgeStyle()
 }
+
 /**
  * Creates a sample graph.
  * @yjs:keep = nodes,edges
@@ -178,6 +196,7 @@ function initializeGraph(graph) {
 async function createSampleGraph(graph) {
   const response = await fetch('./resources/sample.json')
   const data = await response.json()
+
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
     data: data.nodes,
@@ -185,13 +204,16 @@ async function createSampleGraph(graph) {
     tag: (data) => (data.tag != null ? data.tag : null)
   })
   builder.createEdgesSource(data.edges, 'source', 'target')
+
   builder.buildGraph()
 }
+
 /**
  * Creates initial subcomponents in the demo's sample graph.
  */
 function initializeSubcomponents(graphComponent) {
   const graph = graphComponent.graph
+
   const hierarchicalLayout = new HierarchicalLayout()
   hierarchicalLayout.layoutOrientation = 'left-to-right'
   createSubcomponent(
@@ -224,6 +246,7 @@ function initializeSubcomponents(graphComponent) {
     treeLayout2
   )
 }
+
 /**
  * Returns a new layout algorithm instance for the layout type that is specified in the layout
  * combo box.
@@ -242,6 +265,7 @@ function getLayoutAlgorithm() {
       return new HierarchicalLayout()
   }
 }
+
 /**
  * Returns a new tree layout algorithm instance.
  */
@@ -250,15 +274,14 @@ function createTreeLayout() {
   tree.defaultSubtreePlacer.edgeRoutingStyle = 'polyline'
   return tree
 }
+
 /**
  * Returns a new organic layout algorithm instance.
  */
 function createOrganicLayout() {
-  return new OrganicLayout({
-    deterministic: true,
-    defaultPreferredEdgeLength: 70
-  })
+  return new OrganicLayout({ deterministic: true, defaultPreferredEdgeLength: 70 })
 }
+
 /**
  * Returns the layout orientation that is specified in the combo-box.
  */
@@ -276,6 +299,7 @@ function getLayoutOrientation() {
       return LayoutOrientation.RIGHT_TO_LEFT
   }
 }
+
 /**
  * Enables/disables some UI elements depending on the current selection.
  */
@@ -285,6 +309,7 @@ function registerSelectionListener(graphComponent) {
     document.querySelector('#create-subcomponent').removeAttribute('disabled')
     document.querySelector('#remove-subcomponent').removeAttribute('disabled')
   })
+
   selectedNodes.addEventListener('item-removed', () => {
     if (graphComponent.selection.nodes.size === 0) {
       document.querySelector('#create-subcomponent').setAttribute('disabled', 'disabled')
@@ -295,6 +320,7 @@ function registerSelectionListener(graphComponent) {
     }
   })
 }
+
 /**
  * Binds actions to the controls in the demo's toolbar.
  */
@@ -304,22 +330,27 @@ function initializeUI(graphComponent) {
     const value = evt.target.value
     selectOrientation.disabled = value !== 'tree' && value !== 'hierarchical'
   })
+
   const createButton = document.querySelector('#create-subcomponent')
   const removeButton = document.querySelector('#remove-subcomponent')
   const layoutButton = document.querySelector('#layout-button')
+
   function toggleButtonState() {
     createButton.disabled = !createButton.disabled
     removeButton.disabled = !removeButton.disabled
     layoutButton.disabled = !layoutButton.disabled
   }
+
   createButton.addEventListener('click', async (e) => {
     const selectedNodes = graphComponent.selection.nodes
     if (selectedNodes.size === 0) {
       return
     }
+
     // configure the layout algorithm that is assigned to the new subcomponent
     const layout = getLayoutAlgorithm()
     layout.layoutOrientation = getLayoutOrientation()
+
     // create the subcomponent from all selected nodes with the chosen layout algorithm.
     createSubcomponent(graphComponent.graph, selectedNodes, layout)
     toggleButtonState()
@@ -327,6 +358,7 @@ function initializeUI(graphComponent) {
       toggleButtonState()
     })
   })
+
   removeButton.addEventListener('click', async () => {
     const selectedNodes = graphComponent.selection.nodes
     if (selectedNodes.size === 0) {
@@ -336,9 +368,11 @@ function initializeUI(graphComponent) {
     toggleButtonState()
     await runLayout(graphComponent).then(() => toggleButtonState())
   })
+
   layoutButton.addEventListener('click', async () => {
     toggleButtonState()
     await runLayout(graphComponent).then(() => toggleButtonState())
   })
 }
+
 run().then(finishLoading)

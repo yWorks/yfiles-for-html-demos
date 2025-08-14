@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { CustomEdgeStyle } from './CustomEdgeStyle'
 import { Point, ShapeNodeStyle } from '@yfiles/yfiles'
+
 /**
  * Creates the sample edges for this tutorial step
  */
@@ -37,37 +38,21 @@ export function createEdges(graph) {
     fill: '#0b7189',
     stroke: '#042d37'
   })
-  const node1 = graph.createNode({
-    layout: [50, 0, 30, 30]
-  })
-  const node2 = graph.createNode({
-    layout: [100, 100, 30, 30]
-  })
-  const node3 = graph.createNode({
-    layout: [0, 200, 30, 30]
-  })
+  const node1 = graph.createNode({ layout: [50, 0, 30, 30] })
+  const node2 = graph.createNode({ layout: [100, 100, 30, 30] })
+  const node3 = graph.createNode({ layout: [0, 200, 30, 30] })
+
   // the distance can be specified in the constructor
   const style1 = new CustomEdgeStyle(5)
+
   // the distance can also be changed later using the property on the style class
   const style2 = new CustomEdgeStyle(1)
   style2.distance = 3
+
   // not specifying the distance will use the default value
   const style3 = new CustomEdgeStyle()
-  graph.createEdge({
-    source: node1,
-    target: node2,
-    style: style1,
-    bends: [new Point(115, 60)]
-  })
-  graph.createEdge({
-    source: node2,
-    target: node3,
-    style: style2
-  })
-  graph.createEdge({
-    source: node3,
-    target: node1,
-    style: style3,
-    bends: [new Point(15, 120)]
-  })
+
+  graph.createEdge({ source: node1, target: node2, style: style1, bends: [new Point(115, 60)] })
+  graph.createEdge({ source: node2, target: node3, style: style2 })
+  graph.createEdge({ source: node3, target: node1, style: style3, bends: [new Point(15, 120)] })
 }

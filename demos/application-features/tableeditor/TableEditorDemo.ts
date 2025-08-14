@@ -227,19 +227,6 @@ function configureTableEditing(): TableEditorInputMode {
   clipboard.parentNodeDetection = ParentNodeDetectionModes.PREVIOUS_PARENT
   graphComponent.clipboard = clipboard
 
-  graphInputMode.addEventListener('deleted-item', ({ item }) => {
-    console.log('GEIM: deleted item', item)
-  })
-  tableInputMode.addEventListener('deleted-item', ({ item }) => {
-    console.log('TEIM: deleted item', item)
-  })
-  tableInputMode.addEventListener('deleted-selection', (args) => {
-    console.log('TEIM: deleted selection')
-  })
-  graphInputMode.editLabelInputMode.addEventListener('label-edited', ({ item }) => {
-    console.log('GEIM.ELIM: label-edited', item)
-  })
-
   return tableInputMode
 }
 
@@ -309,12 +296,7 @@ function populateContextMenu(
       (item) => !!ITable.getTable(item as INode)
     )
     if (tableNode && tableNode.size > 0) {
-      args.contextMenu = [
-        {
-          label: `ContextMenu for ${tableNode.at(0)}`,
-          action: () => {}
-        }
-      ]
+      args.contextMenu = [{ label: `ContextMenu for ${tableNode.at(0)}`, action: () => {} }]
     }
   }
 }

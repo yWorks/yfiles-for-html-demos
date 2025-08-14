@@ -28,10 +28,12 @@
  ***************************************************************************/
 import { BaseClass, IVisualCreator, SvgVisual } from '@yfiles/yfiles'
 import { getWayPoint } from './resources/TrekkingData'
+
 /**
  * The visual that contains the icon associated with a node that is being hovered.
  */
 let iconDescriptionVisual
+
 /**
  * Adds the icon visual associated to the given node to the background group of the
  * given graph component.
@@ -43,6 +45,7 @@ export function addIconDescription(graphComponent, node) {
     new IconDescriptionVisual(node)
   )
 }
+
 /**
  * Removes the icon visual from the background group of the given graph component.
  * Called whenever the highlighting of a node is being removed.
@@ -53,6 +56,7 @@ export function removeIconDescription(graphComponent) {
     iconDescriptionVisual = null
   }
 }
+
 /**
  * Creates a background visual that contains an icon for the given node.
  */
@@ -62,6 +66,7 @@ export class IconDescriptionVisual extends BaseClass(IVisualCreator) {
     super()
     this.node = node
   }
+
   /**
    * Creates an image element with the icon associated to the current node and a line that connects
    * the node with the image element.
@@ -77,6 +82,7 @@ export class IconDescriptionVisual extends BaseClass(IVisualCreator) {
       const imageHeight = 200
       const imageX = Math.max(5, layout.center.x - imageWidth * 0.5)
       const imageY = -250
+
       const image = document.createElementNS('http://www.w3.org/2000/svg', 'image')
       image.x.baseVal.value = Math.max(5, imageX)
       image.y.baseVal.value = imageY
@@ -85,6 +91,7 @@ export class IconDescriptionVisual extends BaseClass(IVisualCreator) {
       image.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', data.icon)
       image.setAttribute('style', 'pointer-events: none')
       container.appendChild(image)
+
       // create the icon border
       const rectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
       rectangle.x.baseVal.value = imageX
@@ -95,6 +102,7 @@ export class IconDescriptionVisual extends BaseClass(IVisualCreator) {
       rectangle.setAttribute('stroke-width', '2')
       rectangle.setAttribute('fill', 'none')
       container.appendChild(rectangle)
+
       // create the line that connects the node with the icon
       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
       line.x1.baseVal.value = cx
@@ -106,8 +114,10 @@ export class IconDescriptionVisual extends BaseClass(IVisualCreator) {
       line.setAttribute('stroke-dasharray', '2')
       container.appendChild(line)
     }
+
     return new SvgVisual(container)
   }
+
   /**
    * Delegates the call to the {@link createVisual} method.
    */

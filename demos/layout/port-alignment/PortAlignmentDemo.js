@@ -51,24 +51,32 @@ import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { colorSets } from '@yfiles/demo-resources/demo-colors'
 import data from './resources/sample.json'
+
 let graphComponent
 let layoutRunning = false
 const togglePortAlignment = document.querySelector('#toggle-port-alignment')
 const toggleMinimumDistance = document.querySelector('#minimum-port-distance')
+
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the graph component and input mode
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // create nodes and edges of the graph
   buildGraph()
+
   // ensure that the LayoutExecutor class is not removed by build optimizers
   LayoutExecutor.ensure()
+
   // apply the hierarchical layout with port alignment
   await runLayout()
   await graphComponent.fitGraphBounds()
+
   initializeUI()
 }
+
 /**
  * Create and configure port data for port alignment
  */
@@ -82,6 +90,7 @@ function configurePortAlignmnent(layoutData) {
     layoutData.ports = portData
   }
 }
+
 /**
  * Arranges the demo's graph with {@link HierarchicalLayout}.
  */
@@ -91,24 +100,30 @@ async function runLayout() {
   }
   layoutRunning = true
   disableUI(true)
+
   const layout = new HierarchicalLayout()
   layout.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
   layout.minimumLayerDistance = 250
   // apply default node size
   layout.layoutStages.prepend(new NodeResizeStage(30, 50))
+
   const layoutData = new HierarchicalLayoutData()
   layoutData.edgeDescriptors = new HierarchicalLayoutEdgeDescriptor({
     routingStyleDescriptor: new RoutingStyleDescriptor(HierarchicalLayoutRoutingStyle.CURVED)
   })
+
   const pathThickness = data.pathThickness
   layoutData.edgeThickness.mapperFunction = (edge) => pathThickness[edge.tag.path]
+
   // configure port alignment
   configurePortAlignmnent(layoutData)
+
   // configure minimum port distance
   // nodes will be automatically enlarged to meet the specified port distance if necessary
   layoutData.nodeDescriptors = new HierarchicalLayoutNodeDescriptor({
     minimumPortDistance: parseInt(toggleMinimumDistance.value)
   })
+
   try {
     await graphComponent.applyLayoutAnimated({ layout, layoutData, animationDuration: '700ms' })
   } finally {
@@ -116,6 +131,7 @@ async function runLayout() {
     disableUI(false)
   }
 }
+
 /**
  * Binds commands and actions to the demo's UI controls.
  */
@@ -127,31 +143,33 @@ function initializeUI() {
     await runLayout()
   })
 }
+
 /**
  * Create nodes and edges according to the given data.
  * Apply the same color to edges that belong to the same path.
  */
 export function buildGraph() {
   const graph = graphComponent.graph
+
   // apply node style
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: 'rectangle',
     fill: '#e0d5cc',
     stroke: null
   })
+
   // define node and edge sources
   const builder = new GraphBuilder(graph)
-  builder.createNodesSource({
-    data: data.nodeList,
-    id: 'id'
-  })
+  builder.createNodesSource({ data: data.nodeList, id: 'id' })
   const edgesSource = builder.createEdgesSource({
     data: data.edgeList,
     id: 'id',
     sourceId: 'source',
     targetId: 'target'
   })
+
   const pathThickness = data.pathThickness
+
   // different colors for different edge paths
   const colorSetNames = [
     'demo-orange',
@@ -162,6 +180,7 @@ export function buildGraph() {
     'demo-lightblue',
     'demo-palette-14'
   ]
+
   // apply colors to edges depending on the paths they belong to
   const edgeCreator = edgesSource.edgeCreator
   edgeCreator.styleProvider = (data) =>
@@ -171,8 +190,10 @@ export function buildGraph() {
         thickness: pathThickness[data.path]
       })
     })
+
   builder.buildGraph()
 }
+
 /**
  * Helper class to resize nodes during layout.
  */
@@ -184,14 +205,17 @@ class NodeResizeStage extends LayoutStageBase {
     this.width = width
     this.height = height
   }
+
   applyLayoutImpl(graph) {
     graph.nodes.forEach((node) => {
       node.layout.width = this.width
       node.layout.height = this.height
     })
+
     this.coreLayout?.applyLayout(graph)
   }
 }
+
 /**
  * Helper function to disable UI during layout animation
  */
@@ -199,4 +223,5 @@ function disableUI(disabled) {
   togglePortAlignment.disabled = disabled
   toggleMinimumDistance.disabled = disabled
 }
+
 run().then(finishLoading)

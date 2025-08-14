@@ -38,20 +38,30 @@ import {
 } from '../common'
 import { CustomLabelStyle } from './CustomLabelStyle'
 import { CustomLabelStyle as OldCustomLabelStyle } from '../03-add-background-shape/CustomLabelStyle'
+
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { initializeInlineGraphComponent } from '../../tutorial-style-implementation-node/common'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
 initializeLabelModel(graphComponent)
+
 graphComponent.graph.nodeDefaults.labels.style = new CustomLabelStyle()
 graphComponent.graph.edgeDefaults.labels.style = new CustomLabelStyle()
+
 createSampleGraphPreferredSize(graphComponent.graph)
 enableGraphEditing(graphComponent)
+
 await fitGraphBounds(graphComponent)
+
 const oldState = initializeInlineGraphComponent('#old-state')
 initializeLabelModel(oldState)
 oldState.graph.nodeDefaults.labels.style = new OldCustomLabelStyle()
+
 createSampleGraphLargeLabel(oldState.graph)
 await fitGraphBounds(oldState)
+
 finishLoading()

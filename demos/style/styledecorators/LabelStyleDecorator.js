@@ -42,7 +42,9 @@ import {
   SvgVisualGroup,
   Visual
 } from '@yfiles/yfiles'
+
 const SVG_NS = 'http://www.w3.org/2000/svg'
+
 /**
  * This label style decorator shows how to decorate another label style.
  */
@@ -56,6 +58,7 @@ export class LabelStyleDecorator extends LabelStyleBase {
     super()
     this.baseStyle = baseStyle
   }
+
   /**
    * Creates a new visual as combination of the base label visualization and the decoration.
    * @param context The render context.
@@ -65,15 +68,19 @@ export class LabelStyleDecorator extends LabelStyleBase {
    */
   createVisual(context, label) {
     const group = new SvgVisualGroup()
+
     // create the base visualization
     const baseVisual = this.baseStyle.renderer
       .getVisualCreator(label, this.baseStyle)
       .createVisual(context)
     group.add(baseVisual)
+
     // create the decoration
     group.add(LabelStyleDecorator.createDecoration(context, label.layout))
+
     return group
   }
+
   /**
    * Updates the provided visual.
    * @param context The render context.
@@ -88,6 +95,7 @@ export class LabelStyleDecorator extends LabelStyleBase {
     if (!(oldVisual instanceof SvgVisualGroup) || oldVisual.children.size !== 2) {
       return this.createVisual(context, label)
     }
+
     // update the base visual
     const baseVisual = this.baseStyle.renderer
       .getVisualCreator(label, this.baseStyle)
@@ -96,10 +104,13 @@ export class LabelStyleDecorator extends LabelStyleBase {
     if (baseVisual !== oldVisual.children.get(0)) {
       oldVisual.children.set(0, baseVisual)
     }
+
     // update the decoration visual
     LabelStyleDecorator.updateDecoration(context, label.layout, oldVisual.children.get(1))
+
     return oldVisual
   }
+
   /**
    * Creates the visualization of the decoration.
    * @param context The render context.
@@ -116,6 +127,7 @@ export class LabelStyleDecorator extends LabelStyleBase {
     line1.y2.baseVal.value = -yPadding + 2
     line1.setAttribute('stroke', '#224556')
     line1.setAttribute('stroke-width', '2')
+
     const line2 = document.createElementNS(SVG_NS, 'line')
     line2.x1.baseVal.value = -xPadding
     line2.x2.baseVal.value = layout.width + xPadding
@@ -123,14 +135,18 @@ export class LabelStyleDecorator extends LabelStyleBase {
     line2.y2.baseVal.value = layout.height + yPadding
     line2.setAttribute('stroke', '#224556')
     line2.setAttribute('stroke-width', '2')
+
     const group = document.createElementNS(SVG_NS, 'g')
     group.appendChild(line1)
     group.appendChild(line2)
+
     // move the group to correct location
     const transform = LabelStyleBase.createLayoutTransform(context, layout, true)
     transform.applyTo(group)
+
     return new SvgVisual(group)
   }
+
   /**
    * Updates the visualization of the decoration.
    * @param context The render context.
@@ -139,6 +155,7 @@ export class LabelStyleDecorator extends LabelStyleBase {
    */
   static updateDecoration(context, layout, visualGroup) {
     const group = visualGroup.svgElement
+
     const padding = 3
     const line1 = group.childNodes[0]
     const line2 = group.childNodes[1]
@@ -146,10 +163,12 @@ export class LabelStyleDecorator extends LabelStyleBase {
     line2.y1.baseVal.value = layout.height + padding
     line2.x2.baseVal.value = layout.width + padding
     line2.y2.baseVal.value = layout.height + padding
+
     // move the group to correct location
     const transform = LabelStyleBase.createLayoutTransform(context, layout, true)
     transform.applyTo(group)
   }
+
   /**
    * Returns the preferred {@link Size size} of the base style for the provided label.
    * @param label The label to which this style instance is assigned.
@@ -159,6 +178,7 @@ export class LabelStyleDecorator extends LabelStyleBase {
   getPreferredSize(label) {
     return this.baseStyle.renderer.getPreferredSize(label, this.baseStyle)
   }
+
   /**
    * Returns the bounds provided by the base style for the label.
    *
@@ -171,6 +191,7 @@ export class LabelStyleDecorator extends LabelStyleBase {
   getBounds(context, label) {
     return this.baseStyle.renderer.getBoundsProvider(label, this.baseStyle).getBounds(context)
   }
+
   /**
    * Returns whether the base visualization is visible.
    * @param context The canvas context.
@@ -185,6 +206,7 @@ export class LabelStyleDecorator extends LabelStyleBase {
       .getVisibilityTestable(label, this.baseStyle)
       .isVisible(context, rectangle)
   }
+
   /**
    * Returns whether the base visualization is hit, we don't want the decoration to be hit testable.
    *
@@ -198,6 +220,7 @@ export class LabelStyleDecorator extends LabelStyleBase {
   isHit(context, location, label) {
     return this.baseStyle.renderer.getHitTestable(label, this.baseStyle).isHit(context, location)
   }
+
   /**
    * Returns whether the base visualization is in the box, we don't want the decoration to be
    * marquee selectable.
@@ -214,6 +237,7 @@ export class LabelStyleDecorator extends LabelStyleBase {
       .getMarqueeTestable(label, this.baseStyle)
       .isInBox(context, rectangle)
   }
+
   /**
    * Delegates the lookup to the base style.
    *

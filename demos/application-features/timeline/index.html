@@ -78,14 +78,11 @@
       </div>
     </header>
 
-    <div class="demo-page__toolbar">
-      <div class="main-view-buttons">
-        <button data-command="INCREASE_ZOOM"></button>
-        <button data-command="ZOOM_ORIGINAL"></button>
-        <button data-command="DECREASE_ZOOM"></button>
-        <button data-command="FIT_GRAPH_BOUNDS"></button>
-        <span class="demo-separator"></span>
-      </div>
+    <div class="demo-page__toolbar main-view-buttons">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -104,25 +101,25 @@
 
         <p>This demo shows how to add a timeline component to the graph.</p>
 
-        <ul>
-          <li>
-            Consists of a <em>main graph</em> component that displays the graph and a
-            <em>timeline</em> component that displays the timeline.
-          </li>
-          <li>
-            Hover/select bars of the timeline to highlight corresponding nodes in the main graph.
-          </li>
-          <li>
-            The height of the bars in the timeline is determined by the number of node
-            creation/removal events at each time point.
-          </li>
-          <li>
-            The timeline component in this demo does <em>not</em> include a timeframe rectangle or a
-            play button, but they are <em>by default</em> included in the
-            <code>Timeline</code> class. Make use of them by initializing a default Timeline
-            instance and register event listeners for filter change.
-          </li>
-        </ul>
+        <p>
+          The height of the bars in the timeline is determined by the number of node
+          creation/removal events at each time point.
+        </p>
+
+        <h2>Things to try</h2>
+
+        <p>
+          Hover or select bars of the timeline to highlight corresponding nodes in the main graph.
+        </p>
+
+        <h2>Details</h2>
+
+        <p>
+          The timeline component in this demo does <em>not</em> include a timeframe rectangle or a
+          play button, but they are <em>by default</em> included in the <code>Timeline</code> class.
+          Make use of them by initializing a default Timeline instance and register event listeners
+          for filter change.
+        </p>
 
         <p>
           The input data structure can be arbitrary, but it needs to contain information about the

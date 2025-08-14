@@ -29,10 +29,12 @@
 import { EventRecognizers, GraphEditorInputMode, GraphItemTypes, IEdge } from '@yfiles/yfiles'
 import { runLayout, updateStylesAndLayout } from '../sankey-layout'
 import { getThickness, updateEdgeThickness } from '../edge-thickness'
+
 /**
  * Precompiled Regex matcher used to allow only labels with positive numbers as text.
  */
 const validationPattern = new RegExp('^(0*[1-9][0-9]*(\\.[0-9]+)?|0+\\.[0-9]*[1-9][0-9]*)$')
+
 /**
  * Initializes and customizes the input mode for this demo.
  * Various options must be set to custom values to ensure desired behaviour.
@@ -49,6 +51,7 @@ export function configureInteraction(graphComponent) {
     allowCreateNode: false,
     allowAddLabel: false
   })
+
   // validate the label text before the label is added so that only positive numbers are allowed as text
   const editLabelInputMode = mode.editLabelInputMode
   editLabelInputMode.addEventListener('validate-label-text', (evt) => {
@@ -56,6 +59,7 @@ export function configureInteraction(graphComponent) {
       evt.validatedText = validationPattern.test(evt.newText) ? evt.newText : null
     }
   })
+
   editLabelInputMode.addEventListener('label-edited', async (evt) => {
     const label = evt.item
     if (label.owner instanceof IEdge) {
@@ -65,10 +69,14 @@ export function configureInteraction(graphComponent) {
       await updateStylesAndLayout(graphComponent, true)
     }
   })
+
   editLabelInputMode.autoRemoveEmptyLabels = false
+
   allowMovingUnselectedNodes(mode, graphComponent)
+
   graphComponent.inputMode = mode
 }
+
 /**
  * Allows the movement of nodes even if they are not selected.
  */
@@ -77,6 +85,7 @@ function allowMovingUnselectedNodes(mode, graphComponent) {
   mode.moveUnselectedItemsInputMode.addEventListener('drag-finished', async () => {
     await runLayout(graphComponent, true)
   })
+
   mode.marqueeSelectionInputMode.enabled = false
   mode.moveViewportInputMode.beginRecognizer = EventRecognizers.MOUSE_DOWN
 }

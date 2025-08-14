@@ -55,20 +55,14 @@ import { getAlignment, getType, isOnCircle, NodeTypes } from './data-types'
  * Also, it registers the necessary data maps to pass the information about the
  * vertical alignment and circle nodes and their types.
  */
-export function configureKrebsCycleLayout(): {
-  layout: ILayoutAlgorithm
-  layoutData: LayoutData
-} {
+export function configureKrebsCycleLayout(): { layout: ILayoutAlgorithm; layoutData: LayoutData } {
   // creates the layout for the Krebs cycle
   const krebsCycleLayout = new KrebsCycleLayout()
   // creates the layout data to pass the information about the types of the nodes and their placement
   const layoutData: GenericLayoutData = new GenericLayoutData()
 
   // applies a generic labeling for the labels of co-reactants, co-enzymes or nodes of type 'Other'
-  const labeling = new GenericLabeling({
-    coreLayout: krebsCycleLayout,
-    scope: 'node-labels'
-  })
+  const labeling = new GenericLabeling({ coreLayout: krebsCycleLayout, scope: 'node-labels' })
 
   // marks the labels that have to be arranged
   const labelingData = new GenericLabelingData({

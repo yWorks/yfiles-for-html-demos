@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'
 import { BranchDirection } from '../layout/FlowchartLayout'
+
 const initialOptions = {
   ProblemSolving: {
     positiveBranch: BranchDirection.Undefined,
@@ -60,14 +61,17 @@ const initialOptions = {
     allowFlatwiseEdges: false
   }
 }
+
 const sample = document.querySelector('#select-sample')
 const positiveBranch = document.querySelector('#positive-branch-direction')
 const negativeBranch = document.querySelector('#negative-branch-direction')
 const inEdgeGrouping = document.querySelector('#in-edge-grouping')
 const allowFlatwiseEdges = document.querySelector('#allow-flatwise-edges')
 const layoutButton = document.querySelector('#layout-button')
+
 export function initializeOptionPanel(sampleChanged, layoutPressed) {
   addNavigationButtons(sample, true, false, 'select-button')
+
   sample.addEventListener('change', () => {
     const options = initialOptions[sample.value]
     positiveBranch.value = String(options.positiveBranch)
@@ -76,8 +80,10 @@ export function initializeOptionPanel(sampleChanged, layoutPressed) {
     allowFlatwiseEdges.checked = options.allowFlatwiseEdges
     sampleChanged()
   })
+
   layoutButton.addEventListener('click', () => layoutPressed())
 }
+
 export function getLayoutOptions() {
   return {
     positiveBranch: Number(positiveBranch.value),
@@ -86,9 +92,11 @@ export function getLayoutOptions() {
     allowFlatwiseEdges: allowFlatwiseEdges.checked
   }
 }
+
 export function getSample() {
   return sample.value
 }
+
 export function enableUI(value) {
   sample.disabled = !value
   positiveBranch.disabled = !value

@@ -38,6 +38,7 @@ import {
   Point,
   SegmentOrientation
 } from '@yfiles/yfiles'
+
 /**
  * Creates a bend creator that ensures that inner segments of an edge are always
  * orthogonal, even if the new bend was created on the non-orthogonal first
@@ -51,6 +52,7 @@ export class BlueBendCreator extends BaseClass(IBendCreator) {
     this.edge = edge
     this.originalBendCreator = originalBendCreator
   }
+
   /**
    * Creates a new bend at the given location. If this bend is on the first or last segment,
    * a second bend is created and placed at a location that ensures that the newly create
@@ -63,21 +65,26 @@ export class BlueBendCreator extends BaseClass(IBendCreator) {
   createBend(context, graph, location) {
     const edgePoints = getEdgePoints(this.edge)
     const closestSegment = determineBendSegmentIndex(edgePoints, location)
+
     const firstSegment = 0
     const lastSegment = this.edge.bends.size
+
     // if bend wasn't created in first or last segment, call default action
     const isFirstOrLastSegment = closestSegment === firstSegment || closestSegment === lastSegment
     if (!isFirstOrLastSegment) {
       return this.originalBendCreator.createBend(context, graph, location)
     }
+
     // add created bend and another one to make the edge stay orthogonal
     if (closestSegment === -1 || !context || !(context.inputMode instanceof CreateBendInputMode)) {
       return -1
     }
+
     const editingContext = context.lookup(OrthogonalEdgeEditingContext)
     if (!editingContext) {
       return -1
     }
+
     if (closestSegment === firstSegment) {
       const nextPoint = edgePoints.get(1)
       // get orientation of next edge segment to determine second bend location
@@ -90,6 +97,7 @@ export class BlueBendCreator extends BaseClass(IBendCreator) {
       }
       return 0
     }
+
     if (closestSegment === lastSegment) {
       const prevPoint = edgePoints.get(this.edge.bends.size)
       // get orientation of next edge segment to determine second bend location
@@ -105,6 +113,7 @@ export class BlueBendCreator extends BaseClass(IBendCreator) {
     return -1
   }
 }
+
 /**
  * Determines the index of the segment in which the bend was created.
  * @param points The points of an edge
@@ -122,6 +131,7 @@ function determineBendSegmentIndex(points, location) {
   }
   return closestIndex
 }
+
 /**
  * Returns a list containing the source port location, the bend locations,
  * and the target port location of the given edge.

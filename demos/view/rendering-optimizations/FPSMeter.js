@@ -35,6 +35,7 @@ export class FPSMeter {
   canvasCtx
   cacheSize
   timerId = 0
+
   /**
    * Initializes a new FPS counter.
    */
@@ -43,19 +44,25 @@ export class FPSMeter {
     this.frameCache = []
     this.fpsHistory = []
     this.fpsSpan = document.getElementById('fps')
+
     this._enabled = true
+
     // configure canvas
     const canvas = document.querySelector('#fpsMeter')
     canvas.width = 200
     canvas.height = 75
     this.canvasCtx = canvas.getContext('2d')
+
     this.cacheSize = 20
+
     // draw empty background of the fps meter
     this.drawBackground()
   }
+
   get enabled() {
     return this._enabled
   }
+
   set enabled(value) {
     this._enabled = value
     if (value) {
@@ -73,6 +80,7 @@ export class FPSMeter {
       document.getElementById('lt20').setAttribute('style', 'color: #ADADAD')
     }
   }
+
   /**
    * Calculates and shows the frame rate. To be called once on each new frame.
    */
@@ -89,6 +97,7 @@ export class FPSMeter {
       // have at least 3 frames to calculate the framerate
       return
     }
+
     // update the UI periodically
     if (this.timerId === 0) {
       this.timerId = window.setTimeout(() => {
@@ -99,6 +108,7 @@ export class FPSMeter {
         const fps = Math.min(Math.floor(this.cacheSize / d), 60)
         this.timerId = 0
         this.fpsSpan.textContent = fps.toString()
+
         // visualize fps
         const fpsHist = this.fpsHistory
         fpsHist.push(fps)
@@ -111,18 +121,22 @@ export class FPSMeter {
       }, 50)
     }
   }
+
   /**
    * Resets the internal cached frame times.
    */
   resetFrameArray() {
     this.frameCache = []
   }
+
   /**
    * Update the canvas.
    */
   drawFps() {
     this.canvasCtx.clearRect(0, 0, 200, 75)
+
     this.drawBackground()
+
     const slot = Math.floor(200.0 / this.cacheSize)
     this.canvasCtx.moveTo(0, 5)
     this.canvasCtx.beginPath()
@@ -131,6 +145,7 @@ export class FPSMeter {
     }
     this.canvasCtx.stroke()
   }
+
   /**
    * Draws the striped background of the fps meter.
    */
@@ -139,9 +154,11 @@ export class FPSMeter {
     this.canvasCtx.fillStyle = 'rgba(0, 160, 0, 0.4)'
     this.canvasCtx.fillRect(0, 5, 200, this.scale * 25)
     // consider y-offset
+
     // 40 - 20 fps
     this.canvasCtx.fillStyle = 'rgba(255, 110, 0, 0.4)'
     this.canvasCtx.fillRect(0, this.scale * 30, 200, this.scale * 20)
+
     // < 20 fps
     this.canvasCtx.fillStyle = 'rgba(160, 0, 0, 0.4)'
     this.canvasCtx.fillRect(0, this.scale * 50, 200, this.scale * 20)

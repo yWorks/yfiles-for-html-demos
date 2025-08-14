@@ -46,28 +46,36 @@ import {
   Rect,
   SelectionEventArgs
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import SampleData from './resources/SampleData'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent = null
+
 /**
  * Stores the bounding rectangle of the selected nodes that get deleted.
  */
 let selectionRect = null
+
 /**
  * Stores the current component assignment strategy.
  */
 let componentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
   initializeInputModes()
+
   initDemoStyles(graphComponent.graph, { orthogonalEditing: true })
   loadGraph('hierarchical')
+
   // bind the buttons to their functionality
   initializeUI()
 }
+
 /**
  * Initializes the {@link GraphEditorInputMode} as the {@link CanvasComponent.inputMode}
  * and registers handlers which are called when selected nodes are deleted.
@@ -78,11 +86,13 @@ function initializeInputModes() {
   editMode.createEdgeInputMode.orthogonalEdgeCreation = OrthogonalEdgeEditingPolicy.ALWAYS
   editMode.orthogonalBendRemoval = OrthogonalEdgeEditingPolicy.ALWAYS
   graphComponent.inputMode = editMode
+
   // registers handlers which are called when selected nodes are deleted
   editMode.addEventListener('deleting-selection', onDeletingSelection)
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   editMode.addEventListener('deleted-selection', onDeletedSelection)
 }
+
 /**
  * Prepares the {@link LayoutExecutor} that is called after the selection is deleted.
  */
@@ -90,6 +100,7 @@ function onDeletingSelection(event) {
   // determine the bounds of the selection
   selectionRect = getBounds(event.selection)
 }
+
 /**
  * Calls the prepared {@link LayoutExecutor}.
  */
@@ -99,11 +110,14 @@ async function onDeletedSelection(_event) {
     componentAssignmentStrategy: componentAssignmentStrategy,
     area: selectionRect
   })
+
   // configure the LayoutExecutor that will perform the layout and morph the result
   const executor = new LayoutExecutor({ graphComponent, layout, animationDuration: '150ms' })
   await executor.start()
+
   selectionRect = null
 }
+
 /**
  * The bounds including the nodes of the selection.
  */
@@ -124,14 +138,17 @@ function getBounds(selection) {
   })
   return bounds
 }
+
 /**
  * Loads the sample graph associated with the given name
  */
 function loadGraph(sampleName) {
   // @ts-ignore We don't have proper types for the sample data
   const data = SampleData[sampleName]
+
   const graph = graphComponent.graph
   graph.clear()
+
   const defaultNodeSize = graph.nodeDefaults.size
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
@@ -149,7 +166,9 @@ function loadGraph(sampleName) {
     })
   }
   builder.createEdgesSource(data.edges, 'source', 'target', 'id')
+
   builder.buildGraph()
+
   graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
       graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
@@ -161,18 +180,22 @@ function loadGraph(sampleName) {
       graph.addBend(edge, bend)
     })
   })
+
   graphComponent.fitGraphBounds()
 }
+
 /**
  * Registers commands and actions for the items in the toolbar.
  */
 function initializeUI() {
   const sampleGraphs = document.querySelector('#sample-graphs')
+
   addNavigationButtons(sampleGraphs).addEventListener('change', () => {
     const selectedIndex = sampleGraphs.selectedIndex
     const selectedOption = sampleGraphs.options[selectedIndex]
     loadGraph(selectedOption.value)
   })
+
   const assignmentStrategies = document.querySelector('#component-assignment-strategies')
   assignmentStrategies.addEventListener('change', () => {
     const selectedOption = assignmentStrategies.options[assignmentStrategies.selectedIndex]
@@ -189,4 +212,5 @@ function initializeUI() {
     }
   })
 }
+
 run().then(finishLoading)

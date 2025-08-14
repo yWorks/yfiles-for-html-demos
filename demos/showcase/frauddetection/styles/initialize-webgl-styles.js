@@ -37,11 +37,13 @@ import {
   WebGLSelectionIndicatorManager
 } from '@yfiles/yfiles'
 import { getEdgeType, getEntityData, isFraud } from '../entity-data'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 import { edgeStyleMapping, nodeStyleMapping } from './graph-styles'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 import { createCanvasContext } from '@yfiles/demo-utils/IconCreation'
+
 let nodeStyles
 let edgeStyles
+
 /**
  * Creates the WebGL styles used for nodes and edges.
  */
@@ -50,6 +52,7 @@ async function initializeWebGLStyles() {
   nodeStyles = await createWebGLNodeStyles()
   edgeStyles = createWebGLEdgeStyles()
 }
+
 /**
  * Enables WebGL as the rendering technique if this supported by the browser.
  */
@@ -59,7 +62,9 @@ export async function enableWebGLRendering(graphComponent) {
     const webGLGraphModelManager = new WebGLGraphModelManager()
     graphComponent.graphModelManager = webGLGraphModelManager
     webGLGraphModelManager.nodeLabelGroup.above(webGLGraphModelManager.nodeGroup)
+
     await initializeWebGLStyles()
+
     // update the node/edge style, every time that the tag of the node/edge changes
     // this will make sure that the node/edge colors are correctly updated when a node/edge is marked
     // as fraud and vice versa
@@ -67,9 +72,11 @@ export async function enableWebGLRendering(graphComponent) {
     graph.addEventListener('node-tag-changed', (evt) => {
       updateNodeStyle(graphComponent, evt.item)
     })
+
     graph.addEventListener('edge-tag-changed', (evt) => {
       updateEdgeStyle(graphComponent, evt.item)
     })
+
     // initialize the selection and the highlight style so that they also use WebGL as a
     // rendering technique
     graphComponent.highlightIndicatorManager = new WebGLHighlightIndicatorManager({
@@ -80,6 +87,7 @@ export async function enableWebGLRendering(graphComponent) {
         primaryColor: 'slateblue'
       })
     })
+
     graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager({
       nodeStyle: new WebGLNodeIndicatorStyle({
         type: WebGLIndicatorType.SOLID,
@@ -90,6 +98,7 @@ export async function enableWebGLRendering(graphComponent) {
     })
   }
 }
+
 /**
  * Updates the WebGL style of the given node, if needed.
  */
@@ -102,6 +111,7 @@ export function updateNodeStyle(graphComponent, node) {
     graph.setStyle(node, nodeStyles[isFraud(node) ? type + ' Fraud' : type])
   }
 }
+
 /**
  * Updates the WebGL style of the given edge, if needed.
  */
@@ -113,6 +123,7 @@ export function updateEdgeStyle(graphComponent, edge) {
     graph.setStyle(edge, edgeStyles[isFraud(edge) && type === 'untyped' ? type + ' Fraud' : type])
   }
 }
+
 /**
  * Sets the new WebGL styles to the nodes and the edges of the given graphComponent.
  */
@@ -124,10 +135,12 @@ export function setWebGLStyles(graphComponent) {
   graph.nodes.forEach((node) => {
     updateNodeStyle(graphComponent, node)
   })
+
   graph.edges.forEach((edge) => {
     updateEdgeStyle(graphComponent, edge)
   })
 }
+
 /**
  * Checks whether the given style needs an update.
  * The style will be updated only if the 'fraud' property of an item has been changed,
@@ -137,6 +150,7 @@ function needsUpdate(item, type, oldStyle, styles) {
   const fraud = isFraud(item)
   return (fraud && oldStyle !== styles[type + ' Fraud']) || (!fraud && oldStyle !== styles[type])
 }
+
 /**
  * Creates two WebGL node styles for each of the node types stored in `nodeStyleMapping`.
  * One will be used for nodes that are not involved in fraud rings while the other will be used for
@@ -144,11 +158,14 @@ function needsUpdate(item, type, oldStyle, styles) {
  */
 async function createWebGLNodeStyles() {
   const webglNodeStyles = {}
+
   const canvasSize = 90 // square canvas
   const ctx = createCanvasContext(canvasSize, canvasSize)
+
   // create two WebGL Styles for each record
   for (const record of Object.keys(nodeStyleMapping)) {
     const style = nodeStyleMapping[record]
+
     const imageData = await getImageData(ctx, style.image, canvasSize)
     // one with normal nodes
     webglNodeStyles[record] = new WebGLImageNodeStyle({
@@ -156,6 +173,7 @@ async function createWebGLNodeStyles() {
       backgroundFill: style.fill,
       backgroundStroke: `4px ${style.stroke}`
     })
+
     // one for fraud nodes
     webglNodeStyles[record + ' Fraud'] = new WebGLImageNodeStyle({
       image: imageData,
@@ -165,6 +183,7 @@ async function createWebGLNodeStyles() {
   }
   return webglNodeStyles
 }
+
 /**
  * Creates two WebGL edge styles for each of the edge types stored in `edgeStyleMapping`.
  * One will be used for edges that are not marked as `fraud` connections while the other will be used for
@@ -172,16 +191,17 @@ async function createWebGLNodeStyles() {
  */
 function createWebGLEdgeStyles() {
   const webglEdgeStyles = {}
+
   for (const record of Object.keys(edgeStyleMapping)) {
     webglEdgeStyles[record] = new WebGLPolylineEdgeStyle({
       stroke: `5px ${edgeStyleMapping[record]}`
     })
-    webglEdgeStyles[record + ' Fraud'] = new WebGLPolylineEdgeStyle({
-      stroke: `5px #ff6c00`
-    })
+
+    webglEdgeStyles[record + ' Fraud'] = new WebGLPolylineEdgeStyle({ stroke: `5px #ff6c00` })
   }
   return webglEdgeStyles
 }
+
 /**
  * Creates an {@link ImageData} icon from a given url.
  * @param ctx The canvas context in which to render the icon

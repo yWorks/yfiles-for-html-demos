@@ -116,10 +116,7 @@ function createSampleGraph(): void {
   graph.nodeDefaults.size = [50, 30]
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '3px #BBBBBB',
-    targetArrow: new Arrow({
-      fill: '#BBBBBB',
-      type: ArrowType.TRIANGLE
-    }),
+    targetArrow: new Arrow({ fill: '#BBBBBB', type: ArrowType.TRIANGLE }),
     smoothingLength: 15
   })
   graph.edgeDefaults.shareStyleInstance = false
@@ -144,9 +141,7 @@ function createSampleGraph(): void {
     id: 'id',
     layout: (data) =>
       new Rect(data.location.x, data.location.y, defaultNodeSize.width, defaultNodeSize.height),
-    tag: (data) => ({
-      id: data.id
-    })
+    tag: (data) => ({ id: data.id })
   })
   builder.createEdgesSource(SampleData.edges, 'from', 'to', 'id')
   builder.buildGraph()

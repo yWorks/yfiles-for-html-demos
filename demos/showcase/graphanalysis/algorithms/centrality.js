@@ -39,6 +39,7 @@ import {
   WeightCentrality
 } from '@yfiles/yfiles'
 import { setCentrality } from './algorithms'
+
 const centralityLabelStyle = new LabelStyle({
   font: '10px bold Tahoma,sans-serif',
   backgroundStroke: '2px #17bebb',
@@ -46,6 +47,7 @@ const centralityLabelStyle = new LabelStyle({
   autoFlip: false,
   padding: [3, 5, 3, 5]
 })
+
 /**
  * Description of the algorithm which determines the degree centrality values.
  */
@@ -53,6 +55,7 @@ export const degreeCentralityDescription = `
   <p>This part of the demo shows the <em>degree centrality</em> for the nodes of the given graph. This algorithm
   uses the degree of the nodes (incoming and outgoing edges) to determine the centrality value for each node.</p>
   <p>Larger and darker nodes are more central than small, light ones. The label shows the exact centrality value.</p>`
+
 /**
  * Calculates the degree centrality values for the given graph.
  */
@@ -61,33 +64,7 @@ export function calculateDegreeCentrality(graph) {
     considerOutgoingEdges: true,
     considerIncomingEdges: true
   }).run(graph)
-  const nodeCentrality = result.nodeCentrality
-  const normalizedNodeCentrality = result.normalizedNodeCentrality
-  graph.nodes.forEach((node) => {
-    const centrality = normalizedNodeCentrality.get(node)
-    setCentrality(node, centrality)
-    graph.addLabel({
-      owner: node,
-      text: nodeCentrality.get(node).toFixed(2)
-    })
-  })
-}
-/**
- * Description of the algorithm which determines the weight centrality values.
- */
-export const weightCentralityDescription = `
-  <p>This part of the demo shows the <em>weight centrality</em> for the nodes of the given graph.</p>
-  <p>Weights for edges must be positive and can be specified using <em>edge labels</em>. The weights of edges without labels are their <em>edge lengths</em>.
-  When the algorithm should use <em>Uniform weights</em> all edges have equal weights. This algorithm can take the direction of edges into account.</p>
-  <p>Larger and darker nodes are more central than small, light ones. The label shows the exact centrality value.</p>`
-/**
- * Calculates the weight centrality values for the given graph.
- */ export function calculateWeightCentrality(graph, config) {
-  const result = new WeightCentrality({
-    weights: config.edgeWeights,
-    considerOutgoingEdges: true,
-    considerIncomingEdges: true
-  }).run(graph)
+
   const nodeCentrality = result.nodeCentrality
   const normalizedNodeCentrality = result.normalizedNodeCentrality
   graph.nodes.forEach((node) => {
@@ -96,6 +73,34 @@ export const weightCentralityDescription = `
     graph.addLabel({ owner: node, text: nodeCentrality.get(node).toFixed(2) })
   })
 }
+
+/**
+ * Description of the algorithm which determines the weight centrality values.
+ */
+export const weightCentralityDescription = `
+  <p>This part of the demo shows the <em>weight centrality</em> for the nodes of the given graph.</p>
+  <p>Weights for edges must be positive and can be specified using <em>edge labels</em>. The weights of edges without labels are their <em>edge lengths</em>.
+  When the algorithm should use <em>Uniform weights</em> all edges have equal weights. This algorithm can take the direction of edges into account.</p>
+  <p>Larger and darker nodes are more central than small, light ones. The label shows the exact centrality value.</p>`
+
+/**
+ * Calculates the weight centrality values for the given graph.
+ */ export function calculateWeightCentrality(graph, config) {
+  const result = new WeightCentrality({
+    weights: config.edgeWeights,
+    considerOutgoingEdges: true,
+    considerIncomingEdges: true
+  }).run(graph)
+
+  const nodeCentrality = result.nodeCentrality
+  const normalizedNodeCentrality = result.normalizedNodeCentrality
+  graph.nodes.forEach((node) => {
+    const centrality = normalizedNodeCentrality.get(node)
+    setCentrality(node, centrality)
+    graph.addLabel({ owner: node, text: nodeCentrality.get(node).toFixed(2) })
+  })
+}
+
 /**
  * Description of the algorithm which determines the graph centrality values.
  */ export const graphCentralityDescription = `
@@ -106,6 +111,7 @@ export const weightCentralityDescription = `
   <p>Note that, for disconnected graphs the centrality values of all nodes will be zero.
   This also applies to directed graphs without a node from which all other nodes are reachable.</p>
   <p>Larger and darker nodes are more central than small, light ones. The label shows the exact centrality value.</p>`
+
 /**
  * Calculates the graph centrality values for the given graph.
  */
@@ -114,6 +120,7 @@ export function calculateGraphCentrality(graph, config) {
     weights: config.edgeWeights,
     directed: config.directed
   }).run(graph)
+
   const nodeCentrality = result.nodeCentrality
   const normalizedNodeCentrality = result.normalizedNodeCentrality
   graph.nodes.forEach((node) => {
@@ -122,6 +129,7 @@ export function calculateGraphCentrality(graph, config) {
     graph.addLabel({ owner: node, text: nodeCentrality.get(node).toFixed(2) })
   })
 }
+
 /**
  * Description of the algorithm which determines the node-edge betweenness centrality values.
  */ export const nodeEdgeBetweennessCentralityDescription = `
@@ -130,6 +138,7 @@ export function calculateGraphCentrality(graph, config) {
   The weights of edges without labels are their <em>edge lengths</em>. When the algorithm should use <em>Uniform weights</em>
   all edges have equal weights. This algorithm can take the direction of edges into account.</p>
   <p>Larger and darker nodes are more central than small, light ones. The label shows the exact centrality value.</p>`
+
 /**
  * Calculates the node-edge betweenness centrality values for the given graph.
  */
@@ -138,6 +147,7 @@ export function calculateNodeEdgeBetweennessCentrality(graph, config) {
     weights: config.edgeWeights,
     directed: config.directed
   }).run(graph)
+
   const nodeCentrality = result.nodeCentrality
   const normalizedNodeCentrality = result.normalizedNodeCentrality
   graph.nodes.forEach((node) => {
@@ -145,6 +155,7 @@ export function calculateNodeEdgeBetweennessCentrality(graph, config) {
     setCentrality(node, centrality)
     graph.addLabel({ owner: node, text: nodeCentrality.get(node).toFixed(2) })
   })
+
   const edgeCentrality = result.edgeCentrality
   const normalizedEdgeCentrality = result.normalizedEdgeCentrality
   graph.edges.forEach((edge) => {
@@ -158,6 +169,7 @@ export function calculateNodeEdgeBetweennessCentrality(graph, config) {
     })
   })
 }
+
 /**
  * Description of the algorithm which determines the closeness centrality values.
  */ export const closenessCentralityDescription = `
@@ -167,6 +179,7 @@ export function calculateNodeEdgeBetweennessCentrality(graph, config) {
   <p>Note that, for disconnected graphs the algorithm will be applied to each connected component separately.</p>
   <p>The centrality of all nodes will be zero for directed graphs if there exists a node that is not reachable from all other nodes.</p>
   <p>Larger and darker nodes are more central than small, light ones. The label shows the exact centrality value.</p>`
+
 /**
  * Calculates the closeness centrality values for the given graph.
  */
@@ -177,6 +190,7 @@ export function calculateClosenessCentrality(graph, config) {
       weights: config.edgeWeights,
       directed: config.directed
     }).run(graph)
+
     const normalizedNodeCentrality = result.normalizedNodeCentrality
     graph.nodes.forEach((node) => {
       const centrality = normalizedNodeCentrality.get(node)
@@ -190,12 +204,14 @@ export function calculateClosenessCentrality(graph, config) {
   } else {
     // if the graph is not connected, we run the algorithm separately to each connected component
     const connectedComponentsResult = new ConnectedComponents().run(graph)
+
     connectedComponentsResult.components.forEach((component) => {
       const result = new ClosenessCentrality({
         weights: config.edgeWeights,
         directed: config.directed,
         subgraphNodes: component.nodes
       }).run(graph)
+
       const normalizedNodeCentrality = result.normalizedNodeCentrality
       component.nodes.forEach((node) => {
         const centrality = normalizedNodeCentrality.get(node)
@@ -206,6 +222,7 @@ export function calculateClosenessCentrality(graph, config) {
     })
   }
 }
+
 /**
  * Description of the algorithm which determines the Eigenvector centrality values.
  */ export const eigenvectorCentralityDescription = `
@@ -214,21 +231,21 @@ export function calculateClosenessCentrality(graph, config) {
   The more nodes point to a node, the higher is that node's centrality.</p>
   <p>The centrality values are scaled so that the largest centrality value is 1.0.</p>
   <p>Larger and darker nodes are more central than small, light ones. The label shows the exact centrality value.</p>`
+
 /**
  * Calculates the Eigenvector centrality values for the given graph.
  */
 export function calculateEigenvectorCentrality(graph) {
   const result = new EigenvectorCentrality().run(graph)
+
   const nodeCentrality = result.nodeCentrality
   graph.nodes.forEach((node) => {
     const centrality = nodeCentrality.get(node)
     setCentrality(node, centrality)
-    graph.addLabel({
-      owner: node,
-      text: Number.isNaN(centrality) ? 'Inf' : centrality.toFixed(2)
-    })
+    graph.addLabel({ owner: node, text: Number.isNaN(centrality) ? 'Inf' : centrality.toFixed(2) })
   })
 }
+
 /**
  * Description of the algorithm which determines the page rank values.
  */
@@ -246,23 +263,22 @@ export const pageRankDescription = `
   iterations are reached, the algorithm stops.</p>
   <p>Larger and darker nodes have a higher PageRank value than small, light ones. The label shows
   the exact PageRank value.</p>`
+
 /**
  * Calculates the page rank values for the given graph.
  */
 export function calculatePageRankCentrality(graph, config) {
-  const result = new PageRank({
-    edgeWeights: config.edgeWeights
-  }).run(graph)
+  const result = new PageRank({ edgeWeights: config.edgeWeights }).run(graph)
+
   const pageRank = result.pageRank
+
   const maximumRank = graph.nodes.reduce((maxRank, node) => {
     return Math.max(maxRank, pageRank.get(node))
   }, 0)
+
   graph.nodes.forEach((node) => {
     const rank = pageRank.get(node)
     setCentrality(node, rank / maximumRank)
-    graph.addLabel({
-      owner: node,
-      text: rank.toFixed(2)
-    })
+    graph.addLabel({ owner: node, text: rank.toFixed(2) })
   })
 }

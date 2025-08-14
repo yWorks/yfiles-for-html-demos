@@ -213,10 +213,7 @@ function createNode(
  * @param rowInfo The info which describes the row to create.
  */
 function addRow(graph: IGraph, node: INode, rowInfo: RowInfo): void {
-  const labelStyle = new LabelStyle({
-    padding: [1, 3, 1, 3],
-    textFill: '#0C313A'
-  })
+  const labelStyle = new LabelStyle({ padding: [1, 3, 1, 3], textFill: '#0C313A' })
   const portStyle = new ShapePortStyle({ fill: '#304048', shape: 'ellipse' })
 
   const nodeInfo = node.tag as NodeInfo
@@ -439,15 +436,8 @@ function registerContextMenu(graphComponent: GraphComponent, geim: GraphEditorIn
 }
 
 // model data for a node: the node's name and the rows
-export type NodeInfo = {
-  draggingIndex: number | null
-  name: string
-  rows: RowInfo[]
-}
+export type NodeInfo = { draggingIndex: number | null; name: string; rows: RowInfo[] }
 // model data for a row: the name and whether it is for incoming or outgoing edges
-export type RowInfo = {
-  in?: string
-  out?: string
-}
+export type RowInfo = { in?: string; out?: string }
 
 run().then(finishLoading)

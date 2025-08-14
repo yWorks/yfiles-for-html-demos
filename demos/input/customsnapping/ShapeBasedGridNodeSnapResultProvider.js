@@ -35,6 +35,7 @@ import {
   Point,
   Rect
 } from '@yfiles/yfiles'
+
 /**
  * Customizes the grid snapping behavior of NodeSnapResultProvider by providing SnapResults for each point of the
  * node's shape path instead of the node's center.
@@ -55,12 +56,14 @@ export class ShapeBasedGridNodeSnapResultProvider extends NodeSnapResultProvider
       suggestedLayout.topLeft.x - node.layout.topLeft.x,
       suggestedLayout.topLeft.y - node.layout.topLeft.y
     )
+
     // get outline of the shape and iterate over its path point
     const geometry = node.style.renderer.getShapeGeometry(node, node.style)
     const outline = geometry.getOutline()
     if (outline === null) {
       return
     }
+
     const cursor = outline.createCursor()
     while (cursor.moveNext()) {
       // ignore PathType.Close as we had the path point as first point

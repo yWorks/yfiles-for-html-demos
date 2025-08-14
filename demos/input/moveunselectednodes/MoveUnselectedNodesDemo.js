@@ -50,32 +50,42 @@ import {
   ShowPortCandidates,
   Size
 } from '@yfiles/yfiles'
+
 import { colorSets, createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent
+
 let moveUnselectedItemsInputMode
+
 const moveModeSelect = document.querySelector('#move-modes')
 const moveEnabledButton = document.querySelector('#toggle-move-enabled')
 const moveEnabledLabel = document.querySelector('label[for="toggle-move-enabled"]')
 const edgeCreationModeSelect = document.querySelector('#edge-creation-modes')
 const classicModeButton = document.querySelector('#toggle-classic-mode')
+
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   initializeGraph()
+
   initializeInputModes()
+
   initializeUI()
+
   // pre-select the 'Drag at Top' mode
   moveModeSelect.value = 'Drag at Top'
   onMoveModeChanged()
 }
+
 /**
  * Initializes the graph instance setting default styles and creating a small sample graph.
  */
 function initializeGraph() {
   graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
+
   // set the default node style
   graph.nodeDefaults.style = new GroupNodeStyle({
     tabFill: colorSets['demo-orange'].fill,
@@ -84,22 +94,28 @@ function initializeGraph() {
   graph.nodeDefaults.size = new Size(60, 80)
   graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.TOP
   graph.nodeDefaults.labels.style = new LabelStyle({ textFill: 'white' })
+
   graph.edgeDefaults.style = createDemoEdgeStyle()
+
   // Create a sample node
   graph.addLabel(graph.createNode(), 'Node')
+
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Creates and registers the input modes.
  */
 function initializeInputModes() {
   const graphEditorInputMode = new GraphEditorInputMode()
+
   // Always add a label to the newly created nodes
   graphEditorInputMode.nodeCreator = (_context, graph, location) => {
     const node = graph.createNodeAt(location)
     graph.addLabel(node, 'Node')
     return node
   }
+
   // Enable the MoveUnselectedInputMode
   moveUnselectedItemsInputMode = graphEditorInputMode.moveUnselectedItemsInputMode
   moveUnselectedItemsInputMode.enabled = true
@@ -110,8 +126,10 @@ function initializeInputModes() {
   const originalHoverRecognizer = moveUnselectedItemsInputMode.hoverRecognizer
   moveUnselectedItemsInputMode.hoverRecognizer = (evt, eventSource) =>
     originalHoverRecognizer(evt, eventSource) && isRecognized(evt, eventSource)
+
   graphComponent.inputMode = graphEditorInputMode
 }
+
 /**
  * Called when the mode combo box has changed:
  * if necessary, it changes the hit testable for the move input mode
@@ -142,6 +160,7 @@ function onMoveModeChanged() {
   moveEnabledLabel.style.display = showMoveEnabledButton ? 'inline-block' : 'none'
   onEdgeCreationModeChanged()
 }
+
 /**
  * Called when the edge creation mode combo box has changed:
  * Adjusts the edge creation behavior.
@@ -164,6 +183,7 @@ function onEdgeCreationModeChanged() {
     geim.createEdgeInputMode.showPortCandidates = ShowPortCandidates.ALL
   }
 }
+
 /**
  * A custom EventRecognizer to be used as modifier recognizer.
  *
@@ -184,17 +204,20 @@ function isRecognized(evt, source) {
       return false
   }
 }
+
 /**
  * Wires up the UI.
  */
 function initializeUI() {
   moveModeSelect.addEventListener('change', onMoveModeChanged)
   edgeCreationModeSelect.addEventListener('change', onEdgeCreationModeChanged)
+
   classicModeButton.addEventListener('click', () => {
     const mode = graphComponent.inputMode.moveSelectedItemsInputMode
     mode.enabled = !mode.enabled
   })
 }
+
 /**
  * An IHitTestable implementation which detects hits only on top padding of a node.
  *
@@ -211,10 +234,12 @@ class TopPaddingHitTestable extends BaseClass(IHitTestable) {
     this.inputMode = inputMode
     this.original = original
   }
+
   /**
    * Gets the original hit testable.
    */
   original
+
   /**
    * Test whether the given location is a valid hit.
    *
@@ -240,4 +265,5 @@ class TopPaddingHitTestable extends BaseClass(IHitTestable) {
     return false
   }
 }
+
 run().then(finishLoading)

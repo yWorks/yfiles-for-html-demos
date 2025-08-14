@@ -51,11 +51,7 @@ export function configureHighlight(graphComponent: GraphComponent): void {
   decorator.nodes.highlightRenderer.addFactory((node) => {
     const style = node.style as ShapeNodeStyle
     return new NodeStyleIndicatorRenderer({
-      nodeStyle: new ShapeNodeStyle({
-        shape: style.shape,
-        fill: style.fill,
-        stroke: style.stroke
-      }),
+      nodeStyle: new ShapeNodeStyle({ shape: style.shape, fill: style.fill, stroke: style.stroke }),
       zoomPolicy: 'world-coordinates',
       margins: 2
     })

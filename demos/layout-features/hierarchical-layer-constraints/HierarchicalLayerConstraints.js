@@ -33,6 +33,7 @@ import {
   ILayoutAlgorithm,
   LayoutData
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to configure layering contraints for {@link HierarchicalLayout}.
  * @param graph The graph to be laid out
@@ -42,11 +43,13 @@ import {
 export function createFeatureLayoutConfiguration(graph) {
   const layout = new HierarchicalLayout()
   const layoutData = new HierarchicalLayoutData()
+
   // get the nodes for which we want to define layer constraints
   const node0 = graph.nodes.find((node) => node.tag === 0)
   const node2 = graph.nodes.find((node) => node.tag === 2)
   const node7 = graph.nodes.find((node) => node.tag === 7)
   const node9 = graph.nodes.find((node) => node.tag === 9)
+
   // this is the factory that we apply the constraints to
   const layerConstraints = layoutData.layerConstraints
   // place node9 in the topmost layer
@@ -57,8 +60,10 @@ export function createFeatureLayoutConfiguration(graph) {
   layerConstraints.placeInOrder(node9, node0)
   // place node2 in the same layer as node0
   layerConstraints.placeInSameLayer(node0, node2)
+
   return { layout, layoutData }
 }
+
 /**
  * Demonstrates how to run {@link HierarchicalLayout} with its default configuration.
  * @param graph The graph to be laid out

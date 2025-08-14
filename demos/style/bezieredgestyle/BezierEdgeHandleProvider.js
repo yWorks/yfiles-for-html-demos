@@ -34,6 +34,7 @@ import {
   IHandleProvider,
   IInputModeContext
 } from '@yfiles/yfiles'
+
 /**
  * Custom implementation for bezier edges that always shows all handles for the control points
  * This makes it possible to start manipulating the control points immediately without having to
@@ -42,11 +43,13 @@ import {
 export class BezierEdgeHandleProvider extends BaseClass(IHandleProvider) {
   edge
   coreImpl
+
   constructor(edge, coreImpl) {
     super()
     this.edge = edge
     this.coreImpl = coreImpl
   }
+
   getHandles(context) {
     return this.coreImpl
       .getHandles(context)

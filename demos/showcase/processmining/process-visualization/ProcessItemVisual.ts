@@ -41,6 +41,7 @@ import {
   IVisibilityTestable,
   IVisualCreator,
   PathType,
+  type Point,
   PolylineEdgeStyle,
   SimpleEdge,
   type Visual
@@ -49,7 +50,8 @@ import { type WebGLBufferData, WebGLProgramInfo } from './webgl-utils'
 
 type ProcessItemWebGLProgram = WebGLProgram & { info: ProcessItemProgramInfo | undefined }
 
-type ItemEntry = {
+export type ItemEntry = {
+  caseId: number
   color: number
   startTime: number
   endTime: number
@@ -62,21 +64,19 @@ type ItemEntry = {
 
 let processItemVisual: ProcessItemVisual
 
-const dummyEdgeStyle = new PolylineEdgeStyle({
-  sourceArrow: IArrow.NONE,
-  targetArrow: IArrow.NONE
-})
+const dummyEdgeStyle = new PolylineEdgeStyle({ sourceArrow: IArrow.NONE, targetArrow: IArrow.NONE })
 
 /**
  * Installs a process item visual in the given canvas component.
  */
-export function installProcessItemVisual(canvas: CanvasComponent): void {
+export function installProcessItemVisual(canvas: CanvasComponent): ProcessItemVisual {
   processItemVisual = new ProcessItemVisual()
   canvas.renderTree.createElement(
     canvas.renderTree.highlightGroup,
     processItemVisual,
     new ProcessItemRenderer()
   )
+  return processItemVisual
 }
 
 /**
@@ -91,6 +91,7 @@ export function updateTime(time: number): void {
 
 /**
  * Adds an event item to the process item visual for the given edge and a specified timespan.
+ * @param caseId the id of the corresponding case
  * @param path the edge that the item should follow
  * @param reverse the direction in which the item should move
  * @param startTime the time when the item starts traversing the edge
@@ -99,6 +100,7 @@ export function updateTime(time: number): void {
  * @param color a color value
  */
 export function addItem(
+  caseId: number,
   path: IEdge,
   reverse: boolean,
   startTime: number,
@@ -107,7 +109,7 @@ export function addItem(
   color: number
 ): void {
   if (processItemVisual) {
-    processItemVisual.addItem(path, reverse, startTime, endTime, size, color)
+    processItemVisual.addItem(caseId, path, reverse, startTime, endTime, size, color)
   }
 }
 
@@ -312,13 +314,39 @@ export class ProcessItemVisual extends WebGLVisual {
     return this.$time
   }
 
-  clearItems(): void {
-    this.dirty = true
-    this.entries.length = 0
-    this.entryCount = 0
+  /**
+   * Returns all entries that are located at the given location at the current time
+   */
+  getEntriesAtLocation(location: Point): ItemEntry[] {
+    const currentVisibleEntries = this.entries.filter(
+      (entry) => entry.startTime < this.time && entry.endTime > this.time
+    )
+    const locationX = location.x
+    const locationY = location.y
+    return currentVisibleEntries.filter((entry) => {
+      // calculate the exact position of every entry at the current time
+      const timeRatio = (this.time - entry.startTime) / (entry.endTime - entry.startTime)
+      const x = entry.x0 + (entry.x1 - entry.x0) * timeRatio
+      const y = entry.y0 + (entry.y1 - entry.y0) * timeRatio
+      // filter out all entries that are within the mouse click area
+      return (
+        locationX > x - entry.size &&
+        locationX < x + entry.size &&
+        locationY > y - entry.size &&
+        locationY < y + entry.size
+      )
+    })
   }
 
-  addItem(path: IEdge, reverse: boolean, startTime = 0, endTime = 1, size = 10, color = 0.5): void {
+  addItem(
+    caseId: number,
+    path: IEdge,
+    reverse: boolean,
+    startTime = 0,
+    endTime = 1,
+    size = 10,
+    color = 0.5
+  ): void {
     this.dirty = true
 
     const entries = this.entries
@@ -334,6 +362,7 @@ export class ProcessItemVisual extends WebGLVisual {
         const segmentEndTime = startTime + (endTime - startTime) * (runningTotal / totalLength)
 
         entries.push({
+          caseId,
           color,
           startTime: segmentEndTime,
           endTime: segmentStartTime,
@@ -353,6 +382,7 @@ export class ProcessItemVisual extends WebGLVisual {
         const segmentEndTime = startTime + (endTime - startTime) * (runningTotal / totalLength)
 
         entries.push({
+          caseId,
           color,
           startTime: segmentStartTime,
           endTime: segmentEndTime,
@@ -454,10 +484,6 @@ export class ProcessItemVisual extends WebGLVisual {
     })
     this.dirty = false
     this.timeDirty = false
-  }
-
-  get needsRepaint(): boolean {
-    return (this.entryCount > 0 && this.timeDirty) || (this.dirty && this.entries.length > 0)
   }
 }
 

@@ -39,13 +39,19 @@ import {
 } from '../common'
 import { CustomNodeStyle } from './CustomNodeStyle'
 import { CustomNodeStyle as OldCustomNodeStyle } from '../05-data-from-tag/CustomNodeStyle'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
+
 createSampleGraphHitTesting(graphComponent.graph, new CustomNodeStyle(), new OldCustomNodeStyle())
+
 const graphEditorInputMode = enableGraphEditing(graphComponent)
 graphEditorInputMode.selectableItems = GraphItemTypes.NONE
 addHoverEffect(graphComponent, graphEditorInputMode)
 configureMinimumSize(graphComponent)
+
 fitGraphBounds(graphComponent)
 finishLoading()

@@ -31,8 +31,11 @@
  */
 export class LayoutOptions {
   clearAreaStrategy
+
   componentAssignmentStrategy
+
   considerEdges
+
   constructor(clearAreaStrategy, componentAssignmentStrategy, considerEdges) {
     this.clearAreaStrategy = clearAreaStrategy
     this.componentAssignmentStrategy = componentAssignmentStrategy

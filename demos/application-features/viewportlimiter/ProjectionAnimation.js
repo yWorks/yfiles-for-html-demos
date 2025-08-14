@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { BaseClass, GraphComponent, IAnimation, Matrix, TimeSpan } from '@yfiles/yfiles'
+
 /**
  * Animates the projection between two alpha and scale values.
  */
@@ -44,20 +45,24 @@ export class ProjectionAnimation extends BaseClass(IAnimation) {
     this.fromScale = fromScale
     this.toScale = toScale
   }
+
   cleanUp() {
     // NOP
   }
   initialize() {
     // NOP
   }
+
   animate(time) {
     const currentAlpha = (1 - time) * this.fromAlpha + time * this.toAlpha
     const currentScale = (1 - time) * this.fromScale + time * this.toScale
+
     const mat = Matrix.IDENTITY.clone()
     mat.scale(1, currentScale)
     mat.rotate(currentAlpha)
     this.graphComponent.projection = mat
   }
+
   get preferredDuration() {
     return TimeSpan.fromMilliseconds(1000)
   }

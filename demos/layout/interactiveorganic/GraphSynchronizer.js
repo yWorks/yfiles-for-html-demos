@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { ItemEventArgs, Rect } from '@yfiles/yfiles'
+
 /**
  * Two instances of this class synchronize two graphs across threads.
  *
@@ -43,11 +44,17 @@ export class GraphSynchronizer {
   id2Item = new Map()
   lastId = 0
   reentrantFlag = false
+
   nodeCreatedListener = (evt) => this.sendMessage(evt, this.createNodeCreatedMessage)
+
   nodeRemovedListener = (evt) => this.sendMessage(evt, this.createNodeRemovedMessage)
+
   nodeLayoutChangedListener = (evt) => this.sendMessage(evt, this.createNodeLayoutChangedMessage)
+
   edgeCreatedListener = (evt) => this.sendMessage(evt, this.createEdgeCreatedMessage)
+
   edgeRemovedListener = (evt) => this.sendMessage(evt, this.createEdgeRemovedMessage)
+
   /**
    * Creates a new instance of this class.
    * @param graph The graph to synchronize with another graph.
@@ -60,6 +67,7 @@ export class GraphSynchronizer {
     this.messageHandler = messageHandler
     this.registerGraphEvents()
   }
+
   /**
    * Accepts a message from another {@link GraphSynchronizer} instance
    * to reflect its changes on this graph.
@@ -70,6 +78,7 @@ export class GraphSynchronizer {
     this.handleMessage(message)
     this.reentrantFlag = false
   }
+
   /**
    * Returns the id of an item. The id is used to identify an item across the graphs.
    */
@@ -82,17 +91,15 @@ export class GraphSynchronizer {
     }
     return id
   }
+
   /**
    * Returns the item with the given id. If this graph does not contain an item with this id,
    * it will throw an Error.
    */
   getItem(id) {
-    const item = this.id2Item.get(id)
-    if (!item) {
-      throw new Error(`No item with id ${id}`)
-    }
-    return item
+    return this.id2Item.get(id)
   }
+
   /**
    * Disposes this instance.
    */
@@ -102,9 +109,11 @@ export class GraphSynchronizer {
     this.graph.removeEventListener('node-layout-changed', this.nodeLayoutChangedListener)
     this.graph.removeEventListener('edge-created', this.edgeCreatedListener)
     this.graph.removeEventListener('edge-removed', this.edgeRemovedListener)
+
     this.item2Id.clear()
     this.id2Item.clear()
   }
+
   registerGraphEvents() {
     this.graph.addEventListener('node-created', this.nodeCreatedListener)
     this.graph.addEventListener('node-removed', this.nodeRemovedListener)
@@ -112,11 +121,13 @@ export class GraphSynchronizer {
     this.graph.addEventListener('edge-created', this.edgeCreatedListener)
     this.graph.addEventListener('edge-removed', this.edgeRemovedListener)
   }
+
   sendMessage(evt, createMessage) {
     if (!this.reentrantFlag) {
       this.messageHandler(createMessage(evt))
     }
   }
+
   createNodeCreatedMessage = (evt) => {
     const layout = evt.item.layout
     return {
@@ -125,15 +136,14 @@ export class GraphSynchronizer {
       layout: [layout.x, layout.y, layout.width, layout.height]
     }
   }
+
   createNodeRemovedMessage = (evt) => {
     const id = this.getId(evt.item)
     this.item2Id.delete(evt.item)
     this.id2Item.delete(id)
-    return {
-      type: 'node-removed',
-      id
-    }
+    return { type: 'node-removed', id }
   }
+
   createNodeLayoutChangedMessage = (node) => {
     const layout = node.layout
     return {
@@ -142,6 +152,7 @@ export class GraphSynchronizer {
       newLayout: [layout.x, layout.y, layout.width, layout.height]
     }
   }
+
   createEdgeCreatedMessage = (evt) => {
     return {
       type: 'edge-created',
@@ -150,15 +161,14 @@ export class GraphSynchronizer {
       targetId: this.getId(evt.item.targetNode)
     }
   }
+
   createEdgeRemovedMessage = (evt) => {
     const id = this.getId(evt.item)
     this.item2Id.delete(evt.item)
     this.id2Item.delete(id)
-    return {
-      type: 'edge-removed',
-      id
-    }
+    return { type: 'edge-removed', id }
   }
+
   handleMessage(message) {
     switch (message.type) {
       case 'node-created':
@@ -178,20 +188,26 @@ export class GraphSynchronizer {
         break
     }
   }
+
   handleNodeCreated(message) {
     const newNode = this.graph.createNode(message.layout)
     this.item2Id.set(newNode, message.id)
     this.id2Item.set(message.id, newNode)
     this.lastId = message.id
   }
+
   handleNodeRemoved(message) {
     const item = this.getItem(message.id)
     this.graph.remove(item)
   }
+
   handleNodeLayoutChanged(message) {
     const node = this.getItem(message.id)
-    this.graph.setNodeLayout(node, Rect.from(message.newLayout))
+    if (node) {
+      this.graph.setNodeLayout(node, Rect.from(message.newLayout))
+    }
   }
+
   handleEdgeCreated(message) {
     const sourceNode = this.getItem(message.sourceId)
     const targetNode = this.getItem(message.targetId)
@@ -200,6 +216,7 @@ export class GraphSynchronizer {
     this.id2Item.set(message.id, newEdge)
     this.lastId = message.id
   }
+
   handleEdgeRemoved(message) {
     const item = this.getItem(message.id)
     this.graph.remove(item)

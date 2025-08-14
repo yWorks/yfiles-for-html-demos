@@ -97,21 +97,9 @@ function populateContextMenu(
   // Create the context menu items
   if (graphComponent.selection.nodes.size > 0) {
     args.contextMenu = [
-      {
-        label: 'Cut',
-        action: () => inputMode.cut(),
-        icon: `url("${iconCut}")`
-      },
-      {
-        label: 'Copy',
-        action: () => inputMode.copy(),
-        icon: `url("${iconCopy}")`
-      },
-      {
-        label: 'Delete',
-        action: () => inputMode.deleteSelection(),
-        icon: `url("${iconDelete}")`
-      }
+      { label: 'Cut', action: () => inputMode.cut(), icon: `url("${iconCut}")` },
+      { label: 'Copy', action: () => inputMode.copy(), icon: `url("${iconCopy}")` },
+      { label: 'Delete', action: () => inputMode.deleteSelection(), icon: `url("${iconDelete}")` }
     ]
   } else {
     // no node has been hit

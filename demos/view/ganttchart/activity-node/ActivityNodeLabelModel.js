@@ -35,6 +35,7 @@ import {
 } from '@yfiles/yfiles'
 import { getMainActivityWidth, getMainActivityX } from '../gantt-utils'
 import { getActivity } from '../resources/data-model'
+
 /**
  * A label model that arranges the label centered in the "main" activity part, omitting the parts
  * for the lead time and follow-up time.
@@ -57,19 +58,23 @@ export class ActivityNodeLabelModel extends BaseClass(ILabelModel) {
       height
     })
   }
+
   /**
    * Returns a custom label model parameter used for determining the position of the label.
    */
   createDefaultParameter() {
     return new ActivityNodeStyleLabelModelParameter(this)
   }
+
   getContext(label) {
     return ILookup.EMPTY
   }
+
   lookup(type) {
     return null
   }
 }
+
 /**
  * A custom label model parameter used for placing the labels of the activity nodes.
  */
@@ -79,9 +84,11 @@ class ActivityNodeStyleLabelModelParameter extends BaseClass(ILabelModelParamete
     super()
     this._model = _model
   }
+
   clone() {
     return this
   }
+
   /**
    * Returns the model used for placing the labels.
    */

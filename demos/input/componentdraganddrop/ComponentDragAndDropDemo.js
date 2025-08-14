@@ -54,37 +54,43 @@ import { GraphDropInputMode } from './GraphDropInputMode'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent = null
+
 /**
  * Performs layout and animation during the drag and drop operation.
  */
 let layoutHelper = null
+
 /**
  * Determines whether components are kept during drag.
  */
 let keepComponents = false
+
 /**
  * Counts the components and is used as component id.
  */
 let componentCount = 0
+
 async function run() {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('#graphComponent')
   initializeInputModes()
   initializeGraph()
   await initializePalette()
+
   await loadSampleGraph()
   initializeUI()
 }
+
 /**
  * Registers the {@link GraphEditorInputMode} as the {@link CanvasComponent.inputMode}
  * and initializes the input mode for dropping components.
  */
 function initializeInputModes() {
   // create a GraphEditorInputMode instance
-  const graphEditorInputMode = new GraphEditorInputMode({
-    focusableItems: 'none'
-  })
+  const graphEditorInputMode = new GraphEditorInputMode({ focusableItems: 'none' })
   // add newly created nodes to their only component
   graphEditorInputMode.addEventListener(
     'node-created',
@@ -96,12 +102,11 @@ function initializeInputModes() {
     if (edge.sourceNode.tag.component === edge.targetNode.tag.component) {
       graphComponent.graph.setStyle(
         edge,
-        new PolylineEdgeStyle({
-          stroke: new Stroke(edge.sourceNode.style.fill, 5)
-        })
+        new PolylineEdgeStyle({ stroke: new Stroke(edge.sourceNode.style.fill, 5) })
       )
     }
   })
+
   // add a new component id to nodes in duplicated component
   const duplicateCopier = graphComponent.clipboard.duplicateCopier
   duplicateCopier.addEventListener('node-copied', (evt) => {
@@ -120,11 +125,13 @@ function initializeInputModes() {
     updateGraph()
     componentCount++
   })
+
   // configure the move input mode to drag components
   // both moving of selected and unselected nodes can be supported,
   // so both moveSelectedItemsInputMode and moveUnselectedItemsInputMode have to be configured
   configureMoveInputModes(graphEditorInputMode.moveSelectedItemsInputMode)
   configureMoveInputModes(graphEditorInputMode.moveUnselectedItemsInputMode)
+
   // add the input mode to drop components
   const graphDropInputMode = new GraphDropInputMode()
   graphDropInputMode.addEventListener('drag-entered', function () {
@@ -151,9 +158,11 @@ function initializeInputModes() {
     layoutHelper.cancelLayout()
   })
   graphEditorInputMode.add(graphDropInputMode)
+
   let deleting = false
   graphEditorInputMode.addEventListener('deleting-selection', () => (deleting = true))
   graphEditorInputMode.addEventListener('deleted-selection', () => (deleting = false))
+
   // select the whole component when selecting a graph element
   graphComponent.selection.addEventListener('item-added', (evt) => {
     if (deleting) {
@@ -161,14 +170,17 @@ function initializeInputModes() {
     }
     onSelectionChanged(evt.item, true)
   })
+
   graphComponent.selection.addEventListener('item-removed', (evt) => {
     if (deleting) {
       return
     }
     onSelectionChanged(evt.item, false)
   })
+
   graphComponent.inputMode = graphEditorInputMode
 }
+
 /**
  * Updates the selected whenever an item is being selected or deselected.
  */
@@ -180,12 +192,14 @@ function onSelectionChanged(item, selected) {
     changedNode =
       item.sourceNode.tag.component === item.targetNode.tag.component ? item.sourceNode : null
   }
+
   if (changedNode) {
     const component = graphComponent.graph.nodes.filter(
       (node) => node.tag.component === changedNode.tag.component
     )
     component.forEach((node) => {
       setSelected(node, selected)
+
       graphComponent.graph.edgesAt(node).forEach((edge) => {
         if (component.includes(edge.sourceNode) && component.includes(edge.targetNode)) {
           edge.bends.forEach((bend) => {
@@ -197,6 +211,7 @@ function onSelectionChanged(item, selected) {
     })
   }
 }
+
 /**
  * Adds the listeners for drag operations on the given inputMode.
  * This demo supports moving of both selected and unselected nodes.
@@ -207,6 +222,7 @@ function configureMoveInputModes(moveInputMode) {
   moveInputMode.addEventListener('drag-finished', dragFinished)
   moveInputMode.addEventListener('drag-canceled', dragCanceled)
 }
+
 /**
  * Selected or deselects the given item.
  */
@@ -217,6 +233,7 @@ function setSelected(item, selected) {
     graphComponent.selection.remove(item)
   }
 }
+
 /**
  * Initializes the layout when a node has been moved.
  */
@@ -225,6 +242,7 @@ function onDragStarted(_evt, moveInputMode) {
   layoutHelper = new ClearAreaLayoutHelper(graphComponent, component, keepComponents)
   layoutHelper.initializeLayout()
 }
+
 /**
  * Updates the layout when a node has been moved.
  */
@@ -232,6 +250,7 @@ function onDragged(_evt, _moveInputMode) {
   layoutHelper.location = graphComponent.lastEventLocation.toPoint()
   layoutHelper.runLayout()
 }
+
 /**
  * Finalizes the component after a node movement.
  */
@@ -239,12 +258,14 @@ function dragFinished(_evt, moveInputMode) {
   layoutHelper.location = graphComponent.lastEventLocation.toPoint()
   layoutHelper.component = moveInputMode.affectedItems.filter((item) => item instanceof INode)
 }
+
 /**
  * Cancels the layout when the drag operation has been canceled.
  */
 function dragCanceled(_evt, _moveInputMode) {
   layoutHelper.cancelLayout()
 }
+
 /**
  * Updates the graph after a component was added using clipboard operations
  */
@@ -252,15 +273,18 @@ function updateGraph() {
   const component = graphComponent.graph.nodes
     .filter((node) => node.tag.component === componentCount)
     .toList()
+
   const layoutHelper = new ClearAreaLayoutHelper(graphComponent, component, keepComponents)
   layoutHelper.initializeLayout()
   layoutHelper.runLayout()
+
   // update the selection of the new component
   graphComponent.selection.clear()
   graphComponent.graph.nodes.forEach((node) =>
     setSelected(node, node.tag.component === componentCount)
   )
 }
+
 /**
  * Initializes the default styles.
  */
@@ -270,26 +294,29 @@ function initializeGraph() {
     fill: '#c1c1c1',
     stroke: null
   })
-  graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '5px #c1c1c1'
-  })
+
+  graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '5px #c1c1c1' })
 }
+
 /**
  * Populates the palette with the graphs stored in the resources folder.
  */
 async function initializePalette() {
   // retrieve the panel element
   const panel = document.querySelector('#palette')
+
   let sampleComponents = []
   const response = await fetch('./resources/PaletteComponents.json')
   if (response.ok) {
     sampleComponents = await response.json()
   }
+
   // add a visual for each node style to the palette
   sampleComponents.forEach((component) => {
     addComponentVisual(component, panel)
   })
 }
+
 /**
  * Creates and adds a visual for the given style in the drag and drop panel.
  */
@@ -303,9 +330,11 @@ function addComponentVisual(component, panel) {
   const img = document.createElement('img')
   img.setAttribute('style', 'width: auto; height: auto;')
   img.setAttribute('src', createComponentVisual(componentGraph))
+
   const startDrag = () => {
     const dragPreview = document.createElement('div')
     dragPreview.appendChild(img.cloneNode(true))
+
     const dragSource = GraphDropInputMode.startDrag(
       div,
       componentGraph,
@@ -313,6 +342,7 @@ function addComponentVisual(component, panel) {
       true,
       dragPreview
     )
+
     dragSource.addEventListener('query-continue-drag', (evt) => {
       if (evt.dropTarget === null) {
         dragPreview.classList.remove('hidden')
@@ -321,6 +351,7 @@ function addComponentVisual(component, panel) {
       }
     })
   }
+
   img.addEventListener(
     'pointerdown',
     (event) => {
@@ -332,6 +363,7 @@ function addComponentVisual(component, panel) {
   div.appendChild(img)
   panel.appendChild(div)
 }
+
 /**
  * Builds a graph from the given component.
  * @yjs:keep = nodeData,edgeData
@@ -344,6 +376,7 @@ function getComponentGraph(component) {
     fill: component.color
   })
   componentGraph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: `5px ${component.color}` })
+
   const defaultNodeSize = componentGraph.nodeDefaults.size
   const builder = new GraphBuilder(componentGraph)
   builder.createNodesSource({
@@ -352,23 +385,30 @@ function getComponentGraph(component) {
     layout: (data) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
   })
   builder.createEdgesSource(component.edgeData, 'source', 'target', 'id')
+
   return builder.buildGraph()
 }
+
 /**
  * Creates an SVG data string for a node with the given style.
  */
 function createComponentVisual(componentGraph) {
   const exportComponent = new GraphComponent()
   exportComponent.graph = componentGraph
+
   exportComponent.updateContentBounds(5)
+
   const svgExport = new SvgExport(exportComponent.contentBounds)
   const svg = svgExport.exportSvg(exportComponent)
+
   // Dispose of the component and remove its references to the graph
-  exportComponent.cleanUp()
   exportComponent.graph = new Graph()
+  exportComponent.cleanUp()
+
   const svgString = SvgExport.exportSvgString(svg)
   return SvgExport.encodeSvgDataUrl(svgString)
 }
+
 /**
  * Loads the initial graph.
  * @yjs:keep = nodeData,edgeData
@@ -377,6 +417,7 @@ async function loadSampleGraph() {
   const response = await fetch('./resources/SampleGraph.json')
   if (response.ok) {
     const sample = await response.json()
+
     const defaultNodeSize = graphComponent.graph.nodeDefaults.size
     const builder = new GraphBuilder(graphComponent.graph)
     builder.createNodesSource({
@@ -386,13 +427,16 @@ async function loadSampleGraph() {
     })
     builder.createEdgesSource(sample.edgeData, 'source', 'target', 'id')
     builder.buildGraph()
+
     void graphComponent.fitGraphBounds()
+
     graphComponent.graph.nodes.forEach((node) => {
       node.tag.component = componentCount
     })
     componentCount++
   }
 }
+
 /**
  * Registers actions for the items in the toolbar.
  */
@@ -401,4 +445,5 @@ function initializeUI() {
     keepComponents = !keepComponents
   })
 }
+
 run().then(finishLoading)

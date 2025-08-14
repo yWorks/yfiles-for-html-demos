@@ -27,12 +27,14 @@
  **
  ***************************************************************************/
 import { GraphComponent, Point } from '@yfiles/yfiles'
+
 /**
  * Updates the content rectangle to encompass all existing graph elements.
  */
 export function fitGraphBounds(graphComponent) {
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Updates the content rectangle to encompass all existing graph elements.
  */
@@ -40,6 +42,7 @@ export function updateViewport(graphComponent) {
   graphComponent.updateContentBounds()
   graphComponent.fitContent()
 }
+
 /**
  * Resets the viewport to the original values.
  */
@@ -47,6 +50,7 @@ export function resetViewport(graphComponent) {
   graphComponent.zoom = 1
   graphComponent.viewPoint = Point.ORIGIN
 }
+
 /**
  * Fits the graph into the view port using an animation.
  */

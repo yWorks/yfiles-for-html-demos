@@ -27,17 +27,22 @@
  **
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode, IModelItem, Point } from '@yfiles/yfiles'
+
 const innerRadius = 30
 const outerRadius = 100
 const spacing = 2
 const titleOffset = 15
+
 export function createDialContextMenu(items, location, graphComponent, graphItem) {
   const n = items.length
   const pi2 = Math.PI * 2
+
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+
   // temporarily add the svg to the body so the elements can be measured
   const tempParent = document.body
   tempParent.appendChild(svg)
+
   svg.addEventListener('contextmenu', (e) => e.preventDefault())
   svg.setAttribute('class', 'demo-dial-menu')
   svg.setAttribute('width', `${outerRadius}`)
@@ -48,13 +53,16 @@ export function createDialContextMenu(items, location, graphComponent, graphItem
   svg.style.position = 'absolute'
   svg.style.overflow = 'visible'
   svg.style.zIndex = '999999'
+
   const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
   const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
   svg.appendChild(g)
   svg.appendChild(defs)
+
   const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath')
   clipPath.setAttribute('id', 'dial-menu-clip')
   defs.appendChild(clipPath)
+
   // create the svg elements for each item
   items.forEach((item, i) => {
     const itemContainer = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -62,10 +70,14 @@ export function createDialContextMenu(items, location, graphComponent, graphItem
       'class',
       item.disabled ? 'demo-dial-menu-item disabled' : 'demo-dial-menu-item'
     )
+
     g.appendChild(itemContainer)
+
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     itemContainer.appendChild(path)
+
     let middleAngle = Math.PI
+
     if (items.length === 1) {
       // full-circle menu has to be treated differently
       const d = `M 0 ${innerRadius} A ${innerRadius} ${innerRadius} 0 1 0 0 ${-innerRadius} A ${innerRadius} ${innerRadius} 0 1 0 0 ${innerRadius}
@@ -76,6 +88,7 @@ export function createDialContextMenu(items, location, graphComponent, graphItem
       const leftAngle = (i * pi2) / n
       const rightAngle = (i * pi2) / n + pi2 / n
       middleAngle = (leftAngle + rightAngle) * 0.5
+
       const innerLeftPoint = new Point(
         Math.sin(leftAngle) * innerRadius,
         -Math.cos(leftAngle) * innerRadius
@@ -92,11 +105,14 @@ export function createDialContextMenu(items, location, graphComponent, graphItem
         Math.sin(rightAngle) * outerRadius,
         -Math.cos(rightAngle) * outerRadius
       )
+
       const d = `M ${innerLeftPoint.x} ${innerLeftPoint.y} L ${outerLeftPoint.x} ${outerLeftPoint.y} A ${outerRadius} ${outerRadius} 0 0 1 ${outerRightPoint.x} ${outerRightPoint.y} L ${innerRightPoint.x} ${innerRightPoint.y} A ${innerRadius} ${innerRadius} 0 0 0 ${innerLeftPoint.x} ${innerLeftPoint.y}`
       path.setAttribute('d', d)
       path.setAttribute('clip-path', 'url(#dial-menu-clip)')
+
       // create path clip
       const clipElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+
       const leftVector = outerLeftPoint.subtract(innerLeftPoint)
       const leftVectorOrthogonalNormalized = new Point(-leftVector.y, leftVector.x).normalized
       const rightVector = outerRightPoint.subtract(innerRightPoint)
@@ -110,6 +126,7 @@ export function createDialContextMenu(items, location, graphComponent, graphItem
       clipElement.setAttribute('fill', 'none')
       clipPath.appendChild(clipElement)
     }
+
     if (item.icon) {
       const icon = document.createElementNS('http://www.w3.org/2000/svg', 'image')
       icon.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', item.icon)
@@ -123,27 +140,34 @@ export function createDialContextMenu(items, location, graphComponent, graphItem
       icon.setAttribute('class', 'demo-dial-icon')
       itemContainer.appendChild(icon)
     }
+
     if (item.title) {
       const textContainer = document.createElementNS('http://www.w3.org/2000/svg', 'g')
       textContainer.setAttribute('class', 'demo-dial-title')
       itemContainer.appendChild(textContainer)
+
       const padding = 5
+
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
       text.innerHTML = item.title
       text.setAttribute('transform', `translate(${padding} ${padding})`)
       text.setAttribute('dy', '1em')
       textContainer.appendChild(text)
+
       const titleBounds = text.getBBox()
       const w = titleBounds.width + padding + padding
       const h = titleBounds.height + padding + padding
+
       const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
       rect.setAttribute('width', `${w}`)
       rect.setAttribute('height', `${h}`)
       textContainer.insertBefore(rect, text)
+
       let textLocation = new Point(
         Math.sin(middleAngle) * (outerRadius + titleOffset),
         -(Math.cos(middleAngle) * (outerRadius + titleOffset)) - h * 0.5
       )
+
       const eps = Math.PI / 180
       if (
         (middleAngle > Math.PI - eps && middleAngle < Math.PI + eps) ||
@@ -154,8 +178,10 @@ export function createDialContextMenu(items, location, graphComponent, graphItem
       } else if (middleAngle > Math.PI) {
         textLocation = new Point(textLocation.x - w, textLocation.y)
       }
+
       textContainer.setAttribute('transform', `translate(${textLocation.x} ${textLocation.y})`)
     }
+
     if (!item.disabled && typeof item.callback === 'function') {
       itemContainer.addEventListener('click', (_) => {
         item.callback(location, graphItem)
@@ -166,11 +192,15 @@ export function createDialContextMenu(items, location, graphComponent, graphItem
         graphComponent.inputMode.contextMenuInputMode.closeMenu()
       })
     }
+
     item.element = itemContainer
   })
+
   tempParent.removeChild(svg)
+
   const container = document.createElement('div')
   container.setAttribute('transform', `translate(${location.x} ${location.y})`)
   container.appendChild(svg)
+
   return container
 }

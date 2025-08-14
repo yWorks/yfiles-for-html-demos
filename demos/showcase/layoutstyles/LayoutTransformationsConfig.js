@@ -29,10 +29,13 @@
 import {
   Class,
   GraphComponent,
+  HierarchicalLayoutData,
   ILayoutAlgorithm,
+  LayoutData,
   LayoutTransformations,
   SubgraphLayoutStage
 } from '@yfiles/yfiles'
+
 import { LayoutConfiguration, OperationType } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -44,11 +47,13 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 export const LayoutTransformationsConfig = Class('LayoutTransformationsConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     GeneralGroup: [
       new LabelAttribute('General'),
@@ -57,17 +62,17 @@ export const LayoutTransformationsConfig = Class('LayoutTransformationsConfig', 
     ],
     RotateGroup: [
       new LabelAttribute('Rotate'),
-      new OptionGroupAttribute('GeneralGroup', 20),
+      new OptionGroupAttribute('GeneralGroup', 30),
       new TypeAttribute(OptionGroup)
     ],
     ScaleGroup: [
       new LabelAttribute('Scale'),
-      new OptionGroupAttribute('GeneralGroup', 30),
+      new OptionGroupAttribute('GeneralGroup', 40),
       new TypeAttribute(OptionGroup)
     ],
     TranslateGroup: [
       new LabelAttribute('Translate'),
-      new OptionGroupAttribute('GeneralGroup', 40),
+      new OptionGroupAttribute('GeneralGroup', 50),
       new TypeAttribute(OptionGroup)
     ],
     descriptionText: [
@@ -148,6 +153,7 @@ export const LayoutTransformationsConfig = Class('LayoutTransformationsConfig', 
       new TypeAttribute(Number)
     ]
   },
+
   /**
    * Setup default values for various configuration parameters.
    */
@@ -164,13 +170,13 @@ export const LayoutTransformationsConfig = Class('LayoutTransformationsConfig', 
     this.translateYItem = 0
     this.title = 'Layout Transformations'
   },
+
   /**
    * Creates and configures a layout.
-   * @param graphComponent The {@link GraphComponent} to apply the
-   *   configuration on.
+   * @param _graphComponent The {@link GraphComponent} to apply the configuration on.
    * @returns The configured layout algorithm.
    */
-  createConfiguredLayout: function (graphComponent) {
+  createConfiguredLayout: function (_graphComponent) {
     let stage
     switch (this.operationItem) {
       case OperationType.MIRROR_X_AXIS:
@@ -200,68 +206,98 @@ export const LayoutTransformationsConfig = Class('LayoutTransformationsConfig', 
       default:
         stage = LayoutTransformations.createScalingStage()
     }
+
     return this.actOnSelectionOnlyItem ? new SubgraphLayoutStage(stage) : stage
   },
+
+  /**
+   * Creates and configures the layout data.
+   * @returns The configured layout data.
+   */
+  createConfiguredLayoutData: function (graphComponent, _layout) {
+    return this.actOnSelectionOnlyItem
+      ? this.createSubgraphLayoutData(graphComponent)
+      : new HierarchicalLayoutData()
+  },
+
   /** @type {OptionGroup} */
   GeneralGroup: null,
+
   /** @type {OptionGroup} */
   RotateGroup: null,
+
   /** @type {OptionGroup} */
   ScaleGroup: null,
+
   /** @type {OptionGroup} */
   TranslateGroup: null,
+
   /** @type {string} */
   descriptionText: {
     get: function () {
       return '<p>This layout algorithm applies geometric transformations to (sub-)graphs.</p><p>There are several ways to transform the graph that include mirroring, rotating, scaling and translating.</p>'
     }
   },
+
   /** @type {OperationType} */
   operationItem: null,
+
   /** @type {boolean} */
   actOnSelectionOnlyItem: false,
+
   /** @type {number} */
   rotationAngleItem: 0,
+
   /** @type {boolean} */
   shouldDisableRotationAngleItem: {
     get: function () {
       return this.operationItem !== OperationType.ROTATE || this.applyBestFitRotationItem
     }
   },
+
   /** @type {boolean} */
   applyBestFitRotationItem: false,
+
   /** @type {boolean} */
   shouldDisableApplyBestFitRotationItem: {
     get: function () {
       return this.operationItem !== OperationType.ROTATE
     }
   },
+
   /** @type {number} */
   scaleFactorItem: 0.1,
+
   /** @type {boolean} */
   shouldDisableScaleFactorItem: {
     get: function () {
       return this.operationItem !== OperationType.SCALE
     }
   },
+
   /** @type {boolean} */
   scaleNodeSizeItem: false,
+
   /** @type {boolean} */
   shouldDisableScaleNodeSizeItem: {
     get: function () {
       return this.operationItem !== OperationType.SCALE
     }
   },
+
   /** @type {number} */
   translateXItem: 0,
+
   /** @type {boolean} */
   shouldDisableTranslateXItem: {
     get: function () {
       return this.operationItem !== OperationType.TRANSLATE
     }
   },
+
   /** @type {number} */
   translateYItem: 0,
+
   /** @type {boolean} */
   shouldDisableTranslateYItem: {
     get: function () {

@@ -32,20 +32,25 @@ Helper types and functions that are common to all implementations of the string 
 import { GeneralPath, GraphComponent, IRenderContext, Rect, SvgVisual } from '@yfiles/yfiles'
 import { registerConverter } from './template-engine/template-engine'
 import { convertTextToWrappedSVG } from './text-wrapping-converter'
+
 // register this as a default converter
 registerConverter('TextWrapConverter', convertTextToWrappedSVG)
+
 export class TemplateContext {
   zoom = 1.0
   itemSelected = false
   itemHighlighted = false
   itemFocused = false
   item
+
   constructor(label) {
     this.item = label
   }
+
   get bounds() {
     return new Rect(0, 0, Math.max(this.width, 0), Math.max(this.height, 0))
   }
+
   updateState(renderContext) {
     const canvasComponent = renderContext.canvasComponent
     this.zoom = renderContext.zoom
@@ -53,6 +58,7 @@ export class TemplateContext {
       const selected = canvasComponent.selection.includes(this.item)
       const highlighted = canvasComponent.highlights.includes(this.item)
       const focused = canvasComponent.currentItem === this.item
+
       const changed =
         this.itemSelected !== selected ||
         this.itemHighlighted !== highlighted ||
@@ -68,13 +74,16 @@ export class TemplateContext {
     }
   }
 }
+
 export function createSVG(item, templateContext, renderContext, renderFunction, cssClass, arrange) {
   const showIndicators = templateContext.updateState(renderContext)
+
   const {
     node: xmlNode,
     update,
     cleanup
   } = renderFunction(item.tag, templateContext, renderContext.svgDefsManager.generateUniqueDefsId())
+
   let groupElement
   if (xmlNode instanceof SVGGElement) {
     groupElement = xmlNode
@@ -82,17 +91,16 @@ export function createSVG(item, templateContext, renderContext, renderFunction, 
     groupElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     groupElement.appendChild(xmlNode)
   }
+
   if (cssClass) {
     groupElement.classList.add(cssClass)
   }
+
   arrange(groupElement)
+
   // create the visual and store our tag info
-  const svgVisual = SvgVisual.from(groupElement, {
-    templateContext,
-    update,
-    cleanup,
-    cssClass
-  })
+  const svgVisual = SvgVisual.from(groupElement, { templateContext, update, cleanup, cssClass })
+
   if (showIndicators) {
     if (templateContext.itemSelected) {
       groupElement.classList.add('yfiles-selected')
@@ -104,17 +112,22 @@ export function createSVG(item, templateContext, renderContext, renderFunction, 
       groupElement.classList.add('yfiles-focused')
     }
   }
+
   // ensure proper cleanup
   renderContext.setDisposeCallback(svgVisual, (_, removedVisual) => {
     removedVisual.tag.cleanup()
     return null
   })
+
   return svgVisual
 }
+
 export function updateSVG(oldVisual, item, renderContext, cssClass, arrange) {
   const cache = oldVisual.tag
+
   const templateContext = cache.templateContext
   const changeIndicators = templateContext.updateState(renderContext)
+
   const svgElement = oldVisual.svgElement
   if (changeIndicators) {
     if (templateContext.itemSelected) {
@@ -133,6 +146,7 @@ export function updateSVG(oldVisual, item, renderContext, cssClass, arrange) {
       svgElement.classList.remove('yfiles-focused')
     }
   }
+
   if (cache.cssClass !== cssClass) {
     if (cache.cssClass) {
       svgElement.classList.remove(cache.cssClass)
@@ -142,7 +156,10 @@ export function updateSVG(oldVisual, item, renderContext, cssClass, arrange) {
     }
     cache.cssClass = cssClass
   }
+
   cache.update(item.tag, templateContext)
+
   arrange(svgElement)
+
   return oldVisual
 }

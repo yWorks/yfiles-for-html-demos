@@ -99,11 +99,7 @@ function createDragAndDropPanelNodes(): SimpleNode[] {
   ]
 
   const nodeContainer = nodeStyles.map(
-    (style) =>
-      new SimpleNode({
-        layout: new Rect(0, 0, 100, 50),
-        style: style
-      })
+    (style) => new SimpleNode({ layout: new Rect(0, 0, 100, 50), style: style })
   )
 
   // create the port descriptor for the nodes
@@ -138,10 +134,7 @@ function initializeGraph(): void {
 
   // add a listener to add the tags related to the highlighting to the new nodes
   graph.addEventListener('node-created', (evt) => {
-    evt.item.tag = {
-      sourceHighlight: false,
-      targetHighlight: false
-    }
+    evt.item.tag = { sourceHighlight: false, targetHighlight: false }
   })
 
   // disable edge cropping

@@ -25,9 +25,7 @@ To be able to update the visualization in [updateVisual](https://docs.yworks.com
 
 ```
 // the values we use to render the graphics
-type Cache = {
-  generalPath: GeneralPath
-}
+type Cache = { generalPath: GeneralPath }
 
 // the type of visual we create and update in CustomEdgeStyle
 type CustomEdgeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>

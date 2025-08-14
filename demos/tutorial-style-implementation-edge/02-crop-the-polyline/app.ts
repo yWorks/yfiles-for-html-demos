@@ -53,10 +53,7 @@ fitGraphBounds(graphComponent)
 
 const oldState = initializeInlineGraphComponent('#old-state')
 oldState.graph.edgeDefaults.style = new OldCustomEdgeStyle()
-const portStyle = new ShapePortStyle({
-  shape: 'ellipse',
-  fill: 'gray'
-})
+const portStyle = new ShapePortStyle({ shape: 'ellipse', fill: 'gray' })
 portStyle.renderSize = new Size(5, 5)
 oldState.graph.nodeDefaults.ports.style = portStyle
 createSimpleGraph(oldState, false)

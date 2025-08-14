@@ -93,11 +93,7 @@ export class BezierSelectionStyle extends BaseClass(ISelectionRenderer) {
    */
   private selectionDecoratorStyle = new SelectionEdgeStyle(
     new PolylineEdgeStyle({
-      stroke: new Stroke({
-        fill: 'lightgray',
-        dashStyle: 'dash',
-        thickness: 2
-      })
+      stroke: new Stroke({ fill: 'lightgray', dashStyle: 'dash', thickness: 2 })
     })
   )
 

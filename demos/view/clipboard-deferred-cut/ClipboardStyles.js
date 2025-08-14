@@ -46,12 +46,14 @@ import {
   Visual
 } from '@yfiles/yfiles'
 import { DeferredCutClipboard } from './DeferredCutClipboard'
+
 /**
  * A special node style wrapper which renders the wrapped style transparent
  * if the node is marked as "to be cut" in the {@link DeferredCutClipboard}.
  */
 export class ClipboardNodeStyle extends NodeStyleBase {
   _wrapped
+
   /**
    * Wrap the given node style.
    */
@@ -59,6 +61,7 @@ export class ClipboardNodeStyle extends NodeStyleBase {
     super()
     this._wrapped = wrapped
   }
+
   /**
    * Create the visual which visualizes the given node:
    * create the visual of the wrapped style and make it transparent
@@ -71,6 +74,7 @@ export class ClipboardNodeStyle extends NodeStyleBase {
     setOpacity(context, visual, node)
     return visual
   }
+
   /**
    * Update the visual which visualizes the given node:
    * update the visual of the wrapped style and make it transparent
@@ -84,12 +88,14 @@ export class ClipboardNodeStyle extends NodeStyleBase {
     return visual
   }
 }
+
 /**
  * A special edge style wrapper which renders the wrapped style transparent
  * if the edge is marked as "to be cut" in the {@link DeferredCutClipboard}.
  */
 export class ClipboardEdgeStyle extends EdgeStyleBase {
   _wrapped
+
   /**
    * Wraps the given style.
    */
@@ -97,6 +103,7 @@ export class ClipboardEdgeStyle extends EdgeStyleBase {
     super()
     this._wrapped = wrapped
   }
+
   /**
    * Create the visual which visualizes the given edge:
    * create the visual of the wrapped style and make it transparent
@@ -109,6 +116,7 @@ export class ClipboardEdgeStyle extends EdgeStyleBase {
     setOpacity(context, visual, edge)
     return visual
   }
+
   /**
    * Update the visual which visualizes the given edge:
    * update the visual of the wrapped style and make it transparent
@@ -121,6 +129,7 @@ export class ClipboardEdgeStyle extends EdgeStyleBase {
     setOpacity(context, visual, edge)
     return visual
   }
+
   /**
    * Delegates to the wrapped style.
    */
@@ -128,12 +137,14 @@ export class ClipboardEdgeStyle extends EdgeStyleBase {
     return this._wrapped.renderer.getPathGeometry(edge, this._wrapped).getPath()
   }
 }
+
 /**
  * A special label style wrapper which renders the wrapped style transparent
  * if the label is marked as "to be cut" in the {@link DeferredCutClipboard}.
  */
 export class ClipboardLabelStyle extends LabelStyleBase {
   _wrapped
+
   /**
    * Wraps the given style.
    */
@@ -141,6 +152,7 @@ export class ClipboardLabelStyle extends LabelStyleBase {
     super()
     this._wrapped = wrapped
   }
+
   /**
    * Creates the visual which visualizes the given label:
    * creates the visual of the wrapped style and make it transparent
@@ -153,6 +165,7 @@ export class ClipboardLabelStyle extends LabelStyleBase {
     setOpacity(context, visual, label)
     return visual
   }
+
   /**
    * Updates the visual which visualizes the given label:
    * updates the visual of the wrapped style and make it transparent
@@ -165,6 +178,7 @@ export class ClipboardLabelStyle extends LabelStyleBase {
     setOpacity(context, visual, label)
     return visual
   }
+
   /**
    * Delegates to the wrapped style.
    */
@@ -172,6 +186,7 @@ export class ClipboardLabelStyle extends LabelStyleBase {
     return this._wrapped.renderer.getPreferredSize(label, this._wrapped)
   }
 }
+
 /**
  * Sets the opacity on the SVG element of the given visual.
  * Elements which are marked as "to be cut" are rendered transparent.
@@ -191,6 +206,7 @@ function setOpacity(context, visual, item) {
     canvasComponent.invalidate()
   }
 }
+
 /**
  * Create some default styles and wrap them into
  * a style wrapper which indicates whether the item is cut.

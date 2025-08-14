@@ -30,6 +30,7 @@ import { getNodeHighlightInfo } from '../NodeHighlightInfo'
 import { Font, GeneralPath, Point, TextRenderSupport } from '@yfiles/yfiles'
 import { appendEllipse, createPath, createText, GateNodeStyle, setAttribute } from './GateNodeStyle'
 import { LogicGateType } from '../LogicGateType'
+
 /**
  * Node style implementation which renders a NOT gate.
  */
@@ -43,6 +44,7 @@ export class NotNodeStyle extends GateNodeStyle {
     this.strokeColor = strokeColor
     this.labelColor = labelColor
   }
+
   /**
    * Creates the Svg elements and adds them to the container.
    * @param container The svg element
@@ -52,17 +54,21 @@ export class NotNodeStyle extends GateNodeStyle {
   render(container, cache, node) {
     // store information with the visual on how we created it
     container['data-cache'] = cache
+
     // the size of node
     const size = cache.size
     const width = size.width
     const height = size.height
+
     const x1 = width * 0.2
     const x2 = width * 0.7
+
     this.renderMainPart(x1, x2, height, container, width)
     this.renderOutputPort(x2, width, height, node, container)
     this.renderInputPort(height, x1, node, container)
     this.renderLabel(node, container)
   }
+
   renderMainPart(x1, x2, height, container, width) {
     const generalPath = new GeneralPath()
     generalPath.moveTo(new Point(x1, 0))
@@ -72,6 +78,7 @@ export class NotNodeStyle extends GateNodeStyle {
     createPath(container, generalPath, this.fillColor, this.strokeColor)
     appendEllipse(container, x2 + width * 0.03, height * 0.5, width * 0.03, width * 0.03)
   }
+
   renderOutputPort(x2, width, height, node, container) {
     const outputPortPath = new GeneralPath()
     outputPortPath.moveTo(new Point(x2 + 2 * width * 0.03, height * 0.5))
@@ -81,6 +88,7 @@ export class NotNodeStyle extends GateNodeStyle {
       : 'black'
     createPath(container, outputPortPath, 'none', outputStroke)
   }
+
   renderInputPort(height, x1, node, container) {
     const inputPortPath = new GeneralPath()
     inputPortPath.moveTo(new Point(0, height * 0.5))
@@ -88,16 +96,13 @@ export class NotNodeStyle extends GateNodeStyle {
     const inputStroke = getNodeHighlightInfo(node).sourceHighlight ? NotNodeStyle.IN_COLOR : 'black'
     createPath(container, inputPortPath, 'none', inputStroke)
   }
+
   renderLabel(node, container) {
     const fontSize = Math.floor(node.layout.height * 0.25)
     const text = createText('NOT', fontSize, this.labelColor)
     const textSize = TextRenderSupport.measureText(
       text.textContent ?? '',
-      new Font({
-        fontFamily: 'Arial',
-        fontSize,
-        fontWeight: 'bold'
-      })
+      new Font({ fontFamily: 'Arial', fontSize, fontWeight: 'bold' })
     )
     setAttribute(text, 'x', (node.layout.width - textSize.width) * 0.33)
     setAttribute(text, 'y', (node.layout.height - textSize.height) * 0.8)

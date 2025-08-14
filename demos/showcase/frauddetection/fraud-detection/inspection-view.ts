@@ -76,10 +76,7 @@ async function runLayout(incremental = false): Promise<void> {
   }
 
   if (getLayoutStyle() === 'organic') {
-    const layout = new OrganicLayout({
-      deterministic: true,
-      avoidNodeEdgeOverlap: true
-    })
+    const layout = new OrganicLayout({ deterministic: true, avoidNodeEdgeOverlap: true })
 
     if (incremental) {
       // move the new nodes between their neighbors before the actual layout for a smooth animation
@@ -107,11 +104,7 @@ async function runLayout(incremental = false): Promise<void> {
     const layout = new HierarchicalLayout({
       layoutOrientation: 'bottom-to-top',
       fromSketchMode: incremental,
-      defaultEdgeDescriptor: {
-        routingStyleDescriptor: {
-          defaultRoutingStyle: 'octilinear'
-        }
-      }
+      defaultEdgeDescriptor: { routingStyleDescriptor: { defaultRoutingStyle: 'octilinear' } }
     })
 
     const hierarchicalLayoutData = new HierarchicalLayoutData()

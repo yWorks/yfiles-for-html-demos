@@ -46,6 +46,7 @@ export const detailNodeStyleTemplate = `({ layout, tag, selected, zoom }) => svg
       <text transform='translate(170 88)'>\${tag.fax}</text>
     </g>
   </g>\``
+
 export const overviewNodeStyleTemplate = `({ layout, tag, selected, zoom }) => svg\`
   <g>
     <rect fill="#FFFFFF" stroke="#C0C0C0" width="$\{layout.width}" height="$\{layout.height}"></rect>

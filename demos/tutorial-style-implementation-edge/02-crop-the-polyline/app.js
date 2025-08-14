@@ -36,10 +36,13 @@ import {
   initializeTutorialDefaults
 } from '../common'
 import { CustomEdgeStyle as OldCustomEdgeStyle } from '../01-create-a-polyline/CustomEdgeStyle'
+
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { CustomEdgeStyle } from './CustomEdgeStyle'
 import { initializeInlineGraphComponent } from '../../tutorial-style-implementation-node/common'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 initializeLabelModel(graphComponent)
@@ -47,14 +50,13 @@ graphComponent.graph.edgeDefaults.style = new CustomEdgeStyle()
 createSimpleGraph(graphComponent, false)
 enableGraphEditing(graphComponent)
 fitGraphBounds(graphComponent)
+
 const oldState = initializeInlineGraphComponent('#old-state')
 oldState.graph.edgeDefaults.style = new OldCustomEdgeStyle()
-const portStyle = new ShapePortStyle({
-  shape: 'ellipse',
-  fill: 'gray'
-})
+const portStyle = new ShapePortStyle({ shape: 'ellipse', fill: 'gray' })
 portStyle.renderSize = new Size(5, 5)
 oldState.graph.nodeDefaults.ports.style = portStyle
 createSimpleGraph(oldState, false)
 oldState.zoomTo(oldState.graph.nodes.first().layout.toRect().getEnlarged(10))
+
 finishLoading()

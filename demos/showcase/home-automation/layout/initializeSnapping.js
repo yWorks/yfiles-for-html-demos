@@ -32,9 +32,8 @@ import {
   GraphSnapContext,
   SnappableItems
 } from '@yfiles/yfiles'
+
 export function initializeSnapping(graphComponent) {
   const gcInputMode = graphComponent.inputMode
-  gcInputMode.snapContext = new GraphSnapContext({
-    snappableItems: SnappableItems.NODE
-  })
+  gcInputMode.snapContext = new GraphSnapContext({ snappableItems: SnappableItems.NODE })
 }

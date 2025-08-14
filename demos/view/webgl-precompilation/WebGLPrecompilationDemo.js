@@ -42,6 +42,7 @@ import {
   WebGLHighlightIndicatorManager,
   WebGLSelectionIndicatorManager
 } from '@yfiles/yfiles'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
 import { preloadWebglStyles } from './preload-webgl-styles'
@@ -60,7 +61,9 @@ import {
   webGLNodeStyles
 } from './webgl-styles'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+
 const webGLLoadingOverlay = document.querySelector('.webgl-loading')
+
 /**
  * A WebGLGraphModelManager that uses callbacks for graph items to determine their WebGL styles.
  */
@@ -77,13 +80,16 @@ export class MyWebGLGraphModelManager extends WebGLGraphModelManager {
   getWebGLNodeStyle(node) {
     return this.nodeStyle(node)
   }
+
   getWebGLEdgeStyle(edge) {
     return this.edgeStyle(edge)
   }
+
   getWebGLLabelStyle(label) {
     return this.labelStyle(label)
   }
 }
+
 /**
  * Bootstraps the demo.
  */
@@ -91,17 +97,23 @@ async function run() {
   if (!checkWebGL2Support()) {
     return
   }
+
   License.value = await fetchLicense()
+
   const graphComponentWithoutPreload = new GraphComponent('#graphComponent')
   const graphComponentWithPreload = new GraphComponent('#graphComponentWithPreload')
   const demoNodeSize = new Size(40, 40)
+
   for (const graphComponent of [graphComponentWithoutPreload, graphComponentWithPreload]) {
     graphComponent.graph.nodeDefaults.size = demoNodeSize
     initDemoStyles(graphComponent.graph)
+
     initializeInteraction(graphComponent)
+
     createGraph(graphComponent.graph)
     void graphComponent.fitGraphBounds()
   }
+
   document.getElementById('webgl-button').addEventListener('click', async () => {
     // show loading screen
     webGLLoadingOverlay.classList.add('loading')
@@ -131,6 +143,7 @@ async function run() {
     )
   })
 }
+
 /**
  * Enables WebGL as the rendering technique.
  */
@@ -140,13 +153,16 @@ function enableWebGLRendering(graphComponent, afterCompileAction) {
     (edge) => webGLEdgeStyles[(edge.tag || 0) % webGLEdgeStyles.length],
     (label) => webGLLabelStyles[(label.tag || 0) % webGLLabelStyles.length]
   )
+
   if (afterCompileAction) {
     myWebGLGraphModelManager.addEventListener('shaders-compiled', () => {
       afterCompileAction()
       myWebGLGraphModelManager.removeEventListener('shaders-compiled', afterCompileAction)
     })
   }
+
   graphComponent.graphModelManager = myWebGLGraphModelManager
+
   graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager({
     nodeStyle: nodeSelectionStyle,
     edgeStyle: edgeSelectionStyle,
@@ -163,6 +179,7 @@ function enableWebGLRendering(graphComponent, afterCompileAction) {
     nodeLabelStyle: labelHighlightStyle
   })
 }
+
 /**
  * Sets up an InputMode for the GraphComponent
  */
@@ -185,6 +202,7 @@ function initializeInteraction(graphComponent) {
   })
   graphComponent.inputMode = inputMode
 }
+
 /**
  * Creates a sample graph arranged in a grid
  */
@@ -202,6 +220,7 @@ function createGraph(graph, width = 10, height = 10) {
       })
     }
   }
+
   for (let x = 0; x < width; ++x) {
     for (let y = 0; y < height; ++y) {
       const index = x * width + y
@@ -224,4 +243,5 @@ function createGraph(graph, width = 10, height = 10) {
     }
   }
 }
+
 run().then(finishLoading)

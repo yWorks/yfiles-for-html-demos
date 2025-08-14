@@ -46,17 +46,23 @@ import { colorSets, createDemoNodeLabelStyle } from '@yfiles/demo-resources/demo
 import { ArrowNodeStyleHandleProvider } from './ArrowNodeStyleHandleProvider'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * Runs this demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('#graphComponent')
   initializeGraph(graphComponent.graph)
+
   initializeInteraction(graphComponent)
+
   void graphComponent.fitGraphBounds()
+
   graphComponent.selection.add(graphComponent.graph.nodes.first())
 }
+
 /**
  * Initializes defaults for the given graph with the ArrowNodeStyle and creates a node.
  * @param graph The graph to set the defaults and in which to create the sample.
@@ -67,6 +73,7 @@ function initializeGraph(graph) {
     fill: colorSets['demo-palette-13'].fill,
     stroke: colorSets['demo-palette-13'].stroke
   })
+
   // initialize the graph defaults
   const defaultLayoutParameter = new FreeNodeLabelModel().createParameter({
     layoutRatio: new Point(0.5, 0),
@@ -77,16 +84,20 @@ function initializeGraph(graph) {
   const defaultLabelStyle = createDemoNodeLabelStyle('demo-palette-13')
   defaultLabelStyle.textSize = 16
   defaultLabelStyle.padding = [8, 10, 8, 10]
+
   graph.nodeDefaults.style = arrowStyle
   graph.nodeDefaults.size = new Size(200, 100)
   graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.labels.layoutParameter = defaultLayoutParameter
   graph.nodeDefaults.labels.style = defaultLabelStyle
+
   // create a node with the default style
   const node = graph.createNode(new Rect(0, 0, 400, 200))
+
   // create a label that shows the current angle and shaft ratio
   graph.addLabel(node, styleToText(arrowStyle))
 }
+
 /**
  * Sets up an input mode for the GraphComponent, and adds custom handles to change the angle and
  * shaft ratio of the arrow.
@@ -94,19 +105,23 @@ function initializeGraph(graph) {
 function initializeInteraction(graphComponent) {
   const inputMode = new GraphEditorInputMode({ selectableItems: GraphItemTypes.NODE })
   graphComponent.inputMode = inputMode
+
   // add a label to newly created node that shows the current style settings
   inputMode.addEventListener('node-created', (evt) => {
     const node = evt.item
     graphComponent.graph.addLabel(node, styleToText(node.style))
   })
+
   const graph = graphComponent.graph
   const nodeDecorator = graph.decorator.nodes
+
   // add handles that enable the user to change the angle and shaft ratio of an arrow node style
   nodeDecorator.handleProvider.addWrapperFactory(
     (n) => n.style instanceof ArrowNodeStyle,
     (node, delegateProvider) =>
       new ArrowNodeStyleHandleProvider(node, () => updateLabel(graph, node), delegateProvider)
   )
+
   // only provide reshape handles for the right, bottom and bottom-right sides, so they don't clash with
   // the custom handles
   nodeDecorator.reshapeHandleProvider.addFactory(
@@ -117,9 +132,11 @@ function initializeInteraction(graphComponent) {
         HandlePositions.RIGHT | HandlePositions.BOTTOM | HandlePositions.BOTTOM_RIGHT
       )
   )
+
   // don't show the selection decoration to make the above handles more visible
   graphComponent.graph.decorator.nodes.selectionRenderer.hide()
 }
+
 /**
  * Updates the label's text to show the current style settings.
  * @param graph The graph where the node lives.
@@ -137,6 +154,7 @@ function updateLabel(graph, node) {
     }
   }
 }
+
 /**
  * Returns a text description of the style configuration.
  */
@@ -145,10 +163,12 @@ function styleToText(style) {
   const shaftRatio = String(style.shaftRatio.toFixed(2))
   return `Angle of the arrow: ${angle}°\n` + `Ratio of the shaft: ${shaftRatio}`
 }
+
 /**
  * Returns the given angle in degrees.
  */
 function toDegrees(radians) {
   return (radians * 180) / Math.PI
 }
+
 run().then(finishLoading)

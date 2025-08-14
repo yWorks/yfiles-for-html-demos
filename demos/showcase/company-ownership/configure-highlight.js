@@ -44,6 +44,7 @@ import {
 import { CustomShapeNodeStyle } from './styles/CustomShapeNodeStyle'
 import { getCompany, getRelationship } from './data-types'
 import { CollapseExpandPortStyle } from '../orgchart/graph-style/CollapseExpandPortStyle'
+
 /**
  * Enables the highlighting of the edges.
  * @param viewerInputMode The given input mode
@@ -51,6 +52,7 @@ import { CollapseExpandPortStyle } from '../orgchart/graph-style/CollapseExpandP
  */
 export function enableHoverHighlights(viewerInputMode, graphComponent) {
   const decorator = graphComponent.graph.decorator
+
   // configures the highlighting style for the nodes
   decorator.nodes.highlightRenderer.addFactory((node) => {
     const shape =
@@ -58,31 +60,25 @@ export function enableHoverHighlights(viewerInputMode, graphComponent) {
         ? highlightShapes.get(getCompany(node).nodeType)
         : ShapeNodeShape.RECTANGLE
     return new NodeStyleIndicatorRenderer({
-      nodeStyle: new ShapeNodeStyle({
-        stroke: '2px #ab2346',
-        fill: 'none',
-        shape
-      }),
+      nodeStyle: new ShapeNodeStyle({ stroke: '2px #ab2346', fill: 'none', shape }),
       zoomPolicy: StyleIndicatorZoomPolicy.WORLD_COORDINATES,
       margins: 2
     })
   })
+
   // configures the highlighting style for the edges
   decorator.edges.highlightRenderer.addFactory(
     (edge) =>
       new EdgeStyleIndicatorRenderer({
         edgeStyle: new PolylineEdgeStyle({
           stroke: '3px #ab2346',
-          targetArrow: new Arrow({
-            type: 'triangle',
-            stroke: '3px #ab2346',
-            fill: '#ab2346'
-          }),
+          targetArrow: new Arrow({ type: 'triangle', stroke: '3px #ab2346', fill: '#ab2346' }),
           smoothingLength: getRelationship(edge).type === 'Hierarchy' ? 5 : 100
         }),
         zoomPolicy: StyleIndicatorZoomPolicy.WORLD_COORDINATES
       })
   )
+
   // configures the highlighting style for the ports
   decorator.ports.highlightRenderer.addFactory(
     (port) =>
@@ -91,6 +87,7 @@ export function enableHoverHighlights(viewerInputMode, graphComponent) {
         zoomPolicy: StyleIndicatorZoomPolicy.WORLD_COORDINATES
       })
   )
+
   // configures the highlighting style for the labels
   decorator.labels.highlightRenderer.addFactory((label) => {
     const style = label.style.clone()
@@ -101,6 +98,7 @@ export function enableHoverHighlights(viewerInputMode, graphComponent) {
       margins: 0
     })
   })
+
   // configures the hover input mode
   viewerInputMode.itemHoverInputMode.hoverItems =
     GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL | GraphItemTypes.PORT
@@ -132,6 +130,7 @@ export function enableHoverHighlights(viewerInputMode, graphComponent) {
     }
   })
 }
+
 /**
  * Highlights the edge, the edge labels and the ports incident to the given edge.
  */
@@ -148,6 +147,7 @@ function highlightEdge(edge, highlights, highlightIncidentPorts = true) {
     highlightPorts(edge.targetNode, highlights)
   }
 }
+
 /**
  * Highlights the ports incident to the given node rendered by {@link CollapseExpandPortStyle}.
  */
@@ -158,6 +158,7 @@ function highlightPorts(node, highlights) {
       highlights.add(port)
     })
 }
+
 export const highlightShapes = new Map([
   ['Corporation', ShapeNodeShape.RECTANGLE],
   ['CTB', ShapeNodeShape.RECTANGLE],

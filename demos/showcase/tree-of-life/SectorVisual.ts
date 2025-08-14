@@ -164,9 +164,7 @@ export class SectorVisual extends BaseClass(IVisualCreator) {
       return this.createVisual(context)
     }
 
-    const g = oldVisual.svgElement as SVGElement & {
-      'render-data-cache': RenderDataCache
-    }
+    const g = oldVisual.svgElement as SVGElement & { 'render-data-cache': RenderDataCache }
 
     const cache = g['render-data-cache']
     if (

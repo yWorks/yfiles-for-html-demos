@@ -45,11 +45,7 @@ LayoutExecutor.ensure()
  * Type that describes one step in the process.
  * This information is associated with every node in the graph.
  */
-export type ProcessStep = {
-  label: string
-  heat: HeatData
-  capacity: number
-}
+export type ProcessStep = { label: string; heat: HeatData; capacity: number }
 
 /**
  * Type that describes one transition in the process.

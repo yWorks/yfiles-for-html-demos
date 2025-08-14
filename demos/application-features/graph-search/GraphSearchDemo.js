@@ -41,52 +41,65 @@ import {
   ShapeNodeStyle,
   Size
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 /**
  * Application Features - Graph Search
  *
  * This demo shows an implementation of the search functionality on the nodes of a graph.
  */
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   // configure default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   // configure the highlight style for the nodes that match the searched query
   initSearchHighlightingStyle(graphComponent)
+
   // then build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new RadialLayout())
   graphComponent.fitGraphBounds()
+
   // bind the buttons to their functionality
   initializeUI()
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   const nodesSource = graphBuilder.createNodesSource(graphData.nodeList, (item) => item.id)
   nodesSource.nodeCreator.layoutProvider = (item) =>
     item.label === 'Hobbies' ? new Rect(0, 0, 130, 70) : new Rect(0, 0, 80, 40)
   nodesSource.nodeCreator.createLabelBinding((data) => data.label)
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Configures the highlight style that will be used for the nodes that match the searched query.
  * @param graphComponent The component containing the graph.
@@ -104,6 +117,7 @@ function initSearchHighlightingStyle(graphComponent) {
   })
   graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(searchHighlightStyle)
 }
+
 /**
  * Updates the search results by using the given string.
  * @param searchText The text to be queried
@@ -111,6 +125,7 @@ function initSearchHighlightingStyle(graphComponent) {
 function updateSearch(searchText) {
   // we use the search highlight manager to highlight matching items
   const highlights = graphComponent.highlights
+
   // first remove previous highlights
   highlights.clear()
   if (searchText.trim() !== '') {
@@ -122,6 +137,7 @@ function updateSearch(searchText) {
     })
   }
 }
+
 /**
  * Returns whether the given node is a match when searching for the given text in the label of the node.
  * @param node The node to be examined
@@ -131,6 +147,7 @@ function updateSearch(searchText) {
 function matches(node, text) {
   return node.labels.some((label) => label.text.toLowerCase().includes(text.toLowerCase()))
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  *
@@ -139,11 +156,13 @@ function matches(node, text) {
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
+
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(80, 40)
   graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
 }
+
 /**
  * Binds actions to the buttons in the tutorial's toolbar.
  */
@@ -153,4 +172,5 @@ function initializeUI() {
     updateSearch(e.target.value)
   })
 }
+
 run().then(finishLoading)

@@ -33,6 +33,7 @@ import {
   ILayoutAlgorithm,
   LayoutData
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to run a {@link HierarchicalLayout} with configured constraints.
  * @param graph The graph to be laid out
@@ -41,17 +42,22 @@ import {
 export function createFeatureLayoutConfiguration(graph) {
   const layout = new HierarchicalLayout()
   const layoutData = new HierarchicalLayoutData()
+
   const node4 = graph.nodes.find((node) => node.tag === 4)
   const node5 = graph.nodes.find((node) => node.tag === 5)
+
   // node 5 shall follow node 4 in the sequence...
   layoutData.sequenceConstraints.placeNodeBeforeNode(node4, node5)
+
   // HierarchicalLayout normally places the nodes so that the edges point in the direction of the
   // layout (here from top to bottom). This would place node 5 in the next layer, i.e. below node 4.
   // In this example, however, we want the two nodes to be in the same layer. We can do this by
   // specifying a same layer constraint.
   layoutData.layerConstraints.placeInSameLayer(node4, node5)
+
   return { layout, layoutData }
 }
+
 /**
  * Demonstrates how to run a {@link HierarchicalLayout} with the default configuration.
  * @param graph The graph to be laid out

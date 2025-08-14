@@ -37,6 +37,7 @@ import {
   Rect,
   SvgVisual
 } from '@yfiles/yfiles'
+
 // Indices for the corners of the bounding box.
 const LOW_TOP_LEFT_X = 0
 const LOW_TOP_LEFT_Y = 1
@@ -54,6 +55,7 @@ const UP_BOTTOM_RIGHT_X = 12
 const UP_BOTTOM_RIGHT_Y = 13
 const UP_BOTTOM_LEFT_X = 14
 const UP_BOTTOM_LEFT_Y = 15
+
 /**
  * A node style that visualizes the node as block in an isometric fashion.
  */
@@ -69,16 +71,19 @@ export class IsometricNodeStyle extends NodeStyleBase {
       IsometricNodeStyle.calculateHeightVector(context.projection),
       color
     )
+
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     updateVisualization(g, cache)
     setColors(context, g, color)
     return SvgVisual.from(g, cache)
   }
+
   /**
    * Updates the visual representation for the given node.
    */
   updateVisual(context, oldVisual, node) {
     const oldCache = oldVisual.tag
+
     const color = node.tag.color
     const newCache = new RenderDataCache(
       node.layout.toRect(),
@@ -86,6 +91,7 @@ export class IsometricNodeStyle extends NodeStyleBase {
       IsometricNodeStyle.calculateHeightVector(context.projection),
       color
     )
+
     const g = oldVisual.svgElement
     const oldChildCount = g.childNodes.length
     if (!oldCache.equalGeometries(newCache)) {
@@ -94,9 +100,11 @@ export class IsometricNodeStyle extends NodeStyleBase {
     if (oldChildCount != g.childNodes.length || !oldCache.equalColors(newCache)) {
       setColors(context, g, color)
     }
+
     oldVisual.tag = newCache
     return oldVisual
   }
+
   /**
    * Calculates a vector in world coordinates whose transformation by the projection results
    * in the vector (0, -1).
@@ -109,6 +117,7 @@ export class IsometricNodeStyle extends NodeStyleBase {
     return matrix.transform(new Point(0, -1))
   }
 }
+
 /**
  * Stores the geometry data necessary to update the visual representation of a node.
  */
@@ -123,6 +132,7 @@ class RenderDataCache {
     this.upVector = upVector
     this.color = color
   }
+
   equalGeometries(other) {
     const height = this.height
     return (
@@ -131,34 +141,42 @@ class RenderDataCache {
       (height == 0 || equalPoints(this.upVector, other.upVector))
     )
   }
+
   equalColors(other) {
     const c1 = this.color
     const c2 = other.color
     return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b && c1.a == c2.a
   }
 }
+
 function equalRectangles(r1, r2) {
   return r1.x == r2.x && r1.y == r2.y && r1.width == r2.width && r1.height == r2.height
 }
+
 function equalPoints(p1, p2) {
   return p1.x == p2.x && p1.y == p2.y
 }
+
 function updateVisualization(container, cache) {
   const height = cache.height
   if (height > 0) {
     ensurePathChildren(container, 3)
+
     const up = cache.upVector
     const corners = calculateCorners(up, cache.layout, height)
     const leftFacePath = up.x > 0 ? newLeftFacePath(corners) : newRightFacePath(corners)
     const rightFacePath = up.y > 0 ? newBackFacePath(corners) : newFrontFacePath(corners)
+
     setPathDefinition(container.childNodes.item(0), leftFacePath)
     setPathDefinition(container.childNodes.item(1), rightFacePath)
     setPathDefinition(container.childNodes.item(2), newTopFacePath(corners))
   } else {
     ensurePathChildren(container, 1)
+
     setPathDefinition(container.childNodes.item(0), newRectanglePath(cache.layout))
   }
 }
+
 function ensurePathChildren(container, n) {
   while (container.childNodes.length > n) {
     container.removeChild(container.lastChild)
@@ -167,30 +185,39 @@ function ensurePathChildren(container, n) {
     container.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'path'))
   }
 }
+
 function setPathDefinition(path, definition) {
   path.setAttribute('d', definition)
 }
+
 function calculateCorners(upVector, layout, height) {
   const heightVector = new Point(height * upVector.x, height * upVector.y)
+
   const x = layout.x
   const y = layout.y
   const width = layout.width
   const depth = layout.height
+
   const corners = []
   corners[LOW_TOP_LEFT_X] = x
   corners[LOW_TOP_LEFT_Y] = y
+
   corners[LOW_TOP_RIGHT_X] = x + width
   corners[LOW_TOP_RIGHT_Y] = y
+
   corners[LOW_BOTTOM_RIGHT_X] = x + width
   corners[LOW_BOTTOM_RIGHT_Y] = y + depth
+
   corners[LOW_BOTTOM_LEFT_X] = x
   corners[LOW_BOTTOM_LEFT_Y] = y + depth
+
   for (let i = 0; i < 8; i += 2) {
     corners[i + 8] = corners[i] + heightVector.x
     corners[i + 9] = corners[i + 1] + heightVector.y
   }
   return corners
 }
+
 /**
  * Creates a path definition that describes the face on the top of the block.
  * @param corners The coordinates of the corners of the block.
@@ -204,6 +231,7 @@ function newTopFacePath(corners) {
     'Z'
   )
 }
+
 /**
  * Creates a path definition that describes the face on the left side of the block.
  * @param corners The coordinates of the corners of the block.
@@ -217,6 +245,7 @@ function newLeftFacePath(corners) {
     'Z'
   )
 }
+
 /**
  * Creates a path definition that describes the face on the right side of the block.
  * @param corners The coordinates of the corners of the block.
@@ -230,6 +259,7 @@ function newRightFacePath(corners) {
     'Z'
   )
 }
+
 /**
  * Creates a path definition that describes the face on the front side of the block.
  * @param corners The coordinates of the corners of the block.
@@ -243,6 +273,7 @@ function newFrontFacePath(corners) {
     'Z'
   )
 }
+
 /**
  * Creates a path definition that describes the face on the back side of the block.
  * @param corners The coordinates of the corners of the block.
@@ -256,6 +287,7 @@ function newBackFacePath(corners) {
     'Z'
   )
 }
+
 /**
  * Creates a path definition that describes the given rectangle.
  */
@@ -268,10 +300,12 @@ function newRectanglePath(layout) {
     `Z`
   )
 }
+
 function setColors(context, g, baseColor) {
   if (g.childNodes.length > 1) {
     const leftColor = darker(baseColor)
     const rightColor = darker(leftColor)
+
     setColor(context, g.childNodes.item(0), leftColor)
     setColor(context, g.childNodes.item(1), rightColor)
     setColor(context, g.childNodes.item(2), baseColor)
@@ -279,12 +313,15 @@ function setColors(context, g, baseColor) {
     setColor(context, g.childNodes.item(0), baseColor)
   }
 }
+
 function darker(color) {
   return { r: (color.r * 0.8) | 0, g: (color.g * 0.8) | 0, b: (color.b * 0.8) | 0, a: color.a }
 }
+
 function setColor(context, node, color) {
   getNewColor(color).applyTo(node, context)
 }
+
 function getNewColor(color) {
   return new Color(color.r, color.g, color.b, color.a)
 }

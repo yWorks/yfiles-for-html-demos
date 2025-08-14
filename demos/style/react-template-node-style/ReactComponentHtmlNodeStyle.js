@@ -35,12 +35,14 @@ import {
 } from '@yfiles/yfiles'
 import { createRoot } from 'react-dom/client'
 import { createElement } from 'react'
+
 /**
  * The default implementation just uses the props from the tag of the item to be rendered.
  * @param context
  * @param node
  */
 const defaultTagProvider = (context, node) => node.tag
+
 /**
  * Helper method that will be used by the below style to release React resources when the
  * node gets removed from the yFiles scene graph.
@@ -61,6 +63,7 @@ function unmountReact(context, removedVisual, dispose) {
   }
   return null
 }
+
 /**
  * A simple INodeStyle implementation that uses React Components/render functions
  * for rendering the node visualizations as an HtmlVisual
@@ -94,6 +97,7 @@ export class ReactComponentHtmlNodeStyle extends NodeStyleBase {
     this.reactComponent = reactComponent
     this.tagProvider = tagProvider
   }
+
   createProps(context, node) {
     return {
       selected:
@@ -103,24 +107,31 @@ export class ReactComponentHtmlNodeStyle extends NodeStyleBase {
       tag: this.tagProvider(context, node)
     }
   }
+
   createVisual(context, node) {
     // obtain the properties from the node
     const props = this.createProps(context, node)
+
     // create a React root and render the component into
     const div = document.createElement('div')
     const root = createRoot(div)
     root.render(createElement(this.reactComponent, props))
+
     const cache = { props, root }
     // wrap the Dom element into a HtmlVisual, adding the "root" for later use in updateVisual
     const visual = HtmlVisual.from(div, cache)
+
     // set the CSS layout for the container
     HtmlVisual.setLayout(visual.element, node.layout)
+
     // register a callback that unmounts the React app when the visual is discarded
     context.setDisposeCallback(visual, unmountReact)
     return visual
   }
+
   updateVisual(context, oldVisual, node) {
     const newProps = this.createProps(context, node)
+
     const cache = oldVisual.tag
     const oldProps = cache.props
     if (
@@ -132,6 +143,7 @@ export class ReactComponentHtmlNodeStyle extends NodeStyleBase {
       oldVisual.tag.root.render(element)
       cache.props = newProps
     }
+
     // update the CSS layout of the container element
     HtmlVisual.setLayout(oldVisual.element, node.layout)
     return oldVisual

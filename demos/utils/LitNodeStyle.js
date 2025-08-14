@@ -36,15 +36,18 @@ import {
   NodeStyleBase,
   SvgVisual
 } from '@yfiles/yfiles'
+
 // @ts-ignore Import via URL
 // eslint-disable-next-line import/no-unresolved
 import { nothing, render, svg } from 'lit-html'
+
 /**
  * A node style which uses Lit render functions for displaying the contents of a node with SVG.
  */
 export class LitNodeStyle extends NodeStyleBase {
   renderFunction
   normalizedOutline
+
   /**
    * Creates the style using the provided render function.
    */
@@ -52,6 +55,7 @@ export class LitNodeStyle extends NodeStyleBase {
     super()
     this.renderFunction = renderFunction
   }
+
   /**
    * Creates the properties that we pass by default to the render function.
    * Custom variations could be passing other properties to the context, of course.
@@ -66,6 +70,7 @@ export class LitNodeStyle extends NodeStyleBase {
       tag: node.tag
     }
   }
+
   /**
    * Creates a visual that uses a Lit rendered DOM SVG snippet to display a node.
    * @param context The renderContext to be used
@@ -74,13 +79,18 @@ export class LitNodeStyle extends NodeStyleBase {
   createVisual(context, node) {
     const props = this.createProps(context, node)
     const result = this.renderFunction(props)
+
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     SvgVisual.setTranslate(gElement, node.layout.x, node.layout.y)
+
     const svgVisual = SvgVisual.from(gElement, props)
+
     render(result, gElement)
+
     // return an SvgVisual that uses the g element that has been rendered into
     return svgVisual
   }
+
   /**
    * Efficient implementation of the update method that only re-renders the snippet if the
    * props have changed.
@@ -91,7 +101,9 @@ export class LitNodeStyle extends NodeStyleBase {
    */
   updateVisual(context, oldVisual, node) {
     const gElement = oldVisual.svgElement
+
     const props = this.createProps(context, node)
+
     // check if some property has changed
     const lastProps = oldVisual.tag
     if (
@@ -106,18 +118,22 @@ export class LitNodeStyle extends NodeStyleBase {
       render(result, gElement)
       oldVisual.tag = props
     }
+
     // update location in any case
     SvgVisual.setTranslate(gElement, node.layout.x, node.layout.y)
     return oldVisual
   }
+
   getOutline(node) {
     if (!this.normalizedOutline) {
       return super.getOutline(node)
     }
+
     const { x, y, width, height } = node.layout
     return this.normalizedOutline.createTransformedPath(new Matrix(width, 0, 0, height, x, y))
   }
 }
+
 /**
  * Parses a string (using eval) as a function to use for rendering a LitNodeStyle
  * @param renderFunctionSource The source of the function

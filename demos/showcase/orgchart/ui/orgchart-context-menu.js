@@ -27,21 +27,25 @@
  **
  ***************************************************************************/
 import { INode } from '@yfiles/yfiles'
+
 /**
  * Initializes the context menu.
  */
 export function configureContextMenu(graphComponent, orgChartGraph) {
   const inputMode = graphComponent.inputMode
+
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   inputMode.addEventListener('populate-item-context-menu', (evt) => {
     populateContextMenu(graphComponent, orgChartGraph, evt)
   })
 }
+
 /**
  * Populates the context menu based on the item the mouse hovers over.
  */
 function populateContextMenu(graphComponent, orgChartGraph, args) {
   const node = args.item
+
   // if we clicked on a node
   if (node instanceof INode) {
     graphComponent.currentItem = node
@@ -53,6 +57,7 @@ function populateContextMenu(graphComponent, orgChartGraph, args) {
     if (orgChartGraph.canExecuteShowParent(node)) {
       menuItems.push({ label: 'Show Parent', action: () => orgChartGraph.executeShowParent(node) })
     }
+
     if (orgChartGraph.canExecuteHideChildren(node)) {
       menuItems.push({
         label: 'Hide Children',
@@ -65,9 +70,11 @@ function populateContextMenu(graphComponent, orgChartGraph, args) {
         action: () => orgChartGraph.executeShowChildren(node)
       })
     }
+
     if (orgChartGraph.canExecuteShowAll()) {
       menuItems.push({ label: 'Show all', action: () => orgChartGraph.executeShowAll() })
     }
+
     if (menuItems.length > 0) {
       args.contextMenu = menuItems
     }

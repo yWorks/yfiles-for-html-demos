@@ -292,9 +292,7 @@ export class FlowchartLayout extends BaseClass(ILayoutAlgorithm) {
         portCandidateSelector: new FlowchartPortCandidateSelector(),
         fromScratchLayerAssigner: layerer
       },
-      coordinateAssigner: {
-        straightenEdges: true
-      }
+      coordinateAssigner: { straightenEdges: true }
     })
   }
 
@@ -1174,10 +1172,10 @@ function setEdgePath(edge: LayoutEdge, pathPoints: IEnumerable<Point>, graph: La
   })
 }
 
-function getPointListForEdge(edge: LayoutEdge): YList<Point> {
-  return new YList<Point>(
-    edge.pathPoints.toArray().map((pathPoint) => new Point(pathPoint.x, pathPoint.y))
-  )
+function getPointListForEdge(edge: LayoutEdge | null): YList<Point> {
+  const points =
+    edge?.pathPoints.toArray().map((pathPoint) => new Point(pathPoint.x, pathPoint.y)) ?? []
+  return new YList<Point>(points)
 }
 
 /**
@@ -1195,7 +1193,7 @@ function restoreOriginalGraph(graph: LayoutGraph): void {
     let outPath: YList<Point>
     const groupingDummyId = groupingDummiesDP.get(node)
     if (groupingDummyId === NodeLayerType.Preceding) {
-      const outEdge = node.outEdges.get(0)!
+      const outEdge = node.outEdges.get(0)
       outPath = getPointListForEdge(outEdge)
       outPath.unshift(new Point(node.layout.center.x, node.layout.center.y))
       node.inEdges.toArray().forEach((edge: LayoutEdge) => {

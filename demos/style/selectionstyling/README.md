@@ -17,7 +17,7 @@
 
 The Selection Styling demo shows customized selection painting of nodes, edges and labels by decorating these items with a corresponding style.
 
-Customizing the painting of the focus indicator and the highlighting is possible as well but not shown in this demo.
+Customizing the focus and highlight painting is possible in the same way but not shown in this demo.
 
 ## Things to Try
 

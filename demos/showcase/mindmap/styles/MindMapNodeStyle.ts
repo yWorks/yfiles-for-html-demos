@@ -39,10 +39,7 @@ import { getNodeData } from '../data-types'
 /**
  * Augment the SvgVisual type with the data used to cache the rendering information.
  */
-type Cache = {
-  size: Size
-  color: string
-}
+type Cache = { size: Size; color: string }
 type MindMapNodeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 /**
@@ -69,10 +66,7 @@ export class MindMapNodeStyle extends NodeStyleBase<MindMapNodeStyleVisual> {
     // move the container to the node position
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
     // store the data used to create the elements with the container
-    return SvgVisual.from(g, {
-      size: node.layout.toSize(),
-      color: getNodeData(node).color
-    })
+    return SvgVisual.from(g, { size: node.layout.toSize(), color: getNodeData(node).color })
   }
 
   /**
@@ -96,10 +90,7 @@ export class MindMapNodeStyle extends NodeStyleBase<MindMapNodeStyleVisual> {
       }
       this.render(renderContext, node, container)
       // updates the cached information for the rendering
-      oldVisual.tag = {
-        size: nodeSize,
-        color: nodeData.color
-      }
+      oldVisual.tag = { size: nodeSize, color: nodeData.color }
     }
     // move the container to the node position
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)

@@ -113,8 +113,8 @@ export class PrintingSupport {
       renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
     )
     // Dispose of the component and remove its references to the graph
-    exportComponent.cleanUp()
     exportComponent.graph = new Graph()
+    exportComponent.cleanUp()
   }
 
   /**
@@ -358,6 +358,41 @@ export class PrintingSupport {
    * Checks whether the current svg element will produce an empty page
    */
   private isEmpty(svg: SVGSVGElement): boolean {
-    return !svg.children[1].children[0].children[0].hasChildNodes()
+    const renderingTags = new Set([
+      'path',
+      'rect',
+      'circle',
+      'ellipse',
+      'polygon',
+      'polyline',
+      'line',
+      'text',
+      'image',
+      'foreignobject',
+      'use'
+    ])
+    function hasGraphicContent(svg: Element): boolean {
+      if (!svg || !svg.children) {
+        return false
+      }
+      // Iterate through all direct child elements of the current element
+      for (let i = 0; i < svg.children.length; i++) {
+        const child = svg.children[i]
+        const tagName = child.tagName.toLowerCase()
+        // If the child is a rendering graphic tag (e.g., <rect>, <text>), then we've found content
+        if (renderingTags.has(tagName)) {
+          return true
+        }
+        // If the child is a grouping element, recursively check its children for graphic content
+        if (tagName === 'g' || tagName === 'svg' || tagName === 'a') {
+          if (hasGraphicContent(child)) {
+            return true
+          }
+        }
+      }
+      // If no rendering graphic tag found, there is no content in this element
+      return false
+    }
+    return !hasGraphicContent(svg)
   }
 }

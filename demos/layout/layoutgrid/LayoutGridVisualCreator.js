@@ -41,6 +41,7 @@ import {
   TimeSpan,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * Visualizes the layout grid that has been used in the last layout.
  * Each grid cell is visualized as an SVG rectangle.
@@ -65,6 +66,7 @@ export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimatio
    * The selected cell indices.
    */
   selectedCellId = null
+
   /**
    * Creates a new instance of LayoutGridVisualCreator.
    * @param rowCount The number of columns of the grid
@@ -83,6 +85,7 @@ export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimatio
       this.columns.push(new MutableRectangle(0, 0, 10, 10))
     }
   }
+
   /**
    * Creates the visual for the given layout grid.
    * @param context The context that describes where the visual will be used
@@ -90,17 +93,20 @@ export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimatio
    */
   createVisual(context) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     this.columnColors = generateGradientColors(
       Color.LIGHT_SKY_BLUE,
       Color.ROYAL_BLUE,
       this.columnCount
     )
+
     for (let rowIndex = 0; rowIndex < this.rowCount; rowIndex++) {
       for (let columnIndex = 0; columnIndex < this.columnCount; columnIndex++) {
         const cellX1 = this.columns[columnIndex].x
         const cellX2 = this.columns[columnIndex].x + this.columns[columnIndex].width
         const cellY1 = this.rows[rowIndex].y
         const cellY2 = this.rows[rowIndex].y + this.rows[rowIndex].height
+
         const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
         rect.setAttribute('x', cellX1.toString())
         rect.setAttribute('y', cellY1.toString())
@@ -126,6 +132,7 @@ export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimatio
     }
     return new SvgVisual(container)
   }
+
   /**
    * Updates the visual for the given layout grid. In particular, method {@link createVisual} is called.
    * @param context The context that describes where the visual will be used
@@ -136,6 +143,7 @@ export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimatio
   updateVisual(context, oldVisual) {
     return this.createVisual(context)
   }
+
   /**
    * Gets the preferred duration of the animation.
    * @see Specified by {@link IAnimation.preferredDuration}.
@@ -143,6 +151,7 @@ export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimatio
   get preferredDuration() {
     return TimeSpan.fromMilliseconds(400)
   }
+
   /**
    * Initializes the animation.
    */
@@ -156,7 +165,9 @@ export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimatio
     let maxEndX = Number.NEGATIVE_INFINITY
     let minEndY = Number.POSITIVE_INFINITY
     let maxEndY = Number.NEGATIVE_INFINITY
+
     const grid = this.grid
+
     // looking at the y-coordinate and height of each row before and after the layout we can define the
     // minimum/maximum start/end y values for each row
     this.rowStarts = []
@@ -168,15 +179,18 @@ export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimatio
         const startHeight = rowRect.height
         minStartY = Math.min(minStartY, rowRect.y)
         maxStartY = Math.max(maxStartY, rowRect.maxY)
+
         const endY = rowDescriptor.position
         const endHeight = rowDescriptor.height
         minEndY = Math.min(minEndY, rowDescriptor.position)
         maxEndY = Math.max(maxEndY, rowDescriptor.position + rowDescriptor.height)
+
         // for each row we store its layout before and after the layout
         this.rowStarts.push(new Rect(minStartX, startY, maxStartX - minStartX, startHeight))
         this.rowEnds.push(new Rect(minEndX, endY, maxEndX - minEndX, endHeight))
       })
     }
+
     // looking at the x-coordinate and width of each column before and after the layout we can define the
     // minimum/maximum start/end x values for each column
     this.columnStarts = []
@@ -188,16 +202,19 @@ export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimatio
         const startWidth = columnRect.width
         minStartX = Math.min(minStartX, startX)
         maxStartX = Math.max(maxStartX, startX + startWidth)
+
         const endX = columnDescriptor.position
         const endWidth = columnDescriptor.width
         minEndX = Math.min(minEndX, endX)
         maxEndX = Math.max(maxEndX, endX + endWidth)
+
         // for each column we store its layout before and after the layout
         this.columnStarts.push(new Rect(startX, minStartY, startWidth, maxStartY - minStartY))
         this.columnEnds.push(new Rect(endX, minEndY, endWidth, maxEndY - minEndY))
       })
     }
   }
+
   /**
    * Runs the animation according to the relative animation time.
    * @param time The animation time in [0,1]
@@ -207,15 +224,18 @@ export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimatio
     this.rows.forEach((row, index) => {
       const rowStart = this.rowStarts[index]
       const rowEnd = this.rowEnds[index]
+
       const newX = rowStart.x + time * (rowEnd.x - rowStart.x)
       const newY = rowStart.y + time * (rowEnd.y - rowStart.y)
       const newWidth = rowStart.width + time * (rowEnd.width - rowStart.width)
       const newHeight = rowStart.height + time * (rowEnd.height - rowStart.height)
       row.setShape(newX, newY, newWidth, newHeight)
     })
+
     this.columns.forEach((column, index) => {
       const columnStart = this.columnStarts[index]
       const columnEnd = this.columnEnds[index]
+
       const newX = columnStart.x + time * (columnEnd.x - columnStart.x)
       const newY = columnStart.y + time * (columnEnd.y - columnStart.y)
       const newWidth = columnStart.width + time * (columnEnd.width - columnStart.width)
@@ -223,6 +243,7 @@ export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimatio
       column.setShape(newX, newY, newWidth, newHeight)
     })
   }
+
   /**
    * Cleans up after an animation has finished.
    */
@@ -234,6 +255,7 @@ export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimatio
     this.columnEnds = []
   }
 }
+
 /**
  * Generates an array of gradient colors between the start color and the end color.
  * @param startColor The start color

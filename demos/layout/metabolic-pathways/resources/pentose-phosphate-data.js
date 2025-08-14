@@ -29,11 +29,7 @@
 export const pentosePhosphateData = {
   nodes: [
     { id: 0, label: '(3) Glucose<br>6-phosphate', tag: { type: 'PRODUCT', vAlign: 'start' } },
-    {
-      id: 1,
-      label: '(3) 6-phosphoglucono-<br>δ-lactone',
-      tag: { type: 'REACTANT' }
-    },
+    { id: 1, label: '(3) 6-phosphoglucono-<br>δ-lactone', tag: { type: 'REACTANT' } },
     { id: 2, label: '(3) 6-Phosphogluconate', tag: { type: 'REACTANT' } },
     { id: 3, label: '(3) Ribulose<br>5-phosphate', tag: { type: 'REACTANT' } },
     { id: 4, label: 'Sedoheptulose<br>7-phosphate', tag: { type: 'REACTANT' } },

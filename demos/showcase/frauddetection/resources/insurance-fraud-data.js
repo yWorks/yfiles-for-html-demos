@@ -28,20 +28,8 @@
  ***************************************************************************/
 export const insuranceFraudData = {
   nodesSource: [
-    {
-      id: 0,
-      type: 'Accident',
-      enter: ['2021-11-01'],
-      exit: ['2021-12-06'],
-      info: 'Accident 1'
-    },
-    {
-      id: 1,
-      type: 'Car',
-      enter: ['2021-11-11'],
-      exit: ['2021-11-13'],
-      info: 'GL 4128'
-    },
+    { id: 0, type: 'Accident', enter: ['2021-11-01'], exit: ['2021-12-06'], info: 'Accident 1' },
+    { id: 1, type: 'Car', enter: ['2021-11-11'], exit: ['2021-11-13'], info: 'GL 4128' },
     {
       id: 2,
       type: 'Lawyer',
@@ -63,13 +51,7 @@ export const insuranceFraudData = {
       exit: ['2021-11-11'],
       info: { name: 'LAUREN A. ADAMS', role: 'Driver' }
     },
-    {
-      id: 5,
-      type: 'Car',
-      enter: ['2021-11-01'],
-      exit: ['2021-12-06'],
-      info: 'VZ 7482'
-    },
+    { id: 5, type: 'Car', enter: ['2021-11-01'], exit: ['2021-12-06'], info: 'VZ 7482' },
     {
       id: 6,
       type: 'Lawyer',
@@ -168,20 +150,8 @@ export const insuranceFraudData = {
       exit: ['2021-12-06'],
       info: { name: 'ISABELLE S. GREEN', role: 'Witness' }
     },
-    {
-      id: 20,
-      type: 'Accident',
-      enter: ['2021-12-11'],
-      exit: ['2021-12-17'],
-      info: 'Accident 2'
-    },
-    {
-      id: 21,
-      type: 'Car',
-      enter: ['2021-12-11'],
-      exit: ['2021-12-11'],
-      info: 'DC 6192'
-    },
+    { id: 20, type: 'Accident', enter: ['2021-12-11'], exit: ['2021-12-17'], info: 'Accident 2' },
+    { id: 21, type: 'Car', enter: ['2021-12-11'], exit: ['2021-12-11'], info: 'DC 6192' },
     {
       id: 22,
       type: 'Lawyer',
@@ -203,13 +173,7 @@ export const insuranceFraudData = {
       exit: ['2021-12-11'],
       info: { name: 'WILLIAM O. TURNER', role: 'Driver' }
     },
-    {
-      id: 25,
-      type: 'Car',
-      enter: ['2021-12-17'],
-      exit: ['2021-12-17'],
-      info: 'CW 2614'
-    },
+    { id: 25, type: 'Car', enter: ['2021-12-17'], exit: ['2021-12-17'], info: 'CW 2614' },
     {
       id: 26,
       type: 'Lawyer',
@@ -245,20 +209,8 @@ export const insuranceFraudData = {
       exit: ['2021-12-17'],
       info: { name: 'CAMILLA J. LEE', role: 'Witness' }
     },
-    {
-      id: 31,
-      type: 'Accident',
-      enter: ['2022-01-20'],
-      exit: ['2022-02-24'],
-      info: 'Accident 3'
-    },
-    {
-      id: 32,
-      type: 'Car',
-      enter: ['2022-01-28'],
-      exit: ['2022-02-08'],
-      info: 'HQ 8705'
-    },
+    { id: 31, type: 'Accident', enter: ['2022-01-20'], exit: ['2022-02-24'], info: 'Accident 3' },
+    { id: 32, type: 'Car', enter: ['2022-01-28'], exit: ['2022-02-08'], info: 'HQ 8705' },
     {
       id: 33,
       type: 'Lawyer',
@@ -294,13 +246,7 @@ export const insuranceFraudData = {
       exit: ['2022-02-08'],
       info: { name: 'AVA H. CARTER', role: 'Passenger' }
     },
-    {
-      id: 38,
-      type: 'Car',
-      enter: ['2022-01-31'],
-      exit: ['2022-02-24'],
-      info: 'AZ 5934'
-    },
+    { id: 38, type: 'Car', enter: ['2022-01-31'], exit: ['2022-02-24'], info: 'AZ 5934' },
     {
       id: 39,
       type: 'Lawyer',
@@ -329,13 +275,7 @@ export const insuranceFraudData = {
       exit: ['2022-01-31'],
       info: { name: 'CHARLES S. BECKETT', role: 'Driver' }
     },
-    {
-      id: 43,
-      type: 'Car',
-      enter: ['2022-01-20'],
-      exit: ['2022-02-15'],
-      info: 'EB 3680'
-    },
+    { id: 43, type: 'Car', enter: ['2022-01-20'], exit: ['2022-02-15'], info: 'EB 3680' },
     {
       id: 44,
       type: 'Lawyer',
@@ -413,13 +353,7 @@ export const insuranceFraudData = {
       exit: ['2022-02-03'],
       info: { name: 'CAMILLA H. CRAWFORD', role: 'Passenger' }
     },
-    {
-      id: 55,
-      type: 'Car',
-      enter: ['2022-01-23'],
-      exit: ['2022-02-08'],
-      info: 'X 3679'
-    },
+    { id: 55, type: 'Car', enter: ['2022-01-23'], exit: ['2022-02-08'], info: 'X 3679' },
     {
       id: 56,
       type: 'Lawyer',
@@ -462,13 +396,7 @@ export const insuranceFraudData = {
       exit: ['2022-01-29'],
       info: { name: 'ALEXIS N. HUDSON', role: 'Passenger' }
     },
-    {
-      id: 62,
-      type: 'Car',
-      enter: ['2022-01-27'],
-      exit: ['2022-02-22'],
-      info: 'FQ 8742'
-    },
+    { id: 62, type: 'Car', enter: ['2022-01-27'], exit: ['2022-02-22'], info: 'FQ 8742' },
     {
       id: 63,
       type: 'Lawyer',
@@ -567,20 +495,8 @@ export const insuranceFraudData = {
       exit: ['2022-02-24'],
       info: { name: 'SOPHIA Y. PATEL', role: 'Witness' }
     },
-    {
-      id: 77,
-      type: 'Accident',
-      enter: ['2022-03-18'],
-      exit: ['2022-05-06'],
-      info: 'Accident 4'
-    },
-    {
-      id: 78,
-      type: 'Car',
-      enter: ['2022-03-23'],
-      exit: ['2022-05-06'],
-      info: 'OG 8346'
-    },
+    { id: 77, type: 'Accident', enter: ['2022-03-18'], exit: ['2022-05-06'], info: 'Accident 4' },
+    { id: 78, type: 'Car', enter: ['2022-03-23'], exit: ['2022-05-06'], info: 'OG 8346' },
     {
       id: 79,
       type: 'Lawyer',
@@ -658,13 +574,7 @@ export const insuranceFraudData = {
       exit: ['2022-03-27'],
       info: { name: 'ADELINE F. TYLER', role: 'Passenger' }
     },
-    {
-      id: 90,
-      type: 'Car',
-      enter: ['2022-03-18'],
-      exit: ['2022-04-19'],
-      info: 'EZ 3348'
-    },
+    { id: 90, type: 'Car', enter: ['2022-03-18'], exit: ['2022-04-19'], info: 'EZ 3348' },
     {
       id: 91,
       type: 'Lawyer',
@@ -735,13 +645,7 @@ export const insuranceFraudData = {
       exit: ['2022-03-25'],
       info: { name: 'WILLIAM T. CONNOR', role: 'Passenger' }
     },
-    {
-      id: 101,
-      type: 'Car',
-      enter: ['2022-03-21'],
-      exit: ['2022-04-13'],
-      info: 'BD 1586'
-    },
+    { id: 101, type: 'Car', enter: ['2022-03-21'], exit: ['2022-04-13'], info: 'BD 1586' },
     {
       id: 102,
       type: 'Lawyer',
@@ -819,20 +723,8 @@ export const insuranceFraudData = {
       exit: ['2022-05-06'],
       info: { name: 'CHARLOTTE L. CARPENTER', role: 'Witness' }
     },
-    {
-      id: 113,
-      type: 'Accident',
-      enter: ['2022-10-30'],
-      exit: ['2022-12-17'],
-      info: 'Accident 5'
-    },
-    {
-      id: 114,
-      type: 'Car',
-      enter: ['2022-10-30'],
-      exit: ['2022-12-06'],
-      info: 'QX 3818'
-    },
+    { id: 113, type: 'Accident', enter: ['2022-10-30'], exit: ['2022-12-17'], info: 'Accident 5' },
+    { id: 114, type: 'Car', enter: ['2022-10-30'], exit: ['2022-12-06'], info: 'QX 3818' },
     {
       id: 115,
       type: 'Lawyer',
@@ -910,13 +802,7 @@ export const insuranceFraudData = {
       exit: ['2022-10-30'],
       info: { name: 'ELIZABETH D. HARRISON', role: 'Passenger' }
     },
-    {
-      id: 126,
-      type: 'Car',
-      enter: ['2022-11-18'],
-      exit: ['2022-12-17'],
-      info: 'RV 7928'
-    },
+    { id: 126, type: 'Car', enter: ['2022-11-18'], exit: ['2022-12-17'], info: 'RV 7928' },
     {
       id: 127,
       type: 'Lawyer',
@@ -966,13 +852,7 @@ export const insuranceFraudData = {
       exit: ['2022-12-08'],
       info: { name: 'LAWRENCE X. THOMPSON', role: 'Passenger' }
     },
-    {
-      id: 134,
-      type: 'Car',
-      enter: ['2022-11-07'],
-      exit: ['2022-11-11'],
-      info: 'TR 3286'
-    },
+    { id: 134, type: 'Car', enter: ['2022-11-07'], exit: ['2022-11-11'], info: 'TR 3286' },
     {
       id: 135,
       type: 'Lawyer',
@@ -1001,13 +881,7 @@ export const insuranceFraudData = {
       exit: ['2022-11-07'],
       info: { name: 'ALEXANDRA Q. WILSON', role: 'Driver' }
     },
-    {
-      id: 139,
-      type: 'Car',
-      enter: ['2022-11-29'],
-      exit: ['2022-12-08'],
-      info: 'H 5166'
-    },
+    { id: 139, type: 'Car', enter: ['2022-11-29'], exit: ['2022-12-08'], info: 'H 5166' },
     {
       id: 140,
       type: 'Lawyer',
@@ -1043,13 +917,7 @@ export const insuranceFraudData = {
       exit: ['2022-12-08'],
       info: { name: 'GEORGE G. ALLEN', role: 'Passenger' }
     },
-    {
-      id: 145,
-      type: 'Car',
-      enter: ['2022-10-30'],
-      exit: ['2022-12-10'],
-      info: 'DD 6410'
-    },
+    { id: 145, type: 'Car', enter: ['2022-10-30'], exit: ['2022-12-10'], info: 'DD 6410' },
     {
       id: 146,
       type: 'Lawyer',
@@ -1085,20 +953,8 @@ export const insuranceFraudData = {
       exit: ['2022-12-17'],
       info: { name: 'ELENA A. DUNN', role: 'Witness' }
     },
-    {
-      id: 151,
-      type: 'Accident',
-      enter: ['2023-03-04'],
-      exit: ['2023-04-16'],
-      info: 'Accident 6'
-    },
-    {
-      id: 152,
-      type: 'Car',
-      enter: ['2023-03-28'],
-      exit: ['2023-03-28'],
-      info: 'BO 4107'
-    },
+    { id: 151, type: 'Accident', enter: ['2023-03-04'], exit: ['2023-04-16'], info: 'Accident 6' },
+    { id: 152, type: 'Car', enter: ['2023-03-28'], exit: ['2023-03-28'], info: 'BO 4107' },
     {
       id: 153,
       type: 'Lawyer',
@@ -1113,13 +969,7 @@ export const insuranceFraudData = {
       exit: ['2023-03-28'],
       info: { name: 'SOPHIE F. MARTIN', role: 'Driver' }
     },
-    {
-      id: 155,
-      type: 'Car',
-      enter: ['2023-03-04'],
-      exit: ['2023-04-16'],
-      info: 'LX 3407'
-    },
+    { id: 155, type: 'Car', enter: ['2023-03-04'], exit: ['2023-04-16'], info: 'LX 3407' },
     {
       id: 156,
       type: 'Lawyer',
@@ -1176,13 +1026,7 @@ export const insuranceFraudData = {
       exit: ['2023-03-19'],
       info: { name: 'DONALD E. TUCKER', role: 'Passenger' }
     },
-    {
-      id: 164,
-      type: 'Car',
-      enter: ['2023-03-07'],
-      exit: ['2023-03-07'],
-      info: 'ZF 5571'
-    },
+    { id: 164, type: 'Car', enter: ['2023-03-07'], exit: ['2023-03-07'], info: 'ZF 5571' },
     {
       id: 165,
       type: 'Lawyer',
@@ -1204,13 +1048,7 @@ export const insuranceFraudData = {
       exit: ['2023-03-07'],
       info: { name: 'AMELIA K. WINSTON', role: 'Driver' }
     },
-    {
-      id: 168,
-      type: 'Car',
-      enter: ['2023-03-14'],
-      exit: ['2023-04-06'],
-      info: 'S 1376'
-    },
+    { id: 168, type: 'Car', enter: ['2023-03-14'], exit: ['2023-04-06'], info: 'S 1376' },
     {
       id: 169,
       type: 'Lawyer',
@@ -1239,13 +1077,7 @@ export const insuranceFraudData = {
       exit: ['2023-04-06'],
       info: { name: 'JUSTIN G. WILLIAMS', role: 'Passenger' }
     },
-    {
-      id: 173,
-      type: 'Car',
-      enter: ['2023-03-08'],
-      exit: ['2023-03-08'],
-      info: 'KE 7184'
-    },
+    { id: 173, type: 'Car', enter: ['2023-03-08'], exit: ['2023-03-08'], info: 'KE 7184' },
     {
       id: 174,
       type: 'Lawyer',
@@ -1309,20 +1141,8 @@ export const insuranceFraudData = {
       exit: ['2023-04-16'],
       info: { name: 'ELIANA P. BECKETT', role: 'Witness' }
     },
-    {
-      id: 183,
-      type: 'Accident',
-      enter: ['2023-03-04'],
-      exit: ['2023-04-17'],
-      info: 'Accident 7'
-    },
-    {
-      id: 184,
-      type: 'Car',
-      enter: ['2023-03-04'],
-      exit: ['2023-03-22'],
-      info: 'EL 6801'
-    },
+    { id: 183, type: 'Accident', enter: ['2023-03-04'], exit: ['2023-04-17'], info: 'Accident 7' },
+    { id: 184, type: 'Car', enter: ['2023-03-04'], exit: ['2023-03-22'], info: 'EL 6801' },
     {
       id: 185,
       type: 'Lawyer',
@@ -1344,13 +1164,7 @@ export const insuranceFraudData = {
       exit: ['2023-03-04'],
       info: { name: 'NICOLAS T. LINCOLN', role: 'Driver' }
     },
-    {
-      id: 188,
-      type: 'Car',
-      enter: ['2023-03-12'],
-      exit: ['2023-04-17'],
-      info: 'IP 6907'
-    },
+    { id: 188, type: 'Car', enter: ['2023-03-12'], exit: ['2023-04-17'], info: 'IP 6907' },
     {
       id: 189,
       type: 'Lawyer',
@@ -1421,20 +1235,8 @@ export const insuranceFraudData = {
       exit: ['2023-04-17'],
       info: { name: 'ELIANA G. WHITE', role: 'Witness' }
     },
-    {
-      id: 199,
-      type: 'Accident',
-      enter: ['2021-10-12'],
-      exit: ['2021-12-08'],
-      info: 'Accident 8'
-    },
-    {
-      id: 200,
-      type: 'Car',
-      enter: ['2021-10-12'],
-      exit: ['2021-11-06'],
-      info: 'TH 4646'
-    },
+    { id: 199, type: 'Accident', enter: ['2021-10-12'], exit: ['2021-12-08'], info: 'Accident 8' },
+    { id: 200, type: 'Car', enter: ['2021-10-12'], exit: ['2021-11-06'], info: 'TH 4646' },
     {
       id: 201,
       type: 'Lawyer',
@@ -1512,13 +1314,7 @@ export const insuranceFraudData = {
       exit: ['2021-11-06'],
       info: { name: 'ANTHONY L. BRADY', role: 'Passenger' }
     },
-    {
-      id: 212,
-      type: 'Car',
-      enter: ['2021-10-20'],
-      exit: ['2021-11-15'],
-      info: 'YI 3155'
-    },
+    { id: 212, type: 'Car', enter: ['2021-10-20'], exit: ['2021-11-15'], info: 'YI 3155' },
     {
       id: 213,
       type: 'Lawyer',
@@ -1554,13 +1350,7 @@ export const insuranceFraudData = {
       exit: ['2021-10-22'],
       info: { name: 'MACKENZIE R. MYERS', role: 'Driver' }
     },
-    {
-      id: 218,
-      type: 'Car',
-      enter: ['2021-10-21'],
-      exit: ['2021-12-08'],
-      info: 'ZI 8892'
-    },
+    { id: 218, type: 'Car', enter: ['2021-10-21'], exit: ['2021-12-08'], info: 'ZI 8892' },
     {
       id: 219,
       type: 'Lawyer',
@@ -1617,13 +1407,7 @@ export const insuranceFraudData = {
       exit: ['2021-10-21'],
       info: { name: 'RAYMOND B. MYERS', role: 'Passenger' }
     },
-    {
-      id: 227,
-      type: 'Car',
-      enter: ['2021-11-03'],
-      exit: ['2021-11-21'],
-      info: 'OM 7936'
-    },
+    { id: 227, type: 'Car', enter: ['2021-11-03'], exit: ['2021-11-21'], info: 'OM 7936' },
     {
       id: 228,
       type: 'Lawyer',
@@ -1645,13 +1429,7 @@ export const insuranceFraudData = {
       exit: ['2021-11-21'],
       info: { name: 'JOE D. TYLER', role: 'Driver' }
     },
-    {
-      id: 231,
-      type: 'Car',
-      enter: ['2021-11-30'],
-      exit: ['2021-11-30'],
-      info: 'GD 6164'
-    },
+    { id: 231, type: 'Car', enter: ['2021-11-30'], exit: ['2021-11-30'], info: 'GD 6164' },
     {
       id: 232,
       type: 'Lawyer',
@@ -1708,20 +1486,8 @@ export const insuranceFraudData = {
       exit: ['2021-12-08'],
       info: { name: 'RICHARD B. EDWARDS', role: 'Witness' }
     },
-    {
-      id: 240,
-      type: 'Accident',
-      enter: ['2021-12-06'],
-      exit: ['2022-01-18'],
-      info: 'Accident 9'
-    },
-    {
-      id: 241,
-      type: 'Car',
-      enter: ['2021-12-08'],
-      exit: ['2021-12-23'],
-      info: 'WJ 1090'
-    },
+    { id: 240, type: 'Accident', enter: ['2021-12-06'], exit: ['2022-01-18'], info: 'Accident 9' },
+    { id: 241, type: 'Car', enter: ['2021-12-08'], exit: ['2021-12-23'], info: 'WJ 1090' },
     {
       id: 242,
       type: 'Lawyer',
@@ -1792,13 +1558,7 @@ export const insuranceFraudData = {
       exit: ['2021-12-09'],
       info: { name: 'PAUL I. CASSIDY', role: 'Passenger' }
     },
-    {
-      id: 252,
-      type: 'Car',
-      enter: ['2021-12-26'],
-      exit: ['2022-01-17'],
-      info: 'HB 4718'
-    },
+    { id: 252, type: 'Car', enter: ['2021-12-26'], exit: ['2022-01-17'], info: 'HB 4718' },
     {
       id: 253,
       type: 'Lawyer',
@@ -1834,13 +1594,7 @@ export const insuranceFraudData = {
       exit: ['2021-12-26'],
       info: { name: 'BRUCE I. WILKINSON', role: 'Driver' }
     },
-    {
-      id: 258,
-      type: 'Car',
-      enter: ['2022-01-07'],
-      exit: ['2022-01-14'],
-      info: 'VM 3154'
-    },
+    { id: 258, type: 'Car', enter: ['2022-01-07'], exit: ['2022-01-14'], info: 'VM 3154' },
     {
       id: 259,
       type: 'Lawyer',
@@ -1862,13 +1616,7 @@ export const insuranceFraudData = {
       exit: ['2022-01-14'],
       info: { name: 'JOSE T. DUNN', role: 'Driver' }
     },
-    {
-      id: 262,
-      type: 'Car',
-      enter: ['2021-12-15'],
-      exit: ['2022-01-18'],
-      info: 'GC 4823'
-    },
+    { id: 262, type: 'Car', enter: ['2021-12-15'], exit: ['2022-01-18'], info: 'GC 4823' },
     {
       id: 263,
       type: 'Lawyer',
@@ -1918,13 +1666,7 @@ export const insuranceFraudData = {
       exit: ['2021-12-15'],
       info: { name: 'GABRIELLA Y. CLARKE', role: 'Passenger' }
     },
-    {
-      id: 270,
-      type: 'Car',
-      enter: ['2021-12-06'],
-      exit: ['2022-01-14'],
-      info: 'VS 8300'
-    },
+    { id: 270, type: 'Car', enter: ['2021-12-06'], exit: ['2022-01-14'], info: 'VS 8300' },
     {
       id: 271,
       type: 'Lawyer',
@@ -2037,27 +1779,9 @@ export const insuranceFraudData = {
       exit: ['2023-04-15', '2023-01-26', '2021-10-25', '2022-09-12'],
       info: { name: 'CAMILLA V. CARR', role: 'Driver,Witness,Passenger,Passenger' }
     },
-    {
-      id: 287,
-      type: 'Accident',
-      enter: ['2021-08-19'],
-      exit: ['2023-01-26'],
-      info: 'Accident 10'
-    },
-    {
-      id: 288,
-      type: 'Car',
-      enter: ['2021-08-19'],
-      exit: ['2023-01-26'],
-      info: 'OD 6918'
-    },
-    {
-      id: 289,
-      type: 'Car',
-      enter: ['2021-08-19'],
-      exit: ['2023-01-26'],
-      info: 'XW 8682'
-    },
+    { id: 287, type: 'Accident', enter: ['2021-08-19'], exit: ['2023-01-26'], info: 'Accident 10' },
+    { id: 288, type: 'Car', enter: ['2021-08-19'], exit: ['2023-01-26'], info: 'OD 6918' },
+    { id: 289, type: 'Car', enter: ['2021-08-19'], exit: ['2023-01-26'], info: 'XW 8682' },
     {
       id: 290,
       type: 'Lawyer',
@@ -2072,69 +1796,15 @@ export const insuranceFraudData = {
       exit: ['2023-01-26', '2021-10-25', '2022-09-12', '2023-04-15'],
       info: { name: 'MAYA U. CASSIDY', role: 'Doctor,Doctor,Doctor,Doctor' }
     },
-    {
-      id: 292,
-      type: 'Accident',
-      enter: ['2021-09-08'],
-      exit: ['2021-10-25'],
-      info: 'Accident 11'
-    },
-    {
-      id: 293,
-      type: 'Car',
-      enter: ['2021-09-08'],
-      exit: ['2021-10-25'],
-      info: 'QW 3152'
-    },
-    {
-      id: 294,
-      type: 'Car',
-      enter: ['2021-09-08'],
-      exit: ['2021-10-25'],
-      info: 'FO 4014'
-    },
-    {
-      id: 295,
-      type: 'Accident',
-      enter: ['2021-12-12'],
-      exit: ['2022-09-12'],
-      info: 'Accident 12'
-    },
-    {
-      id: 296,
-      type: 'Car',
-      enter: ['2021-12-12'],
-      exit: ['2022-09-12'],
-      info: 'JR 7773'
-    },
-    {
-      id: 297,
-      type: 'Car',
-      enter: ['2021-12-12'],
-      exit: ['2022-09-12'],
-      info: 'HJ 3881'
-    },
-    {
-      id: 298,
-      type: 'Accident',
-      enter: ['2022-02-20'],
-      exit: ['2023-04-15'],
-      info: 'Accident 13'
-    },
-    {
-      id: 299,
-      type: 'Car',
-      enter: ['2022-02-20'],
-      exit: ['2023-04-15'],
-      info: 'FE 1027'
-    },
-    {
-      id: 300,
-      type: 'Car',
-      enter: ['2022-02-20'],
-      exit: ['2023-04-15'],
-      info: 'SG 2753'
-    },
+    { id: 292, type: 'Accident', enter: ['2021-09-08'], exit: ['2021-10-25'], info: 'Accident 11' },
+    { id: 293, type: 'Car', enter: ['2021-09-08'], exit: ['2021-10-25'], info: 'QW 3152' },
+    { id: 294, type: 'Car', enter: ['2021-09-08'], exit: ['2021-10-25'], info: 'FO 4014' },
+    { id: 295, type: 'Accident', enter: ['2021-12-12'], exit: ['2022-09-12'], info: 'Accident 12' },
+    { id: 296, type: 'Car', enter: ['2021-12-12'], exit: ['2022-09-12'], info: 'JR 7773' },
+    { id: 297, type: 'Car', enter: ['2021-12-12'], exit: ['2022-09-12'], info: 'HJ 3881' },
+    { id: 298, type: 'Accident', enter: ['2022-02-20'], exit: ['2023-04-15'], info: 'Accident 13' },
+    { id: 299, type: 'Car', enter: ['2022-02-20'], exit: ['2023-04-15'], info: 'FE 1027' },
+    { id: 300, type: 'Car', enter: ['2022-02-20'], exit: ['2023-04-15'], info: 'SG 2753' },
     {
       id: 301,
       type: 'Lawyer',
@@ -2177,20 +1847,8 @@ export const insuranceFraudData = {
       exit: ['2023-04-15'],
       info: { name: 'ELLA Q. TAYLOR', role: 'Lawyer' }
     },
-    {
-      id: 307,
-      type: 'Accident',
-      enter: ['2022-02-21'],
-      exit: ['2022-03-24'],
-      info: 'Accident 14'
-    },
-    {
-      id: 308,
-      type: 'Car',
-      enter: ['2022-03-17'],
-      exit: ['2022-03-17'],
-      info: 'HL 6269'
-    },
+    { id: 307, type: 'Accident', enter: ['2022-02-21'], exit: ['2022-03-24'], info: 'Accident 14' },
+    { id: 308, type: 'Car', enter: ['2022-03-17'], exit: ['2022-03-17'], info: 'HL 6269' },
     {
       id: 309,
       type: 'Lawyer',
@@ -2219,13 +1877,7 @@ export const insuranceFraudData = {
       exit: ['2022-03-17'],
       info: { name: 'TIMOTHY S. POTTER', role: 'Passenger' }
     },
-    {
-      id: 313,
-      type: 'Car',
-      enter: ['2022-02-26'],
-      exit: ['2022-02-26'],
-      info: 'FE 5584'
-    },
+    { id: 313, type: 'Car', enter: ['2022-02-26'], exit: ['2022-02-26'], info: 'FE 5584' },
     {
       id: 314,
       type: 'Lawyer',
@@ -2247,13 +1899,7 @@ export const insuranceFraudData = {
       exit: ['2022-02-26'],
       info: { name: 'STEPHEN V. BOOTH', role: 'Driver' }
     },
-    {
-      id: 317,
-      type: 'Car',
-      enter: ['2022-02-21'],
-      exit: ['2022-03-24'],
-      info: 'JY 1323'
-    },
+    { id: 317, type: 'Car', enter: ['2022-02-21'], exit: ['2022-03-24'], info: 'JY 1323' },
     {
       id: 318,
       type: 'Lawyer',
@@ -2331,13 +1977,7 @@ export const insuranceFraudData = {
       exit: ['2022-03-14'],
       info: { name: 'KEITH V. YOUNG', role: 'Passenger' }
     },
-    {
-      id: 329,
-      type: 'Car',
-      enter: ['2022-02-28'],
-      exit: ['2022-03-09'],
-      info: 'UB 1840'
-    },
+    { id: 329, type: 'Car', enter: ['2022-02-28'], exit: ['2022-03-09'], info: 'UB 1840' },
     {
       id: 330,
       type: 'Lawyer',
@@ -2394,20 +2034,8 @@ export const insuranceFraudData = {
       exit: ['2022-03-24'],
       info: { name: 'PETER I. ROBERTS', role: 'Witness' }
     },
-    {
-      id: 338,
-      type: 'Accident',
-      enter: ['2023-04-10'],
-      exit: ['2023-05-13'],
-      info: 'Accident 15'
-    },
-    {
-      id: 339,
-      type: 'Car',
-      enter: ['2023-04-10'],
-      exit: ['2023-05-13'],
-      info: 'PU 5520'
-    },
+    { id: 338, type: 'Accident', enter: ['2023-04-10'], exit: ['2023-05-13'], info: 'Accident 15' },
+    { id: 339, type: 'Car', enter: ['2023-04-10'], exit: ['2023-05-13'], info: 'PU 5520' },
     {
       id: 340,
       type: 'Lawyer',
@@ -2450,13 +2078,7 @@ export const insuranceFraudData = {
       exit: ['2023-04-10'],
       info: { name: 'MIA H. SAWYER', role: 'Passenger' }
     },
-    {
-      id: 346,
-      type: 'Car',
-      enter: ['2023-04-12'],
-      exit: ['2023-05-08'],
-      info: 'NA 7717'
-    },
+    { id: 346, type: 'Car', enter: ['2023-04-12'], exit: ['2023-05-08'], info: 'NA 7717' },
     {
       id: 347,
       type: 'Lawyer',
@@ -2548,20 +2170,8 @@ export const insuranceFraudData = {
       exit: ['2023-05-13'],
       info: { name: 'LILIANA R. GRAYSON', role: 'Witness' }
     },
-    {
-      id: 360,
-      type: 'Accident',
-      enter: ['2022-01-09'],
-      exit: ['2022-02-24'],
-      info: 'Accident 16'
-    },
-    {
-      id: 361,
-      type: 'Car',
-      enter: ['2022-01-11'],
-      exit: ['2022-02-15'],
-      info: 'EV 6829'
-    },
+    { id: 360, type: 'Accident', enter: ['2022-01-09'], exit: ['2022-02-24'], info: 'Accident 16' },
+    { id: 361, type: 'Car', enter: ['2022-01-11'], exit: ['2022-02-15'], info: 'EV 6829' },
     {
       id: 362,
       type: 'Lawyer',
@@ -2611,13 +2221,7 @@ export const insuranceFraudData = {
       exit: ['2022-01-11'],
       info: { name: 'GREGORY X. FELLOWS', role: 'Passenger' }
     },
-    {
-      id: 369,
-      type: 'Car',
-      enter: ['2022-02-19'],
-      exit: ['2022-02-19'],
-      info: 'UL 1298'
-    },
+    { id: 369, type: 'Car', enter: ['2022-02-19'], exit: ['2022-02-19'], info: 'UL 1298' },
     {
       id: 370,
       type: 'Lawyer',
@@ -2632,13 +2236,7 @@ export const insuranceFraudData = {
       exit: ['2022-02-19'],
       info: { name: 'ANDREW A. CARSON', role: 'Driver' }
     },
-    {
-      id: 372,
-      type: 'Car',
-      enter: ['2022-01-11'],
-      exit: ['2022-02-24'],
-      info: 'M 6133'
-    },
+    { id: 372, type: 'Car', enter: ['2022-01-11'], exit: ['2022-02-24'], info: 'M 6133' },
     {
       id: 373,
       type: 'Lawyer',
@@ -2709,13 +2307,7 @@ export const insuranceFraudData = {
       exit: ['2022-01-23'],
       info: { name: 'JOSE P. REED', role: 'Driver' }
     },
-    {
-      id: 383,
-      type: 'Car',
-      enter: ['2022-01-09'],
-      exit: ['2022-02-11'],
-      info: 'EF 4156'
-    },
+    { id: 383, type: 'Car', enter: ['2022-01-09'], exit: ['2022-02-11'], info: 'EF 4156' },
     {
       id: 384,
       type: 'Lawyer',
@@ -2814,20 +2406,8 @@ export const insuranceFraudData = {
       exit: ['2022-02-24'],
       info: { name: 'SOPHIA P. CARTER', role: 'Witness' }
     },
-    {
-      id: 398,
-      type: 'Accident',
-      enter: ['2022-09-20'],
-      exit: ['2022-10-20'],
-      info: 'Accident 17'
-    },
-    {
-      id: 399,
-      type: 'Car',
-      enter: ['2022-10-20'],
-      exit: ['2022-10-20'],
-      info: 'Z 3811'
-    },
+    { id: 398, type: 'Accident', enter: ['2022-09-20'], exit: ['2022-10-20'], info: 'Accident 17' },
+    { id: 399, type: 'Car', enter: ['2022-10-20'], exit: ['2022-10-20'], info: 'Z 3811' },
     {
       id: 400,
       type: 'Lawyer',
@@ -2842,13 +2422,7 @@ export const insuranceFraudData = {
       exit: ['2022-10-20'],
       info: { name: 'PIPER V. BLACK', role: 'Driver' }
     },
-    {
-      id: 402,
-      type: 'Car',
-      enter: ['2022-09-20'],
-      exit: ['2022-10-14'],
-      info: 'GZ 1284'
-    },
+    { id: 402, type: 'Car', enter: ['2022-09-20'], exit: ['2022-10-14'], info: 'GZ 1284' },
     {
       id: 403,
       type: 'Lawyer',
@@ -2947,20 +2521,8 @@ export const insuranceFraudData = {
       exit: ['2022-10-20'],
       info: { name: 'STELLA S. HOUSE', role: 'Witness' }
     },
-    {
-      id: 417,
-      type: 'Accident',
-      enter: ['2022-06-07'],
-      exit: ['2022-07-13'],
-      info: 'Accident 18'
-    },
-    {
-      id: 418,
-      type: 'Car',
-      enter: ['2022-06-07'],
-      exit: ['2022-07-05'],
-      info: 'VR 8177'
-    },
+    { id: 417, type: 'Accident', enter: ['2022-06-07'], exit: ['2022-07-13'], info: 'Accident 18' },
+    { id: 418, type: 'Car', enter: ['2022-06-07'], exit: ['2022-07-05'], info: 'VR 8177' },
     {
       id: 419,
       type: 'Lawyer',
@@ -3031,13 +2593,7 @@ export const insuranceFraudData = {
       exit: ['2022-06-24'],
       info: { name: 'CHARLOTTE D. WALKER', role: 'Passenger' }
     },
-    {
-      id: 429,
-      type: 'Car',
-      enter: ['2022-07-01'],
-      exit: ['2022-07-01'],
-      info: 'LP 1542'
-    },
+    { id: 429, type: 'Car', enter: ['2022-07-01'], exit: ['2022-07-01'], info: 'LP 1542' },
     {
       id: 430,
       type: 'Lawyer',
@@ -3052,13 +2608,7 @@ export const insuranceFraudData = {
       exit: ['2022-07-01'],
       info: { name: 'CLAIRE Y. FREEMAN', role: 'Driver' }
     },
-    {
-      id: 432,
-      type: 'Car',
-      enter: ['2022-06-08'],
-      exit: ['2022-07-13'],
-      info: 'YR 2850'
-    },
+    { id: 432, type: 'Car', enter: ['2022-06-08'], exit: ['2022-07-13'], info: 'YR 2850' },
     {
       id: 433,
       type: 'Lawyer',
@@ -3115,13 +2665,7 @@ export const insuranceFraudData = {
       exit: ['2022-06-08'],
       info: { name: 'VIVIAN Z. WILSON', role: 'Passenger' }
     },
-    {
-      id: 441,
-      type: 'Car',
-      enter: ['2022-06-23'],
-      exit: ['2022-06-25'],
-      info: 'FD 1778'
-    },
+    { id: 441, type: 'Car', enter: ['2022-06-23'], exit: ['2022-06-25'], info: 'FD 1778' },
     {
       id: 442,
       type: 'Lawyer',
@@ -3150,13 +2694,7 @@ export const insuranceFraudData = {
       exit: ['2022-06-23'],
       info: { name: 'JULIA Y. PRATT', role: 'Driver' }
     },
-    {
-      id: 446,
-      type: 'Car',
-      enter: ['2022-06-28'],
-      exit: ['2022-07-04'],
-      info: 'EC 3756'
-    },
+    { id: 446, type: 'Car', enter: ['2022-06-28'], exit: ['2022-07-04'], info: 'EC 3756' },
     {
       id: 447,
       type: 'Lawyer',
@@ -3192,20 +2730,8 @@ export const insuranceFraudData = {
       exit: ['2022-07-13'],
       info: { name: 'ROY I. EVANS', role: 'Witness' }
     },
-    {
-      id: 452,
-      type: 'Accident',
-      enter: ['2021-09-18'],
-      exit: ['2021-10-28'],
-      info: 'Accident 19'
-    },
-    {
-      id: 453,
-      type: 'Car',
-      enter: ['2021-09-18'],
-      exit: ['2021-10-21'],
-      info: 'AK 1196'
-    },
+    { id: 452, type: 'Accident', enter: ['2021-09-18'], exit: ['2021-10-28'], info: 'Accident 19' },
+    { id: 453, type: 'Car', enter: ['2021-09-18'], exit: ['2021-10-21'], info: 'AK 1196' },
     {
       id: 454,
       type: 'Lawyer',
@@ -3262,13 +2788,7 @@ export const insuranceFraudData = {
       exit: ['2021-09-21'],
       info: { name: 'AMELIA F. CARTER', role: 'Driver' }
     },
-    {
-      id: 462,
-      type: 'Car',
-      enter: ['2021-10-05'],
-      exit: ['2021-10-28'],
-      info: 'CU 4270'
-    },
+    { id: 462, type: 'Car', enter: ['2021-10-05'], exit: ['2021-10-28'], info: 'CU 4270' },
     {
       id: 463,
       type: 'Lawyer',
@@ -3367,20 +2887,8 @@ export const insuranceFraudData = {
       exit: ['2021-10-28'],
       info: { name: 'BELLA Q. HARRISON', role: 'Witness' }
     },
-    {
-      id: 477,
-      type: 'Accident',
-      enter: ['2023-03-24'],
-      exit: ['2023-04-30'],
-      info: 'Accident 20'
-    },
-    {
-      id: 478,
-      type: 'Car',
-      enter: ['2023-03-24'],
-      exit: ['2023-04-30'],
-      info: 'LE 1324'
-    },
+    { id: 477, type: 'Accident', enter: ['2023-03-24'], exit: ['2023-04-30'], info: 'Accident 20' },
+    { id: 478, type: 'Car', enter: ['2023-03-24'], exit: ['2023-04-30'], info: 'LE 1324' },
     {
       id: 479,
       type: 'Lawyer',
@@ -3465,13 +2973,7 @@ export const insuranceFraudData = {
       exit: ['2023-04-20'],
       info: { name: 'KAYLA N. AUSTIN', role: 'Passenger' }
     },
-    {
-      id: 491,
-      type: 'Car',
-      enter: ['2023-04-08'],
-      exit: ['2023-04-29'],
-      info: 'OU 2380'
-    },
+    { id: 491, type: 'Car', enter: ['2023-04-08'], exit: ['2023-04-29'], info: 'OU 2380' },
     {
       id: 492,
       type: 'Lawyer',
@@ -3521,13 +3023,7 @@ export const insuranceFraudData = {
       exit: ['2023-04-08'],
       info: { name: 'EMILY A. RYAN', role: 'Passenger' }
     },
-    {
-      id: 499,
-      type: 'Car',
-      enter: ['2023-04-19'],
-      exit: ['2023-04-19'],
-      info: 'IZ 1551'
-    },
+    { id: 499, type: 'Car', enter: ['2023-04-19'], exit: ['2023-04-19'], info: 'IZ 1551' },
     {
       id: 500,
       type: 'Lawyer',
@@ -3542,13 +3038,7 @@ export const insuranceFraudData = {
       exit: ['2023-04-19'],
       info: { name: 'ELLIE V. PARKER', role: 'Driver' }
     },
-    {
-      id: 502,
-      type: 'Car',
-      enter: ['2023-03-24'],
-      exit: ['2023-04-19'],
-      info: 'SL 4285'
-    },
+    { id: 502, type: 'Car', enter: ['2023-03-24'], exit: ['2023-04-19'], info: 'SL 4285' },
     {
       id: 503,
       type: 'Lawyer',
@@ -3612,20 +3102,8 @@ export const insuranceFraudData = {
       exit: ['2023-04-30'],
       info: { name: 'SAMANTHA D. ROBINSON', role: 'Witness' }
     },
-    {
-      id: 512,
-      type: 'Accident',
-      enter: ['2021-10-28'],
-      exit: ['2021-11-27'],
-      info: 'Accident 21'
-    },
-    {
-      id: 513,
-      type: 'Car',
-      enter: ['2021-10-28'],
-      exit: ['2021-11-25'],
-      info: 'HW 2578'
-    },
+    { id: 512, type: 'Accident', enter: ['2021-10-28'], exit: ['2021-11-27'], info: 'Accident 21' },
+    { id: 513, type: 'Car', enter: ['2021-10-28'], exit: ['2021-11-25'], info: 'HW 2578' },
     {
       id: 514,
       type: 'Lawyer',
@@ -3703,13 +3181,7 @@ export const insuranceFraudData = {
       exit: ['2021-11-05'],
       info: { name: 'JOSHUA U. MYERS', role: 'Passenger' }
     },
-    {
-      id: 525,
-      type: 'Car',
-      enter: ['2021-11-05'],
-      exit: ['2021-11-26'],
-      info: 'IX 2084'
-    },
+    { id: 525, type: 'Car', enter: ['2021-11-05'], exit: ['2021-11-26'], info: 'IX 2084' },
     {
       id: 526,
       type: 'Lawyer',
@@ -3738,13 +3210,7 @@ export const insuranceFraudData = {
       exit: ['2021-11-26'],
       info: { name: 'JOE O. BRADY', role: 'Driver' }
     },
-    {
-      id: 530,
-      type: 'Car',
-      enter: ['2021-11-11'],
-      exit: ['2021-11-27'],
-      info: 'KQ 3378'
-    },
+    { id: 530, type: 'Car', enter: ['2021-11-11'], exit: ['2021-11-27'], info: 'KQ 3378' },
     {
       id: 531,
       type: 'Lawyer',
@@ -3766,13 +3232,7 @@ export const insuranceFraudData = {
       exit: ['2021-11-11'],
       info: { name: 'MATTHEW A. MORRISON', role: 'Driver' }
     },
-    {
-      id: 534,
-      type: 'Car',
-      enter: ['2021-10-30'],
-      exit: ['2021-11-26'],
-      info: 'FG 4565'
-    },
+    { id: 534, type: 'Car', enter: ['2021-10-30'], exit: ['2021-11-26'], info: 'FG 4565' },
     {
       id: 535,
       type: 'Lawyer',
@@ -3883,10 +3343,7 @@ export const insuranceFraudData = {
       type: 'Participant',
       enter: ['2022-09-20', '2022-11-05', '2023-01-12', '2023-03-09', '2023-04-01', '2023-04-16'],
       exit: ['2022-11-27', '2023-03-31', '2023-04-19', '2023-04-29', '2023-05-16', '2023-05-04'],
-      info: {
-        name: 'ROBERT L. HARVEY',
-        role: 'Driver,Passenger,Passenger,Witness,Witness,Witness'
-      }
+      info: { name: 'ROBERT L. HARVEY', role: 'Driver,Passenger,Passenger,Witness,Witness,Witness' }
     },
     {
       id: 551,
@@ -3950,10 +3407,7 @@ export const insuranceFraudData = {
       type: 'Participant',
       enter: ['2022-09-20', '2022-11-05', '2023-01-12', '2023-03-09', '2023-04-01', '2023-04-16'],
       exit: ['2023-04-29', '2022-11-27', '2023-03-31', '2023-04-19', '2023-05-16', '2023-05-04'],
-      info: {
-        name: 'SOPHIE I. HILL',
-        role: 'Driver,Passenger,Witness,Passenger,Passenger,Witness'
-      }
+      info: { name: 'SOPHIE I. HILL', role: 'Driver,Passenger,Witness,Passenger,Passenger,Witness' }
     },
     {
       id: 558,
@@ -3989,27 +3443,9 @@ export const insuranceFraudData = {
         role: 'Driver,Passenger,Passenger,Passenger,Passenger,Witness'
       }
     },
-    {
-      id: 562,
-      type: 'Accident',
-      enter: ['2022-09-20'],
-      exit: ['2022-11-27'],
-      info: 'Accident 22'
-    },
-    {
-      id: 563,
-      type: 'Car',
-      enter: ['2022-09-20'],
-      exit: ['2022-11-27'],
-      info: 'YU 4591'
-    },
-    {
-      id: 564,
-      type: 'Car',
-      enter: ['2022-09-20'],
-      exit: ['2022-11-27'],
-      info: 'SE 1916'
-    },
+    { id: 562, type: 'Accident', enter: ['2022-09-20'], exit: ['2022-11-27'], info: 'Accident 22' },
+    { id: 563, type: 'Car', enter: ['2022-09-20'], exit: ['2022-11-27'], info: 'YU 4591' },
+    { id: 564, type: 'Car', enter: ['2022-09-20'], exit: ['2022-11-27'], info: 'SE 1916' },
     {
       id: 565,
       type: 'Lawyer',
@@ -4024,111 +3460,21 @@ export const insuranceFraudData = {
       exit: ['2022-11-27', '2023-03-31', '2023-04-19', '2023-04-29', '2023-05-16', '2023-05-04'],
       info: { name: 'GIANNA Q. BRIEN', role: 'Doctor,Doctor,Doctor,Doctor,Doctor,Doctor' }
     },
-    {
-      id: 567,
-      type: 'Accident',
-      enter: ['2022-11-05'],
-      exit: ['2023-03-31'],
-      info: 'Accident 23'
-    },
-    {
-      id: 568,
-      type: 'Car',
-      enter: ['2022-11-05'],
-      exit: ['2023-03-31'],
-      info: 'HR 1817'
-    },
-    {
-      id: 569,
-      type: 'Car',
-      enter: ['2022-11-05'],
-      exit: ['2023-03-31'],
-      info: 'CL 2833'
-    },
-    {
-      id: 570,
-      type: 'Accident',
-      enter: ['2023-01-12'],
-      exit: ['2023-04-19'],
-      info: 'Accident 24'
-    },
-    {
-      id: 571,
-      type: 'Car',
-      enter: ['2023-01-12'],
-      exit: ['2023-04-19'],
-      info: 'LJ 3084'
-    },
-    {
-      id: 572,
-      type: 'Car',
-      enter: ['2023-01-12'],
-      exit: ['2023-04-19'],
-      info: 'WG 4828'
-    },
-    {
-      id: 573,
-      type: 'Accident',
-      enter: ['2023-04-01'],
-      exit: ['2023-04-29'],
-      info: 'Accident 25'
-    },
-    {
-      id: 574,
-      type: 'Car',
-      enter: ['2023-04-01'],
-      exit: ['2023-04-29'],
-      info: 'QE 6120'
-    },
-    {
-      id: 575,
-      type: 'Car',
-      enter: ['2023-04-01'],
-      exit: ['2023-04-29'],
-      info: 'XA 1185'
-    },
-    {
-      id: 576,
-      type: 'Accident',
-      enter: ['2023-04-16'],
-      exit: ['2023-05-16'],
-      info: 'Accident 26'
-    },
-    {
-      id: 577,
-      type: 'Car',
-      enter: ['2023-04-16'],
-      exit: ['2023-05-16'],
-      info: 'ID 1246'
-    },
-    {
-      id: 578,
-      type: 'Car',
-      enter: ['2023-04-16'],
-      exit: ['2023-05-16'],
-      info: 'FP 7115'
-    },
-    {
-      id: 579,
-      type: 'Accident',
-      enter: ['2023-03-09'],
-      exit: ['2023-05-04'],
-      info: 'Accident 27'
-    },
-    {
-      id: 580,
-      type: 'Car',
-      enter: ['2023-03-09'],
-      exit: ['2023-05-04'],
-      info: 'AL 1957'
-    },
-    {
-      id: 581,
-      type: 'Car',
-      enter: ['2023-03-09'],
-      exit: ['2023-05-04'],
-      info: 'DM 2177'
-    },
+    { id: 567, type: 'Accident', enter: ['2022-11-05'], exit: ['2023-03-31'], info: 'Accident 23' },
+    { id: 568, type: 'Car', enter: ['2022-11-05'], exit: ['2023-03-31'], info: 'HR 1817' },
+    { id: 569, type: 'Car', enter: ['2022-11-05'], exit: ['2023-03-31'], info: 'CL 2833' },
+    { id: 570, type: 'Accident', enter: ['2023-01-12'], exit: ['2023-04-19'], info: 'Accident 24' },
+    { id: 571, type: 'Car', enter: ['2023-01-12'], exit: ['2023-04-19'], info: 'LJ 3084' },
+    { id: 572, type: 'Car', enter: ['2023-01-12'], exit: ['2023-04-19'], info: 'WG 4828' },
+    { id: 573, type: 'Accident', enter: ['2023-04-01'], exit: ['2023-04-29'], info: 'Accident 25' },
+    { id: 574, type: 'Car', enter: ['2023-04-01'], exit: ['2023-04-29'], info: 'QE 6120' },
+    { id: 575, type: 'Car', enter: ['2023-04-01'], exit: ['2023-04-29'], info: 'XA 1185' },
+    { id: 576, type: 'Accident', enter: ['2023-04-16'], exit: ['2023-05-16'], info: 'Accident 26' },
+    { id: 577, type: 'Car', enter: ['2023-04-16'], exit: ['2023-05-16'], info: 'ID 1246' },
+    { id: 578, type: 'Car', enter: ['2023-04-16'], exit: ['2023-05-16'], info: 'FP 7115' },
+    { id: 579, type: 'Accident', enter: ['2023-03-09'], exit: ['2023-05-04'], info: 'Accident 27' },
+    { id: 580, type: 'Car', enter: ['2023-03-09'], exit: ['2023-05-04'], info: 'AL 1957' },
+    { id: 581, type: 'Car', enter: ['2023-03-09'], exit: ['2023-05-04'], info: 'DM 2177' },
     {
       id: 582,
       type: 'Doctor',
@@ -4206,20 +3552,8 @@ export const insuranceFraudData = {
       exit: ['2023-05-04'],
       info: { name: 'JAMES R. JACKSON', role: 'Lawyer' }
     },
-    {
-      id: 593,
-      type: 'Accident',
-      enter: ['2022-06-21'],
-      exit: ['2022-07-22'],
-      info: 'Accident 28'
-    },
-    {
-      id: 594,
-      type: 'Car',
-      enter: ['2022-07-15'],
-      exit: ['2022-07-15'],
-      info: 'DA 6182'
-    },
+    { id: 593, type: 'Accident', enter: ['2022-06-21'], exit: ['2022-07-22'], info: 'Accident 28' },
+    { id: 594, type: 'Car', enter: ['2022-07-15'], exit: ['2022-07-15'], info: 'DA 6182' },
     {
       id: 595,
       type: 'Lawyer',
@@ -4234,13 +3568,7 @@ export const insuranceFraudData = {
       exit: ['2022-07-15'],
       info: { name: 'ALLISON D. ADAMS', role: 'Driver' }
     },
-    {
-      id: 597,
-      type: 'Car',
-      enter: ['2022-06-21'],
-      exit: ['2022-07-22'],
-      info: 'HI 3634'
-    },
+    { id: 597, type: 'Car', enter: ['2022-06-21'], exit: ['2022-07-22'], info: 'HI 3634' },
     {
       id: 598,
       type: 'Lawyer',
@@ -4318,20 +3646,8 @@ export const insuranceFraudData = {
       exit: ['2022-07-22'],
       info: { name: 'JASON T. JACKSON', role: 'Witness' }
     },
-    {
-      id: 609,
-      type: 'Accident',
-      enter: ['2021-10-24'],
-      exit: ['2021-12-08'],
-      info: 'Accident 29'
-    },
-    {
-      id: 610,
-      type: 'Car',
-      enter: ['2021-10-28'],
-      exit: ['2021-10-31'],
-      info: 'PO 6881'
-    },
+    { id: 609, type: 'Accident', enter: ['2021-10-24'], exit: ['2021-12-08'], info: 'Accident 29' },
+    { id: 610, type: 'Car', enter: ['2021-10-28'], exit: ['2021-10-31'], info: 'PO 6881' },
     {
       id: 611,
       type: 'Lawyer',
@@ -4360,13 +3676,7 @@ export const insuranceFraudData = {
       exit: ['2021-10-31'],
       info: { name: 'OLIVIA X. MARTIN', role: 'Driver' }
     },
-    {
-      id: 615,
-      type: 'Car',
-      enter: ['2021-10-31'],
-      exit: ['2021-10-31'],
-      info: 'BP 5715'
-    },
+    { id: 615, type: 'Car', enter: ['2021-10-31'], exit: ['2021-10-31'], info: 'BP 5715' },
     {
       id: 616,
       type: 'Lawyer',
@@ -4388,13 +3698,7 @@ export const insuranceFraudData = {
       exit: ['2021-10-31'],
       info: { name: 'GARY A. PERKINS', role: 'Driver' }
     },
-    {
-      id: 619,
-      type: 'Car',
-      enter: ['2021-10-25'],
-      exit: ['2021-11-19'],
-      info: 'C 1100'
-    },
+    { id: 619, type: 'Car', enter: ['2021-10-25'], exit: ['2021-11-19'], info: 'C 1100' },
     {
       id: 620,
       type: 'Lawyer',
@@ -4430,13 +3734,7 @@ export const insuranceFraudData = {
       exit: ['2021-10-25'],
       info: { name: 'MADISON J. DOUGLAS', role: 'Driver' }
     },
-    {
-      id: 625,
-      type: 'Car',
-      enter: ['2021-10-25'],
-      exit: ['2021-12-08'],
-      info: 'FY 6221'
-    },
+    { id: 625, type: 'Car', enter: ['2021-10-25'], exit: ['2021-12-08'], info: 'FY 6221' },
     {
       id: 626,
       type: 'Lawyer',
@@ -4507,13 +3805,7 @@ export const insuranceFraudData = {
       exit: ['2021-12-03'],
       info: { name: 'HAILEY U. CASSIDY', role: 'Passenger' }
     },
-    {
-      id: 636,
-      type: 'Car',
-      enter: ['2021-10-24'],
-      exit: ['2021-12-03'],
-      info: 'GD 6764'
-    },
+    { id: 636, type: 'Car', enter: ['2021-10-24'], exit: ['2021-12-03'], info: 'GD 6764' },
     {
       id: 637,
       type: 'Lawyer',
@@ -4605,13 +3897,7 @@ export const insuranceFraudData = {
       exit: ['2021-10-24'],
       info: { name: 'KEIRA V. JEFFERSON', role: 'Passenger' }
     },
-    {
-      id: 650,
-      type: 'Car',
-      enter: ['2021-10-25'],
-      exit: ['2021-11-13'],
-      info: 'TW 8033'
-    },
+    { id: 650, type: 'Car', enter: ['2021-10-25'], exit: ['2021-11-13'], info: 'TW 8033' },
     {
       id: 651,
       type: 'Lawyer',
@@ -4731,20 +4017,8 @@ export const insuranceFraudData = {
       exit: ['2021-12-08'],
       info: { name: 'PATRIC T. WATSON', role: 'Witness' }
     },
-    {
-      id: 668,
-      type: 'Accident',
-      enter: ['2021-04-28'],
-      exit: ['2021-05-20'],
-      info: 'Accident 30'
-    },
-    {
-      id: 669,
-      type: 'Car',
-      enter: ['2021-04-28'],
-      exit: ['2021-05-16'],
-      info: 'RU 4684'
-    },
+    { id: 668, type: 'Accident', enter: ['2021-04-28'], exit: ['2021-05-20'], info: 'Accident 30' },
+    { id: 669, type: 'Car', enter: ['2021-04-28'], exit: ['2021-05-16'], info: 'RU 4684' },
     {
       id: 670,
       type: 'Lawyer',
@@ -4773,13 +4047,7 @@ export const insuranceFraudData = {
       exit: ['2021-05-16'],
       info: { name: 'CLAIRE W. THOMAS', role: 'Driver' }
     },
-    {
-      id: 674,
-      type: 'Car',
-      enter: ['2021-04-29'],
-      exit: ['2021-05-20'],
-      info: 'VX 1689'
-    },
+    { id: 674, type: 'Car', enter: ['2021-04-29'], exit: ['2021-05-20'], info: 'VX 1689' },
     {
       id: 675,
       type: 'Lawyer',
@@ -4857,20 +4125,8 @@ export const insuranceFraudData = {
       exit: ['2021-05-20'],
       info: { name: 'KYLIE M. AUSTIN', role: 'Witness' }
     },
-    {
-      id: 686,
-      type: 'Accident',
-      enter: ['2023-01-31'],
-      exit: ['2023-03-25'],
-      info: 'Accident 31'
-    },
-    {
-      id: 687,
-      type: 'Car',
-      enter: ['2023-02-02'],
-      exit: ['2023-02-15'],
-      info: 'VY 6712'
-    },
+    { id: 686, type: 'Accident', enter: ['2023-01-31'], exit: ['2023-03-25'], info: 'Accident 31' },
+    { id: 687, type: 'Car', enter: ['2023-02-02'], exit: ['2023-02-15'], info: 'VY 6712' },
     {
       id: 688,
       type: 'Lawyer',
@@ -4906,13 +4162,7 @@ export const insuranceFraudData = {
       exit: ['2023-02-11'],
       info: { name: 'WILLIAM H. JONES', role: 'Driver' }
     },
-    {
-      id: 693,
-      type: 'Car',
-      enter: ['2023-01-31'],
-      exit: ['2023-02-28'],
-      info: 'IF 7364'
-    },
+    { id: 693, type: 'Car', enter: ['2023-01-31'], exit: ['2023-02-28'], info: 'IF 7364' },
     {
       id: 694,
       type: 'Lawyer',
@@ -4962,13 +4212,7 @@ export const insuranceFraudData = {
       exit: ['2023-02-07'],
       info: { name: 'KEIRA U. SLATER', role: 'Driver' }
     },
-    {
-      id: 701,
-      type: 'Car',
-      enter: ['2023-02-09'],
-      exit: ['2023-03-17'],
-      info: 'WG 7597'
-    },
+    { id: 701, type: 'Car', enter: ['2023-02-09'], exit: ['2023-03-17'], info: 'WG 7597' },
     {
       id: 702,
       type: 'Lawyer',
@@ -5018,13 +4262,7 @@ export const insuranceFraudData = {
       exit: ['2023-02-09'],
       info: { name: 'ELIZABETH K. WINSTON', role: 'Passenger' }
     },
-    {
-      id: 709,
-      type: 'Car',
-      enter: ['2023-02-20'],
-      exit: ['2023-03-09'],
-      info: 'DZ 3376'
-    },
+    { id: 709, type: 'Car', enter: ['2023-02-20'], exit: ['2023-03-09'], info: 'DZ 3376' },
     {
       id: 710,
       type: 'Lawyer',
@@ -5067,13 +4305,7 @@ export const insuranceFraudData = {
       exit: ['2023-02-27'],
       info: { name: 'RONALD V. MURPHY', role: 'Passenger' }
     },
-    {
-      id: 716,
-      type: 'Car',
-      enter: ['2023-02-07'],
-      exit: ['2023-03-25'],
-      info: 'YH 1442'
-    },
+    { id: 716, type: 'Car', enter: ['2023-02-07'], exit: ['2023-03-25'], info: 'YH 1442' },
     {
       id: 717,
       type: 'Lawyer',
@@ -5193,20 +4425,8 @@ export const insuranceFraudData = {
       exit: ['2023-03-25'],
       info: { name: 'BELLA K. PIERCE', role: 'Witness' }
     },
-    {
-      id: 734,
-      type: 'Accident',
-      enter: ['2022-01-08'],
-      exit: ['2022-02-06'],
-      info: 'Accident 32'
-    },
-    {
-      id: 735,
-      type: 'Car',
-      enter: ['2022-01-11'],
-      exit: ['2022-02-06'],
-      info: 'Z5020'
-    },
+    { id: 734, type: 'Accident', enter: ['2022-01-08'], exit: ['2022-02-06'], info: 'Accident 32' },
+    { id: 735, type: 'Car', enter: ['2022-01-11'], exit: ['2022-02-06'], info: 'Z5020' },
     {
       id: 736,
       type: 'Lawyer',
@@ -5256,13 +4476,7 @@ export const insuranceFraudData = {
       exit: ['2022-01-11'],
       info: { name: 'HAILEY T. PATTERSON', role: 'Passenger' }
     },
-    {
-      id: 743,
-      type: 'Car',
-      enter: ['2022-01-31'],
-      exit: ['2022-01-31'],
-      info: 'ZS 2546'
-    },
+    { id: 743, type: 'Car', enter: ['2022-01-31'], exit: ['2022-01-31'], info: 'ZS 2546' },
     {
       id: 744,
       type: 'Lawyer',
@@ -5284,13 +4498,7 @@ export const insuranceFraudData = {
       exit: ['2022-01-31'],
       info: { name: 'DOUGLAS U. SHERMAN', role: 'Driver' }
     },
-    {
-      id: 747,
-      type: 'Car',
-      enter: ['2022-01-11'],
-      exit: ['2022-02-05'],
-      info: 'RQ 5397'
-    },
+    { id: 747, type: 'Car', enter: ['2022-01-11'], exit: ['2022-02-05'], info: 'RQ 5397' },
     {
       id: 748,
       type: 'Lawyer',
@@ -5333,13 +4541,7 @@ export const insuranceFraudData = {
       exit: ['2022-01-11'],
       info: { name: 'LAYLA G. POTTER', role: 'Driver' }
     },
-    {
-      id: 754,
-      type: 'Car',
-      enter: ['2022-01-09'],
-      exit: ['2022-02-05'],
-      info: 'KM 1161'
-    },
+    { id: 754, type: 'Car', enter: ['2022-01-09'], exit: ['2022-02-05'], info: 'KM 1161' },
     {
       id: 755,
       type: 'Lawyer',
@@ -5375,13 +4577,7 @@ export const insuranceFraudData = {
       exit: ['2022-02-05'],
       info: { name: 'SOPHIA S. QUINN', role: 'Driver' }
     },
-    {
-      id: 760,
-      type: 'Car',
-      enter: ['2022-01-08'],
-      exit: ['2022-02-06'],
-      info: 'YD 6874'
-    },
+    { id: 760, type: 'Car', enter: ['2022-01-08'], exit: ['2022-02-06'], info: 'YD 6874' },
     {
       id: 761,
       type: 'Lawyer',
@@ -5473,27 +4669,9 @@ export const insuranceFraudData = {
       exit: ['2023-04-18'],
       info: { name: 'ALEXIS X. HARRISON', role: 'Driver' }
     },
-    {
-      id: 774,
-      type: 'Accident',
-      enter: ['2021-09-17'],
-      exit: ['2023-04-18'],
-      info: 'Accident 33'
-    },
-    {
-      id: 775,
-      type: 'Car',
-      enter: ['2021-09-17'],
-      exit: ['2023-04-18'],
-      info: 'PG 6405'
-    },
-    {
-      id: 776,
-      type: 'Car',
-      enter: ['2021-09-17'],
-      exit: ['2023-04-18'],
-      info: 'CY 4859'
-    },
+    { id: 774, type: 'Accident', enter: ['2021-09-17'], exit: ['2023-04-18'], info: 'Accident 33' },
+    { id: 775, type: 'Car', enter: ['2021-09-17'], exit: ['2023-04-18'], info: 'PG 6405' },
+    { id: 776, type: 'Car', enter: ['2021-09-17'], exit: ['2023-04-18'], info: 'CY 4859' },
     {
       id: 777,
       type: 'Lawyer',
@@ -5522,20 +4700,8 @@ export const insuranceFraudData = {
       exit: ['2023-04-18'],
       info: { name: 'ANDREW I. WARNER', role: 'Lawyer' }
     },
-    {
-      id: 781,
-      type: 'Accident',
-      enter: ['2021-10-23'],
-      exit: ['2021-12-08'],
-      info: 'Accident 34'
-    },
-    {
-      id: 782,
-      type: 'Car',
-      enter: ['2021-11-22'],
-      exit: ['2021-12-08'],
-      info: 'FJ 5488'
-    },
+    { id: 781, type: 'Accident', enter: ['2021-10-23'], exit: ['2021-12-08'], info: 'Accident 34' },
+    { id: 782, type: 'Car', enter: ['2021-11-22'], exit: ['2021-12-08'], info: 'FJ 5488' },
     {
       id: 783,
       type: 'Lawyer',
@@ -5578,13 +4744,7 @@ export const insuranceFraudData = {
       exit: ['2021-11-22'],
       info: { name: 'SOPHIA L. SLATER', role: 'Passenger' }
     },
-    {
-      id: 789,
-      type: 'Car',
-      enter: ['2021-10-23'],
-      exit: ['2021-12-04'],
-      info: 'JW 5480'
-    },
+    { id: 789, type: 'Car', enter: ['2021-10-23'], exit: ['2021-12-04'], info: 'JW 5480' },
     {
       id: 790,
       type: 'Lawyer',
@@ -5669,13 +4829,7 @@ export const insuranceFraudData = {
       exit: ['2021-12-04'],
       info: { name: 'PETER Q. ROSE', role: 'Passenger' }
     },
-    {
-      id: 802,
-      type: 'Car',
-      enter: ['2021-11-03'],
-      exit: ['2021-11-05'],
-      info: 'OD 6852'
-    },
+    { id: 802, type: 'Car', enter: ['2021-11-03'], exit: ['2021-11-05'], info: 'OD 6852' },
     {
       id: 803,
       type: 'Lawyer',
@@ -5711,13 +4865,7 @@ export const insuranceFraudData = {
       exit: ['2021-11-03'],
       info: { name: 'HANNAH P. TAYLOR', role: 'Driver' }
     },
-    {
-      id: 808,
-      type: 'Car',
-      enter: ['2021-10-30'],
-      exit: ['2021-11-24'],
-      info: 'HM 5841'
-    },
+    { id: 808, type: 'Car', enter: ['2021-10-30'], exit: ['2021-11-24'], info: 'HM 5841' },
     {
       id: 809,
       type: 'Lawyer',
@@ -5774,20 +4922,8 @@ export const insuranceFraudData = {
       exit: ['2021-12-08'],
       info: { name: 'MAYA M. COOK', role: 'Witness' }
     },
-    {
-      id: 817,
-      type: 'Accident',
-      enter: ['2021-05-22'],
-      exit: ['2021-07-13'],
-      info: 'Accident 35'
-    },
-    {
-      id: 818,
-      type: 'Car',
-      enter: ['2021-05-24'],
-      exit: ['2021-06-22'],
-      info: 'O 8365'
-    },
+    { id: 817, type: 'Accident', enter: ['2021-05-22'], exit: ['2021-07-13'], info: 'Accident 35' },
+    { id: 818, type: 'Car', enter: ['2021-05-24'], exit: ['2021-06-22'], info: 'O 8365' },
     {
       id: 819,
       type: 'Lawyer',
@@ -5879,13 +5015,7 @@ export const insuranceFraudData = {
       exit: ['2021-06-08'],
       info: { name: 'DAVID K. BURTON', role: 'Passenger' }
     },
-    {
-      id: 832,
-      type: 'Car',
-      enter: ['2021-05-22'],
-      exit: ['2021-07-03'],
-      info: 'C4612'
-    },
+    { id: 832, type: 'Car', enter: ['2021-05-22'], exit: ['2021-07-03'], info: 'C4612' },
     {
       id: 833,
       type: 'Lawyer',
@@ -5942,13 +5072,7 @@ export const insuranceFraudData = {
       exit: ['2021-06-15'],
       info: { name: 'JUAN N. LINCOLN', role: 'Passenger' }
     },
-    {
-      id: 841,
-      type: 'Car',
-      enter: ['2021-05-22'],
-      exit: ['2021-06-09'],
-      info: 'NN 5710'
-    },
+    { id: 841, type: 'Car', enter: ['2021-05-22'], exit: ['2021-06-09'], info: 'NN 5710' },
     {
       id: 842,
       type: 'Lawyer',
@@ -5977,13 +5101,7 @@ export const insuranceFraudData = {
       exit: ['2021-05-22'],
       info: { name: 'MAKAYLA X. SMITH', role: 'Driver' }
     },
-    {
-      id: 846,
-      type: 'Car',
-      enter: ['2021-05-31'],
-      exit: ['2021-06-15'],
-      info: 'EV 2463'
-    },
+    { id: 846, type: 'Car', enter: ['2021-05-31'], exit: ['2021-06-15'], info: 'EV 2463' },
     {
       id: 847,
       type: 'Lawyer',
@@ -6061,13 +5179,7 @@ export const insuranceFraudData = {
       exit: ['2021-06-10'],
       info: { name: 'MAYA R. HOUSE', role: 'Passenger' }
     },
-    {
-      id: 858,
-      type: 'Car',
-      enter: ['2021-05-23'],
-      exit: ['2021-07-13'],
-      info: 'UK 5617'
-    },
+    { id: 858, type: 'Car', enter: ['2021-05-23'], exit: ['2021-07-13'], info: 'UK 5617' },
     {
       id: 859,
       type: 'Lawyer',
@@ -6124,20 +5236,8 @@ export const insuranceFraudData = {
       exit: ['2021-07-13'],
       info: { name: 'NORA M. HOUSE', role: 'Witness' }
     },
-    {
-      id: 867,
-      type: 'Accident',
-      enter: ['2021-03-14'],
-      exit: ['2021-04-30'],
-      info: 'Accident 36'
-    },
-    {
-      id: 868,
-      type: 'Car',
-      enter: ['2021-03-14'],
-      exit: ['2021-04-08'],
-      info: 'JG 4082'
-    },
+    { id: 867, type: 'Accident', enter: ['2021-03-14'], exit: ['2021-04-30'], info: 'Accident 36' },
+    { id: 868, type: 'Car', enter: ['2021-03-14'], exit: ['2021-04-08'], info: 'JG 4082' },
     {
       id: 869,
       type: 'Lawyer',
@@ -6173,13 +5273,7 @@ export const insuranceFraudData = {
       exit: ['2021-03-14'],
       info: { name: 'ARTHUR M. PIERCE', role: 'Passenger' }
     },
-    {
-      id: 874,
-      type: 'Car',
-      enter: ['2021-04-08'],
-      exit: ['2021-04-08'],
-      info: 'RK 2743'
-    },
+    { id: 874, type: 'Car', enter: ['2021-04-08'], exit: ['2021-04-08'], info: 'RK 2743' },
     {
       id: 875,
       type: 'Lawyer',
@@ -6194,13 +5288,7 @@ export const insuranceFraudData = {
       exit: ['2021-04-08'],
       info: { name: 'AUBREY T. FRENCH', role: 'Driver' }
     },
-    {
-      id: 877,
-      type: 'Car',
-      enter: ['2021-03-27'],
-      exit: ['2021-04-30'],
-      info: 'KL 7517'
-    },
+    { id: 877, type: 'Car', enter: ['2021-03-27'], exit: ['2021-04-30'], info: 'KL 7517' },
     {
       id: 878,
       type: 'Lawyer',
@@ -6229,13 +5317,7 @@ export const insuranceFraudData = {
       exit: ['2021-04-30'],
       info: { name: 'ELIANA U. JONES', role: 'Driver' }
     },
-    {
-      id: 882,
-      type: 'Car',
-      enter: ['2021-03-29'],
-      exit: ['2021-04-16'],
-      info: 'RR 3323'
-    },
+    { id: 882, type: 'Car', enter: ['2021-03-29'], exit: ['2021-04-16'], info: 'RR 3323' },
     {
       id: 883,
       type: 'Lawyer',
@@ -6348,20 +5430,8 @@ export const insuranceFraudData = {
       exit: ['2021-04-30'],
       info: { name: 'PAUL H. TAYLOR', role: 'Witness' }
     },
-    {
-      id: 899,
-      type: 'Accident',
-      enter: ['2023-05-04'],
-      exit: ['2023-06-02'],
-      info: 'Accident 37'
-    },
-    {
-      id: 900,
-      type: 'Car',
-      enter: ['2023-05-24'],
-      exit: ['2023-05-24'],
-      info: 'WK 5295'
-    },
+    { id: 899, type: 'Accident', enter: ['2023-05-04'], exit: ['2023-06-02'], info: 'Accident 37' },
+    { id: 900, type: 'Car', enter: ['2023-05-24'], exit: ['2023-05-24'], info: 'WK 5295' },
     {
       id: 901,
       type: 'Lawyer',
@@ -6383,13 +5453,7 @@ export const insuranceFraudData = {
       exit: ['2023-05-24'],
       info: { name: 'KEIRA T. WILLIAMS', role: 'Driver' }
     },
-    {
-      id: 904,
-      type: 'Car',
-      enter: ['2023-05-04'],
-      exit: ['2023-05-22'],
-      info: 'TQ 5065'
-    },
+    { id: 904, type: 'Car', enter: ['2023-05-04'], exit: ['2023-05-22'], info: 'TQ 5065' },
     {
       id: 905,
       type: 'Lawyer',
@@ -6425,13 +5489,7 @@ export const insuranceFraudData = {
       exit: ['2023-05-04'],
       info: { name: 'RAYMOND U. FRANK', role: 'Passenger' }
     },
-    {
-      id: 910,
-      type: 'Car',
-      enter: ['2023-05-06'],
-      exit: ['2023-06-02'],
-      info: 'FY 5222'
-    },
+    { id: 910, type: 'Car', enter: ['2023-05-06'], exit: ['2023-06-02'], info: 'FY 5222' },
     {
       id: 911,
       type: 'Lawyer',
@@ -6565,27 +5623,9 @@ export const insuranceFraudData = {
       exit: ['2022-06-21', '2021-09-07'],
       info: { name: 'KENNETH T. WRIGHT', role: 'Driver,Passenger' }
     },
-    {
-      id: 930,
-      type: 'Accident',
-      enter: ['2021-05-06'],
-      exit: ['2021-09-07'],
-      info: 'Accident 38'
-    },
-    {
-      id: 931,
-      type: 'Car',
-      enter: ['2021-05-06'],
-      exit: ['2021-09-07'],
-      info: 'RN 2258'
-    },
-    {
-      id: 932,
-      type: 'Car',
-      enter: ['2021-05-06'],
-      exit: ['2021-09-07'],
-      info: 'ZT 1947'
-    },
+    { id: 930, type: 'Accident', enter: ['2021-05-06'], exit: ['2021-09-07'], info: 'Accident 38' },
+    { id: 931, type: 'Car', enter: ['2021-05-06'], exit: ['2021-09-07'], info: 'RN 2258' },
+    { id: 932, type: 'Car', enter: ['2021-05-06'], exit: ['2021-09-07'], info: 'ZT 1947' },
     {
       id: 933,
       type: 'Lawyer',
@@ -6600,27 +5640,9 @@ export const insuranceFraudData = {
       exit: ['2021-09-07', '2022-06-21'],
       info: { name: 'VICTORIA Q. ANDERSON', role: 'Doctor,Doctor' }
     },
-    {
-      id: 935,
-      type: 'Accident',
-      enter: ['2021-05-23'],
-      exit: ['2022-06-21'],
-      info: 'Accident 39'
-    },
-    {
-      id: 936,
-      type: 'Car',
-      enter: ['2021-05-23'],
-      exit: ['2022-06-21'],
-      info: 'L 8369'
-    },
-    {
-      id: 937,
-      type: 'Car',
-      enter: ['2021-05-23'],
-      exit: ['2022-06-21'],
-      info: 'L 8046'
-    },
+    { id: 935, type: 'Accident', enter: ['2021-05-23'], exit: ['2022-06-21'], info: 'Accident 39' },
+    { id: 936, type: 'Car', enter: ['2021-05-23'], exit: ['2022-06-21'], info: 'L 8369' },
+    { id: 937, type: 'Car', enter: ['2021-05-23'], exit: ['2022-06-21'], info: 'L 8046' },
     {
       id: 938,
       type: 'Lawyer',
@@ -6642,20 +5664,8 @@ export const insuranceFraudData = {
       exit: ['2022-06-21'],
       info: { name: 'ARTHUR X. YOUNG', role: 'Lawyer' }
     },
-    {
-      id: 941,
-      type: 'Accident',
-      enter: ['2022-03-08'],
-      exit: ['2022-04-29'],
-      info: 'Accident 40'
-    },
-    {
-      id: 942,
-      type: 'Car',
-      enter: ['2022-03-16'],
-      exit: ['2022-04-21'],
-      info: 'MG 4302'
-    },
+    { id: 941, type: 'Accident', enter: ['2022-03-08'], exit: ['2022-04-29'], info: 'Accident 40' },
+    { id: 942, type: 'Car', enter: ['2022-03-16'], exit: ['2022-04-21'], info: 'MG 4302' },
     {
       id: 943,
       type: 'Lawyer',
@@ -6712,13 +5722,7 @@ export const insuranceFraudData = {
       exit: ['2022-03-16'],
       info: { name: 'LILA F. CAMPBELL', role: 'Passenger' }
     },
-    {
-      id: 951,
-      type: 'Car',
-      enter: ['2022-03-08'],
-      exit: ['2022-03-31'],
-      info: 'MV 5396'
-    },
+    { id: 951, type: 'Car', enter: ['2022-03-08'], exit: ['2022-03-31'], info: 'MV 5396' },
     {
       id: 952,
       type: 'Lawyer',
@@ -6782,13 +5786,7 @@ export const insuranceFraudData = {
       exit: ['2022-03-08'],
       info: { name: 'EVELYN H. ROSE', role: 'Passenger' }
     },
-    {
-      id: 961,
-      type: 'Car',
-      enter: ['2022-03-11'],
-      exit: ['2022-04-03'],
-      info: 'PM 6424'
-    },
+    { id: 961, type: 'Car', enter: ['2022-03-11'], exit: ['2022-04-03'], info: 'PM 6424' },
     {
       id: 962,
       type: 'Lawyer',
@@ -6810,13 +5808,7 @@ export const insuranceFraudData = {
       exit: ['2022-04-03'],
       info: { name: 'CHLOE A. DUNN', role: 'Driver' }
     },
-    {
-      id: 965,
-      type: 'Car',
-      enter: ['2022-03-12'],
-      exit: ['2022-04-29'],
-      info: 'XG 2907'
-    },
+    { id: 965, type: 'Car', enter: ['2022-03-12'], exit: ['2022-04-29'], info: 'XG 2907' },
     {
       id: 966,
       type: 'Lawyer',
@@ -6908,20 +5900,8 @@ export const insuranceFraudData = {
       exit: ['2022-04-29'],
       info: { name: 'ALYSSA X. HOUSE', role: 'Witness' }
     },
-    {
-      id: 979,
-      type: 'Accident',
-      enter: ['2022-07-31'],
-      exit: ['2022-09-15'],
-      info: 'Accident 41'
-    },
-    {
-      id: 980,
-      type: 'Car',
-      enter: ['2022-08-05'],
-      exit: ['2022-08-29'],
-      info: 'MN 8097'
-    },
+    { id: 979, type: 'Accident', enter: ['2022-07-31'], exit: ['2022-09-15'], info: 'Accident 41' },
+    { id: 980, type: 'Car', enter: ['2022-08-05'], exit: ['2022-08-29'], info: 'MN 8097' },
     {
       id: 981,
       type: 'Lawyer',
@@ -6971,13 +5951,7 @@ export const insuranceFraudData = {
       exit: ['2022-08-29'],
       info: { name: 'CHARLIE S. GILBERT', role: 'Driver' }
     },
-    {
-      id: 988,
-      type: 'Car',
-      enter: ['2022-07-31'],
-      exit: ['2022-09-15'],
-      info: 'IV 5984'
-    },
+    { id: 988, type: 'Car', enter: ['2022-07-31'], exit: ['2022-09-15'], info: 'IV 5984' },
     {
       id: 989,
       type: 'Lawyer',
@@ -7090,13 +6064,7 @@ export const insuranceFraudData = {
       exit: ['2021-07-27'],
       info: 'Accident 42'
     },
-    {
-      id: 1005,
-      type: 'Car',
-      enter: ['2021-06-14'],
-      exit: ['2021-06-14'],
-      info: 'KS 3978'
-    },
+    { id: 1005, type: 'Car', enter: ['2021-06-14'], exit: ['2021-06-14'], info: 'KS 3978' },
     {
       id: 1006,
       type: 'Lawyer',
@@ -7118,13 +6086,7 @@ export const insuranceFraudData = {
       exit: ['2021-06-14'],
       info: { name: 'THOMAS G. HOUSE', role: 'Driver' }
     },
-    {
-      id: 1009,
-      type: 'Car',
-      enter: ['2021-07-03'],
-      exit: ['2021-07-03'],
-      info: 'EY 5022'
-    },
+    { id: 1009, type: 'Car', enter: ['2021-07-03'], exit: ['2021-07-03'], info: 'EY 5022' },
     {
       id: 1010,
       type: 'Lawyer',
@@ -7139,13 +6101,7 @@ export const insuranceFraudData = {
       exit: ['2021-07-03'],
       info: { name: 'JOE D. TAYLOR', role: 'Driver' }
     },
-    {
-      id: 1012,
-      type: 'Car',
-      enter: ['2021-06-04'],
-      exit: ['2021-07-27'],
-      info: 'AR 3041'
-    },
+    { id: 1012, type: 'Car', enter: ['2021-06-04'], exit: ['2021-07-27'], info: 'AR 3041' },
     {
       id: 1013,
       type: 'Lawyer',
@@ -7216,13 +6172,7 @@ export const insuranceFraudData = {
       exit: ['2021-06-22'],
       info: { name: 'MAKAYLA F. OWEN', role: 'Passenger' }
     },
-    {
-      id: 1023,
-      type: 'Car',
-      enter: ['2021-06-12'],
-      exit: ['2021-06-26'],
-      info: 'F 2777'
-    },
+    { id: 1023, type: 'Car', enter: ['2021-06-12'], exit: ['2021-06-26'], info: 'F 2777' },
     {
       id: 1024,
       type: 'Lawyer',
@@ -7244,13 +6194,7 @@ export const insuranceFraudData = {
       exit: ['2021-06-12'],
       info: { name: 'ALLISON K. TUCKER', role: 'Passenger' }
     },
-    {
-      id: 1027,
-      type: 'Car',
-      enter: ['2021-06-12'],
-      exit: ['2021-07-08'],
-      info: 'RH 2486'
-    },
+    { id: 1027, type: 'Car', enter: ['2021-06-12'], exit: ['2021-07-08'], info: 'RH 2486' },
     {
       id: 1028,
       type: 'Lawyer',
@@ -7314,13 +6258,7 @@ export const insuranceFraudData = {
       exit: ['2021-03-19'],
       info: 'Accident 43'
     },
-    {
-      id: 1037,
-      type: 'Car',
-      enter: ['2021-02-04'],
-      exit: ['2021-03-19'],
-      info: 'Q 4046'
-    },
+    { id: 1037, type: 'Car', enter: ['2021-02-04'], exit: ['2021-03-19'], info: 'Q 4046' },
     {
       id: 1038,
       type: 'Lawyer',
@@ -7398,13 +6336,7 @@ export const insuranceFraudData = {
       exit: ['2021-03-04'],
       info: { name: 'SADIE F. NICHOLS', role: 'Passenger' }
     },
-    {
-      id: 1049,
-      type: 'Car',
-      enter: ['2021-02-08'],
-      exit: ['2021-02-27'],
-      info: 'UI 6255'
-    },
+    { id: 1049, type: 'Car', enter: ['2021-02-08'], exit: ['2021-02-27'], info: 'UI 6255' },
     {
       id: 1050,
       type: 'Lawyer',
@@ -7454,13 +6386,7 @@ export const insuranceFraudData = {
       exit: ['2021-02-14'],
       info: { name: 'LAWRENCE U. MATTHEWS', role: 'Passenger' }
     },
-    {
-      id: 1057,
-      type: 'Car',
-      enter: ['2021-02-03'],
-      exit: ['2021-03-17'],
-      info: 'T 4440'
-    },
+    { id: 1057, type: 'Car', enter: ['2021-02-03'], exit: ['2021-03-17'], info: 'T 4440' },
     {
       id: 1058,
       type: 'Lawyer',
@@ -7517,13 +6443,7 @@ export const insuranceFraudData = {
       exit: ['2021-03-17'],
       info: { name: 'NICOLAS P. CARSON', role: 'Passenger' }
     },
-    {
-      id: 1066,
-      type: 'Car',
-      enter: ['2021-02-07'],
-      exit: ['2021-03-03'],
-      info: 'JQ 8201'
-    },
+    { id: 1066, type: 'Car', enter: ['2021-02-07'], exit: ['2021-03-03'], info: 'JQ 8201' },
     {
       id: 1067,
       type: 'Lawyer',
@@ -7615,13 +6535,7 @@ export const insuranceFraudData = {
       exit: ['2022-05-16'],
       info: 'Accident 44'
     },
-    {
-      id: 1080,
-      type: 'Car',
-      enter: ['2022-04-08'],
-      exit: ['2022-05-13'],
-      info: 'BW 2319'
-    },
+    { id: 1080, type: 'Car', enter: ['2022-04-08'], exit: ['2022-05-13'], info: 'BW 2319' },
     {
       id: 1081,
       type: 'Lawyer',
@@ -7699,13 +6613,7 @@ export const insuranceFraudData = {
       exit: ['2022-04-08'],
       info: { name: 'GREGORY A. WILKINSON', role: 'Passenger' }
     },
-    {
-      id: 1092,
-      type: 'Car',
-      enter: ['2022-04-02'],
-      exit: ['2022-05-16'],
-      info: 'NH 7308'
-    },
+    { id: 1092, type: 'Car', enter: ['2022-04-02'], exit: ['2022-05-16'], info: 'NH 7308' },
     {
       id: 1093,
       type: 'Lawyer',
@@ -7783,13 +6691,7 @@ export const insuranceFraudData = {
       exit: ['2022-04-08'],
       info: { name: 'NICOLAS O. WILKINSON', role: 'Passenger' }
     },
-    {
-      id: 1104,
-      type: 'Car',
-      enter: ['2022-04-01'],
-      exit: ['2022-04-19'],
-      info: 'PH 5435'
-    },
+    { id: 1104, type: 'Car', enter: ['2022-04-01'], exit: ['2022-04-19'], info: 'PH 5435' },
     {
       id: 1105,
       type: 'Lawyer',
@@ -7867,13 +6769,7 @@ export const insuranceFraudData = {
       exit: ['2022-09-08'],
       info: 'Accident 45'
     },
-    {
-      id: 1116,
-      type: 'Car',
-      enter: ['2022-08-10'],
-      exit: ['2022-09-04'],
-      info: 'AL 6923'
-    },
+    { id: 1116, type: 'Car', enter: ['2022-08-10'], exit: ['2022-09-04'], info: 'AL 6923' },
     {
       id: 1117,
       type: 'Lawyer',
@@ -7909,13 +6805,7 @@ export const insuranceFraudData = {
       exit: ['2022-08-23'],
       info: { name: 'GEORGE S. GILBERT', role: 'Passenger' }
     },
-    {
-      id: 1122,
-      type: 'Car',
-      enter: ['2022-07-23'],
-      exit: ['2022-08-15'],
-      info: 'HA 5603'
-    },
+    { id: 1122, type: 'Car', enter: ['2022-07-23'], exit: ['2022-08-15'], info: 'HA 5603' },
     {
       id: 1123,
       type: 'Lawyer',
@@ -8000,13 +6890,7 @@ export const insuranceFraudData = {
       exit: ['2022-07-28'],
       info: { name: 'STEVEN S. WARD', role: 'Passenger' }
     },
-    {
-      id: 1135,
-      type: 'Car',
-      enter: ['2022-07-28'],
-      exit: ['2022-09-08'],
-      info: 'TL 1450'
-    },
+    { id: 1135, type: 'Car', enter: ['2022-07-28'], exit: ['2022-09-08'], info: 'TL 1450' },
     {
       id: 1136,
       type: 'Lawyer',
@@ -8147,13 +7031,7 @@ export const insuranceFraudData = {
       exit: ['2022-03-26'],
       info: 'Accident 46'
     },
-    {
-      id: 1156,
-      type: 'Car',
-      enter: ['2022-02-20'],
-      exit: ['2022-03-26'],
-      info: 'HT 1522'
-    },
+    { id: 1156, type: 'Car', enter: ['2022-02-20'], exit: ['2022-03-26'], info: 'HT 1522' },
     {
       id: 1157,
       type: 'Lawyer',
@@ -8203,13 +7081,7 @@ export const insuranceFraudData = {
       exit: ['2022-02-23'],
       info: { name: 'ARTHUR Y. LEWIS', role: 'Passenger' }
     },
-    {
-      id: 1164,
-      type: 'Car',
-      enter: ['2022-02-23'],
-      exit: ['2022-02-23'],
-      info: 'SM 3286'
-    },
+    { id: 1164, type: 'Car', enter: ['2022-02-23'], exit: ['2022-02-23'], info: 'SM 3286' },
     {
       id: 1165,
       type: 'Lawyer',
@@ -8224,13 +7096,7 @@ export const insuranceFraudData = {
       exit: ['2022-02-23'],
       info: { name: 'CHRISTOPHER S. EDWARDS', role: 'Driver' }
     },
-    {
-      id: 1167,
-      type: 'Car',
-      enter: ['2022-02-27'],
-      exit: ['2022-03-26'],
-      info: 'IM 2921'
-    },
+    { id: 1167, type: 'Car', enter: ['2022-02-27'], exit: ['2022-03-26'], info: 'IM 2921' },
     {
       id: 1168,
       type: 'Lawyer',
@@ -8280,13 +7146,7 @@ export const insuranceFraudData = {
       exit: ['2023-04-25'],
       info: 'Accident 47'
     },
-    {
-      id: 1175,
-      type: 'Car',
-      enter: ['2023-03-09'],
-      exit: ['2023-03-10'],
-      info: 'KS 5300'
-    },
+    { id: 1175, type: 'Car', enter: ['2023-03-09'], exit: ['2023-03-10'], info: 'KS 5300' },
     {
       id: 1176,
       type: 'Lawyer',
@@ -8322,13 +7182,7 @@ export const insuranceFraudData = {
       exit: ['2023-03-10'],
       info: { name: 'RONALD X. BURKE', role: 'Passenger' }
     },
-    {
-      id: 1181,
-      type: 'Car',
-      enter: ['2023-03-14'],
-      exit: ['2023-04-25'],
-      info: 'TZ 8357'
-    },
+    { id: 1181, type: 'Car', enter: ['2023-03-14'], exit: ['2023-04-25'], info: 'TZ 8357' },
     {
       id: 1182,
       type: 'Lawyer',
@@ -8408,13 +7262,7 @@ export const insuranceFraudData = {
       exit: ['2023-03-30'],
       info: { name: 'MADELYN L. MARTIN', role: 'Passenger' }
     },
-    {
-      id: 1191,
-      type: 'Car',
-      enter: ['2023-03-13'],
-      exit: ['2023-04-17'],
-      info: 'XA 5352'
-    },
+    { id: 1191, type: 'Car', enter: ['2023-03-13'], exit: ['2023-04-17'], info: 'XA 5352' },
     {
       id: 1192,
       type: 'Lawyer',
@@ -8541,13 +7389,7 @@ export const insuranceFraudData = {
       exit: ['2022-09-30'],
       info: 'Accident 48'
     },
-    {
-      id: 1210,
-      type: 'Car',
-      enter: ['2022-08-29'],
-      exit: ['2022-09-22'],
-      info: 'EP 5183'
-    },
+    { id: 1210, type: 'Car', enter: ['2022-08-29'], exit: ['2022-09-22'], info: 'EP 5183' },
     {
       id: 1211,
       type: 'Lawyer',
@@ -8625,13 +7467,7 @@ export const insuranceFraudData = {
       exit: ['2022-09-03'],
       info: { name: 'CLARA G. ANDERSON', role: 'Passenger' }
     },
-    {
-      id: 1222,
-      type: 'Car',
-      enter: ['2022-08-27'],
-      exit: ['2022-09-30'],
-      info: 'KT 7764'
-    },
+    { id: 1222, type: 'Car', enter: ['2022-08-27'], exit: ['2022-09-30'], info: 'KT 7764' },
     {
       id: 1223,
       type: 'Lawyer',
@@ -8709,13 +7545,7 @@ export const insuranceFraudData = {
       exit: ['2021-05-08'],
       info: 'Accident 49'
     },
-    {
-      id: 1234,
-      type: 'Car',
-      enter: ['2021-03-23'],
-      exit: ['2021-05-08'],
-      info: 'I 1567'
-    },
+    { id: 1234, type: 'Car', enter: ['2021-03-23'], exit: ['2021-05-08'], info: 'I 1567' },
     {
       id: 1235,
       type: 'Lawyer',
@@ -8758,13 +7588,7 @@ export const insuranceFraudData = {
       exit: ['2021-03-30'],
       info: { name: 'RALPH J. EDWARDS', role: 'Passenger' }
     },
-    {
-      id: 1241,
-      type: 'Car',
-      enter: ['2021-03-28'],
-      exit: ['2021-04-24'],
-      info: 'IF 8182'
-    },
+    { id: 1241, type: 'Car', enter: ['2021-03-28'], exit: ['2021-04-24'], info: 'IF 8182' },
     {
       id: 1242,
       type: 'Lawyer',
@@ -8828,13 +7652,7 @@ export const insuranceFraudData = {
       exit: ['2021-04-11'],
       info: { name: 'MIA S. JOHNSON', role: 'Passenger' }
     },
-    {
-      id: 1251,
-      type: 'Car',
-      enter: ['2021-03-20'],
-      exit: ['2021-04-22'],
-      info: 'RF 5759'
-    },
+    { id: 1251, type: 'Car', enter: ['2021-03-20'], exit: ['2021-04-22'], info: 'RF 5759' },
     {
       id: 1252,
       type: 'Lawyer',
@@ -8898,13 +7716,7 @@ export const insuranceFraudData = {
       exit: ['2021-04-22'],
       info: { name: 'LAYLA L. WILSON', role: 'Passenger' }
     },
-    {
-      id: 1261,
-      type: 'Car',
-      enter: ['2021-03-29'],
-      exit: ['2021-03-29'],
-      info: 'QD 2771'
-    },
+    { id: 1261, type: 'Car', enter: ['2021-03-29'], exit: ['2021-03-29'], info: 'QD 2771' },
     {
       id: 1262,
       type: 'Lawyer',
@@ -8919,13 +7731,7 @@ export const insuranceFraudData = {
       exit: ['2021-03-29'],
       info: { name: 'RICHARD D. FIELD', role: 'Driver' }
     },
-    {
-      id: 1264,
-      type: 'Car',
-      enter: ['2021-03-19'],
-      exit: ['2021-04-27'],
-      info: 'GV 2939'
-    },
+    { id: 1264, type: 'Car', enter: ['2021-03-19'], exit: ['2021-04-27'], info: 'GV 2939' },
     {
       id: 1265,
       type: 'Lawyer',
@@ -9045,13 +7851,7 @@ export const insuranceFraudData = {
       exit: ['2022-01-28'],
       info: 'Accident 50'
     },
-    {
-      id: 1282,
-      type: 'Car',
-      enter: ['2021-12-15'],
-      exit: ['2022-01-17'],
-      info: 'RG 2163'
-    },
+    { id: 1282, type: 'Car', enter: ['2021-12-15'], exit: ['2022-01-17'], info: 'RG 2163' },
     {
       id: 1283,
       type: 'Lawyer',
@@ -9101,13 +7901,7 @@ export const insuranceFraudData = {
       exit: ['2022-01-17'],
       info: { name: 'GERALD P. HILL', role: 'Driver' }
     },
-    {
-      id: 1290,
-      type: 'Car',
-      enter: ['2022-01-25'],
-      exit: ['2022-01-25'],
-      info: 'KK 4453'
-    },
+    { id: 1290, type: 'Car', enter: ['2022-01-25'], exit: ['2022-01-25'], info: 'KK 4453' },
     {
       id: 1291,
       type: 'Lawyer',
@@ -9122,13 +7916,7 @@ export const insuranceFraudData = {
       exit: ['2022-01-25'],
       info: { name: 'KEIRA D. DAVIES', role: 'Driver' }
     },
-    {
-      id: 1293,
-      type: 'Car',
-      enter: ['2022-01-28'],
-      exit: ['2022-01-28'],
-      info: 'CH 5811'
-    },
+    { id: 1293, type: 'Car', enter: ['2022-01-28'], exit: ['2022-01-28'], info: 'CH 5811' },
     {
       id: 1294,
       type: 'Lawyer',
@@ -9199,13 +7987,7 @@ export const insuranceFraudData = {
       exit: ['2023-06-03'],
       info: 'Accident 51'
     },
-    {
-      id: 1304,
-      type: 'Car',
-      enter: ['2023-04-17'],
-      exit: ['2023-06-03'],
-      info: 'G 4811'
-    },
+    { id: 1304, type: 'Car', enter: ['2023-04-17'], exit: ['2023-06-03'], info: 'G 4811' },
     {
       id: 1305,
       type: 'Lawyer',
@@ -9276,13 +8058,7 @@ export const insuranceFraudData = {
       exit: ['2023-05-21'],
       info: { name: 'LUCY P. BECKETT', role: 'Passenger' }
     },
-    {
-      id: 1315,
-      type: 'Car',
-      enter: ['2023-04-19'],
-      exit: ['2023-05-17'],
-      info: 'M 8797'
-    },
+    { id: 1315, type: 'Car', enter: ['2023-04-19'], exit: ['2023-05-17'], info: 'M 8797' },
     {
       id: 1316,
       type: 'Lawyer',
@@ -9339,13 +8115,7 @@ export const insuranceFraudData = {
       exit: ['2023-04-19'],
       info: { name: 'LAUREN M. MILLER', role: 'Passenger' }
     },
-    {
-      id: 1324,
-      type: 'Car',
-      enter: ['2023-04-17'],
-      exit: ['2023-05-23'],
-      info: 'QS 4170'
-    },
+    { id: 1324, type: 'Car', enter: ['2023-04-17'], exit: ['2023-05-23'], info: 'QS 4170' },
     {
       id: 1325,
       type: 'Lawyer',
@@ -9402,13 +8172,7 @@ export const insuranceFraudData = {
       exit: ['2023-05-03'],
       info: { name: 'ELENA E. SHERMAN', role: 'Passenger' }
     },
-    {
-      id: 1333,
-      type: 'Car',
-      enter: ['2023-05-11'],
-      exit: ['2023-05-17'],
-      info: 'PV 3389'
-    },
+    { id: 1333, type: 'Car', enter: ['2023-05-11'], exit: ['2023-05-17'], info: 'PV 3389' },
     {
       id: 1334,
       type: 'Lawyer',
@@ -9493,13 +8257,7 @@ export const insuranceFraudData = {
       exit: ['2021-11-19'],
       info: 'Accident 52'
     },
-    {
-      id: 1346,
-      type: 'Car',
-      enter: ['2021-09-25'],
-      exit: ['2021-10-22'],
-      info: 'LG 2180'
-    },
+    { id: 1346, type: 'Car', enter: ['2021-09-25'], exit: ['2021-10-22'], info: 'LG 2180' },
     {
       id: 1347,
       type: 'Lawyer',
@@ -9542,13 +8300,7 @@ export const insuranceFraudData = {
       exit: ['2021-10-22'],
       info: { name: 'PAUL Q. SHERMAN', role: 'Passenger' }
     },
-    {
-      id: 1353,
-      type: 'Car',
-      enter: ['2021-10-26'],
-      exit: ['2021-11-19'],
-      info: 'JZ 7431'
-    },
+    { id: 1353, type: 'Car', enter: ['2021-10-26'], exit: ['2021-11-19'], info: 'JZ 7431' },
     {
       id: 1354,
       type: 'Lawyer',
@@ -9640,13 +8392,7 @@ export const insuranceFraudData = {
       exit: ['2022-07-19'],
       info: 'Accident 53'
     },
-    {
-      id: 1367,
-      type: 'Car',
-      enter: ['2022-06-01'],
-      exit: ['2022-06-23'],
-      info: 'YD 3354'
-    },
+    { id: 1367, type: 'Car', enter: ['2022-06-01'], exit: ['2022-06-23'], info: 'YD 3354' },
     {
       id: 1368,
       type: 'Lawyer',
@@ -9710,13 +8456,7 @@ export const insuranceFraudData = {
       exit: ['2022-06-06'],
       info: { name: 'ELIANA K. PAYNE', role: 'Passenger' }
     },
-    {
-      id: 1377,
-      type: 'Car',
-      enter: ['2022-06-01'],
-      exit: ['2022-07-14'],
-      info: 'OC 6205'
-    },
+    { id: 1377, type: 'Car', enter: ['2022-06-01'], exit: ['2022-07-14'], info: 'OC 6205' },
     {
       id: 1378,
       type: 'Lawyer',
@@ -9773,13 +8513,7 @@ export const insuranceFraudData = {
       exit: ['2022-06-13'],
       info: { name: 'GRACE C. JACKSON', role: 'Passenger' }
     },
-    {
-      id: 1386,
-      type: 'Car',
-      enter: ['2022-05-26'],
-      exit: ['2022-06-26'],
-      info: 'DW 5355'
-    },
+    { id: 1386, type: 'Car', enter: ['2022-05-26'], exit: ['2022-06-26'], info: 'DW 5355' },
     {
       id: 1387,
       type: 'Lawyer',
@@ -9850,13 +8584,7 @@ export const insuranceFraudData = {
       exit: ['2022-05-26'],
       info: { name: 'ARIA Z. JACKSON', role: 'Passenger' }
     },
-    {
-      id: 1397,
-      type: 'Car',
-      enter: ['2022-06-10'],
-      exit: ['2022-07-01'],
-      info: 'NP 6785'
-    },
+    { id: 1397, type: 'Car', enter: ['2022-06-10'], exit: ['2022-07-01'], info: 'NP 6785' },
     {
       id: 1398,
       type: 'Lawyer',
@@ -9913,13 +8641,7 @@ export const insuranceFraudData = {
       exit: ['2022-06-17'],
       info: { name: 'MIA O. FIELD', role: 'Passenger' }
     },
-    {
-      id: 1406,
-      type: 'Car',
-      enter: ['2022-06-03'],
-      exit: ['2022-07-04'],
-      info: 'IP 3273'
-    },
+    { id: 1406, type: 'Car', enter: ['2022-06-03'], exit: ['2022-07-04'], info: 'IP 3273' },
     {
       id: 1407,
       type: 'Lawyer',
@@ -9990,13 +8712,7 @@ export const insuranceFraudData = {
       exit: ['2022-06-05'],
       info: { name: 'BELLA B. JACKSON', role: 'Passenger' }
     },
-    {
-      id: 1417,
-      type: 'Car',
-      enter: ['2022-06-03'],
-      exit: ['2022-07-19'],
-      info: 'N 1486'
-    },
+    { id: 1417, type: 'Car', enter: ['2022-06-03'], exit: ['2022-07-19'], info: 'N 1486' },
     {
       id: 1418,
       type: 'Lawyer',
@@ -10116,13 +8832,7 @@ export const insuranceFraudData = {
       exit: ['2022-05-31'],
       info: 'Accident 54'
     },
-    {
-      id: 1435,
-      type: 'Car',
-      enter: ['2022-05-07'],
-      exit: ['2022-05-31'],
-      info: 'XT 8149'
-    },
+    { id: 1435, type: 'Car', enter: ['2022-05-07'], exit: ['2022-05-31'], info: 'XT 8149' },
     {
       id: 1436,
       type: 'Lawyer',
@@ -10151,13 +8861,7 @@ export const insuranceFraudData = {
       exit: ['2022-05-07'],
       info: { name: 'SCARLETT E. MORGAN', role: 'Driver' }
     },
-    {
-      id: 1440,
-      type: 'Car',
-      enter: ['2022-04-22'],
-      exit: ['2022-05-14'],
-      info: 'SO 5654'
-    },
+    { id: 1440, type: 'Car', enter: ['2022-04-22'], exit: ['2022-05-14'], info: 'SO 5654' },
     {
       id: 1441,
       type: 'Lawyer',
@@ -10200,13 +8904,7 @@ export const insuranceFraudData = {
       exit: ['2022-05-13'],
       info: { name: 'LONDON P. CONNOR', role: 'Passenger' }
     },
-    {
-      id: 1447,
-      type: 'Car',
-      enter: ['2022-04-19'],
-      exit: ['2022-05-16'],
-      info: 'OC 8517'
-    },
+    { id: 1447, type: 'Car', enter: ['2022-04-19'], exit: ['2022-05-16'], info: 'OC 8517' },
     {
       id: 1448,
       type: 'Lawyer',
@@ -10284,13 +8982,7 @@ export const insuranceFraudData = {
       exit: ['2022-04-19'],
       info: { name: 'LILLIAN L. FRENCH', role: 'Passenger' }
     },
-    {
-      id: 1459,
-      type: 'Car',
-      enter: ['2022-04-17'],
-      exit: ['2022-05-22'],
-      info: 'SW 8337'
-    },
+    { id: 1459, type: 'Car', enter: ['2022-04-17'], exit: ['2022-05-22'], info: 'SW 8337' },
     {
       id: 1460,
       type: 'Lawyer',
@@ -10333,13 +9025,7 @@ export const insuranceFraudData = {
       exit: ['2022-05-16'],
       info: { name: 'JASON G. CLARK', role: 'Passenger' }
     },
-    {
-      id: 1466,
-      type: 'Car',
-      enter: ['2022-04-19'],
-      exit: ['2022-05-04'],
-      info: 'MX 4568'
-    },
+    { id: 1466, type: 'Car', enter: ['2022-04-19'], exit: ['2022-05-04'], info: 'MX 4568' },
     {
       id: 1467,
       type: 'Lawyer',
@@ -10382,13 +9068,7 @@ export const insuranceFraudData = {
       exit: ['2022-05-04'],
       info: { name: 'ISABELLA X. THOMPSON', role: 'Passenger' }
     },
-    {
-      id: 1473,
-      type: 'Car',
-      enter: ['2022-04-23'],
-      exit: ['2022-05-23'],
-      info: 'GL 8600'
-    },
+    { id: 1473, type: 'Car', enter: ['2022-04-23'], exit: ['2022-05-23'], info: 'GL 8600' },
     {
       id: 1474,
       type: 'Lawyer',
@@ -10473,13 +9153,7 @@ export const insuranceFraudData = {
       exit: ['2022-06-11'],
       info: 'Accident 55'
     },
-    {
-      id: 1486,
-      type: 'Car',
-      enter: ['2022-05-19'],
-      exit: ['2022-05-19'],
-      info: 'XV 4591'
-    },
+    { id: 1486, type: 'Car', enter: ['2022-05-19'], exit: ['2022-05-19'], info: 'XV 4591' },
     {
       id: 1487,
       type: 'Lawyer',
@@ -10494,13 +9168,7 @@ export const insuranceFraudData = {
       exit: ['2022-05-19'],
       info: { name: 'LARRY A. GRIFFIN', role: 'Driver' }
     },
-    {
-      id: 1489,
-      type: 'Car',
-      enter: ['2022-05-28'],
-      exit: ['2022-06-11'],
-      info: 'PX 5654'
-    },
+    { id: 1489, type: 'Car', enter: ['2022-05-28'], exit: ['2022-06-11'], info: 'PX 5654' },
     {
       id: 1490,
       type: 'Lawyer',
@@ -10693,10 +9361,7 @@ export const insuranceFraudData = {
       type: 'Participant',
       enter: ['2022-04-29', '2022-07-02', '2022-08-17', '2022-08-26', '2022-10-29', '2022-11-07'],
       exit: ['2023-04-04', '2022-09-24', '2022-08-27', '2022-10-28', '2023-01-18', '2023-01-12'],
-      info: {
-        name: 'DAVID G. BRIEN',
-        role: 'Driver,Passenger,Witness,Witness,Passenger,Witness'
-      }
+      info: { name: 'DAVID G. BRIEN', role: 'Driver,Passenger,Witness,Witness,Passenger,Witness' }
     },
     {
       id: 1516,
@@ -10725,20 +9390,8 @@ export const insuranceFraudData = {
       exit: ['2022-09-24'],
       info: 'Accident 56'
     },
-    {
-      id: 1519,
-      type: 'Car',
-      enter: ['2022-04-29'],
-      exit: ['2022-09-24'],
-      info: 'EF 5117'
-    },
-    {
-      id: 1520,
-      type: 'Car',
-      enter: ['2022-04-29'],
-      exit: ['2022-09-24'],
-      info: 'RW 1040'
-    },
+    { id: 1519, type: 'Car', enter: ['2022-04-29'], exit: ['2022-09-24'], info: 'EF 5117' },
+    { id: 1520, type: 'Car', enter: ['2022-04-29'], exit: ['2022-09-24'], info: 'RW 1040' },
     {
       id: 1521,
       type: 'Lawyer',
@@ -10760,20 +9413,8 @@ export const insuranceFraudData = {
       exit: ['2022-08-27'],
       info: 'Accident 57'
     },
-    {
-      id: 1524,
-      type: 'Car',
-      enter: ['2022-07-02'],
-      exit: ['2022-08-27'],
-      info: 'VI 7730'
-    },
-    {
-      id: 1525,
-      type: 'Car',
-      enter: ['2022-07-02'],
-      exit: ['2022-08-27'],
-      info: 'XU 7493'
-    },
+    { id: 1524, type: 'Car', enter: ['2022-07-02'], exit: ['2022-08-27'], info: 'VI 7730' },
+    { id: 1525, type: 'Car', enter: ['2022-07-02'], exit: ['2022-08-27'], info: 'XU 7493' },
     {
       id: 1526,
       type: 'Accident',
@@ -10781,20 +9422,8 @@ export const insuranceFraudData = {
       exit: ['2022-10-28'],
       info: 'Accident 58'
     },
-    {
-      id: 1527,
-      type: 'Car',
-      enter: ['2022-08-17'],
-      exit: ['2022-10-28'],
-      info: 'TW 2630'
-    },
-    {
-      id: 1528,
-      type: 'Car',
-      enter: ['2022-08-17'],
-      exit: ['2022-10-28'],
-      info: 'BI 1491'
-    },
+    { id: 1527, type: 'Car', enter: ['2022-08-17'], exit: ['2022-10-28'], info: 'TW 2630' },
+    { id: 1528, type: 'Car', enter: ['2022-08-17'], exit: ['2022-10-28'], info: 'BI 1491' },
     {
       id: 1529,
       type: 'Accident',
@@ -10802,20 +9431,8 @@ export const insuranceFraudData = {
       exit: ['2023-01-18'],
       info: 'Accident 59'
     },
-    {
-      id: 1530,
-      type: 'Car',
-      enter: ['2022-08-26'],
-      exit: ['2023-01-18'],
-      info: 'HN 5917'
-    },
-    {
-      id: 1531,
-      type: 'Car',
-      enter: ['2022-08-26'],
-      exit: ['2023-01-18'],
-      info: 'Z 8026'
-    },
+    { id: 1530, type: 'Car', enter: ['2022-08-26'], exit: ['2023-01-18'], info: 'HN 5917' },
+    { id: 1531, type: 'Car', enter: ['2022-08-26'], exit: ['2023-01-18'], info: 'Z 8026' },
     {
       id: 1532,
       type: 'Accident',
@@ -10823,20 +9440,8 @@ export const insuranceFraudData = {
       exit: ['2023-04-04'],
       info: 'Accident 60'
     },
-    {
-      id: 1533,
-      type: 'Car',
-      enter: ['2022-10-29'],
-      exit: ['2023-04-04'],
-      info: 'W 5838'
-    },
-    {
-      id: 1534,
-      type: 'Car',
-      enter: ['2022-10-29'],
-      exit: ['2023-04-04'],
-      info: 'FS 5564'
-    },
+    { id: 1533, type: 'Car', enter: ['2022-10-29'], exit: ['2023-04-04'], info: 'W 5838' },
+    { id: 1534, type: 'Car', enter: ['2022-10-29'], exit: ['2023-04-04'], info: 'FS 5564' },
     {
       id: 1535,
       type: 'Accident',
@@ -10844,20 +9449,8 @@ export const insuranceFraudData = {
       exit: ['2023-01-12'],
       info: 'Accident 61'
     },
-    {
-      id: 1536,
-      type: 'Car',
-      enter: ['2022-11-07'],
-      exit: ['2023-01-12'],
-      info: 'MY 1010'
-    },
-    {
-      id: 1537,
-      type: 'Car',
-      enter: ['2022-11-07'],
-      exit: ['2023-01-12'],
-      info: 'DR 4279'
-    },
+    { id: 1536, type: 'Car', enter: ['2022-11-07'], exit: ['2023-01-12'], info: 'MY 1010' },
+    { id: 1537, type: 'Car', enter: ['2022-11-07'], exit: ['2023-01-12'], info: 'DR 4279' },
     {
       id: 1538,
       type: 'Doctor',
@@ -10922,6 +9515,7 @@ export const insuranceFraudData = {
       info: { name: 'NATALIE L. POTTER', role: 'Lawyer' }
     }
   ],
+
   edgesSource: [
     { from: 1, to: 0, type: 'involves' },
     { from: 3, to: 1, type: 'isPassenger' },

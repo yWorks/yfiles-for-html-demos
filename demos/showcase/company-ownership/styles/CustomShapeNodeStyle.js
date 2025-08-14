@@ -37,6 +37,7 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 import { NodeTypeEnum } from '../data-types'
+
 /**
  * A node style implementation that creates shapes based on the type of a given node by delegating to GeneralPathNodeStyle.
  */
@@ -45,6 +46,7 @@ export class CustomShapeNodeStyle extends NodeStyleBase {
   stroke
   fill
   gpNodeStyle
+
   /**
    * Creates the custom style for the given type of node.
    */
@@ -56,10 +58,12 @@ export class CustomShapeNodeStyle extends NodeStyleBase {
     this.type = type ?? NodeTypeEnum.CORPORATION
     this.stroke = Stroke.from(stroke ?? 'black')
     this.fill = Fill.from(fill ?? 'white')
+
     let gp
     this.gpNodeStyle = new GeneralPathNodeStyle()
     this.gpNodeStyle.stroke = this.stroke
     this.gpNodeStyle.fill = this.fill
+
     switch (type) {
       case NodeTypeEnum.CORPORATION:
         gp = createCorporationPath()
@@ -108,8 +112,10 @@ export class CustomShapeNodeStyle extends NodeStyleBase {
       default:
         throw new Error('Unknown Type')
     }
+
     this.gpNodeStyle.path = gp
   }
+
   /**
    * Creates the visual for the given node.
    * @param renderContext The render context
@@ -121,6 +127,7 @@ export class CustomShapeNodeStyle extends NodeStyleBase {
       .getVisualCreator(node, this.gpNodeStyle)
       .createVisual(renderContext)
   }
+
   /**
    * Updates the visual for the given node.
    * @param renderContext The render context
@@ -132,6 +139,7 @@ export class CustomShapeNodeStyle extends NodeStyleBase {
       .getVisualCreator(node, this.gpNodeStyle)
       .updateVisual(renderContext, oldVisual)
   }
+
   /**
    * Gets the outline of the visual style.
    * @param node The node to which this style is assigned
@@ -151,6 +159,7 @@ export class CustomShapeNodeStyle extends NodeStyleBase {
     }
   }
 }
+
 /**
  * Creates the path for nodes of type "partnership".
  * @returns The general path that describes this style
@@ -163,6 +172,7 @@ function createPartnershipPath() {
   gp.close()
   return gp
 }
+
 /**
  * Creates the path for nodes of type "RCTB".
  * @returns The general path that describes this style
@@ -179,6 +189,7 @@ function createRctbPath() {
   gp.lineTo(0, 0)
   return gp
 }
+
 /**
  * Creates the path for nodes of type "Trapezoid".
  * @returns The general path that describes this style
@@ -197,6 +208,7 @@ function createTrapezoidPath() {
   gp.lineTo(0.2, 0)
   return gp
 }
+
 /**
  * Creates the path for nodes of type "Branch".
  * @returns The general path that describes this style
@@ -206,6 +218,7 @@ function createBranchPath() {
   gp.appendEllipse(new Rect(0, 0, 1, 1), false)
   return gp
 }
+
 /**
  * Creates the path for nodes of type "Disregarded".
  * @returns The general path that describes this style
@@ -220,6 +233,7 @@ function createDisregardedPath() {
   gp.appendEllipse(new Rect(0, 0, 1, 1), false)
   return gp
 }
+
 /**
  * Creates the path for nodes of type "Dual_Resident".
  * @returns The general path that describes this style
@@ -235,6 +249,7 @@ function createDualResidentPath() {
   gp.lineTo(1, 0)
   return gp
 }
+
 /**
  * Creates the path for nodes of type "Multiple_Path".
  * @returns The general path that describes this style
@@ -255,6 +270,7 @@ function createMultiplePath() {
   gp.close()
   return gp
 }
+
 /**
  * Creates the path for nodes of type "Trust".
  * @returns The general path that describes this style
@@ -268,6 +284,7 @@ function createTrustPath() {
   gp.close()
   return gp
 }
+
 /**
  * Creates the path for nodes of type "PE_Risk".
  * @returns The general path that describes this style
@@ -277,6 +294,7 @@ function createPeRiskPath() {
   gp.appendEllipse(new Rect(0, 0, 1, 1), false)
   return gp
 }
+
 /**
  * Creates the path for nodes of type "Third_Party".
  * @returns The general path that describes this style
@@ -312,6 +330,7 @@ function createThirdPartyPath() {
   gp.close()
   return gp
 }
+
 /**
  * Creates the path for nodes of type "Corporation".
  * @returns The general path that describes this style
@@ -325,6 +344,7 @@ function createCorporationPath() {
   gp.close()
   return gp
 }
+
 /**
  * Creates the path for nodes of type "CTB".
  * @returns The general path that describes this style

@@ -48,6 +48,7 @@ import {
   PlaceNodesAtBarycenterStageData,
   TimeSpan
 } from '@yfiles/yfiles'
+
 /**
  * Provides utility function for collapsing and expanding nodes as well as configuring layout
  * algorithms.
@@ -56,9 +57,11 @@ export class CollapseAndExpandNodes {
   graphComponent
   nodeCollapsedMap = new HashMap()
   nodeVisibility = new HashMap()
+
   constructor(graphComponent) {
     this.graphComponent = graphComponent
   }
+
   /**
    * Sets the given node's collapsed state.
    * @param node The node whose state is set.
@@ -67,6 +70,7 @@ export class CollapseAndExpandNodes {
   setCollapsed(node, collapsed) {
     this.nodeCollapsedMap.set(node, collapsed)
   }
+
   /**
    * Gets the given node's collapsed state.
    * @param node The node whose state is queried.
@@ -74,6 +78,7 @@ export class CollapseAndExpandNodes {
   isCollapsed(node) {
     return !!this.nodeCollapsedMap.get(node)
   }
+
   /**
    * Sets the given node's visibility.
    * @param node The node whose state is set.
@@ -82,6 +87,7 @@ export class CollapseAndExpandNodes {
   setNodeVisibility(node, visible) {
     this.nodeVisibility.set(node, visible)
   }
+
   /**
    * Gets the given node's visibility.
    * @param node The node whose state is queried.
@@ -89,6 +95,7 @@ export class CollapseAndExpandNodes {
   getNodeVisibility(node) {
     return !!this.nodeVisibility.get(node)
   }
+
   /**
    * Show the children of a collapsed node.
    * @param node The node that should be expanded
@@ -96,6 +103,7 @@ export class CollapseAndExpandNodes {
   expand(node) {
     this.collapseExpandImpl(node, false)
   }
+
   /**
    * Hide the children of an expanded node.
    * @param node The node that should be collapsed
@@ -103,6 +111,7 @@ export class CollapseAndExpandNodes {
   collapse(node) {
     this.collapseExpandImpl(node, true)
   }
+
   /**
    * Collapses or expands the given node.
    * @param node The node whose children will be hidden or shown.
@@ -111,6 +120,7 @@ export class CollapseAndExpandNodes {
    */
   collapseExpandImpl(node, collapse) {
     this.setCollapsed(node, collapse)
+
     const filteredGraph = this.graphComponent.graph
     CollapseAndExpandNodes.getDescendants(filteredGraph.wrappedGraph, node, (succ) =>
       this.isCollapsed(succ)
@@ -118,6 +128,7 @@ export class CollapseAndExpandNodes {
       this.setNodeVisibility(succ, !collapse)
     })
   }
+
   /**
    * Returns the descendants of the given node.
    * @param graph The graph.
@@ -143,19 +154,23 @@ export class CollapseAndExpandNodes {
     }
     return descendants
   }
+
   /**
    * Moves incremental nodes between their neighbors before expanding for a smooth animation.
    * @param incrementalNodes the nodes that need to be moved.
    */
   prepareSmoothExpandLayoutAnimation(incrementalNodes) {
     const graph = this.graphComponent.graph
+
     // mark the new nodes and place them between their neighbors
     const layoutData = new PlaceNodesAtBarycenterStageData({
       affectedNodes: (node) => incrementalNodes.has(node)
     })
+
     const layout = new PlaceNodesAtBarycenterStage()
     graph.applyLayout(layout, layoutData)
   }
+
   /**
    * Configures a new layout for the current graph.
    * Incremental nodes are moved between their neighbors before expanding for a smooth animation.
@@ -176,6 +191,7 @@ export class CollapseAndExpandNodes {
             node === toggledNode ? LayoutAnchoringPolicy.CENTER : LayoutAnchoringPolicy.NONE
         })
       )
+
       const incrementalNodes = CollapseAndExpandNodes.getDescendants(
         graph,
         toggledNode,
@@ -191,28 +207,30 @@ export class CollapseAndExpandNodes {
           co.below(toggledNodeCo)
         }
       })
+
       if (expand) {
         // move the incremental nodes between their neighbors before expanding for a smooth animation
         this.prepareSmoothExpandLayoutAnimation(incrementalMap)
       } else {
         // configure PlaceNodesAtBarycenterStage for a smooth animation
         currentLayoutData.items.add(
-          new PlaceNodesAtBarycenterStageData({
-            affectedNodes: (node) => incrementalMap.has(node)
-          })
+          new PlaceNodesAtBarycenterStageData({ affectedNodes: (node) => incrementalMap.has(node) })
         )
       }
       if (currentLayout instanceof OrganicLayout) {
         currentLayout.compactnessFactor = 0.7
         currentLayout.defaultPreferredEdgeLength = 60
+
         currentLayout.allowNodeOverlaps = false
         currentLayout.defaultMinimumNodeDistance = 10
         currentLayout.qualityTimeRatio = 1
         currentLayout.stopDuration = TimeSpan.fromMilliseconds(1000 + graph.nodes.size * 50)
+
         const layerIds = new Bfs({
           coreNodes: incrementalNodes.concat(toggledNode),
           traversalDirection: 'both'
         }).run(graph).nodeLayerIds
+
         currentLayoutData.items.add(
           new OrganicLayoutData({
             nodeInertia: (obj) => 1 - 1 / (layerIds.get(obj) + 1),
@@ -221,9 +239,8 @@ export class CollapseAndExpandNodes {
         )
       } else if (currentLayout instanceof HierarchicalLayout) {
         currentLayout.fromSketchMode = true
-        const hierarchicalLayoutData = new HierarchicalLayoutData({
-          incrementalNodes
-        })
+
+        const hierarchicalLayoutData = new HierarchicalLayoutData({ incrementalNodes })
         currentLayoutData.items.add(hierarchicalLayoutData)
       }
     } else {

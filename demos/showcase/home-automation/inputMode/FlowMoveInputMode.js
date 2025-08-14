@@ -28,15 +28,19 @@
  ***************************************************************************/
 import { IEnumerable, INode, InputModeEventArgs, MoveInputMode } from '@yfiles/yfiles'
 import { recalculateEdges } from '../FlowEdge/FlowEdge'
+
 export class FlowMoveInputMode extends MoveInputMode {
   onDragging(evt) {
     super.onDragging(evt)
+
     // Get graph component and affected nodes
     const graph = this.parentInputModeContext?.graph
     const nodes = this.affectedItems.filter((item) => item instanceof INode)
+
     if (!graph) {
       return
     }
+
     // Iterate over affected nodes to access connected edges
     nodes.forEach((node) => {
       recalculateEdges(graph, node)

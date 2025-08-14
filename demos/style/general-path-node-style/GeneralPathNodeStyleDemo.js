@@ -41,20 +41,25 @@ import {
 import { colorSets, createDemoNodeLabelStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the graph
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
   const graph = graphComponent.graph
+
   // create nodes with different custom shapes
   createCustomNodes(graph)
+
   // center the graph
   await graphComponent.fitGraphBounds()
 }
+
 /**
  * Creates several nodes that demonstrate various custom shapes.
  * @param graph The graph in which to create nodes.
@@ -62,6 +67,7 @@ async function run() {
 function createCustomNodes(graph) {
   // create several style instances that display various custom shapes
   const customNodeStyles = []
+
   // star with 3 points and 0.1 outer-inner ratio
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -71,6 +77,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Star\nPoint Count: 3\nOuter-Inner Ratio: 0.1\nStretch to Height: True'
   })
+
   // star with 3 points and 1.3 outer-inner ratio, stretched to full bounding box width
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -80,6 +87,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Star\nPoint Count: 3\nOuter-Inner Ratio: 1.3\nStretch to Width: True'
   })
+
   // star with 4 points and 10 outer-inner ratio, rotated
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -89,6 +97,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Star\nPoint Count: 4\nOuter-Inner Ratio: 10\nRotation Angle: 0.1 * π'
   })
+
   // star with 5 points and 0.5 outer-inner ratio
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -98,6 +107,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Star\nPoint Count: 5\nOuter-Inner Ratio: 0.5'
   })
+
   // star with 5 points and 3 outer-inner ratio, stretched to full bounding width
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -108,6 +118,7 @@ function createCustomNodes(graph) {
     label:
       'Shape: Star\nPoint Count: 5\nOuter-Inner Ratio: 3\nRotation 0.3 * π\nStretch to Width: True'
   })
+
   // star with 8 points and 1.4 outer-inner ratio
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -117,6 +128,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Star\nPoint Count: 8\nOuter-Inner Ratio: 1.4'
   })
+
   // star with 6 points and 0.1 outer-inner ratio
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -126,6 +138,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Star\nPoint Count: 6\nOuter-Inner Ratio: 0.1'
   })
+
   // star with 10 points and 0.5 outer-inner ratio
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -135,6 +148,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Star\nPoint Count: 10\nOuter-Inner Ratio: 0.5'
   })
+
   // star with 10 points and 5 outer-inner ratio
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -144,6 +158,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Star\nPoint Count: 10\nOuter-Inner Ratio: 5'
   })
+
   // star with 30 points and 0.8 outer-inner ratio
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -153,6 +168,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Star\nPoint Count: 30\nOuter-Inner Ratio: 0.8'
   })
+
   // star with 30 points and 5 outer-inner ratio
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -162,6 +178,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Star\nPoint Count: 30\nOuter-Inner Ratio: 5'
   })
+
   // star with 30 points and 1.2 outer-inner ratio
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -171,6 +188,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Star\nPoint Count: 30\nOuter-Inner Ratio: 1.2'
   })
+
   // polygon with 3 points, stretched to height
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -180,6 +198,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Polygon\nPoint Count: 3\nStretch to Height: True'
   })
+
   // polygon with 4 points
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -189,6 +208,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Polygon\nPoint Count: 4'
   })
+
   // polygon with 5 points, rotated 0.15 * Pi degrees, stretched to full bounding box height
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -198,6 +218,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Polygon\nPoint Count: 5\nRotation Angle: 0.15 * π\nStretch to Height: True'
   })
+
   // polygon with 5 points
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -207,6 +228,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Polygon\nPoint Count: 5\nRotation Angle: 0'
   })
+
   // polygon with 6 points, stretched to full bounding box width
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -216,6 +238,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Polygon\nPoint Count: 6\nStretch to Width: True'
   })
+
   // polygon with 8 points
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -225,6 +248,7 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Polygon\nPoint Count: 8'
   })
+
   // polygon with 9 points
   customNodeStyles.push({
     style: new GeneralPathNodeStyle({
@@ -234,31 +258,34 @@ function createCustomNodes(graph) {
     }),
     label: 'Shape: Polygon\nPoint Count: 9'
   })
+
   // custom factory icon, facing right
   customNodeStyles.push({
     style: createFactoryNodeStyle('right', 'demo-green'),
     label: 'Shape: Factory Icon\nDirection: Right'
   })
+
   // custom factory icon, facing left
   customNodeStyles.push({
     style: createFactoryNodeStyle('left', 'demo-orange'),
     label: 'Shape: Factory Icon\nDirection: Left'
   })
+
   // custom airplane icon
   customNodeStyles.push({
     style: createAirplaneNodeStyle('demo-red'),
     label: 'Shape: Airplane Icon'
   })
+
   // custom computer icon
   customNodeStyles.push({
     style: createComputerNodeStyle('demo-purple'),
     label: 'Shape: Computer Icon'
   })
+
   // custom person icon
-  customNodeStyles.push({
-    style: createPersonNodeStyle('demo-blue'),
-    label: 'Shape: Person Icon'
-  })
+  customNodeStyles.push({ style: createPersonNodeStyle('demo-blue'), label: 'Shape: Person Icon' })
+
   // create a node for each style instance
   let x = 0
   let y = 0
@@ -282,6 +309,7 @@ function createCustomNodes(graph) {
     }
   }
 }
+
 /**
  * Returns a GeneralPathNodeStyle instance that displays a factory icon.
  * @param direction The direction to which the shape should face.
@@ -290,6 +318,7 @@ function createCustomNodes(graph) {
 function createFactoryNodeStyle(direction, colorSetName) {
   const colorSet = colorSets[colorSetName]
   const generalPath = new GeneralPath()
+
   if (direction === 'right') {
     generalPath.moveTo(0.064, 0)
     generalPath.lineTo(0.17, 0)
@@ -321,12 +350,14 @@ function createFactoryNodeStyle(direction, colorSetName) {
     generalPath.lineTo(0, 1)
     generalPath.close()
   }
+
   return new GeneralPathNodeStyle({
     path: generalPath,
     fill: colorSet.fill,
     stroke: colorSet.stroke
   })
 }
+
 /**
  * Returns a GeneralPathNodeStyle instance that displays a person icon.
  * @param colorSetName The name of the color set to use for nodes.
@@ -334,16 +365,19 @@ function createFactoryNodeStyle(direction, colorSetName) {
 function createPersonNodeStyle(colorSetName) {
   const colorSet = colorSets[colorSetName]
   const generalPath = new GeneralPath()
+
   generalPath.appendEllipse(Rect.from([0.167, 0, 0.667, 0.667]), true)
   generalPath.quadTo(new Point(0.167, 0.733), new Point(0, 1))
   generalPath.lineTo(1, 1)
   generalPath.quadTo(new Point(0.833, 0.733), new Point(0.5, 0.667))
+
   return new GeneralPathNodeStyle({
     path: generalPath,
     fill: colorSet.fill,
     stroke: colorSet.stroke
   })
 }
+
 /**
  * Returns a GeneralPathNodeStyle instance that displays a computer icon.
  * @param colorSetName The name of the color set to use for nodes.
@@ -351,6 +385,7 @@ function createPersonNodeStyle(colorSetName) {
 function createComputerNodeStyle(colorSetName) {
   const colorSet = colorSets[colorSetName]
   const generalPath = new GeneralPath()
+
   generalPath.appendRectangle(Rect.from([0, 0.4, 1, 0.5]), false)
   generalPath.moveTo(0.4, 0.9)
   generalPath.quadTo(new Point(0.42, 0.967), new Point(0.38, 1))
@@ -362,6 +397,7 @@ function createComputerNodeStyle(colorSetName) {
     stroke: colorSet.stroke
   })
 }
+
 /**
  * Returns a GeneralPathNodeStyle instance that displays an airplane icon.
  * @param colorSetName The name of the color set to use for nodes.
@@ -369,6 +405,7 @@ function createComputerNodeStyle(colorSetName) {
 function createAirplaneNodeStyle(colorSetName) {
   const colorSet = colorSets[colorSetName]
   const generalPath = new GeneralPath()
+
   generalPath.moveTo(0.162, 0.662)
   generalPath.lineTo(0.434, 0.529)
   generalPath.lineTo(0.434, 0.397)
@@ -391,12 +428,14 @@ function createAirplaneNodeStyle(colorSetName) {
   generalPath.lineTo(0.397, 0.662)
   generalPath.lineTo(0.162, 0.706)
   generalPath.close()
+
   return new GeneralPathNodeStyle({
     path: generalPath,
     fill: colorSet.fill,
     stroke: colorSet.stroke
   })
 }
+
 /**
  * Creates the label style.
  */
@@ -407,4 +446,5 @@ function createLabelStyle() {
   style.textSize = 10
   return style
 }
+
 run().then(finishLoading)

@@ -60,9 +60,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-export default defineComponent({
-  name: 'DemoSidebar'
-})
+export default defineComponent({ name: 'DemoSidebar' })
 </script>
 
 <style scoped>

@@ -36,6 +36,7 @@
 
 #graphComponent {
   flex: 1;
+  --yfiles-theme-handle-offset: 0;
 }
 
 #timeline-component {

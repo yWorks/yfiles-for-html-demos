@@ -48,16 +48,9 @@ import 'svg2pdf.js'
  * Holds information about a custom font.
  * See the file `./load-custom-fonts.ts` for more details on loading custom font data.
  */
-export type CustomFontDescriptor = {
-  filename: string
-  id: string
-  style: string
-  data: string
-}
+export type CustomFontDescriptor = { filename: string; id: string; style: string; data: string }
 
-export type ClientExportResult = {
-  iFrame: HTMLIFrameElement
-}
+export type ClientExportResult = { iFrame: HTMLIFrameElement }
 
 /**
  * Exports the image on the client. This will open a dialog with a preview and the option to save the image as PDF.
@@ -133,8 +126,8 @@ export async function exportPdf(
   )
 
   // Dispose of the component and remove its references to the graph
-  exportComponent.cleanUp()
   exportComponent.graph = new Graph()
+  exportComponent.cleanUp()
 
   const size = getExportSize(paperSize, exporter)
   return convertSvgToPdf(svgElement as SVGElement, size, customFonts)

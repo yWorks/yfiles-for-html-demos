@@ -58,33 +58,42 @@ import {
 import { createDemoGroupStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent
+
 let partialNodesMapper
 let partialEdgesMapper
+
 let partialNodeStyle
 let partialGroupStyle
 let partialEdgeStyle
 let fixedNodeStyle
 let fixedGroupNodeStyle
 let fixedEdgeStyle
+
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
   // initialize default styles
   initializeGraph()
+
   // initialize interactive behavior
   initializeInputModes()
+
   // bind toolbar buttons to actions
   initializeUI()
+
   // load the first scenario
   await loadScenario()
 }
+
 /**
  * Runs a partial layout considering all selected options and partial/fixed nodes.
  */
 async function runLayout() {
   setUIDisabled(true)
+
   // configure layout
   const distance = Number.parseFloat(document.querySelector(`#node-distance`).value)
   const partialLayout = new PartialLayout({
@@ -97,16 +106,16 @@ async function runLayout() {
     allowMirroring: document.querySelector(`#mirroring`).checked,
     considerNodeAlignment: document.querySelector(`#snapping`).checked
   })
+
   // mark partial elements for the layout algorithm
   const partialLayoutData = new PartialLayoutData({
-    scope: {
-      nodes: (node) => !isFixed(node),
-      edges: (edge) => !isFixed(edge)
-    }
+    scope: { nodes: (node) => !isFixed(node), edges: (edge) => !isFixed(edge) }
   })
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   // run layout algorithm
   try {
     await graphComponent.applyLayoutAnimated(partialLayout, '0.5s', partialLayoutData)
@@ -114,6 +123,7 @@ async function runLayout() {
     setUIDisabled(false)
   }
 }
+
 /**
  * Retrieves the selected layout for partial components.
  */
@@ -122,20 +132,13 @@ function getSubgraphLayout() {
   const layout = document.querySelector(`#subgraph-layout`).value
   switch (layout) {
     case 'hierarchical': {
-      return new HierarchicalLayout({
-        minimumLayerDistance: distance,
-        nodeDistance: distance
-      })
+      return new HierarchicalLayout({ minimumLayerDistance: distance, nodeDistance: distance })
     }
     case 'orthogonal': {
-      return new OrthogonalLayout({
-        gridSpacing: distance
-      })
+      return new OrthogonalLayout({ gridSpacing: distance })
     }
     case 'organic': {
-      return new OrganicLayout({
-        defaultMinimumNodeDistance: distance
-      })
+      return new OrganicLayout({ defaultMinimumNodeDistance: distance })
     }
     case 'circular': {
       const circularLayout = new CircularLayout()
@@ -144,12 +147,10 @@ function getSubgraphLayout() {
       return circularLayout
     }
     default:
-      return new HierarchicalLayout({
-        minimumLayerDistance: distance,
-        nodeDistance: distance
-      })
+      return new HierarchicalLayout({ minimumLayerDistance: distance, nodeDistance: distance })
   }
 }
+
 /**
  * Retrieves the assignment strategy, either single nodes or components.
  */
@@ -164,6 +165,7 @@ function getComponentAssignmentStrategy() {
       return ComponentAssignmentStrategy.SINGLE
   }
 }
+
 /**
  * Retrieves the positioning strategy, either nodes are place close to the barycenter of their neighbors or their
  * initial location.
@@ -179,6 +181,7 @@ function getSubgraphPlacement() {
       return SubgraphPlacement.BARYCENTER
   }
 }
+
 /**
  * Retrieves the edge routing strategy for partial edges and edges connected to partial nodes.
  */
@@ -199,6 +202,7 @@ function getEdgeRoutingStyle() {
       return PartialLayoutRoutingStyle.AUTOMATIC
   }
 }
+
 /**
  * Retrieves the layout orientation for partial components.
  */
@@ -220,12 +224,14 @@ function getLayoutOrientation() {
       return PartialLayoutOrientation.RIGHT_TO_LEFT
   }
 }
+
 /**
  * Activates folding, sets the defaults for new graph elements and registers mappers
  */
 function initializeGraph() {
   const foldingManager = new FoldingManager()
   graphComponent.graph = foldingManager.createFoldingView().graph
+
   // initialize styles
   partialNodeStyle = createNodeStyle(true)
   partialGroupStyle = createGroupNodeStyle(true)
@@ -233,11 +239,14 @@ function initializeGraph() {
   fixedNodeStyle = createNodeStyle(false)
   fixedGroupNodeStyle = createGroupNodeStyle(false)
   fixedEdgeStyle = createEdgeStyle(false)
+
   const graph = graphComponent.graph
   graphComponent.navigationCommandsEnabled = true
+
   graph.nodeDefaults.size = new Size(60, 30)
   graph.nodeDefaults.style = partialNodeStyle
   graph.edgeDefaults.style = partialEdgeStyle
+
   graph.groupNodeDefaults.labels.layoutParameter =
     new GroupNodeLabelModel().createTabBackgroundParameter()
   graph.groupNodeDefaults.labels.style = new LabelStyle({
@@ -245,12 +254,14 @@ function initializeGraph() {
     textFill: 'white'
   })
   graph.groupNodeDefaults.style = partialGroupStyle
+
   // Create and register mappers that specify partial graph elements
   partialNodesMapper = new Mapper()
   partialNodesMapper.defaultValue = true
   partialEdgesMapper = new Mapper()
   partialEdgesMapper.defaultValue = true
 }
+
 /**
  * Creates a new style instance for nodes in this demo.
  * @param partial Whether the node is partial or fixed.
@@ -258,6 +269,7 @@ function initializeGraph() {
 function createNodeStyle(partial) {
   return createDemoNodeStyle(partial ? 'demo-orange' : 'demo-palette-58')
 }
+
 /**
  * Creates a new style instance for group nodes in this demo.
  * @param partial Whether the node is partial or fixed.
@@ -266,6 +278,7 @@ function createGroupNodeStyle(partial) {
   const palette = partial ? 'demo-palette-12' : 'demo-palette-58'
   return createDemoGroupStyle({ colorSetName: palette, foldingEnabled: true })
 }
+
 /**
  * Creates a new style instance for edges in this demo.
  * @param partial Whether the edge is partial or fixed.
@@ -277,13 +290,12 @@ function createEdgeStyle(partial) {
     targetArrow: `${edgeColor} small triangle`
   })
 }
+
 /**
  * Configures input modes to interact with the graph structure.
  */
 function initializeInputModes() {
-  const inputMode = new GraphEditorInputMode({
-    allowEditLabel: false
-  })
+  const inputMode = new GraphEditorInputMode({ allowEditLabel: false })
   inputMode.addEventListener('item-double-clicked', (evt) => {
     // a graph element was double-clicked => toggle its fixed/partial state
     setFixed(evt.item, !isFixed(evt.item))
@@ -312,6 +324,7 @@ function initializeInputModes() {
   })
   graphComponent.inputMode = inputMode
 }
+
 /**
  * Sets the given item as fixed or movable and changes its color to indicate its new state.
  */
@@ -325,6 +338,7 @@ function setFixed(item, fixed) {
     updateStyle(item, fixed)
   }
 }
+
 /**
  * Returns if a given item is considered fixed or shall be rearranged by the layout algorithm.
  * Note that an edge always gets rerouted if any of its end nodes may be moved.
@@ -338,6 +352,7 @@ function isFixed(item) {
   }
   return false
 }
+
 /**
  * Returns the master item for the given item.
  * Since folding is supported in this demo, partial/fixed states are stored for the master items to stay consistent
@@ -354,6 +369,7 @@ function getMasterItem(item) {
   }
   return null
 }
+
 /**
  * Updates the style of the given item when the partial/fixed state has changed.
  */
@@ -371,6 +387,7 @@ function updateStyle(item, fixed) {
     graph.setStyle(item, fixed ? fixedEdgeStyle : partialEdgeStyle)
   }
 }
+
 /**
  * Updates the partial/fixed state of all graph elements that are currently selected.
  */
@@ -383,6 +400,7 @@ function setSelectionFixed(fixed) {
     setFixed(edge, fixed)
   })
 }
+
 /**
  * Binds actions to the buttons in the toolbar.
  */
@@ -394,22 +412,27 @@ function initializeUI() {
     setSelectionFixed(false)
   })
   document.querySelector('#layout').addEventListener('click', runLayout)
+
   addNavigationButtons(document.querySelector('#select-sample')).addEventListener(
     'change',
     loadScenario
   )
   document.querySelector('#refresh').addEventListener('click', loadScenario)
 }
+
 /**
  * Loads one of four scenarios that come with a sample graph and a layout configuration.
  */
 async function loadScenario() {
   partialNodesMapper.clear()
   partialEdgesMapper.clear()
+
   const ioHandler = new GraphMLIOHandler()
   ioHandler.addInputMapper(INode, Boolean, PartialLayout.NODE_SCOPE_DATA_KEY.id, partialNodesMapper)
   ioHandler.addInputMapper(IEdge, Boolean, PartialLayout.EDGE_SCOPE_DATA_KEY.id, partialEdgesMapper)
+
   const sample = document.querySelector(`#select-sample`).value
+
   const path = `resources/${sample}.graphml`
   switch (sample) {
     default:
@@ -435,6 +458,7 @@ async function loadScenario() {
       setOptions('circular', 'connected', 'barycenter', 'automatic', 'none', 10, true, false)
       break
   }
+
   const graph = graphComponent.graph
   await ioHandler.readFromURL(graph, path)
   graph.nodes.forEach((node) => {
@@ -446,6 +470,7 @@ async function loadScenario() {
   })
   await graphComponent.fitGraphBounds()
 }
+
 /**
  * Update the options according to the current scenario.
  */
@@ -468,6 +493,7 @@ function setOptions(
   document.querySelector(`#mirroring`).value = allowMirroring.toString()
   document.querySelector(`#snapping`).value = nodeSnapping.toString()
 }
+
 /**
  * Enables/disables the buttons in the toolbar and the input mode. This is used for managing the toolbar during
  * layout calculation.
@@ -479,4 +505,5 @@ function setUIDisabled(disabled) {
   document.querySelector(`#refresh`).disabled = disabled
   document.querySelector(`#layout`).disabled = disabled
 }
+
 run().then(finishLoading)

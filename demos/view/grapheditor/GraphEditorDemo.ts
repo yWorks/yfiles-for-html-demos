@@ -52,9 +52,8 @@ import {
 
 import { DemoStyleOverviewRenderer, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { BrowserDetection, finishLoading } from '@yfiles/demo-resources/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
@@ -143,9 +142,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
 function createEditorMode(): GraphEditorInputMode {
   const mode = new GraphEditorInputMode({
     snapContext: createGraphSnapContext(),
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext({
-      enabled: false
-    })
+    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext({ enabled: false })
   })
   mode.editLabelInputMode.textEditorInputMode.textBoxPlacementPolicy =
     TextBoxPlacementPolicy.MOVE_TEXT_BOX
@@ -173,9 +170,7 @@ function createEditorMode(): GraphEditorInputMode {
  * Creates a configured {@link GraphSnapContext} for this demo.
  */
 function createGraphSnapContext(): GraphSnapContext {
-  return new GraphSnapContext({
-    enabled: false
-  })
+  return new GraphSnapContext({ enabled: false })
 }
 
 /**

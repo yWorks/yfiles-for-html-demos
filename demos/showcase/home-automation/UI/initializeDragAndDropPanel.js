@@ -30,9 +30,12 @@ import { SimpleNode } from '@yfiles/yfiles'
 import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
 import { FlowNodeStyle } from '../FlowNode/FlowNodeStyle'
 import { createFlowNode, flowNodeVariants } from '../FlowNode/FlowNode'
+
 export function initializeDragAndDropPanel() {
   const panel = new DragAndDropPanel(document.getElementById('drag-and-drop-panel'))
+
   const palette = flowNodeVariants.map((nodeVariant) => createFlowNode(nodeVariant))
+
   panel.maxItemWidth = FlowNodeStyle.defaultWidthWithPorts
   panel.populatePanel(palette)
 }

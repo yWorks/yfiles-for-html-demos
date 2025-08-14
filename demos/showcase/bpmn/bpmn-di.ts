@@ -109,11 +109,7 @@ import {
   TaskType
 } from './bpmn-view'
 
-type Diagram = {
-  name: string
-  nodeCount: number
-  edgeCount: number
-}
+type Diagram = { name: string; nodeCount: number; edgeCount: number }
 type SelectedDiagramCallback = (selected: IEnumerable<Diagram>) => Promise<string>
 
 /**
@@ -304,9 +300,7 @@ export class BpmnDiParser {
    * Initialize the genericLabelModel Using a model with 32 positions (better than ExteriorNodeLabelModel which only has 8) to enable more options for customization in the user interface.
    */
   private initGenericLabelModel(): void {
-    let exteriorNodeLabelModel = new ExteriorNodeLabelModel({
-      margins: 3
-    })
+    let exteriorNodeLabelModel = new ExteriorNodeLabelModel({ margins: 3 })
     this.compositeLabelModel = new CompositeLabelModel()
     this.compositeLabelModel.addParameter(
       exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.BOTTOM)
@@ -333,9 +327,7 @@ export class BpmnDiParser {
       exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.RIGHT)
     )
     // Big Insets
-    exteriorNodeLabelModel = new ExteriorNodeLabelModel({
-      margins: 18
-    })
+    exteriorNodeLabelModel = new ExteriorNodeLabelModel({ margins: 18 })
     this.compositeLabelModel.addParameter(
       exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.BOTTOM)
     )
@@ -1719,9 +1711,7 @@ export class BpmnDiParser {
    * Sets label style for tasks (Centered)
    */
   private setInternalLabelStyle(label: ILabel): void {
-    const model = new StretchNodeLabelModel({
-      padding: 3
-    })
+    const model = new StretchNodeLabelModel({ padding: 3 })
     this.masterGraph.setLabelLayoutParameter(label, model.createParameter('center'))
     const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
@@ -1770,9 +1760,7 @@ export class BpmnDiParser {
    * Sets label style for SubProcesses (Upper left corner)
    */
   private setSubProcessLabelStyle(label: ILabel): void {
-    const model = new StretchNodeLabelModel({
-      padding: 3
-    })
+    const model = new StretchNodeLabelModel({ padding: 3 })
     this.masterGraph.setLabelLayoutParameter(label, model.createParameter('top'))
     const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.LEFT
@@ -1784,9 +1772,7 @@ export class BpmnDiParser {
    * Sets label style for Groups (Upper boundary)
    */
   private setGroupLabelStyle(label: ILabel): void {
-    const model = new StretchNodeLabelModel({
-      padding: 3
-    })
+    const model = new StretchNodeLabelModel({ padding: 3 })
     this.masterGraph.setLabelLayoutParameter(label, model.createParameter('top'))
     const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
@@ -3759,11 +3745,7 @@ export class MultiLabelFolderNodeConverter extends FolderNodeConverter {
  * @readonly
  * @enum {number}
  */
-export const MessageVisibleKind = {
-  UNSPECIFIED: 0,
-  INITIATING: 1,
-  NON_INITIATING: 2
-}
+export const MessageVisibleKind = { UNSPECIFIED: 0, INITIATING: 1, NON_INITIATING: 2 }
 
 /**
  * Enum for the different participant bands

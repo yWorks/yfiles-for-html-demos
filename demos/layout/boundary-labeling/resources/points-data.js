@@ -31,10 +31,7 @@ export const pointsData = [
     layout: { x: 160, y: 20 },
     label: 'Water, dissolved salts, magnesium, calcium, sodium, potassium, and other compounds.'
   },
-  {
-    layout: { x: 100, y: 37.375 },
-    label: '<span style="font-weight: bold">Ocean</span>'
-  },
+  { layout: { x: 100, y: 37.375 }, label: '<span style="font-weight: bold">Ocean</span>' },
   {
     layout: { x: 245, y: 29 },
     label: '<span style="font-weight: bold">Continental Crust</span> (32 km)'
@@ -69,10 +66,7 @@ export const pointsData = [
     label:
       '<span style="font-weight: bold">Partially Molten Asthenosphere</span> <span style="text-align: center">(100 km)</span>'
   },
-  {
-    layout: { x: 236.875, y: 205.625 },
-    label: 'Solid rock and partially molten rock.'
-  },
+  { layout: { x: 236.875, y: 205.625 }, label: 'Solid rock and partially molten rock.' },
   {
     layout: { x: 130, y: 225.5 },
     label: '<span style="font-weight: bold">Solid Asthenosphere</span> (200 km)'
@@ -94,18 +88,12 @@ export const pointsData = [
     layout: { x: 130, y: 315.5 },
     label: '<span style="font-weight: bold">Lower Mantle</span> (2240 km)'
   },
-  {
-    layout: { x: 205, y: 342 },
-    label: 'Liquid iron and nickel, oxygen, silicon, and sulfur.'
-  },
+  { layout: { x: 205, y: 342 }, label: 'Liquid iron and nickel, oxygen, silicon, and sulfur.' },
   {
     layout: { x: 130, y: 371.5 },
     label: '<span style="font-weight: bold">Outer Molten Core</span> (2200 km)'
   },
-  {
-    layout: { x: 192.875, y: 399 },
-    label: 'Iron, nickel, sulfur, oxygen, and silicon.'
-  },
+  { layout: { x: 192.875, y: 399 }, label: 'Iron, nickel, sulfur, oxygen, and silicon.' },
   {
     layout: { x: 130, y: 415.5 },
     label: '<span style="font-weight: bold">Inner Solid Core</span> (1220 km)'

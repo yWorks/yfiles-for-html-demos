@@ -155,9 +155,7 @@ function initializeInputModes(): void {
  */
 function addExportRectInputModes(inputMode: GraphInputMode): void {
   // create a mode that deals with the handles
-  const exportHandleInputMode = new HandleInputMode({
-    priority: 1
-  })
+  const exportHandleInputMode = new HandleInputMode({ priority: 1 })
   // add it to the graph editor mode
   inputMode.add(exportHandleInputMode)
 

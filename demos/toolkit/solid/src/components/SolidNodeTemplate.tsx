@@ -30,11 +30,7 @@ import type { SolidComponentNodeStyleProps } from '../utils/SolidComponentSvgNod
 import { SvgText } from './SvgTextComponent'
 import { Show } from 'solid-js'
 
-export type SolidNodeTemplateProps = {
-  text: string
-  detail: 'low' | 'high'
-  insets?: number
-}
+export type SolidNodeTemplateProps = { text: string; detail: 'low' | 'high'; insets?: number }
 
 export function SolidNodeTemplate(props: SolidComponentNodeStyleProps<SolidNodeTemplateProps>) {
   const insets = props.tag.insets ?? 3

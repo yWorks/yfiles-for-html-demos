@@ -37,11 +37,13 @@ import {
   PortCandidateProviderBase,
   PortCandidateValidity
 } from '@yfiles/yfiles'
+
 /**
  * This port candidate provider does not allow edges to start/end at a particular node.
  */
 export class RedPortCandidateProvider extends PortCandidateProviderBase {
   node
+
   /**
    * Creates a new instance of {@link BluePortCandidateProvider}.
    * @param node The given node.
@@ -50,6 +52,7 @@ export class RedPortCandidateProvider extends PortCandidateProviderBase {
     super()
     this.node = node
   }
+
   /**
    * Returns a list with a single invalid port candidate. This candidate is
    * located in the center of the node to display the invalid port

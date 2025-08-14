@@ -34,6 +34,7 @@ import {
   ImageNodeStyle,
   LabelStyle
 } from '@yfiles/yfiles'
+
 /**
  * Initializes styles and label positions for all graph elements.
  */
@@ -43,9 +44,11 @@ export function initializeDefaultMapStyles(graph) {
   graph.nodeDefaults.labels.style = createLabelStyle()
   graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.BOTTOM
   graph.nodeDefaults.ports.locationParameter = FreeNodePortLocationModel.BOTTOM
+
   graph.edgeDefaults.style = createMapEdgeStyle()
   graph.edgeDefaults.shareStyleInstance = false
 }
+
 /**
  * Creates a default style for airports.
  */
@@ -61,20 +64,17 @@ function createMapNodeStyle() {
   outline.cubicTo(0.82, 0.614, 0.882, 0.502, 0.882, 0.375)
   outline.cubicTo(0.882, 0.164, 0.711, 0, 0.5, 0)
   outline.close()
-  return new ImageNodeStyle({
-    href: 'resources/airport-drop.svg',
-    normalizedOutline: outline
-  })
+
+  return new ImageNodeStyle({ href: 'resources/airport-drop.svg', normalizedOutline: outline })
 }
+
 /**
  * Creates a default style for connections between airports.
  */
 function createMapEdgeStyle() {
-  return new ArcEdgeStyle({
-    stroke: '5px dashed #242265',
-    height: 100
-  })
+  return new ArcEdgeStyle({ stroke: '5px dashed #242265', height: 100 })
 }
+
 /**
  * Creates a default style for the labels at the airports.
  */
@@ -86,6 +86,7 @@ function createLabelStyle() {
     padding: [3, 6]
   })
 }
+
 /**
  * Returns the height of the edge arc considering the length of the edge.
  * This ensures that long edges still have a visible arc.

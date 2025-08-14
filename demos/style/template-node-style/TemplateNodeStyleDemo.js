@@ -26,9 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { basicSetup, EditorView } from 'codemirror'
-import { javascript } from '@codemirror/lang-javascript'
-import { lintGutter } from '@codemirror/lint'
 import {
   Arrow,
   ArrowType,
@@ -42,31 +39,43 @@ import {
   Rect,
   Size
 } from '@yfiles/yfiles'
+
 import { StringTemplateNodeStyle } from '@yfiles/demo-utils/template-styles/StringTemplateNodeStyle'
+
 import SampleData from './resources/SampleData'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 import { registerTemplateStyleSerialization } from '@yfiles/demo-utils/template-styles/MarkupExtensions'
-import { StateEffect, StateField } from '@codemirror/state'
-import { xml } from '@codemirror/lang-xml'
-import { getXmlLinter, getJsonLinter } from '@yfiles/demo-resources/codeMirrorLinters'
-const xmlLinter = getXmlLinter()
-const jsonLinter = getJsonLinter()
+import {
+  createCodemirrorEditor,
+  EditorView,
+  StateEffect,
+  StateField
+} from '@yfiles/demo-resources/codemirror-editor'
+
 let templateEditor
 let setTemplateEditorEditable
+
 let tagEditor
 let setTagEditorEditable
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
+
   initializeEditors(graphComponent)
   initializeStyles(graphComponent.graph)
   initializeConverters()
+
   resetSampleGraph(graphComponent)
+
   initializeUI(graphComponent)
 }
+
 /**
  * Initializes the template and tag editors and registers selection listeners that update the
  * editors on selection changes.
@@ -84,17 +93,12 @@ function initializeEditors(graphComponent) {
       return value
     }
   })
-  templateEditor = new EditorView({
-    parent: document.querySelector('#templateEditorContainer'),
-    extensions: [
-      basicSetup,
-      xml(),
-      lintGutter(),
-      xmlLinter,
-      templateEditorEditable,
-      EditorView.editable.from(templateEditorEditable)
-    ]
-  })
+  templateEditor = createCodemirrorEditor(
+    'xml',
+    document.querySelector('#templateEditorContainer'),
+    [templateEditorEditable, EditorView.editable.from(templateEditorEditable)]
+  )
+
   setTagEditorEditable = StateEffect.define()
   const tagEditorEditable = StateField.define({
     create: () => true,
@@ -107,20 +111,16 @@ function initializeEditors(graphComponent) {
       return value
     }
   })
-  tagEditor = new EditorView({
-    parent: document.querySelector('#tagEditorContainer'),
-    extensions: [
-      basicSetup,
-      javascript(),
-      jsonLinter,
-      lintGutter(),
-      tagEditorEditable,
-      EditorView.editable.from(tagEditorEditable)
-    ]
-  })
+
+  tagEditor = createCodemirrorEditor('json', document.querySelector('#tagEditorContainer'), [
+    tagEditorEditable,
+    EditorView.editable.from(tagEditorEditable)
+  ])
+
   // disable standard selection and focus visualization
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
+
   graphComponent.selection.addEventListener('item-added', (_, graphComponent) => {
     const selectedNode = graphComponent.nodes.at(0)
     if (selectedNode) {
@@ -143,6 +143,7 @@ function initializeEditors(graphComponent) {
           }
         })
       }
+
       tagEditor.dispatch({
         effects: setTagEditorEditable.of(true),
         changes: {
@@ -155,7 +156,8 @@ function initializeEditors(graphComponent) {
       document.querySelector(`#apply-tag-button`).disabled = false
     }
   })
-  graphComponent.selection.addEventListener('item-removed', (_, graphComponent) => {
+
+  graphComponent.selection.addEventListener('item-removed', () => {
     templateEditor.dispatch({
       effects: setTemplateEditorEditable.of(false),
       changes: {
@@ -166,16 +168,13 @@ function initializeEditors(graphComponent) {
     })
     tagEditor.dispatch({
       effects: setTagEditorEditable.of(false),
-      changes: {
-        from: 0,
-        to: tagEditor.state.doc.length,
-        insert: 'Select a node to edit its tag.'
-      }
+      changes: { from: 0, to: tagEditor.state.doc.length, insert: 'Select a node to edit its tag.' }
     })
     document.querySelector(`#apply-template-button`).disabled = true
     document.querySelector(`#apply-tag-button`).disabled = true
   })
 }
+
 /**
  * Initializes the default styles for the graph. By default org-chart nodes are used.
  */
@@ -211,24 +210,23 @@ function initializeStyles(graph) {
 </g>`)
   graph.nodeDefaults.size = new Size(290, 100)
   graph.nodeDefaults.shareStyleInstance = false
+
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '2px rgb(170, 170, 170)',
     targetArrow: new Arrow(ArrowType.NONE)
   })
 }
+
 /**
  * Initializes the converters for the bindings of the template node styles.
  */
 function initializeConverters() {
-  const colors = {
-    present: '#76b041',
-    busy: '#ab2346',
-    travel: '#a367dc',
-    unavailable: '#c1c1c1'
-  }
+  const colors = { present: '#76b041', busy: '#ab2346', travel: '#a367dc', unavailable: '#c1c1c1' }
+
   StringTemplateNodeStyle.CONVERTERS.demoConverters = {
     // converter function for the background color of nodes
     statusColorConverter: (value) => colors[value] || 'white',
+
     // converter function for the border color nodes
     selectedStrokeConverter: (value) => {
       if (typeof value === 'boolean') {
@@ -236,6 +234,7 @@ function initializeConverters() {
       }
       return '#FFF'
     },
+
     // converter function that adds a hash to a given string and - if present - appends the parameter to it
     addHashConverter: (value, parameter) => {
       if (typeof value === 'string') {
@@ -246,6 +245,7 @@ function initializeConverters() {
       }
       return value
     },
+
     // converter function that adds the numbers given as value and parameter
     addConverter: (value, parameter) => {
       if (typeof parameter === 'string') {
@@ -255,6 +255,7 @@ function initializeConverters() {
     }
   }
 }
+
 /**
  * Creates a sample graph for this demo.
  */
@@ -273,8 +274,10 @@ function createSampleGraph(graph) {
     targetId: 'tgt',
     bends: 'bends'
   })
+
   builder.buildGraph()
 }
+
 /**
  * Resets the graph in the given graph view to the demo's sample graph, centers the graph in
  * the visible area, and selects the graph's last node.
@@ -282,10 +285,14 @@ function createSampleGraph(graph) {
 function resetSampleGraph(graphComponent) {
   const graph = graphComponent.graph
   graph.clear()
+
   createSampleGraph(graph)
+
   graphComponent.selection.add(graph.nodes.last())
+
   graphComponent.fitGraphBounds(30)
 }
+
 /**
  * Replaces the styles of the currently selected nodes with new instances that use the template
  * from the template editor.
@@ -296,6 +303,7 @@ function applyTemplate(graphComponent) {
     // if there are no selected nodes, there is no need to do anything
     return
   }
+
   const templateText = templateEditor.state.doc.toString()
   try {
     const style = new StringTemplateNodeStyle(templateText)
@@ -303,9 +311,11 @@ function applyTemplate(graphComponent) {
     style.renderer
       .getVisualCreator(selectedNodes.first(), style)
       .createVisual(graphComponent.createRenderContext())
+
     for (const node of selectedNodes) {
       graphComponent.graph.setStyle(node, style)
     }
+
     document.querySelector(`#template-text-area-error`).classList.remove('open-error')
   } catch (err) {
     const errorArea = document.querySelector(`#template-text-area-error`)
@@ -314,6 +324,7 @@ function applyTemplate(graphComponent) {
     errorArea.classList.add('open-error')
   }
 }
+
 /**
  * Replaces the tags of the currently selected nodes with new instances that correspond to the
  * data in the tag editor.
@@ -324,34 +335,42 @@ function applyTag(graphComponent) {
     // if there are no selected nodes, there is no need to do anything
     return
   }
+
   const tagText = tagEditor.state.doc.toString()
   try {
     const tag = JSON.parse(tagText)
+
     for (const node of selectedNodes) {
       node.tag = tag
     }
+
     document.querySelector(`#tag-text-area-error`).classList.remove('open-error')
   } catch (err) {
     const errorArea = document.querySelector(`#tag-text-area-error`)
     errorArea.setAttribute('title', err.toString())
     errorArea.classList.add('open-error')
   }
+
   // Unlike replacing a node's style, replacing a node's tag does not automatically repaint
   // the graph view. Thus a repaint needs to be triggered manually here.
   graphComponent.invalidate()
 }
+
 /**
  * Binds actions to the demo's UI controls.
  */
 function initializeUI(graphComponent) {
   const graphMLIOHandler = new GraphMLIOHandler()
   registerTemplateStyleSerialization(graphMLIOHandler)
+
   document
     .querySelector('#apply-template-button')
     .addEventListener('click', () => applyTemplate(graphComponent))
+
   document
     .querySelector('#apply-tag-button')
     .addEventListener('click', () => applyTag(graphComponent))
+
   document
     .querySelector('#reload')
     .addEventListener('click', () => resetSampleGraph(graphComponent))
@@ -362,4 +381,5 @@ function initializeUI(graphComponent) {
     await saveGraphML(graphComponent, 'stringTemplateNodeStyle.graphml', graphMLIOHandler)
   })
 }
+
 run().then(finishLoading)

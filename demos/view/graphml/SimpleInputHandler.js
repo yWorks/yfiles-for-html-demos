@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { IGraph, IModelItem, InputHandlerBase, IParseContext, KeyType } from '@yfiles/yfiles'
+
 /**
  * An input handler that reads arbitrary data.
  * In the case of complex types, the text content of the XML node is stored.
@@ -34,11 +35,13 @@ import { IGraph, IModelItem, InputHandlerBase, IParseContext, KeyType } from '@y
 export class SimpleInputHandler extends InputHandlerBase {
   property
   panel
+
   constructor(property, panel) {
     super(Object, Object)
     this.property = property
     this.panel = panel
   }
+
   /**
    * Parses the given xml node.
    *
@@ -69,6 +72,7 @@ export class SimpleInputHandler extends InputHandlerBase {
         return textValue
     }
   }
+
   /**
    * Sets the parsed value.
    * @see Overrides {@link InputHandlerBase.setValue}
@@ -82,6 +86,7 @@ export class SimpleInputHandler extends InputHandlerBase {
       this.panel.setGraphProperty(this.property, data)
     }
   }
+
   /**
    * Initializes this instance from the GraphML key definition.
    * @see overrides {@link InputHandlerBase.initializeFromKeyDefinition}

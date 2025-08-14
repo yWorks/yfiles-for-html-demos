@@ -1,110 +1,25 @@
 {
   "nodeList": [
-    {
-      "id": 0,
-      "tag": "switch",
-      "label": "Root"
-    },
-    {
-      "id": 1,
-      "tag": "Switch",
-      "label": "Switch"
-    },
-    {
-      "id": 2,
-      "tag": "Switch",
-      "label": "Switch"
-    },
-    {
-      "id": 3,
-      "tag": "Scanner",
-      "label": "Scanner"
-    },
-    {
-      "id": 4,
-      "tag": "Printer",
-      "label": "Printer"
-    },
-    {
-      "id": 5,
-      "tag": "Workstation",
-      "label": "Workstation"
-    },
-    {
-      "id": 6,
-      "tag": "Printer",
-      "label": "Printer"
-    },
-    {
-      "id": 7,
-      "tag": "Scanner",
-      "label": "Scanner"
-    },
-    {
-      "id": 8,
-      "tag": "Workstation",
-      "label": "Workstation"
-    },
-    {
-      "id": 9,
-      "tag": "Workstation",
-      "label": "Workstation"
-    }
+    { "id": 0, "tag": "switch", "label": "Root" },
+    { "id": 1, "tag": "Switch", "label": "Switch" },
+    { "id": 2, "tag": "Switch", "label": "Switch" },
+    { "id": 3, "tag": "Scanner", "label": "Scanner" },
+    { "id": 4, "tag": "Printer", "label": "Printer" },
+    { "id": 5, "tag": "Workstation", "label": "Workstation" },
+    { "id": 6, "tag": "Printer", "label": "Printer" },
+    { "id": 7, "tag": "Scanner", "label": "Scanner" },
+    { "id": 8, "tag": "Workstation", "label": "Workstation" },
+    { "id": 9, "tag": "Workstation", "label": "Workstation" }
   ],
   "edgeList": [
-    {
-      "id": 0,
-      "source": 0,
-      "target": 1,
-      "tag": "TRAFFIC_VERY_HIGH"
-    },
-    {
-      "id": 1,
-      "source": 0,
-      "target": 2,
-      "tag": "TRAFFIC_HIGH"
-    },
-    {
-      "id": 2,
-      "source": 1,
-      "target": 3,
-      "tag": "TRAFFIC_HIGH"
-    },
-    {
-      "id": 3,
-      "source": 1,
-      "target": 4,
-      "tag": "TRAFFIC_NORMAL"
-    },
-    {
-      "id": 4,
-      "source": 1,
-      "target": 5,
-      "tag": "TRAFFIC_HIGH"
-    },
-    {
-      "id": 5,
-      "source": 2,
-      "target": 6,
-      "tag": "TRAFFIC_LOW"
-    },
-    {
-      "id": 6,
-      "source": 2,
-      "target": 7,
-      "tag": "TRAFFIC_LOW"
-    },
-    {
-      "id": 7,
-      "source": 2,
-      "target": 8,
-      "tag": "TRAFFIC_NORMAL"
-    },
-    {
-      "id": 8,
-      "source": 2,
-      "target": 9,
-      "tag": "TRAFFIC_LOW"
-    }
+    { "id": 0, "source": 0, "target": 1, "tag": "TRAFFIC_VERY_HIGH" },
+    { "id": 1, "source": 0, "target": 2, "tag": "TRAFFIC_HIGH" },
+    { "id": 2, "source": 1, "target": 3, "tag": "TRAFFIC_HIGH" },
+    { "id": 3, "source": 1, "target": 4, "tag": "TRAFFIC_NORMAL" },
+    { "id": 4, "source": 1, "target": 5, "tag": "TRAFFIC_HIGH" },
+    { "id": 5, "source": 2, "target": 6, "tag": "TRAFFIC_LOW" },
+    { "id": 6, "source": 2, "target": 7, "tag": "TRAFFIC_LOW" },
+    { "id": 7, "source": 2, "target": 8, "tag": "TRAFFIC_NORMAL" },
+    { "id": 8, "source": 2, "target": 9, "tag": "TRAFFIC_LOW" }
   ]
 }

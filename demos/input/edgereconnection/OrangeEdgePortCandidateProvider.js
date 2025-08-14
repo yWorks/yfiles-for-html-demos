@@ -38,6 +38,7 @@ import {
   List,
   PortCandidate
 } from '@yfiles/yfiles'
+
 /**
  * An {@link IEdgeReconnectionPortCandidateProvider} that allows moving ports to
  * any other orange node, except for the opposite port's node.
@@ -46,6 +47,7 @@ export class OrangeEdgePortCandidateProvider extends BaseClass(
   IEdgeReconnectionPortCandidateProvider
 ) {
   edge
+
   /**
    * Creates a new instance of {@link OrangeEdgePortCandidateProvider}.
    * @param edge The given edge
@@ -54,6 +56,7 @@ export class OrangeEdgePortCandidateProvider extends BaseClass(
     super()
     this.edge = edge
   }
+
   /**
    * Returns candidates for all ports at orange nodes in the graph, except
    * for the current target node to avoid the creation of self-loops.
@@ -64,6 +67,7 @@ export class OrangeEdgePortCandidateProvider extends BaseClass(
     const result = new List()
     // add the current one as the default
     result.add(new PortCandidate(this.edge.sourcePort))
+
     const graph = context.graph
     if (graph === null) {
       return result
@@ -81,6 +85,7 @@ export class OrangeEdgePortCandidateProvider extends BaseClass(
     })
     return result
   }
+
   /**
    * Returns candidates for all ports at orange nodes in the graph, except
    * for the current source node to avoid the creation of self-loops.
@@ -91,6 +96,7 @@ export class OrangeEdgePortCandidateProvider extends BaseClass(
     const result = new List()
     // add the current one as the default
     result.add(new PortCandidate(this.edge.targetPort))
+
     const graph = context.graph
     if (graph === null) {
       return result

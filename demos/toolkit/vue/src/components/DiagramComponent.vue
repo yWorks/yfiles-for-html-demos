@@ -36,10 +36,7 @@ License.value = licenseData
 
 export default defineComponent({
   name: 'DiagramComponent',
-  components: {
-    DemoToolbar,
-    ContextMenu
-  },
+  components: { DemoToolbar, ContextMenu },
   setup() {
     const graphComponentProvider = inject('GraphComponentProvider') as {
       getGraphComponent: () => GraphComponent
@@ -98,8 +95,8 @@ export default defineComponent({
         await nextTick()
       })
       // Dispose of the component and remove its references to the graph
-      exportComponent.cleanUp()
       exportComponent.graph = new Graph()
+      exportComponent.cleanUp()
 
       downloadFile(SvgExport.exportSvgString(svg), 'graph.svg', 'image/svg+xml')
     }

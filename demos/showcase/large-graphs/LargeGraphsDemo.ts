@@ -122,9 +122,7 @@ async function loadGraph(graphComponent: GraphComponent, config: DemoConfigurati
  * Configures the interaction options with the graph
  */
 function configureInteraction(graphComponent: GraphComponent) {
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowClipboardOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode({ allowClipboardOperations: true })
 
   // Disable moving of individual edge segments
   graphComponent.graph.decorator.edges.positionHandler.hide()

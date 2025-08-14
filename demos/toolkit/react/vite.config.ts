@@ -45,8 +45,6 @@ export default defineConfig(({ mode }) => {
           })
         : undefined
     ],
-    resolve: {
-      preserveSymlinks: true
-    }
+    resolve: { preserveSymlinks: true }
   }
 })

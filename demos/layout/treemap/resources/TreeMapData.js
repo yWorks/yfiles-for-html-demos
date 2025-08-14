@@ -1839,6 +1839,7 @@ export default {
       size: 55304312
     }
   ],
+
   nodesSource: [
     {
       id: 'yFiles-for-HTML/README.html',
@@ -4790,8 +4791,8 @@ export default {
       color: 'rgb(0, 147, 157)'
     },
     {
-      id: 'yFiles-for-HTML/demos/layout/layoutstyles/HierarchicLayoutConfig.js',
-      label: 'HierarchicLayoutConfig.js\n(78.68kb)',
+      id: 'yFiles-for-HTML/demos/layout/layoutstyles/HierarchicalLayoutConfig.js',
+      label: 'HierarchicalLayoutConfig.js\n(78.68kb)',
       groupRef: 'yFiles-for-HTML/demos/layout/layoutstyles',
       size: '78682',
       color: 'rgb(0, 147, 157)'

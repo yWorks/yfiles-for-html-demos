@@ -37,6 +37,7 @@ import {
   PortCandidateProviderBase,
   PortCandidateValidity
 } from '@yfiles/yfiles'
+
 /**
  * This port candidate provider provides port candidates for the
  * ports of a node. If a port already has a connected edge, its
@@ -44,6 +45,7 @@ import {
  */
 export class BluePortCandidateProvider extends PortCandidateProviderBase {
   node
+
   /**
    * Creates a new instance of {@link BluePortCandidateProvider}.
    * @param node The given node.
@@ -52,6 +54,7 @@ export class BluePortCandidateProvider extends PortCandidateProviderBase {
     super()
     this.node = node
   }
+
   /**
    * Returns a list that contains a port candidate for each of the node's
    * ports. Each candidate has the same location as the port. If a port
@@ -65,6 +68,7 @@ export class BluePortCandidateProvider extends PortCandidateProviderBase {
   getPortCandidates(context) {
     const candidates = new List()
     const graph = context.graph
+
     // Create the candidate for each port
     if (graph) {
       this.node.ports.forEach((port) => {
@@ -74,12 +78,14 @@ export class BluePortCandidateProvider extends PortCandidateProviderBase {
         candidates.add(portCandidate)
       })
     }
+
     // If no candidates have been created so far, create a single invalid candidate as fallback
     if (candidates.size === 0) {
       const item = new PortCandidate(this.node, FreeNodePortLocationModel.CENTER)
       item.validity = PortCandidateValidity.INVALID
       candidates.add(item)
     }
+
     return candidates
   }
 }

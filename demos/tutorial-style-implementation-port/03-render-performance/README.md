@@ -25,9 +25,7 @@ As a first step, we modify the [createVisual](https://docs.yworks.com/yfileshtml
 
 ```
 // the values we use to render the graphics
-type Cache = {
-  size: number
-}
+type Cache = { size: number }
 
 // the type of visual we create and update in CustomPortStyle
 type CustomPortStyleVisual = TaggedSvgVisual<SVGEllipseElement, Cache>

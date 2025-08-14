@@ -18,20 +18,8 @@
     }
   ],
   "edgeList": [
-    {
-      "id": 0,
-      "source": 0,
-      "target": 1
-    },
-    {
-      "id": 1,
-      "source": 0,
-      "target": 2
-    },
-    {
-      "id": 2,
-      "source": 0,
-      "target": 3
-    }
+    { "id": 0, "source": 0, "target": 1 },
+    { "id": 1, "source": 0, "target": 2 },
+    { "id": 2, "source": 0, "target": 3 }
   ]
 }

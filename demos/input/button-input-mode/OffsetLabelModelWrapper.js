@@ -39,6 +39,7 @@ import {
   SimpleLabel,
   Size
 } from '@yfiles/yfiles'
+
 /**
  * An {@see ILabelModel} that moves the layout of a label provided by a wrapped label model
  * by a fixed offset.
@@ -53,6 +54,7 @@ import {
  */
 export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
   static INSTANCE = new OffsetLabelModelWrapper()
+
   createDefaultParameter() {
     return new OffsetLabelModelWrapperParameter(
       this,
@@ -63,6 +65,7 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
       new Point(0, 1)
     )
   }
+
   /**
    * Creates a parameter that describes a label layout provided by the wrapped layout
    * parameter moved by the offset.
@@ -92,10 +95,12 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
       labelRatio
     )
   }
+
   getContext(label) {
     const offsetParameter = label.layoutParameter
     return offsetParameter.wrappedParameter.model.getContext(label)
   }
+
   getGeometry(label, layoutParameter) {
     const offsetParameter = layoutParameter
     // temporarily set the wrappedSize to calculate the wrappedLayout
@@ -109,6 +114,7 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
     if (!offsetParameter.wrappedSize.isEmpty && label instanceof SimpleLabel) {
       label.preferredSize = labelSize
     }
+
     // calculate dx and dy considering the reference points and the offset but ignoring the rotation
     const unrotatedDx =
       offsetParameter.wrappedRatio.x * wrappedLayout.width +
@@ -118,9 +124,11 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
       -(1 - offsetParameter.wrappedRatio.y) * wrappedLayout.height +
       offsetParameter.offset.y +
       (1 - offsetParameter.labelRatio.y) * labelSize.height
+
     // consider the rotation; note that unrotatedDy is negated as the default upY is negative
     const dX = -unrotatedDx * wrappedLayout.upY - unrotatedDy * wrappedLayout.upX
     const dY = -unrotatedDy * wrappedLayout.upY + unrotatedDx * wrappedLayout.upX
+
     // use the anchor of wrappedLayout moved by dx/dy, the original labelSize and the common up vector
     return new OrientedRectangle(
       wrappedLayout.anchorX + dX,
@@ -131,11 +139,13 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
       wrappedLayout.upY
     )
   }
+
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return null
   }
 }
+
 class OffsetLabelModelWrapperParameter extends BaseClass(ILabelModelParameter) {
   _model
   wrappedRatio
@@ -143,6 +153,7 @@ class OffsetLabelModelWrapperParameter extends BaseClass(ILabelModelParameter) {
   wrappedParameter
   offset
   wrappedSize
+
   constructor(model, wrappedParameter, offset, wrappedSize, wrappedRatio, labelRatio) {
     super()
     this.wrappedRatio = wrappedRatio
@@ -152,9 +163,11 @@ class OffsetLabelModelWrapperParameter extends BaseClass(ILabelModelParameter) {
     this.offset = offset
     this.wrappedSize = wrappedSize
   }
+
   clone() {
     return this
   }
+
   get model() {
     return this._model
   }

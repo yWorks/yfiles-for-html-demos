@@ -26,8 +26,4 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-module.exports = {
-  preset: 'jest-puppeteer',
-  testRegex: './*\\.test\\.js$',
-  testTimeout: 30000
-}
+module.exports = { preset: 'jest-puppeteer', testRegex: './*\\.test\\.js$', testTimeout: 30000 }

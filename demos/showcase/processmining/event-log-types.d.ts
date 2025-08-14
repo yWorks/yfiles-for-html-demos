@@ -51,3 +51,7 @@ export type Event = {
   /** A cost factor assigned to this event. */
   cost?: number
 }
+
+export type CaseList = Case[]
+
+export type Case = { caseId: number; data: any }

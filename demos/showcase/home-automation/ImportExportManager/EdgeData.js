@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { IEdge, IGraph, INode, IPort, Point } from '@yfiles/yfiles'
+
 /**
  * A simple, minimal data structure that can be used for storing a FlowEdge in JSON
  * and then re-create it in the graph.
@@ -35,6 +36,7 @@ export class EdgeData {
   bends
   sourceNodeIndex
   targetNodeIndex
+
   /**
    * Creates EdgeData from an actual edge
    */
@@ -42,6 +44,7 @@ export class EdgeData {
     const bends = edge.bends.toArray().map((bend) => [bend.location.x, bend.location.y])
     return new EdgeData({ bends, sourceNodeIndex, targetNodeIndex })
   }
+
   /**
    * Converts an arbitrary piece of data to EdgeData after validation.
    */
@@ -49,6 +52,7 @@ export class EdgeData {
     EdgeData.validate(data)
     return new EdgeData(data)
   }
+
   /**
    * Checks if an arbitrary piece of data (as it comes from a JSON source)
    * conforms to the format required by EdgeData.
@@ -68,17 +72,20 @@ export class EdgeData {
     }
     throw new Error('Malformed edge data')
   }
+
   constructor({ bends, sourceNodeIndex, targetNodeIndex }) {
     this.bends = bends
     this.sourceNodeIndex = sourceNodeIndex
     this.targetNodeIndex = targetNodeIndex
   }
+
   /**
    * Matches the intended source and target ports based on the source and target node indices.
    */
   matchPorts(nodes) {
     const sourceNode = nodes[this.sourceNodeIndex]
     const targetNode = nodes[this.targetNodeIndex]
+
     const sourcePort = sourceNode.ports.find((p) => p.tag.side === 'right')
     const targetPort = targetNode.ports.find((p) => p.tag.side === 'left')
     if (!sourcePort || !targetPort) {
@@ -86,6 +93,7 @@ export class EdgeData {
     }
     return [sourcePort, targetPort]
   }
+
   /**
    * Converts node data to an actual graph node.
    */
@@ -93,6 +101,7 @@ export class EdgeData {
     const bends = this.bends.map((b) => new Point(...b))
     return graph.createEdge({ sourcePort, targetPort, bends })
   }
+
   /**
    * Converts node data to a serializable format.
    */

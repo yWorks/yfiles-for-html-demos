@@ -36,14 +36,22 @@ import {
   initializeTutorialDefaults
 } from '../common'
 import { CustomLabelStyle } from './CustomLabelStyle'
+
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
 initializeLabelModel(graphComponent)
+
 graphComponent.graph.nodeDefaults.labels.style = new CustomLabelStyle()
 graphComponent.graph.edgeDefaults.labels.style = new CustomLabelStyle()
+
 createSimpleGraph(graphComponent.graph)
 enableGraphEditing(graphComponent)
+
 await fitGraphBounds(graphComponent)
+
 finishLoading()

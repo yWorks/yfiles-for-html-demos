@@ -39,6 +39,7 @@ import {
   LayoutData,
   RecursiveGroupLayout
 } from '@yfiles/yfiles'
+
 import {
   ComponentAttribute,
   Components,
@@ -55,11 +56,13 @@ import {
   LabelPlacementSideOfEdge,
   LayoutConfiguration
 } from './LayoutConfiguration'
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 export const LabelingConfig = Class('LabelingConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     GeneralGroup: [
       new LabelAttribute('General'),
@@ -104,6 +107,16 @@ export const LabelingConfig = Class('LabelingConfig', {
       ),
       new OptionGroupAttribute('GeneralGroup', 30),
       new TypeAttribute(Boolean)
+    ],
+    qualityTimeRatioItem: [
+      new OptionGroupAttribute('QualityGroup', 10),
+      new MinMaxAttribute(0, 1, 0.01),
+      new LabelAttribute(
+        'Quality Time Ratio',
+        '#/api/GenericLabeling#GenericLabeling-property-qualityTimeRatio'
+      ),
+      new ComponentAttribute(Components.SLIDER),
+      new TypeAttribute(Number)
     ],
     optimizationStrategyItem: [
       new LabelAttribute('Reduce Overlaps', '#/api/LabelingOptimizationStrategy'),
@@ -182,6 +195,7 @@ export const LabelingConfig = Class('LabelingConfig', {
       new TypeAttribute(Number)
     ]
   },
+
   /**
    * Setup default values for various configuration parameters.
    */
@@ -191,14 +205,18 @@ export const LabelingConfig = Class('LabelingConfig', {
     this.placeNodeLabelsItem = true
     this.placeEdgeLabelsItem = true
     this.considerSelectedFeaturesOnlyItem = false
+
     this.optimizationStrategyItem = LabelingOptimizationStrategy.BALANCED
+
     this.reduceAmbiguityItem = true
+
     this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
     this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
     this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
     this.labelPlacementDistanceItem = 10.0
     this.title = 'Labeling'
   },
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
@@ -215,6 +233,7 @@ export const LabelingConfig = Class('LabelingConfig', {
     )
     labeling.defaultEdgeLabelingCosts = labelingPenalties
     labeling.defaultNodeLabelingCosts = labelingPenalties
+    labeling.qualityTimeRatio = this.qualityTimeRatioItem
     if (this.placeNodeLabelsItem && this.placeEdgeLabelsItem) {
       labeling.scope = 'all'
     } else {
@@ -224,14 +243,17 @@ export const LabelingConfig = Class('LabelingConfig', {
       labeling.defaultNodeLabelingCosts.ambiguousPlacementCost = 1.0
       labeling.defaultEdgeLabelingCosts.ambiguousPlacementCost = 1.0
     }
+
     return labeling
   },
+
   /**
    * Creates and configures the layout data.
    * @returns The configured layout data.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new GenericLabelingData()
+
     const selection = graphComponent.selection
     if (selection !== null && this.considerSelectedFeaturesOnlyItem) {
       layoutData.scope.nodeLabels = (label) =>
@@ -239,6 +261,7 @@ export const LabelingConfig = Class('LabelingConfig', {
       layoutData.scope.edgeLabels = (label) =>
         selection.includes(label) || selection.includes(label.owner)
     }
+
     if (this.placeEdgeLabelsItem) {
       this.setupEdgeLabelModels(graphComponent)
       return layoutData.combineWith(
@@ -251,15 +274,19 @@ export const LabelingConfig = Class('LabelingConfig', {
         )
       )
     }
+
     return layoutData
   },
+
   setupEdgeLabelModels: function (graphComponent) {
     const model = new FreeEdgeLabelModel()
+
     const selectionOnly = this.considerSelectedFeaturesOnlyItem
     const placeEdgeLabels = this.placeEdgeLabelsItem
     if (!placeEdgeLabels) {
       return
     }
+
     const graph = graphComponent.graph
     for (const label of graph.edgeLabels) {
       const parameterFinder = model.getContext(label).lookup(ILabelModelParameterFinder)
@@ -272,36 +299,53 @@ export const LabelingConfig = Class('LabelingConfig', {
       }
     }
   },
+
   /** @type {OptionGroup} */
   GeneralGroup: null,
+
   /** @type {OptionGroup} */
   QualityGroup: null,
+
   /** @type {OptionGroup} */
   PreferredPlacementGroup: null,
+
   /** @type {string} */
   descriptionText: {
     get: function () {
       return "<p style='margin-top:0'>This algorithm finds good positions for the labels of nodes and edges. Typically, a label should be placed near the item it belongs to and it should not overlap with other labels. Optionally, overlaps with nodes and edges can be avoided as well.</p>"
     }
   },
+
   /** @type {boolean} */
   placeNodeLabelsItem: false,
+
   /** @type {boolean} */
   placeEdgeLabelsItem: false,
+
   /** @type {boolean} */
   considerSelectedFeaturesOnlyItem: false,
+
+  /** @type {number} */
+  qualityTimeRatioItem: 1.0,
+
   /** @type {LabelingOptimizationStrategy} */
   optimizationStrategyItem: null,
+
   /** @type {boolean} */
   reduceAmbiguityItem: false,
+
   /** @type {LabelPlacementOrientation} */
   labelPlacementOrientationItem: null,
+
   /** @type {LabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: null,
+
   /** @type {LabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: null,
+
   /** @type {number} */
   labelPlacementDistanceItem: 0,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
     get: function () {

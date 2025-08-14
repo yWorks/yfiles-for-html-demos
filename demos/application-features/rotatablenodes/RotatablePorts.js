@@ -41,7 +41,9 @@ import {
   Matrix,
   Point
 } from '@yfiles/yfiles'
+
 import { RotatableNodeStyleDecorator } from './RotatableNodes'
+
 /**
  * Port location model decorator that automatically provides the location in the rotated coordinates of the owner.
  */
@@ -54,7 +56,9 @@ export class RotatablePortLocationModelDecorator extends BaseClass(
    * It is only used when new parameters are created via {@link createParameter}.
    */
   wrapped = new FreeNodePortLocationModel()
+
   static INSTANCE = new RotatablePortLocationModelDecorator()
+
   /**
    * Recalculates the coordinates provided by parameter.
    * This has only an effect when parameter is created by this model and the owner of port has a
@@ -67,6 +71,7 @@ export class RotatablePortLocationModelDecorator extends BaseClass(
     if (!(ownerNode instanceof INode)) {
       return coreLocation
     }
+
     const angle = getAngle(ownerNode)
     if (Math.abs(angle) < EPS) {
       return coreLocation
@@ -75,6 +80,7 @@ export class RotatablePortLocationModelDecorator extends BaseClass(
     matrix.rotate(toRadians(angle), ownerNode.layout.center)
     return matrix.transform(coreLocation)
   }
+
   /**
    * Creates a parameter that matches the given location.
    */
@@ -92,6 +98,7 @@ export class RotatablePortLocationModelDecorator extends BaseClass(
       this
     )
   }
+
   /**
    * Wraps a given parameter so it can be automatically rotated.
    * The core parameter is assumed to provide coordinates for an un-rotated owner.
@@ -99,18 +106,21 @@ export class RotatablePortLocationModelDecorator extends BaseClass(
   createWrappingParameter(coreParameter) {
     return new RotatablePortLocationModelDecoratorParameter(coreParameter, this)
   }
+
   /**
    * Returns the lookup of the wrapped location model.
    */
   getContext(port) {
     return this.wrapped.getContext(port)
   }
+
   /**
    * Returns that this port location model can be converted.
    */
   canConvert(context, value) {
     return true
   }
+
   /**
    * Converts this port location model using {@link RotatablePortLocationModelDecoratorExtension}.
    */
@@ -120,7 +130,9 @@ export class RotatablePortLocationModelDecorator extends BaseClass(
     return markupExtension
   }
 }
+
 const EPS = 0.001
+
 /**
  * A {@link IPortLocationModelParameter} decorator for ports using
  * {@link RotatablePortLocationModelDecorator} to adjust the port location to the node rotation.
@@ -131,6 +143,7 @@ export class RotatablePortLocationModelDecoratorParameter extends BaseClass(
 ) {
   _wrapped
   _model
+
   /**
    * Creates a new instance wrapping the given location model parameter.
    */
@@ -139,30 +152,35 @@ export class RotatablePortLocationModelDecoratorParameter extends BaseClass(
     this._wrapped = wrapped
     this._model = model
   }
+
   /**
    * Creates a copy of this location model parameter.
    */
   clone() {
     return new RotatablePortLocationModelDecoratorParameter(this.wrapped.clone(), this.model)
   }
+
   /**
    * Returns the model.
    */
   get model() {
     return this._model
   }
+
   /**
    * Returns the wrapped parameter.
    */
   get wrapped() {
     return this._wrapped
   }
+
   /**
    * Returns that this port location model parameter can be converted.
    */
   canConvert(context, value) {
     return true
   }
+
   /**
    * Converts this port location model parameter using {@link RotatablePortLocationModelDecoratorParameterExtension}.
    */
@@ -174,41 +192,51 @@ export class RotatablePortLocationModelDecoratorParameter extends BaseClass(
     return markupExtension
   }
 }
+
 /**
  * Markup extension that helps (de-)serializing a {@link RotatablePortLocationModelDecorator).
  */
 export class RotatablePortLocationModelDecoratorExtension extends MarkupExtension {
   _wrapped = null
+
   get wrapped() {
     return this._wrapped
   }
+
   set wrapped(value) {
     this._wrapped = value
   }
+
   provideValue(serviceProvider) {
     const model = new RotatablePortLocationModelDecorator()
     model.wrapped = this.wrapped
     return model
   }
 }
+
 /**
  * Markup extension that helps (de-)serializing a {@link RotatablePortLocationModelDecoratorParameter).
  */
 export class RotatablePortLocationModelDecoratorParameterExtension extends MarkupExtension {
   _model = null
   _wrapped = null
+
   get model() {
     return this._model
   }
+
   set model(value) {
     this._model = value
   }
+
   get wrapped() {
     return this._wrapped
   }
+
   set wrapped(value) {
     this._wrapped = value
   }
+
   provideValue(serviceProvider) {
     const model =
       this.model instanceof RotatablePortLocationModelDecorator
@@ -217,12 +245,14 @@ export class RotatablePortLocationModelDecoratorParameterExtension extends Marku
     return model.createWrappingParameter(this.wrapped)
   }
 }
+
 /**
  * Returns the current angle of the given rotated node.
  */
 function getAngle(node) {
   return node.style instanceof RotatableNodeStyleDecorator ? node.style.angle : 0
 }
+
 /**
  * Returns the given angle in radians.
  */

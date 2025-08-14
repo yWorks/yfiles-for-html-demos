@@ -27,7 +27,9 @@
  **
  ***************************************************************************/
 import { LayoutGraph, LayoutStageBase, Point } from '@yfiles/yfiles'
+
 const ZIG_SIZE = 5
+
 /**
  * A layout stage that post-processes edge paths produced by the core layout
  * and changes all edges into a zig-zag shape, while following the original path.
@@ -37,11 +39,13 @@ export class ZigZagEdgesStage extends LayoutStageBase {
     if (!this.coreLayout) {
       return
     }
+
     // Apply the core layout ...
     this.coreLayout.applyLayout(graph)
     // ... after which we can then change the edge paths
     this.postProcessEdgePaths(graph)
   }
+
   /**
    * Changes the path of each edge into a zig-zag shape.
    */
@@ -51,7 +55,9 @@ export class ZigZagEdgesStage extends LayoutStageBase {
       path.push(edge.sourcePortLocation)
       path.push(...edge.bends.map((bend) => bend.location))
       path.push(edge.targetPortLocation)
+
       edge.resetPath()
+
       const zigZagPath = getZigZagPointsForEdge(path)
       edge.sourcePortLocation = zigZagPath[0]
       for (let i = 1; i < zigZagPath.length - 1; i++) {
@@ -61,6 +67,7 @@ export class ZigZagEdgesStage extends LayoutStageBase {
     }
   }
 }
+
 /**
  * Calculates the necessary bend locations to change the edge's path into a zig-zag.
  * @param path The edge path.
@@ -73,6 +80,7 @@ function getZigZagPointsForEdge(path) {
   }
   return list
 }
+
 /**
  * Calculates the necessary bend locations to change an edge segment into a zig-zag.
  */
@@ -98,6 +106,7 @@ function getZigZagPointsForSegment(p1, p2) {
   }
   return result
 }
+
 function translatePoint(p, dx, dy) {
   return new Point(p.x + dx, p.y + dy)
 }

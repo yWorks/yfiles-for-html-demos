@@ -44,8 +44,11 @@ import {
   finishLoading
 } from '@yfiles/demo-resources/demo-page'
 import { hideBars, initializeAugmentations, showBars, toggleLabelVisibility } from './bar-rendering'
+
 let graphComponent
+
 let barDataComboBox
+
 /**
  * Demo that shows how to augment a graph with additional information by displaying
  * isometric bars. The sample graph, which is loaded from a GraphML file consists of
@@ -57,26 +60,33 @@ async function run() {
   if (!checkWebGL2Support()) {
     return
   }
+
   License.value = await fetchLicense()
   barDataComboBox = document.querySelector('#bar-data')
   addNavigationButtons(barDataComboBox)
+
   // initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
   // use an isometric projection and allow fitContent to use a zoom > 1
   graphComponent.projection = Matrix.ISOMETRIC
   graphComponent.limitFitContentZoom = false
+
   // setup the additional GraphModelManagers to add the isometric bar augmentation to the GraphComponent
   initializeAugmentations(graphComponent, getTagData)
+
   // configure interaction
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // bind the demo buttons to their actions
   initializeUI()
+
   // Read a sample graph from an embedded resource file
   loadSampleGraph().then(() => {
     // Manages the viewport
     graphComponent.fitGraphBounds()
   })
 }
+
 /**
  * Provides the data to be visualized by the bar chart.
  * @yjs:keep = degreeCentrality,graphCentrality,pageRank
@@ -86,6 +96,7 @@ function getTagData(node) {
   // extract the color used by the style of the node so it can be used as base color for the bar
   const fill = node.style.fill
   const color = getColorValues(fill)
+
   // take the selected node info from the node's tag
   // height will be the height of the bar while value is used for the label of the bar
   const key = barDataComboBox.options[barDataComboBox.selectedIndex].value
@@ -113,6 +124,7 @@ function getTagData(node) {
       return { color: color, value: 0, height: 0 }
   }
 }
+
 /**
  * Extracts the color components to the format used by the IsometricWebGLNodeStyle.
  * @param color The color to get the components for.
@@ -120,6 +132,7 @@ function getTagData(node) {
 function getColorValues(color) {
   return { r: color.r / 255.0, g: color.g / 255.0, b: color.b / 255.0, a: color.a / 255.0 }
 }
+
 /**
  * Round the given number to two digits.
  * @param number The number to round.
@@ -127,6 +140,7 @@ function getColorValues(color) {
 function round(number) {
   return Math.round(number * 100) / 100
 }
+
 /**
  * Reads the sample graph.
  */
@@ -134,6 +148,7 @@ async function loadSampleGraph() {
   const graphMLIOHandler = new GraphMLIOHandler()
   await graphMLIOHandler.readFromURL(graphComponent.graph, 'resources/sample.graphml')
 }
+
 /**
  * Helper method that binds actions to the buttons in the demo's toolbar.
  */
@@ -146,8 +161,10 @@ function initializeUI() {
       toggleLabelVisibility(document.querySelector('#toggle-labels').checked, graphComponent)
     }
   })
+
   document.querySelector('#toggle-labels').addEventListener('change', (e) => {
     toggleLabelVisibility(e.target.checked, graphComponent)
   })
 }
+
 run().then(finishLoading)

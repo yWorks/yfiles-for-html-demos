@@ -48,37 +48,48 @@ import {
   Size,
   TimeSpan
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
+
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   // enable tooltips
   initializeTooltips()
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new HierarchicalLayout())
   await graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder
     .createNodesSource({
       data: graphData.nodeList.filter((item) => !item.isGroup),
@@ -86,12 +97,14 @@ function buildGraph(graph, graphData) {
       parentId: (item) => item.parentId
     })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder
     .createEdgesSource({
       data: graphData.edgeList,
@@ -99,8 +112,10 @@ function buildGraph(graph, graphData) {
       targetId: (item) => item.target
     })
     .edgeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for the 'query-item-tool-tip'
  * event of the {@link GraphEditorInputMode} using the {@link QueryItemToolTipEventArgs} parameter.
@@ -112,23 +127,28 @@ function buildGraph(graph, graphData) {
  */
 function initializeTooltips() {
   const inputMode = graphComponent.inputMode
+
   // Customize the tooltip's behavior to our liking.
   const toolTipInputMode = inputMode.toolTipInputMode
   toolTipInputMode.toolTipLocationOffset = new Point(15, 15)
   toolTipInputMode.delay = TimeSpan.fromMilliseconds(500)
   toolTipInputMode.duration = TimeSpan.fromSeconds(5)
+
   // Register a listener for when a tooltip should be shown.
   inputMode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.handled) {
       // Tooltip content has already been assigned -> nothing to do.
       return
     }
+
     // Use a rich HTML element as tooltip content. Alternatively, a plain string would do as well.
     evt.toolTip = createTooltipContent(evt.item)
+
     // Indicate that the tooltip content has been set.
     evt.handled = true
   })
 }
+
 /**
  * The tooltip may either be a plain string or it can also be a rich HTML element. In this case, we
  * show the latter. We just extract the first label text from the given item and show it as
@@ -137,6 +157,7 @@ function initializeTooltips() {
  */
 function createTooltipContent(item) {
   const title = document.createElement('h4')
+
   // depending on the item, show a different title
   if (item instanceof INode) {
     title.innerHTML = 'Node Tooltip'
@@ -147,6 +168,7 @@ function createTooltipContent(item) {
   } else if (item instanceof ILabel) {
     title.innerHTML = 'Label Tooltip'
   }
+
   // extract the first label from the item
   let label = ''
   if (item instanceof INode || item instanceof IEdge || item instanceof IPort) {
@@ -158,6 +180,7 @@ function createTooltipContent(item) {
   }
   const text = document.createElement('p')
   text.innerHTML = `Label: ${label}`
+
   // build the tooltip container
   const tooltip = document.createElement('div')
   tooltip.classList.add('tooltip')
@@ -165,6 +188,7 @@ function createTooltipContent(item) {
   tooltip.appendChild(text)
   return tooltip
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  *
@@ -173,9 +197,11 @@ function createTooltipContent(item) {
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
+
   const groupNodeStyle = graph.groupNodeDefaults.style
   groupNodeStyle.tabPosition = GroupNodeStyleTabPosition.RIGHT
   groupNodeStyle.cornerRadius = 8
+
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
@@ -186,4 +212,5 @@ function initializeGraph(graph) {
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
+
 run().then(finishLoading)

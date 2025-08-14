@@ -38,6 +38,7 @@ import {
   PortCandidate,
   Rect
 } from '@yfiles/yfiles'
+
 /**
  * An edge drop input mode to manage the edge preview and dropping onto the canvas.
  *
@@ -46,22 +47,27 @@ import {
 export class EdgeDropInputMode extends ItemDropInputMode {
   previewNodeOffset = new Point(20, 10)
   previewBendOffset = new Point(0, 10)
+
   /**
    * The expected type for the data of the drag operation of the {@link EdgeDropInputMode}.
    */
   static DEFAULT_TRANSFER_TYPE = 'iedge'
+
   constructor() {
     super(EdgeDropInputMode.DEFAULT_TRANSFER_TYPE)
   }
+
   install(context, controller) {
     super.install(context, controller)
     let originalEdgeDefaultStyle
+
     this.itemCreator = (ctx, graph, draggedItem, dropTarget, dropLocation) => {
       if (!(draggedItem instanceof IEdge)) {
         return null
       }
       // Use the dropped edge style for changed/created edges.
       const style = draggedItem.style
+
       if (dropTarget instanceof IEdge) {
         // Set the style of the edge at the drop location to the dropped style.
         graph.setStyle(dropTarget, style)
@@ -72,19 +78,23 @@ export class EdgeDropInputMode extends ItemDropInputMode {
         // for the drop location with the dropped edge style.
         const candidateLocation = graph.nodeDefaults.ports.getLocationParameterInstance(node)
         const candidate = new PortCandidate(node, candidateLocation)
+
         const graphEditorInputMode = ctx.canvasComponent.inputMode
         const createEdgeInputMode = graphEditorInputMode.createEdgeInputMode
+
         // store the previous edge style
         originalEdgeDefaultStyle = createEdgeInputMode.edgeDefaults.style
         // change the edge style only for the one dropped onto the canvas
         createEdgeInputMode.edgeDefaults.style = style
         // change the edge style only for the one dropped onto the canvas
         createEdgeInputMode.previewGraph.setStyle(createEdgeInputMode.previewEdge, style)
+
         void createEdgeInputMode.startEdgeCreation(candidate)
       }
       ctx.canvasComponent.focus()
       return null
     }
+
     const graphEditorInputMode = context.inputMode
     const createEdgeInputMode = graphEditorInputMode.createEdgeInputMode
     const resetEdgeDefaultStyle = () => {
@@ -96,9 +106,11 @@ export class EdgeDropInputMode extends ItemDropInputMode {
     createEdgeInputMode.addEventListener('gesture-finished', resetEdgeDefaultStyle)
     createEdgeInputMode.addEventListener('gesture-canceled', resetEdgeDefaultStyle)
   }
+
   get draggedItem() {
     return this.dropData
   }
+
   /**
    * @param dragLocation The location to return the drop target for.
    */
@@ -118,6 +130,7 @@ export class EdgeDropInputMode extends ItemDropInputMode {
     }
     return null
   }
+
   initializePreview() {
     if (!(this.dropData instanceof IModelItem)) {
       // When using the native drag-and-drop approach, the data will
@@ -126,6 +139,7 @@ export class EdgeDropInputMode extends ItemDropInputMode {
     }
     super.initializePreview()
   }
+
   /**
    * @param previewGraph The preview graph to fill.
    */
@@ -140,6 +154,7 @@ export class EdgeDropInputMode extends ItemDropInputMode {
     graph.addBend(previewEdge, new Point(30, 10))
     graph.addBend(previewEdge, new Point(30, 30))
   }
+
   /**
    * @param previewGraph The preview graph to update.
    * @param dragLocation The current drag location.
@@ -149,8 +164,10 @@ export class EdgeDropInputMode extends ItemDropInputMode {
     if (edge) {
       previewGraph.setNodeCenter(edge.sourceNode, dragLocation.subtract(this.previewNodeOffset))
       previewGraph.setNodeCenter(edge.targetNode, dragLocation.add(this.previewNodeOffset))
+
       previewGraph.setBendLocation(edge.bends.at(0), dragLocation.subtract(this.previewBendOffset))
       previewGraph.setBendLocation(edge.bends.at(1), dragLocation.add(this.previewBendOffset))
+
       this.parentInputModeContext?.canvasComponent?.invalidate()
     }
   }

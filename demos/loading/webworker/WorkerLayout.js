@@ -28,8 +28,10 @@
  ***************************************************************************/
 import { HierarchicalLayout, LayoutExecutorAsyncWorker, License } from '@yfiles/yfiles'
 import licenseData from '../../../lib/license.json'
+
 // register the yFiles license in the worker as well
 License.value = licenseData
+
 // initialize the helper class that handles the messaging between the main thread and the worker
 LayoutExecutorAsyncWorker.initializeWebWorker((graph, layoutDescriptor) => {
   if (layoutDescriptor.name === 'HierarchicalLayout') {

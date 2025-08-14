@@ -72,10 +72,7 @@ export function initializeEditorComponent(graphComponent: GraphComponent): void 
   graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(
     (node) => node === rootNode,
     new NodeStyleIndicatorRenderer({
-      nodeStyle: new ShapeNodeStyle({
-        fill: null,
-        stroke: '5px rgb(0, 153, 51)'
-      }),
+      nodeStyle: new ShapeNodeStyle({ fill: null, stroke: '5px rgb(0, 153, 51)' }),
       zoomPolicy: 'world-coordinates',
       margins: 1.5
     })
@@ -197,9 +194,7 @@ async function runLayout(
 
   setLayoutRunning(true, graphComponent)
 
-  const layout = new HierarchicalLayout({
-    fromSketchMode: !!incrementalNodes
-  })
+  const layout = new HierarchicalLayout({ fromSketchMode: !!incrementalNodes })
 
   const layoutData = new HierarchicalLayoutData()
   if (incrementalNodes) {

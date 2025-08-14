@@ -225,9 +225,7 @@ async function runInitialLayout(graph: IGraph): Promise<void> {
     deterministic: true,
     allowNodeOverlaps: false,
     defaultPreferredEdgeLength: 50,
-    componentLayout: {
-      style: 'packed-compact-circle'
-    }
+    componentLayout: { style: 'packed-compact-circle' }
   })
   graph.applyLayout(organicLayout)
   await graphComponent.fitGraphBounds()

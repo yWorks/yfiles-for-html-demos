@@ -58,6 +58,7 @@ import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './resources/graph-data.json'
 import { initializeDnDPanel } from './drag-and-drop'
+
 /**
  *  This demo shows how to enable drag and drop functionality for nodes,
  *  edges, labels, and ports.
@@ -67,15 +68,19 @@ import { initializeDnDPanel } from './drag-and-drop'
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   initializeInteraction(graphComponent)
   initializeDnDPanel()
+
   // init graph default styles and visual decorators
   const graph = graphComponent.graph
   initializeGraph(graph)
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
@@ -86,15 +91,19 @@ async function run() {
   )
   void graphComponent.fitGraphBounds()
   graphComponent.zoom = 1.5
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
+
   initializeUI(graphComponent)
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id
@@ -107,19 +116,23 @@ function buildGraph(graph, graphData) {
     text: (data) => data.label,
     layoutParameter: () => InteriorNodeLabelModel.CENTER
   })
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Initializes the graph.
  * Sets up styles and visual decorations of graph elements.
  */
 function initializeGraph(graph) {
   initDemoStyles(graph)
+
   graph.nodeDefaults.size = new Size(80, 40)
   // draw a port with an elliptical shape
   graph.nodeDefaults.ports.style = new ShapePortStyle({
@@ -147,6 +160,7 @@ function initializeGraph(graph) {
   })
   graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(0)
 }
+
 /**
  * Creates and activates a {@link GraphEditorInputMode} and configures it to enable drag and drop.
  */
@@ -161,6 +175,7 @@ function initializeInteraction(graphComponent) {
       gridSnapType: GridSnapTypes.ALL
     })
   })
+
   // create a new NodeDropInputMode to configure the drag and drop operation
   mode.nodeDropInputMode = new NodeDropInputMode({
     // enables the display of the dragged element during the drag
@@ -172,6 +187,7 @@ function initializeInteraction(graphComponent) {
     // nodes that have a GroupNodeStyle assigned have to be created as group nodes
     isGroupNodePredicate: (draggedNode) => draggedNode.style instanceof GroupNodeStyle
   })
+
   // create a new LabelDropInputMode to configure the drag and drop operation
   mode.labelDropInputMode = new LabelDropInputMode({
     showPreview: true,
@@ -189,6 +205,7 @@ function initializeInteraction(graphComponent) {
       )
     }
   })
+
   // create a new PortDropInputMode to configure the drag and drop operation
   mode.portDropInputMode = new PortDropInputMode({
     showPreview: true,
@@ -198,10 +215,13 @@ function initializeInteraction(graphComponent) {
     // allow only for nodes to be the new port owner
     isValidPortOwnerPredicate: (portOwner) => portOwner instanceof INode
   })
+
   // add the edge drop input mode
   mode.add(new EdgeDropInputMode())
+
   graphComponent.inputMode = mode
 }
+
 /**
  * Registers event listeners for the snapping checkbox.
  */
@@ -212,4 +232,5 @@ function initializeUI(graphComponent) {
     nodeDropInputMode.snappingEnabled = e.currentTarget.checked
   })
 }
+
 void run().then(finishLoading)

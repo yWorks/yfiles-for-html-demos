@@ -61,10 +61,7 @@ export type Trigger = ReturnType<typeof EventRecognizers.createKeyEventRecognize
 /**
  * A combination of {@link Key} and {@link ModifierKeys} that describe a keyboard shortcut.
  */
-export type Shortcut = {
-  key: string
-  modifier?: ModifierKeys
-}
+export type Shortcut = { key: string; modifier?: ModifierKeys }
 
 /**
  * A callback that is called to handle a {@link WizardAction} that has been {@link Trigger triggered}.
@@ -81,30 +78,17 @@ export type Handler = (
 /**
  * The configuration for an icon style for a {@link Button}.
  */
-export type IconButton = {
-  type: 'icon'
-  iconPath: string
-  backgroundFill?: string
-}
+export type IconButton = { type: 'icon'; iconPath: string; backgroundFill?: string }
 
 /**
  * The configuration for a rectangular style for a {@link Button}.
  */
-export type RectButton = {
-  type: 'rect'
-  outline?: string
-  fill?: string
-}
+export type RectButton = { type: 'rect'; outline?: string; fill?: string }
 
 /**
  * The configuration for a text label style for a {@link Button} that may optionally have an icon.
  */
-export type TextButton = {
-  type: 'text'
-  text: string
-  iconPath?: string
-  backgroundFill?: string
-}
+export type TextButton = { type: 'text'; text: string; iconPath?: string; backgroundFill?: string }
 
 /**
  * The layout style buttons shall be arranged in.
@@ -297,9 +281,7 @@ export class WizardAction {
       const fill = styleConfig.backgroundFill
         ? Fill.from(styleConfig.backgroundFill)
         : Color.WHITE_SMOKE
-      iconLabelStyle.wrappedStyle = new LabelStyle({
-        backgroundFill: fill
-      })
+      iconLabelStyle.wrappedStyle = new LabelStyle({ backgroundFill: fill })
       return iconLabelStyle
     } else if (styleConfig && styleConfig.type === 'rect') {
       return new LabelStyle({

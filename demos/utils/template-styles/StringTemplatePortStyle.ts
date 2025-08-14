@@ -93,10 +93,7 @@ class PortTemplateContext extends TemplateContext<IPort> {
 }
 
 export type StringTemplatePortStyleOptions = StringTemplateStyleOptions &
-  Partial<{
-    renderSize: Size | SizeConvertible
-    offset: Point | PointConvertible
-  }>
+  Partial<{ renderSize: Size | SizeConvertible; offset: Point | PointConvertible }>
 
 export class StringTemplatePortStyle extends PortStyleBase<TemplatePortStyleVisual> {
   static CONVERTERS: typeof converters = converters
@@ -147,10 +144,9 @@ export class StringTemplatePortStyle extends PortStyleBase<TemplatePortStyleVisu
    * This mimics the old yFiles 2.x API
    * @param obj
    */
-  static makeObservable<T>(obj: T): T &
-    IPropertyObservable & {
-      firePropertyChanged: (propertyName: string) => void
-    } {
+  static makeObservable<T>(
+    obj: T
+  ): T & IPropertyObservable & { firePropertyChanged: (propertyName: string) => void } {
     makeObservable(obj)
     return obj
   }

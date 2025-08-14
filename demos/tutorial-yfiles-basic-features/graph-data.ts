@@ -30,172 +30,97 @@ const graphDataLayout = {
   nodes: [
     {
       id: 1,
-      layout: {
-        x: 798.5,
-        y: 163.79999542236334,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 798.5, y: 163.79999542236334, width: 40, height: 40 },
       alignment: 0.0,
       label: '1',
       parent: 0
     },
     {
       id: 2,
-      layout: {
-        x: 669.5,
-        y: 193.79999542236328,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 669.5, y: 193.79999542236328, width: 40, height: 40 },
       alignment: 1,
       label: '3',
       parent: 0
     },
     {
       id: 3,
-      layout: {
-        x: 743.5,
-        y: 297.7999954223633,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 743.5, y: 297.7999954223633, width: 40, height: 40 },
       alignment: 0.0,
       label: '4',
       parent: 0
     },
     {
       id: 4,
-      layout: {
-        x: 805.5,
-        y: 320.7999954223633,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 805.5, y: 320.7999954223633, width: 40, height: 40 },
       alignment: 0.5,
       label: '5',
       parent: 0
     },
     {
       id: 5,
-      layout: {
-        x: 595.5,
-        y: 143.79999542236334,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 595.5, y: 143.79999542236334, width: 40, height: 40 },
       alignment: 0.0,
       label: '2',
       parent: 0
     },
     {
       id: 6,
-      layout: {
-        x: 619.5,
-        y: 293,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 619.5, y: 293, width: 40, height: 40 },
       alignment: 0.0,
       label: '6',
       parent: 0
     },
     {
       id: 7,
-      layout: {
-        x: 415.25,
-        y: 322,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 415.25, y: 322, width: 40, height: 40 },
       alignment: 0.0,
       label: '7'
     },
     {
       id: 8,
-      layout: {
-        x: 457.25,
-        y: 409,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 457.25, y: 409, width: 40, height: 40 },
       alignment: 0,
       label: '9'
     },
     {
       id: 9,
-      layout: {
-        x: 589.25,
-        y: 483,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 589.25, y: 483, width: 40, height: 40 },
       alignment: 0.8,
       label: '10'
     },
     {
       id: 10,
-      layout: {
-        x: 691.25,
-        y: 501,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 691.25, y: 501, width: 40, height: 40 },
       alignment: 0.0,
       label: '11'
     },
     {
       id: 11,
-      layout: {
-        x: 492.25,
-        y: 200,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 492.25, y: 200, width: 40, height: 40 },
       alignment: 0.3,
       label: '8'
     },
     {
       id: 12,
-      layout: {
-        x: 517.25,
-        y: 436.7999954223633,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 517.25, y: 436.7999954223633, width: 40, height: 40 },
       alignment: 0,
       label: '13'
     },
     {
       id: 13,
-      layout: {
-        x: 751.25,
-        y: 471,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 751.25, y: 471, width: 40, height: 40 },
       alignment: 1,
       label: '12'
     },
     {
       id: 14,
-      layout: {
-        x: 364.25,
-        y: 292,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 364.25, y: 292, width: 40, height: 40 },
       alignment: 0.0,
       label: '14'
     },
     {
       id: 16,
-      layout: {
-        x: 282.25,
-        y: 8.799995422363395,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 282.25, y: 8.799995422363395, width: 40, height: 40 },
       alignment: 0.0,
       label: '15',
 
@@ -203,12 +128,7 @@ const graphDataLayout = {
     },
     {
       id: 17,
-      layout: {
-        x: 376.25,
-        y: 103.7999954223634,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 376.25, y: 103.7999954223634, width: 40, height: 40 },
       alignment: 0.0,
       label: '16',
 
@@ -216,12 +136,7 @@ const graphDataLayout = {
     },
     {
       id: 18,
-      layout: {
-        x: 193.25,
-        y: 40.799995422363395,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 193.25, y: 40.799995422363395, width: 40, height: 40 },
       alignment: 0.0,
       label: '17',
 
@@ -229,12 +144,7 @@ const graphDataLayout = {
     },
     {
       id: 19,
-      layout: {
-        x: 130.25,
-        y: 103.7999954223634,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 130.25, y: 103.7999954223634, width: 40, height: 40 },
       alignment: 1,
       label: '18',
 
@@ -242,12 +152,7 @@ const graphDataLayout = {
     },
     {
       id: 20,
-      layout: {
-        x: 290,
-        y: 140,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 290, y: 140, width: 40, height: 40 },
       alignment: 0.0,
       label: '19',
 
@@ -255,34 +160,19 @@ const graphDataLayout = {
     },
     {
       id: 21,
-      layout: {
-        x: 270.25,
-        y: 461.2000045776367,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 270.25, y: 461.2000045776367, width: 40, height: 40 },
       alignment: 0.0,
       label: '20'
     },
     {
       id: 22,
-      layout: {
-        x: 171.41056910569114,
-        y: 324,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 171.41056910569114, y: 324, width: 40, height: 40 },
       alignment: 0.0,
       label: '21'
     },
     {
       id: 23,
-      layout: {
-        x: 293.33028455284557,
-        y: 337,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 293.33028455284557, y: 337, width: 40, height: 40 },
       alignment: 0.0,
       label: '22'
     },
@@ -299,12 +189,7 @@ const graphDataLayout = {
     },
     {
       id: 25,
-      layout: {
-        x: 399.25,
-        y: 461.2000045776367,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 399.25, y: 461.2000045776367, width: 40, height: 40 },
       alignment: 1,
       label: '24'
     }
@@ -314,14 +199,8 @@ const graphDataLayout = {
       id: 0,
       source: 1,
       target: 5,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 615.5,
-        y: 168.79999542236334
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 615.5, y: 168.79999542236334 },
       bends: [],
       labels: [],
       tag: null
@@ -330,14 +209,8 @@ const graphDataLayout = {
       id: 1,
       source: 1,
       target: 2,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 684.5,
-        y: 208.79999542236328
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 684.5, y: 208.79999542236328 },
       bends: [],
       labels: [],
       tag: null
@@ -346,14 +219,8 @@ const graphDataLayout = {
       id: 2,
       source: 1,
       target: 6,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 639.5,
-        y: 322.5
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 639.5, y: 322.5 },
       bends: [],
       labels: [],
       tag: null
@@ -362,14 +229,8 @@ const graphDataLayout = {
       id: 3,
       source: 1,
       target: 3,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 758.5,
-        y: 312.7999954223633
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 758.5, y: 312.7999954223633 },
       bends: [],
       labels: [],
       tag: null
@@ -378,14 +239,8 @@ const graphDataLayout = {
       id: 4,
       source: 1,
       target: 4,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 834,
-        y: 345.7999954223633
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 834, y: 345.7999954223633 },
       bends: [],
       labels: [],
       tag: null
@@ -394,14 +249,8 @@ const graphDataLayout = {
       id: 5,
       source: 16,
       target: 17,
-      sourcePort: {
-        x: 297.25,
-        y: 23.799995422363395
-      },
-      targetPort: {
-        x: 391.25,
-        y: 118.7999954223634
-      },
+      sourcePort: { x: 297.25, y: 23.799995422363395 },
+      targetPort: { x: 391.25, y: 118.7999954223634 },
       bends: [],
       labels: [],
       tag: null
@@ -410,14 +259,8 @@ const graphDataLayout = {
       id: 6,
       source: 16,
       target: 18,
-      sourcePort: {
-        x: 297.25,
-        y: 23.799995422363395
-      },
-      targetPort: {
-        x: 208.25,
-        y: 55.799995422363395
-      },
+      sourcePort: { x: 297.25, y: 23.799995422363395 },
+      targetPort: { x: 208.25, y: 55.799995422363395 },
       bends: [],
       labels: [],
       tag: null
@@ -426,14 +269,8 @@ const graphDataLayout = {
       id: 7,
       source: 18,
       target: 19,
-      sourcePort: {
-        x: 208.25,
-        y: 55.799995422363395
-      },
-      targetPort: {
-        x: 145.25,
-        y: 118.7999954223634
-      },
+      sourcePort: { x: 208.25, y: 55.799995422363395 },
+      targetPort: { x: 145.25, y: 118.7999954223634 },
       bends: [],
       labels: [],
       tag: null
@@ -442,14 +279,8 @@ const graphDataLayout = {
       id: 8,
       source: 18,
       target: 20,
-      sourcePort: {
-        x: 208.25,
-        y: 55.799995422363395
-      },
-      targetPort: {
-        x: 325,
-        y: 168.79999542236334
-      },
+      sourcePort: { x: 208.25, y: 55.799995422363395 },
+      targetPort: { x: 325, y: 168.79999542236334 },
       bends: [],
       labels: [],
       tag: null
@@ -458,14 +289,8 @@ const graphDataLayout = {
       id: 9,
       source: 5,
       target: 11,
-      sourcePort: {
-        x: 615.5,
-        y: 168.79999542236334
-      },
-      targetPort: {
-        x: 507.25,
-        y: 239
-      },
+      sourcePort: { x: 615.5, y: 168.79999542236334 },
+      targetPort: { x: 507.25, y: 239 },
       bends: [],
       labels: [],
       tag: null
@@ -474,14 +299,8 @@ const graphDataLayout = {
       id: 10,
       source: 5,
       target: 7,
-      sourcePort: {
-        x: 615.5,
-        y: 168.79999542236334
-      },
-      targetPort: {
-        x: 438.25,
-        y: 347
-      },
+      sourcePort: { x: 615.5, y: 168.79999542236334 },
+      targetPort: { x: 438.25, y: 347 },
       bends: [],
       labels: [],
       tag: null
@@ -490,14 +309,8 @@ const graphDataLayout = {
       id: 11,
       source: 2,
       target: 8,
-      sourcePort: {
-        x: 684.5,
-        y: 208.79999542236328
-      },
-      targetPort: {
-        x: 472.25,
-        y: 424
-      },
+      sourcePort: { x: 684.5, y: 208.79999542236328 },
+      targetPort: { x: 472.25, y: 424 },
       bends: [],
       labels: [],
       tag: null
@@ -506,14 +319,8 @@ const graphDataLayout = {
       id: 12,
       source: 6,
       target: 12,
-      sourcePort: {
-        x: 639.5,
-        y: 322.5
-      },
-      targetPort: {
-        x: 532.25,
-        y: 451.7999954223633
-      },
+      sourcePort: { x: 639.5, y: 322.5 },
+      targetPort: { x: 532.25, y: 451.7999954223633 },
       bends: [],
       labels: [],
       tag: null
@@ -522,14 +329,8 @@ const graphDataLayout = {
       id: 13,
       source: 3,
       target: 9,
-      sourcePort: {
-        x: 758.5,
-        y: 312.7999954223633
-      },
-      targetPort: {
-        x: 604.25,
-        y: 498
-      },
+      sourcePort: { x: 758.5, y: 312.7999954223633 },
+      targetPort: { x: 604.25, y: 498 },
       bends: [],
       labels: [],
       tag: null
@@ -538,14 +339,8 @@ const graphDataLayout = {
       id: 14,
       source: 3,
       target: 10,
-      sourcePort: {
-        x: 758.5,
-        y: 312.7999954223633
-      },
-      targetPort: {
-        x: 706.25,
-        y: 516
-      },
+      sourcePort: { x: 758.5, y: 312.7999954223633 },
+      targetPort: { x: 706.25, y: 516 },
       bends: [],
       labels: [],
       tag: null
@@ -554,14 +349,8 @@ const graphDataLayout = {
       id: 15,
       source: 4,
       target: 13,
-      sourcePort: {
-        x: 834,
-        y: 345.7999954223633
-      },
-      targetPort: {
-        x: 766.25,
-        y: 486
-      },
+      sourcePort: { x: 834, y: 345.7999954223633 },
+      targetPort: { x: 766.25, y: 486 },
       bends: [],
       labels: [],
       tag: null
@@ -570,14 +359,8 @@ const graphDataLayout = {
       id: 16,
       source: 11,
       target: 14,
-      sourcePort: {
-        x: 507.25,
-        y: 239
-      },
-      targetPort: {
-        x: 379.25,
-        y: 307
-      },
+      sourcePort: { x: 507.25, y: 239 },
+      targetPort: { x: 379.25, y: 307 },
       bends: [],
       labels: [],
       tag: null
@@ -586,14 +369,8 @@ const graphDataLayout = {
       id: 17,
       source: 7,
       target: 14,
-      sourcePort: {
-        x: 438.25,
-        y: 347
-      },
-      targetPort: {
-        x: 379.25,
-        y: 307
-      },
+      sourcePort: { x: 438.25, y: 347 },
+      targetPort: { x: 379.25, y: 307 },
       bends: [],
       labels: [],
       tag: null
@@ -602,14 +379,8 @@ const graphDataLayout = {
       id: 18,
       source: 5,
       target: 16,
-      sourcePort: {
-        x: 615.5,
-        y: 168.79999542236334
-      },
-      targetPort: {
-        x: 297.25,
-        y: 23.799995422363395
-      },
+      sourcePort: { x: 615.5, y: 168.79999542236334 },
+      targetPort: { x: 297.25, y: 23.799995422363395 },
       bends: [],
       labels: [],
       tag: null
@@ -618,14 +389,8 @@ const graphDataLayout = {
       id: 19,
       source: 14,
       target: 16,
-      sourcePort: {
-        x: 379.25,
-        y: 307
-      },
-      targetPort: {
-        x: 297.25,
-        y: 23.799995422363395
-      },
+      sourcePort: { x: 379.25, y: 307 },
+      targetPort: { x: 297.25, y: 23.799995422363395 },
       bends: [],
       labels: [],
       tag: null
@@ -634,14 +399,8 @@ const graphDataLayout = {
       id: 20,
       source: 18,
       target: 21,
-      sourcePort: {
-        x: 208.25,
-        y: 55.799995422363395
-      },
-      targetPort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
+      sourcePort: { x: 208.25, y: 55.799995422363395 },
+      targetPort: { x: 285.25, y: 476.2000045776367 },
       bends: [],
       labels: [],
       tag: null
@@ -650,14 +409,8 @@ const graphDataLayout = {
       id: 21,
       source: 21,
       target: 23,
-      sourcePort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
-      targetPort: {
-        x: 308.33028455284557,
-        y: 352
-      },
+      sourcePort: { x: 285.25, y: 476.2000045776367 },
+      targetPort: { x: 308.33028455284557, y: 352 },
       bends: [],
       labels: [],
       tag: null
@@ -666,14 +419,8 @@ const graphDataLayout = {
       id: 22,
       source: 21,
       target: 24,
-      sourcePort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
-      targetPort: {
-        x: 376.33028455284557,
-        y: 409.44167582193995
-      },
+      sourcePort: { x: 285.25, y: 476.2000045776367 },
+      targetPort: { x: 376.33028455284557, y: 409.44167582193995 },
       bends: [],
       labels: [],
       tag: null
@@ -682,14 +429,8 @@ const graphDataLayout = {
       id: 23,
       source: 21,
       target: 25,
-      sourcePort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
-      targetPort: {
-        x: 414.25,
-        y: 476.2000045776367
-      },
+      sourcePort: { x: 285.25, y: 476.2000045776367 },
+      targetPort: { x: 414.25, y: 476.2000045776367 },
       bends: [],
       labels: [],
       tag: null
@@ -698,14 +439,8 @@ const graphDataLayout = {
       id: 24,
       source: 21,
       target: 22,
-      sourcePort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
-      targetPort: {
-        x: 186.41056910569114,
-        y: 339
-      },
+      sourcePort: { x: 285.25, y: 476.2000045776367 },
+      targetPort: { x: 186.41056910569114, y: 339 },
       bends: [],
       labels: [],
       tag: null
@@ -739,235 +474,125 @@ const graphDataLayoutData = {
   nodes: [
     {
       id: 1,
-      layout: {
-        x: 798.5,
-        y: 163.79999542236334,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 798.5, y: 163.79999542236334, width: 40, height: 40 },
       alignment: 'Top',
       parent: 0
     },
     {
       id: 2,
-      layout: {
-        x: 669.5,
-        y: 193.79999542236328,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 669.5, y: 193.79999542236328, width: 40, height: 40 },
       alignment: 'Bottom',
       parent: 0
     },
     {
       id: 3,
-      layout: {
-        x: 743.5,
-        y: 297.7999954223633,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 743.5, y: 297.7999954223633, width: 40, height: 40 },
       alignment: 'Top',
       parent: 0
     },
     {
       id: 4,
-      layout: {
-        x: 805.5,
-        y: 320.7999954223633,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 805.5, y: 320.7999954223633, width: 40, height: 40 },
       alignment: 'Center',
       label: '5',
       parent: 0
     },
     {
       id: 5,
-      layout: {
-        x: 595.5,
-        y: 143.79999542236334,
-        width: 40,
-        height: 70
-      },
+      layout: { x: 595.5, y: 143.79999542236334, width: 40, height: 70 },
       alignment: 'Top',
       parent: 0
     },
     {
       id: 6,
-      layout: {
-        x: 619.5,
-        y: 293,
-        width: 40,
-        height: 70
-      },
+      layout: { x: 619.5, y: 293, width: 40, height: 70 },
       alignment: 'Top',
       label: '6',
       parent: 0
     },
     {
       id: 7,
-      layout: {
-        x: 415.25,
-        y: 322,
-        width: 40,
-        height: 70
-      },
+      layout: { x: 415.25, y: 322, width: 40, height: 70 },
       alignment: 'Top'
     },
     {
       id: 8,
-      layout: {
-        x: 457.25,
-        y: 409,
-        width: 40,
-        height: 70
-      },
+      layout: { x: 457.25, y: 409, width: 40, height: 70 },
       alignment: 'Top'
     },
     {
       id: 9,
-      layout: {
-        x: 589.25,
-        y: 483,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 589.25, y: 483, width: 40, height: 40 },
       alignment: 'Top'
     },
     {
       id: 10,
-      layout: {
-        x: 691.25,
-        y: 501,
-        width: 40,
-        height: 70
-      },
+      layout: { x: 691.25, y: 501, width: 40, height: 70 },
       alignment: 'Top'
     },
     {
       id: 11,
-      layout: {
-        x: 492.25,
-        y: 200,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 492.25, y: 200, width: 40, height: 40 },
       alignment: 'Center'
     },
     {
       id: 12,
-      layout: {
-        x: 517.25,
-        y: 436.7999954223633,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 517.25, y: 436.7999954223633, width: 40, height: 40 },
       alignment: 'Top'
     },
     {
       id: 13,
-      layout: {
-        x: 751.25,
-        y: 471,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 751.25, y: 471, width: 40, height: 40 },
       alignment: 'Bottom'
     },
     {
       id: 14,
-      layout: {
-        x: 364.25,
-        y: 292,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 364.25, y: 292, width: 40, height: 40 },
       alignment: 'Top'
     },
     {
       id: 16,
-      layout: {
-        x: 282.25,
-        y: 8.799995422363395,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 282.25, y: 8.799995422363395, width: 40, height: 40 },
       alignment: 'Top',
       parent: 15
     },
     {
       id: 17,
-      layout: {
-        x: 376.25,
-        y: 103.7999954223634,
-        width: 40,
-        height: 70
-      },
+      layout: { x: 376.25, y: 103.7999954223634, width: 40, height: 70 },
       alignment: 'Top',
       parent: 15
     },
     {
       id: 18,
-      layout: {
-        x: 193.25,
-        y: 40.799995422363395,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 193.25, y: 40.799995422363395, width: 40, height: 40 },
       alignment: 'Top',
       parent: 15
     },
     {
       id: 19,
-      layout: {
-        x: 130.25,
-        y: 103.7999954223634,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 130.25, y: 103.7999954223634, width: 40, height: 40 },
       alignment: 'Bottom',
       parent: 15
     },
     {
       id: 20,
-      layout: {
-        x: 290,
-        y: 140,
-        width: 40,
-        height: 70
-      },
+      layout: { x: 290, y: 140, width: 40, height: 70 },
       alignment: 'Top',
       parent: 15
     },
     {
       id: 21,
-      layout: {
-        x: 270.25,
-        y: 461.2000045776367,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 270.25, y: 461.2000045776367, width: 40, height: 40 },
       alignment: 'Top'
     },
     {
       id: 22,
-      layout: {
-        x: 171.41056910569114,
-        y: 324,
-        width: 40,
-        height: 70
-      },
+      layout: { x: 171.41056910569114, y: 324, width: 40, height: 70 },
       alignment: 'Top'
     },
     {
       id: 23,
-      layout: {
-        x: 293.33028455284557,
-        y: 337,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 293.33028455284557, y: 337, width: 40, height: 40 },
       alignment: 'Top'
     },
     {
@@ -982,12 +607,7 @@ const graphDataLayoutData = {
     },
     {
       id: 25,
-      layout: {
-        x: 399.25,
-        y: 461.2000045776367,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 399.25, y: 461.2000045776367, width: 40, height: 40 },
       alignment: 'Bottom'
     }
   ],
@@ -996,14 +616,8 @@ const graphDataLayoutData = {
       id: 0,
       source: 1,
       target: 5,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 615.5,
-        y: 168.79999542236334
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 615.5, y: 168.79999542236334 },
       bends: [],
       labels: [],
       tag: null
@@ -1012,14 +626,8 @@ const graphDataLayoutData = {
       id: 1,
       source: 1,
       target: 2,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 684.5,
-        y: 208.79999542236328
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 684.5, y: 208.79999542236328 },
       bends: [],
       labels: [],
       tag: null
@@ -1028,14 +636,8 @@ const graphDataLayoutData = {
       id: 2,
       source: 1,
       target: 6,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 639.5,
-        y: 322.5
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 639.5, y: 322.5 },
       bends: [],
       labels: [],
       tag: null
@@ -1044,14 +646,8 @@ const graphDataLayoutData = {
       id: 3,
       source: 1,
       target: 3,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 758.5,
-        y: 312.7999954223633
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 758.5, y: 312.7999954223633 },
       bends: [],
       labels: [],
       tag: null
@@ -1060,14 +656,8 @@ const graphDataLayoutData = {
       id: 4,
       source: 1,
       target: 4,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 834,
-        y: 345.7999954223633
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 834, y: 345.7999954223633 },
       bends: [],
       labels: [],
       tag: null
@@ -1076,14 +666,8 @@ const graphDataLayoutData = {
       id: 5,
       source: 16,
       target: 17,
-      sourcePort: {
-        x: 297.25,
-        y: 23.799995422363395
-      },
-      targetPort: {
-        x: 391.25,
-        y: 118.7999954223634
-      },
+      sourcePort: { x: 297.25, y: 23.799995422363395 },
+      targetPort: { x: 391.25, y: 118.7999954223634 },
       bends: [],
       labels: [],
       tag: null
@@ -1092,14 +676,8 @@ const graphDataLayoutData = {
       id: 6,
       source: 16,
       target: 18,
-      sourcePort: {
-        x: 297.25,
-        y: 23.799995422363395
-      },
-      targetPort: {
-        x: 208.25,
-        y: 55.799995422363395
-      },
+      sourcePort: { x: 297.25, y: 23.799995422363395 },
+      targetPort: { x: 208.25, y: 55.799995422363395 },
       bends: [],
       labels: [],
       tag: null
@@ -1108,14 +686,8 @@ const graphDataLayoutData = {
       id: 7,
       source: 18,
       target: 19,
-      sourcePort: {
-        x: 208.25,
-        y: 55.799995422363395
-      },
-      targetPort: {
-        x: 145.25,
-        y: 118.7999954223634
-      },
+      sourcePort: { x: 208.25, y: 55.799995422363395 },
+      targetPort: { x: 145.25, y: 118.7999954223634 },
       bends: [],
       labels: [],
       tag: null
@@ -1124,14 +696,8 @@ const graphDataLayoutData = {
       id: 8,
       source: 18,
       target: 20,
-      sourcePort: {
-        x: 208.25,
-        y: 55.799995422363395
-      },
-      targetPort: {
-        x: 325,
-        y: 168.79999542236334
-      },
+      sourcePort: { x: 208.25, y: 55.799995422363395 },
+      targetPort: { x: 325, y: 168.79999542236334 },
       bends: [],
       labels: [],
       tag: null
@@ -1140,14 +706,8 @@ const graphDataLayoutData = {
       id: 9,
       source: 5,
       target: 11,
-      sourcePort: {
-        x: 615.5,
-        y: 168.79999542236334
-      },
-      targetPort: {
-        x: 507.25,
-        y: 239
-      },
+      sourcePort: { x: 615.5, y: 168.79999542236334 },
+      targetPort: { x: 507.25, y: 239 },
       bends: [],
       labels: [],
       tag: null
@@ -1156,14 +716,8 @@ const graphDataLayoutData = {
       id: 10,
       source: 5,
       target: 7,
-      sourcePort: {
-        x: 615.5,
-        y: 168.79999542236334
-      },
-      targetPort: {
-        x: 438.25,
-        y: 347
-      },
+      sourcePort: { x: 615.5, y: 168.79999542236334 },
+      targetPort: { x: 438.25, y: 347 },
       bends: [],
       labels: [],
       tag: null
@@ -1172,14 +726,8 @@ const graphDataLayoutData = {
       id: 11,
       source: 2,
       target: 8,
-      sourcePort: {
-        x: 684.5,
-        y: 208.79999542236328
-      },
-      targetPort: {
-        x: 472.25,
-        y: 424
-      },
+      sourcePort: { x: 684.5, y: 208.79999542236328 },
+      targetPort: { x: 472.25, y: 424 },
       bends: [],
       labels: [],
       tag: null
@@ -1188,14 +736,8 @@ const graphDataLayoutData = {
       id: 12,
       source: 6,
       target: 12,
-      sourcePort: {
-        x: 639.5,
-        y: 322.5
-      },
-      targetPort: {
-        x: 532.25,
-        y: 451.7999954223633
-      },
+      sourcePort: { x: 639.5, y: 322.5 },
+      targetPort: { x: 532.25, y: 451.7999954223633 },
       bends: [],
       labels: [],
       tag: null
@@ -1204,14 +746,8 @@ const graphDataLayoutData = {
       id: 13,
       source: 3,
       target: 9,
-      sourcePort: {
-        x: 758.5,
-        y: 312.7999954223633
-      },
-      targetPort: {
-        x: 604.25,
-        y: 498
-      },
+      sourcePort: { x: 758.5, y: 312.7999954223633 },
+      targetPort: { x: 604.25, y: 498 },
       bends: [],
       labels: [],
       tag: null
@@ -1220,14 +756,8 @@ const graphDataLayoutData = {
       id: 14,
       source: 3,
       target: 10,
-      sourcePort: {
-        x: 758.5,
-        y: 312.7999954223633
-      },
-      targetPort: {
-        x: 706.25,
-        y: 516
-      },
+      sourcePort: { x: 758.5, y: 312.7999954223633 },
+      targetPort: { x: 706.25, y: 516 },
       bends: [],
       labels: [],
       tag: null
@@ -1236,14 +766,8 @@ const graphDataLayoutData = {
       id: 15,
       source: 4,
       target: 13,
-      sourcePort: {
-        x: 834,
-        y: 345.7999954223633
-      },
-      targetPort: {
-        x: 766.25,
-        y: 486
-      },
+      sourcePort: { x: 834, y: 345.7999954223633 },
+      targetPort: { x: 766.25, y: 486 },
       bends: [],
       labels: [],
       tag: null
@@ -1252,14 +776,8 @@ const graphDataLayoutData = {
       id: 16,
       source: 11,
       target: 14,
-      sourcePort: {
-        x: 507.25,
-        y: 239
-      },
-      targetPort: {
-        x: 379.25,
-        y: 307
-      },
+      sourcePort: { x: 507.25, y: 239 },
+      targetPort: { x: 379.25, y: 307 },
       bends: [],
       labels: [],
       tag: null
@@ -1268,14 +786,8 @@ const graphDataLayoutData = {
       id: 17,
       source: 7,
       target: 14,
-      sourcePort: {
-        x: 438.25,
-        y: 347
-      },
-      targetPort: {
-        x: 379.25,
-        y: 307
-      },
+      sourcePort: { x: 438.25, y: 347 },
+      targetPort: { x: 379.25, y: 307 },
       bends: [],
       labels: [],
       tag: null
@@ -1284,14 +796,8 @@ const graphDataLayoutData = {
       id: 18,
       source: 5,
       target: 16,
-      sourcePort: {
-        x: 615.5,
-        y: 168.79999542236334
-      },
-      targetPort: {
-        x: 297.25,
-        y: 23.799995422363395
-      },
+      sourcePort: { x: 615.5, y: 168.79999542236334 },
+      targetPort: { x: 297.25, y: 23.799995422363395 },
       bends: [],
       labels: [],
       tag: null
@@ -1300,14 +806,8 @@ const graphDataLayoutData = {
       id: 19,
       source: 14,
       target: 16,
-      sourcePort: {
-        x: 379.25,
-        y: 307
-      },
-      targetPort: {
-        x: 297.25,
-        y: 23.799995422363395
-      },
+      sourcePort: { x: 379.25, y: 307 },
+      targetPort: { x: 297.25, y: 23.799995422363395 },
       bends: [],
       labels: [],
       tag: null
@@ -1316,14 +816,8 @@ const graphDataLayoutData = {
       id: 20,
       source: 18,
       target: 21,
-      sourcePort: {
-        x: 208.25,
-        y: 55.799995422363395
-      },
-      targetPort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
+      sourcePort: { x: 208.25, y: 55.799995422363395 },
+      targetPort: { x: 285.25, y: 476.2000045776367 },
       bends: [],
       labels: [],
       tag: null
@@ -1332,14 +826,8 @@ const graphDataLayoutData = {
       id: 21,
       source: 21,
       target: 23,
-      sourcePort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
-      targetPort: {
-        x: 308.33028455284557,
-        y: 352
-      },
+      sourcePort: { x: 285.25, y: 476.2000045776367 },
+      targetPort: { x: 308.33028455284557, y: 352 },
       bends: [],
       labels: [],
       tag: null
@@ -1348,14 +836,8 @@ const graphDataLayoutData = {
       id: 22,
       source: 21,
       target: 24,
-      sourcePort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
-      targetPort: {
-        x: 376.33028455284557,
-        y: 409.44167582193995
-      },
+      sourcePort: { x: 285.25, y: 476.2000045776367 },
+      targetPort: { x: 376.33028455284557, y: 409.44167582193995 },
       bends: [],
       labels: [],
       tag: null
@@ -1364,14 +846,8 @@ const graphDataLayoutData = {
       id: 23,
       source: 21,
       target: 25,
-      sourcePort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
-      targetPort: {
-        x: 414.25,
-        y: 476.2000045776367
-      },
+      sourcePort: { x: 285.25, y: 476.2000045776367 },
+      targetPort: { x: 414.25, y: 476.2000045776367 },
       bends: [],
       labels: [],
       tag: null
@@ -1380,14 +856,8 @@ const graphDataLayoutData = {
       id: 24,
       source: 21,
       target: 22,
-      sourcePort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
-      targetPort: {
-        x: 186.41056910569114,
-        y: 339
-      },
+      sourcePort: { x: 285.25, y: 476.2000045776367 },
+      targetPort: { x: 186.41056910569114, y: 339 },
       bends: [],
       labels: [],
       tag: null
@@ -1421,172 +891,97 @@ const graphDataAnalysis = {
   nodes: [
     {
       id: 1,
-      layout: {
-        x: 798.5,
-        y: 163.79999542236334,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 798.5, y: 163.79999542236334, width: 40, height: 40 },
       alignment: 0.0,
       label: '1',
       parent: 0
     },
     {
       id: 2,
-      layout: {
-        x: 669.5,
-        y: 193.79999542236328,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 669.5, y: 193.79999542236328, width: 40, height: 40 },
       alignment: 1,
       label: '3',
       parent: 0
     },
     {
       id: 3,
-      layout: {
-        x: 743.5,
-        y: 297.7999954223633,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 743.5, y: 297.7999954223633, width: 40, height: 40 },
       alignment: 0.0,
       label: '4',
       parent: 0
     },
     {
       id: 4,
-      layout: {
-        x: 805.5,
-        y: 320.7999954223633,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 805.5, y: 320.7999954223633, width: 40, height: 40 },
       alignment: 0.5,
       label: '5',
       parent: 0
     },
     {
       id: 5,
-      layout: {
-        x: 595.5,
-        y: 143.79999542236334,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 595.5, y: 143.79999542236334, width: 40, height: 40 },
       alignment: 0.0,
       label: '2',
       parent: 0
     },
     {
       id: 6,
-      layout: {
-        x: 619.5,
-        y: 293,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 619.5, y: 293, width: 40, height: 40 },
       alignment: 0.0,
       label: '6',
       parent: 0
     },
     {
       id: 7,
-      layout: {
-        x: 415.25,
-        y: 322,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 415.25, y: 322, width: 40, height: 40 },
       alignment: 0.0,
       label: '7'
     },
     {
       id: 8,
-      layout: {
-        x: 457.25,
-        y: 409,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 457.25, y: 409, width: 40, height: 40 },
       alignment: 0,
       label: '9'
     },
     {
       id: 9,
-      layout: {
-        x: 589.25,
-        y: 483,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 589.25, y: 483, width: 40, height: 40 },
       alignment: 0.8,
       label: '10'
     },
     {
       id: 10,
-      layout: {
-        x: 691.25,
-        y: 501,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 691.25, y: 501, width: 40, height: 40 },
       alignment: 0.0,
       label: '11'
     },
     {
       id: 11,
-      layout: {
-        x: 492.25,
-        y: 200,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 492.25, y: 200, width: 40, height: 40 },
       alignment: 0.3,
       label: '8'
     },
     {
       id: 12,
-      layout: {
-        x: 517.25,
-        y: 436.7999954223633,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 517.25, y: 436.7999954223633, width: 40, height: 40 },
       alignment: 0,
       label: '13'
     },
     {
       id: 13,
-      layout: {
-        x: 751.25,
-        y: 471,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 751.25, y: 471, width: 40, height: 40 },
       alignment: 1,
       label: '12'
     },
     {
       id: 14,
-      layout: {
-        x: 364.25,
-        y: 292,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 364.25, y: 292, width: 40, height: 40 },
       alignment: 0.0,
       label: '14'
     },
     {
       id: 16,
-      layout: {
-        x: 282.25,
-        y: 8.799995422363395,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 282.25, y: 8.799995422363395, width: 40, height: 40 },
       alignment: 0.0,
       label: '15',
 
@@ -1594,12 +989,7 @@ const graphDataAnalysis = {
     },
     {
       id: 17,
-      layout: {
-        x: 376.25,
-        y: 103.7999954223634,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 376.25, y: 103.7999954223634, width: 40, height: 40 },
       alignment: 0.0,
       label: '16',
 
@@ -1607,12 +997,7 @@ const graphDataAnalysis = {
     },
     {
       id: 18,
-      layout: {
-        x: 193.25,
-        y: 40.799995422363395,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 193.25, y: 40.799995422363395, width: 40, height: 40 },
       alignment: 0.0,
       label: '17',
 
@@ -1620,12 +1005,7 @@ const graphDataAnalysis = {
     },
     {
       id: 19,
-      layout: {
-        x: 130.25,
-        y: 103.7999954223634,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 130.25, y: 103.7999954223634, width: 40, height: 40 },
       alignment: 1,
       label: '18',
 
@@ -1633,12 +1013,7 @@ const graphDataAnalysis = {
     },
     {
       id: 20,
-      layout: {
-        x: 290,
-        y: 140,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 290, y: 140, width: 40, height: 40 },
       alignment: 0.0,
       label: '19',
 
@@ -1646,34 +1021,19 @@ const graphDataAnalysis = {
     },
     {
       id: 21,
-      layout: {
-        x: 270.25,
-        y: 461.2000045776367,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 270.25, y: 461.2000045776367, width: 40, height: 40 },
       alignment: 0.0,
       label: '20'
     },
     {
       id: 22,
-      layout: {
-        x: 171.41056910569114,
-        y: 324,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 171.41056910569114, y: 324, width: 40, height: 40 },
       alignment: 0.0,
       label: '21'
     },
     {
       id: 23,
-      layout: {
-        x: 293.33028455284557,
-        y: 337,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 293.33028455284557, y: 337, width: 40, height: 40 },
       alignment: 0.0,
       label: '22'
     },
@@ -1690,12 +1050,7 @@ const graphDataAnalysis = {
     },
     {
       id: 25,
-      layout: {
-        x: 399.25,
-        y: 461.2000045776367,
-        width: 40,
-        height: 40
-      },
+      layout: { x: 399.25, y: 461.2000045776367, width: 40, height: 40 },
       alignment: 1,
       label: '24'
     }
@@ -1705,14 +1060,8 @@ const graphDataAnalysis = {
       id: 0,
       source: 1,
       target: 5,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 615.5,
-        y: 168.79999542236334
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 615.5, y: 168.79999542236334 },
       bends: [],
       labels: [],
       tag: null
@@ -1721,14 +1070,8 @@ const graphDataAnalysis = {
       id: 1,
       source: 1,
       target: 2,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 684.5,
-        y: 208.79999542236328
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 684.5, y: 208.79999542236328 },
       bends: [],
       labels: [],
       tag: null
@@ -1737,14 +1080,8 @@ const graphDataAnalysis = {
       id: 2,
       source: 1,
       target: 6,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 639.5,
-        y: 322.5
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 639.5, y: 322.5 },
       bends: [],
       labels: [],
       tag: null
@@ -1753,14 +1090,8 @@ const graphDataAnalysis = {
       id: 3,
       source: 1,
       target: 3,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 758.5,
-        y: 312.7999954223633
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 758.5, y: 312.7999954223633 },
       bends: [],
       labels: [],
       tag: null
@@ -1769,14 +1100,8 @@ const graphDataAnalysis = {
       id: 4,
       source: 1,
       target: 4,
-      sourcePort: {
-        x: 813.5,
-        y: 178.79999542236334
-      },
-      targetPort: {
-        x: 834,
-        y: 345.7999954223633
-      },
+      sourcePort: { x: 813.5, y: 178.79999542236334 },
+      targetPort: { x: 834, y: 345.7999954223633 },
       bends: [],
       labels: [],
       tag: null
@@ -1785,14 +1110,8 @@ const graphDataAnalysis = {
       id: 5,
       source: 16,
       target: 17,
-      sourcePort: {
-        x: 297.25,
-        y: 23.799995422363395
-      },
-      targetPort: {
-        x: 391.25,
-        y: 118.7999954223634
-      },
+      sourcePort: { x: 297.25, y: 23.799995422363395 },
+      targetPort: { x: 391.25, y: 118.7999954223634 },
       bends: [],
       labels: [],
       tag: null
@@ -1801,14 +1120,8 @@ const graphDataAnalysis = {
       id: 6,
       source: 16,
       target: 18,
-      sourcePort: {
-        x: 297.25,
-        y: 23.799995422363395
-      },
-      targetPort: {
-        x: 208.25,
-        y: 55.799995422363395
-      },
+      sourcePort: { x: 297.25, y: 23.799995422363395 },
+      targetPort: { x: 208.25, y: 55.799995422363395 },
       bends: [],
       labels: [],
       tag: null
@@ -1817,14 +1130,8 @@ const graphDataAnalysis = {
       id: 7,
       source: 18,
       target: 19,
-      sourcePort: {
-        x: 208.25,
-        y: 55.799995422363395
-      },
-      targetPort: {
-        x: 145.25,
-        y: 118.7999954223634
-      },
+      sourcePort: { x: 208.25, y: 55.799995422363395 },
+      targetPort: { x: 145.25, y: 118.7999954223634 },
       bends: [],
       labels: [],
       tag: null
@@ -1833,14 +1140,8 @@ const graphDataAnalysis = {
       id: 8,
       source: 18,
       target: 20,
-      sourcePort: {
-        x: 208.25,
-        y: 55.799995422363395
-      },
-      targetPort: {
-        x: 325,
-        y: 168.79999542236334
-      },
+      sourcePort: { x: 208.25, y: 55.799995422363395 },
+      targetPort: { x: 325, y: 168.79999542236334 },
       bends: [],
       labels: [],
       tag: null
@@ -1849,14 +1150,8 @@ const graphDataAnalysis = {
       id: 9,
       source: 5,
       target: 11,
-      sourcePort: {
-        x: 615.5,
-        y: 168.79999542236334
-      },
-      targetPort: {
-        x: 507.25,
-        y: 239
-      },
+      sourcePort: { x: 615.5, y: 168.79999542236334 },
+      targetPort: { x: 507.25, y: 239 },
       bends: [],
       labels: [],
       tag: null
@@ -1865,14 +1160,8 @@ const graphDataAnalysis = {
       id: 10,
       source: 5,
       target: 7,
-      sourcePort: {
-        x: 615.5,
-        y: 168.79999542236334
-      },
-      targetPort: {
-        x: 438.25,
-        y: 347
-      },
+      sourcePort: { x: 615.5, y: 168.79999542236334 },
+      targetPort: { x: 438.25, y: 347 },
       bends: [],
       labels: [],
       tag: null
@@ -1881,14 +1170,8 @@ const graphDataAnalysis = {
       id: 11,
       source: 2,
       target: 8,
-      sourcePort: {
-        x: 684.5,
-        y: 208.79999542236328
-      },
-      targetPort: {
-        x: 472.25,
-        y: 424
-      },
+      sourcePort: { x: 684.5, y: 208.79999542236328 },
+      targetPort: { x: 472.25, y: 424 },
       bends: [],
       labels: [],
       tag: null
@@ -1897,14 +1180,8 @@ const graphDataAnalysis = {
       id: 12,
       source: 6,
       target: 12,
-      sourcePort: {
-        x: 639.5,
-        y: 322.5
-      },
-      targetPort: {
-        x: 532.25,
-        y: 451.7999954223633
-      },
+      sourcePort: { x: 639.5, y: 322.5 },
+      targetPort: { x: 532.25, y: 451.7999954223633 },
       bends: [],
       labels: [],
       tag: null
@@ -1913,14 +1190,8 @@ const graphDataAnalysis = {
       id: 13,
       source: 3,
       target: 9,
-      sourcePort: {
-        x: 758.5,
-        y: 312.7999954223633
-      },
-      targetPort: {
-        x: 604.25,
-        y: 498
-      },
+      sourcePort: { x: 758.5, y: 312.7999954223633 },
+      targetPort: { x: 604.25, y: 498 },
       bends: [],
       labels: [],
       tag: null
@@ -1929,14 +1200,8 @@ const graphDataAnalysis = {
       id: 14,
       source: 3,
       target: 10,
-      sourcePort: {
-        x: 758.5,
-        y: 312.7999954223633
-      },
-      targetPort: {
-        x: 706.25,
-        y: 516
-      },
+      sourcePort: { x: 758.5, y: 312.7999954223633 },
+      targetPort: { x: 706.25, y: 516 },
       bends: [],
       labels: [],
       tag: null
@@ -1945,14 +1210,8 @@ const graphDataAnalysis = {
       id: 15,
       source: 4,
       target: 13,
-      sourcePort: {
-        x: 834,
-        y: 345.7999954223633
-      },
-      targetPort: {
-        x: 766.25,
-        y: 486
-      },
+      sourcePort: { x: 834, y: 345.7999954223633 },
+      targetPort: { x: 766.25, y: 486 },
       bends: [],
       labels: [],
       tag: null
@@ -1961,14 +1220,8 @@ const graphDataAnalysis = {
       id: 16,
       source: 11,
       target: 14,
-      sourcePort: {
-        x: 507.25,
-        y: 239
-      },
-      targetPort: {
-        x: 379.25,
-        y: 307
-      },
+      sourcePort: { x: 507.25, y: 239 },
+      targetPort: { x: 379.25, y: 307 },
       bends: [],
       labels: [],
       tag: null
@@ -1977,14 +1230,8 @@ const graphDataAnalysis = {
       id: 17,
       source: 7,
       target: 14,
-      sourcePort: {
-        x: 438.25,
-        y: 347
-      },
-      targetPort: {
-        x: 379.25,
-        y: 307
-      },
+      sourcePort: { x: 438.25, y: 347 },
+      targetPort: { x: 379.25, y: 307 },
       bends: [],
       labels: [],
       tag: null
@@ -1993,14 +1240,8 @@ const graphDataAnalysis = {
       id: 18,
       source: 5,
       target: 16,
-      sourcePort: {
-        x: 615.5,
-        y: 168.79999542236334
-      },
-      targetPort: {
-        x: 297.25,
-        y: 23.799995422363395
-      },
+      sourcePort: { x: 615.5, y: 168.79999542236334 },
+      targetPort: { x: 297.25, y: 23.799995422363395 },
       bends: [],
       labels: [],
       tag: null
@@ -2009,14 +1250,8 @@ const graphDataAnalysis = {
       id: 19,
       source: 14,
       target: 16,
-      sourcePort: {
-        x: 379.25,
-        y: 307
-      },
-      targetPort: {
-        x: 297.25,
-        y: 23.799995422363395
-      },
+      sourcePort: { x: 379.25, y: 307 },
+      targetPort: { x: 297.25, y: 23.799995422363395 },
       bends: [],
       labels: [],
       tag: null
@@ -2025,14 +1260,8 @@ const graphDataAnalysis = {
       id: 20,
       source: 18,
       target: 21,
-      sourcePort: {
-        x: 208.25,
-        y: 55.799995422363395
-      },
-      targetPort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
+      sourcePort: { x: 208.25, y: 55.799995422363395 },
+      targetPort: { x: 285.25, y: 476.2000045776367 },
       bends: [],
       labels: [],
       tag: null
@@ -2041,14 +1270,8 @@ const graphDataAnalysis = {
       id: 21,
       source: 21,
       target: 23,
-      sourcePort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
-      targetPort: {
-        x: 308.33028455284557,
-        y: 352
-      },
+      sourcePort: { x: 285.25, y: 476.2000045776367 },
+      targetPort: { x: 308.33028455284557, y: 352 },
       bends: [],
       labels: [],
       tag: null
@@ -2057,14 +1280,8 @@ const graphDataAnalysis = {
       id: 22,
       source: 21,
       target: 24,
-      sourcePort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
-      targetPort: {
-        x: 376.33028455284557,
-        y: 409.44167582193995
-      },
+      sourcePort: { x: 285.25, y: 476.2000045776367 },
+      targetPort: { x: 376.33028455284557, y: 409.44167582193995 },
       bends: [],
       labels: [],
       tag: null
@@ -2073,14 +1290,8 @@ const graphDataAnalysis = {
       id: 23,
       source: 21,
       target: 25,
-      sourcePort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
-      targetPort: {
-        x: 414.25,
-        y: 476.2000045776367
-      },
+      sourcePort: { x: 285.25, y: 476.2000045776367 },
+      targetPort: { x: 414.25, y: 476.2000045776367 },
       bends: [],
       labels: [],
       tag: null
@@ -2089,14 +1300,8 @@ const graphDataAnalysis = {
       id: 24,
       source: 21,
       target: 22,
-      sourcePort: {
-        x: 285.25,
-        y: 476.2000045776367
-      },
-      targetPort: {
-        x: 186.41056910569114,
-        y: 339
-      },
+      sourcePort: { x: 285.25, y: 476.2000045776367 },
+      targetPort: { x: 186.41056910569114, y: 339 },
       bends: [],
       labels: [],
       tag: null

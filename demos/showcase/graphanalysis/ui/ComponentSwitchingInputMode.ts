@@ -571,7 +571,4 @@ type HitResult =
   | { result: 'popup'; item: ComponentSelectionPopup }
   | { result: 'nothing' }
 
-type VisualWithCache = SvgVisual & {
-  size?: number
-  components?: Set<number>
-}
+type VisualWithCache = SvgVisual & { size?: number; components?: Set<number> }

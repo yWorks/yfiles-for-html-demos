@@ -36,6 +36,7 @@ import {
   TraversalDirection
 } from '@yfiles/yfiles'
 import { getMetabolicData, getType, NodeTypes } from './data-types'
+
 /**
  * Configures the organic layout and adds the needed constraints to handle the nodes that have to
  * be aligned horizontally or vertically.
@@ -48,8 +49,9 @@ export function configurePentosePhosphateLayout(graphComponent) {
     defaultMinimumNodeDistance: 10,
     avoidNodeEdgeOverlap: true
   })
+
   // create the layout data to assign different edge lengths for edges attached to enzymes
-  // and to add node halos to reaction nodes
+  // and to add margins to reaction nodes
   const organicLayoutData = new OrganicLayoutData({
     preferredEdgeLengths: (edge) =>
       getType(edge.sourceNode) === NodeTypes.ENZYME || getType(edge.targetNode) === NodeTypes.ENZYME
@@ -58,27 +60,36 @@ export function configurePentosePhosphateLayout(graphComponent) {
     nodeMargins: (node) =>
       getType(node) === NodeTypes.REACTION ? new Insets(60, 60, 15, 15) : Insets.EMPTY
   })
+
   const graph = graphComponent.graph
+
   // determine and align vertically the main pathway which is defined by a node with in-degree zero
   // and a node which is marked with vAlign = end in its tag
   const reactionPath = alignReactionPath(graph, organicLayoutData)
+
   // determine the nodes that represent the reactions
   const reactions = graph.nodes.filter((node) => getType(node) === NodeTypes.REACTION).toArray()
   // place the nodes in layers
   const layers = placeNodesOnLayers(graph, reactions, organicLayoutData)
+
   // sort the reaction nodes based on their layer
   reactions.sort((n1, n2) => layers.get(n1) - layers.get(n2))
+
   // add the constraints for the co-reactant nodes to vertically align them and place them before
   // their associated reaction node
   addCoReactantConstraints(graph, organicLayoutData)
+
   // add the constraints for the enzymes to align them after their associated reaction
   addEnzymeConstraints(graph, organicLayoutData)
+
   // add the constraints for the reaction nodes to align them vertically on the main path
   addReactionConstraints(reactions, graph, reactionPath, organicLayoutData)
+
   // add the constraints to reaction nodes that contain more than two reactants
   addMultiProductReactionConstraints(reactions, graph, organicLayoutData)
   return { layout: organicLayout, layoutData: organicLayoutData }
 }
+
 /**
  * Defines the main reaction path and creates the constraints to vertically align the nodes on this path.
  * From the main path, reaction nodes that contain more than two reactants are excluded.
@@ -94,6 +105,7 @@ function alignReactionPath(graph, organicLayoutData) {
   // align the main path vertically and order its nodes based on their order in the path
   organicLayoutData.constraints.addAlignmentConstraint(ConstraintOrientation.VERTICAL, 0).source =
     excludeMultiProductReactions
+
   excludeMultiProductReactions.forEach((node, index) => {
     organicLayoutData.constraints
       .addOrderConstraint(ConstraintOrientation.VERTICAL)
@@ -101,6 +113,7 @@ function alignReactionPath(graph, organicLayoutData) {
   })
   return pathNodes
 }
+
 /**
  * Places the nodes in layers using bfs and creates the constraints so that:
  * (i) nodes in the same layer are horizontally aligned,
@@ -109,6 +122,7 @@ function alignReactionPath(graph, organicLayoutData) {
 function placeNodesOnLayers(graph, reactions, organicLayoutData) {
   // we apply a bfs to calculate the layers of the nodes
   const firstBfs = calculateLayers(graph)
+
   // Since we want the products/reactants to be placed below their corresponding reaction,
   // we check whether there exist reactions that contain multiple reactants, and if yes,
   // for this reaction we consider only the edges that connect to the product with the maximum layer
@@ -121,27 +135,32 @@ function placeNodesOnLayers(graph, reactions, organicLayoutData) {
         .inEdgesAt(reaction)
         .filter((edge) => isProductOrReactant(edge.sourceNode))
       const reactionLayer = firstBfs.nodeLayerIds.get(reaction)
+
       // get the maximum layer of these edges
       const maxLayer = productEdges.reduce(
         (acc, edge) => Math.max(acc, firstBfs.nodeLayerIds.get(edge.sourceNode)),
         reactionLayer
       )
+
       if (maxLayer !== reactionLayer) {
         // use the first edge that does not belong to the maximum layer of these edges
         const edgesToUse = productEdges
           .filter((edge) => firstBfs.nodeLayerIds.get(edge.sourceNode) !== maxLayer)
           .at(0)
+
         if (edgesToUse != null) {
           excludeEdges.push(edgesToUse)
         }
       }
     })
+
   let bfs = firstBfs
   // if there exist edges to exclude, we do a second bfs excluding the edges calculated above to
   // re-calculate the layers
   if (excludeEdges.length > 0) {
     bfs = calculateLayers(graph, excludeEdges)
   }
+
   // create the constraints for each layer
   bfs.layers.forEach((bfsLayer) => {
     // nodes that belong in the same layer have to be horizontally aligned
@@ -149,9 +168,11 @@ function placeNodesOnLayers(graph, reactions, organicLayoutData) {
       ConstraintOrientation.HORIZONTAL,
       0
     ).items = bfsLayer.nodes
+
     if (bfsLayer.index > 0) {
       // nodes that belong to consecutive layers have to be ordered based on their bfs layering
       const previousLayerNodes = bfs.layers.at(bfsLayer.index - 1).nodes.toArray()
+
       const orderConstraints = organicLayoutData.constraints.addOrderConstraint(
         ConstraintOrientation.VERTICAL
       )
@@ -160,8 +181,10 @@ function placeNodesOnLayers(graph, reactions, organicLayoutData) {
       })
     }
   })
+
   return bfs.nodeLayerIds
 }
+
 /**
  * Creates the constraints for the nodes representing the co-reactants. Namely, co-reactants
  * (i) have to be vertically aligned,
@@ -171,9 +194,11 @@ function placeNodesOnLayers(graph, reactions, organicLayoutData) {
 function addCoReactantConstraints(graph, organicLayoutData) {
   // find the nodes representing the co-reactants
   const coReactants = graph.nodes.filter((node) => getType(node) === NodeTypes.CO_REACTANT)
+
   // align vertically the co-reactants
   organicLayoutData.constraints.addAlignmentConstraint(ConstraintOrientation.VERTICAL).items =
     coReactants
+
   coReactants.forEach((coReactant) => {
     if (graph.outDegree(coReactant) > 0) {
       const reaction = graph.outEdgesAt(coReactant).at(0).targetNode
@@ -185,6 +210,7 @@ function addCoReactantConstraints(graph, organicLayoutData) {
       )
       horizontalOrdering.mapper.set(coReactant, 1)
       horizontalOrdering.mapper.set(reaction, 2)
+
       const verticalOrdering = organicLayoutData.constraints.addOrderConstraint(
         ConstraintOrientation.VERTICAL
       )
@@ -200,6 +226,7 @@ function addCoReactantConstraints(graph, organicLayoutData) {
       )
       horizontalOrdering.mapper.set(coReactant, 1)
       horizontalOrdering.mapper.set(reaction, 2)
+
       const verticalOrdering = organicLayoutData.constraints.addOrderConstraint(
         ConstraintOrientation.VERTICAL
       )
@@ -208,6 +235,7 @@ function addCoReactantConstraints(graph, organicLayoutData) {
     }
   })
 }
+
 /**
  * Creates the constraints for the nodes representing the enzymes.
  * These should be horizontally aligned with their associated reaction and placed after it.
@@ -227,6 +255,7 @@ function addEnzymeConstraints(graph, organicLayoutData) {
     )
     orderConstraint.mapper.set(reaction, 1)
     orderConstraint.mapper.set(enzyme, 2)
+
     organicLayoutData.constraints.addMaximumDistance(
       reaction,
       enzyme,
@@ -235,6 +264,7 @@ function addEnzymeConstraints(graph, organicLayoutData) {
     )
   })
 }
+
 /**
  * Creates the constraints for the nodes representing reactions that contain two reactants.
  * These should be vertically aligned on the main path.
@@ -255,6 +285,7 @@ function addReactionConstraints(reactions, graph, reactionPath, organicLayoutDat
     })
   })
 }
+
 /**
  * Creates the constraints for the nodes representing reactions that contain more than two reactants.
  * In this case, the four products involved in the reaction should be pairwise aligned vertically.
@@ -277,6 +308,7 @@ function addMultiProductReactionConstraints(reactions, graph, organicLayoutData)
         ConstraintOrientation.VERTICAL,
         0
       ).items = [in1, out2]
+
       organicLayoutData.constraints.addMaximumDistance(
         in1,
         reaction,
@@ -303,6 +335,7 @@ function addMultiProductReactionConstraints(reactions, graph, organicLayoutData)
       )
     })
 }
+
 /**
  * Applies the shortest path algorithm starting from a node with no incoming edges and ending to a node
  * which is marked with vAlign = 'end' in its tag.
@@ -310,6 +343,7 @@ function addMultiProductReactionConstraints(reactions, graph, organicLayoutData)
 function calculateMainReactionPath(graph) {
   const startNodes = graph.nodes.filter((node) => graph.inEdgesAt(node).size === 0).at(0)
   const endNodes = graph.nodes.filter((node) => getMetabolicData(node).vAlign === 'end').at(0)
+
   const shortestPath = new ShortestPath({
     source: startNodes,
     sink: endNodes,
@@ -320,6 +354,7 @@ function calculateMainReactionPath(graph) {
   })
   return shortestPath.run(graph).nodes
 }
+
 /**
  * Calculates the layer of each node that represents a product or a reactant starting from a node with
  * no incoming edges.
@@ -344,12 +379,14 @@ function calculateLayers(graph, excludedEdges) {
   })
   return bfsTraversal.run(graph)
 }
+
 /**
  * Returns whether the given node is a product or a reactant.
  */
 function isProductOrReactant(node) {
   return getType(node) === NodeTypes.PRODUCT || getType(node) === NodeTypes.REACTANT
 }
+
 /**
  * Returns whether the reaction node contains more than 2 reactants.
  */

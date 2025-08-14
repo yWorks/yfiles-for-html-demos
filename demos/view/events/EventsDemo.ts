@@ -745,7 +745,15 @@ function registerMoveInputModeEvents(): void {
     'drag-canceled',
     moveInputModeOnDragCanceled
   )
+  editorMode.moveUnselectedItemsInputMode.addEventListener(
+    'drag-canceled',
+    moveInputModeOnDragCanceled
+  )
   editorMode.moveSelectedItemsInputMode.addEventListener(
+    'drag-canceling',
+    moveInputModeOnDragCanceling
+  )
+  editorMode.moveUnselectedItemsInputMode.addEventListener(
     'drag-canceling',
     moveInputModeOnDragCanceling
   )
@@ -753,18 +761,40 @@ function registerMoveInputModeEvents(): void {
     'drag-finished',
     moveInputModeOnDragFinished
   )
+  editorMode.moveUnselectedItemsInputMode.addEventListener(
+    'drag-finished',
+    moveInputModeOnDragFinished
+  )
   editorMode.moveSelectedItemsInputMode.addEventListener(
     'drag-finishing',
     moveInputModeOnDragFinishing
   )
+  editorMode.moveUnselectedItemsInputMode.addEventListener(
+    'drag-finishing',
+    moveInputModeOnDragFinishing
+  )
   editorMode.moveSelectedItemsInputMode.addEventListener('drag-started', moveInputModeOnDragStarted)
+  editorMode.moveUnselectedItemsInputMode.addEventListener(
+    'drag-started',
+    moveInputModeOnDragStarted
+  )
   editorMode.moveSelectedItemsInputMode.addEventListener(
     'drag-starting',
     moveInputModeOnDragStarting
   )
+  editorMode.moveUnselectedItemsInputMode.addEventListener(
+    'drag-starting',
+    moveInputModeOnDragStarting
+  )
   editorMode.moveSelectedItemsInputMode.addEventListener('dragged', moveInputModeOnDragged)
+  editorMode.moveUnselectedItemsInputMode.addEventListener('dragged', moveInputModeOnDragged)
   editorMode.moveSelectedItemsInputMode.addEventListener('dragging', moveInputModeOnDragging)
+  editorMode.moveUnselectedItemsInputMode.addEventListener('dragging', moveInputModeOnDragging)
   editorMode.moveSelectedItemsInputMode.addEventListener(
+    'query-position-handler',
+    moveInputModeOnQueryPositionHandler
+  )
+  editorMode.moveUnselectedItemsInputMode.addEventListener(
     'query-position-handler',
     moveInputModeOnQueryPositionHandler
   )
@@ -778,7 +808,15 @@ function unregisterMoveInputModeEvents(): void {
     'drag-canceled',
     moveInputModeOnDragCanceled
   )
+  editorMode.moveUnselectedItemsInputMode.removeEventListener(
+    'drag-canceled',
+    moveInputModeOnDragCanceled
+  )
   editorMode.moveSelectedItemsInputMode.removeEventListener(
+    'drag-canceling',
+    moveInputModeOnDragCanceling
+  )
+  editorMode.moveUnselectedItemsInputMode.removeEventListener(
     'drag-canceling',
     moveInputModeOnDragCanceling
   )
@@ -786,7 +824,15 @@ function unregisterMoveInputModeEvents(): void {
     'drag-finished',
     moveInputModeOnDragFinished
   )
+  editorMode.moveUnselectedItemsInputMode.removeEventListener(
+    'drag-finished',
+    moveInputModeOnDragFinished
+  )
   editorMode.moveSelectedItemsInputMode.removeEventListener(
+    'drag-finishing',
+    moveInputModeOnDragFinishing
+  )
+  editorMode.moveUnselectedItemsInputMode.removeEventListener(
     'drag-finishing',
     moveInputModeOnDragFinishing
   )
@@ -794,13 +840,27 @@ function unregisterMoveInputModeEvents(): void {
     'drag-started',
     moveInputModeOnDragStarted
   )
+  editorMode.moveUnselectedItemsInputMode.removeEventListener(
+    'drag-started',
+    moveInputModeOnDragStarted
+  )
   editorMode.moveSelectedItemsInputMode.removeEventListener(
     'drag-starting',
     moveInputModeOnDragStarting
   )
+  editorMode.moveUnselectedItemsInputMode.removeEventListener(
+    'drag-starting',
+    moveInputModeOnDragStarting
+  )
   editorMode.moveSelectedItemsInputMode.removeEventListener('dragged', moveInputModeOnDragged)
+  editorMode.moveUnselectedItemsInputMode.removeEventListener('dragged', moveInputModeOnDragged)
   editorMode.moveSelectedItemsInputMode.removeEventListener('dragging', moveInputModeOnDragging)
+  editorMode.moveUnselectedItemsInputMode.removeEventListener('dragging', moveInputModeOnDragging)
   editorMode.moveSelectedItemsInputMode.removeEventListener(
+    'query-position-handler',
+    moveInputModeOnQueryPositionHandler
+  )
+  editorMode.moveUnselectedItemsInputMode.removeEventListener(
     'query-position-handler',
     moveInputModeOnQueryPositionHandler
   )
@@ -3529,15 +3589,6 @@ function initializeInputModes(): void {
   // initially, we want to disable editing orthogonal edges altogether
   editorMode.orthogonalEdgeEditingContext.enabled = false
 
-  editorMode.contextMenuInputMode.addEventListener('populate-menu', (evt) => {
-    evt.contextMenu = [
-      {
-        label: 'Context Menu Action',
-        action: () => log(editorMode.contextMenuInputMode, 'Context Menu Item Action')
-      }
-    ]
-  })
-
   viewerMode = new GraphViewerInputMode()
   viewerMode.itemHoverInputMode.hoverItems = GraphItemTypes.ALL
 
@@ -3694,14 +3745,19 @@ function setupToolTips(): void {
 
 function setupContextMenu(): void {
   editorMode.contextMenuItems = GraphItemTypes.NODE
-  editorMode.addEventListener('populate-item-context-menu', (evt) => {
-    evt.handled = true
-  })
-
   viewerMode.contextMenuItems = GraphItemTypes.NODE
-  viewerMode.addEventListener('populate-item-context-menu', (evt) => {
+  const listener = (evt: PopulateItemContextMenuEventArgs<IModelItem>) => {
+    console.log('Menu')
+    evt.contextMenu = [
+      {
+        label: 'Context Menu Action',
+        action: () => log(editorMode.contextMenuInputMode, 'Context Menu Item Action')
+      }
+    ]
     evt.handled = true
-  })
+  }
+  editorMode.addEventListener('populate-item-context-menu', listener)
+  viewerMode.addEventListener('populate-item-context-menu', listener)
 }
 
 function enableFolding(): void {

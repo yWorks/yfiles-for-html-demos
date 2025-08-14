@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { GraphSearch } from '@yfiles/demo-utils/GraphSearch'
 import { getCompany } from './data-types'
+
 /**
  * Implements the custom graph search for this demo.
  * It matches the search term with the label text and the contents of the tag of the nodes.

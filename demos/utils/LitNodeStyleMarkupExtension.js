@@ -27,27 +27,34 @@
  **
  ***************************************************************************/
 import { GraphMLIOHandler, ILookup, MarkupExtension } from '@yfiles/yfiles'
+
 import { createLitNodeStyleFromSource, LitNodeStyle } from './LitNodeStyle'
+
 /**
  * A markup extension class used for (de-)serializing a Lit node style.
  */
 export class LitNodeStyleMarkupExtension extends MarkupExtension {
   _renderFunction = ''
+
   get renderFunction() {
     return this._renderFunction
   }
+
   set renderFunction(value) {
     this._renderFunction = value
   }
+
   provideValue(serviceProvider) {
     return createLitNodeStyleFromSource(this._renderFunction)
   }
+
   static create(item) {
     const litNodeStyleMarkupExtension = new LitNodeStyleMarkupExtension()
     litNodeStyleMarkupExtension.renderFunction = item.renderFunction.toString()
     return litNodeStyleMarkupExtension
   }
 }
+
 /**
  * Enable serialization of the LitNodeStyle - without a namespace mapping, serialization will fail
  */
@@ -61,9 +68,7 @@ export function registerLitNodeStyleSerialization(graphmlHandler) {
   graphmlHandler.addTypeInformation(LitNodeStyleMarkupExtension, {
     name: 'LitNodeStyle',
     xmlNamespace: 'http://www.yworks.com/demos/yfiles-lit-node-style/1.0',
-    properties: {
-      renderFunction: { default: '', type: String }
-    }
+    properties: { renderFunction: { default: '', type: String } }
   })
   graphmlHandler.addNamespace('http://www.yworks.com/demos/yfiles-lit-node-style/1.0', 'lit')
   graphmlHandler.addEventListener('handle-serialization', (evt) => {

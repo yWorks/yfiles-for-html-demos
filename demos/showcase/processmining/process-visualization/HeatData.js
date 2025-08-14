@@ -33,11 +33,13 @@ export class HeatData {
   values
   minTime
   maxTime
+
   constructor(elements = 64, minTime = 0, maxTime = 1) {
     this.values = new Float32Array(elements)
     this.minTime = minTime
     this.maxTime = maxTime
   }
+
   /**
    * Returns the heat value at a specific time.
    */
@@ -55,6 +57,7 @@ export class HeatData {
       }
     }
   }
+
   /**
    * Adds the given value for a given time span.
    */
@@ -65,12 +68,14 @@ export class HeatData {
     const toRatio = this.calculateRatio(to)
     const toIndex = Math.floor(toRatio)
     const toFraction = toRatio - toIndex
+
     this.values[fromIndex] += (1 - fromFraction) * value
     for (let i = fromIndex + 1; i < toIndex; i++) {
       this.values[i] += value
     }
     this.values[toIndex] += value * toFraction
   }
+
   /**
    * Calculates the ratio of the given time in relation to the time span
    * covered by this {@link HeatData}.
@@ -78,6 +83,7 @@ export class HeatData {
   calculateRatio(time) {
     return ((time - this.minTime) / (this.maxTime - this.minTime)) * this.values.length
   }
+
   /**
    * Returns the maximum heat value over the whole time span that is covered by this {@link HeatData}.
    */

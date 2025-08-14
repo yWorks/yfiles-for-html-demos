@@ -37,9 +37,7 @@ Ungroup Selected Nodes
 Group nodes can use special styles that are optimized to visualize a group with content. However, a group node can also use a normal node style like [ShapeNodeStyle](https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle). In this example, we use [GroupNodeStyle](https://docs.yworks.com/yfileshtml/#/api/GroupNodeStyle).
 
 ```
-graph.groupNodeDefaults.style = new GroupNodeStyle({
-  tabFill: '#0b7189'
-})
+graph.groupNodeDefaults.style = new GroupNodeStyle({ tabFill: '#0b7189' })
 
 // Set a label style with right-aligned text
 graph.groupNodeDefaults.labels.style = new LabelStyle({

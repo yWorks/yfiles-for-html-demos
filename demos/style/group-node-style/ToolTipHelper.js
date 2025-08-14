@@ -37,6 +37,7 @@ import {
   Point,
   TimeSpan
 } from '@yfiles/yfiles'
+
 /**
  * Configures the given input mode to show tool tips for group nodes and folder nodes.
  * The tool tips show a description of the corresponding node style configuration.
@@ -47,12 +48,14 @@ export function configureToolTips(inputMode) {
   toolTipInputMode.toolTipLocationOffset = new Point(30, 30)
   toolTipInputMode.delay = TimeSpan.fromMilliseconds(500)
   toolTipInputMode.duration = TimeSpan.fromSeconds(10)
+
   // Register a listener for when a tool tip should be shown.
   inputMode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.handled) {
       // Tool tip content has already been assigned -> nothing to do.
       return
     }
+
     // Use a rich HTML element as tool tip content. Alternatively, a plain string would do as well.
     if (evt.item instanceof INode && evt.item.style instanceof GroupNodeStyle) {
       evt.toolTip = createToolTipContent(evt.item)
@@ -61,6 +64,7 @@ export function configureToolTips(inputMode) {
     }
   })
 }
+
 /**
  * The tool tip may either be a plain string or it can also be a rich HTML element. In this case, we
  * show the latter. We just extract the first label text from the given item and show it as
@@ -68,8 +72,10 @@ export function configureToolTips(inputMode) {
  */
 function createToolTipContent(node) {
   const style = node.style
+
   const title = document.createElement('h4')
   title.innerHTML = 'GroupNodeStyle Properties'
+
   const grid = document.createElement('div')
   grid.classList.add('tooltip-content')
   addToToolTipGrid(grid, 'Folder Icon', GroupNodeStyleIconType[style.folderIcon])
@@ -93,6 +99,7 @@ function createToolTipContent(node) {
   )
   addSeparator(grid)
   addToToolTipGrid(grid, 'Corner Radius', `${style.cornerRadius}`)
+
   // build the tooltip container
   const toolTip = document.createElement('div')
   toolTip.classList.add('tooltip-container')
@@ -108,6 +115,7 @@ function addToToolTipGrid(grid, key, value) {
   const keySpan = document.createElement('span')
   keySpan.innerHTML = key
   grid.appendChild(keySpan)
+
   const valueSpan = document.createElement('span')
   if (typeof value === 'string') {
     valueSpan.innerHTML = value
@@ -120,6 +128,7 @@ function addToToolTipGrid(grid, key, value) {
   }
   grid.appendChild(valueSpan)
 }
+
 /**
  * Adds some extra spacing below the last row in the given grid.
  */

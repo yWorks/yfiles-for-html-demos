@@ -37,6 +37,7 @@ import {
   LabelStyle,
   ModifierKeys
 } from '@yfiles/yfiles'
+
 /**
  * This {@link ItemHoverInputMode} will show a pointer cursor for external links and underline the link's
  * text to indicate a clickable link. It is configured to only do the highlighting when the CTRL modifier is pressed
@@ -48,6 +49,7 @@ export class LinkItemHoverInputMode extends ItemHoverInputMode {
     this.priority = 54
     this.hoverCursor = Cursor.POINTER
   }
+
   /**
    * It is only a valid hover when the CTRL modifier is active and there is actually a link that can be clicked.
    * @param item - The item to check.
@@ -60,6 +62,7 @@ export class LinkItemHoverInputMode extends ItemHoverInputMode {
     }
     return !!this.getLabelLink(item)
   }
+
   /**
    * Toggles the underline text decoration for valid links.
    * @param evt - The {@link HoveredItemChangedEventArgs}
@@ -68,24 +71,27 @@ export class LinkItemHoverInputMode extends ItemHoverInputMode {
   onHoveredItemChanged(evt) {
     const oldLabelLink = this.getLabelLink(evt.oldItem)
     const labelLink = this.getLabelLink(evt.item)
+
     // the toggle of underlined text should not be added to the undo queue
     const graph = this.parentInputModeContext.graph
     const edit = graph.beginEdit('LinkDecoration', 'LinkDecoration')
+
     if (oldLabelLink) {
       // re-apply the original style
       graph.setStyle(oldLabelLink, graph.nodeDefaults.labels.getStyleInstance(oldLabelLink.owner))
     }
+
     if (labelLink) {
       // underline the text of the link
       const clone = labelLink.style.clone()
-      clone.font = clone.font.createCopy({
-        textDecoration: 'underline'
-      })
+      clone.font = clone.font.createCopy({ textDecoration: 'underline' })
       graph.setStyle(labelLink, clone)
     }
+
     // we cancel the edit to not add it to the undo queue
     edit.cancel()
   }
+
   /**
    * Returns the {@link ILabel} that represents a link, otherwise null. Nodes and edges are checked for
    * any label that represents a link, too.

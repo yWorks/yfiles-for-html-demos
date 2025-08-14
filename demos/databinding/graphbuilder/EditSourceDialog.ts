@@ -26,18 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { basicSetup, EditorView } from 'codemirror'
-import { xml } from '@codemirror/lang-xml'
-import { javascript } from '@codemirror/lang-javascript'
-
 import type {
   EdgesSourceDefinitionBuilderConnector,
   NodesSourceDefinitionBuilderConnector
 } from './ModelClasses'
-import { lintGutter } from '@codemirror/lint'
-import { getXmlLinter } from '../../resources/codeMirrorLinters'
-
-const xmlLinter = getXmlLinter()
+import {
+  createCodemirrorEditor,
+  type EditorMode,
+  EditorView
+} from '@yfiles/demo-resources/codemirror-editor'
 
 /**
  * Abstract base class for a node-/edge-source editing dialog
@@ -132,23 +129,10 @@ export abstract class SourceDialog {
   }
 
   /**
-   * creates an CodeMirror text/code input field component adorned with heading and documentation
-   * @param labelText the heading label
-   * @param doc the documentation text. Can be longer as it is rendered as a HTML paragraph
-   * @param mode the language syntax configuration object for CodeMirror
+   * Creates a CodeMirror code input field component adorned with heading and documentation.
    */
-  protected createEditorField(labelText: string, doc: string, mode: string | object): EditorView {
-    const container = this.createDescription(labelText, doc)
-    const extensions = [basicSetup]
-    if (mode == 'js') {
-      extensions.push(javascript())
-    } else {
-      extensions.push(xml(), xmlLinter, lintGutter())
-    }
-    return new EditorView({
-      parent: container,
-      extensions: extensions
-    })
+  protected createEditorField(labelText: string, doc: string, mode: EditorMode): EditorView {
+    return createCodemirrorEditor(mode, this.createDescription(labelText, doc))
   }
 
   /**

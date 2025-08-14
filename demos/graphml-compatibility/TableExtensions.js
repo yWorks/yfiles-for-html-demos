@@ -43,6 +43,7 @@ import {
   yfiles
 } from '@yfiles/yfiles'
 import { YfilesCommon_3_0_XamlNS, YfilesCommonXamlNS } from './GraphMLCompatibility'
+
 export function configureRenamings(callback) {
   const nameMappings = new Map()
   nameMappings.set(
@@ -53,6 +54,7 @@ export function configureRenamings(callback) {
     callback(new XmlName(key, YfilesCommon_3_0_XamlNS), new XmlName(value, YfilesCommonXamlNS))
   )
 }
+
 export function configureExtensions(callback) {
   createMetadata(
     TableExtension,
@@ -115,49 +117,68 @@ export function configureExtensions(callback) {
     callback
   )
 }
+
 function createMetadata(type, metadata, callback, ns = YfilesCommon_3_0_XamlNS) {
   metadata.name = type.name
   metadata.xmlNamespace = ns
   callback(type, metadata)
 }
+
 // region Compatibility classes for Table
+
 class TableExtension extends MarkupExtension {
   _ColumnDefaults = null
+
   get ColumnDefaults() {
     return this._ColumnDefaults
   }
+
   set ColumnDefaults(value) {
     this._ColumnDefaults = value
   }
+
   _RowDefaults = null
+
   get RowDefaults() {
     return this._RowDefaults
   }
+
   set RowDefaults(value) {
     this._RowDefaults = value
   }
+
   _RelativeLocation = Point.ORIGIN
+
   get RelativeLocation() {
     return this._RelativeLocation
   }
+
   set RelativeLocation(value) {
     this._RelativeLocation = value
   }
+
   _Insets = new Insets(0)
+
   get Insets() {
     return this._Insets
   }
+
   set Insets(value) {
     this._Insets = value
   }
+
   _Rows = new List()
+
   get Rows() {
     return this._Rows
   }
+
   _Columns = new List()
+
   get Columns() {
     return this._Columns
   }
+
   provideValue(serviceProvider) {
     //@ts-ignore
     const tableExtension = new yfiles.graphml.TableExtension()
@@ -170,50 +191,70 @@ class TableExtension extends MarkupExtension {
     return tableExtension.provideValue(serviceProvider)
   }
 }
+
 class RowExtension extends MarkupExtension {
   _Tag = null
+
   get Tag() {
     return this._Tag
   }
+
   set Tag(value) {
     this._Tag = value
   }
+
   _Style = null
+
   get Style() {
     return this._Style
   }
+
   set Style(value) {
     this._Style = value
   }
+
   _Size = -1
+
   get Size() {
     return this._Size
   }
+
   set Size(value) {
     this._Size = value
   }
+
   _MinimumSize = -1
+
   get MinimumSize() {
     return this._MinimumSize
   }
+
   set MinimumSize(value) {
     this._MinimumSize = value
   }
+
   _Insets = new Insets(0)
+
   get Insets() {
     return this._Insets
   }
+
   set Insets(value) {
     this._Insets = value
   }
+
   _Rows = new List()
+
   get Rows() {
     return this._Rows
   }
+
   _Labels = new List()
+
   get Labels() {
     return this._Labels
   }
+
   provideValue(serviceProvider) {
     //@ts-ignore
     const rowExtension = new yfiles.graphml.RowExtension()
@@ -227,50 +268,70 @@ class RowExtension extends MarkupExtension {
     return rowExtension.provideValue(serviceProvider)
   }
 }
+
 class ColumnExtension extends MarkupExtension {
   _Tag = null
+
   get Tag() {
     return this._Tag
   }
+
   set Tag(value) {
     this._Tag = value
   }
+
   _Style = null
+
   get Style() {
     return this._Style
   }
+
   set Style(value) {
     this._Style = value
   }
+
   _Size = -1
+
   get Size() {
     return this._Size
   }
+
   set Size(value) {
     this._Size = value
   }
+
   _MinimumSize = -1
+
   get MinimumSize() {
     return this._MinimumSize
   }
+
   set MinimumSize(value) {
     this._MinimumSize = value
   }
+
   _Insets = new Insets(0)
+
   get Insets() {
     return this._Insets
   }
+
   set Insets(value) {
     this._Insets = value
   }
+
   _Columns = new List()
+
   get Columns() {
     return this._Columns
   }
+
   _Labels = new List()
+
   get Labels() {
     return this._Labels
   }
+
   provideValue(serviceProvider) {
     //@ts-ignore
     const columnExtension = new yfiles.graphml.ColumnExtension()
@@ -284,6 +345,7 @@ class ColumnExtension extends MarkupExtension {
     return columnExtension.provideValue(serviceProvider)
   }
 }
+
 class StripeDefaultsExtension extends MarkupExtension {
   _Insets = new Insets(0)
   _ShareStyleInstance = true
@@ -291,42 +353,55 @@ class StripeDefaultsExtension extends MarkupExtension {
   _MinimumSize = 10
   _Labels = new LabelDefaults()
   _Style = IStripeStyle.VOID_STRIPE_STYLE
+
   get Insets() {
     return this._Insets
   }
+
   set Insets(value) {
     this._Insets = value
   }
+
   get ShareStyleInstance() {
     return this._ShareStyleInstance
   }
+
   set ShareStyleInstance(value) {
     this._ShareStyleInstance = value
   }
+
   get Size() {
     return this._Size
   }
+
   set Size(value) {
     this._Size = value
   }
+
   get MinimumSize() {
     return this._MinimumSize
   }
+
   set MinimumSize(value) {
     this._MinimumSize = value
   }
+
   get Labels() {
     return this._Labels
   }
+
   set Labels(value) {
     this._Labels = value
   }
+
   get Style() {
     return this._Style
   }
+
   set Style(value) {
     this._Style = value
   }
+
   provideValue(serviceProvider) {
     const stripeDefaults = new StripeDefaults()
     stripeDefaults.padding = this._Insets
@@ -338,3 +413,4 @@ class StripeDefaultsExtension extends MarkupExtension {
     return stripeDefaults
   }
 }
+

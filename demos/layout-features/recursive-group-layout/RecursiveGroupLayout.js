@@ -38,6 +38,7 @@ import {
   RecursiveGroupLayout,
   RecursiveGroupLayoutData
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to run a {@link RecursiveGroupLayout} with different layouts for the group nodes.
  * @param graph The graph to be laid out
@@ -49,11 +50,11 @@ export function createFeatureLayoutConfiguration(graph) {
   const groupNode2 = graph.nodes.find((node) => node.tag === 'Group 2')
   const groupNode3 = graph.nodes.find((node) => node.tag === 'Group 3')
   const groupNode4 = graph.nodes.find((node) => node.tag === 'Group 4')
+
   // the RecursiveGroupLayout can use a core layout algorithm to arrange the top level hierarchy
   const coreLayout = new HierarchicalLayout()
-  const layout = new RecursiveGroupLayout({
-    coreLayout
-  })
+  const layout = new RecursiveGroupLayout({ coreLayout })
+
   // assign a layout algorithm to each group node
   const mapper = new Mapper()
   mapper.set(groupNode1, new HierarchicalLayout())
@@ -64,7 +65,9 @@ export function createFeatureLayoutConfiguration(graph) {
   mapper.set(groupNode4, RecursiveGroupLayout.FIX_CONTENT_LAYOUT)
   // Alternatively, we could also set the default value of the mapper to NULL_LAYOUT
   // mapper.defaultValue = RecursiveGroupLayout.NULL_LAYOUT
+
   const layoutData = new RecursiveGroupLayoutData()
   layoutData.groupNodeLayouts = mapper
+
   return { layout, layoutData }
 }

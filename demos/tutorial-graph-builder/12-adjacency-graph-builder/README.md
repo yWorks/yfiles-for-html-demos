@@ -50,11 +50,7 @@ Consider the following list of data objects, which represents a basic organizati
   name: 'Amy Kain',
   colleagues: ['0_1_0']
 },
-{
-  id: '0_1_0',
-  position: 'Production Supervisor',
-  name: 'Kathy Maxwell'
-}
+{ id: '0_1_0', position: 'Production Supervisor', name: 'Kathy Maxwell' }
 ```
 
 ## Building the graph

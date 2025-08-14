@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { BaseClass, IRenderContext, IVisualCreator, SvgVisual, Visual } from '@yfiles/yfiles'
+
 /**
  * This class renders the map used as background in this demo.
  */
@@ -43,6 +44,7 @@ export class MapVisualCreator extends BaseClass(IVisualCreator) {
     image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', 'resources/usamap.svg')
     return new SvgVisual(image)
   }
+
   /**
    * Updates the visual for the background map.
    * @param context The context that describes where the visual will be used

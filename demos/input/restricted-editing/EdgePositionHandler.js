@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { BaseClass, IHandle, IPositionHandler, MutablePoint } from '@yfiles/yfiles'
+
 /**
  * An {@link IPositionHandler} that moves the bends of an edge
  */
@@ -34,6 +35,7 @@ export class EdgePositionHandler extends BaseClass(IPositionHandler) {
   edge
   handles = []
   _location
+
   /**
    * Creates a new instance of the EdgePositionHandler
    * @param edge the edge which should be moved
@@ -43,6 +45,7 @@ export class EdgePositionHandler extends BaseClass(IPositionHandler) {
     this.edge = edge
     this._location = new MutablePoint()
   }
+
   /**
    * The Edge is canceled being dragged
    * @param context The context to retrieve information about the drag from
@@ -53,6 +56,7 @@ export class EdgePositionHandler extends BaseClass(IPositionHandler) {
       handleStructure.handle.cancelDrag(context, handleStructure.originalLocation)
     })
   }
+
   /**
    * The Edge is canceled being dragged
    * @param context The context to retrieve information about the drag from
@@ -69,6 +73,7 @@ export class EdgePositionHandler extends BaseClass(IPositionHandler) {
       )
     })
   }
+
   /**
    * The edge is dragged.
    * @param context The context to retrieve information about the drag from
@@ -85,6 +90,7 @@ export class EdgePositionHandler extends BaseClass(IPositionHandler) {
       )
     })
   }
+
   /**
    * The edge is about to be dragged.
    * @param context The context to retrieve information about the drag from
@@ -97,10 +103,12 @@ export class EdgePositionHandler extends BaseClass(IPositionHandler) {
       }
     }
   }
+
   get location() {
     return this._location
   }
 }
+
 /**
  * Helper class that represent a handle struct
  */

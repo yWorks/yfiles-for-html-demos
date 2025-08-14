@@ -119,9 +119,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
  * editing labels.
  */
 function createInputMode(): IInputMode {
-  const geim = new GraphEditorInputMode({
-    allowEditLabel: true
-  })
+  const geim = new GraphEditorInputMode({ allowEditLabel: true })
 
   // set a random traffic value to edges created interactively
   geim.createEdgeInputMode.addEventListener('edge-creation-started', (evt) => {
@@ -152,22 +150,13 @@ function configureGraph(graph: IGraph): void {
   initDemoStyles(graph)
 
   graph.nodeDefaults.style = new NodeStyleDecorator(
-    new ShapeNodeStyle({
-      fill: '#46A8D5',
-      stroke: null,
-      shape: 'rectangle'
-    }),
+    new ShapeNodeStyle({ fill: '#46A8D5', stroke: null, shape: 'rectangle' }),
     'resources/workstation.svg'
   )
   graph.nodeDefaults.size = new Size(80, 40)
   graph.nodeDefaults.shareStyleInstance = false
   graph.edgeDefaults.style = new EdgeStyleDecorator(
-    new ShapePortStyle({
-      fill: 'lightgray',
-      stroke: null,
-      shape: 'ellipse',
-      renderSize: [5, 5]
-    })
+    new ShapePortStyle({ fill: 'lightgray', stroke: null, shape: 'ellipse', renderSize: [5, 5] })
   )
   graph.nodeDefaults.labels.style = new LabelStyleDecorator(
     new LabelStyle({ textFill: '224556', backgroundFill: '#B4DBED' })

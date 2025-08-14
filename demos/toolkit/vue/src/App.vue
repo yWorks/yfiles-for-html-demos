@@ -44,11 +44,7 @@ import { defineComponent, provide } from 'vue'
 
 export default defineComponent({
   name: 'App',
-  components: {
-    DemoSidebar,
-    DiagramComponent,
-    DiagramOverviewComponent
-  },
+  components: { DemoSidebar, DiagramComponent, DiagramOverviewComponent },
   setup() {
     // We need to provide a GraphComponent instance to the child components.
     // However, the GraphComponent instance can only be created in the DiagramComponent later.

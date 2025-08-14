@@ -41,42 +41,54 @@ import {
   License,
   Size
 } from '@yfiles/yfiles'
+
 import { NodeStyleDecorator } from './NodeStyleDecorator'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 let graphComponent
+
 /**
  * A cancelable timer to control the toast fadeout animation.
  */
 let hideTimer = null
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
+
   // configures default styles for newly created graph elements
   initTutorialDefaults(graphComponent.graph)
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
   await graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
+
   // register a click listener that handles clicks on the decorator
   initializeDecorationClickListener()
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id
@@ -84,13 +96,16 @@ function buildGraph(graph, graphData) {
     item.tag
       ? new NodeStyleDecorator(graph.nodeDefaults.getStyleInstance(), `resources/${item.tag}.svg`)
       : undefined
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Registers a click listener that handles clicks on a specific node area. In this case, we listen for clicks
  * on the decorator icon.
@@ -107,11 +122,13 @@ function initializeDecorationClickListener() {
     ) {
       return
     }
+
     // The decorator was clicked.
     // Handle the click if it should do nothing else than what is defined in the decorator click listener.
     // Otherwise the click will be handled by other input modes, too. For instance, a node may be created or the
     // clicked node may be selected.
     evt.handled = true
+
     // Shows a toast to indicate the successful click, and hides it again.
     clearTimeout(hideTimer)
     const toast = document.querySelector('#toast')
@@ -121,6 +138,7 @@ function initializeDecorationClickListener() {
     }, 2000)
   })
 }
+
 /**
  * Initializes the defaults for the styling in this tutorial.
  *
@@ -129,6 +147,7 @@ function initializeDecorationClickListener() {
 function initTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
   initDemoStyles(graph)
+
   // set sizes and locations specific for this tutorial
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
@@ -139,4 +158,5 @@ function initTutorialDefaults(graph) {
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
+
 run().then(finishLoading)

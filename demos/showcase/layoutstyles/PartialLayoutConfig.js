@@ -42,6 +42,7 @@ import {
   PartialLayoutRoutingStyle,
   SubgraphPlacement
 } from '@yfiles/yfiles'
+
 import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -53,19 +54,22 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
+
 export var SubgraphLayouts
 ;(function (SubgraphLayouts) {
-  SubgraphLayouts[(SubgraphLayouts['HIERARCHIC'] = 0)] = 'HIERARCHIC'
+  SubgraphLayouts[(SubgraphLayouts['HIERARCHICAL'] = 0)] = 'HIERARCHICAL'
   SubgraphLayouts[(SubgraphLayouts['ORGANIC'] = 1)] = 'ORGANIC'
   SubgraphLayouts[(SubgraphLayouts['CIRCULAR'] = 2)] = 'CIRCULAR'
   SubgraphLayouts[(SubgraphLayouts['ORTHOGONAL'] = 3)] = 'ORTHOGONAL'
   SubgraphLayouts[(SubgraphLayouts['AS_IS'] = 4)] = 'AS_IS'
 })(SubgraphLayouts || (SubgraphLayouts = {}))
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 export const PartialLayoutConfig = Class('PartialLayoutConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     LayoutGroup: [
       new LabelAttribute('General'),
@@ -79,7 +83,7 @@ export const PartialLayoutConfig = Class('PartialLayoutConfig', {
     ],
     routingToSubgraphItem: [
       new LabelAttribute(
-        'Edge Routing Style',
+        'Routing Style',
         '#/api/PartialLayout#PartialLayout-property-edgeRoutingStyle'
       ),
       new OptionGroupAttribute('LayoutGroup', 10),
@@ -108,12 +112,12 @@ export const PartialLayoutConfig = Class('PartialLayoutConfig', {
     ],
     subgraphLayoutItem: [
       new LabelAttribute(
-        'Subgraph Layouter',
+        'Subgraph Layout',
         '#/api/PartialLayout#PartialLayout-property-coreLayout'
       ),
       new OptionGroupAttribute('LayoutGroup', 30),
       new EnumValuesAttribute([
-        ['Hierarchical', SubgraphLayouts.HIERARCHIC],
+        ['Hierarchical', SubgraphLayouts.HIERARCHICAL],
         ['Organic', SubgraphLayouts.ORGANIC],
         ['Circular', SubgraphLayouts.CIRCULAR],
         ['Orthogonal', SubgraphLayouts.ORTHOGONAL],
@@ -176,6 +180,7 @@ export const PartialLayoutConfig = Class('PartialLayoutConfig', {
       new TypeAttribute(Boolean)
     ]
   },
+
   /**
    * Setup default values for various configuration parameters.
    */
@@ -184,13 +189,14 @@ export const PartialLayoutConfig = Class('PartialLayoutConfig', {
     LayoutConfiguration.call(this)
     this.routingToSubgraphItem = PartialLayoutRoutingStyle.AUTOMATIC
     this.componentAssignmentStrategyItem = ComponentAssignmentStrategy.CONNECTED
-    this.subgraphLayoutItem = SubgraphLayouts.HIERARCHIC
+    this.subgraphLayoutItem = SubgraphLayouts.HIERARCHICAL
     this.subgraphPlacementItem = SubgraphPlacement.FROM_SKETCH
     this.minNodeDistItem = 30
     this.orientationItem = PartialLayoutOrientation.AUTO_DETECT
     this.alignNodesItem = true
     this.title = 'Partial Layout'
   },
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
@@ -206,10 +212,11 @@ export const PartialLayoutConfig = Class('PartialLayoutConfig', {
     layout.layoutOrientation = this.orientationItem
     layout.edgeRoutingStyle = this.routingToSubgraphItem
     layout.allowMovingFixedElements = this.moveFixedElementsItem
+
     let subgraphLayout = null
     if (this.componentAssignmentStrategyItem !== ComponentAssignmentStrategy.SINGLE) {
       switch (this.subgraphLayoutItem) {
-        case SubgraphLayouts.HIERARCHIC:
+        case SubgraphLayouts.HIERARCHICAL:
           subgraphLayout = new HierarchicalLayout()
           break
         case SubgraphLayouts.ORGANIC:
@@ -226,8 +233,10 @@ export const PartialLayoutConfig = Class('PartialLayoutConfig', {
       }
     }
     layout.coreLayout = subgraphLayout
+
     return layout
   },
+
   /**
    * Creates and configures the layout data.
    * @returns The configured layout data.
@@ -235,32 +244,44 @@ export const PartialLayoutConfig = Class('PartialLayoutConfig', {
   createConfiguredLayoutData: function (graphComponent, layout) {
     const partialLayoutData = new PartialLayoutData()
     const selection = graphComponent.selection
+
     partialLayoutData.scope.nodes = selection.nodes
     partialLayoutData.scope.edges = selection.edges
+
     return partialLayoutData
   },
+
   /** @type {OptionGroup} */
   LayoutGroup: null,
+
   /** @type {string} */
   descriptionText: {
     get: function () {
       return "<p style='margin-top:0'>Partial layout arranges user-specified parts of a diagram, the so-called partial elements, while keeping the other parts fixed. It is related to incremental graph layout. This concept is a perfect fit for incremental scenarios where subsequently added parts should be arranged so that they fit into a given, unchanged diagram.</p><p>In a first step, partial elements are combined to form subgraph components. Subsequently, these are arranged and afterwards placed so that the remainder of the diagram, which consists of the so-called fixed elements, is not affected.</p><p>Placing a subgraph component predominantly means finding a good position that both meets certain proximity criteria and offers enough space to accommodate the subgraph component.</p> <p>In this demo selected elements are considered by the algorithm as partial elements.</p>"
     }
   },
+
   /** @type {PartialLayoutRoutingStyle} */
   routingToSubgraphItem: null,
+
   /** @type {ComponentAssignmentStrategy} */
   componentAssignmentStrategyItem: null,
+
   /** @type {SubgraphLayouts} */
   subgraphLayoutItem: null,
+
   /** @type {SubgraphPlacement} */
   subgraphPlacementItem: null,
+
   /** @type {number} */
   minNodeDistItem: 1,
+
   /** @type {PartialLayoutOrientation} */
   orientationItem: null,
+
   /** @type {boolean} */
   alignNodesItem: false,
+
   /** @type {boolean} */
   moveFixedElementsItem: false
 })

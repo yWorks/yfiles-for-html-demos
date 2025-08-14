@@ -50,35 +50,43 @@ import { LayerColors, SubtreePlacerPanel } from './SubtreePlacerPanel'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 import { initializesInputMode } from './initialize-input-mode'
+
 /**
  * The graph component which contains the tree graph.
  */
 let graphComponent
+
 /**
  * The panel which provides access to the subtree placer settings.
  */
 let subtreePlacerPanel
+
 /**
  * Flag to prevent re-entrant layout calculations.
  */
 let busy = false
+
 /**
  * Launches the TreeLayoutDemo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the graph component
   graphComponent = new GraphComponent('graphComponent')
   // initialize the settings panel and registers a listener which updates the layout if settings were changed
   subtreePlacerPanel = new SubtreePlacerPanel(graphComponent)
   subtreePlacerPanel.setChangeListener(async () => await runLayout(false))
+
   // initialize interactive behavior and toolbar buttons
   initializeGraphDefaults()
   initializesInputMode(graphComponent, subtreePlacerPanel, runLayout)
   initializeUI()
+
   // load a sample graph
   await loadGraph()
 }
+
 /**
  * Runs a {@link TreeLayout} using the specified {@link ISubtreePlacer}s.
  */
@@ -87,7 +95,9 @@ async function runLayout(initConfig) {
     // there is already a layout calculating do not start another one
     return
   }
+
   setBusy(true)
+
   let configuration
   if (!initConfig) {
     // use the current configuration from the panel
@@ -115,6 +125,7 @@ async function runLayout(initConfig) {
         break
     }
   }
+
   // run the layout animated
   const executor = new LayoutExecutor({
     graphComponent,
@@ -124,8 +135,10 @@ async function runLayout(initConfig) {
     animationDuration: '0.5s'
   })
   await executor.start()
+
   setBusy(false)
 }
+
 function initializeGraphDefaults() {
   // initialize the node and edge default styles, they will be applied to the newly created graph
   graphComponent.graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -135,17 +148,20 @@ function initializeGraphDefaults() {
   })
   graphComponent.graph.nodeDefaults.size = new Size(60, 30)
   graphComponent.graph.nodeDefaults.shareStyleInstance = false
+
   graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
     targetArrow: '#617984 medium triangle',
     stroke: '1.5px solid #617984'
   })
 }
+
 /**
  * Reads a tree graph from file
  */
 async function loadGraph() {
   const graph = graphComponent.graph
   graph.clear()
+
   // select tree data
   let nodesSource
   const sample = document.querySelector('#select-sample').value
@@ -167,18 +183,22 @@ async function loadGraph() {
       nodesSource = TreeData.LargeTree.nodesSource
       break
   }
+
   // configure the tree builder
   const builder = new TreeBuilder(graph)
   const rootNodesSource = builder.createRootNodesSource(nodesSource, 'id')
   rootNodesSource.addChildNodesSource((data) => data.children, rootNodesSource)
+
   // create the graph
   builder.buildGraph()
+
   if (sample === 'general') {
     // add some non-tree edges
     graph.createEdge(graph.nodes.get(1), graph.nodes.get(22))
     graph.createEdge(graph.nodes.get(3), graph.nodes.get(16))
     graph.createEdge(graph.nodes.get(28), graph.nodes.get(26))
   }
+
   // update the node fill colors according to their layers
   graph.nodes.forEach((node) => {
     const layerColor = LayerColors[node.tag.layer % LayerColors.length]
@@ -189,9 +209,11 @@ async function loadGraph() {
       style.stroke = '2px dashed black'
     }
   })
+
   // apply layout
   await runLayout(true)
 }
+
 /**
  * Enables/disables interaction.
  */
@@ -207,6 +229,7 @@ function setBusy(isBusy) {
   document.querySelector('#select-sample').disabled = isBusy
   busy = isBusy
 }
+
 /**
  * Wires up the GUI.
  */
@@ -216,4 +239,5 @@ function initializeUI() {
     loadGraph
   )
 }
+
 run().then(finishLoading)

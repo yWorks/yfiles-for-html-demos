@@ -46,6 +46,7 @@ import {
   SimpleNode,
   Size
 } from '@yfiles/yfiles'
+
 import {
   ActivityNodeStyle,
   ActivityType,
@@ -68,25 +69,31 @@ import {
   SubState,
   TaskType
 } from './bpmn-view'
+
 class BpmnPopup {
   graphComponent
   labelModelParameter
   divField
   _currentItem = null
   dirty = false
+
   constructor(graphComponent, div, labelModelParameter) {
     this.graphComponent = graphComponent
     this.labelModelParameter = labelModelParameter
+
     this.divField = div
     div.style.display = 'none'
+
     this.registerListeners()
   }
+
   /**
    * Returns the pop-up div.
    */
   get div() {
     return this.divField
   }
+
   /**
    * Gets the {@link IModelItem item} to display information for.
    * Setting this property to a value other than null shows the pop-up.
@@ -95,6 +102,7 @@ class BpmnPopup {
   get currentItem() {
     return this._currentItem
   }
+
   /**
    * Sets the {@link IModelItem item} to display information for.
    * Setting this property to a value other than null shows the pop-up.
@@ -111,6 +119,7 @@ class BpmnPopup {
       this.hide()
     }
   }
+
   registerListeners() {
     // Add listener for viewport changes
     this.graphComponent.addEventListener('viewport-changed', () => {
@@ -118,6 +127,7 @@ class BpmnPopup {
         this.dirty = true
       }
     })
+
     // Add listeners for node bounds changes
     this.graphComponent.graph.addEventListener('node-layout-changed', (node) => {
       if (
@@ -129,6 +139,7 @@ class BpmnPopup {
         this.dirty = true
       }
     })
+
     // Add listener for updates of the visual tree
     this.graphComponent.addEventListener('updated-visual', () => {
       if (this._currentItem && this.dirty) {
@@ -137,6 +148,7 @@ class BpmnPopup {
       }
     })
   }
+
   /**
    * Makes this pop-up visible near the given item.
    */
@@ -144,12 +156,14 @@ class BpmnPopup {
     this.divField.style.display = 'block'
     this.updateLocation()
   }
+
   /**
    * Hides this pop-up.
    */
   hide() {
     this.divField.style.display = 'none'
   }
+
   /**
    * Changes the location of this pop-up to the location calculated by the
    * {@link BpmnPopupSupport.labelModelParameter}. Currently, this implementation does not support rotated pop-ups.
@@ -161,11 +175,13 @@ class BpmnPopup {
     const width = this.divField.clientWidth
     const height = this.divField.clientHeight
     const zoom = this.graphComponent.zoom
+
     const dummyLabel = new SimpleLabel({
       text: '',
       layoutParameter: FreeNodeLabelModel.CENTER,
       preferredSize: new Size(width / zoom, height / zoom)
     })
+
     if (this._currentItem instanceof IPort) {
       const location = this._currentItem.location
       const newSimpleNode = new SimpleNode()
@@ -174,10 +190,12 @@ class BpmnPopup {
     } else if (this._currentItem instanceof ILabelOwner) {
       dummyLabel.owner = this._currentItem
     }
+
     dummyLabel.layoutParameter = this.labelModelParameter
     const layout = this.labelModelParameter.model.getGeometry(dummyLabel, this.labelModelParameter)
     this.setLocation(layout.anchorX, layout.anchorY - height / zoom)
   }
+
   /**
    * Sets the location of this pop-up to the given world coordinates.
    * @param x The target x-coordinate of the pop-up.
@@ -190,6 +208,7 @@ class BpmnPopup {
     this.divField.style.top = `${viewPoint.y}px`
   }
 }
+
 /**
  * Manages visibility and content of popup.
  */
@@ -228,16 +247,20 @@ export class BpmnPopupSupport {
   edgeTypeBox = document.querySelector('#edge-type-box')
   portEventTypeBox = document.querySelector('#port-event-type-box')
   portEventCharacteristicBox = document.querySelector('#port-event-characteristic-box')
+
   graphComponent
   // the currently visible popup.
   activePopup = null
   // a mapping of BPMN styles to popup-support to identify the right popup to show for an item.
   typePopups = new HashMap()
+
   constructor(graphComponent) {
     this.graphComponent = graphComponent
+
     this.initializePopups()
     this.initializePopupSynchronization()
   }
+
   /**
    * Initialize UI elements used in the popups.
    */
@@ -260,11 +283,13 @@ export class BpmnPopupSupport {
     populateComboBox(this.edgeTypeBox, BpmnEdgeType)
     populateComboBox(this.portEventTypeBox, EventType)
     populateComboBox(this.portEventCharacteristicBox, EventCharacteristic)
+
     // create a label model parameter that is used to position the node pop-up
     const nodeLabelModelParameter = new ExteriorNodeLabelModel({ margins: 10 }).createParameter(
       'top'
     )
     const edgeLabelModelParameter = NinePositionsEdgeLabelModel.CENTER_CENTERED
+
     // create the pop-ups
     this.createPopup('gateway-popup-content', GatewayNodeStyle, nodeLabelModelParameter)
     this.createPopup('event-popup-content', EventNodeStyle, nodeLabelModelParameter)
@@ -276,6 +301,7 @@ export class BpmnPopupSupport {
     this.createPopup('edge-popup-content', BpmnEdgeStyle, edgeLabelModelParameter)
     this.createPopup('port-popup-content', EventPortStyle, nodeLabelModelParameter)
   }
+
   /**
    * Creates a popup for the given style.
    */
@@ -287,15 +313,18 @@ export class BpmnPopupSupport {
     // map the node/edge/port style to its popup support
     this.typePopups.set(styleName, popup)
   }
+
   hasPropertyPopup(clazz) {
     return this.typePopups.has(clazz)
   }
+
   /**
    * Shows an updated popup for the clicked item.
    */
   showPropertyPopup(clickedItem) {
     // hide any current popups
     this.hidePropertyPopup()
+
     // check if a popup support has been mapped to the style of the clicked item
     let popupValue
     const currentItem = clickedItem instanceof ILabel ? clickedItem.owner : clickedItem
@@ -310,6 +339,7 @@ export class BpmnPopupSupport {
         popupValue = typePopup
       }
     }
+
     if (popupValue) {
       // A popup was found for the double-clicked item so we update and show it
       this.activePopup = popupValue
@@ -319,6 +349,7 @@ export class BpmnPopupSupport {
       this.activePopup.currentItem = currentItem
     }
   }
+
   /**
    * Hides the active popup by resetting its current item.
    */
@@ -329,6 +360,7 @@ export class BpmnPopupSupport {
       this.graphComponent.focus({ preventScroll: true })
     }
   }
+
   /**
    * Updates an open popup or closes the popup if the respective item was removed.
    */
@@ -343,6 +375,7 @@ export class BpmnPopupSupport {
       this.hidePropertyPopup()
     }
   }
+
   /**
    * Updates the popup-content to be in sync with the selected options of the current item.
    * @param item The item for which the popup is assembled.
@@ -355,10 +388,12 @@ export class BpmnPopupSupport {
       if (nodeStyle instanceof GatewayNodeStyle) {
         this.gatewayTypeBox.value = GatewayType[nodeStyle.type]
       }
+
       if (nodeStyle instanceof EventNodeStyle) {
         this.eventTypeBox.value = EventType[nodeStyle.type]
         this.eventCharacteristicBox.value = EventCharacteristic[nodeStyle.characteristic]
       }
+
       if (nodeStyle instanceof ActivityNodeStyle) {
         this.activityTypeBox.value = ActivityType[nodeStyle.activityType]
         this.activityAdHocCheckBox.checked = nodeStyle.adHoc
@@ -379,9 +414,11 @@ export class BpmnPopupSupport {
           this.activityTriggerEventTypeBox.disabled = true
         }
       }
+
       if (nodeStyle instanceof ConversationNodeStyle) {
         this.conversationTypeBox.value = ConversationType[nodeStyle.type]
       }
+
       if (nodeStyle instanceof ChoreographyNodeStyle) {
         this.choreographyTypeBox.value = ChoreographyType[nodeStyle.type]
         this.choreographyInitiatingAtTopCheckBox.checked = nodeStyle.initiatingAtTop
@@ -391,15 +428,18 @@ export class BpmnPopupSupport {
           LoopCharacteristic[nodeStyle.loopCharacteristic]
         this.choreographySubStateBox.value = SubState[nodeStyle.subState]
       }
+
       if (nodeStyle instanceof DataObjectNodeStyle) {
         this.dataObjectTypeBox.value = DataObjectType[nodeStyle.type]
         this.dataObjectCollectionCheckBox.checked = nodeStyle.collection
       }
+
       if (nodeStyle instanceof PoolNodeStyle) {
         this.poolMultipleCheckBox.checked = nodeStyle.multipleInstance
       }
     } else if (item instanceof IEdge) {
       const edgeStyle = item.style
+
       if (edgeStyle instanceof BpmnEdgeStyle) {
         this.edgeTypeBox.value = BpmnEdgeType[edgeStyle.type]
       }
@@ -411,6 +451,7 @@ export class BpmnPopupSupport {
       }
     }
   }
+
   /**
    * Updates the popup state after deleting an item or cut, undo, redo operations.
    */
@@ -427,6 +468,7 @@ export class BpmnPopupSupport {
       this.updatePopupState.bind(this)
     )
   }
+
   /**
    * Registers commands for each combo and check box that apply the new value to the according style property
    */
@@ -436,31 +478,37 @@ export class BpmnPopupSupport {
         node.style.type = value
       })
     })
+
     this.eventTypeBox.addEventListener('change', () => {
       this.setNodeComboBoxValue(EventType, this.eventTypeBox, (node, value) => {
         node.style.type = value
       })
     })
+
     this.eventCharacteristicBox.addEventListener('change', () => {
       this.setNodeComboBoxValue(EventCharacteristic, this.eventCharacteristicBox, (node, value) => {
         node.style.characteristic = value
       })
     })
+
     this.activityTypeBox.addEventListener('change', () => {
       this.setNodeComboBoxValue(ActivityType, this.activityTypeBox, (node, value) => {
         node.style.activityType = value
       })
     })
+
     this.activityAdHocCheckBox.addEventListener('change', () => {
       this.setNodeCheckBoxValue(this.activityAdHocCheckBox, (node, value) => {
         node.style.adHoc = value
       })
     })
+
     this.activityCompensationCheckBox.addEventListener('change', () => {
       this.setNodeCheckBoxValue(this.activityCompensationCheckBox, (node, value) => {
         node.style.compensation = value
       })
     })
+
     this.activityLoopCharacteristicBox.addEventListener('change', () => {
       this.setNodeComboBoxValue(
         LoopCharacteristic,
@@ -470,6 +518,7 @@ export class BpmnPopupSupport {
         }
       )
     })
+
     this.activityLoopCharacteristicBox.addEventListener('change', () => {
       this.setNodeComboBoxValue(
         LoopCharacteristic,
@@ -479,11 +528,13 @@ export class BpmnPopupSupport {
         }
       )
     })
+
     this.activitySubStateBox.addEventListener('change', () => {
       this.setNodeComboBoxValue(SubState, this.activitySubStateBox, (node, value) => {
         node.style.subState = value
       })
     })
+
     this.activityTaskTypeBox.addEventListener('change', () => {
       this.setNodeComboBoxValue(TaskType, this.activityTaskTypeBox, (node, value) => {
         const style = node.style
@@ -502,6 +553,7 @@ export class BpmnPopupSupport {
         }
       })
     })
+
     this.activityTriggerEventCharacteristicBox.addEventListener('change', () => {
       this.setNodeComboBoxValue(
         EventCharacteristic,
@@ -511,36 +563,43 @@ export class BpmnPopupSupport {
         }
       )
     })
+
     this.activityTriggerEventTypeBox.addEventListener('change', () => {
       this.setNodeComboBoxValue(EventType, this.activityTriggerEventTypeBox, (node, value) => {
         node.style.triggerEventType = value
       })
     })
+
     this.conversationTypeBox.addEventListener('change', () => {
       this.setNodeComboBoxValue(ConversationType, this.conversationTypeBox, (node, value) => {
         node.style.type = value
       })
     })
+
     this.choreographyTypeBox.addEventListener('change', () => {
       this.setNodeComboBoxValue(ChoreographyType, this.choreographyTypeBox, (node, value) => {
         node.style.type = value
       })
     })
+
     this.choreographyInitiatingAtTopCheckBox.addEventListener('change', () => {
       this.setNodeCheckBoxValue(this.choreographyInitiatingAtTopCheckBox, (node, value) => {
         node.style.initiatingAtTop = value
       })
     })
+
     this.choreographyInitiatingMessageCheckBox.addEventListener('change', () => {
       this.setNodeCheckBoxValue(this.choreographyInitiatingMessageCheckBox, (node, value) => {
         node.style.initiatingMessage = value
       })
     })
+
     this.choreographyResponseMessageCheckBox.addEventListener('change', () => {
       this.setNodeCheckBoxValue(this.choreographyResponseMessageCheckBox, (node, value) => {
         node.style.responseMessage = value
       })
     })
+
     this.choreographyLoopCharacteristicBox.addEventListener('change', () => {
       this.setNodeComboBoxValue(
         LoopCharacteristic,
@@ -550,34 +609,41 @@ export class BpmnPopupSupport {
         }
       )
     })
+
     this.choreographySubStateBox.addEventListener('change', () => {
       this.setNodeComboBoxValue(SubState, this.choreographySubStateBox, (node, value) => {
         node.style.subState = value
       })
     })
+
     this.dataObjectTypeBox.addEventListener('change', () => {
       this.setNodeComboBoxValue(DataObjectType, this.dataObjectTypeBox, (node, value) => {
         node.style.type = value
       })
     })
+
     this.dataObjectCollectionCheckBox.addEventListener('change', () => {
       this.setNodeCheckBoxValue(this.dataObjectCollectionCheckBox, (node, value) => {
         node.style.collection = value
       })
     })
+
     this.poolMultipleCheckBox.addEventListener('click', () => {
       this.setNodeCheckBoxValue(this.poolMultipleCheckBox, (node, value) => {
         node.style.multipleInstance = value
       })
     })
+
     this.edgeTypeBox.addEventListener('change', () => {
       this.setEdgeType()
     })
+
     this.portEventTypeBox.addEventListener('change', () => {
       this.setPortComboBoxValue(EventType, this.portEventTypeBox, (port, value) => {
         port.style.type = value
       })
     })
+
     this.portEventCharacteristicBox.addEventListener('change', () => {
       this.setPortComboBoxValue(
         EventCharacteristic,
@@ -587,12 +653,14 @@ export class BpmnPopupSupport {
         }
       )
     })
+
     document.querySelectorAll('.close-popup-button').forEach((btn) =>
       btn.addEventListener('click', () => {
         this.hidePropertyPopup()
       })
     )
   }
+
   /**
    * Set the value of the checkbox to the according node style property
    */
@@ -605,6 +673,7 @@ export class BpmnPopupSupport {
     setter(node, checkBox.checked)
     this.graphComponent.invalidate()
   }
+
   /**
    * Sets the value of the combo box to the according node style property.
    */
@@ -618,6 +687,7 @@ export class BpmnPopupSupport {
     setter(node, value)
     this.graphComponent.invalidate()
   }
+
   /**
    * Sets the value of the combo box to the according port style property.
    */
@@ -631,6 +701,7 @@ export class BpmnPopupSupport {
     setter(port, value)
     this.graphComponent.invalidate()
   }
+
   /**
    * Sets the edge style according to the current type.
    */
@@ -645,6 +716,7 @@ export class BpmnPopupSupport {
     this.graphComponent.invalidate()
   }
 }
+
 /**
  * Adds options to the given combo box for the content of the enum type.
  */
@@ -656,6 +728,7 @@ function populateComboBox(comboBox, enumType) {
     comboBox.options.add(option)
   }
 }
+
 /** Returns a readable name for all-caps enum constants. */
 function getFriendlyName(name) {
   // First character in uppercase

@@ -34,12 +34,15 @@ import {
   INode,
   LayoutExecutor
 } from '@yfiles/yfiles'
+
 /**
  * Calculates and animates a hierarchical layout.
  */
 export async function runLayout(graphComponent) {
   LayoutExecutor.ensure()
+
   const hierarchicalLayout = new HierarchicalLayout()
+
   // Configure the layout data using the information from the node labels
   const hierarchicalLayoutData = new HierarchicalLayoutData({
     nodeDescriptors: (node) =>
@@ -48,12 +51,14 @@ export async function runLayout(graphComponent) {
         layerAlignment: getAlignment(node)
       })
   })
+
   await graphComponent.applyLayoutAnimated({
     layout: hierarchicalLayout,
     layoutData: hierarchicalLayoutData,
     animationDuration: '1s'
   })
 }
+
 /**
  * Returns the alignment value based on the data stored in the given node's label.
  */

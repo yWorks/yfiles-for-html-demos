@@ -62,11 +62,7 @@ import { BusMembership, PortSide } from '../PolylineEdgeRouterConfig'
 import { SubtreePlacer } from '../TreeLayoutConfig'
 import { CircularPartitioningPolicy } from '../CircularLayoutConfig'
 
-export type LayoutSample = {
-  layout: string
-  presets: string[]
-  samples: SampleDiagram[]
-}
+export type LayoutSample = { layout: string; presets: string[]; samples: SampleDiagram[] }
 
 export type SampleDiagram = {
   sample: string
@@ -75,15 +71,9 @@ export type SampleDiagram = {
   invalidPresets?: string[]
 }
 
-type Separator = {
-  separator: boolean
-}
+type Separator = { separator: boolean }
 
-export type Preset = {
-  description: string
-  label: string
-  settings: any
-}
+export type Preset = { description: string; label: string; settings: any }
 
 export function isSeparator(entry: LayoutSample | Separator): entry is Separator {
   return typeof (entry as Separator).separator !== 'undefined'
@@ -153,11 +143,7 @@ export const LayoutStyles: (LayoutSample | Separator)[] = [
       'organic-clustered'
     ],
     samples: [
-      {
-        sample: 'generic-organic',
-        label: 'Default',
-        defaultPreset: 'default'
-      },
+      { sample: 'generic-organic', label: 'Default', defaultPreset: 'default' },
       {
         sample: 'mesh',
         label: 'Mesh',
@@ -185,11 +171,7 @@ export const LayoutStyles: (LayoutSample | Separator)[] = [
     layout: 'Orthogonal',
     presets: ['default', 'orthogonal-with-substructures'],
     samples: [
-      {
-        sample: 'orthogonal',
-        label: 'Default',
-        defaultPreset: 'default'
-      },
+      { sample: 'orthogonal', label: 'Default', defaultPreset: 'default' },
       {
         sample: 'orthogonal-with-substructures',
         label: 'Substructures',
@@ -272,11 +254,7 @@ export const LayoutStyles: (LayoutSample | Separator)[] = [
       'compact-disk-recursive-groups'
     ],
     samples: [
-      {
-        sample: 'compact-disk',
-        label: 'Default',
-        defaultPreset: 'default'
-      },
+      { sample: 'compact-disk', label: 'Default', defaultPreset: 'default' },
       {
         sample: 'compact-disk-with-edges',
         label: 'With Edges',
@@ -329,11 +307,7 @@ export const LayoutStyles: (LayoutSample | Separator)[] = [
         defaultPreset: 'default',
         invalidPresets: ['edge-router-with-buses']
       },
-      {
-        sample: 'edge-router-with-buses',
-        label: 'Buses',
-        defaultPreset: 'edge-router-with-buses'
-      },
+      { sample: 'edge-router-with-buses', label: 'Buses', defaultPreset: 'edge-router-with-buses' },
       { sample: 'network-plan', label: 'Network Plan', defaultPreset: 'edge-router-with-buses' },
       {
         sample: 'activity-diagram',
@@ -373,15 +347,11 @@ export const LayoutStyles: (LayoutSample | Separator)[] = [
         defaultPreset: 'labeling-nodes',
         invalidPresets: ['labeling-edges-sides', 'labeling-edges-parallel']
       },
-      {
-        sample: 'node-and-edge-labels',
-        label: 'Metro Map 2',
-        defaultPreset: 'labeling-both'
-      },
+      { sample: 'node-and-edge-labels', label: 'Metro Map 2', defaultPreset: 'labeling-both' },
       {
         sample: 'edge-labels',
         label: 'Edge Labels',
-        defaultPreset: 'labeling-edges-sides',
+        defaultPreset: 'default',
         invalidPresets: ['labeling-nodes']
       }
     ]
@@ -437,9 +407,7 @@ export const Presets: Record<string, Preset> = {
       ' shared bus segment that connects to the common root node. In this demo, the buses' +
       ' are automatically determined such that child nodes without further connections form a bus.</p>',
     label: 'Buses',
-    settings: {
-      automaticBusRoutingEnabledItem: true
-    }
+    settings: { automaticBusRoutingEnabledItem: true }
   },
 
   'hierarchical-with-curves': {
@@ -466,9 +434,7 @@ export const Presets: Record<string, Preset> = {
       '<li>Those with label "TL" are handled by a tree layout algorithm.</li' +
       '</ul>',
     label: 'Sub-Components',
-    settings: {
-      subComponentsItem: true
-    }
+    settings: { subComponentsItem: true }
   },
 
   'hierarchical-flowchart': {
@@ -570,21 +536,19 @@ export const Presets: Record<string, Preset> = {
       'automatically detected and handled in a specific way. This makes it much easier to detect such ' +
       'structures in the underlying data.</p>',
     label: 'Substructures',
-    settings: {
-      starSubstructureItem: CircularLayoutStarSubstructureStyle.RADIAL
-    }
+    settings: { starSubstructureItem: CircularLayoutStarSubstructureStyle.RADIAL }
   },
 
   'partial-with-hierarchical': {
     description: '<p>Incorporate new elements into a hierarchical layout using PartialLayout.</p>',
-    label: 'Partial with Hierarchic',
+    label: 'Partial with Hierarchical',
     settings: {
       alignNodesItem: true,
       componentAssignmentStrategyItem: ComponentAssignmentStrategy.CONNECTED,
       minNodeDistItem: 5,
       orientationItem: PartialLayoutOrientation.TOP_TO_BOTTOM,
       routingToSubgraphItem: PartialLayoutRoutingStyle.ORTHOGONAL,
-      subgraphLayoutItem: SubgraphLayouts.HIERARCHIC,
+      subgraphLayoutItem: SubgraphLayouts.HIERARCHICAL,
       subgraphPlacementItem: SubgraphPlacement.BARYCENTER
     }
   },
@@ -645,10 +609,7 @@ export const Presets: Record<string, Preset> = {
       '<p>All edges are routed on a single, common bus that must consist of ' +
       'only a single backbone segment.</p>',
     label: 'Single Bus',
-    settings: {
-      busMembershipItem: BusMembership.SINGLE,
-      allowMultipleBackboneSegmentsItem: false
-    }
+    settings: { busMembershipItem: BusMembership.SINGLE, allowMultipleBackboneSegmentsItem: false }
   },
 
   'edge-router-with-buses': {
@@ -658,26 +619,19 @@ export const Presets: Record<string, Preset> = {
       ' "Buses" sample graph. In that sample, the color of the edges reflect the data tag and thus' +
       ' the bus membership of an edge.</p>',
     label: 'Custom Buses',
-    settings: {
-      busMembershipItem: BusMembership.TAG
-    }
+    settings: { busMembershipItem: BusMembership.TAG }
   },
 
   'edge-router-with-curves': {
     description: '<p>Edges are routed as smooth curves.</p>',
     label: 'Curves',
-    settings: {
-      routingStyleItem: EdgeRouterRoutingStyle.CURVED
-    }
+    settings: { routingStyleItem: EdgeRouterRoutingStyle.CURVED }
   },
 
   'tree-multiparent': {
     description: '<p>Considers multiple parents for tree nodes.</p>',
     label: 'Multi-parent',
-    settings: {
-      allowMultiParentsItem: true,
-      spacingItem: 50
-    }
+    settings: { allowMultiParentsItem: true, spacingItem: 50 }
   },
 
   'tree-mindmap': {
@@ -686,36 +640,25 @@ export const Presets: Record<string, Preset> = {
       ' that delegates to two layered placers with different orientations, one arranging the subtree' +
       ' from left to right and the other from right to left.</p>',
     label: 'Mindmap',
-    settings: {
-      subtreePlacerItem: SubtreePlacer.SINGLE_SPLIT_LAYERED,
-      spacingItem: 50
-    }
+    settings: { subtreePlacerItem: SubtreePlacer.SINGLE_SPLIT_LAYERED, spacingItem: 50 }
   },
 
   scale3: {
     description: '<p>Scales the graph by 3.</p>',
     label: 'Scale x3',
-    settings: {
-      operationItem: OperationType.SCALE,
-      scaleFactorItem: 3
-    }
+    settings: { operationItem: OperationType.SCALE, scaleFactorItem: 3 }
   },
 
   mirrorY: {
     description: '<p>Mirrors the diagram at the y-axis.</p>',
     label: 'Mirror Vertically',
-    settings: {
-      operationItem: OperationType.MIRROR_Y_AXIS
-    }
+    settings: { operationItem: OperationType.MIRROR_Y_AXIS }
   },
 
   rotate45: {
     description: '<p>Rotates the graph by 45 degrees.</p>',
     label: 'Rotate 45°',
-    settings: {
-      operationItem: OperationType.ROTATE,
-      rotationAngleItem: 45
-    }
+    settings: { operationItem: OperationType.ROTATE, rotationAngleItem: 45 }
   },
 
   'labeling-edges-sides': {
@@ -763,10 +706,7 @@ export const Presets: Record<string, Preset> = {
     description:
       '<p>Places the node labels, avoiding overlaps with other elements. Ignores edge labels.</p>',
     label: 'Node Labels',
-    settings: {
-      placeNodeLabelsItem: true,
-      placeEdgeLabelsItem: false
-    }
+    settings: { placeNodeLabelsItem: true, placeEdgeLabelsItem: false }
   },
 
   'radial-tree-with-rays': {
@@ -784,19 +724,14 @@ export const Presets: Record<string, Preset> = {
     description:
       '<p>Arranges components in US Letter landscape format that works well for printing.</p>',
     label: 'Print Format',
-    settings: {
-      aspectRatioItem: 1.3,
-      useScreenRatioItem: false
-    }
+    settings: { aspectRatioItem: 1.3, useScreenRatioItem: false }
   },
 
   compact: {
     description:
       '<p>This preset utilizes the compact subtree placer and places all nodes that are marked with <code>assistant</code> in their tag alongside the main branch as assistantNodes.</p>',
     label: 'Compact',
-    settings: {
-      subtreePlacerItem: SubtreePlacer.COMPACT
-    }
+    settings: { subtreePlacerItem: SubtreePlacer.COMPACT }
   },
 
   dendrogram: {
@@ -820,17 +755,13 @@ export const Presets: Record<string, Preset> = {
       '<p>This preset utilizes the minimum node distance ' +
       'to make space between nodes and, thus, make the edges visible.</p>',
     label: 'With Edges',
-    settings: {
-      minimumNodeDistanceItem: 30
-    }
+    settings: { minimumNodeDistanceItem: 30 }
   },
 
   'compact-disk-with-rays': {
     description: '<p>Places node labels in a ray-like fashion pointing away from the disk.</p>',
     label: 'Ray-like label placement',
-    settings: {
-      nodeLabelingStyleItem: RadialNodeLabelPlacement.RAY_LIKE_LEAVES
-    }
+    settings: { nodeLabelingStyleItem: RadialNodeLabelPlacement.RAY_LIKE_LEAVES }
   },
 
   'compact-disk-recursive-groups': {
@@ -838,10 +769,7 @@ export const Presets: Record<string, Preset> = {
       '<p>Uses RecursiveGroupLayout to run the compact disk layout algorithm for each group node ' +
       'separately. The topmost level of the hierarchy is arranged with OrganicLayout.</p>',
     label: 'Recursive Groups',
-    settings: {
-      layoutGroupsItem: 1,
-      minimumNodeDistanceItem: 15
-    }
+    settings: { layoutGroupsItem: 1, minimumNodeDistanceItem: 15 }
   },
 
   default: {

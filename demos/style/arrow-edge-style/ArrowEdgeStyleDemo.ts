@@ -72,10 +72,7 @@ async function run(): Promise<void> {
   graphComponent.inputMode = graphEditorInputMode
 
   // Initialize style defaults
-  initDemoStyles(graph, {
-    theme: { node: 'demo-palette-58' },
-    extraCropLength: 0.0
-  })
+  initDemoStyles(graph, { theme: { node: 'demo-palette-58' }, extraCropLength: 0.0 })
   graph.edgeDefaults.style = getStyleForOptionsPanel()
   graph.edgeDefaults.shareStyleInstance = false
 
@@ -93,11 +90,7 @@ async function run(): Promise<void> {
  */
 function createSampleGraph(graph: IGraph): void {
   const builder = new GraphBuilder(graph)
-  builder.createNodesSource({
-    data: SampleGraph.nodeList,
-    id: 'id',
-    layout: 'layout'
-  })
+  builder.createNodesSource({ data: SampleGraph.nodeList, id: 'id', layout: 'layout' })
   builder.createEdgesSource({
     data: SampleGraph.edgeList,
     sourceId: 'source',

@@ -39,15 +39,9 @@ export function createEdges(graph: IGraph): void {
     fill: '#0b7189',
     stroke: '#042d37'
   })
-  const node1 = graph.createNode({
-    layout: [50, 0, 30, 30]
-  })
-  const node2 = graph.createNode({
-    layout: [100, 100, 30, 30]
-  })
-  const node3 = graph.createNode({
-    layout: [0, 200, 30, 30]
-  })
+  const node1 = graph.createNode({ layout: [50, 0, 30, 30] })
+  const node2 = graph.createNode({ layout: [100, 100, 30, 30] })
+  const node3 = graph.createNode({ layout: [0, 200, 30, 30] })
 
   const style1 = new CustomEdgeStyle(1)
   const style2 = new CustomEdgeStyle(3)

@@ -27,8 +27,10 @@
  **
  ***************************************************************************/
 import { GraphItemTypes, Point } from '@yfiles/yfiles'
+
 // Allow ToolTips for nodes and edges, only
 const toolTipItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
+
 /**
  * Initializes support for tooltips.
  *
@@ -41,13 +43,16 @@ const toolTipItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
  */
 export function initializeToolTips(graphInputMode, getToolTip) {
   graphInputMode.toolTipItems = toolTipItems
+
   graphInputMode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.item) {
       evt.toolTip = getToolTip(evt.item)
     }
   })
+
   // slightly offset the tooltip so that it does not interfere with the mouse
   graphInputMode.toolTipInputMode.toolTipLocationOffset = new Point(2, 14)
+
   // show the tooltip faster and for a longer time
   graphInputMode.toolTipInputMode.duration = '10s'
   graphInputMode.toolTipInputMode.delay = '0.5s'

@@ -27,18 +27,22 @@
  **
  ***************************************************************************/
 import { NodeStyleBase, SvgVisual, SvgVisualGroup } from '@yfiles/yfiles'
+
 /**
  * A wrapper for the demo node style which sets additional CSS classes on its elements.
  */
 export class CSS3NodeStyleWrapper extends NodeStyleBase {
   wrapped
+
   constructor(wrapped) {
     super()
     this.wrapped = wrapped
   }
+
   clone() {
     return new CSS3NodeStyleWrapper(this.wrapped.clone())
   }
+
   /**
    * Re-renders the node.
    */
@@ -52,6 +56,7 @@ export class CSS3NodeStyleWrapper extends NodeStyleBase {
     }
     return oldVisual
   }
+
   /**
    * Creates the visual for a node and sets some additional CSS classes on it.
    */
@@ -59,6 +64,7 @@ export class CSS3NodeStyleWrapper extends NodeStyleBase {
     const wrappedVisual = this.wrapped.renderer
       .getVisualCreator(node, this.wrapped)
       .createVisual(context)
+
     const shine = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     shine.setAttribute('class', 'node-flash')
     const { x, y, width, height } = node.layout
@@ -66,6 +72,7 @@ export class CSS3NodeStyleWrapper extends NodeStyleBase {
     shine.height.baseVal.value = height
     shine.x.baseVal.value = x
     shine.y.baseVal.value = y
+
     // set additional CSS class based on the state of the node
     if (node.tag != null) {
       const tag = node.tag
@@ -84,6 +91,7 @@ export class CSS3NodeStyleWrapper extends NodeStyleBase {
         tag.created = false
       }
     }
+
     const svgVisualGroup = new SvgVisualGroup()
     svgVisualGroup.add(wrappedVisual)
     svgVisualGroup.add(new SvgVisual(shine))

@@ -52,11 +52,14 @@ import {
   Stroke,
   Visualization
 } from '@yfiles/yfiles'
+
 import { EdgePathPortCandidateProvider } from './EdgePathPortCandidateProvider'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent
+
 /**
  * This application demonstrates the use of edge-to-edge connections. Edges can be created interactively
  * between nodes, nodes and edges and between two edges. Also, this application enables moving the source or
@@ -74,24 +77,32 @@ let graphComponent
  */
 async function run() {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('graphComponent')
   initializeInputMode()
+
   initializeGraph()
+
   createSampleGraph()
+
   initializeUI()
 }
+
 /**
  * Initializes the graph instance setting default styles and customizing behavior.
  */
 function initializeGraph() {
   const graph = graphComponent.graph
+
   graph.undoEngineEnabled = true
+
   initDemoStyles(graph)
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '1.5px #662b00',
     orthogonalEditing: true
   })
   graph.edgeDefaults.shareStyleInstance = false
+
   // assign a port style for the ports at the edges
   graph.edgeDefaults.ports.style = new ShapePortStyle({
     shape: 'ellipse',
@@ -99,10 +110,12 @@ function initializeGraph() {
     stroke: null,
     renderSize: [3, 3]
   })
+
   // enable edge port candidates
   graph.decorator.edges.portCandidateProvider.addFactory(
     (edge) => new EdgePathPortCandidateProvider(edge)
   )
+
   // set IEdgeReconnectionPortCandidateProvider to allow re-connecting edges to other edges
   graph.decorator.edges.reconnectionPortCandidateProvider.addFactory((edge) =>
     IEdgeReconnectionPortCandidateProvider.fromAllNodeAndEdgeCandidates(edge)
@@ -113,6 +126,7 @@ function initializeGraph() {
     return portRelocationHandleProvider
   })
 }
+
 /**
  * Creates the {@link GraphSnapContext}.
  */
@@ -129,49 +143,58 @@ function createSnapContext() {
   snapContext.portGridConstraintProvider = new GridConstraintProvider(gridInfo)
   return snapContext
 }
+
 /**
  * Initializes the input mode and enables edge-to-edge connections on the input mode.
  */
 function initializeInputMode() {
   const mode = new GraphEditorInputMode({
     snapContext: createSnapContext(),
-    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext({
-      enabled: false
-    })
+    orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext({ enabled: false })
   })
+
   mode.createEdgeInputMode.allowEdgeToEdgeConnections = true
+
   // create bends only when shift is pressed
   mode.createBendInputMode.beginRecognizer = (eventSource, evt) =>
     EventRecognizers.MOUSE_DOWN(eventSource, evt) &&
     EventRecognizers.SHIFT_IS_DOWN(eventSource, evt)
+
   mode.createEdgeInputMode.addEventListener('edge-creation-started', (evt) =>
     setRandomEdgeColor(evt.item)
   )
+
   // disable directional constraint recognizer because Shift is used for bend creation
   mode.handleInputMode.directionalConstraintRecognizer = (evt, eventSource) => {
     console.log(mode.handleInputMode.affectedItems.some((i) => i instanceof IBend))
     return evt.key == 'Shift' && !mode.handleInputMode.affectedItems.some((i) => i instanceof IBend)
   }
+
   graphComponent.inputMode = mode
 }
+
 /**
  * Creates a small sample graph containing edge to edge connections.
  */
 function createSampleGraph() {
   const graph = graphComponent.graph
+
   const n1 = graph.createNodeAt(new Point(0, 0))
   const n2 = graph.createNodeAt(new Point(500, 0))
   const n3 = graph.createNodeAt(new Point(0, 300))
   const n4 = graph.createNodeAt(new Point(500, 300))
+
   const e1 = graph.createEdge(n1, n3)
   const e2 = graph.createEdge(n2, n4)
   const e3 = graph.createEdge(n3, n4)
+
   graph.addBends(e3, [
     new Point(100, 300),
     new Point(100, 450),
     new Point(400, 450),
     new Point(400, 300)
   ])
+
   const p1 = graph.addPort(e1, EdgePathPortLocationModel.INSTANCE.createRatioParameter(0.4))
   const p2 = graph.addPort(e2, EdgePathPortLocationModel.INSTANCE.createRatioParameter(0.4))
   const e4 = graph.createEdge(p1, p2)
@@ -179,9 +202,12 @@ function createSampleGraph() {
   const p4 = graph.addPort(e3, EdgePathPortLocationModel.INSTANCE.createRatioParameter(0.8))
   const e5 = graph.createEdge(p3, p4)
   graph.addBend(e5, new Point(250, 360))
+
   graphComponent.fitGraphBounds()
+
   graph.undoEngine.clear()
 }
+
 /**
  * Wires up the UI.
  */
@@ -191,12 +217,14 @@ function initializeUI() {
     const inputMode = graphComponent.inputMode
     inputMode.snapContext.enabled = snappingButton.checked
   })
+
   const orthogonalEditingButton = document.querySelector('#demo-orthogonal-editing-button')
   orthogonalEditingButton.addEventListener('click', () => {
     const inputMode = graphComponent.inputMode
     inputMode.orthogonalEdgeEditingContext.enabled = orthogonalEditingButton.checked
   })
 }
+
 /**
  * Creates a random colored pen and uses that one for the style.
  */
@@ -211,4 +239,5 @@ function setRandomEdgeColor(edge) {
     )
   }
 }
+
 run().then(finishLoading)

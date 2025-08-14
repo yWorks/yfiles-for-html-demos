@@ -30,9 +30,7 @@ import { Page } from './page.js'
 import type { CanvasComponent, GraphComponent } from '@yfiles/yfiles'
 
 // provide types for the global yFiles object
-declare const yfiles: {
-  CanvasComponent: typeof CanvasComponent
-}
+declare const yfiles: { CanvasComponent: typeof CanvasComponent }
 
 class WdioDemoPage extends Page {
   get zoomInButton() {

@@ -28,12 +28,14 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { INode, INodeStyle, IRenderContext, NodeStyleBase, SvgVisual, Visual } from '@yfiles/yfiles'
+
 export class LevelOfDetailNodeStyle extends NodeStyleBase {
   detailThreshold
   intermediateThreshold
   detailNodeStyle
   intermediateNodeStyle
   overviewNodeStyle
+
   /**
    * Creates a new instance of LevelOfDetailNodeStyle which combines three styles for different zoom level.
    */
@@ -45,6 +47,7 @@ export class LevelOfDetailNodeStyle extends NodeStyleBase {
     this.intermediateNodeStyle = intermediateNodeStyle
     this.overviewNodeStyle = overviewNodeStyle
   }
+
   createVisual(renderContext, node) {
     const zoom = renderContext.zoom
     let visual
@@ -64,11 +67,14 @@ export class LevelOfDetailNodeStyle extends NodeStyleBase {
         .createVisual(renderContext)
       visual.svgElement['data-levelsRenderDataCache'] = this.overviewNodeStyle.renderer
     }
+
     return visual
   }
+
   updateVisual(renderContext, oldVisual, node) {
     const zoom = renderContext.zoom
     let newVisual = null
+
     if (oldVisual === null) {
       return this.createVisual(renderContext, node)
     }

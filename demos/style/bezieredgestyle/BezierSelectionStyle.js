@@ -51,6 +51,7 @@ import {
   SvgVisualGroup,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * Custom selection style that renders a line segment for collinear control point triples
  */
@@ -60,13 +61,16 @@ class SelectionEdgeStyle extends DelegatingEdgeStyle {
     super()
     this.delegatingStyle = delegatingStyle
   }
+
   getStyle(edge) {
     return this.delegatingStyle
   }
+
   getPath(edge) {
     const pathPoints = IEdge.getPathPoints(edge)
     const gp = new GeneralPath(pathPoints.size + 1)
     gp.moveTo(pathPoints.get(0))
+
     for (let i = 1; i < pathPoints.size; ++i) {
       if (i % 3 === 2) {
         // Skip to the next triple
@@ -79,6 +83,7 @@ class SelectionEdgeStyle extends DelegatingEdgeStyle {
     return gp
   }
 }
+
 /**
  * Custom decoration decorator that adds a rendering of the curves control point segments
  * This implementation adds as a decorator for an existing decorator and just adds the control point rendering on top.
@@ -89,15 +94,13 @@ export class BezierSelectionStyle extends BaseClass(ISelectionRenderer) {
    */
   selectionDecoratorStyle = new SelectionEdgeStyle(
     new PolylineEdgeStyle({
-      stroke: new Stroke({
-        fill: 'lightgray',
-        dashStyle: 'dash',
-        thickness: 2
-      })
+      stroke: new Stroke({ fill: 'lightgray', dashStyle: 'dash', thickness: 2 })
     })
   )
+
   renderer
   decorator
+
   /**
    * Create a new instance that decorates the `coreImpl`
    * @param coreImpl The core indicator that is again decorated by this instance
@@ -108,25 +111,31 @@ export class BezierSelectionStyle extends BaseClass(ISelectionRenderer) {
       edgeStyle: this.selectionDecoratorStyle,
       zoomPolicy: StyleIndicatorZoomPolicy.VIEW_COORDINATES
     })
+
     this.renderer = new CompositeRenderer(coreImpl, this.decorator)
   }
+
   getBoundsProvider(renderTag) {
     this.renderer.configure(renderTag)
     return this.renderer
   }
+
   getHitTestable(renderTag) {
     this.renderer.configure(renderTag)
     return this.renderer
   }
+
   getVisibilityTestable(renderTag) {
     this.renderer.configure(renderTag)
     return this.renderer
   }
+
   getVisualCreator(renderTag) {
     this.renderer.configure(renderTag)
     return this.renderer
   }
 }
+
 /**
  * A renderer that combines two render elements.
  */
@@ -139,24 +148,29 @@ class CompositeRenderer extends BaseClass(
   first
   second
   renderTag = null
+
   constructor(first, second) {
     super()
     this.first = first
     this.second = second
   }
+
   configure(renderTag) {
     this.renderTag = renderTag
   }
+
   createVisual(context) {
     const container = new SvgVisualGroup()
     if (this.first) {
       container.add(this.first.getVisualCreator(this.renderTag).createVisual(context))
     }
+
     if (this.second) {
       container.add(this.second.getVisualCreator(this.renderTag).createVisual(context))
     }
     return container
   }
+
   updateVisual(context, oldVisual) {
     const container = oldVisual
     if (!container || container.children.size != 2) {
@@ -164,8 +178,10 @@ class CompositeRenderer extends BaseClass(
     }
     this.first?.getVisualCreator(this.renderTag).updateVisual(context, container.children.at(0))
     this.second?.getVisualCreator(this.renderTag).updateVisual(context, container.children.at(1))
+
     return oldVisual
   }
+
   getBounds(context) {
     const bounds = new MutableRectangle()
     if (this.first != null) {
@@ -176,6 +192,7 @@ class CompositeRenderer extends BaseClass(
     }
     return bounds.toRect()
   }
+
   isVisible(context, rectangle) {
     return (
       (this.first &&
@@ -184,6 +201,7 @@ class CompositeRenderer extends BaseClass(
         this.second.getVisibilityTestable(this.renderTag).isVisible(context, rectangle))
     )
   }
+
   isHit(context, location) {
     return (
       (this.first && this.first.getHitTestable(this.renderTag).isHit(context, location)) ||

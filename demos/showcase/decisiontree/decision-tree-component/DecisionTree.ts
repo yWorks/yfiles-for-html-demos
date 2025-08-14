@@ -473,9 +473,7 @@ export class DecisionTree {
     if (!this.runningLayout) {
       const layout = new HierarchicalLayout({
         fromSketchMode: true,
-        defaultEdgeDescriptor: {
-          minimumSlope: 0
-        }
+        defaultEdgeDescriptor: { minimumSlope: 0 }
       })
 
       const layoutData = new HierarchicalLayoutData()
@@ -541,8 +539,8 @@ export class DecisionTree {
    * Disposes the decision tree and removes it from its container element.
    */
   dispose(): void {
-    this.graphComponent.cleanUp()
     this.graphComponent.graph = new Graph()
+    this.graphComponent.cleanUp()
     this.graphComponent = null!
   }
 

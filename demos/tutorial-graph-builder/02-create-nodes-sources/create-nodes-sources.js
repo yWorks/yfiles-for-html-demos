@@ -27,37 +27,46 @@
  **
  ***************************************************************************/
 import { IEnumerable } from '@yfiles/yfiles'
+
 export function createNodesSourceFromArray(graphBuilder) {
   const nodeData = [{ id: '00' }, { id: '01' }, { id: '02' }]
+
   // nodes source for the turquoise nodes
   const nodesSource = graphBuilder.createNodesSource(nodeData, (item) => item.id)
+
   return nodesSource
 }
+
 export function createNodesSourceFromIEnumerable(graphBuilder) {
   const nodeData = IEnumerable.from([{ id: '10' }, { id: '11' }, { id: '12' }])
+
   // nodes source for the blue nodes
   const nodesSource = graphBuilder.createNodesSource(nodeData, (item) => item.id)
+
   return nodesSource
 }
+
 export function createNodesSourceFromMap(graphBuilder) {
   const nodeData = new Map()
   nodeData.set('node1', { id: '30' })
   nodeData.set('node2', { id: '31' })
   nodeData.set('node3', { id: '32' })
+
   // nodes source for the red nodes
   const nodesSource = graphBuilder.createNodesSource(nodeData, (item, key) => item.id)
+
   return nodesSource
 }
+
 export function createNodesSourceFromObject(graphBuilder) {
-  const nodeData = {
-    node1: { id: '20' },
-    node2: { id: '21' },
-    node3: { id: '22' }
-  }
+  const nodeData = { node1: { id: '20' }, node2: { id: '21' }, node3: { id: '22' } }
+
   // nodes source for the orange nodes
   const nodesSource = graphBuilder.createNodesSource(nodeData, (item, name) => item.id)
+
   return nodesSource
 }
+
 export function createNodesSourceFromGenerator(graphBuilder) {
   const limit = 3
   function* nodes() {
@@ -65,7 +74,9 @@ export function createNodesSourceFromGenerator(graphBuilder) {
       yield { id: `4${i}` }
     }
   }
+
   // nodes source for the brown nodes
   const nodesSource = graphBuilder.createNodesSource(nodes, (item) => item.id)
+
   return nodesSource
 }

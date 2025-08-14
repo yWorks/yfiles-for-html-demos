@@ -180,18 +180,9 @@ export function createSampleGraphGroupNodeStyle(graph: IGraph): void {
   const groupNode = graph.createGroupNode({
     tag: { color: '#9e7cb5', title: 'Group' }
   })
-  graph.createNode({
-    layout: [5, 0, 30, 30],
-    parent: groupNode
-  })
-  graph.createNode({
-    layout: [50, 20, 30, 30],
-    parent: groupNode
-  })
-  graph.createNode({
-    layout: [20, 50, 30, 30],
-    parent: groupNode
-  })
+  graph.createNode({ layout: [5, 0, 30, 30], parent: groupNode })
+  graph.createNode({ layout: [50, 20, 30, 30], parent: groupNode })
+  graph.createNode({ layout: [20, 50, 30, 30], parent: groupNode })
   graph.adjustGroupNodeLayout(groupNode)
 }
 
@@ -220,10 +211,7 @@ export function createSampleGraphGroupNodeStyle2(graph: IGraph): void {
     parent: groupNode,
     labels: ['as a customization']
   })
-  graph.createNode({
-    layout: [-50, 50, 30, 30],
-    parent: groupNode
-  })
+  graph.createNode({ layout: [-50, 50, 30, 30], parent: groupNode })
   graph.adjustGroupNodeLayout(groupNode)
 }
 

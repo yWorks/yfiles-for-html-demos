@@ -34,6 +34,7 @@ import {
   IPositionHandler,
   Point
 } from '@yfiles/yfiles'
+
 /**
  * A position handler that prevents node movements. This implementation is
  * very simple since most methods do nothing at all.
@@ -45,12 +46,14 @@ export class RedPositionHandler extends BaseClass(IPositionHandler) {
   get location() {
     return Point.ORIGIN
   }
+
   /**
    * Stores the initial location of the movement for reference, and calls the base method.
    * @param inputModeContext The context to retrieve information about the drag from
    * @see Specified by {@link IDragHandler.initializeDrag}.
    */
   initializeDrag(inputModeContext) {}
+
   /**
    * Prevents node movements.
    * @param context The context to retrieve information about the drag from
@@ -62,6 +65,7 @@ export class RedPositionHandler extends BaseClass(IPositionHandler) {
    * @see Specified by {@link IDragHandler.handleMove}.
    */
   handleMove(context, originalLocation, newLocation) {}
+
   /**
    * Called when dragging has been canceled by the user.
    * @param inputModeContext The context to retrieve information about the drag from
@@ -70,6 +74,7 @@ export class RedPositionHandler extends BaseClass(IPositionHandler) {
    *   {@link IDragHandler.initializeDrag}.
    */
   cancelDrag(inputModeContext, originalLocation) {}
+
   /**
    * Called when dragging has finished.
    * @param inputModeContext The context to retrieve information about the drag from

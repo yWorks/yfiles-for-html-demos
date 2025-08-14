@@ -29,6 +29,7 @@
 import { BaseClass, IPositionHandler } from '@yfiles/yfiles'
 import { hideInfo, showInfo } from '../info-panel'
 import { getDate, syncActivityWithNodeLayout, updateNodeColor } from '../gantt-utils'
+
 /**
  * Controls the move of an activity node.
  */
@@ -40,26 +41,32 @@ export class ActivityNodePositionHandler extends BaseClass(IPositionHandler) {
     this.node = node
     this.wrappedHandler = wrappedHandler
   }
+
   /**
    * Called when the grad gesture starts.
    */
   initializeDrag(context) {
     this.wrappedHandler?.initializeDrag(context)
   }
+
   /**
    * Shows the date at the current mouse location and updates the node color based on the color
    * of the task at the current mouse location.
    */
   handleMove(context, originalLocation, newLocation) {
     this.wrappedHandler?.handleMove(context, originalLocation, newLocation)
+
     // get the location of the node and calculate the date to which it belongs
     const location = this.node.layout.topLeft
     const text = getDate(location.x).format()
+
     // show the info panel
     showInfo(text, location, context.canvasComponent)
+
     // update the color of the node based on the task that exists at the current grid location
     updateNodeColor(this.node)
   }
+
   /**
    * Hides the info popup and writes back the current date/time information to the data associated with
    * the current activity node.
@@ -69,6 +76,7 @@ export class ActivityNodePositionHandler extends BaseClass(IPositionHandler) {
     hideInfo()
     syncActivityWithNodeLayout(this.node)
   }
+
   /**
    * Hides the info popup and resets the node color to its original one.
    */
@@ -77,6 +85,7 @@ export class ActivityNodePositionHandler extends BaseClass(IPositionHandler) {
     hideInfo()
     updateNodeColor(this.node)
   }
+
   /**
    * Returns the top-left location of the node.
    */

@@ -26,12 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { basicSetup, EditorView } from 'codemirror'
-import { css } from '@codemirror/lang-css'
-import { lintGutter } from '@codemirror/lint'
-import { getCssLinter } from '@yfiles/demo-resources/codeMirrorLinters'
-
-const cssLinter = getCssLinter()
+import { createCodemirrorEditor, type EditorView } from '@yfiles/demo-resources/codemirror-editor'
 
 let editor: EditorView
 
@@ -47,23 +42,13 @@ export async function createStylesheetView(selector: string): Promise<void> {
 
   dataContainer.setAttribute('class', 'data-container')
 
-  editor = new EditorView({
-    parent: dataContainer,
-    extensions: [basicSetup, css(), lintGutter(), cssLinter]
-  })
-
+  editor = createCodemirrorEditor('css', dataContainer)
   let stylesheet = await fetchStylesheet()
 
   // remove the @license doc comment from the css file
   stylesheet = stylesheet.replace(/\/\*{2,}.*@license.*\*{2,}\/(\n|\r\n)/s, '')
 
-  editor.dispatch({
-    changes: {
-      from: 0,
-      to: editor.state.doc.length,
-      insert: stylesheet
-    }
-  })
+  editor.dispatch({ changes: { from: 0, to: editor.state.doc.length, insert: stylesheet } })
 }
 
 /**
@@ -72,9 +57,7 @@ export async function createStylesheetView(selector: string): Promise<void> {
 async function fetchStylesheet(): Promise<string> {
   const stylesheetUrl = './graph-item-styles.css'
   try {
-    const response = await fetch(stylesheetUrl, {
-      headers: { Accept: 'text/css' }
-    })
+    const response = await fetch(stylesheetUrl, { headers: { Accept: 'text/css' } })
     if (response.ok) {
       return response.text()
     } else {

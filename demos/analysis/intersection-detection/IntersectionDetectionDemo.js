@@ -62,14 +62,17 @@ import GraphData from './resources/GraphData'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { createToolTipContent } from './TooltipHelper'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * The graph component
  */
 let graphComponent
+
 /**
  * The canvas object for the intersection visual.
  */
 let intersectionVisualCreator
+
 const considerSourceTargetIntersectionsBox = document.querySelector(
   '#consider-source-target-node-intersections'
 )
@@ -88,6 +91,7 @@ const edgeEdgeCountLabel = document.querySelector('#edge-edge-count')
 const labelCountLabel = document.querySelector('#label-count')
 const consideredItemsSelect = document.querySelector('#considered-items-select')
 let intersectionInfoArray = []
+
 /**
  * This demo shows how to find and highlight intersections and overlaps between graph elements.
  */
@@ -96,23 +100,30 @@ async function run() {
   graphComponent = new GraphComponent('graphComponent')
   // initialize the input mode
   initializeInputMode()
+
   // initialize the graph and the defaults
   initializeGraph(graphComponent)
+
   // bind the buttons to their change listener
   initializeUI()
+
   // load a sample graph
   loadSampleGraph(graphComponent.graph)
   void graphComponent.fitGraphBounds()
+
   initializeIntersectionVisual()
+
   // finally, run the intersection algorithm on it
   runIntersectionAlgorithm()
 }
+
 /**
  * Applies the intersection algorithm.
  */
 function runIntersectionAlgorithm() {
   // configure the algorithm that computes intersections
   const intersections = new Intersections()
+
   // define which items are generally considered
   switch (consideredItemsSelect.value) {
     default:
@@ -135,6 +146,7 @@ function runIntersectionAlgorithm() {
       intersections.consideredItemTypes = IntersectionItemTypes.NODE | IntersectionItemTypes.LABEL
       break
   }
+
   // define which item types are considered to be independent of their owner
   let independentItems = GraphItemTypes.NONE
   if (considerLabelOwnerIntersectionsBox.checked) {
@@ -150,19 +162,25 @@ function runIntersectionAlgorithm() {
     independentItems |= GraphItemTypes.NODE
   }
   intersections.independentItems = independentItems
+
   // whether to consider the shape geometry of the items
   intersections.considerItemGeometry = considerItemGeometryBox.checked
+
   // whether to consider only the selected elements
   if (considerSelectionBox.checked) {
     intersections.affectedItems = (item) => graphComponent.selection.includes(item)
   }
+
   // run the algorithm and obtain the result
   const intersectionsResult = intersections.run(graphComponent.graph)
+
   // store information of results in the right-side panel
   intersectionInfoArray = intersectionsResult.intersections.toArray()
   updateIntersectionInfoPanel(intersectionInfoArray)
+
   updateIntersectionVisual(intersectionInfoArray)
 }
+
 /**
  * Updates the labels in the information panel with the number of intersections by type.
  */
@@ -187,12 +205,14 @@ function updateIntersectionInfoPanel(intersections) {
       labelIntersections++
     }
   }
+
   intersectionCountLabel.innerText = `${intersections.length}`
   nodeNodeCountLabel.innerText = `${nodeNodeIntersections}`
   nodeEdgeCountLabel.innerText = `${nodeEdgeIntersections}`
   edgeEdgeCountLabel.innerText = `${edgeEdgeIntersections}`
   labelCountLabel.innerText = `${labelIntersections}`
 }
+
 /**
  * Updates the intersection visualization to show the given intersections.
  */
@@ -200,6 +220,7 @@ function updateIntersectionVisual(intersections) {
   intersectionVisualCreator.intersections = intersections
   graphComponent.invalidate()
 }
+
 /**
  * Creates the visualization for intersections calculated in this demo.
  */
@@ -209,6 +230,7 @@ function initializeIntersectionVisual() {
     .createElement(graphComponent.renderTree.highlightGroup, intersectionVisualCreator)
     .toFront()
 }
+
 /**
  * Loads the sample graph.
  */
@@ -248,6 +270,7 @@ function loadSampleGraph(graph) {
       )
     )
   })
+
   const groupSource = builder.createGroupNodesSource({
     data: GraphData.nodeList.filter((data) => data.isGroup),
     id: 'id',
@@ -257,6 +280,7 @@ function loadSampleGraph(graph) {
     (data) => data.labels
   ).labelCreator
   groupLabelCreator.textProvider = (data) => data.text || ''
+
   const es = builder.createEdgesSource({
     data: GraphData.edgeList,
     id: 'id',
@@ -279,7 +303,9 @@ function loadSampleGraph(graph) {
       )
     )
   })
+
   builder.buildGraph()
+
   graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
       graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
@@ -289,6 +315,7 @@ function loadSampleGraph(graph) {
     }
   })
 }
+
 /**
  * Initializes default styles for the given graph.
  */
@@ -302,6 +329,7 @@ function initializeGraph(graphComponent) {
     fill: colorSets[theme].fill,
     stroke: `1px ${colorSets[theme].stroke}`
   })
+
   graph.nodeDefaults.labels.style = new LabelStyle({
     backgroundFill: colorSets[theme].nodeLabelFill,
     textFill: colorSets[theme].text,
@@ -310,6 +338,7 @@ function initializeGraph(graphComponent) {
     padding: [2, 4, 1, 4]
   })
   graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.CENTER
+
   graph.edgeDefaults.labels.style = new LabelStyle({
     backgroundFill: colorSets[theme].edgeLabelFill,
     textFill: colorSets[theme].text,
@@ -318,6 +347,7 @@ function initializeGraph(graphComponent) {
     padding: [2, 4, 1, 4]
   })
   graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(0)
+
   graph.decorator.ports.edgePathCropper.addConstant(
     new EdgePathCropper({ cropAtPort: false, extraCropLength: 0 })
   )
@@ -326,6 +356,7 @@ function initializeGraph(graphComponent) {
     positionHandler.visualization = Visualization.LIVE
     return positionHandler
   })
+
   // add some highlighting for the nodes/edges/labels involved in an intersection
   const highlightNodeStyle = new NodeStyleIndicatorRenderer({
     nodeStyle: new ShapeNodeStyle({
@@ -335,6 +366,7 @@ function initializeGraph(graphComponent) {
     }),
     zoomPolicy: 'world-coordinates'
   })
+
   const highlightLabelStyle = new LabelStyleIndicatorRenderer({
     labelStyle: new LabelStyle({
       shape: 'rectangle',
@@ -344,26 +376,29 @@ function initializeGraph(graphComponent) {
     }),
     zoomPolicy: 'world-coordinates'
   })
+
   const highlightEdgeStyle = new EdgeStyleIndicatorRenderer({
-    edgeStyle: new PolylineEdgeStyle({
-      stroke: '2px #ff6c00'
-    }),
+    edgeStyle: new PolylineEdgeStyle({ stroke: '2px #ff6c00' }),
     zoomPolicy: 'world-coordinates'
   })
+
   graph.decorator.nodes.highlightRenderer.addConstant(highlightNodeStyle)
   graph.decorator.edges.highlightRenderer.addConstant(highlightEdgeStyle)
   graph.decorator.labels.highlightRenderer.addConstant(highlightLabelStyle)
+
   graphComponent.selection.addEventListener('item-added', () => {
     if (considerSelectionBox.checked) {
       runIntersectionAlgorithm()
     }
   })
+
   graphComponent.selection.addEventListener('item-removed', () => {
     if (considerSelectionBox.checked) {
       runIntersectionAlgorithm()
     }
   })
 }
+
 /**
  * Initializes the supported user interactions for this demo.
  */
@@ -375,6 +410,7 @@ function initializeInputMode() {
     marqueeSelectableItems: 'all',
     snapContext: new GraphSnapContext()
   })
+
   // register listeners so that the intersections are re-calculated when changing the graph
   inputMode.addEventListener('deleted-selection', runIntersectionAlgorithm)
   inputMode.createEdgeInputMode.addEventListener('edge-created', runIntersectionAlgorithm)
@@ -383,12 +419,14 @@ function initializeInputMode() {
   inputMode.moveSelectedItemsInputMode.addEventListener('dragged', runIntersectionAlgorithm)
   inputMode.moveUnselectedItemsInputMode.addEventListener('dragged', runIntersectionAlgorithm)
   inputMode.handleInputMode.addEventListener('dragged', runIntersectionAlgorithm)
+
   inputMode.itemHoverInputMode.hoverItems =
     GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
   inputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     const item = evt.item
     const highlights = graphComponent.highlights
     highlights.clear()
+
     for (const intersection of intersectionInfoArray) {
       const item1 = intersection.item1
       const item2 = intersection.item2
@@ -399,8 +437,10 @@ function initializeInputMode() {
     }
   })
   configureToolTips(inputMode)
+
   graphComponent.inputMode = inputMode
 }
+
 /**
  * Wires the GUI elements with the corresponding functionality.
  */
@@ -421,12 +461,14 @@ function initializeUI() {
     .querySelector('#consider-only-selection')
     .addEventListener('change', runIntersectionAlgorithm)
   consideredItemsSelect.addEventListener('change', runIntersectionAlgorithm)
+
   document.querySelector('#snapping-button').addEventListener('click', () => {
     const snappingEnabled = document.querySelector('#snapping-button').checked
     const geim = graphComponent.inputMode
     geim.snapContext.enabled = snappingEnabled
   })
 }
+
 /**
  * Configures the given input mode to show tool tips for labels.
  * The tool tips show a description of the corresponding label's configuration.
@@ -437,16 +479,19 @@ function configureToolTips(inputMode) {
   toolTipInputMode.toolTipLocationOffset = new Point(15, 15)
   toolTipInputMode.delay = TimeSpan.fromMilliseconds(50)
   toolTipInputMode.duration = TimeSpan.fromSeconds(10)
+
   // Register a listener for when a tool tip should be shown.
   inputMode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.handled) {
       // Tool tip content has already been assigned -> nothing to do.
       return
     }
+
     // Use a rich HTML element as tool tip content. Alternatively, a plain string would do as well.
     evt.toolTip = createToolTipContent(evt.item, intersectionInfoArray)
     // Indicate that the tool tip content has been set.
     evt.handled = true
   })
 }
+
 run().then(finishLoading)

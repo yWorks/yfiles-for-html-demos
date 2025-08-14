@@ -34,10 +34,7 @@
 /**
  * The returned data of the {@link openFile} function.
  */
-export type FileData = {
-  filename: string
-  content: string
-}
+export type FileData = { filename: string; content: string }
 
 /**
  * Opens the file the user selected in a file input element.
@@ -64,10 +61,7 @@ export function openFile(encoding = 'utf-8'): Promise<FileData> {
         reader.addEventListener('loadend', (evt) => {
           const fileReader = evt.target!
           if (fileReader.error == null) {
-            resolve({
-              filename: file.name,
-              content: fileReader.result as string
-            })
+            resolve({ filename: file.name, content: fileReader.result as string })
           } else {
             reject(fileReader.error)
           }

@@ -28,27 +28,32 @@
  ***************************************************************************/
 import { GraphComponent } from '@yfiles/yfiles'
 import { runAutoLayout, triggerGridDisplay } from '../utils/customTriggers'
+
 export function initializeToolbar(graphComponent, grid) {
   const gridButton = document.querySelector('#grid-button')
   gridButton.addEventListener('click', () => triggerGridDisplay(graphComponent, grid))
   const undoEngine = graphComponent.graph.undoEngine
+
   const undoButton = document.querySelector("button[data-command='UNDO']")
   undoButton.addEventListener('click', () => {
     if (undoEngine.canUndo()) {
       undoEngine.undo()
     }
   })
+
   const redoButton = document.querySelector("button[data-command='REDO']")
   redoButton.addEventListener('click', () => {
     if (undoEngine.canRedo()) {
       undoEngine.redo()
     }
   })
+
   // add a listener to the undoEngine to enable/disable the buttons
   undoEngine.addEventListener('property-changed', () => {
     undoButton.disabled = !undoEngine.canUndo()
     undoButton.disabled = !undoEngine.canRedo()
   })
+
   const layoutButton = document.querySelector('#layoutButton')
   layoutButton.addEventListener('click', async () => runAutoLayout(graphComponent))
 }

@@ -69,14 +69,15 @@ export class ColorDropInputMode extends DropInputMode {
   }
 
   /**
-   * Gets the drop target at current mouse position.
+   * Gets the drop target.
+   * @returns The node or edge at the mouse location, or null.
    */
   get dropTarget(): INode | IEdge | null {
     return this._dropTarget
   }
 
   /**
-   * Sets the the drop target and updates the highlighting.
+   * Sets the drop target.
    */
   set dropTarget(value: INode | IEdge | null) {
     if (this._dropTarget !== value) {
@@ -95,12 +96,12 @@ export class ColorDropInputMode extends DropInputMode {
     }
   }
 
-  protected onDraggedOver(evt: InputModeEventArgs) {
+  protected onDraggedOver(_evt: InputModeEventArgs) {
     super.onDraggedOver(this.createInputModeEventArgs())
     this.updateDropTarget(this.pointerPosition.toPoint())
   }
 
-  protected onDragLeft(evt: InputModeEventArgs) {
+  protected onDragLeft(_evt: InputModeEventArgs) {
     super.onDragLeft(this.createInputModeEventArgs())
     this.cleanup()
   }
@@ -146,7 +147,7 @@ export class ColorDropInputMode extends DropInputMode {
     const hitTester = context.lookup<IHitTester>(IHitTester)
     // hit testing needs to be done with a context whose parent input mode is this mode,
     // because hit-testables may behave differently depending on context
-    // this is e.g. the case for GroupNodeStyle
+    // this is e.g., the case for GroupNodeStyle
     return hitTester
       ?.enumerateHits(new InputModeContext(context, this), location)
       .find(isEdgeOrNode) as IEdge | INode | null
@@ -216,10 +217,10 @@ export class ColorDropInputMode extends DropInputMode {
   }
 
   /**
-   * Sets the {@link DragEventArgs.dropEffect drop effect} to {@link DragDropEffects.COPY copy} if
-   * the current drop target is valid or to {@link DragDropEffects.NONE none} otherwise.
+   * Sets the {@link DragEventArgs.dropEffect drop effect} to {@link DragDropEffects.COPY} if
+   * the current drop target is valid or to {@link DragDropEffects.NONE} otherwise.
    *
-   * Depending on the current drop effect the CSS class `yfiles-cursor-dragdrop-copy` or
+   * Depending on the current drop effect, the CSS class `yfiles-cursor-dragdrop-copy` or
    * `yfiles-cursor-dragdrop-no-drop` is assigned to the element hovered during the drag
    * operation. This allows for updating the mouse cursor using CSS classes.
    */
@@ -241,7 +242,7 @@ export class ColorDropInputMode extends DropInputMode {
 
   /**
    * Starts a drag operation from the given HTML element.
-   * The given color string constitutes the tranfer data of the drag operation.
+   * The given color string constitutes the transfer data of the drag operation.
    */
   public static startDrag(
     dragSource: HTMLElement,

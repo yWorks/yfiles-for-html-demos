@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode, License } from '@yfiles/yfiles'
+
 import { PrintingSupport } from '@yfiles/demo-utils/PrintingSupport'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
@@ -37,21 +38,27 @@ import { initializeOptionPanel } from './option-panel/option-panel'
 import { initializeToggleWebGlRenderingButton } from './webgl-support'
 import { retainAspectRatio } from './aspect-ratio'
 import { DelayedNodeStyle } from './node-styles/delayed-node-style'
+
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the main graph component
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
   initDemoStyles(graphComponent.graph)
   retainAspectRatio(graphComponent.graph)
+
   const printRect = initializeExportRectangle(graphComponent)
+
   // the styles to be used in printing support
   const cssStyle = `
   .demo-palette-23-node{fill:#ff6c00;stroke:#662b00;}
   .demo-palette-25-node{fill:#76b041;stroke:#2f461a;}
   .demo-palette-21-node{fill:#17bebb;stroke:#094c4b;}`
+
   initializeOptionPanel(async (options) => {
     const rect = options.usePrintRectangle ? printRect.toRect() : undefined
+
     const printingSupport = new PrintingSupport()
     printingSupport.fitToTile = options.fitToTile
     printingSupport.scale = options.scale
@@ -61,6 +68,7 @@ async function run() {
     printingSupport.tileWidth = options.tileWidth
     printingSupport.tileHeight = options.tileHeight
     printingSupport.cssStyleSheet = cssStyle
+
     // start the printing process
     // this will open a new document in a separate browser window/tab and use
     // the javascript "print()" method of the browser to print the document.
@@ -69,10 +77,13 @@ async function run() {
       Promise.all(DelayedNodeStyle.pendingPromises)
     )
   })
+
   // wire up the export button
   initializeToggleWebGlRenderingButton(graphComponent)
+
   // create a sample graph
   await createSampleGraph(graphComponent)
   await graphComponent.fitGraphBounds()
 }
+
 void run().then(finishLoading)

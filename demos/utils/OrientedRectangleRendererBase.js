@@ -48,6 +48,7 @@ import {
   SvgVisual,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * An abstract base class for anything that needs to render a rotated rectangle, e.g., a selection,
  * focus or highlight visualization for rotatable items.
@@ -73,23 +74,29 @@ export class OrientedRectangleRendererBase extends BaseClass(
     super()
     this.useViewCoordinates = useViewCoordinates
   }
+
   $renderTag = null
+
   createVisual(context) {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     if (this.$renderTag === null) {
       return new SvgVisual(g)
     }
+
     const layout = this.getLayout(this.$renderTag)
     const intermediateLayout = this.useViewCoordinates
       ? OrientedRectangleRendererBase.getIntermediateLayout(context, layout)
       : layout
+
     const wrappedEl = this.createIndicatorElement(
       context,
       intermediateLayout.toSize(),
       this.$renderTag
     )
+
     if (wrappedEl) {
       g.appendChild(wrappedEl)
+
       const layoutTransform = LabelStyleBase.createLayoutTransform(
         context,
         intermediateLayout,
@@ -102,16 +109,19 @@ export class OrientedRectangleRendererBase extends BaseClass(
     }
     return new SvgVisual(g)
   }
+
   updateVisual(context, oldVisual) {
     if (this.$renderTag === null) {
       return this.createVisual(context)
     }
+
     const layout = this.getLayout(this.$renderTag)
     const intermediateLayout = this.useViewCoordinates
       ? OrientedRectangleRendererBase.getIntermediateLayout(context, layout)
       : layout
     const g = oldVisual.svgElement
     const oldWrappedEl = g.firstElementChild
+
     const wrappedEl = oldWrappedEl
       ? this.updateIndicatorElement(
           context,
@@ -135,6 +145,7 @@ export class OrientedRectangleRendererBase extends BaseClass(
     layoutTransform.applyTo(g)
     return oldVisual
   }
+
   static getIntermediateLayout(context, layout) {
     let anchor = layout.anchor.toPoint()
     const up = layout.upVector
@@ -144,6 +155,7 @@ export class OrientedRectangleRendererBase extends BaseClass(
     anchor = context.worldToIntermediateCoordinates(anchor)
     topLeft = context.worldToIntermediateCoordinates(topLeft)
     bottomRight = context.worldToIntermediateCoordinates(bottomRight)
+
     const or = new OrientedRectangle()
     or.setUpVector(topLeft.subtract(anchor).normalized)
     or.anchorX = anchor.x
@@ -152,29 +164,36 @@ export class OrientedRectangleRendererBase extends BaseClass(
     or.height = anchor.distanceTo(topLeft)
     return or
   }
+
   getBounds(context) {
     return this.$renderTag !== null
       ? this.getLayout(this.$renderTag).bounds
       : IBoundsProvider.EMPTY.getBounds(context)
   }
+
   isVisible(context, rectangle) {
     return this.getBounds(context).intersects(rectangle)
   }
+
   getBoundsProvider(renderTag) {
     this.$renderTag = renderTag
     return this
   }
+
   getHitTestable(renderTag) {
     this.$renderTag = renderTag
     return this
   }
+
   getVisibilityTestable(renderTag) {
     this.$renderTag = renderTag
     return this
   }
+
   isHit(_context, _location) {
     return false
   }
+
   getVisualCreator(renderTag) {
     this.$renderTag = renderTag
     return this

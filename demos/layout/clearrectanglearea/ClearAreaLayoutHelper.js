@@ -43,6 +43,7 @@ import {
   MutableRectangle,
   Rect
 } from '@yfiles/yfiles'
+
 /**
  * Performs layout and animation while dragging the marquee rectangle.
  */
@@ -51,40 +52,49 @@ export class ClearAreaLayoutHelper {
    * Performs the layout and the animation.
    */
   executor = null
+
   /**
    * Options to control the layout behavior.
    */
   options
+
   /**
    * The control that displays the graph.
    */
   graphComponent
+
   /**
    * The graph that is displayed.
    */
   get graph() {
     return this.graphComponent.graph
   }
+
   /**
    * The graph layout copy that stores the original layout before the marquee rectangle has been dragged.
    */
   resetToOriginalGraphStageData = null
+
   /**
    * The rectangular area that can be freely moved or resized.
    */
   clearRect
+
   /**
    * The layout of the rectangular area at the beginning of the gesture. Used for undo/redo.
    */
   oldClearRect = null
+
   /**
    * The {@link ILayoutAlgorithm} that makes space for the rectangular area
    */
   clearAreaLayout = null
+
   /**
    * The group node we are currently inside.
    */
   groupNode = null
+
   /**
    * Initializes the helper.
    * @param graphComponent The component that displays the graph.
@@ -96,21 +106,27 @@ export class ClearAreaLayoutHelper {
     this.clearRect = clearRect
     this.options = options
   }
+
   // --------------------------------------------------------------- LayoutExecutor configurations
+
   /**
    * Creates a {@link GivenCoordinatesLayoutData} that store the layout of nodes and edges.
    */
   createGivenCoordinateStageData() {
     const data = new GivenCoordinatesLayoutData()
+
     this.graph.nodes.forEach((node) => {
       data.nodeLocations.mapper.set(node, node.layout.topLeft)
       data.nodeSizes.mapper.set(node, node.layout.toSize())
     })
+
     this.graph.edges.forEach((edge) => {
       data.edgePaths.mapper.set(edge, IEdge.getPathPoints(edge))
     })
+
     return data
   }
+
   /**
    * A {@link LayoutExecutor} that is used while dragging the marquee rectangle.
    *
@@ -127,6 +143,7 @@ export class ClearAreaLayoutHelper {
       animateViewport: false
     })
   }
+
   /**
    * A {@link LayoutExecutor} that is used after the drag is canceled.
    *
@@ -140,6 +157,7 @@ export class ClearAreaLayoutHelper {
       animationDuration: '150ms'
     })
   }
+
   /**
    * Creates a {@link ILayoutAlgorithm} used while dragging and finishing the gesture.
    */
@@ -151,35 +169,44 @@ export class ClearAreaLayoutHelper {
     })
     return new GivenCoordinatesLayout(this.clearAreaLayout)
   }
+
   /**
    * Creates a {@link LayoutData} used while dragging and finishing the gesture.
    */
   createDraggingLayoutData() {
     const clearAreaLayoutData = new ClearAreaLayoutData()
     clearAreaLayoutData.areaGroupNode = (node) => node === this.groupNode
+
     return new CompositeLayoutData(this.resetToOriginalGraphStageData, clearAreaLayoutData)
   }
+
   // ---------------------------------------------------------------------------- Layout Execution
+
   /**
    * A lock which prevents re-entrant layout execution.
    */
   layoutIsRunning = false
+
   /**
    * Indicates whether a layout run has been requested while running a layout calculation.
    */
   layoutPending = false
+
   /**
    * Indicates that the gesture has been canceled and the original layout should be restored.
    */
   canceled = false
+
   /**
    * Indicates that the gesture has been finished and the new layout should be applied.
    */
   stopped = false
+
   /**
    * Creates a single unit to undo and redo the complete reparent gesture.
    */
   layoutEdit = null
+
   /**
    * Starts a layout calculation if none is already running.
    */
@@ -189,22 +216,30 @@ export class ClearAreaLayoutHelper {
       this.layoutPending = true
       return
     }
+
     do {
       // prevent other layouts from running
       this.layoutIsRunning = true
+
       // clear the pending flag: the requested layout will run now
       this.layoutPending = false
+
       // before the layout run
       this.onExecutorStarting()
+
       // start the layout
       await this.executor.start()
+
       // after the layout run
       this.onExecutorFinished()
+
       // free the executor for the next layout
       this.layoutIsRunning = false
+
       // repeat if another layout has been requested in the meantime
     } while (this.layoutPending)
   }
+
   /**
    * Prepares the layout execution.
    */
@@ -212,9 +247,11 @@ export class ClearAreaLayoutHelper {
     // prepare undo/redo
     this.oldClearRect = this.clearRect.toRect()
     this.layoutEdit = this.graph.beginEdit('Clear Area', 'Clear Area')
+
     this.resetToOriginalGraphStageData = this.createGivenCoordinateStageData()
     this.executor = this.createDraggingLayoutExecutor()
   }
+
   /**
    * Cancels the current layout calculation.
    */
@@ -225,6 +262,7 @@ export class ClearAreaLayoutHelper {
     this.canceled = true
     this.runLayout()
   }
+
   /**
    * Stops the current layout calculation.
    */
@@ -233,9 +271,11 @@ export class ClearAreaLayoutHelper {
       this.executor.stop()
     }
     this.stopped = true
+
     // noinspection JSIgnoredPromiseFromCall
     this.runLayout()
   }
+
   /**
    * Called before the a layout run starts.
    */
@@ -247,6 +287,7 @@ export class ClearAreaLayoutHelper {
       this.clearAreaLayout.area = this.clearRect.toRect()
     }
   }
+
   /**
    * Called after the a layout run finished.
    */
@@ -270,6 +311,7 @@ export class ClearAreaLayoutHelper {
         },
         () => this.clearRect.setShape(newRect)
       )
+
       // add all changes of the complete gesture as one undo/redo unit
       if (this.layoutEdit) {
         this.layoutEdit.commit()

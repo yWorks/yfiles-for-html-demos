@@ -37,60 +37,27 @@ const prodConfig = require('./webpack.prod')
 const baseConfig = {
   module: {
     rules: [
-      {
-        test: /\.ts$/,
-        loader: 'ts-loader',
-        options: { allowTsInNodeModules: true }
-      },
+      { test: /\.ts$/, loader: 'ts-loader', options: { allowTsInNodeModules: true } },
       {
         test: /\.css$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: './'
-            }
-          },
-          'css-loader'
-        ],
+        use: [{ loader: MiniCssExtractPlugin.loader, options: { publicPath: './' } }, 'css-loader'],
         sideEffects: true
       },
-      {
-        test: /\.(png|svg|jpg|gif)$/,
-        type: 'asset/resource'
-      }
+      { test: /\.(png|svg|jpg|gif)$/, type: 'asset/resource' }
     ]
   },
-  resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
-    symlinks: false
-  },
+  resolve: { extensions: ['.tsx', '.ts', '.js'], symlinks: false },
   optimization: {
     // don't split chunks for web worker
-    splitChunks: {
-      chunks: 'all',
-      minSize: 100000
-    }
+    splitChunks: { chunks: 'all', minSize: 100000 }
   },
   plugins: [
-    new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[id].css'
-    }),
+    new MiniCssExtractPlugin({ filename: '[name].css', chunkFilename: '[id].css' }),
     new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: '../../resources/icons/favicon.ico',
-          noErrorOnMissing: true
-        }
-      ]
+      patterns: [{ from: '../../resources/icons/favicon.ico', noErrorOnMissing: true }]
     })
   ],
-  output: {
-    clean: true,
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'dist')
-  }
+  output: { clean: true, filename: '[name].js', path: path.resolve(__dirname, 'dist') }
 }
 
 module.exports = function (env, options) {

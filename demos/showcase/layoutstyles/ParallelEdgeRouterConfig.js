@@ -34,6 +34,7 @@ import {
   ParallelEdgeRouter,
   ParallelEdgeRouterData
 } from '@yfiles/yfiles'
+
 import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -45,17 +46,20 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
+
 var Scope
 ;(function (Scope) {
   Scope[(Scope['SCOPE_ALL_EDGES'] = 0)] = 'SCOPE_ALL_EDGES'
   Scope[(Scope['SCOPE_SELECTED_EDGES'] = 1)] = 'SCOPE_SELECTED_EDGES'
   Scope[(Scope['SCOPE_AT_SELECTED_NODES'] = 2)] = 'SCOPE_AT_SELECTED_NODES'
 })(Scope || (Scope = {}))
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 export const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
@@ -133,6 +137,7 @@ export const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
       new TypeAttribute(Number)
     ]
   },
+
   /**
    * Setup default values for various configuration parameters.
    */
@@ -149,6 +154,7 @@ export const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
     this.joinDistanceItem = router.absoluteJoinEndDistance
     this.title = 'Parallel Edge Router'
   },
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
@@ -163,8 +169,10 @@ export const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
     router.edgeDistance = this.edgeDistanceItem
     router.joinEnds = this.joinEndsItem
     router.absoluteJoinEndDistance = this.joinDistanceItem
+
     return router
   },
+
   /**
    * Called by {@link LayoutConfiguration.apply} to create the layout data of the configuration. This
    * method is typically overridden to provide mappers for the different layouts.
@@ -172,6 +180,7 @@ export const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
   createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new ParallelEdgeRouterData()
     const selection = graphComponent.selection
+
     if (this.scopeItem === Scope.SCOPE_AT_SELECTED_NODES) {
       layoutData.affectedEdges = (edge) =>
         selection.includes(edge.sourceNode) || selection.includes(edge.targetNode)
@@ -180,33 +189,45 @@ export const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
     } else {
       layoutData.affectedEdges = () => true
     }
+
     if (this.useSelectedEdgesAsMasterItem) {
       layoutData.leadingEdges = selection.edges.toList()
     }
+
     return layoutData
   },
+
   /** @type {string} */
   descriptionText: {
     get: function () {
       return "<p style='margin-top:0'>The parallel edge routing algorithm routes parallel edges which connect the same pair of nodes in a graph. It is often used as layout stage for other layout algorithms to handle the parallel edges for those.</p>"
     }
   },
+
   /** @type {OptionGroup} */
   LayoutGroup: null,
+
   /** @type {Scope} */
   scopeItem: null,
+
   /** @type {boolean} */
   useSelectedEdgesAsMasterItem: false,
+
   /** @type {boolean} */
   considerEdgeDirectionItem: false,
+
   /** @type {boolean} */
   useAdaptiveEdgeDistanceItem: false,
+
   /** @type {number} */
   edgeDistanceItem: 0,
+
   /** @type {boolean} */
   joinEndsItem: false,
+
   /** @type {number} */
   joinDistanceItem: 0,
+
   /** @type {boolean} */
   shouldDisableJoinDistanceItem: {
     get: function () {

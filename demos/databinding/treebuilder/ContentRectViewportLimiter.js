@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { CanvasComponent, Rect, ViewportLimiter } from '@yfiles/yfiles'
+
 /**
  * A viewport limiter implementation that limits panning to the client area if the whole
  * graph content rectangle fits and limits the panning to the content rectangle if any of it's
@@ -44,6 +45,7 @@ export class ContentRectViewportLimiter {
     const rightX = canvas.contentBounds.bottomRight.x
     const contentWidth = rightX - leftX
     const suggestedX = suggestedViewport.x
+
     let newX
     if (contentWidth > suggestedViewport.width) {
       newX = Math.max(leftX, Math.min(rightX - suggestedViewport.width, suggestedX))
@@ -56,10 +58,12 @@ export class ContentRectViewportLimiter {
         newX = -suggestedViewport.width + rightX
       }
     }
+
     const topY = canvas.contentBounds.y
     const bottomY = canvas.contentBounds.bottomLeft.y
     const contentHeight = bottomY - topY
     const suggestedY = suggestedViewport.y
+
     let newY
     if (contentHeight > suggestedViewport.height) {
       newY = Math.max(topY, Math.min(bottomY - suggestedViewport.height, suggestedY))
@@ -72,6 +76,7 @@ export class ContentRectViewportLimiter {
         newY = -suggestedViewport.height + bottomY
       }
     }
+
     return new Rect(newX, newY, suggestedViewport.width, suggestedViewport.height)
   }
 }

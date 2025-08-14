@@ -89,19 +89,12 @@ function initializeStyles(graphComponent: GraphComponent): void {
 
   // set the default style for the nodes
   graph.nodeDefaults.style = new TagColoredShapeNodeStyle()
-  graph.nodeDefaults.labels.style = new LabelStyle({
-    font: '10px Tahoma',
-    textFill: 'white'
-  })
+  graph.nodeDefaults.labels.style = new LabelStyle({ font: '10px Tahoma', textFill: 'white' })
 
   // initialize the selection style for nodes
   graph.decorator.nodes.selectionRenderer.addConstant(
     new NodeStyleIndicatorRenderer({
-      nodeStyle: new ShapeNodeStyle({
-        shape: 'ellipse',
-        stroke: '5px gray',
-        fill: null
-      }),
+      nodeStyle: new ShapeNodeStyle({ shape: 'ellipse', stroke: '5px gray', fill: null }),
       margins: 5
     })
   )
@@ -114,10 +107,7 @@ function initializeStyles(graphComponent: GraphComponent): void {
 
   // set the style and the label model for the edge labels
   graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createParameter()
-  graph.edgeDefaults.labels.style = new LabelStyle({
-    font: '10px Tahoma',
-    textFill: 'gray'
-  })
+  graph.edgeDefaults.labels.style = new LabelStyle({ font: '10px Tahoma', textFill: 'gray' })
 
   graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.CENTER
 }
@@ -202,10 +192,7 @@ function createEditorMode(graphComponent: GraphComponent): GraphEditorInputMode 
 
   // ensure that each created node has a tag
   inputMode.nodeCreator = (_, g, location): INode =>
-    g.createNodeAt({
-      location: location,
-      tag: { components: [] }
-    })
+    g.createNodeAt({ location: location, tag: { components: [] } })
 
   inputMode.createEdgeInputMode.addEventListener(
     'edge-creation-started',

@@ -28,325 +28,93 @@
  ***************************************************************************/
 export default {
   nodes: [
-    {
-      id: 0,
-      layout: {
-        x: 0,
-        y: 0,
-        width: 30,
-        height: 30
-      },
-      label: 'START',
-      tag: {
-        duration: 1
-      }
-    },
+    { id: 0, layout: { x: 0, y: 0, width: 30, height: 30 }, label: 'START', tag: { duration: 1 } },
     {
       id: 1,
-      layout: {
-        x: 0,
-        y: 0,
-        width: 50,
-        height: 30
-      },
+      layout: { x: 0, y: 0, width: 50, height: 30 },
       label: 'Excavating',
-      tag: {
-        duration: 10
-      }
+      tag: { duration: 10 }
     },
     {
       id: 2,
-      layout: {
-        x: 0,
-        y: 0,
-        width: 90,
-        height: 30
-      },
+      layout: { x: 0, y: 0, width: 90, height: 30 },
       label: 'Foundation',
-      tag: {
-        duration: 30
-      }
+      tag: { duration: 30 }
     },
     {
       id: 3,
-      layout: {
-        x: 0,
-        y: 0,
-        width: 90,
-        height: 30
-      },
+      layout: { x: 0, y: 0, width: 90, height: 30 },
       label: 'Framing',
-      tag: {
-        duration: 30
-      }
+      tag: { duration: 30 }
     },
     {
       id: 4,
-      layout: {
-        x: 0,
-        y: 0,
-        width: 70,
-        height: 30
-      },
+      layout: { x: 0, y: 0, width: 70, height: 30 },
       label: 'Plumbing',
-      tag: {
-        duration: 20
-      }
+      tag: { duration: 20 }
     },
     {
       id: 5,
-      layout: {
-        x: 0,
-        y: 0,
-        width: 60,
-        height: 30
-      },
+      layout: { x: 0, y: 0, width: 60, height: 30 },
       label: 'Brickwork',
-      tag: {
-        duration: 15
-      }
+      tag: { duration: 15 }
     },
     {
       id: 6,
-      layout: {
-        x: 0,
-        y: 0,
-        width: 36,
-        height: 30
-      },
+      layout: { x: 0, y: 0, width: 36, height: 30 },
       label: 'Windows',
-      tag: {
-        duration: 3
-      }
+      tag: { duration: 3 }
     },
-    {
-      id: 7,
-      layout: {
-        x: 0,
-        y: 0,
-        width: 90,
-        height: 30
-      },
-      label: 'Roof',
-      tag: {
-        duration: 30
-      }
-    },
+    { id: 7, layout: { x: 0, y: 0, width: 90, height: 30 }, label: 'Roof', tag: { duration: 30 } },
     {
       id: 8,
-      layout: {
-        x: 0,
-        y: 0,
-        width: 70,
-        height: 30
-      },
+      layout: { x: 0, y: 0, width: 70, height: 30 },
       label: 'Flooring',
-      tag: {
-        duration: 20
-      }
+      tag: { duration: 20 }
     },
     {
       id: 9,
-      layout: {
-        x: 0,
-        y: 0,
-        width: 60,
-        height: 30
-      },
+      layout: { x: 0, y: 0, width: 60, height: 30 },
       label: 'Electrical',
-      tag: {
-        duration: 15
-      }
+      tag: { duration: 15 }
     },
     {
       id: 10,
-      layout: {
-        x: 0,
-        y: 0,
-        width: 46,
-        height: 30
-      },
+      layout: { x: 0, y: 0, width: 46, height: 30 },
       label: 'Kitchen/Bathroom',
-      tag: {
-        duration: 8
-      }
+      tag: { duration: 8 }
     },
     {
       id: 11,
-      layout: {
-        x: 0,
-        y: 0,
-        width: 70,
-        height: 30
-      },
+      layout: { x: 0, y: 0, width: 70, height: 30 },
       label: 'Painting',
-      tag: {
-        duration: 20
-      }
+      tag: { duration: 20 }
     },
     {
       id: 12,
-      layout: {
-        x: 0,
-        y: 0,
-        width: 70,
-        height: 30
-      },
+      layout: { x: 0, y: 0, width: 70, height: 30 },
       label: 'Landscape',
-      tag: {
-        duration: 20
-      }
+      tag: { duration: 20 }
     },
-    {
-      id: 13,
-      layout: {
-        x: 0,
-        y: 0,
-        width: 30,
-        height: 30
-      },
-      label: 'FINISH',
-      tag: {
-        duration: 0
-      }
-    }
+    { id: 13, layout: { x: 0, y: 0, width: 30, height: 30 }, label: 'FINISH', tag: { duration: 0 } }
   ],
   edges: [
-    {
-      source: 0,
-      target: 1,
-      label: '0d',
-      tag: {
-        transitionDuration: 0
-      }
-    },
-    {
-      source: 1,
-      target: 2,
-      label: '2d',
-      tag: {
-        transitionDuration: 2
-      }
-    },
-    {
-      source: 2,
-      target: 3,
-      label: '2d',
-      tag: {
-        transitionDuration: 2
-      }
-    },
-    {
-      source: 3,
-      target: 4,
-      label: '2d',
-      tag: {
-        transitionDuration: 2
-      }
-    },
-    {
-      source: 3,
-      target: 5,
-      label: '2d',
-      tag: {
-        transitionDuration: 2
-      }
-    },
-    {
-      source: 4,
-      target: 8,
-      label: '2d',
-      tag: {
-        transitionDuration: 2
-      }
-    },
-    {
-      source: 5,
-      target: 6,
-      label: '1d',
-      tag: {
-        transitionDuration: 1
-      }
-    },
-    {
-      source: 3,
-      target: 7,
-      label: '2d',
-      tag: {
-        transitionDuration: 2
-      }
-    },
-    {
-      source: 7,
-      target: 8,
-      label: '2d',
-      tag: {
-        transitionDuration: 2
-      }
-    },
-    {
-      source: 6,
-      target: 8,
-      label: '2d',
-      tag: {
-        transitionDuration: 2
-      }
-    },
-    {
-      source: 9,
-      target: 10,
-      label: '2d',
-      tag: {
-        transitionDuration: 2
-      }
-    },
-    {
-      source: 7,
-      target: 9,
-      label: '2d',
-      tag: {
-        transitionDuration: 1
-      }
-    },
-    {
-      source: 7,
-      target: 12,
-      label: '2d',
-      tag: {
-        transitionDuration: 2
-      }
-    },
-    {
-      source: 8,
-      target: 10,
-      label: '2d',
-      tag: {
-        transitionDuration: 2
-      }
-    },
-    {
-      source: 10,
-      target: 11,
-      label: '2d',
-      tag: {
-        transitionDuration: 2
-      }
-    },
-    {
-      source: 11,
-      target: 13,
-      label: '5d',
-      tag: {
-        transitionDuration: 5
-      }
-    },
-    {
-      source: 12,
-      target: 13,
-      label: '6d',
-      tag: {
-        transitionDuration: 6
-      }
-    }
+    { source: 0, target: 1, label: '0d', tag: { transitionDuration: 0 } },
+    { source: 1, target: 2, label: '2d', tag: { transitionDuration: 2 } },
+    { source: 2, target: 3, label: '2d', tag: { transitionDuration: 2 } },
+    { source: 3, target: 4, label: '2d', tag: { transitionDuration: 2 } },
+    { source: 3, target: 5, label: '2d', tag: { transitionDuration: 2 } },
+    { source: 4, target: 8, label: '2d', tag: { transitionDuration: 2 } },
+    { source: 5, target: 6, label: '1d', tag: { transitionDuration: 1 } },
+    { source: 3, target: 7, label: '2d', tag: { transitionDuration: 2 } },
+    { source: 7, target: 8, label: '2d', tag: { transitionDuration: 2 } },
+    { source: 6, target: 8, label: '2d', tag: { transitionDuration: 2 } },
+    { source: 9, target: 10, label: '2d', tag: { transitionDuration: 2 } },
+    { source: 7, target: 9, label: '2d', tag: { transitionDuration: 1 } },
+    { source: 7, target: 12, label: '2d', tag: { transitionDuration: 2 } },
+    { source: 8, target: 10, label: '2d', tag: { transitionDuration: 2 } },
+    { source: 10, target: 11, label: '2d', tag: { transitionDuration: 2 } },
+    { source: 11, target: 13, label: '5d', tag: { transitionDuration: 5 } },
+    { source: 12, target: 13, label: '6d', tag: { transitionDuration: 6 } }
   ]
 }

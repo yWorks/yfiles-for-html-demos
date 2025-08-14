@@ -33,12 +33,14 @@ import {
   SmartEdgeLabelModel,
   StretchNodeLabelModel
 } from '@yfiles/yfiles'
+
 /**
  * Configures the default label placement.
  */
 export function setDefaultLabelLayoutParameters(graph) {
   // Place node labels in the node center
   graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
+
   // Use a rotated layout for edge labels
   graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel({
     autoRotation: true
@@ -48,6 +50,7 @@ export function setDefaultLabelLayoutParameters(graph) {
     segmentRatio: 0.5 // placement near the center of the path
   })
 }
+
 /**
  * Changes the placement of some labels.
  */
@@ -55,15 +58,20 @@ export function changeLabelLayoutParameters(graph) {
   const label1 = graph.nodeLabels.at(1)
   const label2 = graph.nodeLabels.at(2)
   const edgeLabel = graph.edgeLabels.at(0)
+
   // InteriorStretchLabelModel stretches the label width or height to match the node size
   const interiorStretchModel = new StretchNodeLabelModel({ padding: 3 })
   graph.setLabelLayoutParameter(label1, interiorStretchModel.createParameter('top'))
+
   // ExteriorLabelModel places the label on discrete positions outside the node bounds
   const exteriorLabelModel = new ExteriorNodeLabelModel({ margins: 10 })
+
   graph.setLabelLayoutParameter(label2, exteriorLabelModel.createParameter('bottom'))
+
   // NinePositionsEdgeLabelModel provides a set of 9 predefined locations on an edge
   graph.setLabelLayoutParameter(edgeLabel, NinePositionsEdgeLabelModel.CENTER_ABOVE)
 }
+
 /**
  * Resets each label layout to the graph default.
  */

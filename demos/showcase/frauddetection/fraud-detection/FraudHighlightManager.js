@@ -36,12 +36,14 @@ import {
 } from '@yfiles/yfiles'
 import { getStroke } from '../styles/graph-styles'
 import { EntityNodeStyle } from '../styles/EntityNodeStyle'
+
 /**
  * A highlight manager responsible for highlighting the fraud components.
  */
 export class FraudHighlightManager extends HighlightIndicatorManager {
   edgeHighlightGroup
   nodeHighlightGroup
+
   /**
    * Installs the manager on the component.
    * Adds the highlight group.
@@ -52,11 +54,13 @@ export class FraudHighlightManager extends HighlightIndicatorManager {
     const renderTree = canvas.renderTree
     this.edgeHighlightGroup = renderTree.createGroup(graphModelManager.contentGroup)
     this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
+
     // the nodes' highlight group should be above the nodes
     this.nodeHighlightGroup = renderTree.createGroup(graphModelManager.contentGroup)
     this.nodeHighlightGroup.above(graphModelManager.nodeGroup)
     super.install(canvas)
   }
+
   /**
    * Uninstalls the manager from the canvas.
    * Removes the highlight group.
@@ -72,6 +76,7 @@ export class FraudHighlightManager extends HighlightIndicatorManager {
       this.nodeHighlightGroup = undefined
     }
   }
+
   /**
    * Returns the render tree group for a given item.
    */
@@ -82,6 +87,7 @@ export class FraudHighlightManager extends HighlightIndicatorManager {
         ? this.nodeHighlightGroup
         : super.getRenderTreeGroup(item)
   }
+
   /**
    * Callback used by {@link install} to retrieve the object renderer for a given item.
    */
@@ -94,9 +100,7 @@ export class FraudHighlightManager extends HighlightIndicatorManager {
         })
       : item instanceof IEdge
         ? new EdgeStyleIndicatorRenderer({
-            edgeStyle: new PolylineEdgeStyle({
-              stroke: `8px solid ${getStroke(item)}`
-            }),
+            edgeStyle: new PolylineEdgeStyle({ stroke: `8px solid ${getStroke(item)}` }),
             zoomPolicy: 'world-coordinates'
           })
         : super.getRenderer(item)

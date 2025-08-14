@@ -34,6 +34,7 @@ import {
   IShapeGeometry,
   OrthogonalEdgeHelper
 } from '@yfiles/yfiles'
+
 /**
  * An {@link OrthogonalEdgeHelper} that enables moving the
  * source/target of the edge to another port, removes bends inside the bounds
@@ -43,6 +44,7 @@ export class PurpleOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
   constructor(edge) {
     super(edge)
   }
+
   /**
    * Enables moving the source and target of the edge to other ports.
    * @param _inputModeContext The input mode context in which the segment is edited
@@ -54,6 +56,7 @@ export class PurpleOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
   shouldMoveEndImplicitly(_inputModeContext, _sourceEnd) {
     return true
   }
+
   /**
    * Removes bends inside of nodes, in addition to the clean-ups provided by
    * the base implementation.
@@ -64,6 +67,7 @@ export class PurpleOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
    */
   cleanUpEdge(inputModeContext, graph) {
     super.cleanUpEdge(inputModeContext, graph)
+
     // now check bends which lie inside the node bounds and remove them...
     const sourceNode = this.edge.sourceNode
     if (sourceNode) {
@@ -82,6 +86,7 @@ export class PurpleOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
         graph.remove(firstBend)
       }
     }
+
     const targetNode = this.edge.targetNode
     if (targetNode) {
       const targetContainsTest = targetNode.lookup(IShapeGeometry)

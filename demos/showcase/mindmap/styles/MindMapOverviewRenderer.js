@@ -35,6 +35,7 @@ import {
   IVisibilityTestable,
   IVisualCreator
 } from '@yfiles/yfiles'
+
 /**
  * Custom HTML Canvas rendering for the overview.
  */
@@ -59,6 +60,7 @@ export class MindMapOverviewRenderer extends BaseClass(IObjectRenderer) {
     })
   }
 }
+
 /**
  * A {@link Visual} that renders the overview component with customized node and edge styles.
  */
@@ -75,6 +77,7 @@ class MindMapOverviewVisual extends HtmlCanvasVisual {
       this.renderNode(renderContext, ctx, node)
     })
   }
+
   /**
    * Draws each node with a round rectangle.
    */
@@ -90,10 +93,12 @@ class MindMapOverviewVisual extends HtmlCanvasVisual {
       // @ts-ignore Older browsers don't support roundRect
       ctx.rect(x, y, width, height)
     }
+
     ctx.fill()
     ctx.stroke()
     ctx.restore()
   }
+
   /**
    * Draws each edge as a straight-line segment.
    */

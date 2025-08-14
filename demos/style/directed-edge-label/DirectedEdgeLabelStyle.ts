@@ -70,10 +70,7 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase<DirectedEdgeLabelStyl
   public arrowStroke = 'black'
 
   /** The text font */
-  private readonly font: Font = new Font({
-    fontFamily: 'Arial',
-    fontSize: 12
-  })
+  private readonly font: Font = new Font({ fontFamily: 'Arial', fontSize: 12 })
 
   /**
    * Creates a new instance.

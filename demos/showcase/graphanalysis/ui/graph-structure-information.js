@@ -28,56 +28,69 @@
  ***************************************************************************/
 import { GraphStructureAnalyzer } from '@yfiles/yfiles'
 import './graph-structure-information.css'
+
 /**
  * Registers listener to graph changes to update the graph information.
  */
 export function initializeGraphInformation(graphComponent) {
   const inputMode = graphComponent.inputMode
+
   inputMode.addEventListener('deleting-selection', async () => {
     updateGraphInformation(graphComponent)
   })
+
   inputMode.addEventListener('deleted-selection', async () => {
     updateGraphInformation(graphComponent)
   })
+
   // edge creation
   inputMode.createEdgeInputMode.addEventListener('edge-created', async () => {
     updateGraphInformation(graphComponent)
   })
+
   inputMode.addEventListener('edge-ports-changed', async () => {
     updateGraphInformation(graphComponent)
   })
+
   inputMode.addEventListener('node-created', () => {
     updateGraphInformation(graphComponent)
   })
+
   const engine = graphComponent.graph.undoEngine
   if (engine) {
     engine.addEventListener('unit-redone', () => updateGraphInformation(graphComponent))
     engine.addEventListener('unit-undone', () => updateGraphInformation(graphComponent))
   }
 }
+
 /**
  * Updates the table that holds information about the graph.
  */
 export function updateGraphInformation(graphComponent) {
   // clear table
   const table = document.getElementById('graph-structure-information')
+
   // fill table with updated information
   const graph = graphComponent.graph
+
   updateNumberOfElements(graph, table.querySelector('#graph-elements'))
   updateStructureAnalysis(graph, table.querySelector('#structure-analysis'))
 }
+
 /**
  * Returns the number of nodes in the given graph.
  */
 function getNodeCount(graph) {
   return graph.nodes.size
 }
+
 /**
  * Returns the number of edges in the given graph.
  */
 function getEdgeCount(graph) {
   return graph.edges.size
 }
+
 /**
  * Checks whether the given graph is acyclic.
  */
@@ -85,6 +98,7 @@ function isAcyclic(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.isAcyclic(false)
 }
+
 /**
  * Checks whether the given graph is bipartite.
  */
@@ -92,6 +106,7 @@ function isBipartite(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.isBipartite()
 }
+
 /**
  * Checks whether the given graph is connected.
  */
@@ -99,6 +114,7 @@ function isConnected(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.isConnected()
 }
+
 /**
  * Checks whether the given graph is biconnected.
  */
@@ -106,6 +122,7 @@ function isBiconnected(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.isBiconnected()
 }
+
 /**
  * Checks whether the given graph is strongly connected.
  */
@@ -113,6 +130,7 @@ function isStronglyConnected(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.isStronglyConnected()
 }
+
 /**
  * Checks whether the given graph is planar.
  */
@@ -120,6 +138,7 @@ function isPlanar(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.isPlanar()
 }
+
 /**
  * Checks whether the given graph is a tree.
  */
@@ -127,6 +146,7 @@ function isTree(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.isTree(false)
 }
+
 /**
  * Checks whether the given graph contains self-loop edges.
  */
@@ -134,6 +154,7 @@ function hasSelfLoops(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.hasSelfLoops()
 }
+
 /**
  * Checks whether the given graph has multiple edges between any two nodes.
  */
@@ -141,6 +162,7 @@ function hasMultipleEdges(graph) {
   const structureAnalyzer = new GraphStructureAnalyzer(graph)
   return structureAnalyzer.hasMultiEdges()
 }
+
 /**
  * Updates the number of graph elements the panel.
  */
@@ -148,21 +170,26 @@ function updateNumberOfElements(graph, container) {
   while (container.childElementCount > 0) {
     container.lastElementChild?.remove()
   }
+
   ;['Nodes', 'Edges'].forEach((element) => {
     const row = document.createElement('div')
     row.classList.add('row', 'bold')
     container.appendChild(row)
+
     const name = document.createElement('div')
     name.className = 'name'
     const elementCount = element === 'Nodes' ? getNodeCount(graph) : getEdgeCount(graph)
     name.appendChild(document.createTextNode(`Number of ${element}`))
+
     const result = document.createElement('div')
     result.className = 'value'
     result.appendChild(document.createTextNode(elementCount.toString()))
+
     row.appendChild(name)
     row.appendChild(result)
   })
 }
+
 /**
  * Updates the results of structure analysis in the panel.
  */
@@ -170,15 +197,18 @@ function updateStructureAnalysis(graph, container) {
   while (container.childElementCount > 0) {
     container.lastElementChild?.remove()
   }
+
   structureAnalysis.forEach((algorithm) => {
     const row = document.createElement('div')
     row.className = 'row'
     container.appendChild(row)
+
     const name = document.createElement('div')
     name.className = 'name'
     const result = algorithm.apply(graph)
     name.appendChild(document.createTextNode(algorithm.name))
     name.classList.add(result ? 'applicable' : 'inapplicable')
+
     const infoButton = document.createElement('div')
     infoButton.className = 'value'
     const a = document.createElement('a')
@@ -189,24 +219,18 @@ function updateStructureAnalysis(graph, container) {
     a.href = algorithm.url ?? ''
     a.target = '_blank'
     infoButton.appendChild(a)
+
     row.appendChild(name)
     row.appendChild(infoButton)
   })
 }
+
 /**
  * List of all structural analysis algorithms whose results are displayed in the panel.
  */
 const structureAnalysis = [
-  {
-    name: 'Acyclic',
-    apply: isAcyclic,
-    url: 'https://en.wikipedia.org/wiki/Cycle_(graph_theory)'
-  },
-  {
-    name: 'Bipartite',
-    apply: isBipartite,
-    url: 'https://en.wikipedia.org/wiki/Bipartite_graph'
-  },
+  { name: 'Acyclic', apply: isAcyclic, url: 'https://en.wikipedia.org/wiki/Cycle_(graph_theory)' },
+  { name: 'Bipartite', apply: isBipartite, url: 'https://en.wikipedia.org/wiki/Bipartite_graph' },
   {
     name: 'Connected',
     apply: isConnected,

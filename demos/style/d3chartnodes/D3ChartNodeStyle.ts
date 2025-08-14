@@ -36,12 +36,7 @@ import {
 import type { NumberValue } from 'd3'
 import * as d3 from 'd3'
 
-const margin = {
-  top: 3,
-  right: 3,
-  bottom: 1,
-  left: 3
-}
+const margin = { top: 3, right: 3, bottom: 1, left: 3 }
 
 const xHelper = d3.scaleBand<number>().padding(0.1)
 

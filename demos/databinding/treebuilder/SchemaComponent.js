@@ -74,9 +74,11 @@ import {
 import { EditTreeNodesSourceDialog } from './EditTreeNodeSourceDialog'
 import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
+
 // @ts-ignore Import via URL
 // eslint-disable-next-line import/no-unresolved
 import { nothing, svg } from 'lit-html'
+
 /**
  * Schema component for building a graph using the {@link TreeBuilder}.
  * Displays a schema graph and builds the result graph from data contained
@@ -86,17 +88,23 @@ export class SchemaComponent {
   treeBuilder
   resultGraph
   schemaGraphComponent
+
   newNodesSourcesCounter
   schemaChangedCallback
+
   constructor(selector, graph, schemaChangedCallback) {
     this.resultGraph = graph
     this.schemaChangedCallback = schemaChangedCallback
+
     this.schemaGraphComponent = new GraphComponent(selector)
     this.configureSchemaStyles()
     this.schemaGraphComponent.inputMode = this.configureInputMode(this.schemaGraphComponent.graph)
+
     this.treeBuilder = new TreeBuilder(graph)
+
     this.newNodesSourcesCounter = 1
   }
+
   /**
    * Updates the content rectangle on schema changes and calls the
    * schemaChangedCallback
@@ -105,6 +113,7 @@ export class SchemaComponent {
     this.schemaGraphComponent.updateContentBounds()
     this.schemaChangedCallback()
   }
+
   /**
    * Configures the style of the schema graph nodes and edges
    */
@@ -118,11 +127,7 @@ export class SchemaComponent {
     const edgeDefaults = this.schemaGraphComponent.graph.edgeDefaults
     edgeDefaults.style = new PolylineEdgeStyle({
       stroke: '3px #BBBBBB',
-      targetArrow: new Arrow({
-        fill: '#BBBBBB',
-        type: ArrowType.TRIANGLE,
-        widthScale: 1.5
-      }),
+      targetArrow: new Arrow({ fill: '#BBBBBB', type: ArrowType.TRIANGLE, widthScale: 1.5 }),
       smoothingLength: 15
     })
     edgeDefaults.labels.style = new LabelStyle({
@@ -132,11 +137,13 @@ export class SchemaComponent {
     })
     edgeDefaults.labels.layoutParameter = NinePositionsEdgeLabelModel.CENTER_CENTERED
   }
+
   /**
    * Configures the input mode of the schema graph
    */
   configureInputMode(graph) {
     const inputMode = new GraphEditorInputMode()
+
     inputMode.clickableItems = GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL
     inputMode.selectableItems =
       GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL
@@ -145,19 +152,23 @@ export class SchemaComponent {
     inputMode.focusableItems = GraphItemTypes.NONE
     inputMode.movableSelectedItems = GraphItemTypes.NONE
     inputMode.allowCreateBend = false
+
     // configure the tooltips
     inputMode.toolTipInputMode.delay = '0.5s'
     inputMode.toolTipInputMode.duration = '5m'
+
     // the pointer cursor should be shown when hovering over certain graph items to indicate their clickable
     inputMode.itemHoverInputMode.enabled = true
     inputMode.itemHoverInputMode.hoverItems =
       GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.EDGE_LABEL
     inputMode.itemHoverInputMode.hoverCursor = Cursor.POINTER
+
     // easily move viewport and create new edges when dragging on another node
     inputMode.marqueeSelectionInputMode.enabled = false
     inputMode.moveViewportInputMode.beginRecognizer = EventRecognizers.MOUSE_DOWN
     inputMode.moveViewportInputMode.priority = inputMode.createEdgeInputMode.priority + 1
     this.enableTargetNodeCreation(inputMode.createEdgeInputMode)
+
     // start label edit when an edge or edge label is clicked
     inputMode.addEventListener('item-clicked', (evt) => {
       const graphComponent = evt.context.canvasComponent
@@ -165,6 +176,7 @@ export class SchemaComponent {
         evt.handled = true
         const edge = evt.item
         graphComponent.selection.edges.add(edge)
+
         if (edge.labels.size === 0) {
           // noinspection JSIgnoredPromiseFromCall
           inputMode.editLabelInputMode.startLabelAddition(edge)
@@ -179,6 +191,7 @@ export class SchemaComponent {
         inputMode.editLabelInputMode.startLabelEditing(evt.item)
       }
     })
+
     // open node dialog when a node is double clicked
     inputMode.addEventListener('item-double-clicked', (evt) => {
       if (evt.item instanceof INode) {
@@ -186,18 +199,21 @@ export class SchemaComponent {
         this.openEditNodeSourceDialog(evt.item)
       }
     })
+
     // create a new nodes source and layout the graph
     inputMode.addEventListener('node-created', (evt) => {
       this.createNewTreeNodesSource(evt.item, true)
       // noinspection JSIgnoredPromiseFromCall
       this.applySchemaLayout()
     })
+
     // create the relationship in the TreeBuilder and layout the graph
     inputMode.createEdgeInputMode.addEventListener('edge-created', (evt) => {
       this.createChildRelationship('children', evt.item)
       // noinspection JSIgnoredPromiseFromCall
       this.applySchemaLayout()
     })
+
     // update the schema
     inputMode.editLabelInputMode.addEventListener('label-edited', (evt) => {
       const owner = evt.item.owner
@@ -207,6 +223,7 @@ export class SchemaComponent {
         this.schemaChanged()
       }
     })
+
     // remove edge when label was removed, recreate graph on all removals
     inputMode.addEventListener('deleted-item', (evt) => {
       if (evt.details instanceof LabelEventArgs && evt.details.owner) {
@@ -214,17 +231,20 @@ export class SchemaComponent {
       }
       this.recreateGraph()
     })
+
     // create Tooltips for node data
     inputMode.addEventListener('query-item-tool-tip', (evt) => {
       if (evt.handled) {
         // A tooltip has already been assigned => nothing to do.
         return
       }
+
       if (evt.item instanceof INode) {
         const hitNode = evt.item
         if (hitNode.labels.size > 0) {
           const sourceConnector = hitNode.tag
           evt.toolTip = SchemaComponent.createToolTip(sourceConnector)
+
           // Indicate that the toolTip has been set.
           evt.handled = true
         }
@@ -232,6 +252,7 @@ export class SchemaComponent {
     })
     return inputMode
   }
+
   /**
    * Creates the tooltip content for a node
    * @param sourceConnector the {@link TreeNodesSourceDefinitionBuilderConnector} to get the data from
@@ -239,14 +260,17 @@ export class SchemaComponent {
   static createToolTip(sourceConnector) {
     const toolTip = document.createElement('div')
     toolTip.classList.add('toolTip')
+
     const title = document.createElement('b')
     title.innerHTML = 'Data'
     toolTip.appendChild(title)
+
     const data = document.createElement('pre')
     data.innerHTML = sourceConnector.sourceDefinition.data || 'Child nodes source'
     toolTip.appendChild(data)
     return toolTip
   }
+
   /**
    * Builds the schema graph using the provided {@link TreeBuilderSample}
    * @param sample the sample data used for the graphs
@@ -254,16 +278,21 @@ export class SchemaComponent {
   loadSample(sample) {
     this.schemaGraphComponent.graph.clear()
     this.treeBuilder = new TreeBuilder(this.resultGraph)
+
     const schemaGraphBuilder = new GraphBuilder(this.schemaGraphComponent.graph)
     const schemaNodesSource = schemaGraphBuilder.createNodesSource(
       sample.nodesSources,
       (n) => n.name
     )
+
     schemaNodesSource.nodeCreator.createLabelBinding((n) => n.name)
+
     schemaNodesSource.nodeCreator.tagProvider = (sourceDefinition) =>
       this.createTreeNodesSourceConnector(sourceDefinition)
+
     schemaNodesSource.nodeCreator.styleProvider = (data) =>
       SchemaComponent.createSchemaNodeStyle(data)
+
     const schemaEdgesSource = schemaGraphBuilder.createEdgesSource(
       sample.edgesSource,
       (e) => e.parentSource,
@@ -272,9 +301,12 @@ export class SchemaComponent {
     schemaEdgesSource.edgeCreator.addEventListener('edge-created', (evt) => {
       this.createChildRelationship(evt.dataItem.childBinding, evt.item)
     })
+
     schemaGraphBuilder.buildGraph()
+
     this.applySchemaLayout()
   }
+
   /**
    * Completely recreates the graph in case of a schema entry deletion
    * This is necessary, as it is not possible to remove sources from
@@ -282,17 +314,20 @@ export class SchemaComponent {
    */
   recreateGraph() {
     const schemaGraph = this.schemaGraphComponent.graph
+
     // gather remaining source definitions
     const treeNodesSourcesDefinitions = []
     schemaGraph.nodes.forEach((node) => {
       const sourceConnector = node.tag
       treeNodesSourcesDefinitions.push(sourceConnector.sourceDefinition)
     })
+
     // gather remaining edge definitions
     const edgesSourceDefinitions = []
     schemaGraph.edges.forEach((edge) => {
       const sourceConnector = edge.sourceNode.tag
       const targetConnector = edge.targetNode.tag
+
       const schemaEdge = {
         parentSource: sourceConnector.sourceDefinition.name,
         childSource: targetConnector.sourceDefinition.name,
@@ -300,15 +335,19 @@ export class SchemaComponent {
       }
       edgesSourceDefinitions.push(schemaEdge)
     })
+
     const treeBuilderSample = {
       name: 'empty',
       nodesSources: treeNodesSourcesDefinitions,
       edgesSource: edgesSourceDefinitions
     }
+
     this.resultGraph.clear()
+
     this.loadSample(treeBuilderSample)
     this.schemaChanged()
   }
+
   /**
    * Creates the child relations between to schema graph nodes connected by an edge.
    * @param childDataMap the binding string for the child relation
@@ -317,11 +356,14 @@ export class SchemaComponent {
   createChildRelationship(childDataMap, edge) {
     const sourceConnector = edge.sourceNode.tag
     const targetConnector = edge.targetNode.tag
+
     edge.tag = { provider: childDataMap, binding: createBinding(childDataMap) }
+
     sourceConnector.nodesSource.addChildNodesSource(
       (dataItem) => edge.tag.binding(dataItem),
       targetConnector.nodesSource
     )
+
     const labelModel = new SmartEdgeLabelModel({ autoRotation: false })
     this.schemaGraphComponent.graph.addLabel(
       edge,
@@ -329,6 +371,7 @@ export class SchemaComponent {
       labelModel.createParameterFromSource(0)
     )
   }
+
   /**
    * Creates a new {@link TreeNodesSourceDefinition} for use in the schema graph
    * @param node the schema graph node to attach the definition to
@@ -343,8 +386,10 @@ export class SchemaComponent {
 <text transform="translate(10 20)" data-content="{Binding id}" style="font-size:18px; fill:#000;"/>`
     node.tag = this.createTreeNodesSourceConnector(treeNodesSourceDefinition)
     this.schemaGraphComponent.graph.addLabel(node, treeNodesSourceDefinition.name)
+
     this.setSchemaNodeStyle(node)
   }
+
   /**
    * Creates a {@link TreeNodesSourceDefinitionBuilderConnector} for a {@link TreeNodesSourceDefinition}
    * @param sourceDefinition the TreeNodesSourceDefinition to create the connector for
@@ -354,6 +399,7 @@ export class SchemaComponent {
       ? parseData(sourceDefinition.data)
       : []
     const nodesSource = this.treeBuilder.createRootNodesSource(data, null)
+
     const nodeCreator = nodesSource.nodeCreator
     nodeCreator.defaults.style = new LitNodeStyle(
       this.createRenderFunction(sourceDefinition.template)
@@ -364,12 +410,14 @@ export class SchemaComponent {
       evt.graph.setStyle(evt.item, nodeCreator.defaults.style)
     })
     nodesSource.parentEdgeCreator.defaults.style = createDemoEdgeStyle()
+
     return new TreeNodesSourceDefinitionBuilderConnector(
       sourceDefinition,
       nodesSource,
       this.treeBuilder
     )
   }
+
   createRenderFunction(template) {
     return new Function(
       'const svg = arguments[0]; const nothing = arguments[1]; const renderFunction = ' +
@@ -379,6 +427,7 @@ export class SchemaComponent {
         '\n return renderFunction'
     )(svg, nothing)
   }
+
   /**
    * Applies the layout for the schema graph component
    */
@@ -388,6 +437,7 @@ export class SchemaComponent {
         routingStyleDescriptor: new RoutingStyleDescriptor(HierarchicalLayoutRoutingStyle.POLYLINE)
       })
     })
+
     const layoutData = new HierarchicalLayoutData({
       ports: new PortData({
         sourcePortCandidates: (edge) => {
@@ -400,9 +450,11 @@ export class SchemaComponent {
         }
       })
     })
+
     // Ensure that the LayoutExecutor class is not removed by build optimizers
     // It is needed for the 'applyLayoutAnimated' method in this demo.
     LayoutExecutor.ensure()
+
     await this.schemaGraphComponent.applyLayoutAnimated({
       layout,
       layoutData,
@@ -410,6 +462,7 @@ export class SchemaComponent {
     })
     this.schemaGraphComponent.updateContentBounds()
   }
+
   /**
    * Opens the {@link EditTreeNodesSourceDialog} for editing a schema nodes' business data
    * @param schemaNode the schema node to edit
@@ -426,6 +479,7 @@ export class SchemaComponent {
       this.schemaChanged()
     }).show()
   }
+
   /**
    * Returns whether a {@link TreeNodesSourceDefinition} represents a root node or not.
    * A root node definition sources' data is non-empty.
@@ -433,6 +487,7 @@ export class SchemaComponent {
   static isRootNodesSourceDefinition(nodesSourceDefinition) {
     return !!nodesSourceDefinition.data && nodesSourceDefinition.data.length > 0
   }
+
   /**
    * Configures the given {@link CreateEdgeInputMode} to be able to finish the gesture on an empty
    * canvas with a newly created node.
@@ -440,16 +495,15 @@ export class SchemaComponent {
   enableTargetNodeCreation(createEdgeInputMode) {
     createEdgeInputMode.previewGraph.nodeDefaults.size =
       this.schemaGraphComponent.graph.nodeDefaults.size
+
     // each edge creation should use another random target node color
     createEdgeInputMode.addEventListener('gesture-starting', (_, src) => {
-      const nodeStyle = new ShapeNodeStyle({
-        shape: 'ellipse',
-        fill: '#6495ED',
-        stroke: 'white'
-      })
+      const nodeStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: '#6495ED', stroke: 'white' })
+
       src.previewGraph.nodeDefaults.style = nodeStyle
       src.previewGraph.setStyle(src.previewEndNode, nodeStyle)
     })
+
     // If targeting another node during edge creation, the dummy target node should not be rendered
     // because we'd use that actual graph node as target if the gesture is finished on a node.
     createEdgeInputMode.addEventListener('end-port-candidate-changed', (args) => {
@@ -460,10 +514,12 @@ export class SchemaComponent {
         previewGraph.setStyle(createEdgeInputMode.previewEndNode, previewGraph.nodeDefaults.style)
       }
     })
+
     // allow the create edge gesture to be finished anywhere, since we'll create a node if there is
     // no target node in the graph at the given location
     createEdgeInputMode.prematureEndHitTestable = IHitTestable.ALWAYS
     createEdgeInputMode.forceSnapToCandidate = false
+
     // create a new node if the gesture finishes on the empty canvas
     const edgeCreator = createEdgeInputMode.edgeCreator
     createEdgeInputMode.edgeCreator = (
@@ -481,6 +537,7 @@ export class SchemaComponent {
       const dummyTargetNode = createEdgeInputMode.previewEndNode
       const node = this.schemaGraphComponent.graph.createNode(dummyTargetNode.layout)
       this.createNewTreeNodesSource(node, false)
+
       return edgeCreator(
         context,
         graph,
@@ -490,6 +547,7 @@ export class SchemaComponent {
       )
     }
   }
+
   /**
    * Sets the style for a node in the schema graph
    * Root nodes have a different style than non-root nodes (octagon vs. circle)
@@ -501,19 +559,12 @@ export class SchemaComponent {
       SchemaComponent.createSchemaNodeStyle(node.tag.sourceDefinition)
     )
   }
+
   static createSchemaNodeStyle(nodesSourceDefinition) {
     if (SchemaComponent.isRootNodesSourceDefinition(nodesSourceDefinition)) {
-      return new ShapeNodeStyle({
-        shape: 'octagon',
-        fill: '#6495ED',
-        stroke: 'white'
-      })
+      return new ShapeNodeStyle({ shape: 'octagon', fill: '#6495ED', stroke: 'white' })
     } else {
-      return new ShapeNodeStyle({
-        shape: 'ellipse',
-        fill: '#eee',
-        stroke: '5px solid #6495ED'
-      })
+      return new ShapeNodeStyle({ shape: 'ellipse', fill: '#eee', stroke: '5px solid #6495ED' })
     }
   }
 }

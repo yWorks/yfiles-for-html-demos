@@ -27,24 +27,30 @@
  **
  ***************************************************************************/
 import { Command, EventRecognizers, GraphItemTypes, IModelItem } from '@yfiles/yfiles'
+
 /**
  * Disables the selection of multiple graph items using mouse/keyboard gestures.
  * Only one item may be selected at a time.
  */
 export function useSingleSelection(graphComponent) {
   const mode = graphComponent.inputMode
+
   // disable marquee selection
   mode.marqueeSelectionInputMode.enabled = false
+
   // disable multi selection with Ctrl-Click
   mode.multiSelectionRecognizer = EventRecognizers.NEVER
+
   // deactivate commands that can lead to multi selection
   mode.availableCommands.remove(Command.TOGGLE_ITEM_SELECTION)
   mode.availableCommands.remove(Command.SELECT_ALL)
+
   // deactivate commands that can extend the selection
   mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_LEFT)
   mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_UP)
   mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_DOWN)
   mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_RIGHT)
+
   // add custom binding for toggle item selection
   mode.keyboardInputMode.addCommandBinding(
     Command.TOGGLE_ITEM_SELECTION,
@@ -52,6 +58,7 @@ export function useSingleSelection(graphComponent) {
     (parameter) => toggleItemSelectionCanExecute(graphComponent, parameter)
   )
 }
+
 /**
  * Determines whether toggling the selection state of an item,
  * respecting the single selection policy, is allowed.
@@ -61,6 +68,7 @@ function toggleItemSelectionCanExecute(graphComponent, parameter) {
   const modelItem = parameter instanceof IModelItem ? parameter : graphComponent.currentItem
   return !!modelItem
 }
+
 /**
  * Custom command handler that allows toggling the selection state of an item
  * respecting the single selection policy.
@@ -70,6 +78,7 @@ function toggleItemSelectionExecuted(graphComponent, parameter) {
   // get the item
   const modelItem = parameter instanceof IModelItem ? parameter : graphComponent.currentItem
   const inputMode = graphComponent.inputMode
+
   // check if it allowed to be selected
   if (
     !modelItem ||
@@ -79,6 +88,7 @@ function toggleItemSelectionExecuted(graphComponent, parameter) {
   ) {
     return false
   }
+
   const isSelected = inputMode.graphSelection.includes(modelItem)
   if (isSelected) {
     // the item is selected and needs to be unselected - just clear the selection

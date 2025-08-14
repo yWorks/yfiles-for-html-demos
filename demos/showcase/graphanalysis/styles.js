@@ -39,35 +39,43 @@ import {
 } from '@yfiles/yfiles'
 import { getTag } from './demo-types'
 import { useDirectedEdges } from './ui/ui-utils'
+
 /**
  * An extended node which chooses the colors of the node's
  * stroke and fill depending on the information in the tag.
  */
+
 export class TagColoredShapeNodeStyle extends DelegatingNodeStyle {
   delegatingStyle = new ShapeNodeStyle({ shape: 'ellipse' })
+
   getStyle(node) {
     this.delegatingStyle.fill = this.getFill(node)
     this.delegatingStyle.stroke = this.getStroke(node)
     return this.delegatingStyle
   }
+
   getFill(node) {
     const tag = getTag(node)
     if (tag?.type === 'start' || tag?.type === 'end') {
       return Color.WHITE
     }
+
     const componentColor = getDisplayedComponentColor(node)
     return componentColor != null ? Fill.from(componentColor) : Color.LIGHT_GRAY
   }
+
   getStroke(node) {
     const tag = getTag(node)
     const highlighted = isHighlighted(node)
     const highlightedStrokeWidth = highlighted ? 6 : 4
+
     // first check if the node is a start or end node for the algorithm
     if (tag?.type === 'start') {
       return Stroke.from(`${highlightedStrokeWidth}px #9acd32`)
     } else if (tag?.type === 'end') {
       return Stroke.from(`${highlightedStrokeWidth}px #cd5c5c`)
     }
+
     const componentColor = getDisplayedComponentColor(node)
     if (componentColor == null) {
       // if the edge doesn't belong to a component, render it grey
@@ -76,6 +84,7 @@ export class TagColoredShapeNodeStyle extends DelegatingNodeStyle {
     return highlighted ? new Stroke(componentColor, highlightedStrokeWidth) : null
   }
 }
+
 /**
  * An extended {@link PolylineEdgeStyle} which chooses the color and width of the edge's
  * stroke depending on the information in the tag.
@@ -83,11 +92,13 @@ export class TagColoredShapeNodeStyle extends DelegatingNodeStyle {
 export class TagColoredPolylineEdgeStyle extends DelegatingEdgeStyle {
   static arrowCache = new Map().set('none', IArrow.NONE)
   delegatingStyle = new PolylineEdgeStyle()
+
   getStyle(edge) {
     this.delegatingStyle.stroke = this.getStroke(edge)
     this.delegatingStyle.targetArrow = this.getTargetArrow(edge)
     return this.delegatingStyle
   }
+
   getStroke(edge) {
     const componentColor = getDisplayedComponentColor(edge)
     if (componentColor == null) {
@@ -96,16 +107,19 @@ export class TagColoredPolylineEdgeStyle extends DelegatingEdgeStyle {
     }
     return new Stroke(componentColor, isHighlighted(edge) ? 8 : 5)
   }
+
   getTargetArrow(edge) {
     const directed = useDirectedEdges()
     if (!directed) {
       return IArrow.NONE
     }
+
     const highlighted = isHighlighted(edge)
     const componentColor = getDisplayedComponentColor(edge) ?? 'darkgrey'
     const strokeWidth = highlighted ? 5 : 1
     return TagColoredPolylineEdgeStyle.getArrow(componentColor, strokeWidth)
   }
+
   /**
    * Returns an arrow with the given color and stroke width. Either returns
    * a cached version if such an arrow already exists or creates and caches
@@ -126,6 +140,7 @@ export class TagColoredPolylineEdgeStyle extends DelegatingEdgeStyle {
     return arrow
   }
 }
+
 /**
  * Checks whether the given item is part of a highlighted component.
  */
@@ -133,6 +148,7 @@ function isHighlighted(item) {
   const tag = getTag(item)
   return tag?.highlightedComponent !== undefined
 }
+
 /**
  * Returns the color for the displayed component of the given item.
  */
@@ -144,6 +160,7 @@ function getDisplayedComponentColor(item) {
   }
   return undefined
 }
+
 /**
  * A set of colors that can be applied to components of nodes and edges.
  */
@@ -164,10 +181,12 @@ const colors = [
   '#17bebb',
   '#76b041'
 ]
+
 /** The color at the end of the gradient (#242265, rgb(36,34,101)) */
 const gradientStart = [36, 34, 101]
 /** The color at the end of the gradient (#17bebb, rgb(23,190,187)) */
 const gradientEnd = [23, 190, 187]
+
 /**
  * Returns the color for the given component.
  * Colors are represented like this: "rbg(r,g,b)".
@@ -180,10 +199,12 @@ export function getColorForComponent(componentId, gradient) {
     // there is neither a component nor a gradient
     return undefined
   }
+
   if (gradient === undefined) {
     // there is no gradient -> choose a color from the list
     return colors[componentId % colors.length]
   }
+
   // return the color from the gradient
   const [r1, g1, b1] = gradientStart
   const [r2, g2, b2] = gradientEnd

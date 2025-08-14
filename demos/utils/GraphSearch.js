@@ -37,10 +37,12 @@ import {
   Stroke,
   StyleIndicatorZoomPolicy
 } from '@yfiles/yfiles'
+
 export class GraphSearch {
   graphComponent
   matchingNodes = []
   searchHighlightIndicatorManager
+
   /**
    * Registers event listeners at the search box.
    *
@@ -61,10 +63,12 @@ export class GraphSearch {
       }
       graphSearch.updateAutoCompleteSuggestions(searchBox, autoCompleteSuggestions)
     }
+
     searchBox.addEventListener('input', async (e) => {
       const input = e.target
       const searchText = input.value
       graphSearch.updateSearch(searchText)
+
       // Zoom to search result if an element from the auto-completion list has been selected
       // How to detect this varies between browsers, sadly
       if (
@@ -77,6 +81,7 @@ export class GraphSearch {
         }
       }
     })
+
     // adds the listener that will focus to the result of the search
     searchBox.addEventListener('keydown', async (e) => {
       if (e.key === 'Enter') {
@@ -84,6 +89,7 @@ export class GraphSearch {
         await graphSearch.zoomToSearchResult()
       }
     })
+
     // adds the listener to enable auto-completion
     searchBox.addEventListener('keyup', (e) => {
       if (e.key === 'Enter') {
@@ -91,6 +97,7 @@ export class GraphSearch {
       }
     })
   }
+
   /**
    * Creates a new instance of this class with the default highlight style.
    *
@@ -98,6 +105,7 @@ export class GraphSearch {
    */
   constructor(graphComponent) {
     this.graphComponent = graphComponent
+
     // initialize the default highlight style
     const highlightColor = Color.TOMATO
     this.searchHighlightIndicatorManager = new SearchHighlightIndicatorManager({
@@ -113,12 +121,14 @@ export class GraphSearch {
     })
     this.searchHighlightIndicatorManager.install(graphComponent)
   }
+
   /**
    * Gets the decoration style used for highlighting the matching nodes.
    */
   get highlightRenderer() {
     return this.searchHighlightIndicatorManager.nodeRenderer
   }
+
   /**
    * Sets the decoration style used for highlighting the matching nodes.
    * @param highlightRenderer The given highlight renderer
@@ -126,6 +136,7 @@ export class GraphSearch {
   set highlightRenderer(highlightRenderer) {
     this.searchHighlightIndicatorManager.nodeRenderer = highlightRenderer
   }
+
   /**
    * Updates the search results for the given search query.
    * @param searchText The text of the search query.
@@ -133,6 +144,7 @@ export class GraphSearch {
   updateSearch(searchText) {
     // we use the search highlight manager to highlight matching items
     const highlights = this.searchHighlightIndicatorManager.items
+
     // first remove previous highlights
     highlights.clear()
     this.matchingNodes = []
@@ -145,6 +157,7 @@ export class GraphSearch {
         })
     }
   }
+
   /**
    * Updates the auto-complete list for the given search field with
    * the given new suggestions.
@@ -169,6 +182,7 @@ export class GraphSearch {
       datalist.appendChild(option)
     }
   }
+
   /**
    * Zooms to the nodes that match the result of the current search.
    */
@@ -176,12 +190,14 @@ export class GraphSearch {
     if (this.matchingNodes.length === 0) {
       return Promise.resolve()
     }
+
     const maxRect = this.matchingNodes
       .map((node) => node.layout.toRect())
       .reduce((prev, current) => Rect.add(prev, current))
     if (!maxRect.isFinite) {
       return Promise.resolve()
     }
+
     const rect = maxRect.getEnlarged(20)
     const componentWidth = this.graphComponent.size.width
     const componentHeight = this.graphComponent.size.height
@@ -189,6 +205,7 @@ export class GraphSearch {
     const zoom = Math.min(maxPossibleZoom, 1.5)
     return this.graphComponent.zoomToAnimated(zoom, new Point(rect.centerX, rect.centerY))
   }
+
   /**
    * Specifies whether the given node is a match when searching for the given text.
    *
@@ -203,6 +220,7 @@ export class GraphSearch {
     return node.labels.some((label) => label.text.toLowerCase().indexOf(text.toLowerCase()) !== -1)
   }
 }
+
 function hasSelectedElementFromDatalist(input, searchText) {
   if (input.list) {
     for (const option of Array.from(input.list.children)) {
@@ -213,16 +231,20 @@ function hasSelectedElementFromDatalist(input, searchText) {
   }
   return false
 }
+
 /**
  * A highlight indicator manager allows setting a specific renderer for the node highlights.
  */
 class SearchHighlightIndicatorManager extends HighlightIndicatorManager {
   nodeRenderer
+
   constructor({ nodeRenderer, domain }) {
     super()
+
     this.nodeRenderer = nodeRenderer
     this.domain = domain
   }
+
   getRenderer(item) {
     if (item instanceof INode) {
       return this.nodeRenderer

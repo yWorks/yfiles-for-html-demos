@@ -38,6 +38,7 @@ import {
   SimpleLabel,
   Size
 } from '@yfiles/yfiles'
+
 /**
  * This class adds an HTML panel on top of the contents of the GraphComponent that can display arbitrary information
  * about a {@link IModelItem graph item}. In order to not interfere with the positioning of the pop-up,
@@ -50,18 +51,22 @@ export class PriorityPanel {
   div
   dirty = false
   _currentItems = null
+
   /**
    * Creates a new instance of {@link PriorityPanel}.
    */
   constructor(graphComponent) {
     this.graphComponent = graphComponent
     this.div = document.getElementById('priority-panel')
+
     // make the popup invisible
     this.div.style.opacity = '0'
     this.div.style.display = 'none'
+
     this.registerListeners()
     this.registerClickListeners()
   }
+
   /**
    * Sets the {@link IModelItem item} to display information for.
    * Setting this property to a value other than `null` shows the pop-up.
@@ -78,12 +83,14 @@ export class PriorityPanel {
       this.hide()
     }
   }
+
   /**
    * Returns all {@link IModelItem}s to display information for.
    */
   get currentItems() {
     return this._currentItems
   }
+
   /**
    * Registers listeners for viewport, node bounds and visual tree changes to the {@link GraphComponent}.
    */
@@ -94,6 +101,7 @@ export class PriorityPanel {
         this.dirty = true
       }
     })
+
     // Adds listener for updates of the visual tree
     this.graphComponent.addEventListener('updated-visual', () => {
       if (this.currentItems && this.currentItems.length > 0 && this.dirty) {
@@ -102,6 +110,7 @@ export class PriorityPanel {
       }
     })
   }
+
   /**
    * Registers click listeners for all buttons of this {@link PriorityPanel}.
    */
@@ -113,6 +122,7 @@ export class PriorityPanel {
     this.setClickListener(document.getElementById('priority-button-4'), 4)
     this.setClickListener(document.getElementById('priority-button-5'), 5)
   }
+
   /**
    * Registers a click listener to given element which will invoke the callback {@link itemPriorityChanged} and
    * {@link priorityChanged} in case the priority of the current item changed.
@@ -131,6 +141,7 @@ export class PriorityPanel {
       }
     })
   }
+
   /**
    * Makes this pop-up visible.
    */
@@ -149,6 +160,7 @@ export class PriorityPanel {
     }
     this.updateLocation()
   }
+
   /**
    * Hides this pop-up.
    */
@@ -156,6 +168,7 @@ export class PriorityPanel {
     this.div.style.opacity = '0'
     this.div.style.display = 'none'
   }
+
   /**
    * Changes the location of this pop-up to the location calculated by the
    * {@link PriorityPanel.labelModelParameter}.
@@ -167,13 +180,12 @@ export class PriorityPanel {
     const width = this.div.offsetWidth
     const height = this.div.offsetHeight
     const zoom = this.graphComponent.zoom
+
     let dummyLabel = null
     let labelModelParameter = null
     const firstItem = this.currentItems[0]
     if (firstItem instanceof IEdge) {
-      labelModelParameter = new EdgePathLabelModel({
-        autoRotation: false
-      }).createRatioParameter()
+      labelModelParameter = new EdgePathLabelModel({ autoRotation: false }).createRatioParameter()
       dummyLabel = new SimpleLabel(firstItem, '', labelModelParameter)
     } else if (firstItem instanceof INode) {
       labelModelParameter = ExteriorNodeLabelModel.TOP
@@ -188,6 +200,7 @@ export class PriorityPanel {
       this.setLocation(anchorX, anchorY - height / zoom)
     }
   }
+
   /**
    * Sets the location of this pop-up to the given world coordinates.
    */
@@ -197,15 +210,18 @@ export class PriorityPanel {
     this.div.style.left = `${viewPoint.x}px`
     this.div.style.top = `${viewPoint.y}px`
   }
+
   /**
    * Callback for when the priority changed for a specific edge.
    */
   itemPriorityChanged(item, newPriority, oldPriority) {}
+
   /**
    * Callback for when the priority changed for some or all edges in the graph.
    */
   priorityChanged() {}
 }
+
 /**
  * Checks the given arrays for equality.
  */

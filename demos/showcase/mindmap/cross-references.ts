@@ -89,11 +89,7 @@ export function initializeCrossReferences(graphComponent: GraphComponent): void 
   edgeDefaults.style = new ArcEdgeStyle({
     stroke: '8px #2e282a66',
     height: 50,
-    targetArrow: new Arrow({
-      fill: '#2e282a',
-      stroke: '6px #ABA9AA',
-      type: ArrowType.TRIANGLE
-    }),
+    targetArrow: new Arrow({ fill: '#2e282a', stroke: '6px #ABA9AA', type: ArrowType.TRIANGLE }),
     provideHeightHandle: true
   })
   // clone the style for each edge
@@ -102,10 +98,7 @@ export function initializeCrossReferences(graphComponent: GraphComponent): void 
   const labelModel = new EdgePathLabelModel({ offset: 20, sideOfEdge: EdgeSides.BELOW_EDGE })
   edgeDefaults.labels.layoutParameter = labelModel.createRatioParameter(0.5)
 
-  edgeDefaults.labels.style = new LabelStyle({
-    font: '16px Arial',
-    padding: [3, 5, 3, 5]
-  })
+  edgeDefaults.labels.style = new LabelStyle({ font: '16px Arial', padding: [3, 5, 3, 5] })
 
   // initialize a custom selection style for edges
   graph.decorator.edges.selectionRenderer.addConstant(
@@ -114,11 +107,7 @@ export function initializeCrossReferences(graphComponent: GraphComponent): void 
         new ArcEdgeStyle({
           stroke: '8px #f26419',
           height: 50,
-          targetArrow: new Arrow({
-            fill: '#f26419',
-            stroke: '6px #f26419',
-            type: 'triangle'
-          })
+          targetArrow: new Arrow({ fill: '#f26419', stroke: '6px #f26419', type: 'triangle' })
         })
       ),
       zoomPolicy: 'world-coordinates'

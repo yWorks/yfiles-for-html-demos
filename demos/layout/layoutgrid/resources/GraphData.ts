@@ -28,231 +28,58 @@
  ***************************************************************************/
 export default {
   nodes: [
-    {
-      id: 0,
-      column: -1,
-      row: -1
-    },
-    {
-      id: 1,
-      column: -1,
-      row: -1
-    },
-    {
-      id: 2,
-      column: 3,
-      row: 0
-    },
-    {
-      id: 3,
-      column: 2,
-      row: 1
-    },
-    {
-      id: 4,
-      column: 3,
-      row: 1,
-      group: 'group2'
-    },
-    {
-      id: 5,
-      column: 1,
-      row: 1
-    },
-    {
-      id: 6,
-      column: 2,
-      row: 0
-    },
-    {
-      id: 7,
-      column: 0,
-      row: 1,
-      group: 'group1'
-    },
-    {
-      id: 8,
-      column: 0,
-      row: 1,
-      group: 'group1'
-    },
-    {
-      id: 9,
-      column: 2,
-      row: 1
-    },
-    {
-      id: 10,
-      column: 4,
-      row: 2
-    },
-    {
-      id: 11,
-      column: 1,
-      row: 2
-    },
-    {
-      id: 12,
-      column: 3,
-      row: 3
-    },
-    {
-      id: 13,
-      column: 1,
-      row: 3
-    },
-    {
-      id: 14,
-      column: 2,
-      row: 0
-    },
-    {
-      id: 15,
-      column: 2,
-      row: 3
-    },
-    {
-      id: 16,
-      column: 4,
-      row: 1
-    },
-    {
-      id: 17,
-      column: 3,
-      row: 1,
-      group: 'group2'
-    }
+    { id: 0, column: -1, row: -1 },
+    { id: 1, column: -1, row: -1 },
+    { id: 2, column: 3, row: 0 },
+    { id: 3, column: 2, row: 1 },
+    { id: 4, column: 3, row: 1, group: 'group2' },
+    { id: 5, column: 1, row: 1 },
+    { id: 6, column: 2, row: 0 },
+    { id: 7, column: 0, row: 1, group: 'group1' },
+    { id: 8, column: 0, row: 1, group: 'group1' },
+    { id: 9, column: 2, row: 1 },
+    { id: 10, column: 4, row: 2 },
+    { id: 11, column: 1, row: 2 },
+    { id: 12, column: 3, row: 3 },
+    { id: 13, column: 1, row: 3 },
+    { id: 14, column: 2, row: 0 },
+    { id: 15, column: 2, row: 3 },
+    { id: 16, column: 4, row: 1 },
+    { id: 17, column: 3, row: 1, group: 'group2' }
   ],
 
   edges: [
-    {
-      source: 0,
-      target: 3
-    },
-    {
-      source: 0,
-      target: 7
-    },
-    {
-      source: 0,
-      target: 11
-    },
-    {
-      source: 14,
-      target: 0
-    },
-    {
-      source: 11,
-      target: 1
-    },
-    {
-      source: 2,
-      target: 4
-    },
-    {
-      source: 2,
-      target: 16
-    },
-    {
-      source: 3,
-      target: 5
-    },
-    {
-      source: 3,
-      target: 9
-    },
-    {
-      source: 14,
-      target: 3
-    },
-    {
-      source: 4,
-      target: 9
-    },
-    {
-      source: 4,
-      target: 12
-    },
-    {
-      source: 5,
-      target: 15
-    },
-    {
-      source: 5,
-      target: 8
-    },
-    {
-      source: 6,
-      target: 14
-    },
-    {
-      source: 6,
-      target: 9
-    },
-    {
-      source: 7,
-      target: 11
-    },
-    {
-      source: 8,
-      target: 11
-    },
-    {
-      source: 9,
-      target: 12
-    },
-    {
-      source: 9,
-      target: 15
-    },
-    {
-      source: 15,
-      target: 10
-    },
-    {
-      source: 11,
-      target: 12
-    },
-    {
-      source: 11,
-      target: 13
-    },
-    {
-      source: 15,
-      target: 3
-    },
-    {
-      source: 14,
-      target: 4
-    },
-    {
-      source: 16,
-      target: 10
-    },
-    {
-      source: 7,
-      target: 1
-    },
-    {
-      source: 6,
-      target: 17
-    },
-    {
-      source: 17,
-      target: 12
-    },
-    {
-      source: 5,
-      target: 13
-    }
+    { source: 0, target: 3 },
+    { source: 0, target: 7 },
+    { source: 0, target: 11 },
+    { source: 14, target: 0 },
+    { source: 11, target: 1 },
+    { source: 2, target: 4 },
+    { source: 2, target: 16 },
+    { source: 3, target: 5 },
+    { source: 3, target: 9 },
+    { source: 14, target: 3 },
+    { source: 4, target: 9 },
+    { source: 4, target: 12 },
+    { source: 5, target: 15 },
+    { source: 5, target: 8 },
+    { source: 6, target: 14 },
+    { source: 6, target: 9 },
+    { source: 7, target: 11 },
+    { source: 8, target: 11 },
+    { source: 9, target: 12 },
+    { source: 9, target: 15 },
+    { source: 15, target: 10 },
+    { source: 11, target: 12 },
+    { source: 11, target: 13 },
+    { source: 15, target: 3 },
+    { source: 14, target: 4 },
+    { source: 16, target: 10 },
+    { source: 7, target: 1 },
+    { source: 6, target: 17 },
+    { source: 17, target: 12 },
+    { source: 5, target: 13 }
   ],
 
-  groups: [
-    {
-      id: 'group1'
-    },
-    {
-      id: 'group2'
-    }
-  ]
+  groups: [{ id: 'group1' }, { id: 'group2' }]
 }

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { IEdge, IGraph, INode, Rect } from '@yfiles/yfiles'
+
 /**
  * This class holds the nodes and edges of a subtree rooted at a specific node.
  */
@@ -36,6 +37,7 @@ export class Subtree {
   nodes
   edges
   $newParent
+
   /**
    * Initializes a subtree with the given root node.
    * @param graph The graph in which the subtree lives
@@ -49,18 +51,21 @@ export class Subtree {
     this.initializeSubtree(root)
     this.$newParent = this.parent
   }
+
   /**
    * Returns the edge connecting the parent and the root.
    */
   get parentToRootEdge() {
     return this.graph.inEdgesAt(this.root).at(0)
   }
+
   /**
    * Returns the parent node of the subtree.
    */
   get parent() {
     return this.parentToRootEdge ? this.parentToRootEdge.sourceNode : null
   }
+
   /**
    * Sets the parent node of the subtree.
    * @param parent The parent node of the subtree
@@ -75,18 +80,21 @@ export class Subtree {
       this.graph.clearBends(this.parentToRootEdge)
     }
   }
+
   /**
    * Returns the new parent of the subtree.
    */
   get newParent() {
     return this.$newParent
   }
+
   /**
    * Sets the new parent of the subtree.
    */
   set newParent(newParent) {
     this.$newParent = newParent
   }
+
   /**
    * Returns the bounds including the nodes of the subtree.
    */
@@ -97,6 +105,7 @@ export class Subtree {
     })
     return subtreeBounds
   }
+
   /**
    * Determines the nodes and edges of a subtree of a given root.
    * @param root The root node of the subtree

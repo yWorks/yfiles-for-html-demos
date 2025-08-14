@@ -69,9 +69,7 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
    */
   constructor(
     private voronoiDiagram: VoronoiDiagram,
-    private clusters: {
-      centroids: ResultItemCollection<Point>
-    }
+    private clusters: { centroids: ResultItemCollection<Point> }
   ) {
     super()
   }
@@ -287,11 +285,7 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
 
       const textSize = TextRenderSupport.measureText(
         text.textContent,
-        new Font({
-          fontFamily: 'Arial',
-          fontSize: 8,
-          fontWeight: 'bold'
-        })
+        new Font({ fontFamily: 'Arial', fontSize: 8, fontWeight: 'bold' })
       )
       setAttribute(text, 'transform', 'translate(4 14)')
       setAttribute(text, 'font-size', '14px')
@@ -352,10 +346,7 @@ export class CutoffVisual extends BaseClass(IVisualCreator) {
     setAttribute(cutOffLine, 'fill', 'firebrick')
     container.appendChild(cutOffLine)
 
-    const font = new Font({
-      fontSize: 14,
-      fontWeight: 'bold'
-    })
+    const font = new Font({ fontSize: 14, fontWeight: 'bold' })
 
     const text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
     text.textContent = `Cut-off:  ${this.cutOffValue}`

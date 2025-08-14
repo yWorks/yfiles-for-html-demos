@@ -27,8 +27,10 @@
  **
  ***************************************************************************/
 import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
+
 const tabWidth = 50
 const tabHeight = 14
+
 export class CustomNodeStyle extends NodeStyleBase {
   fillColor
   /**
@@ -39,38 +41,48 @@ export class CustomNodeStyle extends NodeStyleBase {
     super()
     this.fillColor = fillColor
   }
+
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
+
     const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     pathElement.setAttribute('d', createPathData(0, 0, width, height))
+
     const fillColor = this.fillColor ?? '#0b7189'
     pathElement.setAttribute('fill', fillColor)
     pathElement.setAttribute('stroke', '#333')
+
     SvgVisual.setTranslate(pathElement, x, y)
+
     return SvgVisual.from(pathElement, { width, height, fillColor })
   }
+
   updateVisual(context, oldVisual, node) {
     const { x, y, width, height } = node.layout
     // get the path element that needs updating from the old visual
     const pathElement = oldVisual.svgElement
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
+
     const fillColor = this.fillColor ?? '#0b7189'
     if (fillColor !== cache.fillColor) {
       cache.fillColor = fillColor
       // update the fill color
       pathElement.setAttribute('fill', fillColor)
     }
+
     if (width !== cache.width || height !== cache.height) {
       // update the path data to fit the new width and height
       pathElement.setAttribute('d', createPathData(0, 0, width, height))
       cache.width = width
       cache.height = height
     }
+
     SvgVisual.setTranslate(pathElement, x, y)
     return oldVisual
   }
 }
+
 /**
  * Creates the path data for the SVG path element.
  */

@@ -58,6 +58,7 @@ import {
   finishLoading,
   showLoadingIndicator
 } from '@yfiles/demo-resources/demo-page'
+
 // Some selected colors to colorize the icons
 const iconColors = [
   Color.from('#DB3A34'),
@@ -66,6 +67,7 @@ const iconColors = [
   Color.from('#242265'),
   Color.from('#56926E')
 ]
+
 // the font awesome classes used in this sample
 const faClasses = [
   'fas fa-anchor',
@@ -79,17 +81,24 @@ const faClasses = [
   'fas fa-bug',
   'fas fa-camera-retro'
 ]
+
 // the "graph loading" indicator element
 async function run() {
   if (!checkWebGL2Support()) {
     return
   }
+
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('#graphComponent')
+
   initializeFastRendering(graphComponent)
+
   configureInteraction(graphComponent)
+
   initializeUI(graphComponent)
 }
+
 /**
  * Creates a small sample graph with icons of different image types.
  */
@@ -103,9 +112,12 @@ async function createSmallSampleGraph(graphComponent) {
     padding: 5
   })
   graphComponent.graph = graph
+
   const ctx = createCanvasContext(128, 128)
+
   // Pre-created icons because they are shared between several nodes and have to be created in
   // asynchronous code
+
   // Create icon from SVG file
   const svgFileIcon = await createUrlIcon(ctx, './resources/play-16.svg', new Size(16, 16))
   // Create icon from SVG data URI
@@ -120,14 +132,13 @@ async function createSmallSampleGraph(graphComponent) {
   const pngIcon = await createUrlIcon(ctx, './resources/usericon.png', new Size(256, 256))
   // Create another icon from SVG file
   const svgFileIconGear = await createUrlIcon(ctx, './resources/settings-16.svg', new Size(16, 16))
+
   for (let i = 0; i < iconColors.length; i++) {
     const color = iconColors[i]
+
     // Create node with icon from SVG file
     graph.setStyle(
-      graph.createNodeAt({
-        labels: ['Icon from SVG file'],
-        location: new Point(150 * i, 0)
-      }),
+      graph.createNodeAt({ labels: ['Icon from SVG file'], location: new Point(150 * i, 0) }),
       new WebGLImageNodeStyle({
         image: svgFileIcon,
         imageColor: 'white',
@@ -137,12 +148,10 @@ async function createSmallSampleGraph(graphComponent) {
           i % 2 == 0 ? WebGLTextureRendering.SDF : WebGLTextureRendering.INTERPOLATED
       })
     )
+
     // Create node with icon from SVG data URI
     graph.setStyle(
-      graph.createNodeAt({
-        labels: ['Icon from SVG data URI'],
-        location: new Point(150 * i, 100)
-      }),
+      graph.createNodeAt({ labels: ['Icon from SVG data URI'], location: new Point(150 * i, 100) }),
       new WebGLImageNodeStyle({
         image: svgDataURIIcon,
         imageColor: 'white',
@@ -153,12 +162,10 @@ async function createSmallSampleGraph(graphComponent) {
           i % 2 == 0 ? WebGLTextureRendering.SDF : WebGLTextureRendering.INTERPOLATED
       })
     )
+
     // Create node with Font Awesome icon
     graph.setStyle(
-      graph.createNodeAt({
-        labels: ['Icon from Font Awesome'],
-        location: new Point(150 * i, 200)
-      }),
+      graph.createNodeAt({ labels: ['Icon from Font Awesome'], location: new Point(150 * i, 200) }),
       new WebGLImageNodeStyle({
         image: fontAwesomeIcon,
         imageColor: 'white',
@@ -168,24 +175,20 @@ async function createSmallSampleGraph(graphComponent) {
           i % 2 == 0 ? WebGLTextureRendering.SDF : WebGLTextureRendering.INTERPOLATED
       })
     )
+
     // Create node with icon from PNG file
     graph.setStyle(
-      graph.createNodeAt({
-        labels: ['Icon from PNG file'],
-        location: new Point(150 * i, 300)
-      }),
+      graph.createNodeAt({ labels: ['Icon from PNG file'], location: new Point(150 * i, 300) }),
       new WebGLImageNodeStyle({
         image: pngIcon,
         backgroundFill: Color.TRANSPARENT,
         backgroundStroke: new WebGLStroke(Color.TRANSPARENT, 1)
       })
     )
+
     // Create node with icon and fill/background color
     graph.setStyle(
-      graph.createNodeAt({
-        labels: ['Icon with Fill Color'],
-        location: new Point(150 * i, 400)
-      }),
+      graph.createNodeAt({ labels: ['Icon with Fill Color'], location: new Point(150 * i, 400) }),
       new WebGLImageNodeStyle({
         image: svgFileIconGear,
         imageColor: color,
@@ -195,6 +198,7 @@ async function createSmallSampleGraph(graphComponent) {
           i % 2 == 0 ? WebGLTextureRendering.SDF : WebGLTextureRendering.INTERPOLATED
       })
     )
+
     // Create node with icon that keeps its aspect ratio
     graph.setStyle(
       graph.createNode({
@@ -210,16 +214,21 @@ async function createSmallSampleGraph(graphComponent) {
       })
     )
   }
+
   return graph
 }
+
 /**
  * Creates graph of 250x400 nodes with random Font Awesome icons and colors.
  */
 function createLargeSampleGraph(graphComponent) {
   const graph = new Graph()
   graphComponent.graph = graph
+
   const ctx = createCanvasContext(128, 128)
+
   const fontAwesomeIcons = faClasses.map((faClass) => createFontAwesomeIcon(ctx, faClass))
+
   for (let i = 0; i < 400; i++) {
     for (let k = 0; k < 250; k++) {
       const iconIndex = Math.floor(Math.random() * fontAwesomeIcons.length)
@@ -230,11 +239,13 @@ function createLargeSampleGraph(graphComponent) {
       while (iconColorIndex === colorIndex) {
         iconColorIndex = Math.floor(Math.random() * iconColors.length)
       }
+
       let strokeColorIndex = colorIndex
       // select a different random color for the icon
       while (strokeColorIndex === colorIndex) {
         strokeColorIndex = Math.floor(Math.random() * iconColors.length)
       }
+
       const node = graph.createNodeAt(new Point(i * 50, k * 50))
       graph.setStyle(
         node,
@@ -253,8 +264,10 @@ function createLargeSampleGraph(graphComponent) {
       )
     }
   }
+
   return Promise.resolve(graph)
 }
+
 /**
  * Initialize WebGL rendering.
  */
@@ -263,15 +276,16 @@ function initializeFastRendering(graphComponent) {
   graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager()
   graphComponent.focusIndicatorManager.enabled = false
 }
+
 /**
  * Configures the interaction behaviour
  */
 function configureInteraction(graphComponent) {
-  const graphEditorInputMode = new GraphEditorInputMode({
-    allowCreateEdge: false
-  })
+  const graphEditorInputMode = new GraphEditorInputMode({ allowCreateEdge: false })
+
   // Disable moving of individual edge segments
   graphComponent.graph.decorator.edges.positionHandler.hide()
+
   graphEditorInputMode.addEventListener('node-created', (evt) => {
     const node = evt.item
     const faClass = faClasses[Math.floor(Math.random() * faClasses.length)]
@@ -294,8 +308,10 @@ function configureInteraction(graphComponent) {
       })
     )
   })
+
   graphComponent.inputMode = graphEditorInputMode
 }
+
 /**
  * Binds the various commands available in yFiles for HTML to the buttons in the tutorial's toolbar.
  */
@@ -320,4 +336,5 @@ function initializeUI(graphComponent) {
   })
   addOptions(sampleSelectElement, 'Different icon types', 'Large graph')
 }
+
 run().then(finishLoading)

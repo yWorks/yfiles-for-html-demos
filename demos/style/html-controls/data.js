@@ -38,7 +38,9 @@ export const avatars = [
   './resources/usericon_male4.svg',
   './resources/usericon_male5.svg'
 ]
+
 export const statusValues = ['busy', 'available', 'offline']
+
 export const defaultData = {
   id: -1,
   name: 'Jane Doe',
@@ -47,6 +49,7 @@ export const defaultData = {
   status: 'available',
   description: 'Enter a job description.'
 }
+
 export const people = [
   {
     name: 'Jane Smith',

@@ -33,27 +33,35 @@ import {
   License,
   Rect
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { MyMarqueeSelectionInputMode } from './MyMarqueeSelectionInputMode'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent
+
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the graph component
   graphComponent = new GraphComponent('graphComponent')
   // initialize the graph
   initializeGraph()
+
   // initialize the input mode
   graphComponent.inputMode = createEditorMode()
+
   // center the graph
   graphComponent.fitGraphBounds()
 }
+
 function initializeGraph() {
   // Set custom style defaults that will be used for newly created graph items
   initDemoStyles(graphComponent.graph)
   createSampleGraph()
 }
+
 /**
  * Creates the default input mode for the GraphComponent,
  * a {@link GraphEditorInputMode}.
@@ -67,25 +75,31 @@ function createEditorMode() {
     // Disable the default marqueeSelectionInputMode
     marqueeSelectionInputMode: { enabled: false }
   })
+
   // Setting the custom input mode which handles snapping as well as a custom visualization for the marquee rectangle
   const myMarqueeSelectionInputMode = new MyMarqueeSelectionInputMode()
   // Set to the new input mode the priority of the default marqueeSelectionInputMode
   myMarqueeSelectionInputMode.priority = mode.marqueeSelectionInputMode.priority
   // Add the new input mode to the GraphEditorInputMode
   mode.add(myMarqueeSelectionInputMode)
+
   // When a marquee selection is finished, create a new node at the position and size of the marquee rectangle
   myMarqueeSelectionInputMode.addEventListener('drag-finishing', (evt) => {
     graphComponent.graph.createNode(evt.rectangle)
   })
+
   return mode
 }
+
 /**
  * Creates the initial sample graph.
  */
 function createSampleGraph() {
   const graph = graphComponent.graph
+
   graph.createNode(new Rect(180, 40, 30, 30))
   graph.createNode(new Rect(260, 50, 50, 50))
   graph.createNode(new Rect(284, 200, 50, 30))
 }
+
 run().then(finishLoading)

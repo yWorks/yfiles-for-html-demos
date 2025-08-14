@@ -50,10 +50,7 @@ import {
 } from '@yfiles/yfiles'
 import type { UMLClassModel } from './UMLClassModel'
 
-const font = new Font({
-  fontFamily: 'monospace',
-  fontSize: 18
-})
+const font = new Font({ fontFamily: 'monospace', fontSize: 18 })
 const factoryStyle = new LabelStyle({
   backgroundStroke: '#607D8B',
   backgroundFill: '#FFF',
@@ -151,11 +148,7 @@ export class RelationButtonStyle extends LabelStyleBase {
 }
 
 function createBackgroundStyle(): ILabelStyle {
-  return new LabelStyle({
-    backgroundFill: 'white',
-    backgroundStroke: '#607D8B',
-    shape: 'pill'
-  })
+  return new LabelStyle({ backgroundFill: 'white', backgroundStroke: '#607D8B', shape: 'pill' })
 }
 
 function createSimpleEdge(src: INode, tgt: INode): IEdge {

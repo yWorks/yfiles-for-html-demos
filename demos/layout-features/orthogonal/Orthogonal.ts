@@ -54,7 +54,7 @@ export function createLayoutConfiguration(graph: IGraph): {
 
   // there exist other styles that allow the layout to resize the nodes according to the number
   // and position of their neighbors to reduce the overall number of bends.
-  // However, note that this may be incompatible with other settings such as node halos.
+  // However, note that this may be incompatible with other settings such as node margins.
   layout.layoutMode = OrthogonalLayoutMode.STRICT
 
   // nodes and edges are laid out on a virtual grid, so that nodes are placed on grid points and edges run along the grid lines.
@@ -74,7 +74,7 @@ export function createLayoutConfiguration(graph: IGraph): {
 
   // while the above configuration modifies the layout in general, the corresponding layoutData
   // holds configuration about specific graph items.
-  // E.g. to specify a halo around a certain node
+  // E.g. to specify a margin around a certain node
   const layoutData = new OrthogonalLayoutData()
 
   // define some edges to be directed: they must flow in the direction of the main layout
@@ -84,10 +84,10 @@ export function createLayoutConfiguration(graph: IGraph): {
 
   // increasing the bend cost for an edge causes the layout algorithm to prefer not creating bends
   // there (in favor of bending other edges instead) - in the example we want that the directed
-  // edges are not bended if possible
+  // edges are without bends if possible
   layoutData.edgeBendCosts = (edge) => (isDirectedEdge(edge) ? 4 : 1)
 
-  // node halos are reserving additional space around nodes.
+  // node margins are reserving additional space around nodes.
   layoutData.nodeMargins = (node) => new Insets(node.labels.get(0).text === 'Insets' ? 50 : 0)
 
   return { layoutAlgorithm: layout, layoutData: layoutData }

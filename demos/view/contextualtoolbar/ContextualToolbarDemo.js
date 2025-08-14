@@ -43,25 +43,33 @@ import {
   ShapeNodeStyle,
   Size
 } from '@yfiles/yfiles'
+
 import { ContextualToolbar } from './ContextualToolbar'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 let graphComponent
 let contextualToolbar
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
   graphComponent.graph.undoEngineEnabled = true
+
   initializeInputMode()
+
   // initialize the contextual toolbar
   contextualToolbar = new ContextualToolbar(
     graphComponent,
     document.getElementById('contextualToolbar')
   )
+
   initializeDefaultStyles(graphComponent.graph)
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
@@ -72,14 +80,17 @@ async function run() {
     })
   )
   void graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngine?.clear()
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id
@@ -94,14 +105,17 @@ function buildGraph(graph, graphData) {
         : undefined
   nodesSource.nodeCreator.styleBindings.addBinding('fill', colorProvider)
   nodesSource.nodeCreator.styleBindings.addBinding('stroke', colorProvider)
+
   const edgesSource = graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
   edgesSource.edgeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Initializes the default styles.
  */
@@ -112,6 +126,7 @@ function initializeDefaultStyles(graph) {
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
     margins: 5
   }).createParameter('top')
+
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: 'thick #333',
     targetArrow: '#333 large triangle'
@@ -120,11 +135,13 @@ function initializeDefaultStyles(graph) {
     distance: 5
   }).createRatioParameter()
 }
+
 /**
  * Creates and configures an editor input mode for the GraphComponent of this demo.
  */
 function initializeInputMode() {
   const mode = new GraphEditorInputMode()
+
   // update the contextual toolbar when the selection changes ...
   mode.addEventListener('multi-selection-finished', (evt) => {
     // this implementation of the contextual toolbar only supports nodes, edges and labels
@@ -139,7 +156,9 @@ function initializeInputMode() {
     graphComponent.selection.add(evt.item)
     contextualToolbar.selectedItems = [evt.item]
   })
+
   graphComponent.inputMode = mode
+
   // if an item is deselected or deleted, we remove that element from the selectedItems
   graphComponent.selection.addEventListener('item-removed', (evt) => {
     // remove the element from the selectedItems of the contextual toolbar
@@ -149,4 +168,5 @@ function initializeInputMode() {
     contextualToolbar.selectedItems = newSelection
   })
 }
+
 run().then(finishLoading)

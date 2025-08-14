@@ -1334,10 +1334,7 @@ function newEventBus() {
     return {
       restrict: 'A',
       templateUrl: relativeTemplatePath + './components/option-ui-tabbar/option-ui-tabbar.html',
-      scope: {
-        tabs: '=',
-        selected: '='
-      },
+      scope: { tabs: '=', selected: '=' },
       controller: [
         '$scope',
         function ($scope) {
@@ -1353,10 +1350,7 @@ function newEventBus() {
             }),
             ($scope.moveSlider = function () {
               const length = 100 / $scope.tabs.length
-              $scope.slide = {
-                width: length + '%',
-                left: $scope.currentTab * length + '%'
-              }
+              $scope.slide = { width: length + '%', left: $scope.currentTab * length + '%' }
             }),
             $scope.$watch('tabs', initialize)
         }
@@ -1419,12 +1413,7 @@ function newEventBus() {
       return {
         restrict: 'A',
         templateUrl: relativeTemplatePath + './components/option-ui-button/option-ui-button.html',
-        scope: {
-          label: '=',
-          icon: '=',
-          disabled: '=',
-          clickCallback: '&'
-        },
+        scope: { label: '=', icon: '=', disabled: '=', clickCallback: '&' },
         controller: [
           '$scope',
           '$element',
@@ -1457,10 +1446,7 @@ function newEventBus() {
         restrict: 'A',
         templateUrl:
           relativeTemplatePath + './components/option-ui-checkbox/option-ui-checkbox.html',
-        scope: {
-          option: '=',
-          disabled: '='
-        },
+        scope: { option: '=', disabled: '=' },
         controller: [
           '$scope',
           'eventBus',
@@ -1481,11 +1467,7 @@ function newEventBus() {
         restrict: 'A',
         templateUrl:
           relativeTemplatePath + './components/option-ui-combobox/option-ui-combobox.html',
-        scope: {
-          option: '=',
-          options: '=',
-          disabled: '='
-        },
+        scope: { option: '=', options: '=', disabled: '=' },
         controller: [
           '$scope',
           'eventBus',
@@ -1506,10 +1488,7 @@ function newEventBus() {
         restrict: 'A',
         templateUrl:
           relativeTemplatePath + './components/option-ui-dropdown/option-ui-dropdown.html',
-        scope: {
-          options: '=',
-          selected: '='
-        },
+        scope: { options: '=', selected: '=' },
         controller: [
           '$scope',
           function ($scope) {
@@ -1544,10 +1523,7 @@ function newEventBus() {
       return {
         restrict: 'A',
         templateUrl: relativeTemplatePath + './components/option-ui-slider/option-ui-slider.html',
-        scope: {
-          option: '=',
-          disabled: '='
-        },
+        scope: { option: '=', disabled: '=' },
         controller: [
           '$scope',
           'eventBus',
@@ -1594,10 +1570,7 @@ function newEventBus() {
           restrict: 'A',
           templateUrl:
             relativeTemplatePath + './components/option-ui-spinner/option-ui-spinner.html',
-          scope: {
-            option: '=',
-            disabled: '='
-          },
+          scope: { option: '=', disabled: '=' },
           controller: [
             '$scope',
             'eventBus',
@@ -1618,11 +1591,7 @@ function newEventBus() {
       return {
         restrict: 'A',
         templateUrl: relativeTemplatePath + './components/option-ui-text/option-ui-text.html',
-        scope: {
-          option: '=',
-          options: '=',
-          disabled: '='
-        },
+        scope: { option: '=', options: '=', disabled: '=' },
         controller: [
           '$scope',
           'eventBus',
@@ -1643,10 +1612,7 @@ function newEventBus() {
         restrict: 'A',
         templateUrl:
           relativeTemplatePath + './components/option-ui-htmlblock/option-ui-htmlblock.html',
-        scope: {
-          option: '=',
-          disabled: '='
-        },
+        scope: { option: '=', disabled: '=' },
         controller: ['$scope', function () {}],
         link: function (scope, elem) {
           angular.element(elem.children()[0]).append(scope.option.value)
@@ -1726,11 +1692,7 @@ var relativeTemplatePath = relativeTemplatePath || ''
       function ($templateCache, $http, $compile) {
         return {
           restrict: 'A',
-          scope: {
-            presetName: '=',
-            members: '=',
-            accordeon: '@'
-          },
+          scope: { presetName: '=', members: '=', accordeon: '@' },
           controller: [
             '$scope',
             function ($scope) {
@@ -1779,10 +1741,7 @@ var relativeTemplatePath = relativeTemplatePath || ''
     module.directive('optionUiItem', function () {
       return {
         restrict: 'A',
-        scope: {
-          option: '=',
-          disabled: '='
-        },
+        scope: { option: '=', disabled: '=' },
         templateUrl: relativeTemplatePath + './templates/option-ui-item.html',
         controller: ['$scope', function () {}],
         link: function (scope, elem) {

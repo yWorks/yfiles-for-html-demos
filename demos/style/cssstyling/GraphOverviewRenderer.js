@@ -35,6 +35,7 @@ import {
   IVisibilityTestable,
   IVisualCreator
 } from '@yfiles/yfiles'
+
 /**
  * A customized overview renderer with adjusted styles for nodes and edges.
  */
@@ -42,12 +43,15 @@ export class GraphOverviewRenderer extends BaseClass(IObjectRenderer) {
   getBoundsProvider(renderTag) {
     return IBoundsProvider.UNBOUNDED
   }
+
   getHitTestable(renderTag) {
     return IHitTestable.NEVER
   }
+
   getVisibilityTestable(renderTag) {
     return IVisibilityTestable.ALWAYS
   }
+
   getVisualCreator(renderTag) {
     return IVisualCreator.create({
       createVisual(context) {
@@ -59,6 +63,7 @@ export class GraphOverviewRenderer extends BaseClass(IObjectRenderer) {
     })
   }
 }
+
 class CanvasVisual extends HtmlCanvasVisual {
   render(renderContext, ctx) {
     const graph = renderContext.canvasComponent.graph
@@ -73,6 +78,7 @@ class CanvasVisual extends HtmlCanvasVisual {
       }
     })
   }
+
   /**
    * Draws the path of the edge in a very light gray.
    */
@@ -84,6 +90,7 @@ class CanvasVisual extends HtmlCanvasVisual {
     ctx.lineTo(edge.targetPort.location.x, edge.targetPort.location.y)
     ctx.stroke()
   }
+
   /**
    * Draws the outline of the group node in a very light gray.
    */
@@ -91,6 +98,7 @@ class CanvasVisual extends HtmlCanvasVisual {
     ctx.strokeStyle = '#f7f7f7'
     ctx.strokeRect(node.layout.x, node.layout.y, node.layout.width, node.layout.height)
   }
+
   /**
    * Paints the rectangle of the node in a very light gray
    */

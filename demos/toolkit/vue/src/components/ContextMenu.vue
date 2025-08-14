@@ -24,20 +24,11 @@ export default defineComponent({
   emits: ['hide-context-menu'],
   props: {
     // the top left corner of the context menu
-    location: {
-      required: true,
-      type: Object as PropType<Location>
-    },
+    location: { required: true, type: Object as PropType<Location> },
     // whether the context menu should be shown or not
-    display: {
-      required: true,
-      type: Boolean
-    },
+    display: { required: true, type: Boolean },
     // the menu items of the context menu
-    items: {
-      required: true,
-      type: Array as PropType<MenuItem[]>
-    }
+    items: { required: true, type: Array as PropType<MenuItem[]> }
   },
   setup(props, ctx) {
     function performAction(item: MenuItem) {

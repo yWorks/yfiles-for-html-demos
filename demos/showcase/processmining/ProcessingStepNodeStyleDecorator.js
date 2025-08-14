@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  Color,
   ICanvasContext,
   INode,
   INodeStyle,
@@ -36,18 +37,22 @@ import {
   SvgVisual,
   SvgVisualGroup
 } from '@yfiles/yfiles'
+
 /**
- * Returns the color associated with the given intensity value from blue (low) to red (high).
+ * Returns the color associated with the given intensity value from green (low) to red (high).
  */
 function getIntensityColor(value) {
-  return `rgb(${(16 + value * 239) | 0}, ${((1 - value) * 239) | 16}, 16)`
+  const c = Color.fromHSLA(((1 - value) * 100) / 360, 1, 0.5, 1)
+  return `rgb(${c.r}, ${c.g}, ${c.b})`
 }
+
 /**
  * A decorator style which augments the wrapped style with a circular visualization of its workload.
  */
 export class ProcessingStepNodeStyleDecorator extends NodeStyleBase {
   wrappedStyle
   valueGetter
+
   /**
    * Creates a new instance of the decorator style.
    * @param wrappedStyle the style that is augmented with the workload visualization
@@ -58,39 +63,50 @@ export class ProcessingStepNodeStyleDecorator extends NodeStyleBase {
     this.wrappedStyle = wrappedStyle
     this.valueGetter = valueGetter || ((node) => node?.tag?.value ?? 0)
   }
+
   /**
    * Creates the visual for a node.
    */
   createVisual(renderContext, node) {
     // This implementation creates a group and uses it as a container for the rendering of the node.
     const group = new SvgVisualGroup()
+
     const { x, y, height } = node.layout
+
     const { thickness, r, cx, cy } = this.getCircleLayout(height)
+
     const nodeVisual = this.wrappedStyle.renderer
       .getVisualCreator(node, this.wrappedStyle)
       .createVisual(renderContext)
+
     group.add(nodeVisual)
+
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     const circleBackground = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     circleBackground.cx.baseVal.value = cx
     circleBackground.cy.baseVal.value = cy
     circleBackground.r.baseVal.value = height / 2 + 3
-    circleBackground.setAttribute('fill', 'rgb(220,220,220)')
+    circleBackground.setAttribute('fill', '#ffffff')
     circleBackground.setAttribute('stroke', 'none')
     g.appendChild(circleBackground)
+
     const trackBackground = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     trackBackground.cx.baseVal.value = cx
     trackBackground.cy.baseVal.value = cy
     trackBackground.r.baseVal.value = r
     trackBackground.setAttribute('fill', 'none')
     trackBackground.setAttribute('stroke-width', String(thickness))
-    trackBackground.setAttribute('stroke', 'orange')
+    trackBackground.setAttribute('stroke', '#343e49')
     g.appendChild(trackBackground)
+
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+
     const value = this.valueGetter(node)
     const perimeter = r * 2 * Math.PI
     const length = perimeter * (1 - value)
     const color = getIntensityColor(value)
+
     circle.cx.baseVal.value = cx
     circle.cy.baseVal.value = cy
     circle.r.baseVal.value = r
@@ -101,11 +117,14 @@ export class ProcessingStepNodeStyleDecorator extends NodeStyleBase {
     circle.setAttribute('stroke-dasharray', String(perimeter))
     circle.setAttribute('class', 'circle-animation')
     g.appendChild(circle)
+
     SvgVisual.setTranslate(g, x, y)
     group.add(new SvgVisual(g))
+
     group.cache = { value }
     return group
   }
+
   /**
    * Re-renders the node using the old visual for performance reasons.
    */
@@ -118,26 +137,35 @@ export class ProcessingStepNodeStyleDecorator extends NodeStyleBase {
     if (oldWrappedVisual !== newWrappedVisual) {
       oldVisual.children.set(0, newWrappedVisual)
     }
+
     const { x, y, height } = node.layout
     const cache = oldVisual.cache
     const g = oldVisual.children.last().svgElement
     const value = this.valueGetter(node)
+
     // update the gauge if necessary
     if (cache && cache.value !== value) {
       const circle = g.lastElementChild
+
       const { thickness, r } = this.getCircleLayout(height)
+
       const perimeter = r * 2 * Math.PI
       const length = perimeter * (1 - value)
+
       const color = getIntensityColor(value)
+
       circle.setAttribute('stroke-width', String(thickness))
       circle.setAttribute('stroke', color)
       circle.setAttribute('stroke-dashoffset', String(length))
       circle.setAttribute('stroke-dasharray', String(perimeter))
+
       cache.value = value
     }
+
     SvgVisual.setTranslate(g, x, y)
     return oldVisual
   }
+
   /**
    * Get the bounding box of the node.
    * This is used for bounding box calculations and considers the slightly overlapping circles.
@@ -146,11 +174,14 @@ export class ProcessingStepNodeStyleDecorator extends NodeStyleBase {
     const wrappedStyleBounds = this.wrappedStyle.renderer
       .getBoundsProvider(node, this.wrappedStyle)
       .getBounds(canvasContext)
+
     const { height } = node.layout
     const { r, cx, cy } = this.getCircleLayout(height)
+
     const gaugeBounds = new Rect(cx - r, cy - r, r, r)
     return Rect.add(gaugeBounds, wrappedStyleBounds)
   }
+
   /**
    * Gets the radius, center and thickness of the gauge circle
    * @param height the node height
@@ -160,6 +191,7 @@ export class ProcessingStepNodeStyleDecorator extends NodeStyleBase {
     const r = height / 2 - thickness / 2
     const cx = height / 2 - 5
     const cy = height / 2
+
     return { thickness, r, cx, cy }
   }
 }

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { BaseClass, Exception, IPositionHandler, Point } from '@yfiles/yfiles'
+
 /**
  * Constrains the node movement only along the layer to which it belongs, i.e., the node can be moved
  * only along the y-axis.
@@ -38,6 +39,7 @@ export function allowOnlyVerticalNodeMovement(graph) {
     return new ConstrainedPositionHandler(handler)
   })
 }
+
 /**
  * A custom position handler which constrains the node movement long the layer to which it belongs,
  * i.e., the node can be moved only along the y-axis.
@@ -46,16 +48,19 @@ export function allowOnlyVerticalNodeMovement(graph) {
 class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
   handler
   lastLocation = Point.ORIGIN
+
   constructor(handler) {
     super()
     this.handler = handler
   }
+
   get location() {
     if (this.handler) {
       return this.handler.location
     }
     throw new Exception('IPositionHandler === null')
   }
+
   /**
    * Called when the drag starts. It delegates the work to the default position handler and
    * additionally, updates the last location to be used for calculating the new drag position.
@@ -67,6 +72,7 @@ class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
     this.handler.initializeDrag(context)
     this.lastLocation = this.handler.location.toPoint()
   }
+
   /**
    * It allows moving only along the y-axis, by keeping the original x-coordinate.
    */
@@ -83,12 +89,14 @@ class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
       this.lastLocation = newLocation
     }
   }
+
   /**
    * Cancels the drag operation and delegates the work to the default position handler.
    */
   cancelDrag(context, originalLocation) {
     this.handler?.cancelDrag(context, originalLocation)
   }
+
   /**
    * Called when the drag operation has finished and delegates the work to the default position handler.
    */

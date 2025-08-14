@@ -42,11 +42,7 @@ import {
   type Visual
 } from '@yfiles/yfiles'
 
-type Cache = SvgVisual & {
-  cache?: {
-    distance: number
-  }
-}
+type Cache = SvgVisual & { cache?: { distance: number } }
 
 export class CustomArrow extends BaseClass(
   IArrow,
@@ -108,9 +104,7 @@ export class CustomArrow extends BaseClass(
     )
 
     const svgVisual: Cache = new SvgVisual(path)
-    svgVisual.cache = {
-      distance: this.distance
-    }
+    svgVisual.cache = { distance: this.distance }
     return svgVisual
   }
 

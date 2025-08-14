@@ -92,10 +92,7 @@ function createLayoutGrid(): LayoutGrid | null {
       const columnIndex = node.tag.column
       const rowIndex = node.tag.row
       // the column/row indices are stored to each node's tag
-      node.tag = {
-        rowIndex,
-        columnIndex
-      }
+      node.tag = { rowIndex, columnIndex }
       columnCount = Math.max(columnIndex, columnCount)
       rowCount = Math.max(rowIndex, rowCount)
     } else {
@@ -130,9 +127,7 @@ function createLayoutGrid(): LayoutGrid | null {
  */
 function runLayout(): void {
   // configures the layout algorithm
-  const layoutAlgorithm = new HierarchicalLayout({
-    nodeDistance: 25
-  })
+  const layoutAlgorithm = new HierarchicalLayout({ nodeDistance: 25 })
 
   // create the grid cell descriptors
   const layoutData = new HierarchicalLayoutData({

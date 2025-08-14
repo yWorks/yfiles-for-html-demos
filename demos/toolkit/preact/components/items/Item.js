@@ -28,6 +28,7 @@
  ***************************************************************************/
 // @ts-ignore - We have no proper types for preact, here
 import { html } from '../../preact-loader'
+
 export default (props) => html`
   <div class="item">
     <div class="item-row item-head">

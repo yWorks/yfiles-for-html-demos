@@ -35,9 +35,12 @@ import {
   initializeLabelModel,
   initializeTutorialDefaults
 } from '../common'
+
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { CustomEdgeStyle } from './CustomEdgeStyle'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 initializeLabelModel(graphComponent)
@@ -45,4 +48,5 @@ graphComponent.graph.edgeDefaults.style = new CustomEdgeStyle()
 createSimpleGraph(graphComponent)
 enableGraphEditing(graphComponent)
 fitGraphBounds(graphComponent)
+
 finishLoading()

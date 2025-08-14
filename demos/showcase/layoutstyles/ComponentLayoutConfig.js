@@ -34,6 +34,7 @@ import {
   ILayoutAlgorithm,
   Size
 } from '@yfiles/yfiles'
+
 import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -45,11 +46,13 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 export const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     LayoutGroup: [
       new LabelAttribute('General'),
@@ -145,6 +148,7 @@ export const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
       new TypeAttribute(Number)
     ]
   },
+
   /**
    * Setup default values for various configuration parameters.
    */
@@ -157,11 +161,13 @@ export const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
     const size = layout.preferredSize
     this.useScreenRatioItem = true
     this.aspectRatioItem = size.width / size.height
+
     this.componentSpacingItem = layout.componentSpacing
     this.gridEnabledItem = layout.gridSpacing > 0
     this.gridSpacingItem = layout.gridSpacing > 0 ? layout.gridSpacing : 20.0
     this.title = 'Component Layout'
   },
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
@@ -172,6 +178,7 @@ export const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
     const layout = new ComponentLayout()
     layout.style = this.styleItem
     layout.fromSketchMode = this.fromSketchItem
+
     let w, h
     if (graphComponent !== null && this.useScreenRatioItem) {
       const canvasSize = graphComponent.innerSize
@@ -186,8 +193,10 @@ export const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
     layout.preferredSize = new Size(w, h)
     layout.componentSpacing = this.componentSpacingItem
     layout.gridSpacing = this.gridEnabledItem ? this.gridSpacingItem : 0
+
     return layout
   },
+
   /** @type {OptionGroup} */
   LayoutGroup: {
     $meta: function () {
@@ -199,32 +208,42 @@ export const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
     },
     value: null
   },
+
   /** @type {string} */
   descriptionText: {
     get: function () {
       return "<p style='margin-top:0'>The component layout arranges the connected components of a graph. It can use any other layout style to arrange each component separately, and then arranges the components as such.</p><p>In this demo, the arrangement of each component is just kept as it is.</p>"
     }
   },
+
   /** @type {ComponentArrangementStyle} */
   styleItem: null,
+
   /** @type {boolean} */
   fromSketchItem: false,
+
   /** @type {boolean} */
   useScreenRatioItem: false,
+
   /** @type {number} */
   aspectRatioItem: 0.2,
+
   /** @type {boolean} */
   shouldDisableAspectRatioItem: {
     get: function () {
       return this.useScreenRatioItem
     }
   },
+
   /** @type {number} */
   componentSpacingItem: 0,
+
   /** @type {boolean} */
   gridEnabledItem: false,
+
   /** @type {number} */
   gridSpacingItem: 2,
+
   /** @type {boolean} */
   shouldDisableGridSpacingItem: {
     get: function () {

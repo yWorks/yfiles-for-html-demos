@@ -50,12 +50,7 @@ import {
   type TaggedSvgVisual
 } from '@yfiles/yfiles'
 
-type Cache = {
-  x: number
-  y: number
-  w: number
-  h: number
-}
+type Cache = { x: number; y: number; w: number; h: number }
 type TableStyleCache = Cache & { top: number; bottom: number; left: number; right: number }
 
 type TableStyleVisual = TaggedSvgVisual<SVGGElement, TableStyleCache>
@@ -227,12 +222,7 @@ class TableBackgroundStyle extends NodeStyleBase<TableStyleVisual> {
     innerRect.y.baseVal.value = y
     innerRect.width.baseVal.value = w
     innerRect.height.baseVal.value = h
-    ;(innerRect as any).cache = {
-      x,
-      y,
-      w,
-      h
-    } as Cache
+    ;(innerRect as any).cache = { x, y, w, h } as Cache
   }
 
   /**
@@ -522,13 +512,7 @@ export class DemoStripeStyle extends NodeStyleBase<TableStyleVisual> {
     rec.y.baseVal.value = y
     rec.width.baseVal.value = w
     rec.height.baseVal.value = h
-    ;(rec as any).cache = {
-      x,
-      y,
-      w,
-      h,
-      cl: cssClass
-    } as Cache & { cl: string }
+    ;(rec as any).cache = { x, y, w, h, cl: cssClass } as Cache & { cl: string }
   }
 
   /**

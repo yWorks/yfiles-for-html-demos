@@ -46,26 +46,33 @@ import {
   registerConverter
 } from './template-engine/template-engine'
 import { createSVG, TemplateContext, updateSVG } from './StringTemplateSupport'
+
 class NodeTemplateContext extends TemplateContext {
   style
+
   constructor(node, style) {
     super(node)
     this.style = style
   }
+
   get node() {
     return this.item
   }
+
   get width() {
     return this.node.layout.width
   }
+
   get height() {
     return this.node.layout.height
   }
+
   // noinspection JSUnusedGlobalSymbols
   get styleTag() {
     return this.style.tag
   }
 }
+
 export class StringTemplateNodeStyle extends NodeStyleBase {
   static CONVERTERS = converters
   tag
@@ -75,6 +82,7 @@ export class StringTemplateNodeStyle extends NodeStyleBase {
   svgContent
   minimumSize
   renderFunction
+
   constructor() {
     super()
     const arg = arguments[0]
@@ -95,6 +103,7 @@ export class StringTemplateNodeStyle extends NodeStyleBase {
       this.minimumSize = options.minimumSize ? Size.from(options.minimumSize) : Size.EMPTY
     }
   }
+
   /**
    * This mimics the old yFiles 2.x API
    * Registers a global converter.
@@ -104,6 +113,7 @@ export class StringTemplateNodeStyle extends NodeStyleBase {
   static registerConverter(name, converter) {
     registerConverter(name, converter)
   }
+
   /**
    * This mimics the old yFiles 2.x API
    * @param obj
@@ -112,6 +122,7 @@ export class StringTemplateNodeStyle extends NodeStyleBase {
     makeObservable(obj)
     return obj
   }
+
   createVisual(renderContext, node) {
     return createSVG(
       node,
@@ -124,11 +135,13 @@ export class StringTemplateNodeStyle extends NodeStyleBase {
       }
     )
   }
+
   updateVisual(renderContext, oldVisual, node) {
     return updateSVG(oldVisual, node, renderContext, this.cssClass, (element) => {
       SvgVisual.setTranslate(element, node.layout.x, node.layout.y)
     })
   }
+
   lookup(node, type) {
     if (type === INodeSizeConstraintProvider && !this.minimumSize.isEmpty) {
       return new NodeSizeConstraintProvider(this.minimumSize, Size.INFINITE)

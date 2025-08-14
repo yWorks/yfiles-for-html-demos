@@ -30,10 +30,6 @@ import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
 import * as ReactDOM from 'react-dom'
 
-import { basicSetup, EditorView } from 'codemirror'
-import { javascript } from '@codemirror/lang-javascript'
-import { type Diagnostic, linter, lintGutter } from '@codemirror/lint'
-
 import {
   ExteriorNodeLabelModel,
   GraphBuilder,
@@ -64,10 +60,13 @@ import { ReactComponentHtmlNodeStyle } from './ReactComponentHtmlNodeStyle'
 import { ReactComponentSvgLabelStyle } from './ReactComponentSvgLabelStyle'
 import { ReactComponentSvgNodeStyle } from './ReactComponentSvgNodeStyle'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
-import { StateEffect, type StateEffectType, StateField } from '@codemirror/state'
-import { getJsonLinter } from '@yfiles/demo-resources/codeMirrorLinters'
-
-const jsonLinter = getJsonLinter()
+import {
+  createCodemirrorEditor,
+  EditorView,
+  StateEffect,
+  type StateEffectType,
+  StateField
+} from '@yfiles/demo-resources/codemirror-editor'
 
 let graphComponent: GraphComponent
 
@@ -118,15 +117,11 @@ function initializeTextAreas(): void {
       return value
     }
   })
-  jsxRenderFunctionTextArea = new EditorView({
-    parent: document.querySelector<HTMLTextAreaElement>('#templateEditorContainer')!,
-    extensions: [
-      basicSetup,
-      javascript({ jsx: true }),
-      jsxRenderFunctionTextAreaEditable,
-      EditorView.editable.from(jsxRenderFunctionTextAreaEditable)
-    ]
-  })
+  jsxRenderFunctionTextArea = createCodemirrorEditor(
+    'jsx',
+    document.querySelector<HTMLTextAreaElement>('#templateEditorContainer')!,
+    [jsxRenderFunctionTextAreaEditable, EditorView.editable.from(jsxRenderFunctionTextAreaEditable)]
+  )
 
   setTagTextAreaEditable = StateEffect.define<boolean>()
   const tagTextAreaEditable = StateField.define<boolean>({
@@ -140,17 +135,11 @@ function initializeTextAreas(): void {
       return value
     }
   })
-  tagTextArea = new EditorView({
-    parent: document.querySelector<HTMLTextAreaElement>('#tagEditorContainer')!,
-    extensions: [
-      basicSetup,
-      javascript(),
-      jsonLinter,
-      lintGutter(),
-      tagTextAreaEditable,
-      EditorView.editable.from(tagTextAreaEditable)
-    ]
-  })
+  tagTextArea = createCodemirrorEditor(
+    'json',
+    document.querySelector<HTMLTextAreaElement>('#tagEditorContainer')!,
+    [tagTextAreaEditable, EditorView.editable.from(tagTextAreaEditable)]
+  )
 
   // disable standard selection and focus visualization
   graphComponent.selectionIndicatorManager.enabled = false

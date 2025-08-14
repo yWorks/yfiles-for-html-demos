@@ -73,9 +73,7 @@ let graphComponent: GraphComponent
 async function run(): Promise<void> {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupSelection: false
-  })
+  graphComponent.inputMode = new GraphEditorInputMode({ allowGroupSelection: false })
 
   // Enable general undo support
   graphComponent.graph.undoEngineEnabled = true
@@ -180,20 +178,12 @@ function buildGraph(graph: IGraph, graphData: any): void {
   })
   table.columnDefaults.size = 200
   table.columnDefaults.style = new NodeStyleStripeStyleAdapter(
-    new ShapeNodeStyle({
-      fill: '#c4d7ed',
-      stroke: 'black',
-      shape: 'rectangle'
-    })
+    new ShapeNodeStyle({ fill: '#c4d7ed', stroke: 'black', shape: 'rectangle' })
   )
 
   // The second column style that is used for the even-odd styling of the columns.
   const alternateColumnStyle = new NodeStyleStripeStyleAdapter(
-    new ShapeNodeStyle({
-      fill: '#abc8e2',
-      stroke: 'black',
-      shape: 'rectangle'
-    })
+    new ShapeNodeStyle({ fill: '#abc8e2', stroke: 'black', shape: 'rectangle' })
   )
 
   // Create the single container row.
@@ -264,11 +254,7 @@ function buildGraph(graph: IGraph, graphData: any): void {
  * @param graph The graph
  */
 function writeToJSON(graph: IGraph): any {
-  const jsonOutput = {
-    nodesSource: [],
-    edgesSource: [],
-    lanesSource: []
-  }
+  const jsonOutput = { nodesSource: [], edgesSource: [], lanesSource: [] }
 
   // find the table, we assume there is only one
   const tableNode = graph.nodes.find((node: INode): boolean => !!ITable.getTable(node))
@@ -318,10 +304,7 @@ function writeToJSON(graph: IGraph): any {
   graph.edges.forEach((edge: IEdge): void => {
     const sourceId = node2id.get(edge.sourceNode)
     const targetId = node2id.get(edge.targetNode)
-    ;(jsonOutput.edgesSource as any).push({
-      from: sourceId,
-      to: targetId
-    })
+    ;(jsonOutput.edgesSource as any).push({ from: sourceId, to: targetId })
   })
 
   return jsonOutput

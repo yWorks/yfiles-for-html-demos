@@ -45,16 +45,19 @@ import {
   LayoutExecutor,
   SubgraphLayoutStageData
 } from '@yfiles/yfiles'
+
 /**
  * Abstract base class for configurations that can be displayed in an {@link OptionEditor}.
  */
 export const LayoutConfiguration = Class('LayoutConfiguration', {
   $abstract: true,
+
   /**
    * A guard to prevent running multiple layout calculations at the same time.
    * @type {boolean}
    */
   $layoutRunning: false,
+
   /**
    * Applies this configuration to the given {@link GraphComponent}.
    *
@@ -72,12 +75,14 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
       setTimeout(doneHandler, 10)
       return
     }
+
     const layout = this.createConfiguredLayout(graphComponent)
     if (layout === null) {
       setTimeout(doneHandler, 10)
       return
     }
     const layoutData = this.createConfiguredLayoutData(graphComponent, layout)
+
     // configure the LayoutExecutor
     const layoutExecutor = new LayoutExecutor({
       graphComponent,
@@ -88,6 +93,7 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
       animateViewport: true,
       easedAnimation: true
     })
+
     // set the layout data to the LayoutExecutor
     if (layoutData) {
       layoutExecutor.layoutData = layoutData
@@ -109,6 +115,7 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
     }
     doneHandler()
   },
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
@@ -118,11 +125,13 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
   createConfiguredLayout: function (graphComponent) {
     return null
   },
+
   /**
    * Called by {@link LayoutConfiguration.runLayout} after the layout animation is done. This method is
    * typically overridden to remove mappers from the mapper registry of the graph.
    */
   postProcess: function (graphComponent) {},
+
   /**
    * Called by {@link LayoutConfiguration.apply} to create the layout data of the configuration. This
    * method is typically overridden to provide mappers for the different layouts.
@@ -130,11 +139,14 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
   createConfiguredLayoutData: function (graphComponent, layout) {
     return null
   },
+
   /**
    * The title of the layout algorithm that is managed by this configuration.
    */
   title: 'Layout Algorithm',
+
   collapsedInitialization: false,
+
   /**
    * Adds a mapper with a {@link EdgeLabelPreferredPlacement} that matches the given settings
    * to the mapper registry of the given graph. In addition, sets the label model of all node and edge
@@ -153,6 +165,7 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
       orientation,
       distanceToEdge
     )
+
     //change to a free edge label model to support integrated edge labeling
     const freeEdgeLabelModel = new FreeEdgeLabelModel()
     graph.edgeLabels.forEach((label) => {
@@ -163,6 +176,7 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
         )
       }
     })
+
     //change to a free node label model to support generic node labeling
     const freeNodeLabelModel = new FreeNodeLabelModel()
     graph.nodeLabels.forEach((label) => {
@@ -173,12 +187,14 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
         )
       }
     })
+
     const layoutData = new GenericLayoutData()
     layoutData.addItemMapping(
       EdgeLabelPreferredPlacement.EDGE_LABEL_PREFERRED_PLACEMENT_DATA_KEY
     ).constant = descriptor
     return layoutData
   },
+
   /**
    * Creates a layout data for {@link SubgraphLayoutStage} that is based on the selection model of
    * the given graph component.
@@ -197,6 +213,7 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
       subgraphEdgeLabels: graphComponent.selection.labels.filter((l) => l.owner instanceof IEdge)
     })
   },
+
   /**
    * Creates a new {@link EdgeLabelPreferredPlacement} that matches the given settings.
    */
@@ -207,6 +224,7 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
     distanceToEdge
   ) {
     const descriptor = new EdgeLabelPreferredPlacement()
+
     switch (sideOfEdge) {
       case LabelPlacementSideOfEdge.ANYWHERE:
         descriptor.edgeSide = LabelEdgeSides.ANYWHERE
@@ -227,6 +245,7 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
         descriptor.edgeSide = LabelEdgeSides.ANYWHERE
         break
     }
+
     switch (placeAlongEdge) {
       case LabelPlacementAlongEdge.ANYWHERE:
         descriptor.placementAlongEdge = LabelAlongEdgePlacements.ANYWHERE
@@ -250,6 +269,7 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
         descriptor.placementAlongEdge = LabelAlongEdgePlacements.ANYWHERE
         break
     }
+
     switch (orientation) {
       case LabelPlacementOrientation.PARALLEL:
         descriptor.angle = 0.0
@@ -272,10 +292,12 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
         descriptor.angleReference = LabelAngleReferences.RELATIVE_TO_EDGE_FLOW
         break
     }
+
     descriptor.distanceToEdge = distanceToEdge
     return descriptor
   }
 })
+
 /**
  * Specifies constants for the preferred placement along an edge used by layout configurations.
  */
@@ -288,6 +310,7 @@ export var LabelPlacementAlongEdge
   LabelPlacementAlongEdge[(LabelPlacementAlongEdge['AT_SOURCE_PORT'] = 4)] = 'AT_SOURCE_PORT'
   LabelPlacementAlongEdge[(LabelPlacementAlongEdge['AT_TARGET_PORT'] = 5)] = 'AT_TARGET_PORT'
 })(LabelPlacementAlongEdge || (LabelPlacementAlongEdge = {}))
+
 /**
  * Specifies constants for the preferred placement at a side of an edge used by layout configurations.
  */
@@ -299,6 +322,7 @@ export var LabelPlacementSideOfEdge
   LabelPlacementSideOfEdge[(LabelPlacementSideOfEdge['RIGHT'] = 3)] = 'RIGHT'
   LabelPlacementSideOfEdge[(LabelPlacementSideOfEdge['LEFT_OR_RIGHT'] = 4)] = 'LEFT_OR_RIGHT'
 })(LabelPlacementSideOfEdge || (LabelPlacementSideOfEdge = {}))
+
 /**
  * Specifies constants for the orientation of an edge label used by layout configurations.
  */
@@ -309,12 +333,14 @@ export var LabelPlacementOrientation
   LabelPlacementOrientation[(LabelPlacementOrientation['HORIZONTAL'] = 2)] = 'HORIZONTAL'
   LabelPlacementOrientation[(LabelPlacementOrientation['VERTICAL'] = 3)] = 'VERTICAL'
 })(LabelPlacementOrientation || (LabelPlacementOrientation = {}))
+
 export var Scope
 ;(function (Scope) {
   Scope[(Scope['ROUTE_ALL_EDGES'] = 0)] = 'ROUTE_ALL_EDGES'
   Scope[(Scope['ROUTE_AFFECTED_EDGES'] = 1)] = 'ROUTE_AFFECTED_EDGES'
   Scope[(Scope['ROUTE_EDGES_AT_AFFECTED_NODES'] = 2)] = 'ROUTE_EDGES_AT_AFFECTED_NODES'
 })(Scope || (Scope = {}))
+
 export var OperationType
 ;(function (OperationType) {
   OperationType[(OperationType['MIRROR_X_AXIS'] = 0)] = 'MIRROR_X_AXIS'

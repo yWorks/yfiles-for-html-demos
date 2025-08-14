@@ -44,8 +44,10 @@ import {
   YList
 } from '@yfiles/yfiles'
 import { colorSets } from '@yfiles/demo-resources/demo-styles'
+
 const GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
 const GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
+
 /**
  * Sets the value of the attribute with the given name for the given element.
  * @param e The Element for which an attribute value is set.
@@ -55,6 +57,7 @@ const GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
 function setAttribute(e, name, value) {
   e.setAttribute(name, value.toString())
 }
+
 /**
  * This visual draws a Voronoi diagram.
  */
@@ -69,6 +72,7 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
     this.voronoiDiagram = voronoiDiagram
     this.clusters = clusters
   }
+
   /**
    * Creates the Voronoi visual.
    * @param context The context that describes where the visual will be used
@@ -76,11 +80,13 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
    */
   createVisual(context) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     const colors = generateColors(
       GRADIENT_START,
       GRADIENT_END,
       this.voronoiDiagram.voronoiFaces.length + 1
     )
+
     this.voronoiDiagram.voronoiFaces.forEach((face, index) => {
       const svgPath = face.createSvgPath()
       const color = colors[index]
@@ -89,11 +95,14 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
       setAttribute(svgPath, 'stroke-width', '20')
       container.appendChild(svgPath)
     })
+
     this.clusters.centroids.forEach((point) => {
       VoronoiVisual.drawClusterCenter(point, container)
     })
+
     return new SvgVisual(container)
   }
+
   /**
    * Updates the Voronoi visual
    * @param context The context that describes where the visual will be used
@@ -103,6 +112,7 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
   updateVisual(context, oldVisual) {
     return this.createVisual(context)
   }
+
   /**
    * Draws an X on the given coordinate.
    * @param point The given coordinates
@@ -118,6 +128,7 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
     container.appendChild(path)
   }
 }
+
 /**
  * This visual creates a polygon around the nodes that belong to the same cluster.
  */
@@ -126,6 +137,7 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
   clusters
   startColor
   endColor
+
   /**
    * Creates a new instance.
    * @param drawCenter Whether to draw an X at the center.
@@ -141,6 +153,7 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
     this.startColor = GRADIENT_START
     this.endColor = GRADIENT_END
   }
+
   /**
    * Creates the polygonal visual containing the nodes that belong to the same cluster.
    * @param context The context that describes where the visual will be used
@@ -151,6 +164,7 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
     const colors = generateColors(this.startColor, this.endColor, this.clusters.number + 1)
     for (let i = 0; i < this.clusters.number; i++) {
       const clusterNodeBounds = this.clusters.clustering.get(i)
+
       const color = colors[i]
       let generalPath = new GeneralPath()
       if (clusterNodeBounds.length > 1) {
@@ -166,6 +180,7 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
           points.add(new Point(x + width + offset, y - offset))
           points.add(new Point(x + width + offset, y + height + offset))
         })
+
         const convexHull = GeometryUtilities.getConvexHull(points)
         const firstPoint = convexHull.at(0)
         generalPath.moveTo(firstPoint.x, firstPoint.y)
@@ -175,11 +190,13 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
         }
         generalPath.close()
         generalPath = generalPath.createSmoothedPath(50)
+
         const cluster = generalPath.createSvgPath()
         setAttribute(cluster, 'fill', `rgb(${color.r},${color.g},${color.b})`)
         setAttribute(cluster, 'stroke', `rgb(${color.r},${color.g},${color.b})`)
         setAttribute(cluster, 'stroke-linejoin', 'round')
         setAttribute(cluster, 'stroke-width', '30')
+
         element.appendChild(cluster)
       } else {
         const cluster = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
@@ -193,13 +210,16 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
         element.appendChild(cluster)
       }
     }
+
     if (this.drawCenter) {
       for (const point of this.clusters.centroids) {
         VoronoiVisual.drawClusterCenter(point, element)
       }
     }
+
     return new SvgVisual(element)
   }
+
   /**
    * Updates the polygonal containing the nodes that belong to the same cluster.
    * @param context The context that describes where the visual will be used
@@ -210,6 +230,7 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
     return this.createVisual(context)
   }
 }
+
 /**
  * Creates the coordinate axis of the dendrogram.
  * This is only used for Hierarchical Clustering.
@@ -220,6 +241,7 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
     super()
     this.rect = rect
   }
+
   /**
    * Creates the polygonal visual containing the nodes that belong to the same cluster.
    * @param context The context that describes where the visual will be used
@@ -227,6 +249,7 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
    */
   createVisual(context) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     const offset = 20
     const verticalOffset = 4
@@ -239,7 +262,9 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
     setAttribute(rect, 'stroke-width', '3')
     setAttribute(rect, 'fill', 'none')
     container.appendChild(rect)
+
     const division = 20
+
     let j = 0
     for (let i = this.rect.maxY - verticalOffset; i >= this.rect.y - division; i -= division) {
       const marks = window.document.createElementNS('http://www.w3.org/2000/svg', 'line')
@@ -250,15 +275,13 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
       setAttribute(marks, 'stroke', color)
       setAttribute(marks, 'stroke-width', '2')
       container.appendChild(marks)
+
       const text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
       text.textContent = j.toString()
+
       const textSize = TextRenderSupport.measureText(
         text.textContent,
-        new Font({
-          fontFamily: 'Arial',
-          fontSize: 8,
-          fontWeight: 'bold'
-        })
+        new Font({ fontFamily: 'Arial', fontSize: 8, fontWeight: 'bold' })
       )
       setAttribute(text, 'transform', 'translate(4 14)')
       setAttribute(text, 'font-size', '14px')
@@ -269,8 +292,10 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
       container.appendChild(text)
       j += division
     }
+
     return new SvgVisual(container)
   }
+
   /**
    * Updates the polygonal containing the nodes that belong to the same cluster.
    * @param context The context that describes where the visual will be used
@@ -281,6 +306,7 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
     return this.createVisual(context)
   }
 }
+
 /**
  * Creates the visualization for the cut-off.
  * A red line with a label for the cut-off value.
@@ -290,6 +316,7 @@ export class CutoffVisual extends BaseClass(IVisualCreator) {
   rectangle
   maxY
   cutOffValue
+
   constructor(rectangle, maxY) {
     super()
     this.rectangle = rectangle
@@ -298,6 +325,7 @@ export class CutoffVisual extends BaseClass(IVisualCreator) {
     this.maxY = maxY
     this.cutOffValue = Math.ceil(this.maxY - this.rectangle.center.y + 1)
   }
+
   /**
    * Creates the time frame rectangle.
    * @param context The context that describes where the visual will be used
@@ -314,10 +342,9 @@ export class CutoffVisual extends BaseClass(IVisualCreator) {
     setAttribute(cutOffLine, 'stroke-width', '1')
     setAttribute(cutOffLine, 'fill', 'firebrick')
     container.appendChild(cutOffLine)
-    const font = new Font({
-      fontSize: 14,
-      fontWeight: 'bold'
-    })
+
+    const font = new Font({ fontSize: 14, fontWeight: 'bold' })
+
     const text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
     text.textContent = `Cut-off:  ${this.cutOffValue}`
     setAttribute(text, 'fill', 'firebrick')
@@ -326,9 +353,11 @@ export class CutoffVisual extends BaseClass(IVisualCreator) {
     setAttribute(text, 'x', this.rectangle.width + 5)
     setAttribute(text, 'y', textSize.height * 0.5 - 2)
     container.appendChild(text)
+
     setAttribute(container, 'transform', `translate(${this.rectangle.x} ${this.rectangle.y})`)
     return new SvgVisual(container)
   }
+
   /**
    * Updates the time frame rectangle to improve performance.
    * @param context The context that describes where the visual will be used
@@ -338,6 +367,7 @@ export class CutoffVisual extends BaseClass(IVisualCreator) {
     return this.createVisual(context)
   }
 }
+
 /**
  * Generates random colors for nodes and edges.
  * @param startColor The start color
@@ -348,6 +378,7 @@ export class CutoffVisual extends BaseClass(IVisualCreator) {
 export function generateColors(startColor, endColor, gradientCount) {
   const colors = []
   const stepCount = gradientCount - 1
+
   for (let i = 0; i < gradientCount; i++) {
     const r = (startColor.r * (stepCount - i) + endColor.r * i) / stepCount
     const g = (startColor.g * (stepCount - i) + endColor.g * i) / stepCount

@@ -41,39 +41,43 @@ import SampleData from './resources/SampleData'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * Bootstraps this demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // create the demo's graph component
   const graphComponent = new GraphComponent('#graphComponent')
   // enable interactive editing
   graphComponent.inputMode = new GraphEditorInputMode()
+
   // configure default styles for the demo's graph
   initDemoStyles(graphComponent.graph, { theme: 'demo-palette-31' })
   // create the demo's sample graph
   createSampleGraph(graphComponent.graph)
+
   // center the demo's graph in the demo's visible area
   graphComponent.fitGraphBounds()
+
   // enable undo and redo
   graphComponent.graph.undoEngineEnabled = true
+
   // bind the demo's new node alignment and node distribution operations to the demo's UI controls
   initializeUI(graphComponent)
 }
+
 /**
  * Creates the sample graph for this demo.
  */
 function createSampleGraph(graph) {
   const data = SampleData
   const builder = new GraphBuilder(graph)
-  builder.createNodesSource({
-    data: data.nodes,
-    id: 'id',
-    layout: 'bounds'
-  })
+  builder.createNodesSource({ data: data.nodes, id: 'id', layout: 'bounds' })
   builder.buildGraph()
 }
+
 /**
  * Binds actions to the demo's UI controls.
  */
@@ -107,6 +111,7 @@ function initializeUI(graphComponent) {
     .addEventListener('click', () =>
       alignVertically(graphComponent.graph, graphComponent.selection.nodes)
     )
+
   // bind the demo's new node distribution operations to toolbar controls
   document
     .querySelector('#distribute-horizontally')
@@ -119,4 +124,5 @@ function initializeUI(graphComponent) {
       distributeVertically(graphComponent.graph, graphComponent.selection.nodes)
     )
 }
+
 run().then(finishLoading)

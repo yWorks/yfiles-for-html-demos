@@ -40,13 +40,19 @@ import {
   resetLabelLayoutParameters,
   setDefaultLabelLayoutParameters
 } from './label-placement'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
+
 setDefaultLabelLayoutParameters(graphComponent.graph)
+
 createSampleGraphLabelPlacement(graphComponent.graph)
+
 fitGraphBounds(graphComponent)
 finishLoading()
+
 addButtonListener('#changeLayoutParametersButton', () =>
   changeLabelLayoutParameters(graphComponent.graph)
 )

@@ -34,6 +34,7 @@ import {
   ILayoutAlgorithm,
   LayoutData
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to run a {@link HierarchicalLayout} with edge grouping.
  * @param graph The graph to be laid out
@@ -41,10 +42,13 @@ import {
  */
 export function createFeatureLayoutConfiguration(graph) {
   const layout = new HierarchicalLayout()
+
   // specify an id for all edges starting in node 0
   const nodeSourceGroupId = 'node 0 source edges'
+
   // specify an id for all edges ending in node 5
   const nodeTargetGroupId = 'node 5 target edges'
+
   // use LayoutData to configure edge grouping
   const layoutData = new HierarchicalLayoutData({
     //group edges at their source side if the source node's tag is '0' (equal to label in this sample)
@@ -52,8 +56,10 @@ export function createFeatureLayoutConfiguration(graph) {
     //group edges at their target side if the target node's tag is '5' (equal to label in this sample)
     targetGroupIds: (edge) => (edge.targetNode.tag === 5 ? nodeTargetGroupId : null)
   })
+
   return { layout, layoutData }
 }
+
 /**
  * Demonstrates how to run a {@link HierarchicalLayout} with the default configuration.
  * @param graph The graph to be laid out
@@ -62,5 +68,6 @@ export function createFeatureLayoutConfiguration(graph) {
 export function createDefaultLayoutConfiguration(graph) {
   const layout = new HierarchicalLayout()
   const layoutData = new HierarchicalLayoutData()
+
   return { layout, layoutData }
 }

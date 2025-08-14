@@ -120,9 +120,7 @@ function initializeGraph(graph: IGraph): void {
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
-  graph.groupNodeDefaults.labels.style = new LabelStyle({
-    horizontalTextAlignment: 'center'
-  })
+  graph.groupNodeDefaults.labels.style = new LabelStyle({ horizontalTextAlignment: 'center' })
   graph.groupNodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
     margins: 5
   }).createParameter('top')
@@ -136,7 +134,7 @@ function initializeGraph(graph: IGraph): void {
  */
 async function createGraph(graph: IGraph) {
   // get the lists of data items for the nodes and edges
-  const response = await fetch('./resources/hierarchic_2000_2100.json')
+  const response = await fetch('./resources/hierarchical_2000_2100.json')
   const graphData = await response.json()
 
   const getRandomInt = (upper: number) => Math.floor(Math.random() * upper)

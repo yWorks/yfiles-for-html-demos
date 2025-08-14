@@ -138,11 +138,7 @@ export class SchemaComponent {
     const edgeDefaults = this.schemaGraphComponent.graph.edgeDefaults
     edgeDefaults.style = new PolylineEdgeStyle({
       stroke: '3px #BBBBBB',
-      targetArrow: new Arrow({
-        fill: '#BBBBBB',
-        type: ArrowType.TRIANGLE,
-        widthScale: 1.5
-      }),
+      targetArrow: new Arrow({ fill: '#BBBBBB', type: ArrowType.TRIANGLE, widthScale: 1.5 }),
       smoothingLength: 15
     })
     edgeDefaults.labels.style = new LabelStyle({
@@ -521,11 +517,7 @@ export class SchemaComponent {
 
     // each edge creation should use another random target node color
     createEdgeInputMode.addEventListener('gesture-starting', (_, src) => {
-      const nodeStyle = new ShapeNodeStyle({
-        shape: 'ellipse',
-        fill: '#6495ED',
-        stroke: 'white'
-      })
+      const nodeStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: '#6495ED', stroke: 'white' })
 
       src.previewGraph.nodeDefaults.style = nodeStyle
       src.previewGraph.setStyle(src.previewEndNode, nodeStyle)
@@ -593,17 +585,9 @@ export class SchemaComponent {
     nodesSourceDefinition: TreeNodesSourceDefinition
   ): INodeStyle {
     if (SchemaComponent.isRootNodesSourceDefinition(nodesSourceDefinition)) {
-      return new ShapeNodeStyle({
-        shape: 'octagon',
-        fill: '#6495ED',
-        stroke: 'white'
-      })
+      return new ShapeNodeStyle({ shape: 'octagon', fill: '#6495ED', stroke: 'white' })
     } else {
-      return new ShapeNodeStyle({
-        shape: 'ellipse',
-        fill: '#eee',
-        stroke: '5px solid #6495ED'
-      })
+      return new ShapeNodeStyle({ shape: 'ellipse', fill: '#eee', stroke: '5px solid #6495ED' })
     }
   }
 }

@@ -33,11 +33,13 @@ export function initToolbars() {
       initToolbarResponsiveness(toolbar)
       observer.observe(toolbar)
     }
+
     if (document.body.classList.contains('demo-tutorial')) {
       initTutorialToolbar(toolbar)
     }
   }
 }
+
 export function forceToolbarOverflowUpdate() {
   for (const toolbar of document.querySelectorAll('.demo-page__toolbar')) {
     if (!toolbar.classList.contains('no-overflow')) {
@@ -46,10 +48,12 @@ export function forceToolbarOverflowUpdate() {
     }
   }
 }
+
 // @yjs:keep = contentRect
 function getToolbarWidthAndPadding(entry) {
   let toolbarWidth = 0,
     toolbarContentWidth = 0
+
   // borderBoxSize and contentBoxSize are not supported by Safari < 15,
   // fallback to contentRect
   if (!entry.borderBoxSize || !entry.contentBoxSize) {
@@ -66,8 +70,10 @@ function getToolbarWidthAndPadding(entry) {
     toolbarWidth = entry.borderBoxSize[0].inlineSize
     toolbarContentWidth = entry.contentBoxSize[0].inlineSize
   }
+
   return { toolbarWidth, toolbarPadding: (toolbarWidth - toolbarContentWidth) / 2 }
 }
+
 function toolbarSizeChanged(entries, observer) {
   window.requestAnimationFrame(() => {
     entries.forEach((entry) => {
@@ -78,6 +84,7 @@ function toolbarSizeChanged(entries, observer) {
     })
   })
 }
+
 /**
  * Initializes responsive toolbar behavior (i.e. puts overflowing toolbar items in a separate
  * overflow menu).
@@ -91,9 +98,11 @@ function initToolbarResponsiveness(toolbar) {
   const overflowContainerContent = document.createElement('div')
   overflowContainerContent.classList.add('overflow-container__content')
   overflowContainer.appendChild(overflowContainerContent)
+
   const overflowButton = document.createElement('span')
   overflowButton.classList.add('overflow-button')
   overflowButton.setAttribute('title', 'More...')
+
   const closeContainerHandler = (e) => {
     let current = e.target
     while (current !== overflowContainer && current.parentNode) {
@@ -107,6 +116,7 @@ function initToolbarResponsiveness(toolbar) {
   }
   overflowButton.addEventListener('click', (e) => {
     if (e.target !== overflowButton) return
+
     overflowContainer.classList.toggle('overflow-container--open')
     if (overflowContainer.classList.contains('overflow-container--open')) {
       document.addEventListener('click', closeContainerHandler)
@@ -115,19 +125,26 @@ function initToolbarResponsiveness(toolbar) {
       }
     }
   })
+
   overflowButton.appendChild(overflowContainer)
   toolbar.insertBefore(overflowButton, toolbar.firstChild)
 }
+
 function wrapToolbar(toolbar, toolbarWidth, toolbarPadding) {
   const overflowContainer = toolbar.querySelector('.overflow-container')
+
   // not initialized
   if (!overflowContainer) return
+
   const overflowContainerContent = overflowContainer.querySelector('.overflow-container__content')
   const overflowButton = toolbar.querySelector('.overflow-button')
+
   // preserve 40px for overflow button
   toolbarWidth -= toolbarPadding + 40
+
   pushBackOverflow(toolbar, overflowContainerContent, toolbarWidth)
   removeOverflow(toolbar, overflowContainerContent, toolbarWidth)
+
   if (overflowContainerContent.children.length === 0) {
     overflowButton.classList.add('hidden')
     overflowContainer.classList.remove('overflow-container--open')
@@ -135,8 +152,10 @@ function wrapToolbar(toolbar, toolbarWidth, toolbarPadding) {
     overflowButton.classList.remove('hidden')
   }
 }
+
 function removeOverflow(toolbar, overflowContainerContent, toolbarWidth) {
   let toolbarItem = toolbar.lastElementChild
+
   // move overflowing toolbar items to overflow container
   while (
     toolbarItem &&
@@ -160,8 +179,10 @@ function removeOverflow(toolbar, overflowContainerContent, toolbarWidth) {
     toolbarItem = toolbar.lastElementChild
   }
 }
+
 function pushBackOverflow(toolbar, overflowContainerContent, toolbarWidth) {
   let toolbarItem = toolbar.lastElementChild
+
   // move overflowing toolbar items back to the toolbar if there is enough space
   let overflowItem = overflowContainerContent.firstElementChild
   while (
@@ -171,8 +192,10 @@ function pushBackOverflow(toolbar, overflowContainerContent, toolbarWidth) {
   ) {
     overflowItem = overflowItem.nextElementSibling
   }
+
   // remove 5 px to account for icon spacing
   let space = toolbarWidth - toolbarItem.offsetLeft - toolbarItem.offsetWidth - 5
+
   // eslint-disable-next-line no-cond-assign
   // add 5 px to client width to handle icon spacing
   while (overflowItem && overflowItem.previousOffsetWidth < space) {
@@ -180,6 +203,7 @@ function pushBackOverflow(toolbar, overflowContainerContent, toolbarWidth) {
       toolbar.appendChild(overflowContainerContent.firstElementChild)
     }
     toolbar.appendChild(overflowItem)
+
     toolbarItem = toolbar.lastElementChild
     space = toolbarWidth - toolbarItem.offsetLeft - toolbarItem.offsetWidth - 5
     overflowItem = overflowContainerContent.firstElementChild
@@ -191,12 +215,15 @@ function pushBackOverflow(toolbar, overflowContainerContent, toolbarWidth) {
     }
   }
 }
+
 function initTutorialToolbar(toolbar) {
   const dropdown = toolbar.querySelector('.demo-toolbar__tutorial-dropdown')
+
   const closeDropdown = (e) => {
     dropdown.classList.remove('demo-toolbar__tutorial-dropdown--expanded')
     document.body.removeEventListener('click', closeDropdown)
   }
+
   dropdown?.addEventListener('click', (e) => {
     if (dropdown.classList.contains('demo-toolbar__tutorial-dropdown--expanded')) {
       closeDropdown(e)

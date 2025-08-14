@@ -27,43 +27,39 @@
  **
  ***************************************************************************/
 import { GraphBuilder, IEdge, IGraph, INode } from '@yfiles/yfiles'
+
 /**
  * Returns the data of the given process step.
  */
 export function getProcessStepTag(step) {
   return step.tag
 }
+
 /**
  * Returns the data of the given process transition.
  */
 export function getProcessTransitionTag(transition) {
   return transition.tag
 }
+
 /**
  * Returns the graph on which the simulation runs random traversals to create an event log.
  */
 export function getSimulationGraph() {
   const builder = new GraphBuilder()
-  builder.createNodesSource({
-    data: graphData.nodes,
-    id: 'id'
-  }).nodeCreator.tagProvider = (dataItem) => ({
-    duration: Math.random() * 0.5,
-    ...dataItem
-  })
-  builder.createEdgesSource({
-    data: graphData.edges,
-    sourceId: 'source',
-    targetId: 'target'
-  })
+  builder.createNodesSource({ data: graphData.nodes, id: 'id' }).nodeCreator.tagProvider = (
+    dataItem
+  ) => ({ duration: Math.random() * 0.5, ...dataItem })
+  builder.createEdgesSource({ data: graphData.edges, sourceId: 'source', targetId: 'target' })
   return builder.buildGraph()
 }
+
 /**
  * The data from which the simulation graph is built.
  */
 const graphData = {
   nodes: [
-    { id: 1, label: 'Start', capacity: 50 },
+    { id: 1, label: 'Feature Request', capacity: 50 },
     { id: 3, label: 'Evaluation', capacity: 20 },
     { id: 4, label: 'Move to Backlog' },
     { id: 5, label: 'Prepare', capacity: 20 },

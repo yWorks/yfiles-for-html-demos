@@ -200,9 +200,7 @@ function prepareSmoothExpandLayoutAnimation(newNodes: Iterable<INode>): void {
   const graph = graphComponent.graph
 
   // mark the new nodes and place them between their neighbors
-  const layoutData = new PlaceNodesAtBarycenterStageData({
-    affectedNodes: newNodes
-  })
+  const layoutData = new PlaceNodesAtBarycenterStageData({ affectedNodes: newNodes })
 
   const layout = new PlaceNodesAtBarycenterStage()
   graph.applyLayout(layout, layoutData)

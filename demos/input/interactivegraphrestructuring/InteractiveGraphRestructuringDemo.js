@@ -42,23 +42,31 @@ import {
   RectangleNodeStyle,
   Stroke
 } from '@yfiles/yfiles'
+
 import GraphData from './resources/GraphData'
 import { SubtreePositionHandler } from './SubtreePositionHandler'
 import { Subtree } from './Subtree'
 import { createDemoNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent = null
+
 let subTree = null
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
   initDemoStyles(graphComponent.graph, { orthogonalEditing: true })
   graphComponent.graph.nodeDefaults.shareStyleInstance = false
+
   initializeHighlightDecorator()
+
   initializeInputMode()
+
   loadGraph()
 }
+
 /**
  * Loads the graph.
  */
@@ -73,15 +81,19 @@ function loadGraph() {
       new Rect(data.x, data.y, graph.nodeDefaults.size.width, graph.nodeDefaults.size.height)
   })
   graphBuilder.createEdgesSource(GraphData.edgesSource, 'source', 'target', 'id')
+
   graph = graphBuilder.buildGraph()
+
   // adds the bends
   graph.edges.forEach((edge) => {
     edge.tag.bends.forEach((bend) => {
       graph.addBend(edge, bend)
     })
   })
+
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Initializes the input mode.
  */
@@ -95,25 +107,27 @@ function initializeInputMode() {
     marqueeSelectionInputMode: { enabled: false },
     moveViewportInputMode: { beginRecognizer: EventRecognizers.MOUSE_DRAG },
     // enable the ItemHoverInputMode and let it handle edges and nodes
-    itemHoverInputMode: {
-      enabled: true,
-      hoverItems: GraphItemTypes.NODE
-    }
+    itemHoverInputMode: { enabled: true, hoverItems: GraphItemTypes.NODE }
   })
   graphComponent.inputMode = mode
+
   // node style that is applied by SubtreePositionHandler while moving subtree nodes
   const movingNodeStyle = createDemoNodeStyle('demo-palette-12')
   movingNodeStyle.stroke = new Stroke(movingNodeStyle.stroke.fill, 3.5)
+
   const graph = graphComponent.graph
+
   // adds the position handler that will relocate the selected node along with the subtree rooted at it
   graph.decorator.nodes.positionHandler.addWrapperFactory(
     (node, handler) => new SubtreePositionHandler(node, handler, movingNodeStyle)
   )
+
   const defaultStyle = graph.nodeDefaults.style
   const defaultFill = defaultStyle.stroke.fill
   // normal and thicker stroke that will be set by the hovered item change listener
   const normalStroke = new Stroke(defaultFill, 1.5).freeze()
   const hoveredThickStroke = new Stroke(defaultFill, 3.5).freeze()
+
   // handle changes on the hovered items
   mode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     if (subTree !== null) {
@@ -122,6 +136,7 @@ function initializeInputMode() {
         style.stroke = normalStroke
       })
     }
+
     const newItem = evt.item
     if (newItem) {
       subTree = new Subtree(graph, newItem)
@@ -133,6 +148,7 @@ function initializeInputMode() {
     graphComponent.invalidate()
   })
 }
+
 /**
  * Installs a different highlight decorator visual.
  */
@@ -148,4 +164,5 @@ function initializeHighlightDecorator() {
     })
   )
 }
+
 run().then(finishLoading)

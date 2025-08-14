@@ -35,10 +35,7 @@ export type SerializableGraphData = {
   edges: Array<SerializableEdgeData>
 }
 
-type GraphDataOptions = {
-  nodeDataItems: Array<NodeData>
-  edgeDataItems: Array<EdgeData>
-}
+type GraphDataOptions = { nodeDataItems: Array<NodeData>; edgeDataItems: Array<EdgeData> }
 
 /**
  * A simple, minimal data structure that can be used for exporting Graph data

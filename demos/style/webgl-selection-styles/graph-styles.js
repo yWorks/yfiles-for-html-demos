@@ -40,6 +40,7 @@ import {
   WebGLNodeIndicatorStyle,
   WebGLTransition
 } from '@yfiles/yfiles'
+
 /**
  * Initializes the defaults for the styling in this demo.
  */
@@ -51,27 +52,29 @@ export function initStyleDefaults(graph) {
     stroke: 'transparent'
   })
   graph.nodeDefaults.labels.style = new LabelStyle({ padding: 10 })
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '2px gray',
-    targetArrow: 'triangle'
-  })
+
+  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '2px gray', targetArrow: 'triangle' })
   graph.edgeDefaults.labels.style = new LabelStyle({ padding: 10 })
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 0,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.ON_EDGE })
 }
+
 /**
  * Reconfigures the selection styles according to the settings chosen in the UI.
  */
 export function updateSelectionStyles(style, graphComponent) {
   const selectionIndicatorManager = graphComponent.selectionIndicatorManager
+
   selectionIndicatorManager.nodeStyle = createNodeIndicatorStyle(style)
   selectionIndicatorManager.edgeStyle = createEdgeIndicatorStyle(style)
   selectionIndicatorManager.nodeLabelStyle = createLabelIndicatorStyle(style)
   selectionIndicatorManager.edgeLabelStyle = createLabelIndicatorStyle(style)
+
   reselectSelected(graphComponent)
 }
+
 /**
  * Creates a node indicator style from the given style properties. This can either be a
  * node indicator style or a beacon node indicator style.
@@ -87,6 +90,7 @@ function createNodeIndicatorStyle(style) {
           duration: style.transition.duration
         })
       : style.transition
+
   if (isBeaconStyle(style.stylePattern)) {
     return new WebGLBeaconNodeIndicatorStyle({
       type: style.stylePattern,
@@ -114,6 +118,7 @@ function createNodeIndicatorStyle(style) {
     })
   }
 }
+
 /**
  * Creates an edge indicator style from the given style properties.
  */
@@ -129,6 +134,7 @@ function createEdgeIndicatorStyle(style) {
     thickness: style.thickness
   })
 }
+
 /**
  * Creates a label indicator style from the given style properties.
  */
@@ -146,6 +152,7 @@ function createLabelIndicatorStyle(style) {
     shape: 'label-shape'
   })
 }
+
 /**
  * "Re"-selects all already selected graph element to apply newly configured selection styles
  */
@@ -156,12 +163,14 @@ function reselectSelected(graphComponent) {
     graphComponent.selection.add(item)
   }
 }
+
 /**
  * Determines if the given style string is a beacon style.
  */
 function isBeaconStyle(styleString) {
   return styleString === 'fade' || styleString === 'no-fade' || styleString === 'reverse-fade'
 }
+
 /**
  * Creates a Color from a css color string and a provided transparency
  */
@@ -171,6 +180,7 @@ function getColor(color, transparency) {
   const b = parseInt(color.substring(5, 7), 16)
   return Color.fromRGBA(r, g, b, 1 - transparency)
 }
+
 /**
  *  Determines if the style pattern is only available for nodes which is true for beacon and halo styles.
  */

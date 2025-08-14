@@ -74,11 +74,7 @@ async function run(): Promise<void> {
 
   // layout and center the graph
   LayoutExecutor.ensure()
-  graphComponent.graph.applyLayout(
-    new OrganicLayout({
-      defaultMinimumNodeDistance: 50
-    })
-  )
+  graphComponent.graph.applyLayout(new OrganicLayout({ defaultMinimumNodeDistance: 50 }))
   await graphComponent.fitGraphBounds()
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
@@ -99,10 +95,7 @@ async function run(): Promise<void> {
 function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   const graphBuilder = new GraphBuilder(graph)
 
-  graphBuilder.createNodesSource({
-    data: graphData.nodeList,
-    id: (item) => item.id
-  })
+  graphBuilder.createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,

@@ -44,13 +44,9 @@ export default defineConfig(({ mode }) => {
         : undefined
     ],
     resolve: {
-      alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url))
-      },
+      alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
       preserveSymlinks: true
     },
-    build: {
-      chunkSizeWarningLimit: 3000
-    }
+    build: { chunkSizeWarningLimit: 3000 }
   }
 })

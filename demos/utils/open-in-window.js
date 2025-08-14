@@ -51,6 +51,7 @@ export function openInWindow(content, title = 'File content') {
       </body>
       </html>`
   )
+
   newDocument.close()
   return newWindow
 }

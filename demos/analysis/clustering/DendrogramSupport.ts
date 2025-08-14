@@ -123,15 +123,9 @@ export class DendrogramComponent {
       selectableItems: GraphItemTypes.NONE,
       focusableItems: GraphItemTypes.NONE,
       allowClipboardOperations: false,
-      itemHoverInputMode: {
-        hoverItems: GraphItemTypes.NODE
-      },
-      marqueeSelectionInputMode: {
-        enabled: false
-      },
-      moveSelectedItemsInputMode: {
-        moveCursor: Cursor.NS_RESIZE
-      }
+      itemHoverInputMode: { hoverItems: GraphItemTypes.NODE },
+      marqueeSelectionInputMode: { enabled: false },
+      moveSelectedItemsInputMode: { moveCursor: Cursor.NS_RESIZE }
     })
     mode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) =>
       this.onHoveredItemChanged(evt.item)
@@ -146,22 +140,14 @@ export class DendrogramComponent {
    * @param graph The graph to configure.
    */
   configureGraph(graph: IGraph): void {
-    this.defaultNodeStyle = new ShapeNodeStyle({
-      shape: 'ellipse',
-      fill: 'gray',
-      stroke: null
-    })
+    this.defaultNodeStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: 'gray', stroke: null })
     graph.nodeDefaults.style = this.defaultNodeStyle
 
-    this.defaultEdgeStyle = new PolylineEdgeStyle({
-      stroke: '3px gray'
-    })
+    this.defaultEdgeStyle = new PolylineEdgeStyle({ stroke: '3px gray' })
 
     graph.edgeDefaults.style = this.defaultEdgeStyle
 
-    graph.nodeDefaults.labels.style = new LabelStyle({
-      textSize: 8
-    })
+    graph.nodeDefaults.labels.style = new LabelStyle({ textSize: 8 })
 
     graph.nodeDefaults.size = new Size(10, 10)
 
@@ -389,11 +375,7 @@ export class DendrogramComponent {
    * @param color The color to be used
    */
   updateNodeStyle(node: INode, color: Color): void {
-    const updatedNodeStyle = new ShapeNodeStyle({
-      shape: 'ellipse',
-      fill: color,
-      stroke: null
-    })
+    const updatedNodeStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: color, stroke: null })
     this.dendrogramComponent.graph.setStyle(node, updatedNodeStyle)
   }
 

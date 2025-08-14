@@ -27,8 +27,10 @@
  **
  ***************************************************************************/
 import { Graph, GraphComponent, IGraph, IInputMode } from '@yfiles/yfiles'
+
 if (window.customElements) {
   const template = document.createElement('template')
+
   template.innerHTML = `
 <!-- include styles -->
 <!-- these will not interfere with any user defined styles as they are encapsulated in the shadow DOM  -->
@@ -40,6 +42,7 @@ if (window.customElements) {
 </style>
 <slot></slot>
 `
+
   /**
    * A custom element that displays a graph using a {@link GraphComponent}.
    * It reflects the GraphComponent's zoom property to an attribute.
@@ -50,36 +53,45 @@ if (window.customElements) {
     _graphComponent = null
     isInShadowRoot = false
     componentStyles = null
+
     /**
      * Lists for which attributes the attributeChangedCallback will be called.
      */
     static get observedAttributes() {
       return ['zoom']
     }
+
     /**
      * This will be called every time the element is inserted into the DOM.
      */
     connectedCallback() {
       // create a shadow root for this element "mode: 'open'" would work just as well.
       this._shadowRoot = this.attachShadow({ mode: 'closed' })
+
       // clone the template
       const stamped = template.content.cloneNode(true)
+
       // if we reconnect - we clean up the old component.
       if (this._graphComponent) {
-        this._graphComponent.cleanUp()
         this._graphComponent.graph = new Graph()
+        this._graphComponent.cleanUp()
       }
+
       this._graphComponent = new GraphComponent()
       this.isInShadowRoot = true
+
       stamped.appendChild(this.graphComponent.htmlElement)
+
       // append the template and the GraphComponent div to the shadow root so that they are encapsulated
       this._shadowRoot.appendChild(stamped)
+
       // reflect the value of the graphComponent's zoom property as an HTML attribute
       this.updateZoomAttribute()
       // listen to changes in the graphComponent's zoom property (which may happend e.g. after a
       // fitGraphBounds call) and update the corresponding HTML attribute accordingly
       this.graphComponent.addEventListener('zoom-changed', () => this.updateZoomAttribute())
     }
+
     /**
      * This will be called when an attribute was added, removed, updated, or replaced.
      *
@@ -102,36 +114,42 @@ if (window.customElements) {
           break
       }
     }
+
     /**
      * Gets the zoom factor of this element's associated graph component.
      */
     get zoom() {
       return this.graphComponent.zoom
     }
+
     /**
      * Sets the zoom factor of this element's associated graph component.
      */
     set zoom(value) {
       this.graphComponent.zoom = value
     }
+
     /**
      * Gets the input mode for this element's associated graph component.
      */
     get editMode() {
       return this.graphComponent.inputMode
     }
+
     /**
      * Sets the input mode for this element's associated graph component.
      */
     set editMode(value) {
       this.graphComponent.inputMode = value
     }
+
     /**
      * Gets the graph of this element's associated graph component.
      */
     get graph() {
       return this.graphComponent.graph
     }
+
     /**
      * Centers the graph of this element's associated graph component in said graph component's
      * visible area.
@@ -139,6 +157,7 @@ if (window.customElements) {
     fitGraphBounds() {
       this.graphComponent.fitGraphBounds()
     }
+
     /**
      * Toggles whether the children of this element should reside inside its shadow root or not.
      */
@@ -151,27 +170,32 @@ if (window.customElements) {
       }
       this.isInShadowRoot = !this.isInShadowRoot
     }
+
     /**
      * Sets the parent node for this element's associated graph Component and the corresponding
      * style children.
      */
     setParent(parent) {
       parent.appendChild(this.graphComponent.htmlElement)
+
       const styles = this.componentStyles
       for (let i = 0; i < styles.length; i++) {
         parent.appendChild(styles[i])
       }
     }
+
     /**
      * Reflects the associated graphComponent's zoom property as HTML attribute.
      */
     updateZoomAttribute() {
       this.setAttribute('zoom', this.graphComponent.zoom.toString())
     }
+
     get graphComponent() {
       return this._graphComponent
     }
   }
+
   // register the custom element with the browser
   window.customElements.define('graph-component', GraphComponentElement)
 }

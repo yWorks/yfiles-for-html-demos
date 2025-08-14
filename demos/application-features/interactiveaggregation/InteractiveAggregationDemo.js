@@ -39,6 +39,8 @@ import {
   INode,
   INodeStyle,
   InteriorNodeLabelModel,
+  LabelingScope,
+  LabelShape,
   LabelStyle,
   LayoutExecutor,
   License,
@@ -53,6 +55,7 @@ import {
   Size,
   Stroke
 } from '@yfiles/yfiles'
+
 import {
   AggregationGraphWrapper,
   EdgeReplacementPolicy
@@ -61,63 +64,84 @@ import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 LayoutExecutor.ensure()
+
 let graphComponent = null
+
 let aggregateGraph = null
+
 // selectors for shape and/or color
 const shapeSelector = (n) => n.style.shape
+
 const fillColorSelector = (n) => {
   const fill = n.style.fill
   return fill.value
 }
 const shapeAndFillSelector = (n) => new ShapeAndFill(shapeSelector(n), fillColorSelector(n))
+
 const grayBorder = new Stroke('#77776E', 2.0)
+
 // style factories for aggregation nodes
 const shapeStyle = (shape) =>
-  new ShapeNodeStyle({
-    fill: '#C7C7A6',
-    shape: shape,
-    stroke: grayBorder
-  })
+  new ShapeNodeStyle({ fill: '#C7C7A6', shape: shape, stroke: grayBorder })
+
 const fillStyle = (fillColor) =>
-  new ShapeNodeStyle({
-    fill: fillColor,
-    shape: ShapeNodeShape.ELLIPSE,
-    stroke: grayBorder
-  })
+  new ShapeNodeStyle({ fill: fillColor, shape: ShapeNodeShape.ELLIPSE, stroke: grayBorder })
+
 const shapeAndFillStyle = (shapeAndFill) =>
   new ShapeNodeStyle({
     fill: shapeAndFill.fillColor,
     shape: shapeAndFill.shape,
     stroke: grayBorder
   })
+
 async function run() {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('#graphComponent')
   // initialize the demo styles
   initDemoStyles(graphComponent.graph)
   graphComponent.graph.nodeDefaults.size = new Size(40, 40)
+
   // then build and layout the graph with the given data set
   buildGraph(graphComponent.graph, graphData)
+
   await runLayout()
+
   // Finally, enable the undo engine. This prevents undoing of the graph creation
   graphComponent.graph.undoEngineEnabled = true
+
   // create and configure a new AggregationGraphWrapper
   aggregateGraph = new AggregationGraphWrapper(graphComponent.graph)
+
   // set default label text sizes for aggregation labels
-  aggregateGraph.aggregationNodeDefaults.labels.style = new LabelStyle({ textSize: 32 })
-  aggregateGraph.aggregationEdgeDefaults.labels.style = new LabelStyle({ textSize: 24 })
+  aggregateGraph.aggregationNodeDefaults.labels.style = new LabelStyle({ textSize: 28 })
+  aggregateGraph.aggregationEdgeDefaults.labels.style = new LabelStyle({
+    textSize: 18,
+    shape: LabelShape.PILL,
+    backgroundFill: 'rgba(255,255,255,0.8)',
+    padding: 4
+  })
+
   // assign it to the graphComponent
   graphComponent.graph = aggregateGraph
+
   // disable edge cropping, so thick aggregation edges run smoothly into nodes
   graphComponent.graph.decorator.ports.edgePathCropper.hide()
+
   // don't create edges in both directions when replacing edges by aggregation edges
   aggregateGraph.edgeReplacementPolicy = EdgeReplacementPolicy.UNDIRECTED
+
   graphComponent.inputMode = new GraphViewerInputMode()
+
   configureContextMenu(graphComponent)
+
   registerAggregationCallbacks()
+
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Initializes the context menu.
  * @param graphComponent The graph component to which the context menu belongs
@@ -125,11 +149,13 @@ async function run() {
 function configureContextMenu(graphComponent) {
   const inputMode = graphComponent.inputMode
   inputMode.contextMenuItems = GraphItemTypes.NODE
+
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   inputMode.addEventListener('populate-item-context-menu', (evt) => {
     populateContextMenu(graphComponent, evt)
   })
 }
+
 /**
  * Fills the context menu with menu items based on the clicked node.
  */
@@ -138,12 +164,14 @@ function populateContextMenu(_sender, evt) {
   const node = evt.item
   // if the cursor is over a node select it, else clear selection
   updateSelection(node)
+
   // Create the context menu items
   const menuItems = []
   const selectedNodes = graphComponent.selection.nodes
   if (selectedNodes.size > 0) {
     // only allow aggregation operations on nodes that are not aggregation nodes already
     const aggregateAllowed = selectedNodes.some((n) => !aggregateGraph.isAggregationItem(n))
+
     if (aggregateAllowed) {
       // add aggregation menu items
       menuItems.push({
@@ -159,6 +187,7 @@ function populateContextMenu(_sender, evt) {
         action: () => aggregateSame(selectedNodes.toList(), shapeAndFillSelector, shapeAndFillStyle)
       })
     }
+
     const separateAllowed = selectedNodes.some((n) => aggregateGraph.isAggregationItem(n))
     if (separateAllowed) {
       menuItems.push({ label: 'Separate', action: () => separate(selectedNodes.toList()) })
@@ -177,6 +206,7 @@ function populateContextMenu(_sender, evt) {
       label: 'Aggregate All Nodes by Shape & Color',
       action: () => aggregateAll(shapeAndFillSelector, shapeAndFillStyle)
     })
+
     const separateAllowed = graphComponent.graph.nodes.some((node) =>
       aggregateGraph.isAggregationItem(node)
     )
@@ -190,10 +220,12 @@ function populateContextMenu(_sender, evt) {
       })
     }
   }
+
   if (menuItems.length > 0) {
     evt.contextMenu = menuItems
   }
 }
+
 /**
  * Updates the node selection state when the context menu is opened on the node
  * If the node is null, the selection is cleared.
@@ -217,8 +249,10 @@ function updateSelection(node) {
     }
   }
 }
+
 function registerAggregationCallbacks() {
   const graph = graphComponent.graph
+
   graph.addEventListener('node-created', (evt) => {
     if (aggregateGraph.isAggregationItem(evt.item)) {
       // add a label with the number of aggregated items to the new aggregation node
@@ -229,87 +263,97 @@ function registerAggregationCallbacks() {
       )
     }
   })
+
   graph.addEventListener('edge-created', (evt) => {
     const edge = evt.item
     if (!aggregateGraph.isAggregationItem(edge)) {
       return
     }
+
     // add a label with the number of all original aggregated edges represented by the new aggregation edge
     const aggregatedEdgesCount = aggregateGraph.getAllAggregatedOriginalItems(edge).size
+
     // set the thickness to the number of aggregated edges
     graph.setStyle(
       edge,
-      new PolylineEdgeStyle({
-        stroke: new Stroke(Color.GRAY, 1 + aggregatedEdgesCount)
-      })
+      new PolylineEdgeStyle({ stroke: new Stroke(Color.GRAY, Math.max(2, aggregatedEdgesCount)) })
     )
+
     if (aggregatedEdgesCount > 1) {
       graph.addLabel(edge, String(aggregatedEdgesCount), NinePositionsEdgeLabelModel.CENTER_ABOVE)
     }
   })
 }
+
 /**
  * Iterates through the given data set and creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id,
     parentId: (item) => item.parentId
-  }).nodeCreator.styleProvider = (item) => {
-    switch (item.tag) {
-      case 'b1':
-        return new ShapeNodeStyle({
-          fill: '#67b7dc',
-          stroke: '#617984',
-          shape: ShapeNodeShape.RECTANGLE
-        })
-      case 'b2':
-        return new ShapeNodeStyle({
-          fill: '#67b7dc',
-          stroke: '#617984',
-          shape: ShapeNodeShape.OCTAGON
-        })
-      case 'p1':
-        return new ShapeNodeStyle({
-          fill: '#177E89',
-          stroke: '#304F52',
-          shape: ShapeNodeShape.RECTANGLE
-        })
-      case 'p2':
-        return new ShapeNodeStyle({
-          fill: '#177E89',
-          stroke: '#304F52',
-          shape: ShapeNodeShape.OCTAGON
-        })
-      case 'p3':
-        return new ShapeNodeStyle({
-          fill: '#177E89',
-          stroke: '#304F52',
-          shape: ShapeNodeShape.DIAMOND
-        })
-      case 'l2':
-        return new ShapeNodeStyle({
-          fill: '#aa4586',
-          stroke: '#66485B',
-          shape: ShapeNodeShape.OCTAGON
-        })
-      case 'l3':
-        return new ShapeNodeStyle({
-          fill: '#aa4586',
-          stroke: '#66485B',
-          shape: ShapeNodeShape.DIAMOND
-        })
-    }
-  }
+  }).nodeCreator.styleProvider = (item) => nodeStyles[item.tag]
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
+const nodeStyles = {
+  blueRectangle: new ShapeNodeStyle({
+    fill: '#67b7dc',
+    stroke: '#617984',
+    shape: ShapeNodeShape.RECTANGLE
+  }),
+  blueOctagon: new ShapeNodeStyle({
+    fill: '#67b7dc',
+    stroke: '#617984',
+    shape: ShapeNodeShape.OCTAGON
+  }),
+  blueDiamond: new ShapeNodeStyle({
+    fill: '#67b7dc',
+    stroke: '#617984',
+    shape: ShapeNodeShape.DIAMOND
+  }),
+  greenRectangle: new ShapeNodeStyle({
+    fill: '#177E89',
+    stroke: '#304F52',
+    shape: ShapeNodeShape.RECTANGLE
+  }),
+  greenOctagon: new ShapeNodeStyle({
+    fill: '#177E89',
+    stroke: '#304F52',
+    shape: ShapeNodeShape.OCTAGON
+  }),
+  greenDiamond: new ShapeNodeStyle({
+    fill: '#177E89',
+    stroke: '#304F52',
+    shape: ShapeNodeShape.DIAMOND
+  }),
+  purpleRectangle: new ShapeNodeStyle({
+    fill: '#aa4586',
+    stroke: '#66485B',
+    shape: ShapeNodeShape.RECTANGLE
+  }),
+  purpleOctagon: new ShapeNodeStyle({
+    fill: '#aa4586',
+    stroke: '#66485B',
+    shape: ShapeNodeShape.OCTAGON
+  }),
+  purpleDiamond: new ShapeNodeStyle({
+    fill: '#aa4586',
+    stroke: '#66485B',
+    shape: ShapeNodeShape.DIAMOND
+  })
+}
+
 /**
  * For all passed nodes, aggregates all nodes that match the given node by the selector.
  * After the aggregation a layout calculation is run.
@@ -324,13 +368,16 @@ function aggregateSame(nodes, selector, styleFactory) {
     .groupBy(selector, (key, enumerable) => ({ key: key, enumerable: enumerable }))
     .map((grouping) => grouping.enumerable.first())
     .toList()
+
   distinctNodes.forEach((node) => {
     // aggregate all nodes of the same kind as the representing node
     const nodesOfSameKind = collectNodesOfSameKind(node, selector)
     aggregate(nodesOfSameKind, selector(node), styleFactory)
   })
+
   void runLayout()
 }
+
 /**
  * Collects all un-aggregated nodes that match the kind of node by the selector.
  * @param node The node to match
@@ -343,6 +390,7 @@ function collectNodesOfSameKind(node, selector) {
     .filter((n) => equals(selector(n), nodeKind))
     .toList()
 }
+
 function equals(o1, o2) {
   if (o1 == o2) {
     return true
@@ -357,6 +405,7 @@ function equals(o1, o2) {
   }
   return false
 }
+
 /**
  * Aggregates all nodes of the original graph by the selector and runs the layout.
  * Before aggregating the nodes, all existing aggregations are separated.
@@ -364,14 +413,17 @@ function equals(o1, o2) {
  */
 function aggregateAll(selector, styleFactory) {
   aggregateGraph.separateAll()
+
   graphComponent.graph.nodes
     .groupBy(selector, (key, enumerable) => ({ key: key, enumerable: enumerable }))
     .toList()
     .forEach((arg) => {
       aggregate(arg.enumerable.toList(), arg.key, styleFactory)
     })
+
   void runLayout()
 }
+
 /**
  * Aggregates the nodes to a new aggregation node.
  * Adds a label with the number of aggregated nodes and adds labels
@@ -381,10 +433,11 @@ function aggregateAll(selector, styleFactory) {
  * @param styleFactory The style factory to use for the aggregation node
  */
 function aggregate(nodes, key, styleFactory) {
-  const size = graphComponent.graph.nodeDefaults.size.multiply(1 + nodes.size * 0.2)
-  const layout = Rect.fromCenter(Point.ORIGIN, size)
+  const size = Math.sqrt(graphComponent.graph.nodeDefaults.size.width * nodes.size) * 5
+  const layout = Rect.fromCenter(Point.ORIGIN, new Size(size, size))
   aggregateGraph.aggregate(nodes, layout, styleFactory(key))
 }
+
 /**
  * Separates all nodes and runs the layout afterward.
  * @param nodes the nodes to separate
@@ -395,31 +448,42 @@ function separate(nodes) {
       aggregateGraph.separate(node)
     }
   })
+
   void runLayout()
 }
+
 /**
  * Runs an organic layout with edge labeling.
  */
 async function runLayout() {
   const layout = new OrganicLayout({
-    defaultMinimumNodeDistance: 60,
-    avoidNodeEdgeOverlap: true,
-    edgeLabelPlacement: 'integrated'
+    defaultMinimumNodeDistance: 80,
+    defaultPreferredEdgeLength: 100,
+    genericLabeling: {
+      enabled: true,
+      scope: LabelingScope.EDGE_LABELS,
+      defaultEdgeLabelingCosts: { ambiguousPlacementCost: 1.0 }
+    }
   })
+
   await graphComponent.applyLayoutAnimated(layout, '1s')
 }
+
 /**
  * Helper class for aggregation by shape and fill.
  */
 class ShapeAndFill {
   shape
   fillColor
+
   constructor(shape, fillColor) {
     this.shape = shape
     this.fillColor = fillColor
   }
+
   equals(obj) {
     return obj.shape === this.shape && obj.fillColor === this.fillColor
   }
 }
+
 run().then(finishLoading)

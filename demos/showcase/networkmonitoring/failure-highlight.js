@@ -29,48 +29,60 @@
 import {
   HighlightIndicatorManager,
   WebGLBeaconNodeIndicatorStyle,
+  WebGLGraphModelManager,
   WebGLHighlightIndicatorManager
 } from '@yfiles/yfiles'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
-const highlightIndicatorManager = BrowserDetection.webGL2
-  ? new WebGLHighlightIndicatorManager({
-      nodeStyle: new WebGLBeaconNodeIndicatorStyle({
-        shape: 'triangle',
-        color: '#cc0000',
-        pulseCount: 3,
-        pulseWidth: 3,
-        pulseDistance: 10,
-        leaveTransition: '1s scale',
-        timing: '1s ease-in-out 3 normal'
+
+let highlightIndicatorManager
+
+function createHighlightIndicatorManager(useWebGL) {
+  return useWebGL
+    ? new WebGLHighlightIndicatorManager({
+        nodeStyle: new WebGLBeaconNodeIndicatorStyle({
+          shape: 'triangle',
+          color: '#cc0000',
+          pulseCount: 3,
+          pulseWidth: 3,
+          pulseDistance: 10,
+          leaveTransition: '1s scale',
+          timing: '1s ease-in-out 3 normal'
+        })
       })
-    })
-  : new HighlightIndicatorManager()
+    : new HighlightIndicatorManager()
+}
+
 /**
  * Initializes failure highlighting for the given component.
  */
-export function installFailureHighlight(canvasComponent) {
+export function installFailureHighlight(component) {
   // First, check if the highlight is installed in another component
   uninstallFailureHighlight()
-  highlightIndicatorManager.install(canvasComponent)
+  highlightIndicatorManager = createHighlightIndicatorManager(
+    component.graphModelManager instanceof WebGLGraphModelManager
+  )
+  highlightIndicatorManager.install(component)
 }
+
 /**
  * Uninstalls failure highlighting from its component.
  */
 export function uninstallFailureHighlight() {
-  if (!highlightIndicatorManager.canvasComponent) {
-    return
+  if (highlightIndicatorManager?.canvasComponent) {
+    highlightIndicatorManager.uninstall(highlightIndicatorManager.canvasComponent)
   }
-  highlightIndicatorManager.uninstall(highlightIndicatorManager.canvasComponent)
+  highlightIndicatorManager = undefined
 }
+
 /**
  * Shows the given node highlighted.
  */
 export function addFailureHighlight(node) {
-  highlightIndicatorManager.items.add(node)
+  highlightIndicatorManager?.items.add(node)
 }
+
 /**
  * Stops highlighting the given node.
  */
 export function removeFailureHighlight(node) {
-  highlightIndicatorManager.items.remove(node)
+  highlightIndicatorManager?.items.remove(node)
 }

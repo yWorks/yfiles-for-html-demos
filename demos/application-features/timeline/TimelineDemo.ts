@@ -83,10 +83,7 @@ function initializeTimeline(): Timeline<Node> {
     inTimeframeBars: { fill: '#e0d5cc' },
     barHover: { stroke: '#662b00' },
     barSelect: { fill: '#ffc499' },
-    legend: {
-      even: { backgroundFill: '#ff6c00' },
-      odd: { backgroundFill: '#ffc499' }
-    }
+    legend: { even: { backgroundFill: '#ff6c00' }, odd: { backgroundFill: '#ffc499' } }
   }
 
   const timeline = new Timeline('timeline-component', getTimeEntry, timelineStyle, false, false)

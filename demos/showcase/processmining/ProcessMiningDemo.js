@@ -46,11 +46,24 @@ import {
   getProcessStepData,
   getProcessTransitionData
 } from './process-graph-extraction'
-import { installProcessItemVisual, updateTime } from './process-visualization/ProcessItemVisual'
-import { createSimulatedEventLog } from './simulation/simulator'
+import {
+  installProcessItemVisual,
+  ProcessItemVisual,
+  updateTime
+} from './process-visualization/ProcessItemVisual'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { checkWebGLSupport, finishLoading } from '@yfiles/demo-resources/demo-page'
 import { prepareProcessVisualization } from './process-visualization/process-visualization'
+import { showItemOverlay } from './item-overlay'
+
+let processItemVisual
+
+let caseData = []
+
+let infiniteLoopEnabled = false
+
+let graphComponent
+
 /**
  * Initializes the graph and wires up the UI
  */
@@ -60,8 +73,10 @@ async function run() {
     return
   }
   License.value = await fetchLicense()
+
   // stores the current time value in the animation
   let time = 0
+
   // this function provides the heat for a node or edge at a specific time
   // it is used to update the heat map or the node decoration
   const getHeat = (item) => {
@@ -70,52 +85,126 @@ async function run() {
     const data = item instanceof INode ? getProcessStepData(item) : getProcessTransitionData(item)
     return Math.min(1, data.heat.getValue(time) / data.capacity)
   }
-  // create a GraphComponent
-  const graphComponent = new GraphComponent('#graphComponent')
-  // create an input mode
-  graphComponent.inputMode = new GraphViewerInputMode()
-  // create and configure a default node and edge styles style
+
+  graphComponent = new GraphComponent('#graphComponent')
+  const inputMode = new GraphViewerInputMode()
+  inputMode.addEventListener('item-clicked', graphClickListener)
+  inputMode.addEventListener('canvas-clicked', graphClickListener)
+  graphComponent.inputMode = inputMode
+
   const graph = graphComponent.graph
   initializeDemoStyles(graph, getHeat)
-  // add the item visual to be able to render dots for the traversing events
-  installProcessItemVisual(graphComponent)
-  // run the simulation to create a random event log
-  // this line can be replaced with the import of a custom event log
-  const eventLog = createSimulatedEventLog()
-  // extract a graph from the event log
+
+  const eventLogRes = await fetch('./data/events.json')
+  const eventLog = await eventLogRes.json()
+  const caseDataRes = await fetch('./data/cases.json')
+  caseData = await caseDataRes.json()
+
   extractGraph(eventLog, graphComponent)
+
+  // add the item visual to be able to render dots for the traversing events
+  processItemVisual = installProcessItemVisual(graphComponent)
+
   // augment the graph with information about heat and traversing events
   const maxTime = prepareProcessVisualization(graph, eventLog)
+
   // add a heatmap visualization
   addHeatmap(graphComponent, getHeat)
+
   // wire up the controls
   const progressInput = document.querySelector('#progress')
-  const restartAnimationButton = document.querySelector('#restart-animation')
-  /**
-   * Callback function to transfer the progress to the visuals and the toolbar slider
-   */
-  function setProgress(progress) {
-    time = progress * maxTime
-    updateTime(progress * maxTime)
-    progressInput.value = String(progress * 100)
+  const animationControlButton = document.querySelector('#animation-control')
+  const infiniteLoopButton = document.querySelector('#infinite-loop')
+
+  const timeToSliderValue = (time) => (time / maxTime) * 100
+  const sliderValueToTime = (value) => (Number(value) * maxTime) / 100
+
+  // callback function passed to the animation controller to transfer the animation progress to the visuals and the toolbar slider
+  function setProgress(timeStamp) {
+    time = timeStamp
+    updateTime(time)
+    progressInput.value = String(timeToSliderValue(time))
+    updateProgressBarBackground()
+
+    // animation has finished but infinite loop button is enabled -> automatic restart
+    if (infiniteLoopEnabled && time === maxTime) {
+      progressInput.classList.add('hide-thumb')
+      setSingleCssClass(animationControlButton, 'demo-icon-yIconPause')
+      // wait for animation's last tick to complete
+      setTimeout(() => animationController.startAnimation(0))
+    }
+    // animation has finished -> no automatic restart, enable slider
+    else if (time === maxTime) {
+      progressInput.classList.remove('hide-thumb')
+      setSingleCssClass(animationControlButton, 'demo-icon-yIconReload')
+    }
+    // animation still running
+    else {
+      progressInput.classList.add('hide-thumb')
+    }
   }
+
   // initialize the animation and controls
   const animationController = new AnimationController(
     graphComponent,
     TimeSpan.fromSeconds(maxTime),
     setProgress
   )
+
   // set up the remainder of the UI
   progressInput.addEventListener('change', () => {
-    if (!animationController.running) {
-      setProgress(Number(progressInput.value) / 100)
-      graphComponent.invalidate()
+    if (animationController.running) return
+    time = sliderValueToTime(progressInput.value)
+    updateTime(time)
+    updateProgressBarBackground()
+    graphComponent.invalidate()
+    if (Number(progressInput.value) < 100) {
+      setSingleCssClass(animationControlButton, 'demo-icon-yIconPlay')
     }
   })
-  restartAnimationButton.addEventListener('click', () => animationController.restartAnimation())
-  // and start the playback of the simulation
-  void animationController.runAnimation()
+
+  animationControlButton.addEventListener('click', () => {
+    if (animationController.running) {
+      animationController.stopAnimation()
+      progressInput.classList.remove('hide-thumb')
+      setSingleCssClass(animationControlButton, 'demo-icon-yIconPlay')
+    } else if (Number(progressInput.value) === 100) {
+      animationController.startAnimation(0)
+      setSingleCssClass(animationControlButton, 'demo-icon-yIconPause')
+    } else {
+      animationController.startAnimation(sliderValueToTime(progressInput.value))
+      setSingleCssClass(animationControlButton, 'demo-icon-yIconPause')
+    }
+  })
+
+  infiniteLoopButton.addEventListener('click', () => {
+    if (infiniteLoopEnabled) {
+      infiniteLoopEnabled = false
+      infiniteLoopButton.classList.remove('infinite-loop-button-enabled')
+      infiniteLoopButton.textContent = 'Enable infinite loop'
+    } else {
+      infiniteLoopEnabled = true
+      infiniteLoopButton.classList.add('infinite-loop-button-enabled')
+      infiniteLoopButton.textContent = 'Infinite loop enabled'
+    }
+  })
+
+  function updateProgressBarBackground() {
+    const value = parseFloat(progressInput.value)
+    const min = parseFloat(progressInput.min)
+    const max = parseFloat(progressInput.max)
+    if (isNaN(value) || isNaN(min) || isNaN(max) || max === min) return
+    const val = ((value - min) / (max - min)) * 100
+    progressInput.style.setProperty('--val', `${val}`)
+  }
+
+  updateProgressBarBackground()
+  progressInput.classList.add('hide-thumb')
+
+  // start the simulation the first from the start or something
+  void animationController.startAnimation(0)
 }
+
 /**
  * Sets default styles for nodes and edges.
  * @param graph the current graph
@@ -126,21 +215,38 @@ function initializeDemoStyles(graph, getHeat) {
   function quantize(value) {
     return Math.floor(value * 30) / 30
   }
+
   graph.nodeDefaults.style = new ProcessingStepNodeStyleDecorator(
-    new ShapeNodeStyle({ fill: '#494949', stroke: 'none' }),
+    new ShapeNodeStyle({ shape: 'round-rectangle', cssClass: 'process-step-node' }),
     (node) => quantize(getHeat(node))
   )
   graph.nodeDefaults.size = new Size(150, 30)
   graph.nodeDefaults.labels.style = new LabelStyle({
-    textFill: '#d0d0d0',
+    textFill: '#ffffff',
     verticalTextAlignment: 'center',
     padding: { top: 0, right: 0, bottom: 0, left: 35 }
   })
   graph.nodeDefaults.labels.layoutParameter = new StretchNodeLabelModel().createParameter('center')
+
   graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '2px solid #33a',
-    targetArrow: '#33a triangle',
+    stroke: '2px solid #343e49',
+    targetArrow: '#343e49 triangle',
     smoothingLength: 10
   })
 }
-void run().then(finishLoading)
+
+/**
+ * Finds all items that are within the mouse click area and display their info as a graph overlay.
+ */
+function graphClickListener(evt) {
+  const clickedEntries = processItemVisual.getEntriesAtLocation(evt.location)
+  const viewCoordinates = graphComponent.worldToViewCoordinates([evt.location.x, evt.location.y])
+  showItemOverlay(clickedEntries, viewCoordinates, caseData)
+}
+
+function setSingleCssClass(element, cssClass) {
+  element.classList.remove(...element.classList)
+  element.classList.add(cssClass)
+}
+
+run().then(finishLoading)

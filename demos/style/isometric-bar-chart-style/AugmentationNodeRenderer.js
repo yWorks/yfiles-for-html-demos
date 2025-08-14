@@ -38,6 +38,7 @@ import {
   Rect,
   SimpleNode
 } from '@yfiles/yfiles'
+
 /**
  * An {@link IObjectRenderer} for nodes using a fixed {@link INodeStyle node style}
  * as well as the layout and tag provided by callback functions.
@@ -47,6 +48,7 @@ export class AugmentationNodeRenderer extends BaseClass(IObjectRenderer) {
   layoutProvider
   tagProvider
   dummyNode
+
   constructor(nodeStyle, layoutProvider, getNodeData) {
     super()
     this.layoutProvider = layoutProvider
@@ -54,21 +56,26 @@ export class AugmentationNodeRenderer extends BaseClass(IObjectRenderer) {
     this.nodeStyle = nodeStyle
     this.dummyNode = new SimpleNode()
   }
+
   configure(renderTag) {
     const originalNode = renderTag
     this.dummyNode.layout = this.layoutProvider(originalNode)
     this.dummyNode.tag = this.tagProvider(originalNode)
     return this.dummyNode
   }
+
   getBoundsProvider(renderTag) {
     return this.nodeStyle.renderer.getBoundsProvider(this.configure(renderTag), this.nodeStyle)
   }
+
   getHitTestable(renderTag) {
     return this.nodeStyle.renderer.getHitTestable(this.configure(renderTag), this.nodeStyle)
   }
+
   getVisibilityTestable(renderTag) {
     return IVisibilityTestable.ALWAYS
   }
+
   getVisualCreator(renderTag) {
     return this.nodeStyle.renderer.getVisualCreator(this.configure(renderTag), this.nodeStyle)
   }

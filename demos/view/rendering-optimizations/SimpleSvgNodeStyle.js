@@ -37,6 +37,7 @@ import {
   Rect,
   SvgVisual
 } from '@yfiles/yfiles'
+
 /**
  * A simple SVG node style consisting of one filled rect element.
  */
@@ -51,6 +52,7 @@ export class SimpleSvgNodeStyle extends NodeStyleBase {
     this.color = color
     this.color = color || Color.from('#AB2346')
   }
+
   /**
    * Creates the visual representation for the given node.
    * @param context The render context.
@@ -61,16 +63,20 @@ export class SimpleSvgNodeStyle extends NodeStyleBase {
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
     const color = this.color
+
     // create a rect element
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.setAttribute('width', `${width}`)
     rect.setAttribute('height', `${height}`)
     rect.setAttribute('fill', `rgba(${color.r},${color.g},${color.b},${color.a / 255})`)
+
     // set the translation using a utility method for improved performance
     SvgVisual.setTranslate(rect, x, y)
+
     // store the data with which we created the rect so we can efficiently update it later
     return SvgVisual.from(rect, { x, y, width, height })
   }
+
   /**
    * Updates the visual representation for the given node.
    * @param context The render context.
@@ -84,8 +90,10 @@ export class SimpleSvgNodeStyle extends NodeStyleBase {
     const { x, y, width, height } = node.layout
     // get the rect element
     const rect = oldVisual.svgElement
+
     // get the cache we stored in CreateVisual
     const cache = oldVisual.tag
+
     // update width and height only if necessary
     if (cache.width !== width || cache.height !== height) {
       rect.setAttribute('width', `${width}`)
@@ -93,14 +101,17 @@ export class SimpleSvgNodeStyle extends NodeStyleBase {
       cache.width = width
       cache.height = height
     }
+
     // update the location only if necessary
     if (cache.x !== x || cache.y !== y) {
       SvgVisual.setTranslate(rect, x, y)
       cache.x = x
       cache.y = y
     }
+
     return oldVisual
   }
+
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
    * Optimized implementation for a rectangular shape.
@@ -112,6 +123,7 @@ export class SimpleSvgNodeStyle extends NodeStyleBase {
   isHit(context, p, node) {
     return node.layout.toRect().contains(p, context.hitTestRadius)
   }
+
   /**
    * Gets the intersection of a line with the visual representation of the node.
    * Optimized implementation for a rectangular shape.
@@ -123,6 +135,7 @@ export class SimpleSvgNodeStyle extends NodeStyleBase {
   getIntersection(node, inner, outer) {
     return node.layout.toRect().findLineIntersection(inner, outer)
   }
+
   /**
    * Determines whether the provided point is geometrically inside the visual bounds of the node.
    * Optimized implementation for a rectangular shape.
@@ -133,6 +146,7 @@ export class SimpleSvgNodeStyle extends NodeStyleBase {
   isInside(node, point) {
     return node.layout.toRect().contains(point)
   }
+
   /**
    * Determines whether the visualization for the specified node is included in the marquee selection.
    * Optimized implementation for a rectangular shape.

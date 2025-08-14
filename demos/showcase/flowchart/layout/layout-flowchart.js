@@ -28,13 +28,16 @@
  ***************************************************************************/
 import { FlowchartLayout } from './FlowchartLayout'
 import { FlowchartLayoutData } from './FlowchartLayoutData'
+
 export async function layoutFlowchart(graphComponent, layoutOptions) {
   const flowchartLayout = new FlowchartLayout()
   flowchartLayout.allowFlatwiseEdges = layoutOptions.allowFlatwiseEdges
+
   const flowchartLayoutData = new FlowchartLayoutData()
   flowchartLayoutData.preferredPositiveBranchDirection = layoutOptions.positiveBranch
   flowchartLayoutData.preferredNegativeBranchDirection = layoutOptions.negativeBranch
   flowchartLayoutData.inEdgeGrouping = layoutOptions.inEdgeGrouping
+
   await graphComponent.applyLayoutAnimated(
     flowchartLayout,
     '0.5s',

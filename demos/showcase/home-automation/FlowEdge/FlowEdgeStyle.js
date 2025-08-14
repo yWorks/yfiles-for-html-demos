@@ -34,6 +34,7 @@ import {
   SvgVisualGroup,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * This class decorates the original `BezierEdgeStyleRenderer` in such a way that the resulting
  * SVG visuals stay almost the same, but gain an additional outline edge that follows
@@ -48,23 +49,28 @@ export class FlowEdgeStyle extends DelegatingEdgeStyle {
     outline: 'flow-edge__outline',
     animation: 'flow-edge__animation'
   }
+
   isDummyNewEdge
   isReconnecting
+
   constructor(delegatingStyle, mode) {
     super()
     this.delegatingStyle = delegatingStyle
     this.isDummyNewEdge = mode === 'newEdge'
     this.isReconnecting = mode === 'edgeReconnection'
   }
+
   getStyle(edge) {
     return this.delegatingStyle
   }
+
   static getGroupElement(visual) {
     if (!(visual instanceof SvgVisualGroup) || !(visual.svgElement instanceof SVGGElement)) {
       return null
     }
     return visual.svgElement
   }
+
   /**
    * Retrieves the <path> created by the original `createVisual` implementation.
    */
@@ -77,6 +83,7 @@ export class FlowEdgeStyle extends DelegatingEdgeStyle {
     )
     return path instanceof SVGPathElement ? path : null
   }
+
   /**
    * Retrieves the outline <path> created by our ` createVisual` override.
    */
@@ -87,6 +94,7 @@ export class FlowEdgeStyle extends DelegatingEdgeStyle {
     const path = visual.svgElement.querySelector(`path.${FlowEdgeStyle.cssClass.outline}`)
     return path instanceof SVGPathElement ? path : null
   }
+
   /**
    * Retrieves the <path> animation created by our ` createVisual` override.
    */
@@ -97,6 +105,7 @@ export class FlowEdgeStyle extends DelegatingEdgeStyle {
     const path = visual.svgElement.querySelector(`path.${FlowEdgeStyle.cssClass.animation}`)
     return path instanceof SVGPathElement ? path : null
   }
+
   /**
    * Applies BEM-style class modifiers to the provided element depending on the state
    * of the edge.
@@ -104,11 +113,14 @@ export class FlowEdgeStyle extends DelegatingEdgeStyle {
   setClassModifiers(context, element, edge) {
     const gc = context.canvasComponent instanceof GraphComponent ? context.canvasComponent : null
     const { sourceNode, targetNode } = edge
+
     const isEdgeSelected = gc?.selection.includes(edge)
     const isEdgeHovered = gc?.highlights.includes(edge)
+
     const isConnectedNodeSelected =
       (sourceNode && gc?.selection.includes(sourceNode)) ||
       (targetNode && gc?.selection.includes(targetNode))
+
     const modifiers = {
       selected: isEdgeSelected,
       'connected-node-selected': isConnectedNodeSelected,
@@ -117,10 +129,12 @@ export class FlowEdgeStyle extends DelegatingEdgeStyle {
       'dummy-new-edge': this.isDummyNewEdge,
       reconnecting: this.isReconnecting
     }
+
     for (const [modifier, enabled] of Object.entries(modifiers)) {
       element.classList.toggle(`${FlowEdgeStyle.cssClass.container}--${modifier}`, enabled ?? false)
     }
   }
+
   /**
    * Takes whatever visual is created by `BezierEdgeStyleRenderer`,
    * clones the `<path>` element from its group, sets a slightly thicker stroke
@@ -137,17 +151,22 @@ export class FlowEdgeStyle extends DelegatingEdgeStyle {
     if (!groupElement || !path) {
       return visual
     }
+
     this.setClassModifiers(context, groupElement, edge)
+
     const outline = path.cloneNode(true)
     const animation = path.cloneNode(true)
     path.insertAdjacentElement('beforebegin', outline)
     path.insertAdjacentElement('afterend', animation)
+
     groupElement.classList.add(FlowEdgeStyle.cssClass.container)
     path.classList.add(FlowEdgeStyle.cssClass.basePath)
     outline.classList.add(FlowEdgeStyle.cssClass.outline)
     animation.classList.add(FlowEdgeStyle.cssClass.animation)
+
     return visual
   }
+
   /**
    * While updating the visual, we retrieve the extra outline added earlier
    * and synchronize its path data with the original <paths>'s data.
@@ -161,14 +180,18 @@ export class FlowEdgeStyle extends DelegatingEdgeStyle {
     const path = FlowEdgeStyle.getOriginalPathElement(visual)
     const outline = FlowEdgeStyle.getPathOutlineElement(visual)
     const animation = FlowEdgeStyle.getPathAnimationElement(visual)
+
     if (path && outline && animation) {
       const pathData = path.getAttribute('d')
       pathData && outline.setAttribute('d', pathData)
       pathData && animation.setAttribute('d', pathData)
     }
+
     groupElement && this.setClassModifiers(context, groupElement, edge)
+
     return visual
   }
+
   cropPath(_edge, _sourceArrow, _targetArrow, path) {
     return path
   }

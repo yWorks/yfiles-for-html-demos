@@ -35,15 +35,8 @@ export function createNodes(graph: IGraph): void {
   })
   graph.createNode({
     layout: [140, 0, 100, 70],
-    tag: {
-      color: '#9e7cb5',
-      title: 'Long title',
-      showBadge: true
-    }
+    tag: { color: '#9e7cb5', title: 'Long title', showBadge: true }
   })
 
-  graph.createNode({
-    layout: [70, 150, 100, 70],
-    tag: null
-  })
+  graph.createNode({ layout: [70, 150, 100, 70], tag: null })
 }

@@ -39,6 +39,7 @@ import {
   PortCandidateValidity,
   Rect
 } from '@yfiles/yfiles'
+
 import { OrangePortCandidateProvider } from './OrangePortCandidateProvider'
 import { GreenPortCandidateProvider } from './GreenPortCandidateProvider'
 import { BluePortCandidateProvider } from './BluePortCandidateProvider'
@@ -50,18 +51,20 @@ import {
 } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
+
   // Disable automatic cleanup of unconnected ports since some nodes have a predefined set of ports
   graph.nodeDefaults.ports.autoCleanUp = false
-  graph.nodeDefaults.ports.style = new ShapePortStyle({
-    shape: 'ellipse'
-  })
+  graph.nodeDefaults.ports.style = new ShapePortStyle({ shape: 'ellipse' })
+
   // Initialize basic demo styles
   initDemoStyles(graph)
+
   // Create a default editor input mode and configure it
   const graphEditorInputMode = new GraphEditorInputMode({
     // Just for user convenience: disable node creation and clipboard operations
@@ -71,23 +74,25 @@ async function run() {
   })
   // and enable the undo feature.
   graph.undoEngineEnabled = true
+
   // Finally, set the input mode to the graph component.
   graphComponent.inputMode = graphEditorInputMode
   registerPortCandidateProvider(graph)
+
   // crop the edge path at the port and not at the node bounds
   graph.decorator.ports.edgePathCropper.addConstant(
-    new EdgePathCropper({
-      cropAtPort: true,
-      extraCropLength: 3
-    })
+    new EdgePathCropper({ cropAtPort: true, extraCropLength: 3 })
   )
+
   // draw edges in front of the nodes
   graphComponent.graphModelManager.edgeGroup.toFront()
   graphComponent.graphModelManager.hierarchicalNestingPolicy = HierarchicalNestingPolicy.NODES
+
   // create the graph
   createSampleGraph(graphComponent)
   graphComponent.updateContentBounds()
 }
+
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link IPortCandidateProvider} for each node.
@@ -100,6 +105,7 @@ function registerPortCandidateProvider(graph) {
   graph.decorator.nodes.portCandidateProvider.addFactory((node) => {
     // Obtain the tag from the edge
     const nodeTag = node.tag
+
     // Check if it is a known tag and choose the respective implementation
     if (typeof nodeTag !== 'string') {
       return null
@@ -116,18 +122,22 @@ function registerPortCandidateProvider(graph) {
     return null
   })
 }
+
 /**
  * Creates the sample graph for this demo.
  * @param graphComponent The given graphComponent
  */
 function createSampleGraph(graphComponent) {
   const graph = graphComponent.graph
+
   createNode(graph, 100, 100, 80, 30, 'demo-red', 'red', 'No Edge')
   createNode(graph, 350, 200, 80, 30, 'demo-red', 'red', 'No Edge')
   createNode(graph, 350, 100, 80, 30, 'demo-green', 'green', 'Green Only')
   createNode(graph, 100, 200, 80, 30, 'demo-green', 'green', 'Green Only')
+
   const blue1 = createNode(graph, 100, 300, 80, 30, 'demo-lightblue', 'blue', 'One   Port')
   graph.addPortAt(blue1, blue1.layout.center)
+
   const blue2 = createNode(graph, 350, 300, 100, 100, 'demo-lightblue', 'blue', 'Many Ports')
   const portCandidateProvider = IPortCandidateProvider.fromShapeGeometry(blue2, 0, 0.25, 0.5, 0.75)
   const candidates = portCandidateProvider.getAllSourcePortCandidates(
@@ -136,11 +146,14 @@ function createSampleGraph(graphComponent) {
   candidates
     .filter((portCandidate) => portCandidate.validity !== PortCandidateValidity.DYNAMIC)
     .forEach((portCandidate) => portCandidate.createPort(graphComponent.inputModeContext))
+
   // The orange node
   createNode(graph, 100, 400, 100, 100, 'demo-orange', 'orange', 'Dynamic Ports')
+
   // clear undo after initial graph loading
   graph.undoEngine.clear()
 }
+
 /**
  * Creates a sample node for this demo.
  * @param graph The given graph
@@ -158,11 +171,8 @@ function createNode(graph, x, y, w, h, colorSet, tag, labelText) {
     style: createDemoNodeStyle(colorSet),
     tag: tag
   })
-  graph.addLabel({
-    owner: node,
-    text: labelText,
-    style: createDemoNodeLabelStyle(colorSet)
-  })
+  graph.addLabel({ owner: node, text: labelText, style: createDemoNodeLabelStyle(colorSet) })
   return node
 }
+
 run().then(finishLoading)

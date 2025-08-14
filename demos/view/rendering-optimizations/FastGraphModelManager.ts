@@ -1349,8 +1349,8 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     const exporter = new SvgExport(exportRect, scale)
     const exportSvg = exporter.exportSvg(exportComponent)
     // Dispose of the component and remove its references to the graph
-    exportComponent.cleanUp()
     exportComponent.graph = new Graph()
+    exportComponent.cleanUp()
     return exportSvg
   }
 

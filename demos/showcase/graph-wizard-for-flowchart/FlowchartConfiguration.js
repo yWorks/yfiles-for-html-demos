@@ -84,6 +84,7 @@ import {
   createStartEdgeCreation,
   runLayout
 } from './Actions'
+
 /**
  * Utility class that configures a GraphComponent to support fast creation of flowchart diagrams.
  *
@@ -128,13 +129,17 @@ export class FlowchartConfiguration {
     FlowchartNodeType.UserMessage,
     FlowchartNodeType.NetworkMessage
   ]
+
   colorTheme
+
   _layoutOrientation
   layoutData = null
+
   constructor(layoutOrientation) {
     this._layoutOrientation = layoutOrientation
     this.colorTheme = ColorThemes[1]
   }
+
   createLayout(incremental) {
     const layout = incremental ? new IncrementalFlowchartLayout() : new FlowchartLayout()
     layout.layoutOrientation = this.layoutOrientation
@@ -142,10 +147,13 @@ export class FlowchartConfiguration {
     layout.minimumNodeDistance = 80
     return layout
   }
+
   get layoutOrientation() {
     return this._layoutOrientation
   }
+
   //region Graph Defaults
+
   /**
    * Initializes the style and decorator defaults for flowchart diagrams.
    * @param graphComponent The graph component to set the defaults to.
@@ -167,15 +175,19 @@ export class FlowchartConfiguration {
         zoomPolicy: 'world-coordinates'
       })
     )
+
     const graph = graphComponent.graph
     graph.decorator.edges.portHandleProvider.hide()
+
     const colorSet = this.colorTheme[0]
+
     // initialize node/edge/label defaults
     graph.nodeDefaults.style = new FlowchartNodeStyle(
       FlowchartNodeType.Process,
       Fill.from(colorSet.fill),
       new Stroke({ fill: colorSet.outline, thickness: 1.5 })
     )
+
     graph.nodeDefaults.size = new Size(100, 80)
     graph.nodeDefaults.shareStyleInstance = false
     graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
@@ -185,6 +197,7 @@ export class FlowchartConfiguration {
       padding: 2
     })
     graph.nodeDefaults.labels.shareStyleInstance = false
+
     graph.edgeDefaults.style = new PolylineEdgeStyle({
       stroke: '1.5px black',
       targetArrow: new Arrow({
@@ -195,17 +208,20 @@ export class FlowchartConfiguration {
         type: 'triangle'
       })
     })
-    graph.edgeDefaults.labels.style = new LabelStyle({
-      textFill: colorSet.labelText
-    })
+    graph.edgeDefaults.labels.style = new LabelStyle({ textFill: colorSet.labelText })
     graph.edgeDefaults.labels.layoutParameter = NinePositionsEdgeLabelModel.CENTER_BELOW
     graph.edgeDefaults.shareStyleInstance = false
+
     this.layoutData = new FlowchartLayoutData().create(graph)
+
     // enable undo
     graph.undoEngineEnabled = true
   }
+
   //endregion
+
   //region Initial Diagram
+
   /**
    * Initializes a new flowchart diagram with a single start node.
    * @param graphComponent The component containing the diagram.
@@ -246,8 +262,11 @@ export class FlowchartConfiguration {
     graphComponent.focus()
     graph.undoEngine?.clear()
   }
+
   //endregion
+
   //region Input Mode with Flowchart-Actions
+
   /**
    * Creates an editor input mode that disables many of the default actions and adds a
    * {@link GraphWizardInputMode} with custom actions to create flow charts.
@@ -261,9 +280,7 @@ export class FlowchartConfiguration {
       allowCreateNode: false,
       allowCreateBend: false,
       focusableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
-      createEdgeInputMode: {
-        showPortCandidates: ShowPortCandidates.END
-      },
+      createEdgeInputMode: { showPortCandidates: ShowPortCandidates.END },
       editLabelInputMode: {
         autoRemoveEmptyLabels: false,
         textEditorInputMode: {
@@ -278,26 +295,28 @@ export class FlowchartConfiguration {
           autoCommitOnFocusLost: true
         }
       },
-      marqueeSelectionInputMode: {
-        enabled: false
-      },
+      marqueeSelectionInputMode: { enabled: false },
       moveViewportInputMode: {
         // move viewport by dragging the empty canvas with the mouse
         beginRecognizer: EventRecognizers.MOUSE_DOWN
       }
     })
+
     const wizardMode = new GraphWizardInputMode(legendDiv)
     // mode.moveUnselectedItemsInputMode.priority = mode.moveViewportInputMode.priority - 1
     mode.moveUnselectedItemsInputMode.addEventListener('drag-finished', () =>
       runLayout(wizardMode, this.createLayout(true), this.layoutData)
     )
+
     this.addActions(wizardMode)
     mode.add(wizardMode)
+
     mode.keyboardInputMode.addKeyBinding('l', ModifierKeys.NONE, async () => {
       await this.runFromScratchLayout(graphComponent)
     })
     return mode
   }
+
   /**
    * {@link GraphWizardInputMode.addAction Adds} actions to the {link GraphWizardInputMode} that
    * are suited to support the creation of flowchart diagrams.
@@ -307,6 +326,7 @@ export class FlowchartConfiguration {
     mode.addAction(createSmartNavigate())
     mode.addAction(createSmartNavigateEdge('NextIncoming'))
     mode.addAction(createSmartNavigateEdge('NextOutgoing'))
+
     mode.addAction(this.createCreateSmartChild())
     mode.addAction(this.createCreateTwoChildren())
     mode.addAction(createStartEdgeCreation())
@@ -316,6 +336,7 @@ export class FlowchartConfiguration {
         () => this.layoutData
       )
     )
+
     mode.addAction(createEditLabel())
     mode.addAction(
       createChangeNodeColorSet(
@@ -331,14 +352,18 @@ export class FlowchartConfiguration {
     mode.addAction(this.createChangeFlowchartType())
     mode.addAction(this.createDelete())
   }
+
   //endregion
+
   //region Action Factory Methods
+
   /**
    * Creates a {@link WizardAction} to change the {@link FlowchartNodeType type} of the flowchart node.
    */
   createChangeFlowchartType() {
     return this.createChangeFlowchartTypeCore(this.createChangeFlowchartTypeHandler(true), false)
   }
+
   /**
    * Creates a {@link WizardAction} to select the {@link FlowchartNodeType type} of a newly created
    * flowchart node.
@@ -346,6 +371,7 @@ export class FlowchartConfiguration {
   createSelectInitialFlowchartType() {
     return this.createChangeFlowchartTypeCore(this.createChangeFlowchartTypeHandler(false), true)
   }
+
   /**
    * Creates a {@link WizardAction} to select or change the {@link FlowchartNodeType type} of a node.
    * @param handler The handler for assigning the chosen flowchart type.
@@ -371,6 +397,7 @@ export class FlowchartConfiguration {
       }
     )
   }
+
   createChangeFlowchartTypeHandler(refresh) {
     return (mode, item, type, args) => {
       let newType
@@ -380,16 +407,19 @@ export class FlowchartConfiguration {
       } else {
         newType = type
       }
+
       // set a new style so the type change is undoable
       const node = item
       const newStyle = node.style.clone()
       newStyle.type = newType
       mode.graph.setStyle(node, newStyle)
+
       if (refresh) {
         this.refreshFocusHighlights(mode, item)
       }
     }
   }
+
   createChangeFlowchartTypeButtons() {
     const typeToTooltip = (type) => {
       const name = type
@@ -402,23 +432,23 @@ export class FlowchartConfiguration {
       const type = this.flowchartTypes[i]
       pickerButtons.push({
         type: type,
-        style: {
-          type: 'icon',
-          iconPath: 'resources/icons/flowchart-' + type + '.svg'
-        },
+        style: { type: 'icon', iconPath: 'resources/icons/flowchart-' + type + '.svg' },
         tooltip: typeToTooltip(type)
       })
     }
     return pickerButtons
   }
+
   getFlowchartType(node) {
     return node.style.type
   }
+
   refreshFocusHighlights(mode, item) {
     mode.graphComponent.currentItem = null
     mode.graphComponent.currentItem = item
     mode.graphComponent.updateVisual()
   }
+
   /**
    * Creates a {@link WizardAction} to create two child nodes of a
    * {@link FlowchartNodeType.Decision decision} node.
@@ -439,6 +469,7 @@ export class FlowchartConfiguration {
       }
     )
   }
+
   /**
    * Creates a {@link WizardAction} to create a child node in a free direction.
    */
@@ -471,6 +502,7 @@ export class FlowchartConfiguration {
       }
     )
   }
+
   getOffsetForFreeSide(parent) {
     const offset = this.getOffsetFromParent(parent)
     if (this.layoutOrientation == LayoutOrientation.TOP_TO_BOTTOM) {
@@ -498,6 +530,7 @@ export class FlowchartConfiguration {
       }
     }
   }
+
   /**
    * Determines the horizontal and vertical offset required for child nodes of the given parent
    * node.
@@ -512,6 +545,7 @@ export class FlowchartConfiguration {
       return new Point(w + 20, h + 30)
     }
   }
+
   /**
    * Returns if node has a port at the provided node side.
    * @param node The node to check for ports.
@@ -535,6 +569,7 @@ export class FlowchartConfiguration {
     }
     return false
   }
+
   /**
    * Creates a {@link WizardAction} that deletes the
    * {@link GraphWizardInputMode.currentItem current item}.
@@ -570,6 +605,7 @@ export class FlowchartConfiguration {
       }
     )
   }
+
   /**
    * Starts a new (non-incremental) layout calculation from scratch.
    * @param graphComponent The GraphComponent containing the graph to layout.
@@ -584,7 +620,9 @@ export class FlowchartConfiguration {
       graphComponent: graphComponent
     }).start()
   }
+
   //endregion
+
   /**
    * Creates the steps to create a new node connected to the given parent node by a new edge and
    * {@link runLayout runs} a new layout calculation.
@@ -599,14 +637,13 @@ export class FlowchartConfiguration {
    */
   createAddNodeWithEdgeSteps(mode, parent, childOffset, skipLayout) {
     const steps = []
+
     // create node and edge (non-interactive)
     const step1 = {
       action: async (inData, wasCanceled) => {
         if (wasCanceled) {
           // if the next step (picker type selection) was canceled, cancel this step as well
-          return {
-            success: false
-          }
+          return { success: false }
         }
         const currentItem = mode.graphComponent.currentItem
         const graph = mode.graph
@@ -616,20 +653,19 @@ export class FlowchartConfiguration {
           INodeStyle.VOID_NODE_STYLE
         )
         const edge = graph.createEdge(parent, child)
+
         if (!skipLayout) {
           await runLayout(mode, this.createLayout(true), this.layoutData, [parent], [child])
         }
+
         // bring the new node into view with some reasonable insets
         await mode.graphComponent.ensureVisible(
           child.layout,
           new Insets(Math.min(child.layout.width, child.layout.height) / 2)
         )
+
         mode.graphComponent.currentItem = child
-        return {
-          success: true,
-          undoData: { currentItem, child, edge },
-          outData: { child, edge }
-        }
+        return { success: true, undoData: { currentItem, child, edge }, outData: { child, edge } }
       },
       undo: (undoData) => {
         const { currentItem, child, edge } = undoData
@@ -640,6 +676,7 @@ export class FlowchartConfiguration {
       }
     }
     steps.push(step1)
+
     const parentInputMode = mode.graphEditorInputMode
     const parentType = this.getFlowchartType(parent)
     if (FlowchartNodeType.Decision == parentType) {
@@ -652,11 +689,7 @@ export class FlowchartConfiguration {
             edge
           )
           const newLabel = labelPicked && edge.labels.size > 0 ? edge.labels.at(0) : null
-          return {
-            success: labelPicked,
-            undoData: newLabel,
-            outData: inData
-          }
+          return { success: labelPicked, undoData: newLabel, outData: inData }
         },
         undo: (inData) => {
           if (inData) {
@@ -666,6 +699,7 @@ export class FlowchartConfiguration {
       }
       steps.push(step2)
     }
+
     // select FlowchartNodeType
     const step3 = {
       action: async (inData, wasCanceled) => {
@@ -691,6 +725,7 @@ export class FlowchartConfiguration {
       }
     }
     steps.push(step3)
+
     // edit node label
     const step4 = {
       action: async (inData) => {
@@ -713,6 +748,7 @@ export class FlowchartConfiguration {
     steps.push(step4)
     return steps
   }
+
   /**
    * Creates a {@link WizardAction} for an edge that provides picker buttons for the edge label text.
    *
@@ -775,6 +811,7 @@ export class FlowchartConfiguration {
       }
     )
   }
+
   /**
    * Creates two nodes connected to the {@link GraphWizardInputMode.currentItem currentItem} by edges,
    * runs a layout calculation and interactively adds new labels for those new nodes and edges.
@@ -782,6 +819,7 @@ export class FlowchartConfiguration {
    */
   async addTwoChildNodes(mode) {
     const parent = mode.currentItem
+
     const offset = this.getOffsetFromParent(parent)
     let childOffset1 = new Point(0, 0)
     let childOffset2 = new Point(0, 0)
@@ -795,12 +833,14 @@ export class FlowchartConfiguration {
         childOffset2 = new Point(0, offset.y)
         break
     }
+
     // combine the steps to create the two nodes so they may be canceled all together
     const node1Steps = this.createAddNodeWithEdgeSteps(mode, parent, childOffset1, true)
     const node2Steps = this.createAddNodeWithEdgeSteps(mode, parent, childOffset2)
     node1Steps.push(...node2Steps)
     return handleMultipleSteps(node1Steps)
   }
+
   /**
    * Returns a {@link PreCondition} that checks if the {@link GraphWizardInputMode.currentItem currentItem}
    * is a node of the given {@link FlowchartNodeType}.
@@ -813,6 +853,7 @@ export class FlowchartConfiguration {
       mode.currentItem.style.type === type
   }
 }
+
 /**
  * A {@link FlowchartLayout} using an incremental {@link HierarchicalLayout}.
  */

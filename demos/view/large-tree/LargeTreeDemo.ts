@@ -187,10 +187,7 @@ async function createGraph(graphComponent: GraphComponent, layers: number): Prom
   graph.setNodeLayout(rootNode, Rect.fromCenter(graphComponent.viewport.center, rootNode.layout))
   graph.setStyle(rootNode, nodeStyles[0])
 
-  const fadeInAnimation = gmm.createFadeAnimation({
-    type: 'fade-out',
-    timing: '1s ease reverse'
-  })
+  const fadeInAnimation = gmm.createFadeAnimation({ type: 'fade-out', timing: '1s ease reverse' })
 
   extendTree(graphComponent, layers, childCount, queue, fadeInAnimation)
   graph.tag = { maxLayer: layers, childCount: childCount }
@@ -222,10 +219,7 @@ async function addLayer(graphComponent: GraphComponent): Promise<void> {
     })
 
   const gmm = graphComponent.graphModelManager as WebGLGraphModelManager
-  const fadeInAnimation = gmm.createFadeAnimation({
-    type: 'fade-out',
-    timing: '1s ease reverse'
-  })
+  const fadeInAnimation = gmm.createFadeAnimation({ type: 'fade-out', timing: '1s ease reverse' })
 
   const numberChildren = queue.length * childCount
 
@@ -364,15 +358,9 @@ async function reduceTree(graphComponent: GraphComponent, removeNodes: INode[]):
   }
 
   const gmm = graphComponent.graphModelManager as WebGLGraphModelManager
-  const nodeFadeOutAnimation = gmm.createFadeAnimation({
-    type: 'fade-out',
-    timing: '1s ease'
-  })
+  const nodeFadeOutAnimation = gmm.createFadeAnimation({ type: 'fade-out', timing: '1s ease' })
   // Fading out edges faster looks better
-  const edgeFadeOutAnimation = gmm.createFadeAnimation({
-    type: 'fade-out',
-    timing: '500ms ease'
-  })
+  const edgeFadeOutAnimation = gmm.createFadeAnimation({ type: 'fade-out', timing: '500ms ease' })
 
   removeNodes.forEach((node) => {
     gmm.setAnimations(node, [nodeFadeOutAnimation])

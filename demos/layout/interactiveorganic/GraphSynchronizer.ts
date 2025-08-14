@@ -40,25 +40,14 @@ type NodeCreatedMessage = {
   id: number
   layout: [number, number, number, number]
 }
-type NodeRemovedMessage = {
-  type: 'node-removed'
-  id: number
-}
+type NodeRemovedMessage = { type: 'node-removed'; id: number }
 type NodeLayoutChangedMessage = {
   type: 'node-layout-changed'
   id: number
   newLayout: [number, number, number, number]
 }
-type EdgeCreatedMessage = {
-  type: 'edge-created'
-  id: number
-  sourceId: number
-  targetId: number
-}
-type EdgeRemovedMessage = {
-  type: 'edge-removed'
-  id: number
-}
+type EdgeCreatedMessage = { type: 'edge-created'; id: number; sourceId: number; targetId: number }
+type EdgeRemovedMessage = { type: 'edge-removed'; id: number }
 type SynchronizeMessage =
   | NodeCreatedMessage
   | NodeRemovedMessage
@@ -138,12 +127,8 @@ export class GraphSynchronizer {
    * Returns the item with the given id. If this graph does not contain an item with this id,
    * it will throw an Error.
    */
-  public getItem(id: number): IModelItem {
-    const item = this.id2Item.get(id)
-    if (!item) {
-      throw new Error(`No item with id ${id}`)
-    }
-    return item
+  public getItem(id: number): IModelItem | undefined {
+    return this.id2Item.get(id)
   }
 
   /**
@@ -190,10 +175,7 @@ export class GraphSynchronizer {
     const id = this.getId(evt.item)
     this.item2Id.delete(evt.item)
     this.id2Item.delete(id)
-    return {
-      type: 'node-removed',
-      id
-    }
+    return { type: 'node-removed', id }
   }
 
   private createNodeLayoutChangedMessage = (node: INode): NodeLayoutChangedMessage => {
@@ -218,10 +200,7 @@ export class GraphSynchronizer {
     const id = this.getId(evt.item)
     this.item2Id.delete(evt.item)
     this.id2Item.delete(id)
-    return {
-      type: 'edge-removed',
-      id
-    }
+    return { type: 'edge-removed', id }
   }
 
   private handleMessage(message: SynchronizeMessage): void {
@@ -252,13 +231,15 @@ export class GraphSynchronizer {
   }
 
   private handleNodeRemoved(message: NodeRemovedMessage): void {
-    const item = this.getItem(message.id)
+    const item = this.getItem(message.id) as INode
     this.graph.remove(item)
   }
 
   private handleNodeLayoutChanged(message: NodeLayoutChangedMessage): void {
     const node = this.getItem(message.id) as INode
-    this.graph.setNodeLayout(node, Rect.from(message.newLayout))
+    if (node) {
+      this.graph.setNodeLayout(node, Rect.from(message.newLayout))
+    }
   }
 
   private handleEdgeCreated(message: EdgeCreatedMessage): void {
@@ -271,7 +252,7 @@ export class GraphSynchronizer {
   }
 
   private handleEdgeRemoved(message: EdgeRemovedMessage): void {
-    const item = this.getItem(message.id)
+    const item = this.getItem(message.id) as IEdge
     this.graph.remove(item)
   }
 }

@@ -66,8 +66,10 @@ import {
   SvgVisual,
   Visual
 } from '@yfiles/yfiles'
+
 import { SvgEdgeStyle } from './SvgEdgeStyle'
 import { SimpleSvgNodeStyle } from './SimpleSvgNodeStyle'
+
 /**
  * A {@link GraphModelManager} implementation that uses several optimizations
  * to improve the rendering performance especially for large graphs.
@@ -120,6 +122,7 @@ export class FastGraphModelManager extends GraphModelManager {
   fastEdgeRenderer = new AutoSwitchRenderer(GraphModelManager.DEFAULT_EDGE_RENDERER, this)
   fastLabelRenderer = new AutoSwitchRenderer(GraphModelManager.DEFAULT_LABEL_RENDERER, this)
   fastPortRenderer = new AutoSwitchRenderer(GraphModelManager.DEFAULT_PORT_RENDERER, this)
+
   // set default values
   _intermediateZoomThreshold = 1
   _overviewZoomThreshold = 0.1
@@ -131,68 +134,89 @@ export class FastGraphModelManager extends GraphModelManager {
   _drawEdgeCallback = null
   _drawNodeLabelCallback = null
   _drawEdgeLabelCallback = null
+
   // create the image renderer
   _imageRenderTreeElement = null
   imageRenderer
+
   // add a chain link to the graphComponent's lookup that customizes item hit test
   // private hitTestInputChainLink: HitTestInputChainLink | null = null
+
   _graphOptimizationMode = OptimizationMode.DEFAULT
+
   zoomChangedHandler
   graphChangedHandler
   iHitTester = null
+
   /**
    * Creates a new instance of this class.
    */
   constructor() {
     super()
     this._graphOptimizationMode = OptimizationMode.DEFAULT
+
     this.nodeRenderer = this.fastNodeRenderer
     this.edgeRenderer = this.fastEdgeRenderer
     this.nodeLabelRenderer = this.fastLabelRenderer
     this.edgeLabelRenderer = this.fastLabelRenderer
     this.portLabelRenderer = this.fastPortRenderer
+
     // initialize the intermediate and overview styles with default values
     this.overviewNodeStyle = new SimpleSvgNodeStyle()
     this.overviewEdgeStyle = new SvgEdgeStyle()
+
     // there is an intermediate level visualization for nodes and edges
     this.intermediateNodeStyle = new SimpleSvgNodeStyle()
     this.intermediateEdgeStyle = new SvgEdgeStyle()
     // we do not render ports and labels in other levels than the default level
     this.overviewLabelStyle = ILabelStyle.VOID_LABEL_STYLE
     this.overviewPortStyle = IPortStyle.VOID_PORT_STYLE
+
     this.imageRenderer = new ImageGraphRenderer(this)
+
     this.zoomChangedHandler = () => this.onGraphComponentZoomChanged()
     this.graphChangedHandler = () => this.onGraphComponentGraphChanged()
   }
+
   install(graphComponent, graph, contentGroup) {
     if (this.graphComponent != null) {
       throw new Error('This instance is already installed.')
     }
+
     super.install(graphComponent, graphComponent.graph, graphComponent.renderTree.contentGroup)
+
     // register to graphComponent events that could trigger a visualization change
     graphComponent.addEventListener('zoom-changed', this.zoomChangedHandler)
+
     this.iHitTester = graphComponent
       .getInputModeContextDecoratorFor(IHitTester)
       .addFactory((context) => new MyHitTestEnumerator(context.graph))
+
     if (graphComponent.graph != null) {
       // install rendering, if necessary
       this.updateRendering()
     }
   }
+
   uninstall(graphComponent) {
     // Remove image renderer. Note that this is installed in updateRendering on demand
     if (this.imageRenderTreeElement) {
       graphComponent.renderTree.remove(this.imageRenderTreeElement)
       this.imageRenderTreeElement = null
     }
+
     // unregister to graphComponent events that could trigger a visualization change
     graphComponent.removeEventListener('zoom-changed', this.zoomChangedHandler)
+
     graphComponent.lookup(ILookupDecorator).removeLookup(IInputModeContext, this.iHitTester)
+
     super.uninstall(graphComponent)
   }
+
   get graphComponent() {
     return this.canvasComponent
   }
+
   /**
    * Gets the optimization mode used to render the graph
    * if the zoom level is below {@link FastGraphModelManager.zoomThreshold}.
@@ -201,6 +225,7 @@ export class FastGraphModelManager extends GraphModelManager {
     this._graphOptimizationMode = value
     this.updateRendering()
   }
+
   /**
    * Sets the optimization mode used to render the graph
    * if the zoom level is below {@link FastGraphModelManager.zoomThreshold}.
@@ -208,90 +233,105 @@ export class FastGraphModelManager extends GraphModelManager {
   get graphOptimizationMode() {
     return this._graphOptimizationMode
   }
+
   /**
    * Sets the canvas object for image rendering.
    */
   set imageRenderTreeElement(value) {
     this._imageRenderTreeElement = value
   }
+
   /**
    * Gets the canvas object for image rendering.
    */
   get imageRenderTreeElement() {
     return this._imageRenderTreeElement
   }
+
   /**
    * Sets the intermediate node style.
    */
   set intermediateNodeStyle(value) {
     this.fastNodeRenderer.intermediateStyle = value
   }
+
   /**
    * Gets the intermediate node style.
    */
   get intermediateNodeStyle() {
     return this.fastNodeRenderer.intermediateStyle
   }
+
   /**
    * Sets the intermediate edge style.
    */
   set intermediateEdgeStyle(value) {
     this.fastEdgeRenderer.intermediateStyle = value
   }
+
   /**
    * Gets the intermediate edge style.
    */
   get intermediateEdgeStyle() {
     return this.fastEdgeRenderer.intermediateStyle
   }
+
   /**
    * Sets the overview node style.
    */
   set overviewNodeStyle(value) {
     this.fastNodeRenderer.overviewStyle = value
   }
+
   /**
    * Gets the overview node style.
    */
   get overviewNodeStyle() {
     return this.fastNodeRenderer.overviewStyle
   }
+
   /**
    * Sets the overview edge style.
    */
   set overviewEdgeStyle(value) {
     this.fastEdgeRenderer.overviewStyle = value
   }
+
   /**
    * Gets the overview edge style.
    */
   get overviewEdgeStyle() {
     return this.fastEdgeRenderer.overviewStyle
   }
+
   /**
    * Sets the overview label style.
    */
   set overviewLabelStyle(value) {
     this.fastLabelRenderer.overviewStyle = this.fastLabelRenderer.intermediateStyle = value
   }
+
   /**
    * Gets the overview label style.
    */
   get overviewLabelStyle() {
     return this.fastLabelRenderer.overviewStyle
   }
+
   /**
    * Sets the overview port style.
    */
   set overviewPortStyle(value) {
     this.fastPortRenderer.overviewStyle = this.fastPortRenderer.intermediateStyle = value
   }
+
   /**
    * Gets the overview port style.
    */
   get overviewPortStyle() {
     return this.fastPortRenderer.overviewStyle
   }
+
   /**
    * Sets the threshold below which the rendering is switched from
    * default rendering to the optimized intermediate variant.
@@ -299,6 +339,7 @@ export class FastGraphModelManager extends GraphModelManager {
   set intermediateZoomThreshold(value) {
     this._intermediateZoomThreshold = value
   }
+
   /**
    * Gets the threshold below which the rendering is switched from
    * default rendering to the optimized intermediate variant.
@@ -306,6 +347,7 @@ export class FastGraphModelManager extends GraphModelManager {
   get intermediateZoomThreshold() {
     return this._intermediateZoomThreshold
   }
+
   /**
    * Sets the threshold below which the rendering is switched from
    * intermediate rendering to the overview variant.
@@ -313,6 +355,7 @@ export class FastGraphModelManager extends GraphModelManager {
   set overviewZoomThreshold(value) {
     this._overviewZoomThreshold = value
   }
+
   /**
    * Gets the threshold below which the rendering is switched from
    * intermediate rendering to the overview variant.
@@ -320,6 +363,7 @@ export class FastGraphModelManager extends GraphModelManager {
   get overviewZoomThreshold() {
     return this._overviewZoomThreshold
   }
+
   /**
    * Sets the factor by which the zoom factor has to change in order
    * to refresh the pre-rendered canvas image, if {@link
@@ -330,6 +374,7 @@ export class FastGraphModelManager extends GraphModelManager {
   set refreshImageZoomFactor(value) {
     this._refreshImageZoomFactor = value
   }
+
   /**
    * Gets the factor by which the zoom factor has to change in order
    * to refresh the pre-rendered canvas image, if {@link
@@ -340,6 +385,7 @@ export class FastGraphModelManager extends GraphModelManager {
   get refreshImageZoomFactor() {
     return this._refreshImageZoomFactor
   }
+
   /**
    * Sets the factor that is used to calculate the size of
    * the pre-rendered image, if {@link FastGraphModelManager.graphOptimizationMode}
@@ -349,6 +395,7 @@ export class FastGraphModelManager extends GraphModelManager {
   set imageSizeFactor(value) {
     this._imageSizeFactor = value
   }
+
   /**
    * Gets the factor that is used to calculate the size of
    * the pre-rendered image, if {@link FastGraphModelManager.graphOptimizationMode}
@@ -358,6 +405,7 @@ export class FastGraphModelManager extends GraphModelManager {
   get imageSizeFactor() {
     return this._imageSizeFactor
   }
+
   /**
    * Sets the maximum size of the canvas if
    * {@link FastGraphModelManager.graphOptimizationMode} is set to
@@ -372,6 +420,7 @@ export class FastGraphModelManager extends GraphModelManager {
   set maximumCanvasSize(value) {
     this._maximumCanvasSize = value
   }
+
   /**
    * Gets the maximum size of the canvas if
    * {@link FastGraphModelManager.graphOptimizationMode} is set to
@@ -386,6 +435,7 @@ export class FastGraphModelManager extends GraphModelManager {
   get maximumCanvasSize() {
     return this._maximumCanvasSize
   }
+
   /**
    * Sets the callback to draw a node, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
@@ -397,6 +447,7 @@ export class FastGraphModelManager extends GraphModelManager {
   set drawNodeCallback(value) {
     this._drawNodeCallback = value
   }
+
   /**
    * Gets the callback to draw a node, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
@@ -408,6 +459,7 @@ export class FastGraphModelManager extends GraphModelManager {
   get drawNodeCallback() {
     return this._drawNodeCallback
   }
+
   /**
    * Sets the callback to draw an edge, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
@@ -419,6 +471,7 @@ export class FastGraphModelManager extends GraphModelManager {
   set drawEdgeCallback(value) {
     this._drawEdgeCallback = value
   }
+
   /**
    * Gets the callback to draw an edge, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
@@ -430,6 +483,7 @@ export class FastGraphModelManager extends GraphModelManager {
   get drawEdgeCallback() {
     return this._drawEdgeCallback
   }
+
   /**
    * Sets the callback to draw a node label, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
@@ -438,6 +492,7 @@ export class FastGraphModelManager extends GraphModelManager {
   set drawNodeLabelCallback(value) {
     this._drawNodeLabelCallback = value
   }
+
   /**
    * Gets the callback to draw a node label, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
@@ -446,6 +501,7 @@ export class FastGraphModelManager extends GraphModelManager {
   get drawNodeLabelCallback() {
     return this._drawNodeLabelCallback
   }
+
   /**
    * Sets the callback to draw an edge label, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
@@ -456,6 +512,7 @@ export class FastGraphModelManager extends GraphModelManager {
   set drawEdgeLabelCallback(value) {
     this._drawEdgeLabelCallback = value
   }
+
   /**
    * Gets the callback to draw an edge label, if {@link FastGraphModelManager.graphOptimizationMode}
    * is set to {@link OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK}.
@@ -466,6 +523,7 @@ export class FastGraphModelManager extends GraphModelManager {
   get drawEdgeLabelCallback() {
     return this._drawEdgeLabelCallback
   }
+
   /**
    * Sets whether or tno to re-create the graph visualization the next time the
    * {@link FastGraphModelManager.graphComponent} is rendered.
@@ -474,6 +532,7 @@ export class FastGraphModelManager extends GraphModelManager {
   set dirty(value) {
     this._dirty = value
   }
+
   /**
    * Gets whether or tno to re-create the graph visualization the next time the
    * {@link FastGraphModelManager.graphComponent} is rendered.
@@ -482,6 +541,7 @@ export class FastGraphModelManager extends GraphModelManager {
   get dirty() {
     return this._dirty
   }
+
   /**
    * Tells the renderers whether an image is used or default rendering.
    * `true`, if the image renderer should be used to render the graph.
@@ -498,12 +558,15 @@ export class FastGraphModelManager extends GraphModelManager {
         optimizationMode === OptimizationMode.SVG_IMAGE ||
         optimizationMode === OptimizationMode.DYNAMIC_CANVAS_WITH_ITEM_STYLES ||
         optimizationMode === OptimizationMode.DYNAMIC_CANVAS_WITH_DRAW_CALLBACK)
+
     this.fastNodeRenderer.shouldUseImage = value
     this.fastEdgeRenderer.shouldUseImage = value
     this.fastLabelRenderer.shouldUseImage = value
     this.fastPortRenderer.shouldUseImage = value
+
     return value
   }
+
   /**
    * Calls {@link updateEffectiveStyles}, {@link updateImageRenderer}, and {@link updateGraph} to
    * adjust the used styles and the rendering method (image or directly) based on the set
@@ -514,6 +577,7 @@ export class FastGraphModelManager extends GraphModelManager {
     this.updateGraph()
     this.updateImageRenderer()
   }
+
   /**
    * Sets the styles to use on the renderers depending on the current
    * graphOptimizationMode and the zoom level of the GraphComponent
@@ -524,6 +588,7 @@ export class FastGraphModelManager extends GraphModelManager {
     this.fastLabelRenderer.updateEffectiveStyle()
     this.fastPortRenderer.updateEffectiveStyle()
   }
+
   /**
    * Sets either an empty graph or {@link GraphComponent.graph this.graphComponent.graph}
    * as the graph to display in this instance.
@@ -544,6 +609,7 @@ export class FastGraphModelManager extends GraphModelManager {
       this.graph = this.graphComponent.graph
     }
   }
+
   /**
    * Installs the image renderer in the graphComponent if needed, or removes
    * it if not needed.
@@ -552,6 +618,7 @@ export class FastGraphModelManager extends GraphModelManager {
     if (!this.graphComponent) {
       return
     }
+
     const imageRendererNeeded = this.updateShouldUseImage()
     const renderTree = this.graphComponent.renderTree
     if (imageRendererNeeded && this.imageRenderTreeElement == null) {
@@ -565,12 +632,14 @@ export class FastGraphModelManager extends GraphModelManager {
       this.imageRenderTreeElement = null
     }
   }
+
   /**
    * Called when the {@link FastGraphModelManager.graphComponent}'s zoom factor changes.
    */
   onGraphComponentZoomChanged() {
     this.updateRendering()
   }
+
   /**
    * Called when the {@link FastGraphModelManager.graphComponent}'s graph instance changes.
    */
@@ -578,6 +647,7 @@ export class FastGraphModelManager extends GraphModelManager {
     this.updateRendering()
   }
 }
+
 /**
  * The optimization used to render the graph.
  *
@@ -602,6 +672,7 @@ export const OptimizationMode = {
    * Uses the default rendering code that delegates the rendering to the item styles.
    */
   DEFAULT: 0,
+
   /**
    * With this option, the graph visualization is created using the default rendering code.
    * However, subsequent updates are ignored. This makes panning very fast. However,
@@ -611,6 +682,7 @@ export const OptimizationMode = {
    * that rely on the actual item style.
    */
   STATIC: 1,
+
   /**
    * This option uses a level-of-detail approach to render graph items. In the overview level,
    * items are rendered with alternative styles. This can be used to assign simpler item styles
@@ -627,6 +699,7 @@ export const OptimizationMode = {
    * @see {@link FastGraphModelManager.overviewPortStyle}
    */
   LEVEL_OF_DETAIL: 2,
+
   /**
    * This option creates a static SVG image of the graph at zoom level 1 and uses this image
    * instead of calling the render code of the actual item styles.
@@ -638,6 +711,7 @@ export const OptimizationMode = {
    * big graphs.
    */
   SVG_IMAGE: 3,
+
   /**
    * This option creates a static image of the currently visible part of the graph, using HTML canvas.
    *
@@ -662,6 +736,7 @@ export const OptimizationMode = {
    * @see {@link FastGraphModelManager.drawEdgeLabelCallback}
    */
   DYNAMIC_CANVAS_WITH_DRAW_CALLBACK: 4,
+
   /**
    * This option creates a static image of the currently visible part of the graph, using HTML canvas.
    * The items are drawn using the item styles.
@@ -683,6 +758,7 @@ export const OptimizationMode = {
    * @see {@link FastGraphModelManager.drawEdgeLabelCallback}
    */
   DYNAMIC_CANVAS_WITH_ITEM_STYLES: 5,
+
   /**
    * This option exports an HTML canvas image of the complete graph and draws it into the graphComponent.
    * The item styles are used to draw the image.
@@ -692,6 +768,7 @@ export const OptimizationMode = {
    */
   STATIC_CANVAS: 6
 }
+
 /**
  * An {@link IObjectRenderer} implementation
  * that switches between default and optimized styles.
@@ -704,6 +781,7 @@ class AutoSwitchRenderer extends BaseClass(IObjectRenderer) {
   effectiveStyle = null
   _intermediateStyle = null
   _overviewStyle = null
+
   /**
    * Creates a new instance of AutoSwitchRenderer.
    * @param backingInstance The IObjectRenderer implementation
@@ -714,20 +792,25 @@ class AutoSwitchRenderer extends BaseClass(IObjectRenderer) {
     this.backingInstance = backingInstance
     this.manager = manager
   }
+
   get intermediateStyle() {
     return this._intermediateStyle
   }
+
   set intermediateStyle(value) {
     this._intermediateStyle = value
     this.updateEffectiveStyle()
   }
+
   get overviewStyle() {
     return this._overviewStyle
   }
+
   set overviewStyle(value) {
     this._overviewStyle = value
     this.updateEffectiveStyle()
   }
+
   updateEffectiveStyle() {
     const manager = this.manager
     if (
@@ -745,23 +828,28 @@ class AutoSwitchRenderer extends BaseClass(IObjectRenderer) {
       this.effectiveStyle = null
     }
   }
+
   getVisualCreator(item) {
     const style = this.effectiveStyle || item.style
     return style.renderer.getVisualCreator(item, style)
   }
+
   getBoundsProvider(item) {
     const style = this.effectiveStyle || item.style
     return style.renderer.getBoundsProvider(item, style)
   }
+
   getVisibilityTestable(item) {
     const style = this.effectiveStyle || item.style
     return style.renderer.getVisibilityTestable(item, style)
   }
+
   getHitTestable(item) {
     const style = this.effectiveStyle || item.style
     return style.renderer.getHitTestable(item, style)
   }
 }
+
 /**
  * Draws a pre-rendered image of the graph in canvas.
  */
@@ -775,12 +863,14 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     super()
     this.outer = outer
   }
+
   /**
    * Gets the graphComponent's graph.
    */
   get graph() {
     return this.outer.graphComponent.graph
   }
+
   /**
    * Creates the new visual.
    * @param context The context to be used
@@ -811,6 +901,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     }
     return visual
   }
+
   /**
    * Updates the current visual.
    * @param context The context to be used
@@ -842,6 +933,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     }
     return oldVisual
   }
+
   /**
    * Custom bounds calculation for image object.
    * This is necessary because the default bounds calculation is
@@ -886,6 +978,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     }
     return Rect.EMPTY
   }
+
   /**
    * Creates a visual that renders a static SVG image of the graph.
    */
@@ -898,6 +991,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     g.appendChild(svg)
     return new SvgVisual(g)
   }
+
   /**
    * Creates a visual that renders the currently visible part of the graph into a canvas
    * using draw callbacks.
@@ -911,12 +1005,14 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     this.drawSimpleCanvasImage(visual)
     return visual
   }
+
   /**
    * Updates the visual with the current viewport.
    */
   updateSimpleDynamicCanvasVisual(visual) {
     this.drawSimpleCanvasImage(visual)
   }
+
   /**
    * Creates a Visual that renders the currently visible part of the graph into a canvas
    * using the actual item styles.
@@ -934,6 +1030,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     })
     return visual
   }
+
   /**
    * Updates the visual with the current viewport.
    * @param oldVisual The last visual that was returned.
@@ -945,6 +1042,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
       graphComponent.invalidate()
     })
   }
+
   /**
    * Creates a canvas image containing the complete graph.
    */
@@ -952,22 +1050,29 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     const graphComponent = this.outer.graphComponent
     const zoom = graphComponent.zoom
     const exportRect = graphComponent.contentBounds
+
     const scale = this.getSuitableScale(graphComponent.contentBounds)
     const svgElement = this.exportRectToSvg(exportRect, scale)
     const dataUrl = SvgExport.encodeSvgDataUrl(SvgExport.exportSvgString(svgElement))
+
     const targetCanvasWidth = exportRect.width * scale
     const targetCanvasHeight = exportRect.height * scale
+
     const image = new Image()
     image.src = dataUrl
     image.width = targetCanvasWidth
     image.height = targetCanvasHeight
+
     const visual = new CanvasRenderVisual(0, zoom, this.outer.maximumCanvasSize)
+
     image.addEventListener('load', () => {
       visual.update(image, targetCanvasWidth, targetCanvasHeight, exportRect, graphComponent.zoom)
       graphComponent.invalidate()
     })
+
     return visual
   }
+
   /**
    * Draws the graph into a canvas and updates the given visual with the newly created canvas.
    * @param visual The given visual
@@ -978,6 +1083,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     const zoom = graphComponent.zoom
     const factor = this.outer.imageSizeFactor
     const contentRect = graphComponent.contentBounds
+
     // calculate the area to export in world coordinates
     let exportRect = new Rect(
       viewport.x - (factor - 1) * 0.5 * viewport.width,
@@ -985,6 +1091,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
       viewport.width * factor,
       viewport.height * factor
     )
+
     // export intersection of desired exportRect and contentRect
     exportRect = new Rect(
       new Point(Math.max(exportRect.x, contentRect.x), Math.max(exportRect.y, contentRect.y)),
@@ -993,9 +1100,11 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
         Math.min(exportRect.bottomRight.y, contentRect.bottomRight.y)
       )
     )
+
     // calculate the size of the target image in view coordinates
     const targetWidth = exportRect.width * zoom
     const targetHeight = exportRect.height * zoom
+
     // calculate the scale to draw the graph in world coordinates into the target image
     const scaleX = targetWidth / exportRect.width
     const scaleY = targetHeight / exportRect.height
@@ -1003,32 +1112,43 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     if (scale <= 0 || Number.isNaN(scale)) {
       scale = 1
     }
+
     // create the canvas element
     const canvas = window.document.createElement('canvas')
+
     // set the canvas size to the target size
     canvas.width = targetWidth
     canvas.height = targetHeight
+
     const canvasContext = canvas.getContext('2d')
     canvasContext.save()
+
     // set the scale and translate so we can draw in the world coordinate system
     canvasContext.scale(scale, scale)
     canvasContext.translate(-exportRect.x, -exportRect.y)
+
     // draw the graph items in world coordinates
     this.graph.edges.forEach((edge) => {
       this.drawEdge(edge, canvasContext)
     })
+
     this.graph.nodes.forEach((node) => {
       this.drawNode(node, canvasContext)
     })
+
     this.graph.nodeLabels.forEach((label) => {
       this.drawNodeLabel(label, canvasContext)
     })
+
     this.graph.edgeLabels.forEach((label) => {
       this.drawEdgeLabel(label, canvasContext)
     })
+
     canvasContext.restore()
+
     visual.update(canvas, targetWidth, targetHeight, exportRect, zoom)
   }
+
   /**
    * Draws a node using the given context.
    * @param node The node to be drawn
@@ -1043,6 +1163,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
       canvasContext.fillRect(layout.x, layout.y, layout.width, layout.height)
     }
   }
+
   /**
    * Draws an edge using the given context.
    * @param edge The edge to be drawn
@@ -1072,6 +1193,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
       canvasContext.stroke()
     }
   }
+
   /**
    * Draws a node label using the given context.
    * @param label The node label to be drawn
@@ -1082,6 +1204,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
       this.outer.drawNodeLabelCallback(label, canvasContext)
     }
   }
+
   /**
    * Draws an edge label using the given context.
    * @param label The edge label to be drawn
@@ -1092,6 +1215,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
       this.outer.drawEdgeLabelCallback(label, canvasContext)
     }
   }
+
   /**
    * Draws the graph into an image using the item styles. Calls the given callback if finished.
    * @param callback The callback to call if the image has
@@ -1103,6 +1227,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     const zoom = graphComponent.zoom
     const factor = this.outer.imageSizeFactor
     const contentRect = graphComponent.contentBounds
+
     // calculate the area to export in world coordinates
     let exportRect = new Rect(
       viewport.x - (factor - 1) * 0.5 * viewport.width,
@@ -1110,6 +1235,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
       viewport.width * factor,
       viewport.height * factor
     )
+
     // export intersection of desired exportRect and contentRect
     exportRect = new Rect(
       new Point(Math.max(exportRect.x, contentRect.x), Math.max(exportRect.y, contentRect.y)),
@@ -1118,28 +1244,35 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
         Math.min(exportRect.bottomRight.y, contentRect.bottomRight.y)
       )
     )
+
     // calculate the size of the target image in view coordinates
     const targetWidth = exportRect.width * zoom
     const targetHeight = exportRect.height * zoom
+
     // calculate the scale to draw the graph in world coordinates into the target image
     const scaleX = targetWidth / exportRect.width
     const scaleY = targetHeight / exportRect.height
     let scale = Math.min(scaleX, scaleY)
+
     if (scale <= 0 || Number.isNaN(scale)) {
       scale = 1
     }
+
     // export the graph to svg
     const svgElement = this.exportRectToSvg(exportRect, scale)
     const dataUrl = SvgExport.encodeSvgDataUrl(SvgExport.exportSvgString(svgElement))
+
     const image = new Image()
     image.src = dataUrl
     image.width = targetWidth
     image.height = targetHeight
+
     // invoke the callback if the image is loaded
     image.addEventListener('load', () => {
       callback(image, targetWidth, targetHeight, exportRect)
     })
   }
+
   /**
    * Exports the given area of the graphComponent into an SVG element with the given scale factor.
    * @param exportRect The area to be exported
@@ -1151,10 +1284,11 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     const exporter = new SvgExport(exportRect, scale)
     const exportSvg = exporter.exportSvg(exportComponent)
     // Dispose of the component and remove its references to the graph
-    exportComponent.cleanUp()
     exportComponent.graph = new Graph()
+    exportComponent.cleanUp()
     return exportSvg
   }
+
   /**
    * Calculates a suitable scale for the given area, respecting {@link FastGraphModelManager.maximumCanvasSize}.
    * @param exportRect The area to be exported
@@ -1162,8 +1296,10 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
    */
   getSuitableScale(exportRect) {
     const maxSize = this.outer.maximumCanvasSize
+
     const scaleX = exportRect.width > maxSize.width ? maxSize.width / exportRect.width : 1
     const scaleY = exportRect.height > maxSize.height ? maxSize.height / exportRect.height : 1
+
     let scale = Math.min(scaleX, scaleY)
     if (scale <= 0 || Number.isNaN(scale)) {
       scale = 1
@@ -1171,6 +1307,7 @@ class ImageGraphRenderer extends BaseClass(IVisualCreator, IBoundsProvider) {
     return scale
   }
 }
+
 /**
  * A render visual that draws a given canvas element in canvas.
  */
@@ -1180,6 +1317,7 @@ class CanvasRenderVisual extends HtmlCanvasVisual {
   maxCanvasSize
   initialArea = new Rect(new Point(0, 0), new Size(0, 0))
   canvas
+
   /**
    * Creates a new CanvasRenderVisual instance.
    * @param refreshImageZoomFactor The factor by which the zoom factor has to change
@@ -1193,6 +1331,7 @@ class CanvasRenderVisual extends HtmlCanvasVisual {
     this.maxCanvasSize = maxCanvasSize
     this.canvas = document.createElement('canvas')
   }
+
   /**
    * Paints onto the context using HTML Canvas operations.
    * @param context The context to paint on
@@ -1207,6 +1346,7 @@ class CanvasRenderVisual extends HtmlCanvasVisual {
       this.initialArea.height
     )
   }
+
   /**
    * Returns whether the visual needs an update because the zoom level or the viewport has
    * changed beyond the thresholds defined in {@link FastGraphModelManager.refreshImageZoomFactor}
@@ -1233,6 +1373,7 @@ class CanvasRenderVisual extends HtmlCanvasVisual {
       bry > this.initialArea.bottomRight.y
     )
   }
+
   /**
    * Updates the visual with the new image data.
    * @param image The image or canvas to render in this visual.
@@ -1257,6 +1398,7 @@ class CanvasRenderVisual extends HtmlCanvasVisual {
     canvasContext.drawImage(image, 0, 0, w, h)
   }
 }
+
 /**
  * Enumerates all graph elements of a given graph for hit testing.
  */
@@ -1270,6 +1412,7 @@ class MyHitTestEnumerator extends BaseClass(IHitTester) {
     super()
     this.graph = graph
   }
+
   /**
    * Enumerates the hits for the given location.
    * @param context The context to perform the hit

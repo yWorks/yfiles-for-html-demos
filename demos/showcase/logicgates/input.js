@@ -38,6 +38,7 @@ import {
 import { getNodeHighlightInfo } from './NodeHighlightInfo'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
 import { runLayout } from './logicgates-layout'
+
 /**
  * Creates the input mode to highlight source and target ports on hover and configures
  * drag and drop behavior.
@@ -53,14 +54,18 @@ export function createInputMode(graphComponent) {
     // don't allow moving unselected items
     moveUnselectedItemsInputMode: { enabled: false }
   })
+
   // allow reversed edge creation depending on what kind of port the drag starts
   mode.createEdgeInputMode.edgeDirectionPolicy = EdgeDirectionPolicy.DETERMINE_FROM_PORT_CANDIDATES
   // allow edge creation by dragging from anywhere on a node instead of only from port candidates
   mode.createEdgeInputMode.startOverCandidateOnly = false
   mode.createEdgeInputMode.priority = 45
   mode.moveSelectedItemsInputMode.priority = 40
+
   // layout the graph on edge creation if auto-layout is checked
+
   const autoLayout = document.querySelector('#auto-layout-checkbox')
+
   mode.createEdgeInputMode.addEventListener('edge-created', () => {
     if (autoLayout.checked) {
       // wait for next frame to make sure the gesture has completely finished
@@ -69,6 +74,7 @@ export function createInputMode(graphComponent) {
       }, 0)
     }
   })
+
   mode.addEventListener('edge-ports-changed', () => {
     if (autoLayout.checked) {
       // wait for next frame to make sure the gesture has completely finished
@@ -77,9 +83,11 @@ export function createInputMode(graphComponent) {
       }, 0)
     }
   })
+
   // we want to get reports of the mouse being hovered over nodes and edges
   // first enable queries
   mode.itemHoverInputMode.enabled = true
+
   // set the items to be reported
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
   // whenever the currently hovered item changes call our method
@@ -89,6 +97,7 @@ export function createInputMode(graphComponent) {
       highlightInfo.sourceHighlight = false
       highlightInfo.targetHighlight = false
     }
+
     if (item instanceof INode) {
       const highlightInfo = getNodeHighlightInfo(item)
       highlightInfo.sourceHighlight = true
@@ -96,11 +105,15 @@ export function createInputMode(graphComponent) {
     }
     graphComponent.invalidate()
   })
+
   configureNodeDropInputMode(mode)
+
   graphComponent.inputMode = mode
+
   // use two finger panning to allow easier editing with touch gestures
   configureTwoPointerPanning(graphComponent)
 }
+
 /**
  * Creates a new node drop input mode and configure the drop be
  */
@@ -112,10 +125,12 @@ function configureNodeDropInputMode(mode) {
     // by default the mode available in GraphEditorInputMode is disabled, so first enable it
     enabled: true
   })
+
   const originalNodeCreator = mode.nodeDropInputMode.itemCreator
   mode.nodeDropInputMode.itemCreator = (context, graph, draggedNode, dropTarget, point) => {
     if (draggedNode instanceof INode) {
       const modelItem = new SimpleNode({ style: draggedNode.style, layout: draggedNode.layout })
+
       const newNode = originalNodeCreator(context, graph, modelItem, dropTarget, point)
       // copy the ports
       for (const port of draggedNode.ports) {

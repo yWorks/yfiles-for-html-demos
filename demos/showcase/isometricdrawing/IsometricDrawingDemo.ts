@@ -142,11 +142,7 @@ function configureGraphModelManager(graphComponent: GraphComponent): void {
 function initializeFolding(): void {
   const manager = new FoldingManager(graphComponent.graph)
   manager.folderNodeConverter = new FolderNodeConverter({
-    folderNodeDefaults: {
-      copyLabels: true,
-      shareStyleInstance: false,
-      size: [210, 120]
-    }
+    folderNodeDefaults: { copyLabels: true, shareStyleInstance: false, size: [210, 120] }
   })
   manager.foldingEdgeConverter = new FoldingEdgeConverter({
     foldingEdgeDefaults: { copyLabels: true }
@@ -202,9 +198,7 @@ function runHierarchicalLayout(): Promise<void> {
 }
 
 function runOrthogonalLayout(): Promise<void> {
-  const layout = new OrthogonalLayout({
-    gridSpacing: 20
-  })
+  const layout = new OrthogonalLayout({ gridSpacing: 20 })
 
   const layoutData = new OrthogonalLayoutData({
     edgeLabelPreferredPlacements: new EdgeLabelPreferredPlacement({
@@ -245,10 +239,7 @@ async function runLayout(layout: ILayoutAlgorithm, layoutData: LayoutData): Prom
 function initializeGraph(graph: IGraph): void {
   graph.nodeDefaults.style = new IsometricNodeStyle()
   graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.BOTTOM_LEFT
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '2px #444',
-    orthogonalEditing: true
-  })
+  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '2px #444', orthogonalEditing: true })
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel(10).createRatioParameter()
   graph.groupNodeDefaults.labels.layoutParameter = new StretchNodeLabelModel({
     padding: 10

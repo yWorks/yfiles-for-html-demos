@@ -27,10 +27,12 @@
  **
  ***************************************************************************/
 import { ICanvasContext, IPort, Point, PortStyleBase, Rect } from '@yfiles/yfiles'
+
 export class FlowNodePortStyle extends PortStyleBase {
   static size = 12
   static nodeMargin = 3
   static nodeReservedWidthForPort = FlowNodePortStyle.size / 2 + FlowNodePortStyle.nodeMargin
+
   /**
    * Creates a visual for the dummy "port" that will be rendered as part of node visual
    * to bypass DnD limitations. (We can't render actual ports when preparing nodes
@@ -42,14 +44,17 @@ export class FlowNodePortStyle extends PortStyleBase {
     const outerRadius = size / 2
     const innerRadius = size / 2 / 2 + 0.5
     const color = isConnected ? 'rgb(0, 0, 0)' : 'rgb(153, 153, 153)'
+
     const location = {
       left: new Point(0, nodeBounds.height / 2),
       right: new Point(nodeBounds.width, nodeBounds.height / 2)
     }[side]
     const { x, y } = location
+
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const outer = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     const inner = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
+
     outer.setAttribute('cx', String(x))
     outer.setAttribute('cy', String(y))
     outer.setAttribute('rx', String(outerRadius))
@@ -57,16 +62,20 @@ export class FlowNodePortStyle extends PortStyleBase {
     outer.setAttribute('fill', 'rgb(255, 255, 255)')
     outer.setAttribute('stroke', color)
     outer.setAttribute('stroke-width', '1')
+
     inner.setAttribute('cx', String(x))
     inner.setAttribute('cy', String(y))
     inner.setAttribute('rx', String(innerRadius))
     inner.setAttribute('ry', String(innerRadius))
     inner.setAttribute('fill', color)
+
     group.setAttribute('style', 'cursor: crosshair')
     group.appendChild(outer)
     group.appendChild(inner)
+
     return group
   }
+
   static updateDummyPortElement({ element, nodeBounds, side }) {
     const location = {
       left: new Point(0, nodeBounds.height / 2),
@@ -78,12 +87,14 @@ export class FlowNodePortStyle extends PortStyleBase {
       e.setAttribute('cy', String(y))
     })
   }
+
   /**
    * The actual visual is rendered as part of the accompanying node.
    */
   createVisual() {
     return null
   }
+
   getBounds(_context, port) {
     const { size } = FlowNodePortStyle
     return Rect.fromCenter(port.location, [size, size])

@@ -28,19 +28,24 @@
  ***************************************************************************/
 import { ConnectedComponents, CycleEdges, Mapper } from '@yfiles/yfiles'
 import { getConnectionData, getEntityData, setConnectionData, setEntityData } from '../entity-data'
+
 /**
  * Scans the graph for cycles that only contain persons, phone numbers and addresses.
  */
 export function detectBankFraud(graphComponent) {
   const graph = graphComponent.graph
+
   const fraudsterNodes = []
+
   resetTags(graphComponent)
+
   // run the algorithm on the filtered graph
   const result = new CycleEdges({
     directed: false,
     // only consider "non-bank branch" nodes to avoid finding cycles other than fraud cycles
     subgraphNodes: (node) => getEntityData(node).type !== 'Bank Branch'
   }).run(graph)
+
   for (const edge of result.edges) {
     const source = edge.sourceNode
     const target = edge.targetNode
@@ -48,6 +53,7 @@ export function detectBankFraud(graphComponent) {
     const targetEntityData = getEntityData(target)
     const sourceType = sourceEntityData.type
     const targetType = targetEntityData.type
+
     if (
       (sourceType === 'Account Holder' ||
         sourceType === 'Phone Number' ||
@@ -61,8 +67,10 @@ export function detectBankFraud(graphComponent) {
       updateEdgeFraudTag(edge, true)
     }
   }
+
   return fraudsterNodes
 }
+
 /**
  * Checks in each connected component if the same persons are involved in more than one accident
  * and then checks if some of these persons have the same lawyer or doctor.
@@ -70,10 +78,12 @@ export function detectBankFraud(graphComponent) {
 export function detectInsuranceFraud(graphComponent) {
   const graph = graphComponent.graph
   resetTags(graphComponent)
+
   const fraudsterNodes = []
   const result = new ConnectedComponents().run(graph)
   result.components.forEach((component) => {
     const node2Accidents = new Mapper()
+
     let involvedAccidents = 0
     component.nodes.forEach((node) => {
       const entityData = getEntityData(node)
@@ -81,6 +91,7 @@ export function detectInsuranceFraud(graphComponent) {
         involvedAccidents++
       }
     })
+
     // if the person is involved in only one accident => no fraud
     if (involvedAccidents > 1) {
       const suspiciousPersons = []
@@ -88,13 +99,16 @@ export function detectInsuranceFraud(graphComponent) {
       const doctors = []
       const lawyerSet = new Set()
       const doctorSet = new Set()
+
       for (const node of component.nodes) {
         const entityData = getEntityData(node)
         if (entityData.type === 'Participant') {
           const accidents = []
+
           // determine if the person is involved in more than one accident
           for (const edge of graph.outEdgesAt(node)) {
             const targetNode = edge.targetNode
+
             const targetEntityData = getEntityData(targetNode)
             if (targetEntityData.type === 'Car') {
               const accident = graphComponent.graph.outEdgesAt(targetNode).at(0)
@@ -105,12 +119,15 @@ export function detectInsuranceFraud(graphComponent) {
               accidents.push(targetNode)
             }
           }
+
           // if the person is involved in all accidents of the component => fraud
           if (accidents.length === involvedAccidents) {
             node2Accidents.set(node, accidents)
             suspiciousPersons.push(node)
+
             for (const edge of graph.inEdgesAt(node)) {
               const oppositeNode = edge.sourceNode
+
               const oppositeEntityData = getEntityData(oppositeNode)
               if (oppositeEntityData.type === 'Lawyer') {
                 if (!lawyerSet.has(oppositeNode)) {
@@ -127,21 +144,25 @@ export function detectInsuranceFraud(graphComponent) {
           }
         }
       }
+
       // if the suspicious persons share lawyers or doctors => fraud
       if (suspiciousPersons.length > lawyers.length || suspiciousPersons.length > doctors.length) {
         for (const person of suspiciousPersons) {
           updateNodeFraudTag(person, true)
           fraudsterNodes.push(person)
+
           graph.edgesAt(person).forEach((edge) => {
             updateEdgeFraudTag(edge, true)
           })
         }
+
         for (const doctor of doctors) {
           if (graph.edgesAt(doctor).size > 1) {
             updateNodeFraudTag(doctor, true)
             fraudsterNodes.push(doctor)
           }
         }
+
         for (const lawyer of lawyers) {
           if (graph.edgesAt(lawyer).size > 1) {
             updateNodeFraudTag(lawyer, true)
@@ -153,6 +174,7 @@ export function detectInsuranceFraud(graphComponent) {
   })
   return fraudsterNodes
 }
+
 /**
  * Updates explicitly the node tags so that the node styles are updated through the
  * `NodeTagChanged` event.
@@ -162,6 +184,7 @@ function updateNodeFraudTag(node, isFraud) {
   const entityData = getEntityData(node)
   setEntityData(node, { ...entityData, fraud: isFraud })
 }
+
 /**
  * Updates explicitly the edge tags so that the edge styles are updated through the
  * `EdgeTagChanged` event.
@@ -171,6 +194,7 @@ function updateEdgeFraudTag(edge, isFraud) {
   const connectionData = getConnectionData(edge)
   setConnectionData(edge, { ...connectionData, fraud: isFraud })
 }
+
 /**
  * Resets the tags of nodes and edges to no-fraud.
  */

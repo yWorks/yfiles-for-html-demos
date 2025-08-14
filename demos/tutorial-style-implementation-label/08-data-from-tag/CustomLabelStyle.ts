@@ -40,10 +40,7 @@ import {
   TextRenderSupport
 } from '@yfiles/yfiles'
 
-const font: Font = new Font({
-  fontFamily: 'Arial',
-  fontSize: 12
-})
+const font: Font = new Font({ fontFamily: 'Arial', fontSize: 12 })
 const padding = 3
 const iconSize = 16
 

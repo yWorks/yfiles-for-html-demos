@@ -29,6 +29,7 @@
 // @ts-ignore - We have no proper types for preact, here
 import { html } from '../../preact-loader'
 import Item from './Item'
+
 export default (props) => {
   const itemElements = props.itemData.map(
     (dataItem, index) => html`

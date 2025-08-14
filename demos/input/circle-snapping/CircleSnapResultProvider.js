@@ -37,6 +37,7 @@ import {
 } from '@yfiles/yfiles'
 import { EqualAngleSnapLine, NodeSnapCircle, NodeSnapLine } from './SnapReferences'
 import { EqualAngleObjectRenderer } from './EqualAngleObjectRenderer'
+
 /**
  * Collects snap results for the demo's custom snap references.
  * @see SnapCircleProvider
@@ -50,6 +51,7 @@ export class CircleSnapResultProvider extends NodeSnapResultProvider {
       if (!(evt.context.canvasComponent instanceof GraphComponent)) {
         return
       }
+
       const graph = evt.context.canvasComponent.graph
       for (const inEdge of graph.inEdgesAt(node)) {
         const parent = inEdge.sourceNode
@@ -61,6 +63,7 @@ export class CircleSnapResultProvider extends NodeSnapResultProvider {
       super.collectCircleSnapResults(context, evt, snapCircle, suggestedLayout, node)
     }
   }
+
   /**
    * Collects snap results for snap lines radiating out from a given node.
    */
@@ -82,6 +85,7 @@ export class CircleSnapResultProvider extends NodeSnapResultProvider {
       super.collectLineSnapResults(context, evt, snapLine, suggestedLayout, node)
     }
   }
+
   getParent(args, node) {
     const graphComponent = args.context.canvasComponent
     return graphComponent.graph.inEdgesAt(node).first()?.sourceNode ?? null

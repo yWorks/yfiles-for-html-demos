@@ -36,11 +36,16 @@ import {
   setDefaultLabelLayoutParameters
 } from '../common'
 import { configureInteraction } from './basic-interaction'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 setDefaultLabelLayoutParameters(graphComponent.graph)
+
 createSampleGraph(graphComponent.graph)
+
 configureInteraction(graphComponent)
+
 fitGraphBounds(graphComponent)
 finishLoading()

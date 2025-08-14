@@ -33,8 +33,10 @@ import { ReactComponentHtmlLabelStyle } from './ReactComponentHtmlLabelStyle'
 import { SvgText } from './SvgText'
 import { transform } from '@babel/standalone'
 import * as React from 'react'
+
 // We need a global React at runtime
 window.React = React
+
 /**
  * The following is a simple "compile" function that is inherently unsafe in that
  * it executes the code in the string.
@@ -56,36 +58,45 @@ function compileRenderFunction(jsx) {
     }
   }
 }
+
 export function isReactComponentSvgNodeStyleEx(o) {
   return o && typeof o.jsx === 'string' && o instanceof ReactComponentSvgNodeStyle
 }
+
 export function isReactComponentHtmlNodeStyleEx(o) {
   return o && typeof o.jsx === 'string' && o instanceof ReactComponentHtmlNodeStyle
 }
+
 export function isReactComponentSvgLabelStyleEx(o) {
   return o && typeof o.jsx === 'string' && o instanceof ReactComponentSvgLabelStyle
 }
+
 export function isReactComponentHtmlLabelStyleEx(o) {
   return o && typeof o.jsx === 'string' && o instanceof ReactComponentHtmlLabelStyle
 }
+
 export function isReactComponentStyleEx(o) {
   return o && typeof o.jsx === 'string'
 }
+
 export function createReactComponentSvgNodeStyleFromJSX(jsx) {
   const style = new ReactComponentSvgNodeStyle(compileRenderFunction(jsx))
   style.jsx = jsx
   return style
 }
+
 export function createReactComponentHtmlNodeStyleFromJSX(jsx) {
   const style = new ReactComponentHtmlNodeStyle(compileRenderFunction(jsx))
   style.jsx = jsx
   return style
 }
+
 export function createReactComponentSvgLabelStyleFromJSX(jsx, size) {
   const style = new ReactComponentSvgLabelStyle(compileRenderFunction(jsx), size)
   style.jsx = jsx
   return style
 }
+
 export function createReactComponentHtmlLabelStyleFromJSX(jsx, size) {
   const style = new ReactComponentHtmlLabelStyle(compileRenderFunction(jsx), size)
   style.jsx = jsx

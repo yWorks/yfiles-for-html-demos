@@ -35,7 +35,9 @@ import {
   LayoutStageBase,
   Point
 } from '@yfiles/yfiles'
+
 const NODE_DISTANCE = 15
+
 /**
  * A layout stage that excludes nodes with a special tag
  * (`{ moveAside: boolean }`) from the core layout
@@ -58,10 +60,12 @@ export class MoveNodesAsideStage extends LayoutStageBase {
     if (!this.coreLayout) {
       return
     }
+
     // The simplest way to hide items in the graph temporarily is the LayoutGraphHider,
     // which also remembers the hidden items and can re-show them later.
     const hider = new LayoutGraphHider(graph)
     const asideNodes = []
+
     for (const node of graph.nodes) {
       // For each node, get the original node and see whether the tag specifies that it
       // should be handled specially.
@@ -72,19 +76,24 @@ export class MoveNodesAsideStage extends LayoutStageBase {
         asideNodes.push(node)
       }
     }
+
     // Then, run the core layout, which calculates a layout for the remaining graph.
     this.coreLayout.applyLayout(graph)
+
     // What's left now is to place the nodes we've hidden earlier.
     // Since we've hidden them from the core layout, they remain at their
     // original location for now.
+
     // We need the bounding box of the graph without the nodes, to place
     // them correctly.
     const boundingBox = graph.getBounds()
+
     // Then we show everything again. We've collected the originally-hidden
     // nodes and edges above, already. We also have to make sure in general
     // that the graph doesn't change its structure during layout. So we always
     // have to undo everything we do to the graph structure.
     hider.unhideAll()
+
     // In this case we want to place all of the “aside” nodes in a single column
     // to the right of the rest of the graph. Let's first figure out how tall that
     // column is so we can immediately place them in the correct place.
@@ -94,6 +103,7 @@ export class MoveNodesAsideStage extends LayoutStageBase {
     }
     // Also account for the distance between the nodes
     nodeStackHeight += NODE_DISTANCE * (asideNodes.length - 1)
+
     // Now we can place the nodes.
     const x = boundingBox.maxX + NODE_DISTANCE
     let y = boundingBox.centerY - nodeStackHeight / 2
@@ -101,17 +111,18 @@ export class MoveNodesAsideStage extends LayoutStageBase {
       node.layout.topLeft = new Point(x, y)
       y += node.layout.height + NODE_DISTANCE
     }
+
     // Now we still have to deal with the edges that may have been connected to
     // the nodes we've moved aside. Those still have their original path from
     // before the layout because they've been hidden as well.
+
     // In this case we simply apply an EdgeRouter to calculate suitable routes
     // to the nodes that we moved aside.
     const edgeRouter = new EdgeRouter()
     // We also have to tell the EdgeRouter which edges to route (in this case,
     // edges at affected nodes, so we tell it the affected nodes)
-    const edgeRouterData = new EdgeRouterData({
-      scope: { incidentNodes: asideNodes }
-    })
+    const edgeRouterData = new EdgeRouterData({ scope: { incidentNodes: asideNodes } })
+
     // Finally, EdgeRouter can calculate routes for the remaining edges.
     graph.applyLayout(edgeRouter, edgeRouterData)
   }

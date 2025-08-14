@@ -36,6 +36,7 @@ import {
   List,
   PortCandidate
 } from '@yfiles/yfiles'
+
 /**
  * An {@link IEdgeReconnectionPortCandidateProvider} that allows moving ports to
  * any other existing port on any node.
@@ -66,6 +67,7 @@ export class BlueEdgePortCandidateProvider extends BaseClass(
     }
     return result
   }
+
   /**
    * Returns candidates for the locations of all existing ports at all nodes.
    * @param context The context for which the candidates should be provided

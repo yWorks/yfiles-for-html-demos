@@ -33,6 +33,7 @@ import {
   OrthogonalEdgeHelper,
   SegmentOrientation
 } from '@yfiles/yfiles'
+
 /**
  * The {@link OrthogonalEdgeHelper} for blue edges. Orthogonal edge
  * editing is enabled for the inner segments of this edge but not for the
@@ -42,6 +43,7 @@ export class BlueOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
   constructor(edge) {
     super(edge)
   }
+
   /**
    * Returns the NonOrthogonal segment orientation for the first and last
    * segment, and the default for all other segments.

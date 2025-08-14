@@ -40,6 +40,7 @@ import {
   OrganicLayoutData,
   ParallelEdgeRouterData
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to configure {@link OrganicLayout} for automatic edge label placement.
  * Additionally, a post-processing labeling algorithm has to be applied for placing the labels
@@ -54,10 +55,12 @@ export function createFeatureLayoutConfiguration(graph) {
   // set the preferred length for the edges
   organicLayout.defaultPreferredEdgeLength = 150
   organicLayout.deterministic = true
+
   // Integrated edge labeling produces satisfying results that are sensible for a lot of cases by
   // default. Additionally, the algorithm offers some control over how and where individual labels
   // should be placed. This is where preferred placement descriptors come into play.
   // For better results, specify both the side and angle of the labels relative to the edge.
+
   // move a label as close to its owner edge's source node as possible
   // additionally, the corresponding label is placed on the left side of the edge and parallel to the edge's flow
   const closeToSourceDesc = new EdgeLabelPreferredPlacement()
@@ -66,6 +69,7 @@ export function createFeatureLayoutConfiguration(graph) {
   closeToSourceDesc.angleReference = LabelAngleReferences.RELATIVE_TO_EDGE_FLOW // important for organic layout
   closeToSourceDesc.edgeSide = LabelEdgeSides.LEFT_OF_EDGE
   closeToSourceDesc.distanceToEdge = 4
+
   // move a label as close to its owner edge's target node as possible
   // additionally, the corresponding label is placed on the right side of the edge and parallel to the edge's flow
   const closeToTargetDesc = new EdgeLabelPreferredPlacement()
@@ -74,10 +78,12 @@ export function createFeatureLayoutConfiguration(graph) {
   closeToTargetDesc.angleReference = LabelAngleReferences.RELATIVE_TO_EDGE_FLOW // important for organic layout
   closeToTargetDesc.edgeSide = LabelEdgeSides.RIGHT_OF_EDGE
   closeToTargetDesc.distanceToEdge = 4
+
   // default placement - labels are placed parallel to the edge's flow
   const defaultDesc = new EdgeLabelPreferredPlacement()
   defaultDesc.sideReference = LabelSideReferences.RELATIVE_TO_EDGE_FLOW // important for organic layout
   defaultDesc.angleReference = LabelAngleReferences.RELATIVE_TO_EDGE_FLOW // important for organic layout
+
   // use the layout data to pass the information about the placement of individual edges
   const organicLayoutData = new OrganicLayoutData()
   organicLayoutData.edgeLabelPreferredPlacements = (label) => {
@@ -93,6 +99,7 @@ export function createFeatureLayoutConfiguration(graph) {
         return defaultDesc
     }
   }
+
   // Note that the labels of parallel edges and self-loops are routed by ParallelEdgeRouter and
   // SelfLoopEdgeRouter internally and are not considered by the organic layout algorithm.
   // Thus, we have to apply a generic labeling algorithm only for the labels of those edges.
@@ -102,11 +109,13 @@ export function createFeatureLayoutConfiguration(graph) {
   // place only the edge labels
   layout.scope = 'edge-labels'
   layout.deterministic = true
+
   // Since we want to apply a generic labeling algorithm to labels of parallel edges,
   // we need a way to determine which edges are "parallel edges".
   // Fortunately, it is possible to retrieve that information from ParallelEdgeRouterData.
   // We simply have to define an array to be filled with these edges.
   const parallelEdgeRouterData = new ParallelEdgeRouterData()
+
   const labelingData = new GenericLabelingData()
   // define the edges that have to be arranged by the generic labeling,
   // i.e., the labels of self-loops and parallel edges
@@ -116,13 +125,16 @@ export function createFeatureLayoutConfiguration(graph) {
     const isSelfLoopEdge = owner.isSelfLoop
     return isSelfLoopEdge || isParallelEdge
   }
+
   // While preferred placement descriptors offer lots of configuration options, they cannot be used
   // to control the minimum distance of a label to the source or target node of its owner edge.
-  // However, node halos may be used towards this end. E.g. the halo defined here reserves enough
+  // However, node margins may be used towards this end. E.g. the halo defined here reserves enough
   // space above all nodes to prevent labels from overlapping the target arrows of their owner
   // edges.
   labelingData.nodeMargins = new Insets(5)
+
   // combine the layout data to ensure that all the information is being passed to the algorithm
   const layoutData = organicLayoutData.combineWith(parallelEdgeRouterData).combineWith(labelingData)
+
   return { layout, layoutData }
 }

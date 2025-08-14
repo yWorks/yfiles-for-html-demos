@@ -39,38 +39,48 @@ import { getEntityData, isFraud } from '../entity-data'
 import { FraudHighlightManager } from './FraudHighlightManager'
 import { openFraudDetectionView } from './inspection-view'
 import { forceToolbarOverflowUpdate } from '@yfiles/demo-resources/demo-page'
+
 /**
  * The main graph component that displays the graph.
  */
 let graphComponent
+
 /**
  * Holds the manager responsible for the highlighting of the fraud components.
  */
 let fraudHighlightManager
+
 /**
  * Holds the components that contain nodes marked as fraud.
  */
 const visibleFraudComponents = []
+
 export function initializeFraudHighlights(gc) {
   graphComponent = gc
+
   // initialize the fraud highlight manager
   fraudHighlightManager = new FraudHighlightManager()
   fraudHighlightManager.install(graphComponent)
+
   const inputMode = graphComponent.inputMode
   inputMode.itemHoverInputMode.addEventListener('hovered-item-changed', (event) => {
     updateFraudHighlights(event.item, event.oldItem)
   })
+
   // clear the highlights when a node or an edge is removed
   const graph = graphComponent.graph
   graph.addEventListener('node-removed', () => {
     clearFraudHighlights()
   })
+
   graph.addEventListener('edge-removed', () => {
     clearFraudHighlights()
   })
 }
+
 export function updateFraudWarnings(fraudsters) {
   const currentFraudComponents = new Set()
+
   // add fraud warning for new fraud components
   fraudsters.forEach((node) => {
     const componentIdx = getComponentIdx(node)
@@ -80,6 +90,7 @@ export function updateFraudWarnings(fraudsters) {
     }
     currentFraudComponents.add(componentIdx)
   })
+
   // remove from the toolbar the warning for the components that are not visible anymore
   for (let i = visibleFraudComponents.length - 1; i >= 0; i--) {
     const componentIdx = visibleFraudComponents[i]
@@ -95,12 +106,14 @@ export function updateFraudWarnings(fraudsters) {
     }
   }
 }
+
 /**
  * Clears all fraud highlights.
  */
 export function clearFraudHighlights() {
   fraudHighlightManager.items.clear()
 }
+
 /**
  * Adds the fraud warning button associated with the given component.
  * @param componentIdx The index of the given component
@@ -119,8 +132,10 @@ function createFraudWarning(componentIdx) {
     addFraudComponentHighlight(parseInt(event.currentTarget.id))
   )
   warningButton.addEventListener('mouseleave', () => removeFraudComponentHighlight())
+
   forceToolbarOverflowUpdate()
 }
+
 function removeFraudWarning(componentIdx) {
   // remove the warning button
   const warningButton = document.getElementById(componentIdx.toString())
@@ -129,6 +144,7 @@ function removeFraudWarning(componentIdx) {
   }
   forceToolbarOverflowUpdate()
 }
+
 /**
  * Invoked when the mouse is over a warning button to highlight the associated component.
  */
@@ -138,12 +154,14 @@ async function addFraudComponentHighlight(componentIdx) {
   // animate the view port to the current component index
   await focusFraudComponent(componentIdx)
 }
+
 /**
  * Invoked when the mouse leaves a warning button.
  */
 function removeFraudComponentHighlight() {
   fraudHighlightManager.items.clear()
 }
+
 /**
  * Animates the viewport to the given fraud component.
  */
@@ -153,6 +171,7 @@ export async function focusFraudComponent(componentIdx = -1) {
     await animateViewPort(componentIdx < 0 ? visibleFraudComponents[0] : componentIdx)
   }
 }
+
 /**
  * Animates the viewport to the selected fraud ring.
  */
@@ -184,6 +203,7 @@ async function animateViewPort(componentIdx) {
     }
     // Enlarge the viewport so that we get an overview of the neighborhood as well
     rect = rect.getEnlarged(200)
+
     // Animate the transition to the failed element
     const animator = new Animator(graphComponent)
     animator.allowUserInteraction = true
@@ -191,6 +211,7 @@ async function animateViewPort(componentIdx) {
     await animator.animate(viewportAnimation.createEasedAnimation(0, 1))
   }
 }
+
 function updateFraudHighlights(item, oldItem) {
   fraudHighlightManager.items.clear()
   if (item) {
@@ -210,6 +231,7 @@ function updateFraudHighlights(item, oldItem) {
       highlightFraudComponent(componentIndex)
     }
   }
+
   if (oldItem) {
     if (oldItem instanceof INode) {
       // remove highlight class from the warning button
@@ -222,6 +244,7 @@ function updateFraudHighlights(item, oldItem) {
     }
   }
 }
+
 /**
  * Highlights the fraud component.
  */
@@ -238,33 +261,40 @@ function highlightFraudComponent(componentIndex) {
       highlights.add(edge)
     }
   })
+
   componentNodes.forEach((node) => {
     if (isFraud(node) && graphComponent.graph.contains(node)) {
       highlights.add(node)
     }
   })
 }
+
 /**
  * Maps each component with the list of nodes that this component contains.
  */
 const component2Nodes = new Mapper()
+
 /**
  * Holds the component's index to which each node belongs.
  */
 const node2Component = new Mapper()
+
 /**
  * Calculates the connected components of the input graph and holds
  * the index of the component to which each component belongs.
  */
 export function calculateComponents() {
   component2Nodes.clear()
+
   const fullGraph = graphComponent.graph.wrappedGraph
   const bankFraud = document.querySelector('#samples').value === 'bank-fraud'
+
   // for bank fraud, we remove the bank branch nodes to avoid having
   // large components that contain nodes that have no actual relationship with each other
   const result = new ConnectedComponents({
     subgraphNodes: (node) => !bankFraud || getEntityData(node).type !== 'Bank Branch'
   }).run(fullGraph)
+
   const nodeComponentIds = result.nodeComponentIds
   fullGraph.nodes.forEach((node) => {
     const componentIdx = nodeComponentIds.get(node)
@@ -274,6 +304,7 @@ export function calculateComponents() {
     }
     component2Nodes.get(componentIdx).push(node)
   })
+
   if (bankFraud) {
     // we un-hide the bank branch nodes
     // and add them to the components to which their neighbor nodes belong
@@ -293,9 +324,11 @@ export function calculateComponents() {
     })
   }
 }
+
 export function getComponentIdx(node) {
   return node2Component.get(node)
 }
+
 export function getComponentNodes(componentIdx) {
   return component2Nodes.get(componentIdx) || []
 }

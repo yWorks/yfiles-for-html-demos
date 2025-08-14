@@ -27,17 +27,20 @@
  **
  ***************************************************************************/
 import { HashMap, IGraph, ILabelOwner, IModelItem, ParseEventArgs } from '@yfiles/yfiles'
-import { EditorState, StateEffect, StateEffectType, StateField } from '@codemirror/state'
-import { Decoration, ViewUpdate } from '@codemirror/view'
-import { basicSetup, EditorView } from 'codemirror'
-import { xml } from '@codemirror/lang-xml'
-import { lintGutter } from '@codemirror/lint'
-import { getXmlLinter } from '@yfiles/demo-resources/codeMirrorLinters'
-const xmlLinter = getXmlLinter()
+import {
+  createGraphMLEditor,
+  EditorView,
+  StateEffect,
+  StateEffectType,
+  StateField,
+  ViewUpdate
+} from '@yfiles/demo-resources/codemirror-editor'
+
 /**
  * This class handles synchronization of the GraphML editor with the view graph.
  * @yjs:keep = setValue,getValue
  */
+
 export class EditorSync {
   itemToIdMap = new HashMap()
   itemToMarkerMap = new HashMap()
@@ -51,161 +54,125 @@ export class EditorSync {
   itemSelectedListener
   addMarker
   removeMarker
+  ignoreChanges = false
+
   constructor() {
     this.contentChanged = this.onContentChanged.bind(this)
     this.cursorActivity = this.onCursorActivity.bind(this)
     this.editorContentChangedListener = () => {}
     this.itemSelectedListener = () => {}
   }
+
   /**
    * Dispatched when the GraphML content has been modified by the used.
    */
   addEditorContentChangedListener(listener) {
     this.editorContentChangedListener = listener
   }
+
   /**
    * Dispatched when the GraphML content has been modified by the used.
    */
   removeEditorContentChangedListener() {
     this.editorContentChangedListener = () => {}
   }
+
   /**
    * Dispatched when the GraphML representation of a graph item has been selected in the editor.
    */
   setItemSelectedListener(listener) {
     this.itemSelectedListener = listener
   }
+
   /**
    * Dispatched when the GraphML representation of a graph item has been selected in the editor.
    */
   removeItemSelectedListener() {
     this.itemSelectedListener = () => {}
   }
+
+  hasValidText() {
+    const outputText = document.querySelector('#outputText')
+    if (outputText) {
+      return !(outputText.textContent && outputText.textContent.length > 1)
+    }
+    return true
+  }
+
   /**
    * Initializes the graph and text editor.
    */
+
   initialize(masterGraph) {
     this._graph = masterGraph
-    const addMarker = StateEffect.define()
-    this.addMarker = addMarker
-    const removeMarker = StateEffect.define()
-    this.removeMarker = removeMarker
-    this.markerField = StateField.define({
-      create() {
-        return {
-          decorations: Decoration.none,
-          markers: new Map()
-        }
-      },
-      update(value, tr) {
-        let { decorations, markers } = value
-        decorations = decorations.map(tr.changes)
-        for (let e of tr.effects) {
-          if (e.is(addMarker)) {
-            const marker = e.value
-            decorations = decorations.update({
-              add: [
-                Decoration.mark({
-                  class: marker.className
-                }).range(marker.from, marker.to)
-              ]
-            })
-            markers.set(marker.id, marker)
-          } else if (e.is(removeMarker)) {
-            const markerId = e.value
-            const marker = markers.get(markerId)
-            if (marker) {
-              decorations = decorations.update({
-                filter: (from, to) => !(from === marker.from && to === marker.to)
-              })
-              markers.delete(marker.id)
-            }
-          }
-        }
-        return { decorations, markers }
-      },
-      provide: (f) => EditorView.decorations.from(f, (value) => value.decorations)
-    })
+
     const textArea = document.querySelector('#editorContainer')
-    const startState = EditorState.create({
-      doc: textArea.value,
-      extensions: [
-        basicSetup,
-        this.markerField,
-        xml(),
-        xmlLinter,
-        lintGutter(),
-        EditorView.updateListener.of((update) => {
-          if (update.docChanged) {
-            this.contentChanged(update)
-          }
-        }),
-        EditorView.updateListener.of((update) => {
-          if (update.selectionSet) {
-            this.cursorActivity(update)
-          }
-        })
-      ]
-    })
-    this._editor = new EditorView({
-      parent: textArea,
-      state: startState
-    })
+
+    const { editor, markerField, addMarker, removeMarker } = createGraphMLEditor(
+      textArea,
+      (update) => this.contentChanged(update),
+      (update) => this.cursorActivity(update)
+    )
+
+    this.addMarker = addMarker
+    this.removeMarker = removeMarker
+    this.markerField = markerField
+    this._editor = editor
   }
+
   /**
    * generate a marker with the supplied parameters
    */
   addMarkerWrapper(from, to, id, item, cssClass = '', scrollToView = false) {
-    const effects = [
-      this.addMarker.of({
-        from: from,
-        to: to,
-        className: cssClass,
-        id: id
-      })
-    ]
+    const effects = [this.addMarker.of({ from: from, to: to, className: cssClass, id: id })]
     if (scrollToView) {
       effects.push(EditorView.scrollIntoView(from, { y: 'start' }))
     }
-    this.editor.dispatch({
-      effects: effects
-    })
+    this.editor.dispatch({ effects: effects })
+
     const newMarker = this.editor.state.field(this.markerField).markers.get(id)
     this.itemToMarkerMap.set(item, newMarker)
     this.markerToItemMap.set(newMarker, item)
+
     return newMarker
   }
+
   /**
    * The editor content has been edited: dispatch an event that notifies the view, and update the markers.
    */
   onContentChanged(update) {
+    if (this.ignoreChanges) {
+      return
+    }
+
     const value = update.state.doc.toString()
     this.editorContentChangedListener({ value })
     this.onCursorActivity(update)
   }
+
   /**
    * The graph has been modified interactively in the view:
    * replace the editor content with the updated GraphML representation, and update the editor markers.
    */
   onGraphModified(event) {
     // don't fire changes while replacing the content
+    this.ignoreChanges = true
     this.editor.dispatch({
-      changes: {
-        from: 0,
-        to: this.editor.state.doc.length,
-        insert: event.graphml
-      }
+      changes: { from: 0, to: this.editor.state.doc.length, insert: event.graphml }
     })
     setOutput('')
+    this.ignoreChanges = false
     this.setMarkers()
     this.onItemSelected(event.selectedItem)
   }
+
   /**
    * Display GraphML errors in a HTML div element.
    */
   onGraphMLError(ex) {
     setOutput(ex.message)
   }
+
   /**
    * The GraphML has been parsed successfully: update markers
    */
@@ -214,24 +181,30 @@ export class EditorSync {
     // clear text in output area
     setOutput('')
   }
+
   /**
    * Called when a document has been parsed.
    */
-  onParsed(args) {
+  onParsed(_args) {
     // clear text in output area
     setOutput('')
   }
+
   getMarkersAt(view, pos) {
     const found = []
     const state = view.state.field(this.markerField)
+
     // Get the line start and end positions
+
     state.markers.forEach((marker) => {
       if (marker.from <= pos && marker.to >= pos) {
         found.push(marker)
       }
     })
+
     return found
   }
+
   /**
    * When the editor cursor is moved, see if we can identify a graph item representation
    * at the current cursor position.
@@ -245,18 +218,21 @@ export class EditorSync {
       this.itemSelectedListener({ item })
     }
   }
+
   /**
    * Map editor markers to graph items.
    */
   setMarkers() {
     this.itemToMarkerMap.values.forEach((marker) => {
-      this.editor.dispatch({
-        effects: this.removeMarker.of(marker.id)
-      })
+      if (marker) {
+        this.editor.dispatch({ effects: this.removeMarker.of(marker.id) })
+      }
     })
     this.itemToMarkerMap.clear()
     this.markerToItemMap.clear()
+
     const editorText = this.editor.state.doc.toString()
+
     const graph = this._graph
     graph.nodes.forEach((node) => {
       this.setMarkersForItem(node, 'node', editorText)
@@ -265,6 +241,7 @@ export class EditorSync {
       this.setMarkersForItem(edge, 'edge', editorText)
     })
   }
+
   /**
    * Identify corresponding node/edge and label snippets for the provided item.
    * @param item A node or edge
@@ -274,6 +251,7 @@ export class EditorSync {
   setMarkersForItem(item, tagName, editorText) {
     // The internal GraphML ID for the item (determined during GraphML parsing/writing)
     const itemId = this.itemToIdMap.get(item)
+
     // Find the <node> or <edge> start tag
     const regexpStr = `<${tagName}.*?id="${itemId}".*?>`
     const regexp = new RegExp(regexpStr, 'i')
@@ -281,18 +259,22 @@ export class EditorSync {
     if (!matches) {
       return
     }
+
     // set an editor marker with the corresponding start and end indices
     const startIndex = editorText.indexOf(matches[0], 0)
     const endIndex = findMatchingTag(editorText, startIndex, tagName)
     this.addMarkerWrapper(startIndex, endIndex, itemId ?? '', item)
+
     //
     // Find Label markers (labels are not part of the core GraphML standard and have no individual IDs).
     //
     // Identifying the correct set of <y:Label> elements is tedious, because <nodes> can contain nested
     // <graphs> and styles that also contain <y:Label> elements.
     //
+
     // The full GraphML representation of the label owner
     const labelOwnerText = editorText.substring(startIndex, endIndex)
+
     // If there is a nested <graph> section, we remove it for further matching,
     // so we find only labels belonging to the correct item.
     const nestedGraphRegExp = new RegExp('<graph(.|\\n)*<\\/graph>', '')
@@ -312,15 +294,19 @@ export class EditorSync {
       'gi'
     )
     const labelDataMatch = labelOwnerTextWithoutNesting.match(labelDataRegExp)
+
     if (labelDataMatch !== null) {
       const labelData = labelDataMatch[0]
+
       // Finally, find the individual <y:Label> elements
       const labelRegExp = new RegExp('<y:Label.*>(?:\\n|.)*?<\\/y:Label>', 'gi')
+
       let labelMatches = labelRegExp.exec(labelData)
       let labelIndex = 0
       while (labelMatches) {
         const labelItem = item.labels.get(labelIndex)
         const labelText = labelMatches[0]
+
         let labelStartIndex = labelOwnerTextWithoutNesting.indexOf(labelText)
         // If we removed a nested graph, we have to consider this for the marker index
         if (nestedGraphMatch && labelStartIndex > nestedGraphStartIndex) {
@@ -330,39 +316,39 @@ export class EditorSync {
         labelStartIndex += startIndex
         const labelEndIndex = labelStartIndex + labelText.length
         this.addMarkerWrapper(labelStartIndex, labelEndIndex, labelText, labelItem)
+
         labelIndex++
         labelMatches = labelRegExp.exec(labelData)
       }
     }
   }
+
   /**
-   * An view item has been selected by the user: identify the corresponding editor section and highlight it.
+   * The user has selected a view item: identify the corresponding editor section and highlight it.
    */
   onItemSelected(masterItem) {
-    if (masterItem && this.itemToMarkerMap.keys.includes(masterItem)) {
-      const options = {
-        className: 'text-highlight'
-      }
+    if (masterItem && this.itemToMarkerMap.has(masterItem)) {
+      const options = { className: 'text-highlight' }
       this.replaceMarker(masterItem, options)
     }
   }
+
   /**
    * Unhighlight a deselected item by providing null-options to {@link replaceMarker}.
    */
   onItemDeselected(masterItem) {
     this.replaceMarker(masterItem, {})
   }
+
   /**
    * Update a marker with the provided options (e.g. CSS class)
    */
   replaceMarker(masterItem, options) {
-    if (masterItem !== null && this.itemToMarkerMap.keys.includes(masterItem)) {
+    if (masterItem !== null && this.itemToMarkerMap.has(masterItem)) {
       const oldMarker = this.itemToMarkerMap.get(masterItem)
       if (typeof oldMarker !== 'undefined') {
         this.markerToItemMap.delete(oldMarker)
-        this.editor.dispatch({
-          effects: this.removeMarker.of(oldMarker.id)
-        })
+        this.editor.dispatch({ effects: this.removeMarker.of(oldMarker.id) })
         return this.addMarkerWrapper(
           oldMarker.from,
           oldMarker.to,
@@ -375,10 +361,12 @@ export class EditorSync {
     }
     return null
   }
+
   get editor() {
     return this._editor
   }
 }
+
 /**
  * Find the shortest marker (text index pair) that spans the provided position.
  */
@@ -395,13 +383,14 @@ function getInnermostMarker(position, markers) {
   }
   return inner
 }
+
 /**
  * Finds a matching closing tag for a provided start tag (at the appropriate nesting depth).
  * @returns The index of the match
  */
 function findMatchingTag(str, startIndex, tagName) {
   const regExp = new RegExp(`<${tagName}.*>|</${tagName}>`, 'gi')
-  const substr = str.substr(startIndex)
+  const substr = str.substring(startIndex)
   let matches = regExp.exec(substr)
   let depth = 0
   while (matches) {
@@ -413,6 +402,7 @@ function findMatchingTag(str, startIndex, tagName) {
   }
   return regExp.lastIndex + startIndex
 }
+
 function setOutput(text) {
   const outputText = document.querySelector('#outputText')
   outputText.textContent = text

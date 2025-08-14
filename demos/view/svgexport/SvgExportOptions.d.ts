@@ -26,8 +26,4 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-export type SvgExportOptions = {
-  useExportRectangle: boolean
-  scale: number
-  background: string
-}
+export type SvgExportOptions = { useExportRectangle: boolean; scale: number; background: string }

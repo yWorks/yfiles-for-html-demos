@@ -129,9 +129,7 @@ async function updateGraph(
 function arrangeGraph(graphComponent: GraphComponent): Promise<void> {
   document.querySelector<HTMLButtonElement>('#update-builder')!.disabled = true
 
-  const algorithm = new HierarchicalLayout({
-    layoutOrientation: 'left-to-right'
-  })
+  const algorithm = new HierarchicalLayout({ layoutOrientation: 'left-to-right' })
 
   // arrange the graph with the chosen layout algorithm
   return new LayoutExecutor({

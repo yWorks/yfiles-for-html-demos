@@ -826,9 +826,7 @@ export class MinCutLine extends BaseClass(IVisualCreator) {
    * @param cache The render data cache
    */
   render(
-    container: SVGElement & {
-      'data-renderDataCache'?: MclRenderDataCache
-    },
+    container: SVGElement & { 'data-renderDataCache'?: MclRenderDataCache },
     cache: MclRenderDataCache
   ): void {
     // store information with the visual on how we created it

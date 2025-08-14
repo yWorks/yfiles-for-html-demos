@@ -50,7 +50,9 @@ import {
   createLabelsForType,
   createNodesSource
 } from './configure-labels'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 const graph = graphComponent.graph
 graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -63,20 +65,32 @@ graph.edgeDefaults.style = new PolylineEdgeStyle({
   stroke: '#aaaaaa',
   targetArrow: '#aaaaaa small triangle'
 })
+
 const graphBuilder = new GraphBuilder(graph)
+
 const nodesSource = createNodesSource(graphBuilder)
 const edgesSource = createEdgesSource(graphBuilder)
+
 const nameLabelCreator = createLabelsForName(nodesSource)
 const typeLabelCreator = createLabelsForType(nodesSource)
+
 configureDefaultPlacement(nameLabelCreator)
 configureDefaultPlacement(typeLabelCreator)
+
 configureNodeLabelParameter(nameLabelCreator)
+
 configureLabelDefaultStyles(nameLabelCreator)
 configureLabelDefaultStyles(typeLabelCreator)
+
 configureLabelStylingWithBinding(typeLabelCreator)
 configureLabelStylingWithProvider(nameLabelCreator)
+
 configureLabelSizeWithProvider(typeLabelCreator)
+
 configureEdgeLabels(edgesSource)
+
 graphBuilder.buildGraph()
+
 void runLayout(graphComponent)
+
 finishLoading()

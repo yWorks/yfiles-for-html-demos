@@ -266,12 +266,7 @@ async function readSampleGraph(): Promise<void> {
  * Initializes the converters for the bindings of the template node styles.
  */
 function initializeConverters(): void {
-  const colors = {
-    present: '#76b041',
-    busy: '#ab2346',
-    travel: '#a367dc',
-    unavailable: '#c1c1c1'
-  }
+  const colors = { present: '#76b041', busy: '#ab2346', travel: '#a367dc', unavailable: '#c1c1c1' }
 
   StringTemplateNodeStyle.CONVERTERS.demoConverters = {
     // converter function for the background color of nodes

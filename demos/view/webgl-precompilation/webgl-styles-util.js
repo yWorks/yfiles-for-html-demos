@@ -39,6 +39,7 @@ import {
   WebGLPolylineEdgeStyle,
   WebGLShapeNodeStyle
 } from '@yfiles/yfiles'
+
 const webGLNodeStyles = [WebGLShapeNodeStyle, WebGLImageNodeStyle, WebGLGroupNodeStyle]
 const webGLEdgeStyles = [WebGLPolylineEdgeStyle, WebGLArcEdgeStyle, WebGLBridgeEdgeStyle]
 const webGLLabelStyles = [WebGLLabelStyle, WebGLIconLabelStyle]
@@ -47,6 +48,7 @@ const webGLIndicatorStyles = [
   WebGLEdgeIndicatorStyle,
   WebGLLabelIndicatorStyle
 ]
+
 export function isWebGLNodeStyle(style) {
   return webGLNodeStyles.some((ns) => style instanceof ns)
 }

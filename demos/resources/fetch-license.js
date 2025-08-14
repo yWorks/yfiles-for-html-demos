@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { Graph, GraphComponent, License } from '@yfiles/yfiles'
 import { INVALID_LICENSE_MESSAGE } from './demo-error'
+
 /**
  * Fetches `license.json` file and returns its data.
  *
@@ -42,6 +43,7 @@ import { INVALID_LICENSE_MESSAGE } from './demo-error'
 export async function fetchLicense() {
   return fetchLicenseCore().then(checkLicense)
 }
+
 /**
  * Fetches `license.json`.
  */
@@ -62,6 +64,7 @@ async function fetchLicenseCore() {
   }
   return new Promise((resolve) => showLicenseDialog(resolve))
 }
+
 /**
  * Checks whether the license is the built dummy license
  * @param licenseData the license data to be checked
@@ -69,6 +72,7 @@ async function fetchLicenseCore() {
 function isDummyLicense(licenseData) {
   return Boolean(licenseData.dummy)
 }
+
 /**
  * Checks whether the license is a valid yfiles license.
  * @param licenseData The license data to be checked
@@ -86,6 +90,7 @@ async function checkLicense(licenseData) {
     if (g.nodes.size === 1) {
       return new Promise((resolve) => resolve(licenseData))
     }
+
     window.setTimeout(() => {
       document.body.style.display = 'unset'
       document.body.innerHTML =
@@ -95,6 +100,7 @@ async function checkLicense(licenseData) {
   }
   throw new Error(INVALID_LICENSE_MESSAGE)
 }
+
 /*
  * Following are license helpers for the demo-framework.
  */
@@ -102,23 +108,27 @@ function parseLicense(licenseString) {
   if (licenseString == null) {
     return
   }
+
   try {
     return JSON.parse(licenseString)
   } catch (e) {
     console.warn('yFiles demo app: Cannot parse license information', licenseString)
   }
 }
+
 function loadLicenseFromLocalStorage() {
   if (typeof window === 'undefined') {
     console.warn('yFiles demo app: No yFiles for HTML license included!')
     return
   }
+
   const storedLicense = parseLicense(window.localStorage.getItem('yFiles_for_HTML_license'))
   if (storedLicense) {
     console.warn('yFiles demo app: Using license from local storage.')
     return storedLicense
   }
 }
+
 function noLicenseDialog(div, resolve) {
   div.innerHTML = `<h2>No yFiles for HTML license included</h2>
 <p>Enter your license information in JSON format into the file <b>lib/license.json</b>.</p>
@@ -154,6 +164,7 @@ with the actual license information.</p>
   licenseInputDiv.appendChild(inputNote)
   div.appendChild(licenseInputDiv)
 }
+
 function showLicenseDialog(resolve) {
   window.setTimeout(function () {
     const div = document.createElement('div')

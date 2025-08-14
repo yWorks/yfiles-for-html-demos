@@ -59,10 +59,7 @@ export enum NodeTypeEnum {
  * Data format that is used to build the company ownership chart.
  * It contains information about nodes and edges.
  */
-export type GraphData = {
-  nodes: Company[]
-  edges: (OwnershipEdge | RelationshipEdge)[]
-}
+export type GraphData = { nodes: Company[]; edges: (OwnershipEdge | RelationshipEdge)[] }
 
 /**
  * Type that describes the format of the input node data in this company ownership demo.
@@ -98,9 +95,7 @@ export type OwnershipEdge = CompanyRelationshipEdge & {
 /**
  * Type that describes the relationship edges in this company ownership demo.
  */
-export type RelationshipEdge = CompanyRelationshipEdge & {
-  type: typeof EdgeTypeEnum.Relation
-}
+export type RelationshipEdge = CompanyRelationshipEdge & { type: typeof EdgeTypeEnum.Relation }
 
 /**
  * Type of data associated with a node.

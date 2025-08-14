@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 // eslint-disable @typescript-eslint/explicit-function-return-type
+
 import { GraphComponent, GraphViewerInputMode, License } from '@yfiles/yfiles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
@@ -39,23 +40,32 @@ import {
 import { createSampleGraph } from './create-sample-graph'
 import { configureSelectionHighlight } from './configure-selection-highlight'
 import { configureHoverHighlight } from './configure-hover-highlight'
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('#graphComponent')
   // do not allow structural changes in this demo
   const inputMode = new GraphViewerInputMode()
+
   // show the graph-item-styles stylesheet in the demo
   await createStylesheetView('#data-view')
+
   // highlight graph items by hovering over them
   configureHoverHighlight(graphComponent, inputMode)
+
   // on click, highlight the node and its direct connections
   configureSelectionHighlight(graphComponent, inputMode)
+
   graphComponent.inputMode = inputMode
   createSampleGraph(graphComponent.graph)
   await graphComponent.fitGraphBounds()
+
   addStylesheet()
+
   initializeUI()
 }
+
 /**
  * Initializes the UI elements that are specific to this demo.
  */
@@ -73,4 +83,5 @@ function initializeUI() {
     document.addEventListener('mouseup', upListener)
   })
 }
+
 void run().then(finishLoading)

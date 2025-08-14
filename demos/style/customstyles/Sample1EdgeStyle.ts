@@ -237,9 +237,7 @@ export class Sample1EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
    */
   lookup(edge: IEdge, type: Constructor<any>): any | null {
     if (type === ISelectionRenderer) {
-      return new EdgeStyleIndicatorRenderer({
-        edgeStyle: new PolylineEdgeStyle({ stroke: null })
-      })
+      return new EdgeStyleIndicatorRenderer({ edgeStyle: new PolylineEdgeStyle({ stroke: null }) })
     }
 
     return super.lookup(edge, type)

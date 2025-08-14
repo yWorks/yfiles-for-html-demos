@@ -35,11 +35,13 @@ import {
   License,
   PortPlacementPolicy
 } from '@yfiles/yfiles'
+
 import { createPortAwareGraphBuilder, setBuilderData } from './GraphBuilder'
 import GraphBuilderData from './graph-builder-data'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * This demo shows how to automatically build a graph from business data using
  * a customized GraphBuilder which creates node ports based on the node type and
@@ -50,12 +52,15 @@ import { finishLoading } from '@yfiles/demo-resources/demo-page'
  */
 async function run() {
   License.value = await fetchLicense()
+
   // Initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
   // We want to keep the unused ports
   graphComponent.graph.nodeDefaults.ports.autoCleanUp = false
+
   // Use the viewer input mode since this demo should not allow interactive graph editing
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // Build the graph from data
   builder = createPortAwareGraphBuilder(
     graphComponent.graph,
@@ -63,14 +68,19 @@ async function run() {
     GraphBuilderData.connections
   )
   builder.buildGraph()
+
   // Center the graph in the visible area
   void graphComponent.fitGraphBounds()
+
   // Arrange the graph using a tree layout algorithm
   await arrangeGraph(graphComponent)
+
   // Register toolbar actions
   initializeUI(graphComponent)
 }
+
 let builder
+
 /**
  * Updates the graph. This reflects changes in the business data while keeping the unchanged items.
  * This function uses GraphBuilder's updateGraph method to modify the existing graph
@@ -78,35 +88,42 @@ let builder
  */
 async function updateGraph(graphComponent, nodesSource, edgesSource) {
   const graph = graphComponent.graph
+
   // determine which nodes were added while updating the graph
   const newNodes = []
   const nodeCreatedListener = (evt) => newNodes.push(evt.item)
   builder.addEventListener('node-created', nodeCreatedListener)
+
   // update the graph according the new (but related) data
   // this will remove nodes whose IDs are not in the new data set
   // this will add nodes whose IDs are in the new data set, but not in the old one
   setBuilderData(nodesSource, edgesSource)
   builder.updateGraph()
+
   builder.removeEventListener('node-created', nodeCreatedListener)
+
   // hide the new items (i.e. the new nodes, the edges connected to the new nodes, their labels
   // and their ports) during the animated layout calculation
   hideNodesAndRelatedItems(graph, newNodes)
+
   await arrangeGraph(graphComponent)
+
   // after the layout animation has finished, show the previously hidden items
   // this way new items do not seem to be affected by the layout calculation
   // otherwise, new items would appear at the default location (0,0) and then move to their
   // final location during the layout animation
   showNodesAndRelatedItems(graph, newNodes)
 }
+
 /**
  * Arranges the graph of the given graph component and applies the new layout in an animated
  * fashion.
  */
 function arrangeGraph(graphComponent) {
   document.querySelector('#update-builder').disabled = true
-  const algorithm = new HierarchicalLayout({
-    layoutOrientation: 'left-to-right'
-  })
+
+  const algorithm = new HierarchicalLayout({ layoutOrientation: 'left-to-right' })
+
   // arrange the graph with the chosen layout algorithm
   return new LayoutExecutor({
     graphComponent: graphComponent,
@@ -121,6 +138,7 @@ function arrangeGraph(graphComponent) {
       document.querySelector('#update-builder').disabled = false
     })
 }
+
 /**
  * Registers the actions for the toolbar buttons during the creation of this application.
  */
@@ -134,4 +152,5 @@ function initializeUI(graphComponent) {
     await updateGraph(graphComponent, nodeData, edgeData)
   })
 }
+
 run().then(finishLoading)

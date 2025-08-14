@@ -48,11 +48,14 @@ import {
   SmartEdgeLabelModel,
   SvgExport
 } from '@yfiles/yfiles'
+
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { createDemoShapeNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { SubdivideEdgeDropInputMode } from './SubdivideEdgeDropInputMode'
+
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
@@ -60,19 +63,24 @@ async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.graph.undoEngineEnabled = true
+
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   // add a sample graph
   createGraph()
+
   // configure drag and drop
   configureDragAndDrop()
 }
+
 /**
  * Configures drag and drop for this demo.
  */
 function configureDragAndDrop() {
   // create and configure the input mode
   const inputMode = new GraphEditorInputMode()
+
   // create and configure the node drop input mode
   const nodeDropInputMode = new SubdivideEdgeDropInputMode()
   // nodes with GroupNodeStyle should be created as group nodes
@@ -80,25 +88,32 @@ function configureDragAndDrop() {
     draggedNode.style instanceof GroupNodeStyle
   // assign the new node input mode to the graphComponent
   inputMode.nodeDropInputMode = nodeDropInputMode
+
   graphComponent.inputMode = inputMode
+
   initializeDragAndDropPanel()
 }
+
 /**
  * Initializes the palette of nodes that can be dragged to the graph component.
  */
 function initializeDragAndDropPanel() {
   // retrieve the panel element
   const panel = document.querySelector('#drag-and-drop-panel')
+
   // prepare node styles for the palette
   const defaultNodeStyle = graphComponent.graph.nodeDefaults.style
   const otherNodeStyle = createDemoShapeNodeStyle(ShapeNodeShape.ELLIPSE)
+
   const defaultGroupNodeStyle = graphComponent.graph.groupNodeDefaults.style
   const nodeStyles = [defaultNodeStyle, otherNodeStyle, defaultGroupNodeStyle]
+
   // add a visual for each node style to the palette
   nodeStyles.forEach((style) => {
     addNodeVisual(style, panel)
   })
 }
+
 /**
  * Creates and adds a visual for the given style in the drag and drop panel.
  */
@@ -110,16 +125,19 @@ function addNodeVisual(style, panel) {
   img.setAttribute('style', 'width: auto; height: auto;')
   // Create a visual for the style.
   img.setAttribute('src', createNodeVisual(style))
+
   const startDrag = () => {
     // Create preview node with which the GraphComponent can render a preview during the drag gesture.
     const simpleNode = new SimpleNode()
     simpleNode.layout = new Rect(0, 0, 40, 40)
     simpleNode.style = style.clone()
+
     // We also want to show a preview of dragged node, while the dragging is not within the GraphComponent.
     // For this, we can provide an element that will be placed at the mouse position during the drag gesture.
     // Of course, this should resemble the node that is currently dragged.
     const dragPreview = document.createElement('div')
     dragPreview.appendChild(img.cloneNode(true))
+
     // The core method that initiates a drag which is recognized by the GraphComponent.
     const dragSource = NodeDropInputMode.startDrag(
       div, // The source of the drag gesture, i.e. the element in the drag and drop panel.
@@ -128,6 +146,7 @@ function addNodeVisual(style, panel) {
       true, // Whether to the cursor during the drag.
       dragPreview // The optional preview element that is shown outside of the GC during the drag.
     )
+
     // Within the GraphComponent, it draws its own preview node. Therefore, we need to hide the additional
     // preview element that is used outside the GraphComponent.
     // The GraphComponent uses its own preview node to support features like snap lines or snapping of the dragged node.
@@ -139,6 +158,7 @@ function addNodeVisual(style, panel) {
       }
     })
   }
+
   img.addEventListener(
     'pointerdown',
     (event) => {
@@ -150,6 +170,7 @@ function addNodeVisual(style, panel) {
   div.appendChild(img)
   panel.appendChild(div)
 }
+
 /**
  * Creates an SVG data string for a node with the given style.
  */
@@ -157,15 +178,18 @@ function createNodeVisual(style) {
   // another GraphComponent is utilized to export a visual of the given style
   const exportComponent = new GraphComponent()
   const exportGraph = exportComponent.graph
+
   // we create a node in this GraphComponent that should be exported as SVG
   exportGraph.createNode(new Rect(0, 0, 40, 40), style)
   exportComponent.updateContentBounds(5)
+
   // the SvgExport can export the content of any GraphComponent
   const svgExport = new SvgExport(exportComponent.contentBounds)
   const svg = svgExport.exportSvg(exportComponent)
   const svgString = SvgExport.exportSvgString(svg)
   return SvgExport.encodeSvgDataUrl(svgString)
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  *
@@ -174,6 +198,7 @@ function createNodeVisual(style) {
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
+
   // set the style, label and label parameter for group nodes
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#46a8d5',
@@ -186,6 +211,7 @@ function initializeGraph(graph) {
     textFill: '#eee'
   })
   graph.groupNodeDefaults.labels.layoutParameter = new GroupNodeLabelModel().createTabParameter()
+
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
@@ -195,18 +221,23 @@ function initializeGraph(graph) {
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
+
   graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(0)
 }
+
 /**
  * Creates a simple sample graph.
  */
 function createGraph() {
   const graph = graphComponent.graph
+
   const node1 = graph.createNodeAt([0, 0])
   const node2 = graph.createNodeAt([200, 0])
   const node3 = graph.createNodeAt([200, 100])
   const node4 = graph.createNodeAt([350, 0])
+
   graph.groupNodes({ children: [node2, node3, node4], labels: ['Group 1'] })
+
   graph.createEdge({ source: node1, target: node2, labels: ['Label 1'] })
   graph.createEdge({
     source: node1,
@@ -215,8 +246,10 @@ function createGraph() {
     bends: [new Point(0, 100)]
   })
   graph.createEdge({ source: node2, target: node4, labels: ['Label 3'] })
+
   graphComponent.fitGraphBounds()
   graph.undoEngine.clear()
 }
+
 // noinspection JSIgnoredPromiseFromCall
 run().then(finishLoading)

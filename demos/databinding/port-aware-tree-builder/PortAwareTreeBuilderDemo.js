@@ -40,11 +40,13 @@ import {
   TreeBuilder,
   TreeLayout
 } from '@yfiles/yfiles'
+
 import { createPortAwareTreeBuilder, setBuilderData } from './TreeBuilder'
 import TreeData from './tree-builder-data'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * This demo shows how to automatically build a graph from business data using
  * a customized TreeBuilder which creates node ports based on the node data and
@@ -55,22 +57,30 @@ import { finishLoading } from '@yfiles/demo-resources/demo-page'
  */
 async function run() {
   License.value = await fetchLicense()
+
   // Initialize graph component
   const graphComponent = new GraphComponent('graphComponent')
   setGraphDefaults(graphComponent.graph)
+
   // Use the viewer input mode since this demo should not allow interactive graph editing
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // Build the graph from data
   builder = createPortAwareTreeBuilder(graphComponent.graph, TreeData.nodesSource)
   builder.buildGraph()
+
   // center graph in the visible area
   await graphComponent.fitGraphBounds()
+
   // Arrange the graph using a tree layout algorithm
   await arrangeGraph(graphComponent)
+
   // Register toolbar actions
   initializeUI(graphComponent)
 }
+
 let builder
+
 /**
  * Updates the graph. This reflects changes in the business data while keeping the unchanged items.
  * This function uses TreeBuilder's updateGraph method to modify the existing graph
@@ -78,38 +88,47 @@ let builder
  */
 async function updateGraph(graphComponent, nodesSource) {
   const graph = graphComponent.graph
+
   // determine which nodes were added while updating the graph
   const newNodes = []
   const nodeCreatedListener = (evt) => newNodes.push(evt.item)
   builder.addEventListener('node-created', nodeCreatedListener)
+
   // update the graph according the new (but related) data
   // this will remove nodes whose IDs are not in the new data set
   // this will add nodes whose IDs are in the new data set, but not in the old one
   setBuilderData(nodesSource)
   builder.updateGraph()
+
   builder.removeEventListener('node-created', nodeCreatedListener)
+
   // hide the new items (i.e. the new nodes, the edges connected to the new nodes, their labels
   // and their ports) during the animated layout calculation
   hideNodesAndRelatedItems(graph, newNodes)
+
   await arrangeGraph(graphComponent)
+
   // after the layout animation has finished, show the previously hidden items
   // this way new items do not seem to be affected by the layout calculation
   // otherwise, new items would appear at the default location (0,0) and then move to their
   // final location during the layout animation
   showNodesAndRelatedItems(graph, newNodes)
 }
+
 /**
  * Arranges the graph of the given graph component and applies the new layout in an animated
  * fashion.
  */
 function arrangeGraph(graphComponent) {
   document.querySelector('#update-builder').disabled = true
+
   const algorithm = new TreeLayout({
     defaultSubtreePlacer: new SingleLayerSubtreePlacer({
       minimumFirstSegmentLength: 20,
       minimumLastSegmentLength: 20
     })
   })
+
   // arrange the graph with the chosen layout algorithm
   return new LayoutExecutor({
     graphComponent: graphComponent,
@@ -124,20 +143,23 @@ function arrangeGraph(graphComponent) {
       document.querySelector('#update-builder').disabled = false
     })
 }
+
 /**
  * Initializes style defaults for the graph items.
  */
 function setGraphDefaults(graph) {
   graph.nodeDefaults.size = new Size(160, 120)
+
   // we want to keep the ports
   graph.nodeDefaults.ports.autoCleanUp = false
+
   graph.nodeDefaults.ports.labels.layoutParameter = new InsideOutsidePortLabelModel({
     distance: 5
   }).createInsideParameter()
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '2px #662b00'
-  })
+
+  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '2px #662b00' })
 }
+
 /**
  * Registers the actions for the toolbar buttons during the creation of this application.
  */
@@ -149,4 +171,5 @@ function initializeUI(graphComponent) {
     await updateGraph(graphComponent, data)
   })
 }
+
 run().then(finishLoading)

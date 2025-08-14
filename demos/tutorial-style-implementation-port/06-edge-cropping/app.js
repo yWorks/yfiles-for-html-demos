@@ -38,16 +38,23 @@ import {
   initializeInlineGraphComponent,
   initializeTutorialDefaults
 } from '../common'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 const oldState = initializeInlineGraphComponent('#old-state')
+
 initializeTutorialDefaults(graphComponent)
 initializeTutorialDefaults(oldState)
+
 graphComponent.graph.nodeDefaults.ports.style = new CustomPortStyle(15)
 oldState.graph.nodeDefaults.ports.style = new OldCustomPortStyle(15)
+
 createSampleGraphEdgeCropping(graphComponent.graph)
 createSampleGraphEdgeCropping(oldState.graph)
 enableGraphEditing(graphComponent)
+
 fitGraphBounds(graphComponent)
 fitGraphBounds(oldState)
+
 finishLoading()

@@ -227,7 +227,7 @@ export const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
     ],
     edgeRoutingItem: [
       new LabelAttribute(
-        'Edge Routing Style',
+        'Routing Style',
         '#/api/CircularLayout#CircularLayout-property-edgeRoutingPolicy'
       ),
       new OptionGroupAttribute('EdgesGroup', 30),
@@ -617,9 +617,7 @@ export const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
 
     const ebc = layout.edgeBundling
     ebc.bundlingStrength = this.edgeBundlingStrengthItem
-    ebc.defaultBundleDescriptor = new EdgeBundleDescriptor({
-      bundled: this.edgeBundlingItem
-    })
+    ebc.defaultBundleDescriptor = new EdgeBundleDescriptor({ bundled: this.edgeBundlingItem })
 
     layout.nodeLabelPlacement = this.nodeLabelingStyleItem
 
@@ -866,6 +864,7 @@ export const CircularLayoutConfig = (Class as any)('CircularLayoutConfig', {
   shouldDisableEdgeBundlingStrengthItem: <any>{
     get: function (): boolean {
       return (
+        !this.edgeBundlingItem ||
         this.partitionStyleItem !== CircularLayoutPartitionStyle.CYCLE ||
         this.partitioningPolicyItem === CircularLayoutPartitioningPolicy.BCC_ISOLATED
       )

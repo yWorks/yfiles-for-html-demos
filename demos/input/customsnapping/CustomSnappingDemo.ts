@@ -80,9 +80,7 @@ async function run(): Promise<void> {
   addAdditionalSnapLineVisualCreator(graphComponent, new Point(-230, -50), new Point(-230, 400))
 
   // initialize the input mode for this demo
-  const graphEditorInputMode = new GraphEditorInputMode({
-    snapContext: graphSnapContext
-  })
+  const graphEditorInputMode = new GraphEditorInputMode({ snapContext: graphSnapContext })
 
   // add an input mode that allows to move the additional snap lines
   const additionalSnapLineMoveInputMode = new AdditionalSnapLineMoveInputMode(
@@ -225,11 +223,7 @@ function addAdditionalSnapLineVisualCreator(
 function createSampleGraph(graph: IGraph): void {
   graph.clear()
 
-  const starShape = new ShapeNodeStyle({
-    shape: 'star5',
-    fill: '#46A8D5',
-    stroke: '#224556'
-  })
+  const starShape = new ShapeNodeStyle({ shape: 'star5', fill: '#46A8D5', stroke: '#224556' })
 
   graph.createNode(new Rect(-100, 260, 75, 75), starShape)
   graph.createNode(new Rect(40, 260, 75, 75), starShape)

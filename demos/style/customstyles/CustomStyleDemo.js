@@ -43,6 +43,7 @@ import {
   Rect,
   Size
 } from '@yfiles/yfiles'
+
 import { Sample1GroupNodeStyle } from './Sample1GroupNodeStyle'
 import { Sample1LabelStyle } from './Sample1LabelStyle'
 import { Sample1EdgeStyle } from './Sample1EdgeStyle'
@@ -54,27 +55,40 @@ import { Sample2NodeStyle, Sample2NodeStyleExtension } from './Sample2NodeStyle'
 import { Sample2Arrow, Sample2ArrowExtension } from './Sample2Arrow'
 import { applyDefaultStyles } from './style-utils'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-resources/demo-page'
+import {
+  addNavigationButtons,
+  addOptions,
+  BrowserDetection,
+  finishLoading
+} from '@yfiles/demo-resources/demo-page'
 import { saveGraphML } from '@yfiles/demo-utils/graphml-support'
 import { Sample1CollapsibleNodeStyleDecorator } from './Sample1CollapsibleNodeStyleDecorator'
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('graphComponent')
   // Enable folding such that the group styles show an expand/collapse button
   const foldingManager = new FoldingManager(graphComponent.graph)
   graphComponent.graph = foldingManager.createFoldingView().graph
+
   // Create some graph elements
   createSampleGraph(graphComponent.graph)
+
   // Initially, set the styles of sample #1
   applySample1(graphComponent.graph)
   applyDefaultStyles(graphComponent.graph)
+
   // Initialize the input mode
   graphComponent.inputMode = new GraphEditorInputMode({
     clickHitTestOrder: [GraphItemTypes.LABEL, GraphItemTypes.EDGE, GraphItemTypes.NODE]
   })
+
   await graphComponent.fitGraphBounds()
+
   initializeUI(graphComponent)
 }
+
 /**
  * Sets the styles of sample #1 to the graph defaults.
  */
@@ -86,24 +100,30 @@ function applySample1(graph) {
   nodeStyleDecorator.buttonPlacement = new InteriorNodeLabelModel({ padding: 2 }).createParameter(
     'bottom-right'
   )
+
   graph.groupNodeDefaults.style = nodeStyleDecorator
+
   graph.nodeDefaults.style = new Sample1NodeStyle()
   graph.nodeDefaults.labels.style = new Sample1LabelStyle()
   graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.TOP
   graph.nodeDefaults.ports.style = new Sample1PortStyle()
+
   graph.edgeDefaults.style = new Sample1EdgeStyle()
   graph.edgeDefaults.labels.style = new Sample1LabelStyle()
+
   // add some padding to the group nodes
   graph.decorator.nodes.groupPaddingProvider.addFactory(
     () => new GroupPaddingProvider(new Insets(30, 10, 25, 10))
   )
 }
+
 /**
  * Sets the styles of sample #2 to the graph defaults.
  */
 function applySample2(graph) {
   // define the demo node style using the 'node-color' css rule
   graph.nodeDefaults.style = new Sample2NodeStyle('node-color')
+
   graph.nodeDefaults.labels.style = new LabelStyle({
     backgroundFill: '#c8dfb3',
     shape: 'pill',
@@ -111,21 +131,28 @@ function applySample2(graph) {
   })
   graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.TOP
   graph.nodeDefaults.ports.style = IPortStyle.VOID_PORT_STYLE
+
   const groupNodeStyle = new Sample2GroupNodeStyle()
   groupNodeStyle.isCollapsible = true
   graph.groupNodeDefaults.style = groupNodeStyle
+
   // define the demo edge style using the 'edge-color' css rule
-  graph.edgeDefaults.style = new Sample2EdgeStyle('edge-color')
+  const sample2EdgeStyle = new Sample2EdgeStyle('edge-color')
+  // Don't use marker arrows in Safari, because they are not supported there
+  sample2EdgeStyle.useMarkerArrows = BrowserDetection.safariVersion === 0
+  graph.edgeDefaults.style = sample2EdgeStyle
   graph.edgeDefaults.labels.style = new LabelStyle({
     backgroundFill: '#acb5a3',
     shape: 'pill',
     padding: 5
   })
+
   // add some padding to the group nodes
   graph.decorator.nodes.groupPaddingProvider.addFactory(
     () => new GroupPaddingProvider(new Insets(30, 10, 25, 10))
   )
 }
+
 /**
  * Enables saving and loading of the demo's custom styles {@link Sample2NodeStyle}, {@link Sample2EdgeStyle},
  * {@link Sample2Arrow} and {@link Sample2GroupNodeStyle} from and to GraphML.
@@ -151,6 +178,7 @@ function enableGraphML() {
   registerMarkupExtensions(graphMLIOHandler)
   return graphMLIOHandler
 }
+
 /**
  * Helper method that registers the markup extensions for our custom styles
  *
@@ -164,9 +192,7 @@ function registerMarkupExtensions(graphMLIOHandler) {
     }
   })
   graphMLIOHandler.addTypeInformation(Sample2NodeStyleExtension, {
-    properties: {
-      cssClass: { default: '', type: String }
-    }
+    properties: { cssClass: { default: '', type: String } }
   })
   graphMLIOHandler.addTypeInformation(Sample2GroupNodeStyle, {
     extension: (item) => {
@@ -208,57 +234,28 @@ function registerMarkupExtensions(graphMLIOHandler) {
     }
   })
   graphMLIOHandler.addTypeInformation(Sample2ArrowExtension, {
-    properties: {
-      cssClass: { default: '', type: String }
-    }
+    properties: { cssClass: { default: '', type: String } }
   })
 }
+
 /**
  * Creates the initial sample graph.
  */
 function createSampleGraph(graph) {
   graph.nodeDefaults.size = new Size(50, 50)
-  const n0 = graph.createNodeAt({
-    location: new Point(291, 433),
-    tag: 'rgb(108, 0, 255)'
-  })
-  const n1 = graph.createNodeAt({
-    location: new Point(396, 398),
-    tag: 'rgb(210, 255, 0)'
-  })
-  const n2 = graph.createNodeAt({
-    location: new Point(462, 308),
-    tag: 'rgb(0, 72, 255)'
-  })
-  const n3 = graph.createNodeAt({
-    location: new Point(462, 197),
-    tag: 'rgb(255, 0, 84)'
-  })
-  const n4 = graph.createNodeAt({
-    location: new Point(396, 107),
-    tag: 'rgb(255, 30, 0)'
-  })
-  const n5 = graph.createNodeAt({
-    location: new Point(291, 73),
-    tag: 'rgb(0, 42, 255)'
-  })
-  const n6 = graph.createNodeAt({
-    location: new Point(185, 107),
-    tag: 'rgb(114, 255, 0)'
-  })
-  const n7 = graph.createNodeAt({
-    location: new Point(119, 197),
-    tag: 'rgb(216, 0, 255)'
-  })
-  const n8 = graph.createNodeAt({
-    location: new Point(119, 308),
-    tag: 'rgb(36, 255, 0)'
-  })
-  const n9 = graph.createNodeAt({
-    location: new Point(185, 398),
-    tag: 'rgb(216, 0, 255)'
-  })
+  const n0 = graph.createNodeAt({ location: new Point(291, 433), tag: 'rgb(108, 0, 255)' })
+  const n1 = graph.createNodeAt({ location: new Point(396, 398), tag: 'rgb(210, 255, 0)' })
+  const n2 = graph.createNodeAt({ location: new Point(462, 308), tag: 'rgb(0, 72, 255)' })
+  const n3 = graph.createNodeAt({ location: new Point(462, 197), tag: 'rgb(255, 0, 84)' })
+  const n4 = graph.createNodeAt({ location: new Point(396, 107), tag: 'rgb(255, 30, 0)' })
+  const n5 = graph.createNodeAt({ location: new Point(291, 73), tag: 'rgb(0, 42, 255)' })
+  const n6 = graph.createNodeAt({ location: new Point(185, 107), tag: 'rgb(114, 255, 0)' })
+  const n7 = graph.createNodeAt({ location: new Point(119, 197), tag: 'rgb(216, 0, 255)' })
+  const n8 = graph.createNodeAt({ location: new Point(119, 308), tag: 'rgb(36, 255, 0)' })
+  const n9 = graph.createNodeAt({ location: new Point(185, 398), tag: 'rgb(216, 0, 255)' })
+
   const labelModel = new ExteriorNodeLabelModel({ margins: 15 })
+
   graph.addLabel(n0, 'Node 0', labelModel.createParameter('bottom'))
   graph.addLabel(n1, 'Node 1', labelModel.createParameter('bottom-right'))
   graph.addLabel(n2, 'Node 2', labelModel.createParameter('right'))
@@ -269,17 +266,20 @@ function createSampleGraph(graph) {
   graph.addLabel(n7, 'Node 7', labelModel.createParameter('left'))
   graph.addLabel(n8, 'Node 8', labelModel.createParameter('left'))
   graph.addLabel(n9, 'Node 9', labelModel.createParameter('bottom-left'))
+
   graph.createEdge(n0, n4)
   graph.createEdge(n6, n0)
   graph.createEdge(n6, n5)
   graph.createEdge(n5, n2)
   graph.createEdge(n3, n7)
   graph.createEdge(n9, n4)
+
   // Add all nodes to a group
   const group1 = graph.groupNodes({ children: graph.nodes })
   group1.tag = 'gold'
   graph.setNodeLayout(group1, new Rect(0, -50, 600, 600))
 }
+
 function initializeUI(graphComponent) {
   // Enable support to save the second sample to graphml
   const graphMLIOHandler = enableGraphML()
@@ -295,6 +295,7 @@ function initializeUI(graphComponent) {
     // on which the styles depend
     graphComponent.graph.invalidateDisplays()
   })
+
   // Wire the save button, but initially disable it - will be enabled on selecting sample 2
   const saveButton = document.querySelector(`#save-button`)
   saveButton.addEventListener(
@@ -302,12 +303,14 @@ function initializeUI(graphComponent) {
     async () => await saveGraphML(graphComponent, 'CustomStyles.graphml', graphMLIOHandler)
   )
   saveButton.disabled = true
+
   const sampleSelectElements = ['#sample-select--sidebar', '#sample-select--toolbar'].map(
     (selector) => document.querySelector(selector)
   )
   for (const selectElement of sampleSelectElements) {
     addOptions(selectElement, 'Sample 1', 'Sample 2')
     addNavigationButtons(selectElement, true, false)
+
     selectElement.addEventListener('change', () => {
       const sampleName = selectElement.value
       switch (sampleName) {
@@ -315,6 +318,7 @@ function initializeUI(graphComponent) {
         default:
           // Set up the styles of the first sample
           applySample1(graphComponent.graph)
+
           // Update UI accordingly
           updateDescriptionText('sample-1-description', 'sample-2-description')
           modifyColors.disabled = false
@@ -323,14 +327,17 @@ function initializeUI(graphComponent) {
         case 'Sample 2':
           // Set up the styles of the second sample
           applySample2(graphComponent.graph)
+
           // Update UI accordingly
           updateDescriptionText('sample-2-description', 'sample-1-description')
           modifyColors.disabled = true
           saveButton.disabled = false
           break
       }
+
       // Apply the new default styles
       applyDefaultStyles(graphComponent.graph)
+
       // Updates all other select elements
       for (const selectElement of sampleSelectElements) {
         selectElement.value = sampleName
@@ -338,6 +345,7 @@ function initializeUI(graphComponent) {
     })
   }
 }
+
 /**
  * Updates the description text in the demo's left sidebar.
  * @param visibleId the div element which becomes visible
@@ -350,4 +358,5 @@ function updateDescriptionText(visibleId, hiddenId) {
   descriptionContainer.classList.remove('highlight-description')
   setTimeout(() => descriptionContainer.classList.add('highlight-description'), 0)
 }
+
 void run().then(finishLoading)

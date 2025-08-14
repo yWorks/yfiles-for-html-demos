@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { basicSetup, EditorView } from 'codemirror'
-import { javascript } from '@codemirror/lang-javascript'
+import { createCodemirrorEditor, EditorView } from '@yfiles/demo-resources/codemirror-editor'
 
 let container: HTMLDivElement
 let sourceDataView: EditorView
@@ -53,10 +52,7 @@ function initDataView(selector: string): void {
   header.addEventListener('click', () => {
     container.classList.toggle('collapsed')
   })
-  sourceDataView = new EditorView({
-    parent: container,
-    extensions: [basicSetup, javascript(), EditorView.editable.of(false)]
-  })
+  sourceDataView = createCodemirrorEditor('js', container, [EditorView.editable.of(false)])
 }
 
 /**
@@ -80,11 +76,7 @@ function updateDataView(nodesSource: any, groupsSource?: any, edgesSource?: any)
     }
 
     sourceDataView.dispatch({
-      changes: {
-        from: 0,
-        to: sourceDataView.state.doc.length,
-        insert: editorData
-      }
+      changes: { from: 0, to: sourceDataView.state.doc.length, insert: editorData }
     })
   }
 }

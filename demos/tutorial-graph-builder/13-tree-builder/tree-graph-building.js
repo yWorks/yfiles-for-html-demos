@@ -27,13 +27,17 @@
  **
  ***************************************************************************/
 import { TreeBuilder } from '@yfiles/yfiles'
+
 export function configureGraphBuilder(graph, nodesData) {
   const treeBuilder = new TreeBuilder(graph)
+
   const rootNodesSource = treeBuilder.createRootNodesSource(nodesData, null)
+
+
   // the childDataProvider identifies the property of a node object that contains its child nodes
   rootNodesSource.addChildNodesSource((data) => data.colleagues, rootNodesSource)
-  rootNodesSource.nodeCreator.createLabelBinding({
-    text: (dataItem) => dataItem.name
-  })
+
+  rootNodesSource.nodeCreator.createLabelBinding({ text: (dataItem) => dataItem.name })
+
   return treeBuilder
 }

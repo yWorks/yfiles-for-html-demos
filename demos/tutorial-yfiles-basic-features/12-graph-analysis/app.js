@@ -39,17 +39,24 @@ import {
   setDefaultLabelLayoutParameters
 } from '../common'
 import { runReachabilityAlgorithm, runShortestPathAlgorithm } from './graph-analysis'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
 setDefaultLabelLayoutParameters(graphComponent.graph)
+
 configureInteraction(graphComponent)
 configureHighlights(graphComponent)
+
 createSampleGraphAnalysis(graphComponent.graph)
+
 graphComponent.selection.add(
   graphComponent.graph.nodes.find((node) => node.labels.first().text === '15')
 )
+
 fitGraphBounds(graphComponent)
 finishLoading()
+
 addButtonListener('#runReachabilityButton', () => runReachabilityAlgorithm(graphComponent))
 addButtonListener('#runShortestPathButton', () => runShortestPathAlgorithm(graphComponent))

@@ -75,10 +75,7 @@ export function initStyleDefaults(graph: IGraph): void {
   })
   graph.nodeDefaults.labels.style = new LabelStyle({ padding: 10 })
 
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '2px gray',
-    targetArrow: 'triangle'
-  })
+  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '2px gray', targetArrow: 'triangle' })
   graph.edgeDefaults.labels.style = new LabelStyle({ padding: 10 })
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 0,

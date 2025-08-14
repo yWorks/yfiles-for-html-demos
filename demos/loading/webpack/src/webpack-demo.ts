@@ -67,9 +67,7 @@ layout().then(() => {
 LayoutExecutor.ensure()
 
 function layout() {
-  const layoutAlgorithm = new HierarchicalLayout({
-    layoutOrientation: 'top-to-bottom'
-  })
+  const layoutAlgorithm = new HierarchicalLayout({ layoutOrientation: 'top-to-bottom' })
   return graphComponent.applyLayoutAnimated(layoutAlgorithm, '2s')
 }
 

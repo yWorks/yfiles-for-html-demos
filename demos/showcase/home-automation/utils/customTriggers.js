@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { runLayout } from '../layout/runLayout'
 import { GraphComponent, GraphEditorInputMode } from '@yfiles/yfiles'
+
 export async function runAutoLayout(graphComponent) {
   const layoutButton = document.querySelector('#layoutButton')
   // disable and re-enable the button before and after morphing the layout
@@ -40,6 +41,7 @@ export async function runAutoLayout(graphComponent) {
     layoutButton.removeAttribute('disabled')
   }
 }
+
 export function triggerGridDisplay(graphComponent, grid) {
   const gridButton = document.querySelector('#grid-button')
   const gcInputModeSnapContext = graphComponent.inputMode.snapContext

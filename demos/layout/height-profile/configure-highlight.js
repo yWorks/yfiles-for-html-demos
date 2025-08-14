@@ -35,6 +35,7 @@ import {
 } from '@yfiles/yfiles'
 import { getWayPoint, MultiPageNodeType } from './resources/TrekkingData'
 import { addIconDescription, removeIconDescription } from './draw-icon-description'
+
 /**
  * Configures the highlighting style for a hovered node and adds the associated description icon
  * if there is such an icon.
@@ -53,6 +54,7 @@ export function configureHighlight(graphComponent) {
         zoomPolicy: StyleIndicatorZoomPolicy.MIXED
       })
   )
+
   // configures hover input mode to highlight hovered nodes and to show the icon associated to
   // the hovered node
   const inputMode = graphComponent.inputMode
@@ -64,6 +66,7 @@ export function configureHighlight(graphComponent) {
     const highlights = graphComponent.highlights
     highlights.clear()
     removeIconDescription(graphComponent)
+
     if (hoveredItem instanceof INode) {
       // highlight the node and show its description icon if there is one
       highlights.add(hoveredItem)

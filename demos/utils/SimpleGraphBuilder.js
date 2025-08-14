@@ -48,6 +48,7 @@ import {
   Point,
   Rect
 } from '@yfiles/yfiles'
+
 /**
  Populates a graph from custom data.
  This class can be used when the data specifies a collection of nodes, a collection of edges, and optionally a collection
@@ -109,9 +110,12 @@ export class SimpleGraphBuilder {
   $builderNodesSource
   $builderGroupsSource
   $builderEdgesSource
+
   $graphBuilderHelper
+
   $sourceIdProvider
   $targetIdProvider
+
   /**
      Initializes a new instance of the {@link SimpleGraphBuilder} class that operates on the given graph.
      The `graph` will be {@link IGraph.clear cleared} and re-built from the data in {@link SimpleGraphBuilder.nodesSource}, {@link SimpleGraphBuilder.groupsSource}, and {@link SimpleGraphBuilder.edgesSource} when {@link SimpleGraphBuilder.buildGraph} is called.
@@ -145,6 +149,7 @@ export class SimpleGraphBuilder {
       options = graphOrOptions
       graph = options.graph || new Graph()
     }
+
     this.$graphBuilderHelper = new GraphBuilderHelper(
       this,
       graph,
@@ -159,6 +164,7 @@ export class SimpleGraphBuilder {
         this.createEdge(graph, source, target, labelData, edgeObject),
       (graph, edge, labelData, edgeObject) => this.updateEdge(graph, edge, labelData, edgeObject)
     )
+
     this.$lazyNodeDefinition = false
     this.$nodesSource = null
     this.$edgesSource = null
@@ -166,21 +172,26 @@ export class SimpleGraphBuilder {
     this.$edgeIdBinding = null
     this.$sourceNodeBinding = null
     this.$targetNodeBinding = null
+
     this.$graphBuilder = new GraphBuilder(graph)
     this.$builderNodesSource = this.$graphBuilder.createNodesSource([], '')
     this.$builderNodesSource.nodeCreator = this.$graphBuilderHelper.createNodeCreator()
+
     this.$builderGroupsSource = this.$graphBuilder.createGroupNodesSource([], '')
     this.$builderGroupsSource.nodeCreator = this.$graphBuilderHelper.createGroupCreator()
+
     this.$builderEdgesSource = this.$graphBuilder.createEdgesSource(
       [],
       (dataItem) => this.$sourceIdProvider && this.$sourceIdProvider(dataItem),
       (dataItem) => this.$targetIdProvider && this.$targetIdProvider(dataItem)
     )
     this.$builderEdgesSource.edgeCreator = this.$graphBuilderHelper.createEdgeCreator()
+
     if (options) {
       this.$applyOptions(options)
     }
   }
+
   $applyOptions(options) {
     if (options.lazyNodeDefinition) this.lazyNodeDefinition = options.lazyNodeDefinition
     if (options.nodesSource) this.nodesSource = options.nodesSource
@@ -199,6 +210,7 @@ export class SimpleGraphBuilder {
     if (options.locationXBinding) this.locationXBinding = options.locationXBinding
     if (options.locationYBinding) this.locationYBinding = options.locationYBinding
   }
+
   /**
      Populates the graph with items generated from the bound data.
      The graph is cleared, and then new nodes, groups, and edges are created as defined by the source collections.
@@ -209,6 +221,7 @@ export class SimpleGraphBuilder {
     this.$initialize()
     return this.$graphBuilder.buildGraph()
   }
+
   /**
      Updates the graph after changes in the bound data.
      In contrast to
@@ -220,10 +233,12 @@ export class SimpleGraphBuilder {
     this.$initialize()
     this.$graphBuilder.updateGraph()
   }
+
   $initialize() {
     if (this.$nodesSource == null) {
       throw new Error('nodesSource must be set.')
     }
+
     if (
       this.$edgesSource != null &&
       (this.sourceNodeBinding == null || this.targetNodeBinding == null)
@@ -232,63 +247,83 @@ export class SimpleGraphBuilder {
         'Since edgesSource is set, sourceNodeBinding and targetNodeBinding must be set, too.'
       )
     }
+
     if (this.$lazyNodeDefinition && this.nodeIdBinding != null) {
       throw new Error('LazyNodeDefinition cannot be used with nodeIdBinding.')
     }
+
     this.$initializeProviders()
     this.$prepareData()
   }
+
   $initializeProviders() {
     this.$graphBuilderHelper.initializeProviders()
+
     this.$builderNodesSource.idProvider = GraphBuilderHelper.createIdProvider(this.nodeIdBinding)
     this.$builderGroupsSource.idProvider = GraphBuilderHelper.createIdProvider(this.groupIdBinding)
     this.$builderEdgesSource.idProvider = GraphBuilderHelper.createIdProvider(this.edgeIdBinding)
+
     this.$builderEdgesSource.edgeCreator.tagProvider = (e) => e
+
     this.$builderNodesSource.parentIdProvider = GraphBuilderHelper.createBinding(this.groupBinding)
     this.$builderGroupsSource.parentIdProvider = GraphBuilderHelper.createBinding(
       this.parentGroupBinding
     )
+
     this.$sourceIdProvider = GraphBuilderHelper.createBinding(this.sourceNodeBinding)
     this.$targetIdProvider = GraphBuilderHelper.createBinding(this.targetNodeBinding)
   }
+
   $prepareData() {
     const { nodeCollection, edgeCollection } = this.$maybeExtractLazyNodes()
     this.$graphBuilder.setData(this.$builderNodesSource, nodeCollection)
     this.$graphBuilder.setData(this.$builderEdgesSource, edgeCollection || [])
     this.$graphBuilder.setData(this.$builderGroupsSource, this.$groupsSource || [])
   }
+
   $maybeExtractLazyNodes() {
     if (!this.$lazyNodeDefinition || !this.$edgesSource) {
       return { nodeCollection: this.$nodesSource, edgeCollection: this.$edgesSource }
     }
+
     const nodeCollectionCloner = createNodeCollectionCloner(this.$nodesSource)
     if (nodeCollectionCloner instanceof ObjectNodeCollectionCloner) {
       const edgeCollectionCloner = createEdgeCollectionCloner(this.$edgesSource)
       const iterator = edgeCollectionCloner.generator()
+
       let iteratorResult = iterator.next()
       while (!iteratorResult.done) {
         const edgeDataItem = iteratorResult.value
+
         const sourceNodeDataItem = this.$sourceIdProvider(edgeDataItem)
         const newSource = nodeCollectionCloner.has(sourceNodeDataItem)
           ? sourceNodeDataItem
           : nodeCollectionCloner.add(sourceNodeDataItem)
+
         const targetNodeDataItem = this.$targetIdProvider(edgeDataItem)
         const newTarget = !nodeCollectionCloner.has(targetNodeDataItem)
           ? nodeCollectionCloner.add(targetNodeDataItem)
           : targetNodeDataItem
         const newEdgeDataItem = { dataItem: edgeDataItem, source: newSource, target: newTarget }
+
         iteratorResult = iterator.next(newEdgeDataItem)
       }
+
       this.$sourceIdProvider = (e) => e.source
       this.$targetIdProvider = (e) => e.target
+
       const tagProvider = (e) => e.dataItem
+
       const edgesSource = this.$builderEdgesSource
       const helper = this.$graphBuilderHelper
+
       if (edgesSource.idProvider) {
         edgesSource.idProvider = compose((e) => edgesSource.idProvider(e, null), tagProvider)
       }
+
       helper.edgeLabelProvider = compose(helper.edgeLabelProvider, tagProvider)
       edgesSource.edgeCreator.tagProvider = tagProvider
+
       return {
         nodeCollection: nodeCollectionCloner.collection,
         edgeCollection: edgeCollectionCloner.collection
@@ -307,6 +342,7 @@ export class SimpleGraphBuilder {
       return { nodeCollection: nodeCollectionCloner.collection, edgeCollection: this.$edgesSource }
     }
   }
+
   /**
      Creates an edge from the given `edgeObject` and `labelData`.
      This method is called for every edge that is created either when {@link SimpleGraphBuilder.buildGraph building the graph}, or when new items appear in the {@link SimpleGraphBuilder.edgesSource}
@@ -325,6 +361,7 @@ export class SimpleGraphBuilder {
   createEdge(graph, source, target, labelData, edgeObject) {
     return this.$graphBuilderHelper.createEdge(graph, source, target, labelData, edgeObject)
   }
+
   /**
      Creates a group node from the given `groupObject` and `labelData`.
      This method is called for every group node that is created either when {@link SimpleGraphBuilder.buildGraph building the graph}, or when new items appear in
@@ -341,6 +378,7 @@ export class SimpleGraphBuilder {
   createGroupNode(graph, labelData, groupObject) {
     return this.$graphBuilderHelper.createGroupNode(graph, labelData, groupObject)
   }
+
   /**
      Creates a node with the specified parent from the given `nodeObject` and `labelData`.
      This method is called for every node that is created either when {@link SimpleGraphBuilder.buildGraph building the graph}, or when new items appear in the {@link SimpleGraphBuilder.nodesSource}
@@ -359,6 +397,7 @@ export class SimpleGraphBuilder {
   createNode(graph, parent, location, labelData, nodeObject) {
     return this.$graphBuilderHelper.createNode(graph, parent, location, labelData, nodeObject)
   }
+
   /**
      Retrieves the object from which a given item has been created.
      @param item The item to get the object for.
@@ -370,6 +409,7 @@ export class SimpleGraphBuilder {
   getBusinessObject(item) {
     return this.$graphBuilderHelper.getBusinessObject(item)
   }
+
   /**
      Retrieves the edge associated with an object from the {@link SimpleGraphBuilder.edgesSource}.
      @param businessObject An object from the {@link SimpleGraphBuilder.edgesSource}.
@@ -382,6 +422,7 @@ export class SimpleGraphBuilder {
   getEdge(businessObject) {
     return this.$graphBuilderHelper.getEdge(businessObject)
   }
+
   /**
      Retrieves the group node associated with an object from the {@link SimpleGraphBuilder.groupsSource}.
      @param groupObject An object from the {@link SimpleGraphBuilder.groupsSource}.
@@ -394,6 +435,7 @@ export class SimpleGraphBuilder {
   getGroup(groupObject) {
     return this.$graphBuilderHelper.getGroup(groupObject)
   }
+
   /**
      Retrieves the node associated with an object from the {@link SimpleGraphBuilder.nodesSource}.
      @param nodeObject An object from the {@link SimpleGraphBuilder.nodesSource}.
@@ -405,6 +447,7 @@ export class SimpleGraphBuilder {
   getNode(nodeObject) {
     return this.$graphBuilderHelper.getNode(nodeObject)
   }
+
   /**
      Updates an existing edge when the {@link SimpleGraphBuilder.updateGraph graph is updated}.
      This method is called during {@link SimpleGraphBuilder.updateGraph updating the graph} for every edge that already exists in the graph where its corresponding
@@ -419,6 +462,7 @@ export class SimpleGraphBuilder {
   updateEdge(graph, edge, labelData, edgeObject) {
     this.$graphBuilderHelper.updateEdge(graph, edge, labelData, edgeObject)
   }
+
   /**
      Updates an existing group node when the {@link SimpleGraphBuilder.updateGraph graph is updated}.
      This method is called during {@link SimpleGraphBuilder.updateGraph updating the graph} for every group node that already exists in the graph where its
@@ -433,6 +477,7 @@ export class SimpleGraphBuilder {
   updateGroupNode(graph, groupNode, labelData, groupObject) {
     this.$graphBuilderHelper.updateGroupNode(graph, groupNode, labelData, groupObject)
   }
+
   /**
      Updates an existing node when the {@link SimpleGraphBuilder.updateGraph graph is updated}.
      This method is called during {@link SimpleGraphBuilder.updateGraph updating the graph} for every node that already exists in the graph where its corresponding
@@ -449,13 +494,16 @@ export class SimpleGraphBuilder {
   updateNode(graph, node, parent, location, labelData, nodeObject) {
     this.$graphBuilderHelper.updateNode(graph, node, parent, location, labelData, nodeObject)
   }
+
   /**
    * Gets the {@link IGraph graph} used by this class.
    */
   get graph() {
     return this.$graphBuilder.graph
   }
+
   $lazyNodeDefinition
+
   /**
      Gets or sets a value indicating whether or not to automatically create nodes for values returned from {@link SimpleGraphBuilder.sourceNodeBinding} and {@link SimpleGraphBuilder.targetNodeBinding} that don't
      exist in {@link SimpleGraphBuilder.nodesSource}.
@@ -468,39 +516,50 @@ export class SimpleGraphBuilder {
   get lazyNodeDefinition() {
     return this.$lazyNodeDefinition
   }
+
   set lazyNodeDefinition(value) {
     this.$lazyNodeDefinition = value
   }
+
   $nodesSource
+
   /**
    * Gets or sets the objects to be represented as nodes of the {@link SimpleGraphBuilder.graph}.
    */
   get nodesSource() {
     return this.$nodesSource
   }
+
   set nodesSource(value) {
     this.$nodesSource = value
   }
+
   $edgesSource
+
   /**
    * Gets or sets the objects to be represented as edges of the {@link SimpleGraphBuilder.graph}.
    */
   get edgesSource() {
     return this.$edgesSource
   }
+
   set edgesSource(value) {
     this.$edgesSource = value
   }
+
   $groupsSource
+
   /**
    * Gets or sets the objects to be represented as group nodes of the {@link SimpleGraphBuilder.graph}.
    */
   get groupsSource() {
     return this.$groupsSource
   }
+
   set groupsSource(value) {
     this.$groupsSource = value
   }
+
   /**
      Gets or sets a binding that maps node objects to their identifier.
   
@@ -519,10 +578,13 @@ export class SimpleGraphBuilder {
   get nodeIdBinding() {
     return this.$graphBuilderHelper.nodeIdBinding
   }
+
   set nodeIdBinding(value) {
     this.$graphBuilderHelper.nodeIdBinding = value
   }
+
   $edgeIdBinding
+
   /**
      Gets or sets a binding that maps edge objects to their identifier.
      This maps an business object that represents a edge to its identifier. This can be used to improve the performance of
@@ -537,9 +599,11 @@ export class SimpleGraphBuilder {
   get edgeIdBinding() {
     return this.$edgeIdBinding
   }
+
   set edgeIdBinding(value) {
     this.$edgeIdBinding = value
   }
+
   /**
      Gets or sets a binding that maps a node object to a label.
   
@@ -558,9 +622,11 @@ export class SimpleGraphBuilder {
   get nodeLabelBinding() {
     return this.$graphBuilderHelper.nodeLabelBinding
   }
+
   set nodeLabelBinding(value) {
     this.$graphBuilderHelper.nodeLabelBinding = value
   }
+
   /**
      Gets or sets a binding that maps node objects to their containing groups.
   
@@ -578,9 +644,11 @@ export class SimpleGraphBuilder {
   get groupBinding() {
     return this.$graphBuilderHelper.groupBinding
   }
+
   set groupBinding(value) {
     this.$graphBuilderHelper.groupBinding = value
   }
+
   /**
      Gets or sets a binding that maps an edge object to a label.
      This maps an object that represents an edge to an object that represents the label for the edge.
@@ -596,10 +664,13 @@ export class SimpleGraphBuilder {
   get edgeLabelBinding() {
     return this.$graphBuilderHelper.edgeLabelBinding
   }
+
   set edgeLabelBinding(value) {
     this.$graphBuilderHelper.edgeLabelBinding = value
   }
+
   $sourceNodeBinding
+
   /**
      Gets or sets a binding that maps edge objects to their source node.
      This maps an object _E_ that represents an edge to another object _N_ that specifies the source node of _E_.
@@ -616,10 +687,13 @@ export class SimpleGraphBuilder {
   get sourceNodeBinding() {
     return this.$sourceNodeBinding
   }
+
   set sourceNodeBinding(value) {
     this.$sourceNodeBinding = value
   }
+
   $targetNodeBinding
+
   /**
      Gets or sets a binding that maps edge objects to their target node.
      This maps an object _E_ that represents an edge to another object _N_ that specifies the target node of _E_.
@@ -636,9 +710,11 @@ export class SimpleGraphBuilder {
   get targetNodeBinding() {
     return this.$targetNodeBinding
   }
+
   set targetNodeBinding(value) {
     this.$targetNodeBinding = value
   }
+
   /**
      Gets or sets a binding that maps group objects to their identifier.
      This maps an object that represents a group node to its identifier. This is needed when {@link SimpleGraphBuilder.nodesSource node objects} only contain an
@@ -657,9 +733,11 @@ export class SimpleGraphBuilder {
   get groupIdBinding() {
     return this.$graphBuilderHelper.groupIdBinding
   }
+
   set groupIdBinding(value) {
     this.$graphBuilderHelper.groupIdBinding = value
   }
+
   /**
      Gets or sets a binding that maps a group object to a label.
      This maps an object that represents a group node to an object that represents the label for the group node.
@@ -674,9 +752,11 @@ export class SimpleGraphBuilder {
   get groupLabelBinding() {
     return this.$graphBuilderHelper.groupLabelBinding
   }
+
   set groupLabelBinding(value) {
     this.$graphBuilderHelper.groupLabelBinding = value
   }
+
   /**
      Gets or sets a binding that maps group objects to their containing groups.
      This maps an object _G_ that represents a group node to another object _P_ that specifies the containing group of _G_. If _P_ is
@@ -691,9 +771,11 @@ export class SimpleGraphBuilder {
   get parentGroupBinding() {
     return this.$graphBuilderHelper.parentGroupBinding
   }
+
   set parentGroupBinding(value) {
     this.$graphBuilderHelper.parentGroupBinding = value
   }
+
   /**
      Gets or sets the binding for determining a node's position on the x-axis.
      This binding maps a business object that represents a node to a number that specifies the x-coordinate of that node.
@@ -705,9 +787,11 @@ export class SimpleGraphBuilder {
   get locationXBinding() {
     return this.$graphBuilderHelper.locationXBinding
   }
+
   set locationXBinding(value) {
     this.$graphBuilderHelper.locationXBinding = value
   }
+
   /**
      Gets or sets the binding for determining a node's position on the y-axis.
      This binding maps a business object that represents a node to a number that specifies the y-coordinate of that node.
@@ -719,9 +803,11 @@ export class SimpleGraphBuilder {
   get locationYBinding() {
     return this.$graphBuilderHelper.locationYBinding
   }
+
   set locationYBinding(value) {
     this.$graphBuilderHelper.locationYBinding = value
   }
+
   /**
      Adds the given listener for the `NodeCreated` event that occurs when a node has been created.
      This event can be used to further customize the created node.
@@ -734,6 +820,7 @@ export class SimpleGraphBuilder {
   setNodeCreatedListener(listener) {
     this.$graphBuilderHelper.setNodeCreatedListener(listener)
   }
+
   /**
      Removes the given listener for the `NodeCreated` event that occurs when a node has been created.
      This event can be used to further customize the created node.
@@ -746,6 +833,7 @@ export class SimpleGraphBuilder {
   removeNodeCreatedListener(listener) {
     this.$graphBuilderHelper.removeNodeCreatedListener(listener)
   }
+
   /**
      Adds the given listener for the `NodeUpdated` event that occurs when a node has been updated.
      This event can be used to update customizations added in an event handler for
@@ -759,6 +847,7 @@ export class SimpleGraphBuilder {
   setNodeUpdatedListener(listener) {
     this.$graphBuilderHelper.setNodeUpdatedListener(listener)
   }
+
   /**
      Removes the given listener for the `NodeUpdated` event that occurs when a node has been updated.
      This event can be used to update customizations added in an event handler for
@@ -772,6 +861,7 @@ export class SimpleGraphBuilder {
   removeNodeUpdatedListener(listener) {
     this.$graphBuilderHelper.removeNodeUpdatedListener(listener)
   }
+
   /**
      Adds the given listener for the `EdgeCreated` event that occurs when an edge has been created.
      This event can be used to further customize the created edge.
@@ -784,6 +874,7 @@ export class SimpleGraphBuilder {
   addEdgeCreatedListener(listener) {
     this.$graphBuilderHelper.setEdgeCreatedListener(listener)
   }
+
   /**
      Removes the given listener for the `EdgeCreated` event that occurs when an edge has been created.
      This event can be used to further customize the created edge.
@@ -796,6 +887,7 @@ export class SimpleGraphBuilder {
   removeEdgeCreatedListener(listener) {
     this.$graphBuilderHelper.removeEdgeCreatedListener(listener)
   }
+
   /**
      Adds the given listener for the `EdgeUpdated` event that occurs when an edge has been updated.
      This event can be used to update customizations added in an event handler for
@@ -809,6 +901,7 @@ export class SimpleGraphBuilder {
   addEdgeUpdatedListener(listener) {
     this.$graphBuilderHelper.setEdgeUpdatedListener(listener)
   }
+
   /**
      Removes the given listener for the `EdgeUpdated` event that occurs when an edge has been updated.
      This event can be used to update customizations added in an event handler for
@@ -822,6 +915,7 @@ export class SimpleGraphBuilder {
   removeEdgeUpdatedListener(listener) {
     this.$graphBuilderHelper.removeEdgeUpdatedListener(listener)
   }
+
   /**
      Adds the given listener for the `GroupNodeCreated` event that occurs when a group node has been created.
      This event can be used to further customize the created group node.
@@ -834,6 +928,7 @@ export class SimpleGraphBuilder {
   setGroupNodeCreatedListener(listener) {
     this.$graphBuilderHelper.setGroupNodeCreatedListener(listener)
   }
+
   /**
      Removes the given listener for the `GroupNodeCreated` event that occurs when a group node has been created.
      This event can be used to further customize the created group node.
@@ -846,6 +941,7 @@ export class SimpleGraphBuilder {
   removeGroupNodeCreatedListener(listener) {
     this.$graphBuilderHelper.removeGroupNodeCreatedListener(listener)
   }
+
   /**
      Adds the given listener for the `GroupNodeUpdated` event that occurs when a group node has been updated.
      This event can be used to update customizations added in an event handler for
@@ -859,6 +955,7 @@ export class SimpleGraphBuilder {
   setGroupNodeUpdatedListener(listener) {
     this.$graphBuilderHelper.setGroupNodeUpdatedListener(listener)
   }
+
   /**
      Removes the given listener for the `GroupNodeUpdated` event that occurs when a group node has been updated.
      This event can be used to update customizations added in an event handler for
@@ -873,6 +970,7 @@ export class SimpleGraphBuilder {
     this.$graphBuilderHelper.removeGroupNodeUpdatedListener(listener)
   }
 }
+
 export class SimpleGraphBuilderItemEventArgs extends ItemEventArgs {
   /**
      Creates a new instance of the {@link SimpleGraphBuilderItemEventArgs} class with the given graph, item, and source object.
@@ -885,6 +983,7 @@ export class SimpleGraphBuilderItemEventArgs extends ItemEventArgs {
     this.graph = graph
     this.sourceObject = sourceObject
   }
+
   /**
      Gets the graph that can be used to modify the {@link ItemEventArgs.item}.
      */
@@ -894,6 +993,7 @@ export class SimpleGraphBuilderItemEventArgs extends ItemEventArgs {
      */
   sourceObject
 }
+
 function createIterable(collection) {
   if (collection[Symbol.iterator]) {
     return collection
@@ -901,6 +1001,7 @@ function createIterable(collection) {
     return Object.values(collection)
   }
 }
+
 function createNodeCollectionCloner(originalCollection) {
   if (originalCollection[Symbol.iterator]) {
     return new IterableNodeCollectionCloner(originalCollection)
@@ -908,35 +1009,44 @@ function createNodeCollectionCloner(originalCollection) {
     return new ObjectNodeCollectionCloner(originalCollection)
   }
 }
+
 class IterableNodeCollectionCloner {
   $array
   $valueSet
+
   get collection() {
     return this.$array
   }
+
   constructor(originalCollection) {
     this.$array = []
     this.$valueSet = new Set()
+
     for (const itemData of originalCollection) {
       this.add(itemData)
     }
   }
+
   add(itemData) {
     this.$array.push(itemData)
     this.$valueSet.add(itemData)
     return itemData
   }
+
   has(itemData) {
     return this.$valueSet.has(itemData)
   }
 }
+
 class ObjectNodeCollectionCloner {
   $object
   $valueSet
   $currentIndex
+
   get collection() {
     return this.$object
   }
+
   constructor(originalCollection) {
     this.$currentIndex = 0
     this.$object = {}
@@ -944,25 +1054,30 @@ class ObjectNodeCollectionCloner {
     Object.keys(originalCollection).forEach((key) => {
       this.$object[key] = originalCollection[key]
       this.$valueSet.add(key)
+
       const numberIndex = parseInt(key)
       if (!Number.isNaN(numberIndex)) {
         this.$currentIndex = Math.max(this.$currentIndex, numberIndex)
       }
     })
   }
+
   add(itemData) {
     const key = this.$newKey()
     this.$object[key] = itemData
     this.$valueSet.add(key)
     return key
   }
+
   has(id) {
     return this.$valueSet.has(id)
   }
+
   $newKey() {
     return (++this.$currentIndex).toString(10)
   }
 }
+
 function createEdgeCollectionCloner(originalCollection) {
   if (originalCollection[Symbol.iterator]) {
     return new IterableEdgeCollectionCloner(originalCollection)
@@ -970,38 +1085,47 @@ function createEdgeCollectionCloner(originalCollection) {
     return new ObjectEdgeCollectionCloner(originalCollection)
   }
 }
+
 class IterableEdgeCollectionCloner {
   $array
   $originalCollection
+
   constructor(originalCollection) {
     this.$originalCollection = originalCollection
     this.$array = []
   }
+
   get collection() {
     return this.$array
   }
+
   *generator() {
     for (const edgeDataItem of this.$originalCollection) {
       this.$array.push(yield edgeDataItem)
     }
   }
 }
+
 class ObjectEdgeCollectionCloner {
   $originalCollection
   $object
+
   get collection() {
     return this.$object
   }
+
   constructor(originalCollection) {
     this.$originalCollection = originalCollection
     this.$object = {}
   }
+
   *generator() {
     for (const [id, edgeDataItem] of Object.entries(this.$originalCollection)) {
       this.$object[id] = yield edgeDataItem
     }
   }
 }
+
 /**
  Populates a graph from custom data where objects corresponding to nodes have a parent-child relationship.
  This class can be used when the data specifies a collection of nodes, each of which knows its child nodes,
@@ -1061,7 +1185,9 @@ class ObjectEdgeCollectionCloner {
  */
 export class SimpleTreeBuilder {
   $adjacentNodesGraphBuilder
+
   $edgeLabelBinding
+
   /**
      Initializes a new instance of the {@link SimpleTreeBuilder} class that operates on the given graph.
      The `graph` will be {@link IGraph.clear cleared} and re-built from the data in {@link SimpleTreeBuilder.nodesSource} and {@link SimpleTreeBuilder.groupsSource} when {@link SimpleTreeBuilder.buildGraph} is called.
@@ -1090,12 +1216,15 @@ export class SimpleTreeBuilder {
       options = graphOrOptions
       graph = options.graph || new Graph()
     }
+
     this.$edgeLabelBinding = null
     this.$adjacentNodesGraphBuilder = this.$createAdjacentNodesGraphBuilderWrapper(graph)
+
     if (options) {
       this.$applyOptions(options)
     }
   }
+
   $applyOptions(options) {
     if (options.nodesSource) this.nodesSource = options.nodesSource
     if (options.childBinding) this.childBinding = options.childBinding
@@ -1110,52 +1239,68 @@ export class SimpleTreeBuilder {
     if (options.locationXBinding) this.locationXBinding = options.locationXBinding
     if (options.locationYBinding) this.locationYBinding = options.locationYBinding
   }
+
   $createAdjacentNodesGraphBuilderWrapper(graph) {
     class AdjacentNodesGraphBuilderWrapper extends SimpleAdjacentNodesGraphBuilder {
       $treeBuilder
+
       constructor(graphOrOptions, treeBuilder) {
         super(graphOrOptions)
         this.$treeBuilder = treeBuilder
       }
+
       createEdge(graph, source, target, labelData) {
         return this.$treeBuilder.createEdge(graph, source, target, labelData)
       }
+
       createGroupNode(graph, labelData, groupObject) {
         return this.$treeBuilder.createGroupNode(graph, labelData, groupObject)
       }
+
       createNode(graph, parent, location, labelData, nodeObject) {
         return this.$treeBuilder.createNode(graph, parent, location, labelData, nodeObject)
       }
+
       updateEdge(graph, edge, labelData) {
         this.$treeBuilder.updateEdge(graph, edge, labelData)
       }
+
       updateGroupNode(graph, groupNode, labelData, groupObject) {
         this.$treeBuilder.updateGroupNode(graph, groupNode, labelData, groupObject)
       }
+
       updateNode(graph, node, parent, location, labelData, nodeObject) {
         this.$treeBuilder.updateNode(graph, node, parent, location, labelData, nodeObject)
       }
+
       createEdgeBase(graph, source, target, labelData) {
         return super.createEdge(graph, source, target, labelData)
       }
+
       createGroupNodeBase(graph, labelData, groupObject) {
         return super.createGroupNode(graph, labelData, groupObject)
       }
+
       createNodeBase(graph, parent, location, labelData, nodeObject) {
         return super.createNode(graph, parent, location, labelData, nodeObject)
       }
+
       updateEdgeBase(graph, edge, labelData) {
         super.updateEdge(graph, edge, labelData)
       }
+
       updateGroupNodeBase(graph, groupNode, labelData, groupObject) {
         super.updateGroupNode(graph, groupNode, labelData, groupObject)
       }
+
       updateNodeBase(graph, node, parent, location, labelData, nodeObject) {
         super.updateNode(graph, node, parent, location, labelData, nodeObject)
       }
     }
+
     return new AdjacentNodesGraphBuilderWrapper(graph, this)
   }
+
   /**
      Populates the graph with items generated from the bound data.
      The graph is cleared, and then new nodes, groups, and edges are created as defined by the source collections.
@@ -1169,6 +1314,7 @@ export class SimpleTreeBuilder {
     }
     return this.$adjacentNodesGraphBuilder.buildGraph()
   }
+
   /**
      Updates the graph after changes in the bound data.
      In contrast to
@@ -1179,6 +1325,7 @@ export class SimpleTreeBuilder {
   updateGraph() {
     this.$adjacentNodesGraphBuilder.updateGraph()
   }
+
   /**
      Creates an edge from the given `source`, `target`, and `labelData`.
      This method is called for every edge that is created either when {@link SimpleTreeBuilder.buildGraph building the graph}, or when new items appear in the {@link SimpleTreeBuilder.childBinding}
@@ -1194,6 +1341,7 @@ export class SimpleTreeBuilder {
   createEdge(graph, source, target, labelData) {
     return this.$adjacentNodesGraphBuilder.createEdgeBase(graph, source, target, labelData)
   }
+
   /**
      Creates a group node from the given `groupObject` and `labelData`.
      This method is called for every group node that is created either when {@link SimpleTreeBuilder.buildGraph building the graph}, or when new items appear in
@@ -1209,6 +1357,7 @@ export class SimpleTreeBuilder {
   createGroupNode(graph, labelData, groupObject) {
     return this.$adjacentNodesGraphBuilder.createGroupNodeBase(graph, labelData, groupObject)
   }
+
   /**
      Creates a node with the specified parent from the given `nodeObject` and `labelData`.
      This method is called for every node that is created either when {@link SimpleTreeBuilder.buildGraph building the graph}, or when new items appear in the {@link SimpleTreeBuilder.nodesSource}
@@ -1232,6 +1381,7 @@ export class SimpleTreeBuilder {
       nodeObject
     )
   }
+
   /**
      Retrieves the object from which a given item has been created.
      @param item The item to get the object for.
@@ -1241,6 +1391,7 @@ export class SimpleTreeBuilder {
   getBusinessObject(item) {
     return this.$adjacentNodesGraphBuilder.getBusinessObject(item)
   }
+
   /**
      Retrieves the group node associated with an object from the {@link SimpleTreeBuilder.groupsSource}.
      @param groupObject An object from the {@link SimpleTreeBuilder.groupsSource}.
@@ -1251,6 +1402,7 @@ export class SimpleTreeBuilder {
   getGroup(groupObject) {
     return this.$adjacentNodesGraphBuilder.getGroup(groupObject)
   }
+
   /**
      Retrieves the node associated with an object from the {@link SimpleTreeBuilder.nodesSource}.
      @param nodeObject An object from the {@link SimpleTreeBuilder.nodesSource}.
@@ -1261,6 +1413,7 @@ export class SimpleTreeBuilder {
   getNode(nodeObject) {
     return this.$adjacentNodesGraphBuilder.getNode(nodeObject)
   }
+
   /**
      Updates an existing edge when the {@link SimpleTreeBuilder.updateGraph graph is updated}.
      This method is called during {@link SimpleTreeBuilder.updateGraph updating the graph} for every edge that already exists in the graph where its corresponding
@@ -1273,6 +1426,7 @@ export class SimpleTreeBuilder {
   updateEdge(graph, edge, labelData) {
     this.$adjacentNodesGraphBuilder.updateEdgeBase(graph, edge, labelData)
   }
+
   /**
      Updates an existing group node when the {@link SimpleTreeBuilder.updateGraph graph is updated}.
      This method is called during {@link SimpleTreeBuilder.updateGraph updating the graph} for every group node that already exists in the graph where its
@@ -1286,6 +1440,7 @@ export class SimpleTreeBuilder {
   updateGroupNode(graph, groupNode, labelData, groupObject) {
     this.$adjacentNodesGraphBuilder.updateGroupNodeBase(graph, groupNode, labelData, groupObject)
   }
+
   /**
      Updates an existing node when the {@link SimpleTreeBuilder.updateGraph graph is updated}.
      This method is called during {@link SimpleTreeBuilder.updateGraph updating the graph} for every node that already exists in the graph where its corresponding
@@ -1308,11 +1463,13 @@ export class SimpleTreeBuilder {
       nodeObject
     )
   }
+
   /**
      Gets the {@link IGraph graph} used by this class. */
   get graph() {
     return this.$adjacentNodesGraphBuilder.graph
   }
+
   /**
      Gets or sets the objects to be represented as nodes of the {@link SimpleTreeBuilder.graph}.
      Note that it is not necessary to include all nodes in this property, if they can be reached via the
@@ -1321,17 +1478,21 @@ export class SimpleTreeBuilder {
   get nodesSource() {
     return this.$adjacentNodesGraphBuilder.nodesSource
   }
+
   set nodesSource(value) {
     this.$adjacentNodesGraphBuilder.nodesSource = value
   }
+
   /**
      Gets or sets the objects to be represented as group nodes of the {@link SimpleTreeBuilder.graph}. */
   get groupsSource() {
     return this.$adjacentNodesGraphBuilder.groupsSource
   }
+
   set groupsSource(value) {
     this.$adjacentNodesGraphBuilder.groupsSource = value
   }
+
   /**
      Gets or sets a binding that maps node objects to their identifier.
      This maps an object that represents a node to its identifier. This is needed when {@link SimpleTreeBuilder.childBinding children} are represented only by an
@@ -1348,9 +1509,11 @@ export class SimpleTreeBuilder {
   get idBinding() {
     return this.$adjacentNodesGraphBuilder.nodeIdBinding
   }
+
   set idBinding(value) {
     this.$adjacentNodesGraphBuilder.nodeIdBinding = value
   }
+
   /**
      Gets or sets a binding that maps a node object to a label.
      This maps an object that represents a node to an object that represents the label for the node.
@@ -1365,9 +1528,11 @@ export class SimpleTreeBuilder {
   get nodeLabelBinding() {
     return this.$adjacentNodesGraphBuilder.nodeLabelBinding
   }
+
   set nodeLabelBinding(value) {
     this.$adjacentNodesGraphBuilder.nodeLabelBinding = value
   }
+
   /**
      Gets or sets the binding for determining a node's position on the x-axis.
      This binding maps a business object that represents a node to a number that specifies the x-coordinate of that node.
@@ -1378,9 +1543,11 @@ export class SimpleTreeBuilder {
   get locationXBinding() {
     return this.$adjacentNodesGraphBuilder.locationXBinding
   }
+
   set locationXBinding(value) {
     this.$adjacentNodesGraphBuilder.locationXBinding = value
   }
+
   /**
      Gets or sets the binding for determining a node's position on the y-axis.
      This binding maps a business object that represents a node to a number that specifies the y-coordinate of that node.
@@ -1391,9 +1558,11 @@ export class SimpleTreeBuilder {
   get locationYBinding() {
     return this.$adjacentNodesGraphBuilder.locationYBinding
   }
+
   set locationYBinding(value) {
     this.$adjacentNodesGraphBuilder.locationYBinding = value
   }
+
   /**
      Gets or sets a binding that maps node objects to their child nodes.
      This maps an object that represents a node to a set of other objects that represent its child nodes.
@@ -1406,9 +1575,11 @@ export class SimpleTreeBuilder {
   get childBinding() {
     return this.$adjacentNodesGraphBuilder.successorsBinding
   }
+
   set childBinding(value) {
     this.$adjacentNodesGraphBuilder.successorsBinding = value
   }
+
   /**
      Gets or sets a binding that maps node objects to their containing groups.
      This maps an object _N_ that represents a node to another object _G_ that specifies the containing group of _N_. If _G_ is contained
@@ -1423,9 +1594,11 @@ export class SimpleTreeBuilder {
   get groupBinding() {
     return this.$adjacentNodesGraphBuilder.groupBinding
   }
+
   set groupBinding(value) {
     this.$adjacentNodesGraphBuilder.groupBinding = value
   }
+
   /**
      Gets or sets a binding that maps a node object representing the edge's target node to a label.
      This maps an object that represents an edge to an object that represents the label for the edge.
@@ -1440,6 +1613,7 @@ export class SimpleTreeBuilder {
   get edgeLabelBinding() {
     return this.$edgeLabelBinding
   }
+
   set edgeLabelBinding(value) {
     this.$edgeLabelBinding = value
     const edgeLabelBinding = GraphBuilderHelper.createBinding(value)
@@ -1450,6 +1624,7 @@ export class SimpleTreeBuilder {
       this.$adjacentNodesGraphBuilder.edgeLabelBinding = null
     }
   }
+
   /**
      Gets or sets a binding that maps group objects to their identifier.
      This maps an object that represents a group node to its identifier. This is needed when {@link SimpleTreeBuilder.nodesSource node objects} only contain an
@@ -1468,9 +1643,11 @@ export class SimpleTreeBuilder {
   get groupIdBinding() {
     return this.$adjacentNodesGraphBuilder.groupIdBinding
   }
+
   set groupIdBinding(value) {
     this.$adjacentNodesGraphBuilder.groupIdBinding = value
   }
+
   /**
      Gets or sets a binding that maps a group object to a label.
      This maps an object that represents a group node to an object that represents the label for the group node.
@@ -1485,9 +1662,11 @@ export class SimpleTreeBuilder {
   get groupLabelBinding() {
     return this.$adjacentNodesGraphBuilder.groupLabelBinding
   }
+
   set groupLabelBinding(value) {
     this.$adjacentNodesGraphBuilder.groupLabelBinding = value
   }
+
   /**
      Gets or sets a binding that maps group objects to their containing groups.
      This maps an object _G_ that represents a group node to another object _P_ that specifies the containing group of _G_. If _P_ is
@@ -1501,9 +1680,11 @@ export class SimpleTreeBuilder {
   get parentGroupBinding() {
     return this.$adjacentNodesGraphBuilder.parentGroupBinding
   }
+
   set parentGroupBinding(value) {
     this.$adjacentNodesGraphBuilder.parentGroupBinding = value
   }
+
   /**
      Adds the given listener for the `NodeCreated` event that occurs when a node has been created.
      This event can be used to further customize the created node.
@@ -1515,6 +1696,7 @@ export class SimpleTreeBuilder {
   setNodeCreatedListener(listener) {
     this.$adjacentNodesGraphBuilder.setNodeCreatedListener(listener)
   }
+
   /**
      Removes the given listener for the `NodeCreated` event that occurs when a node has been created.
      This event can be used to further customize the created node.
@@ -1526,6 +1708,7 @@ export class SimpleTreeBuilder {
   removeNodeCreatedListener(listener) {
     this.$adjacentNodesGraphBuilder.removeNodeCreatedListener(listener)
   }
+
   /**
      Adds the given listener for the `NodeUpdated` event that occurs when a node has been updated.
      This event can be used to update customizations added in an event handler for
@@ -1538,6 +1721,7 @@ export class SimpleTreeBuilder {
   setNodeUpdatedListener(listener) {
     this.$adjacentNodesGraphBuilder.setNodeUpdatedListener(listener)
   }
+
   /**
      Removes the given listener for the `NodeUpdated` event that occurs when a node has been updated.
      This event can be used to update customizations added in an event handler for
@@ -1550,6 +1734,7 @@ export class SimpleTreeBuilder {
   removeNodeUpdatedListener(listener) {
     this.$adjacentNodesGraphBuilder.removeNodeUpdatedListener(listener)
   }
+
   /**
      Adds the given listener for the `EdgeCreated` event that occurs when an edge has been created.
      This event can be used to further customize the created edge.
@@ -1561,6 +1746,7 @@ export class SimpleTreeBuilder {
   addEdgeCreatedListener(listener) {
     this.$adjacentNodesGraphBuilder.addEdgeCreatedListener(listener)
   }
+
   /**
      Removes the given listener for the `EdgeCreated` event that occurs when an edge has been created.
      This event can be used to further customize the created edge.
@@ -1572,6 +1758,7 @@ export class SimpleTreeBuilder {
   removeEdgeCreatedListener(listener) {
     this.$adjacentNodesGraphBuilder.removeEdgeCreatedListener(listener)
   }
+
   /**
      Adds the given listener for the `EdgeUpdated` event that occurs when an edge has been updated.
      This event can be used to update customizations added in an event handler for
@@ -1584,6 +1771,7 @@ export class SimpleTreeBuilder {
   setEdgeUpdatedListener(listener) {
     this.$adjacentNodesGraphBuilder.addEdgeUpdatedListener(listener)
   }
+
   /**
      Removes the given listener for the `EdgeUpdated` event that occurs when an edge has been updated.
      This event can be used to update customizations added in an event handler for
@@ -1596,6 +1784,7 @@ export class SimpleTreeBuilder {
   removeEdgeUpdatedListener(listener) {
     this.$adjacentNodesGraphBuilder.removeEdgeUpdatedListener(listener)
   }
+
   /**
      Adds the given listener for the `GroupNodeCreated` event that occurs when a group node has been created.
      This event can be used to further customize the created group node.
@@ -1607,6 +1796,7 @@ export class SimpleTreeBuilder {
   setGroupNodeCreatedListener(listener) {
     this.$adjacentNodesGraphBuilder.setGroupNodeCreatedListener(listener)
   }
+
   /**
      Removes the given listener for the `GroupNodeCreated` event that occurs when a group node has been created.
      This event can be used to further customize the created group node.
@@ -1618,6 +1808,7 @@ export class SimpleTreeBuilder {
   removeGroupNodeCreatedListener(listener) {
     this.$adjacentNodesGraphBuilder.removeGroupNodeCreatedListener(listener)
   }
+
   /**
      Adds the given listener for the `GroupNodeUpdated` event that occurs when a group node has been updated.
      This event can be used to update customizations added in an event handler for
@@ -1630,6 +1821,7 @@ export class SimpleTreeBuilder {
   setGroupNodeUpdatedListener(listener) {
     this.$adjacentNodesGraphBuilder.setGroupNodeUpdatedListener(listener)
   }
+
   /**
      Removes the given listener for the `GroupNodeUpdated` event that occurs when a group node has been updated.
      This event can be used to update customizations added in an event handler for
@@ -1643,6 +1835,7 @@ export class SimpleTreeBuilder {
     this.$adjacentNodesGraphBuilder.removeGroupNodeUpdatedListener(listener)
   }
 }
+
 /**
  Populates a graph from custom data where objects corresponding to nodes know their neighbors.
  This class can be used when the data specifies a collection of nodes in which each node knows its direct neighbors,
@@ -1715,6 +1908,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   $builderGroupsSource
   $mirrorGraph
   $nodeToMirrorNodeMap
+
   $nodesSource
   $groupsSource
   $successorsBinding
@@ -1723,6 +1917,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   $successorsProvider
   $predecessorsIdProvider
   $successorsIdProvider
+
   /**
      Initializes a new instance of the {@link SimpleAdjacentNodesGraphBuilder} class that operates on the given graph.
      The `graph` will be {@link IGraph.clear cleared} and re-built from the data in {@link SimpleAdjacentNodesGraphBuilder.nodesSource} and {@link SimpleAdjacentNodesGraphBuilder.groupsSource} when {@link SimpleAdjacentNodesGraphBuilder.buildGraph}
@@ -1755,6 +1950,7 @@ export class SimpleAdjacentNodesGraphBuilder {
       options = graphOrOptions
       graph = options.graph || new Graph()
     }
+
     this.$graphBuilderHelper = new GraphBuilderHelper(
       this,
       graph,
@@ -1771,16 +1967,20 @@ export class SimpleAdjacentNodesGraphBuilder {
         this.$updateEdgeAndCreateMirrorEdge(edge, graph, labelData)
       }
     )
+
     this.$nodesSource = null
     this.$groupsSource = null
     this.$predecessorsProvider = null
     this.$successorsProvider = null
     this.$predecessorsIdProvider = null
     this.$successorsIdProvider = null
+
     this.$graphBuilder = new AdjacencyGraphBuilder(graph)
     this.$builderNodesSource = this.$graphBuilder.createNodesSource([], null)
     this.$builderNodesSource.nodeCreator = this.$graphBuilderHelper.createNodeCreator()
+
     this.$builderEdgeCreator = this.$graphBuilderHelper.createEdgeCreator(true)
+
     this.$builderNodesSource.addSuccessorsSource(
       (dataItem) => this.$successorsProvider && this.$successorsProvider(dataItem),
       this.$builderNodesSource,
@@ -1791,6 +1991,7 @@ export class SimpleAdjacentNodesGraphBuilder {
       this.$builderNodesSource,
       this.$builderEdgeCreator
     )
+
     this.$builderNodesSource.addSuccessorIds(
       (dataItem) => this.$successorsIdProvider && this.$successorsIdProvider(dataItem),
       this.$builderEdgeCreator
@@ -1799,14 +2000,18 @@ export class SimpleAdjacentNodesGraphBuilder {
       (dataItem) => this.$predecessorsIdProvider && this.$predecessorsIdProvider(dataItem),
       this.$builderEdgeCreator
     )
+
     this.$builderGroupsSource = this.$graphBuilder.createGroupNodesSource([], null)
     this.$builderGroupsSource.nodeCreator = this.$graphBuilderHelper.createGroupCreator()
+
     this.$mirrorGraph = new Graph()
     this.$nodeToMirrorNodeMap = new Map()
+
     if (options) {
       this.$applyOptions(options)
     }
   }
+
   $applyOptions(options) {
     if (options.nodesSource) this.nodesSource = options.nodesSource
     if (options.groupsSource) this.groupsSource = options.groupsSource
@@ -1822,6 +2027,7 @@ export class SimpleAdjacentNodesGraphBuilder {
     if (options.predecessorsBinding) this.predecessorsBinding = options.predecessorsBinding
     if (options.successorsBinding) this.successorsBinding = options.successorsBinding
   }
+
   /**
      Populates the graph with items generated from the bound data.
      The graph is cleared, and then new nodes, groups, and edges are created as defined by the source collections.
@@ -1836,6 +2042,7 @@ export class SimpleAdjacentNodesGraphBuilder {
     this.$cleanup()
     return graph
   }
+
   /**
      Updates the graph after changes in the bound data.
      In contrast to
@@ -1849,6 +2056,7 @@ export class SimpleAdjacentNodesGraphBuilder {
     this.$graphBuilder.updateGraph()
     this.$cleanup()
   }
+
   $initialize() {
     if (
       this.$nodesSource == null ||
@@ -1861,16 +2069,20 @@ export class SimpleAdjacentNodesGraphBuilder {
     this.$initializeProviders()
     this.$prepareData()
   }
+
   $initializeProviders() {
     this.$graphBuilderHelper.initializeProviders()
+
     const predecessorsProvider = GraphBuilderHelper.createBinding(this.predecessorsBinding)
     const distinctPredecessorsProvider = predecessorsProvider
       ? (dataItem) => this.$eliminateDuplicateEdges(dataItem, predecessorsProvider(dataItem), false)
       : null
+
     const successorsProvider = GraphBuilderHelper.createBinding(this.successorsBinding)
     const distinctSuccessorsProvider = successorsProvider
       ? (dataItem) => this.$eliminateDuplicateEdges(dataItem, successorsProvider(dataItem), true)
       : null
+
     if (this.nodeIdBinding) {
       this.$predecessorsProvider = null
       this.$successorsProvider = null
@@ -1882,19 +2094,24 @@ export class SimpleAdjacentNodesGraphBuilder {
       this.$predecessorsIdProvider = null
       this.$successorsIdProvider = null
     }
+
     this.$builderNodesSource.idProvider = GraphBuilderHelper.createIdProvider(this.nodeIdBinding)
     this.$builderGroupsSource.idProvider = GraphBuilderHelper.createIdProvider(this.groupIdBinding)
+
     this.$builderNodesSource.nodeCreator.tagProvider = (n) => n
     this.$builderEdgeCreator.tagProvider = () => null
+
     this.$builderNodesSource.parentIdProvider = GraphBuilderHelper.createBinding(this.groupBinding)
     this.$builderGroupsSource.parentIdProvider = GraphBuilderHelper.createBinding(
       this.parentGroupBinding
     )
   }
+
   $prepareData() {
     this.$graphBuilder.setData(this.$builderNodesSource, this.$nodesSource)
     this.$graphBuilder.setData(this.$builderGroupsSource, this.$groupsSource || [])
   }
+
   $eliminateDuplicateEdges(thisDataItem, neighborCollection, neighborIsSuccessor) {
     if (!neighborCollection) {
       return neighborCollection
@@ -1926,23 +2143,29 @@ export class SimpleAdjacentNodesGraphBuilder {
       return distinctCollection
     }
   }
+
   $isDuplicate(thisDataItem, neighborDataItem, neighborIsSuccessor) {
     let thisNode = this.getNode(thisDataItem)
     let neighborNode = this.getNode(neighborDataItem)
+
     if (!thisNode || !neighborNode) {
       return false
     }
+
     thisNode = this.$nodeToMirrorNodeMap.get(thisNode)
     neighborNode = this.$nodeToMirrorNodeMap.get(neighborNode)
+
     return (
       neighborIsSuccessor
         ? this.$mirrorGraph.successors(thisNode)
         : this.$mirrorGraph.predecessors(thisNode)
     ).includes(neighborNode)
   }
+
   $maybeResolveId(dataItemOrId) {
     return this.nodeIdBinding ? this.$getDataItemById(dataItemOrId) : dataItemOrId
   }
+
   $getDataItemById(id) {
     for (const dataItem of createIterable(this.$nodesSource)) {
       if (this.$builderNodesSource.idProvider(dataItem, null) === id) {
@@ -1951,10 +2174,12 @@ export class SimpleAdjacentNodesGraphBuilder {
     }
     return null
   }
+
   $cleanup() {
     this.$mirrorGraph.clear()
     this.$nodeToMirrorNodeMap.clear()
   }
+
   /**
      Creates a new edge connecting the given nodes.
      This class calls this method to create all new edges, and customers may override it to customize edge creation.
@@ -1968,6 +2193,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   createEdge(graph, source, target, labelData) {
     return this.$graphBuilderHelper.createEdge(graph, source, target, labelData, null)
   }
+
   $createEdgeAndMirrorEdge(source, target, graph, labelData) {
     const sourceMirrorNode = this.$nodeToMirrorNodeMap.get(source)
     const targetMirrorNode = this.$nodeToMirrorNodeMap.get(target)
@@ -1976,6 +2202,7 @@ export class SimpleAdjacentNodesGraphBuilder {
     }
     return this.createEdge(graph, source, target, labelData)
   }
+
   /**
      Creates a group node from the given `groupObject` and `labelData`.
      This method is called for every group node that is created either when {@link SimpleAdjacentNodesGraphBuilder.buildGraph building the graph}, or when new items appear in
@@ -1995,6 +2222,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   createGroupNode(graph, labelData, groupObject) {
     return this.$graphBuilderHelper.createGroupNode(graph, labelData, groupObject)
   }
+
   /**
      Creates a node with the specified parent from the given `nodeObject` and `labelData`.
      This method is called for every node that is created either when {@link SimpleAdjacentNodesGraphBuilder.buildGraph building the graph}, or when new items appear in the {@link SimpleAdjacentNodesGraphBuilder.nodesSource}
@@ -2016,12 +2244,14 @@ export class SimpleAdjacentNodesGraphBuilder {
   createNode(graph, parent, location, labelData, nodeObject) {
     return this.$graphBuilderHelper.createNode(graph, parent, location, labelData, nodeObject)
   }
+
   $createNodeAndMirrorNode(graph, parent, location, labelData, nodeObject) {
     const node = this.createNode(graph, parent, location, labelData, nodeObject)
     const mirrorNode = this.$mirrorGraph.createNode()
     this.$nodeToMirrorNodeMap.set(node, mirrorNode)
     return node
   }
+
   /**
      Retrieves the object from which a given item has been created.
      @param item The item to get the object for.
@@ -2032,6 +2262,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   getBusinessObject(item) {
     return this.$graphBuilderHelper.getBusinessObject(item)
   }
+
   /**
      Retrieves the group node associated with an object from the {@link SimpleAdjacentNodesGraphBuilder.groupsSource}.
      @param groupObject An object from the {@link SimpleAdjacentNodesGraphBuilder.groupsSource}.
@@ -2043,6 +2274,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   getGroup(groupObject) {
     return this.$graphBuilderHelper.getGroup(groupObject)
   }
+
   /**
      Retrieves the node associated with an object from the {@link SimpleAdjacentNodesGraphBuilder.nodesSource}.
      @param nodeObject An object from the {@link SimpleAdjacentNodesGraphBuilder.nodesSource}.
@@ -2054,6 +2286,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   getNode(nodeObject) {
     return this.$graphBuilderHelper.getNode(nodeObject)
   }
+
   /**
      Updates an existing edge connecting the given nodes when {@link SimpleGraphBuilder.updateGraph} is called and the edge
      should remain in the graph.
@@ -2067,6 +2300,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   updateEdge(graph, edge, labelData) {
     this.$graphBuilderHelper.updateEdge(graph, edge, labelData, null)
   }
+
   $updateEdgeAndCreateMirrorEdge(edge, graph, labelData) {
     const sourceMirrorNode = this.$nodeToMirrorNodeMap.get(edge.sourceNode)
     const targetMirrorNode = this.$nodeToMirrorNodeMap.get(edge.targetNode)
@@ -2075,6 +2309,7 @@ export class SimpleAdjacentNodesGraphBuilder {
     }
     this.updateEdge(graph, edge, labelData)
   }
+
   /**
      Updates an existing group node when the {@link SimpleAdjacentNodesGraphBuilder.updateGraph graph is updated}.
      This method is called during {@link SimpleAdjacentNodesGraphBuilder.updateGraph updating the graph} for every group node that already exists in the graph where its
@@ -2091,6 +2326,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   updateGroupNode(graph, groupNode, labelData, groupObject) {
     this.$graphBuilderHelper.updateGroupNode(graph, groupNode, labelData, groupObject)
   }
+
   /**
      Updates an existing node when the {@link SimpleAdjacentNodesGraphBuilder.updateGraph graph is updated}.
      This method is called during {@link SimpleAdjacentNodesGraphBuilder.updateGraph updating the graph} for every node that already exists in the graph where its corresponding
@@ -2109,17 +2345,20 @@ export class SimpleAdjacentNodesGraphBuilder {
   updateNode(graph, node, parent, location, labelData, nodeObject) {
     this.$graphBuilderHelper.updateNode(graph, node, parent, location, labelData, nodeObject)
   }
+
   $updateNodeAndCreateMirrorNode(graph, node, parent, location, labelData, nodeObject) {
     this.updateNode(graph, node, parent, location, labelData, nodeObject)
     const mirrorNode = this.$mirrorGraph.createNode()
     this.$nodeToMirrorNodeMap.set(node, mirrorNode)
   }
+
   /**
      Gets the {@link IGraph graph} used by this class.
      @see SimpleAdjacentNodesGraphBuilder */
   get graph() {
     return this.$graphBuilder.graph
   }
+
   /**
      Gets or sets the objects to be represented as nodes of the {@link SimpleAdjacentNodesGraphBuilder.graph}.
      Note that it is not necessary to include all nodes in this property, if they can be reached via the {@link SimpleAdjacentNodesGraphBuilder.predecessorsBinding} or
@@ -2129,18 +2368,22 @@ export class SimpleAdjacentNodesGraphBuilder {
   get nodesSource() {
     return this.$nodesSource
   }
+
   set nodesSource(value) {
     this.$nodesSource = value
   }
+
   /**
      Gets or sets the objects to be represented as group nodes of the {@link SimpleAdjacentNodesGraphBuilder.graph}.
      @see SimpleAdjacentNodesGraphBuilder */
   get groupsSource() {
     return this.$groupsSource
   }
+
   set groupsSource(value) {
     this.$groupsSource = value
   }
+
   /**
      Gets or sets a binding that maps node objects to their identifier.
      This maps an object that represents a node to its identifier. This is needed when {@link SimpleAdjacentNodesGraphBuilder.predecessorsBinding predecessors} or {@link SimpleAdjacentNodesGraphBuilder.successorsBinding successors} are
@@ -2159,12 +2402,15 @@ export class SimpleAdjacentNodesGraphBuilder {
      @see SimpleAdjacentNodesGraphBuilder#successorsBinding
      @see SimpleAdjacentNodesGraphBuilder */
   $nodeIdBinding
+
   get nodeIdBinding() {
     return this.$nodeIdBinding
   }
+
   set nodeIdBinding(value) {
     this.$nodeIdBinding = value
   }
+
   /**
      Gets or sets a binding that maps a node object to a label.
      This maps an object that represents a node to an object that represents the label for the node.
@@ -2184,9 +2430,11 @@ export class SimpleAdjacentNodesGraphBuilder {
   get nodeLabelBinding() {
     return this.$graphBuilderHelper.nodeLabelBinding
   }
+
   set nodeLabelBinding(value) {
     this.$graphBuilderHelper.nodeLabelBinding = value
   }
+
   /**
      Gets or sets the binding for determining a node's position on the x-axis.
      This binding maps a business object that represents a node to a number that specifies the x-coordinate of that node.
@@ -2200,9 +2448,11 @@ export class SimpleAdjacentNodesGraphBuilder {
   get locationXBinding() {
     return this.$graphBuilderHelper.locationXBinding
   }
+
   set locationXBinding(value) {
     this.$graphBuilderHelper.locationXBinding = value
   }
+
   /**
      Gets or sets the binding for determining a node's position on the y-axis.
      This binding maps a business object that represents a node to a number that specifies the y-coordinate of that node.
@@ -2216,9 +2466,11 @@ export class SimpleAdjacentNodesGraphBuilder {
   get locationYBinding() {
     return this.$graphBuilderHelper.locationYBinding
   }
+
   set locationYBinding(value) {
     this.$graphBuilderHelper.locationYBinding = value
   }
+
   /**
      Gets or sets a binding that maps node objects to their containing groups.
      This maps an object _N_ that represents a node to another object _G_ that specifies the containing group of _N_. If _G_ is contained
@@ -2237,9 +2489,11 @@ export class SimpleAdjacentNodesGraphBuilder {
   get groupBinding() {
     return this.$graphBuilderHelper.groupBinding
   }
+
   set groupBinding(value) {
     this.$graphBuilderHelper.groupBinding = value
   }
+
   /**
      Gets or sets a binding that maps an edge, represented by its source and target node object, to a label.
      This maps the source and target node objects to an object that represents the label for the edge.
@@ -2258,9 +2512,11 @@ export class SimpleAdjacentNodesGraphBuilder {
   get edgeLabelBinding() {
     return this.$graphBuilderHelper.edgeLabelBinding
   }
+
   set edgeLabelBinding(value) {
     this.$graphBuilderHelper.edgeLabelBinding = value
   }
+
   /**
      Gets or sets a binding that maps group objects to their identifier.
      This maps an object that represents a group node to its identifier. This is needed when {@link SimpleAdjacentNodesGraphBuilder.nodesSource node objects} only contain an
@@ -2282,9 +2538,11 @@ export class SimpleAdjacentNodesGraphBuilder {
   get groupIdBinding() {
     return this.$graphBuilderHelper.groupIdBinding
   }
+
   set groupIdBinding(value) {
     this.$graphBuilderHelper.groupIdBinding = value
   }
+
   /**
      Gets or sets a binding that maps a group object to a label.
      This maps an object that represents a group node to an object that represents the label for the group node.
@@ -2304,9 +2562,11 @@ export class SimpleAdjacentNodesGraphBuilder {
   get groupLabelBinding() {
     return this.$graphBuilderHelper.groupLabelBinding
   }
+
   set groupLabelBinding(value) {
     this.$graphBuilderHelper.groupLabelBinding = value
   }
+
   /**
      Gets or sets a binding that maps group objects to their containing groups.
      This maps an object _G_ that represents a group node to another object _P_ that specifies the containing group of _G_. If _P_ is
@@ -2324,9 +2584,11 @@ export class SimpleAdjacentNodesGraphBuilder {
   get parentGroupBinding() {
     return this.$graphBuilderHelper.parentGroupBinding
   }
+
   set parentGroupBinding(value) {
     this.$graphBuilderHelper.parentGroupBinding = value
   }
+
   /**
      Gets or sets a binding that maps node objects to their successors.
      This maps an object that represents a node to a set of other objects that represent its successor nodes, i.e. other
@@ -2345,9 +2607,11 @@ export class SimpleAdjacentNodesGraphBuilder {
   get successorsBinding() {
     return this.$successorsBinding
   }
+
   set successorsBinding(value) {
     this.$successorsBinding = value
   }
+
   /**
      Gets or sets a binding that maps node objects to their predecessors.
      This maps an object that represents a node to a set of other objects that represent its predecessor nodes, i.e. other
@@ -2366,9 +2630,11 @@ export class SimpleAdjacentNodesGraphBuilder {
   get predecessorsBinding() {
     return this.$predecessorsBinding
   }
+
   set predecessorsBinding(value) {
     this.$predecessorsBinding = value
   }
+
   /**
      Adds the given listener for the `NodeCreated` event that occurs when a node has been created.
      This event can be used to further customize the created node.
@@ -2383,6 +2649,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   setNodeCreatedListener(listener) {
     this.$graphBuilderHelper.setNodeCreatedListener(listener)
   }
+
   /**
      Removes the given listener for the `NodeCreated` event that occurs when a node has been created.
      This event can be used to further customize the created node.
@@ -2397,6 +2664,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   removeNodeCreatedListener(listener) {
     this.$graphBuilderHelper.removeNodeCreatedListener(listener)
   }
+
   /**
      Adds the given listener for the `NodeUpdated` event that occurs when a node has been updated.
      This event can be used to update customizations added in an event handler for
@@ -2413,6 +2681,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   setNodeUpdatedListener(listener) {
     this.$graphBuilderHelper.setNodeUpdatedListener(listener)
   }
+
   /**
      Removes the given listener for the `NodeUpdated` event that occurs when a node has been updated.
      This event can be used to update customizations added in an event handler for
@@ -2429,6 +2698,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   removeNodeUpdatedListener(listener) {
     this.$graphBuilderHelper.removeNodeUpdatedListener(listener)
   }
+
   /**
      Adds the given listener for the `EdgeCreated` event that occurs when an edge has been created.
      This event can be used to further customize the created edge.
@@ -2443,6 +2713,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   addEdgeCreatedListener(listener) {
     this.$graphBuilderHelper.setEdgeCreatedListener(listener)
   }
+
   /**
      Removes the given listener for the `EdgeCreated` event that occurs when an edge has been created.
      This event can be used to further customize the created edge.
@@ -2457,6 +2728,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   removeEdgeCreatedListener(listener) {
     this.$graphBuilderHelper.removeEdgeCreatedListener(listener)
   }
+
   /**
      Adds the given listener for the `EdgeUpdated` event that occurs when an edge has been updated.
      This event can be used to update customizations added in an event handler for
@@ -2477,6 +2749,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   addEdgeUpdatedListener(listener) {
     this.$graphBuilderHelper.setEdgeUpdatedListener(listener)
   }
+
   /**
      Removes the given listener for the `EdgeUpdated` event that occurs when an edge has been updated.
      This event can be used to update customizations added in an event handler for
@@ -2497,6 +2770,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   removeEdgeUpdatedListener(listener) {
     this.$graphBuilderHelper.removeEdgeUpdatedListener(listener)
   }
+
   /**
      Adds the given listener for the `GroupNodeCreated` event that occurs when a group node has been created.
      This event can be used to further customize the created group node.
@@ -2511,6 +2785,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   setGroupNodeCreatedListener(listener) {
     this.$graphBuilderHelper.setGroupNodeCreatedListener(listener)
   }
+
   /**
      Removes the given listener for the `GroupNodeCreated` event that occurs when a group node has been created.
      This event can be used to further customize the created group node.
@@ -2525,6 +2800,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   removeGroupNodeCreatedListener(listener) {
     this.$graphBuilderHelper.removeGroupNodeCreatedListener(listener)
   }
+
   /**
      Adds the given listener for the `GroupNodeUpdated` event that occurs when a group node has been updated.
      This event can be used to update customizations added in an event handler for
@@ -2541,6 +2817,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   setGroupNodeUpdatedListener(listener) {
     this.$graphBuilderHelper.setGroupNodeUpdatedListener(listener)
   }
+
   /**
      Removes the given listener for the `GroupNodeUpdated` event that occurs when a group node has been updated.
      This event can be used to update customizations added in an event handler for
@@ -2558,6 +2835,7 @@ export class SimpleAdjacentNodesGraphBuilder {
     this.$graphBuilderHelper.removeGroupNodeUpdatedListener(listener)
   }
 }
+
 class GraphBuilderHelper {
   $graph
   $eventSender
@@ -2567,6 +2845,7 @@ class GraphBuilderHelper {
   $builderUpdateGroupNode
   $builderCreateEdge
   $builderUpdateEdge
+
   nodeLabelBinding
   locationXBinding
   locationYBinding
@@ -2576,17 +2855,20 @@ class GraphBuilderHelper {
   groupLabelBinding
   parentGroupBinding
   nodeIdBinding
+
   locationXProvider
   locationYProvider
   nodeLabelProvider
   groupLabelProvider
   edgeLabelProvider
+
   $edgeUpdatedListeners
   $nodeCreatedListeners
   $nodeUpdatedListeners
   $groupCreatedListeners
   $groupUpdatedListeners
   $edgeCreatedListeners
+
   constructor(
     eventSender,
     graph,
@@ -2605,12 +2887,14 @@ class GraphBuilderHelper {
     this.$builderUpdateGroupNode = updateGroupNode
     this.$builderCreateEdge = createEdge
     this.$builderUpdateEdge = updateEdge
+
     this.$nodeCreatedListeners = []
     this.$nodeUpdatedListeners = []
     this.$groupCreatedListeners = []
     this.$groupUpdatedListeners = []
     this.$edgeCreatedListeners = []
     this.$edgeUpdatedListeners = []
+
     this.nodeIdBinding = null
     this.groupIdBinding = null
     this.nodeLabelBinding = null
@@ -2621,13 +2905,16 @@ class GraphBuilderHelper {
     this.locationYBinding = null
     this.parentGroupBinding = null
   }
+
   initializeProviders() {
     this.nodeLabelProvider = GraphBuilderHelper.createBinding(this.nodeLabelBinding)
     this.groupLabelProvider = GraphBuilderHelper.createBinding(this.groupLabelBinding)
     this.edgeLabelProvider = GraphBuilderHelper.createBinding(this.edgeLabelBinding)
+
     this.locationXProvider = GraphBuilderHelper.createBinding(this.locationXBinding)
     this.locationYProvider = GraphBuilderHelper.createBinding(this.locationYBinding)
   }
+
   createEdge(graph, source, target, labelData, edgeObject) {
     if (source == null || target == null) {
       // early exit if source or target node doesn't exist
@@ -2635,14 +2922,11 @@ class GraphBuilderHelper {
     }
     const edge = graph.createEdge(source, target, graph.edgeDefaults.getStyleInstance(), edgeObject)
     if (labelData != null) {
-      graph.addLabel({
-        owner: edge,
-        text: labelData.toString(),
-        tag: labelData
-      })
+      graph.addLabel({ owner: edge, text: labelData.toString(), tag: labelData })
     }
     return this.$onEdgeCreated(edge, edgeObject)
   }
+
   createGroupNode(graph, labelData, groupObject) {
     const nodeDefaults = graph.groupNodeDefaults
     const groupNode = graph.createGroupNode(
@@ -2652,14 +2936,11 @@ class GraphBuilderHelper {
       groupObject
     )
     if (labelData != null) {
-      this.$graph.addLabel({
-        owner: groupNode,
-        text: labelData.toString(),
-        tag: labelData
-      })
+      this.$graph.addLabel({ owner: groupNode, text: labelData.toString(), tag: labelData })
     }
     return this.$onGroupCreated(groupNode, groupObject)
   }
+
   createNode(graph, parent, location, labelData, nodeObject) {
     const nodeDefaults = graph.nodeDefaults
     try {
@@ -2669,13 +2950,11 @@ class GraphBuilderHelper {
         nodeDefaults.getStyleInstance(),
         nodeObject
       )
+
       if (labelData != null) {
-        this.$graph.addLabel({
-          owner: node,
-          text: labelData.toString(),
-          tag: labelData
-        })
+        this.$graph.addLabel({ owner: node, text: labelData.toString(), tag: labelData })
       }
+
       return this.$onNodeCreated(node, nodeObject)
     } catch (err) {
       if (err instanceof Error && err.message === 'No node created!') {
@@ -2687,6 +2966,7 @@ class GraphBuilderHelper {
       throw err
     }
   }
+
   updateEdge(graph, edge, labelData, edgeObject) {
     if (edge.tag !== edgeObject) {
       edge.tag = edgeObject
@@ -2694,6 +2974,7 @@ class GraphBuilderHelper {
     GraphBuilderHelper.$updateLabels(graph, graph.edgeDefaults.labels, edge, labelData)
     this.$onEdgeUpdated(edge, edgeObject)
   }
+
   updateGroupNode(graph, groupNode, labelData, groupObject) {
     if (groupNode.tag !== groupObject) {
       groupNode.tag = groupObject
@@ -2701,6 +2982,7 @@ class GraphBuilderHelper {
     GraphBuilderHelper.$updateLabels(graph, graph.nodeDefaults.labels, groupNode, labelData)
     this.$onGroupUpdated(groupNode, groupObject)
   }
+
   updateNode(graph, node, parent, location, labelData, nodeObject) {
     if (node.tag !== nodeObject) {
       node.tag = nodeObject
@@ -2714,6 +2996,7 @@ class GraphBuilderHelper {
     }
     this.$onNodeUpdated(node, nodeObject)
   }
+
   static $updateLabels(graph, labelDefaults, item, labelData) {
     const labels = item.labels
     if (typeof labelData === 'undefined' || labelData === null) {
@@ -2738,18 +3021,23 @@ class GraphBuilderHelper {
       }
     }
   }
+
   getBusinessObject(item) {
     return item.tag
   }
+
   getEdge(businessObject) {
     return this.$graph.edges.find((e) => e.tag === businessObject)
   }
+
   getGroup(groupObject) {
     return this.$graph.nodes.find((n) => n.tag === groupObject)
   }
+
   getNode(nodeObject) {
     return this.$graph.nodes.find((n) => n.tag === nodeObject)
   }
+
   static createIdProvider(binding) {
     if (binding === null || binding === undefined) {
       return null
@@ -2759,6 +3047,7 @@ class GraphBuilderHelper {
       return binding
     }
   }
+
   static createBinding(binding) {
     if (binding === undefined || binding === null) {
       return null
@@ -2768,36 +3057,43 @@ class GraphBuilderHelper {
       return binding
     }
   }
+
   createNodeCreator() {
     class SimpleGraphBuilderNodeCreator extends NodeCreator {
       $graphBuilder
+
       constructor(graphBuilder) {
         super()
         this.$graphBuilder = graphBuilder
       }
+
       createNode(graph, parent, dataItem) {
         const location = this.$getLocation(dataItem, Point.ORIGIN)
         const labelData = this.$getLabelData(dataItem)
         const nodeObject = this.$getNodeObject(dataItem)
         return this.$graphBuilder.$builderCreateNode(graph, parent, location, labelData, nodeObject)
       }
+
       updateNode(graph, node, parent, dataItem) {
         const location = this.$getLocation(dataItem, node.layout.topLeft)
         const labelData = this.$getLabelData(dataItem)
         const nodeObject = this.$getNodeObject(dataItem)
         this.$graphBuilder.$builderUpdateNode(graph, node, parent, location, labelData, nodeObject)
       }
+
       $getNodeObject(dataItem) {
         if (this.tagProvider) {
           return this.tagProvider(dataItem)
         }
         return dataItem
       }
+
       $getLabelData(dataItem) {
         return this.$graphBuilder.nodeLabelProvider
           ? this.$graphBuilder.nodeLabelProvider(dataItem)
           : null
       }
+
       $getLocation(dataItem, fallback) {
         return new Point(
           this.$graphBuilder.locationXProvider
@@ -2809,15 +3105,19 @@ class GraphBuilderHelper {
         )
       }
     }
+
     return new SimpleGraphBuilderNodeCreator(this)
   }
+
   createGroupCreator() {
     class SimpleGraphBuilderGroupCreator extends NodeCreator {
       $graphBuilder
+
       constructor(graphBuilder) {
         super()
         this.$graphBuilder = graphBuilder
       }
+
       createNode(graph, parent, dataItem) {
         const labelData = this.$getLabelData(dataItem)
         const nodeObject = this.$getNodeObject(dataItem)
@@ -2825,6 +3125,7 @@ class GraphBuilderHelper {
         graph.setParent(node, parent)
         return node
       }
+
       updateNode(graph, node, parent, dataItem) {
         const labelData = this.$getLabelData(dataItem)
         const nodeObject = this.$getNodeObject(dataItem)
@@ -2833,29 +3134,35 @@ class GraphBuilderHelper {
           graph.setParent(node, parent)
         }
       }
+
       $getNodeObject(dataItem) {
         if (this.tagProvider) {
           return this.tagProvider(dataItem)
         }
         return dataItem
       }
+
       $getLabelData(dataItem) {
         return this.$graphBuilder.groupLabelProvider
           ? this.$graphBuilder.groupLabelProvider(dataItem)
           : null
       }
     }
+
     return new SimpleGraphBuilderGroupCreator(this)
   }
+
   createEdgeCreator(labelDataFromSourceAndTarget = false) {
     class SimpleGraphBuilderEdgeCreator extends EdgeCreator {
       $graphBuilder
       $labelDataFromSourceAndTarget
+
       constructor(graphBuilder, labelDataFromSourceAndTarget) {
         super()
         this.$graphBuilder = graphBuilder
         this.$labelDataFromSourceAndTarget = labelDataFromSourceAndTarget
       }
+
       createEdge(graph, source, target, dataItem) {
         const labelData = this.$getLabelData(dataItem, source, target)
         const edgeObject = this.$getEdgeObject(dataItem)
@@ -2871,17 +3178,20 @@ class GraphBuilderHelper {
         }
         return edge
       }
+
       updateEdge(graph, edge, dataItem) {
         const labelData = this.$getLabelData(dataItem, edge.sourceNode, edge.targetNode)
         const edgeObject = this.$getEdgeObject(dataItem)
         this.$graphBuilder.$builderUpdateEdge(graph, edge, labelData, edgeObject)
       }
+
       $getEdgeObject(dataItem) {
         if (this.tagProvider) {
           return this.tagProvider(dataItem)
         }
         return dataItem
       }
+
       $getLabelData(dataItem, source, target) {
         if (this.$labelDataFromSourceAndTarget) {
           return this.$graphBuilder.edgeLabelProvider
@@ -2894,20 +3204,25 @@ class GraphBuilderHelper {
         }
       }
     }
+
     return new SimpleGraphBuilderEdgeCreator(this, labelDataFromSourceAndTarget)
   }
+
   static setEventListener(listeners, listener) {
     listeners.push(listener)
   }
+
   static $removeEventListener(listeners, listener) {
     const index = listeners.indexOf(listener)
     if (index >= 0) {
       listeners.splice(index, 1)
     }
   }
+
   $fireEvent(listeners, evt) {
     listeners.forEach((l) => l(this.$eventSender, evt))
   }
+
   $onNodeCreated(node, dataItem) {
     if (this.$nodeCreatedListeners.length > 0) {
       const evt = new SimpleGraphBuilderItemEventArgs(this.$graph, node, dataItem)
@@ -2916,6 +3231,7 @@ class GraphBuilderHelper {
     }
     return node
   }
+
   $onNodeUpdated(node, dataItem) {
     if (this.$nodeUpdatedListeners.length > 0) {
       const evt = new SimpleGraphBuilderItemEventArgs(this.$graph, node, dataItem)
@@ -2924,6 +3240,7 @@ class GraphBuilderHelper {
     }
     return node
   }
+
   $onGroupCreated(group, dataItem) {
     if (this.$groupCreatedListeners.length > 0) {
       const evt = new SimpleGraphBuilderItemEventArgs(this.$graph, group, dataItem)
@@ -2932,6 +3249,7 @@ class GraphBuilderHelper {
     }
     return group
   }
+
   $onGroupUpdated(group, dataItem) {
     if (this.$groupUpdatedListeners.length > 0) {
       const evt = new SimpleGraphBuilderItemEventArgs(this.$graph, group, dataItem)
@@ -2940,6 +3258,7 @@ class GraphBuilderHelper {
     }
     return group
   }
+
   $onEdgeCreated(edge, dataItem) {
     if (this.$edgeCreatedListeners.length > 0) {
       const evt = new SimpleGraphBuilderItemEventArgs(this.$graph, edge, dataItem)
@@ -2948,6 +3267,7 @@ class GraphBuilderHelper {
     }
     return edge
   }
+
   $onEdgeUpdated(edge, dataItem) {
     if (this.$edgeUpdatedListeners.length > 0) {
       const evt = new SimpleGraphBuilderItemEventArgs(this.$graph, edge, dataItem)
@@ -2956,43 +3276,56 @@ class GraphBuilderHelper {
     }
     return edge
   }
+
   setNodeCreatedListener(listener) {
     GraphBuilderHelper.setEventListener(this.$nodeCreatedListeners, listener)
   }
+
   removeNodeCreatedListener(listener) {
     GraphBuilderHelper.$removeEventListener(this.$nodeCreatedListeners, listener)
   }
+
   setNodeUpdatedListener(listener) {
     GraphBuilderHelper.setEventListener(this.$nodeUpdatedListeners, listener)
   }
+
   removeNodeUpdatedListener(listener) {
     GraphBuilderHelper.$removeEventListener(this.$nodeUpdatedListeners, listener)
   }
+
   setEdgeCreatedListener(listener) {
     GraphBuilderHelper.setEventListener(this.$edgeCreatedListeners, listener)
   }
+
   removeEdgeCreatedListener(listener) {
     GraphBuilderHelper.$removeEventListener(this.$edgeCreatedListeners, listener)
   }
+
   setEdgeUpdatedListener(listener) {
     GraphBuilderHelper.setEventListener(this.$edgeUpdatedListeners, listener)
   }
+
   removeEdgeUpdatedListener(listener) {
     GraphBuilderHelper.$removeEventListener(this.$edgeUpdatedListeners, listener)
   }
+
   setGroupNodeCreatedListener(listener) {
     GraphBuilderHelper.setEventListener(this.$groupCreatedListeners, listener)
   }
+
   removeGroupNodeCreatedListener(listener) {
     GraphBuilderHelper.$removeEventListener(this.$groupCreatedListeners, listener)
   }
+
   setGroupNodeUpdatedListener(listener) {
     GraphBuilderHelper.setEventListener(this.$groupUpdatedListeners, listener)
   }
+
   removeGroupNodeUpdatedListener(listener) {
     GraphBuilderHelper.$removeEventListener(this.$groupUpdatedListeners, listener)
   }
 }
+
 function compose(f1, f2) {
   if (f2 && f1) {
     return (a) => f1(f2(a))

@@ -42,11 +42,14 @@ import {
   License,
   Size
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
@@ -55,42 +58,53 @@ async function run() {
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
+
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   // enable snapping for labels and other graph items
   initializeSnapping()
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
   await graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Iterates through the given data set and creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder.createNodesSource({
     data: graphData.nodeList.filter((item) => !item.isGroup),
     id: (item) => item.id,
     parentId: (item) => item.parentId
   })
+
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Initializes snapping for labels and other graph items. The default snapping behavior can easily be enabled by
  * setting the according snap context. Those snap contexts provide many options to fine tune their behavior. Please
@@ -100,6 +114,7 @@ function initializeSnapping() {
   const inputMode = graphComponent.inputMode
   inputMode.snapContext = new GraphSnapContext()
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  *
@@ -108,9 +123,11 @@ function initializeSnapping() {
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
+
   const groupNodeStyle = graph.groupNodeDefaults.style
   groupNodeStyle.tabPosition = GroupNodeStyleTabPosition.RIGHT
   groupNodeStyle.cornerRadius = 8
+
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
@@ -121,4 +138,5 @@ function initializeGraph(graph) {
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
+
 run().then(finishLoading)

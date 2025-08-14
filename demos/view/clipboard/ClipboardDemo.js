@@ -40,51 +40,65 @@ import {
   Point,
   Size
 } from '@yfiles/yfiles'
+
 import { svg } from 'lit-html'
+
 import { createNodeBusinessData, getCommonName } from './BusinessDataHandling'
 import { TaggedNodeClipboardHelper } from './ClipboardHelper'
 import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { bindYFilesCommand, finishLoading } from '@yfiles/demo-resources/demo-page'
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
+
 let graphComponent
 let graphComponent2
+
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the GraphComponents
   graphComponent = new GraphComponent('graphComponent')
   graphComponent2 = new GraphComponent('clipboard-graph-component')
   // both components share the clipboard
   graphComponent2.clipboard = graphComponent.clipboard
+
   // initializes the graph
   initializeGraphStyling()
+
   // Create nodes and an edge.
   createSampleGraph(graphComponent.graph)
   void graphComponent.fitGraphBounds()
   graphComponent2.zoomTo(graphComponent.zoom, graphComponent.center)
+
   // Enable the Undo functionality.
   graphComponent.graph.undoEngineEnabled = true
   graphComponent2.graph.undoEngineEnabled = true
+
   // creates the input modes
   graphComponent.inputMode = createInputMode()
   graphComponent2.inputMode = createInputMode()
+
   // wires up the UI
   initializeUI()
+
   // sets the focus to the left GraphComponent
   graphComponent.focus()
 }
+
 /**
  * Initializes the two graphs.
  */
 function initializeGraphStyling() {
   // Initialize the left graph
   const graph = graphComponent.graph
+
   // Create a function that converts the node width
   // into a "translate" expression that horizontally centers the transformed element
   function centerTransform(width, verticalOffset) {
     // place in horizontal center
     return `translate(${width * 0.5} ${verticalOffset ?? 0})`
   }
+
   // Set the default style for new nodes and edges
   graph.nodeDefaults.style = new LitNodeStyle(
     ({ layout, tag }) => svg`<g>
@@ -96,19 +110,26 @@ function initializeGraphStyling() {
   `
   )
   graph.nodeDefaults.size = new Size(120, 60)
+
   graph.edgeDefaults.style = createDemoEdgeStyle({ colorSetName: 'demo-palette-31' })
+
   // Set the default locations for new labels
   graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.TOP
   graph.edgeDefaults.labels.layoutParameter = NinePositionsEdgeLabelModel.CENTER_ABOVE
+
   graph.decorator.nodes.clipboardHelper.addConstant(new TaggedNodeClipboardHelper())
+
   // Initialize the right graph
   const graph2 = graphComponent2.graph
   graph2.nodeDefaults = graph.nodeDefaults
   graph2.edgeDefaults = graph.edgeDefaults
+
   graph.decorator.nodes.focusRenderer.hide()
   graph2.decorator.nodes.focusRenderer.hide()
+
   graph2.decorator.nodes.clipboardHelper.addConstant(new TaggedNodeClipboardHelper())
 }
+
 /**
  * Creates the GraphEditorInputMode for this demo.
  */
@@ -124,11 +145,13 @@ function createInputMode() {
     // Enable clipboard operations (basically the key bindings/commands)
     allowClipboardOperations: true
   })
+
   // Discard the first click after getting the focus
   // to prevent node creation when switching between the GraphComponents
   inputMode.clickInputMode.swallowFocusClick = true
   return inputMode
 }
+
 /**
  * Wires up the UI.
  */
@@ -137,14 +160,17 @@ function initializeUI() {
     document.querySelector('#paste-special').disabled = false
     document.querySelector('#paste-special2').disabled = false
   }
+
   function registerEditNameEnabledListeners(inputMode, buttonSelector) {
     inputMode.addEventListener('multi-selection-finished', (evt) => {
       document.querySelector(buttonSelector).disabled = evt.selection.size === 0
     })
+
     inputMode.addEventListener('deleted-selection', () => {
       document.querySelector(buttonSelector).disabled = true
     })
   }
+
   // Left GraphComponent
   document
     .getElementById('paste-special')
@@ -152,9 +178,11 @@ function initializeUI() {
   document
     .getElementById('edit-name')
     .addEventListener('click', () => onEditNameCommand(graphComponent, 'left'))
+
   graphComponent.clipboard.addEventListener('items-copied', enablePasteSpecialButton)
   graphComponent.clipboard.addEventListener('items-cut', enablePasteSpecialButton)
   registerEditNameEnabledListeners(graphComponent.inputMode, '#edit-name')
+
   // Right GraphComponent
   bindYFilesCommand(
     "button[data-command='ZoomIn2']",
@@ -170,9 +198,11 @@ function initializeUI() {
     null,
     'Decrease zoom'
   )
+
   document
     .querySelector("button[data-command='FitContent2']")
     .addEventListener('click', () => graphComponent.fitGraphBounds())
+
   bindYFilesCommand(
     "button[data-command='ZoomOriginal2']",
     Command.ZOOM,
@@ -180,6 +210,7 @@ function initializeUI() {
     1.0,
     'Zoom to original size'
   )
+
   const undoEngine = graphComponent2.graph.undoEngine
   const undo2Button = document.querySelector("button[data-command='Undo2']")
   undo2Button.addEventListener('click', () => {
@@ -187,17 +218,20 @@ function initializeUI() {
       undoEngine.undo()
     }
   })
+
   const redo2Button = document.querySelector("button[data-command='Redo2']")
   redo2Button.addEventListener('click', () => {
     if (undoEngine.canRedo()) {
       undoEngine.redo()
     }
   })
+
   // add a listener to the undoEngine to enable/disable the buttons
   undoEngine.addEventListener('property-changed', () => {
     undo2Button.disabled = !undoEngine.canUndo()
     redo2Button.disabled = !undoEngine.canRedo()
   })
+
   const inputMode = graphComponent2.inputMode
   document
     .querySelector("button[data-command='Cut2']")
@@ -217,8 +251,10 @@ function initializeUI() {
   document
     .querySelector('#edit-name2')
     .addEventListener('click', () => onEditNameCommand(graphComponent2, 'right'))
+
   registerEditNameEnabledListeners(graphComponent2.inputMode, '#edit-name2')
 }
+
 /**
  * Executes paste special command.
  * @param component The graphComponent to apply the command to.
@@ -226,6 +262,7 @@ function initializeUI() {
 function onPasteSpecialCommand(component) {
   const clipboard = component.clipboard
   component.selection.clear()
+
   // This is the filter for the Paste call.
   const clipboardGraph = clipboard.clipboardGraph
   const itemsToPaste = [...clipboardGraph.nodes, ...clipboardGraph.labels]
@@ -236,9 +273,11 @@ function onPasteSpecialCommand(component) {
     }
   }
   clipboard.paste(component.graph, itemsToPaste, pasted)
+
   // Set the different paste delta.
   clipboard.pasteOffset = new Point(clipboard.pasteOffset.x + 30, clipboard.pasteOffset.y + 30)
 }
+
 /**
  * Shows a dialog for editing the node name.
  * @param component The graphComponent to apply the command to.
@@ -248,6 +287,7 @@ function onEditNameCommand(component, elementID) {
   const nameDialog = document.querySelector('#name-dialog')
   const nodeNameInput = nameDialog.querySelector('#node-name-input')
   nodeNameInput.value = getCommonName(component.selection.nodes)
+
   const applyListener = (evt) => {
     evt.preventDefault()
     nameDialog.style.display = 'none'
@@ -258,20 +298,25 @@ function onEditNameCommand(component, elementID) {
     component.focus()
     document.querySelector('#apply-button').removeEventListener('click', applyListener)
   }
+
   document.querySelector('#apply-button').addEventListener('click', applyListener)
+
   document.querySelector('#cancel-button').addEventListener('click', () => {
     nameDialog.style.display = 'none'
     document.querySelector('#apply-button').removeEventListener('click', applyListener)
   })
+
   nameDialog.style.display = 'block'
   document.querySelector('#' + elementID)?.appendChild(nameDialog)
   nodeNameInput.focus()
 }
+
 /**
  * Creates the sample graph.
  */
 function createSampleGraph(graph) {
   const sharedBusinessObject = createNodeBusinessData()
+
   const node1 = graph.createNodeAt({
     location: new Point(100, 100),
     tag: sharedBusinessObject,
@@ -282,10 +327,8 @@ function createSampleGraph(graph) {
     tag: sharedBusinessObject,
     labels: ['Label 2']
   })
-  graph.createNodeAt({
-    location: new Point(100, 200),
-    tag: createNodeBusinessData()
-  })
+  graph.createNodeAt({ location: new Point(100, 200), tag: createNodeBusinessData() })
   graph.addLabel(graph.createEdge(node1, node2), 'Shared Object')
 }
+
 run().then(finishLoading)

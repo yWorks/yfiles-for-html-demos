@@ -38,6 +38,7 @@ import {
   WebGLGraphModelManagerRenderMode,
   WebGLSelectionIndicatorManager
 } from '@yfiles/yfiles'
+
 /**
  * The {@link RenderingTypesManager} takes care of switching between the two rendering types
  * WebGL and SVG.
@@ -56,21 +57,26 @@ export class RenderingTypesManager {
   edgeStyleProvider
   nodeCreator
   listeners
+
   /**
    * Sets the style for newly created nodes using the tyle provider.
    */
   nodeCreatedListener
+
   /**
    * Sets the style for newly created edges using the tyle provider.
    */
   edgeCreatedListener
+
   /**
    * Listener for zoom change events. Activates the appropriate
    * rendering method according to the svgThreshold configured,
    * and notifies the rendering changed listeners.
    */
   zoomChangedListener
+
   svgThresholdValue
+
   /**
    * Instantiates the {@link RenderingTypesManager}
    * @param graphComponent the GraphComponent
@@ -93,20 +99,25 @@ export class RenderingTypesManager {
     this.edgeStyleProvider = edgeStyleProvider
     this.nodeCreator = nodeCreator
     this.listeners = new List()
+
     this.svgThresholdValue = svgThreshold
+
     graphComponent.graphModelManager = new WebGLGraphModelManager({ renderMode: 'webgl' })
     graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager()
     graphComponent.focusIndicatorManager.enabled = false
+
     this.nodeCreatedListener = (evt) => {
       const node = evt.item
       const graph = this.graphComponent.graph
       graph.setStyle(node, this.nodeStyleProvider(node, graph))
     }
+
     this.edgeCreatedListener = (evt) => {
       const edge = evt.item
       const graph = this.graphComponent.graph
       graph.setStyle(edge, this.edgeStyleProvider(edge, graph))
     }
+
     this.zoomChangedListener = () => {
       const isWebGLRendering = this.currentRenderingType === 'WebGL'
       const zoom = this.graphComponent.zoom
@@ -118,12 +129,18 @@ export class RenderingTypesManager {
         this.fireRenderingTypeChangedEvent()
       }
     }
-    this.zoomChangedListener()
+
+    // add time_out to make sure that everything will be correctly loaded also in slower devices (e.g., android)
+    setTimeout(() => {
+      this.zoomChangedListener()
+    }, 0)
   }
+
   get currentRenderingType() {
     const graphModelManager = this.graphComponent.graphModelManager
     return graphModelManager.renderMode == WebGLGraphModelManagerRenderMode.WEBGL ? 'WebGL' : 'SVG'
   }
+
   /**
    * Sets a new value for the SVG threshold.
    * @param value The new SVG threshold.
@@ -132,6 +149,7 @@ export class RenderingTypesManager {
     this.svgThresholdValue = value
     this.zoomChangedListener()
   }
+
   /**
    * Gets the value of the SVG threshold.
    * @returns The value of the SVG threshold.
@@ -139,6 +157,7 @@ export class RenderingTypesManager {
   get svgThreshold() {
     return this.svgThresholdValue
   }
+
   /**
    * Adds an event listener for zoom changes that switches back and forth between
    * the rendering types when the SVG threshold is passed.
@@ -149,9 +168,11 @@ export class RenderingTypesManager {
     this.graphComponent.addEventListener('zoom-changed', this.zoomChangedListener)
     this.zoomChangedListener()
   }
+
   unregisterZoomChangedListener() {
     this.graphComponent.removeEventListener('zoom-changed', this.zoomChangedListener)
   }
+
   /**
    * Registers the item created listeners. Can _usually_ be called _after_ a large graph has been
    * loaded to avoid redundant calls to the configured node and edge creation listeners.
@@ -161,23 +182,29 @@ export class RenderingTypesManager {
     if (!(inputMode instanceof GraphEditorInputMode)) {
       return
     }
+
     inputMode.addEventListener('node-created', this.nodeCreatedListener)
     inputMode.createEdgeInputMode.addEventListener('edge-created', this.edgeCreatedListener)
+
     if (this.nodeCreator) {
       inputMode.nodeCreator = this.nodeCreator
     }
   }
+
   unregisterItemCreatedListeners() {
     const inputMode = this.graphComponent.inputMode
     if (!(inputMode instanceof GraphEditorInputMode)) {
       return
     }
+
     inputMode.removeEventListener('node-created', this.nodeCreatedListener)
     inputMode.createEdgeInputMode.removeEventListener('edge-created', this.edgeCreatedListener)
+
     if (this.nodeCreator) {
       inputMode.nodeCreator = null
     }
   }
+
   /**
    * Must be called before instantiating a new {@link RenderingTypesManager},
    * so that the various listeners are unregistered from the {@link GraphComponent}
@@ -187,6 +214,7 @@ export class RenderingTypesManager {
     this.unregisterZoomChangedListener()
     this.listeners.clear()
   }
+
   /**
    * Activates the given rendering type for the graph component of this instance
    * by instantiating and switching to appropriate {@link GraphModelManager}
@@ -202,6 +230,7 @@ export class RenderingTypesManager {
       gmm.renderMode = 'svg'
     }
   }
+
   /**
    * Registers a {@link RenderingTypeChangedListener}.
    * @param listener the listener
@@ -209,6 +238,7 @@ export class RenderingTypesManager {
   setRenderingTypeChangedListener(listener) {
     this.listeners.push(listener)
   }
+
   /**
    * Unregisters a {@link RenderingTypeChangedListener}.
    * @param listener the listener
@@ -216,6 +246,7 @@ export class RenderingTypesManager {
   removeRenderingTypeChangedListener(listener) {
     this.listeners.remove(listener)
   }
+
   fireRenderingTypeChangedEvent() {
     for (const listener of this.listeners) {
       listener(this.currentRenderingType)

@@ -47,11 +47,14 @@ import {
   StretchNodeLabelModel,
   TextWrapping
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
@@ -59,28 +62,31 @@ async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
+
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   // configures the MarkupLabelStyle to be used as default label style in this demo
   configureMarkupLabelStyle(graphComponent.graph)
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
-  graphComponent.graph.applyLayout(
-    new HierarchicalLayout({
-      minimumLayerDistance: 35
-    })
-  )
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
   await graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Iterates through the given data set and creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList.filter((item) => !item.isGroup),
     id: (item) => item.id,
@@ -89,19 +95,23 @@ function buildGraph(graph, graphData) {
   nodesSource.nodeCreator.createLabelBinding((item) => item.label)
   nodesSource.nodeCreator.layoutProvider = (item) =>
     item.label ? new Rect(0, 0, 400, 250) : undefined
+
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Sets the {@link MarkupLabelStyle} as default label style for nodes and edges.
  */
@@ -115,6 +125,7 @@ function configureMarkupLabelStyle(graph) {
   })
   graph.edgeDefaults.labels.style = new MarkupLabelStyle({ font: font })
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  *
@@ -123,6 +134,7 @@ function configureMarkupLabelStyle(graph) {
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph, { orthogonalEditing: true })
+
   // set the style, label and label parameter for group nodes
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#46a8d5',
@@ -134,9 +146,11 @@ function initializeGraph(graph) {
     textFill: '#b5dcee'
   })
   graph.groupNodeDefaults.labels.layoutParameter = new GroupNodeLabelModel().createTabParameter()
+
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.shareStyleInstance = false
+
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
     margins: 5
   }).createParameter('bottom')
@@ -145,4 +159,5 @@ function initializeGraph(graph) {
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
+
 run().then(finishLoading)

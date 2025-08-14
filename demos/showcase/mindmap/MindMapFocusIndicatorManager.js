@@ -34,6 +34,7 @@ import {
   ShowFocusPolicy
 } from '@yfiles/yfiles'
 import { getNodeData, isRoot } from './data-types'
+
 /**
  * A custom {@link FocusIndicatorManager} that adds the focus indicator for the root node in front
  * and the focus indicator of the other nodes behind the content group.
@@ -43,6 +44,7 @@ export class MindMapFocusIndicatorManager extends FocusIndicatorManager {
     super()
     this.showFocusPolicy = ShowFocusPolicy.ALWAYS
   }
+
   getRenderTreeGroup(node) {
     const canvasComponent = this.canvasComponent
     // choose the highlight group for the root (front) and the background group for others (back)
@@ -50,15 +52,12 @@ export class MindMapFocusIndicatorManager extends FocusIndicatorManager {
       ? canvasComponent.renderTree.highlightGroup
       : canvasComponent.renderTree.backgroundGroup
   }
+
   getRenderer(node) {
     const nodeData = getNodeData(node)
     return isRoot(node)
       ? new NodeStyleIndicatorRenderer({
-          nodeStyle: new ShapeNodeStyle({
-            shape: 'pill',
-            stroke: `5px black`,
-            fill: 'none'
-          }),
+          nodeStyle: new ShapeNodeStyle({ shape: 'pill', stroke: `5px black`, fill: 'none' }),
           zoomPolicy: 'world-coordinates',
           margins: 0
         })

@@ -337,7 +337,7 @@ function isAssociation(edge: IEdge): boolean {
 }
 
 /**
- * Adds node halos to reserve some space for labels.
+ * Adds node margins to reserve some space for labels.
  */
 function addNodeMargins(
   data: HierarchicalLayoutData,
@@ -352,7 +352,7 @@ function addNodeMargins(
     let bottom = 0.0
     let right = 0.0
 
-    // for each port with an EventPortStyle extend the node halo to cover the ports render size
+    // for each port with an EventPortStyle extend the node margin to cover the ports render size
     node.ports.forEach((port) => {
       if (port.style instanceof EventPortStyle) {
         const eventPortStyle = port.style

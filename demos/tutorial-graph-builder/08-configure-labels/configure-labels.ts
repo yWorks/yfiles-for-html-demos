@@ -131,9 +131,7 @@ export function configureEdgeLabels(
   const grey = '#1a3442'
   // configure the position of the label
   edgeLabelCreator.layoutParameterProvider = (): ILabelModelParameter =>
-    new EdgePathLabelModel({
-      autoRotation: false
-    }).createRatioParameter()
+    new EdgePathLabelModel({ autoRotation: false }).createRatioParameter()
 
   // configure its style
   edgeLabelCreator.defaults.shareStyleInstance = false
@@ -147,38 +145,15 @@ export function createNodesSource(
 ): NodesSource<EntityData> {
   const data = {
     nodeData: [
-      {
-        id: '0',
-        name: 'Investment Capital',
-        type: 'Corporation'
-      },
+      { id: '0', name: 'Investment Capital', type: 'Corporation' },
       { id: '1', name: 'Melissa Barner', type: 'Trust' },
       { id: '2', name: 'Monster Inc', type: 'Corporation' },
-      {
-        id: '3',
-        name: 'International Group',
-        type: 'Trust'
-      }
+      { id: '3', name: 'International Group', type: 'Trust' }
     ],
     edgeData: [
-      {
-        id: '0',
-        sourceId: '1',
-        targetId: '0',
-        ownership: 30
-      },
-      {
-        id: '1',
-        sourceId: '2',
-        targetId: '0',
-        ownership: 60
-      },
-      {
-        id: '2',
-        sourceId: '3',
-        targetId: '0',
-        ownership: 5
-      }
+      { id: '0', sourceId: '1', targetId: '0', ownership: 30 },
+      { id: '1', sourceId: '2', targetId: '0', ownership: 60 },
+      { id: '2', sourceId: '3', targetId: '0', ownership: 5 }
     ]
   }
   return graphBuilder.createNodesSource(
@@ -192,24 +167,9 @@ export function createEdgesSource(
 ): EdgesSource<ConnectionData> {
   const data = {
     edgesSource: [
-      {
-        id: '0',
-        sourceId: '1',
-        targetId: '0',
-        ownership: 30
-      },
-      {
-        id: '1',
-        sourceId: '2',
-        targetId: '0',
-        ownership: 60
-      },
-      {
-        id: '2',
-        sourceId: '3',
-        targetId: '0',
-        ownership: 5
-      }
+      { id: '0', sourceId: '1', targetId: '0', ownership: 30 },
+      { id: '1', sourceId: '2', targetId: '0', ownership: 60 },
+      { id: '2', sourceId: '3', targetId: '0', ownership: 5 }
     ]
   }
   return graphBuilder.createEdgesSource(

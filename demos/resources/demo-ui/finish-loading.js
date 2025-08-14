@@ -29,7 +29,8 @@
 import { CanvasComponent, Command, GraphComponent, GraphOverviewComponent } from '@yfiles/yfiles'
 import { initToolbars } from './toolbar'
 import { bindYFilesCommand } from './element-utils'
-import { enableMetaQuestSupport } from '@yfiles/demo-utils/meta-quest-support'
+import { enableMetaQuestSupport } from './meta-quest-support'
+
 export function finishLoading() {
   const graphComponent = CanvasComponent.getComponent(document.querySelector('#graphComponent'))
   if (graphComponent instanceof GraphComponent) {
@@ -37,22 +38,27 @@ export function finishLoading() {
     registerDevicePixelRatioChangeListener(graphComponent)
     enableMetaQuestSupport(graphComponent)
   }
+
   const overviewComponent = CanvasComponent.getComponent(
     document.querySelector('#overviewComponent')
   )
   if (overviewComponent instanceof GraphOverviewComponent) {
     registerDevicePixelRatioChangeListener(overviewComponent)
   }
+
   document.body.classList.add('loaded')
   window['data-demo-status'] = 'OK'
+
   initToolbars()
 }
+
 /**
  * Sets the device pixel ratio of the given component and register a listener that applies
  * device pixel ratio changes.
  */
 function registerDevicePixelRatioChangeListener(canvasComponent) {
   let removeCallback = () => {}
+
   const updatePixelRatio = () => {
     removeCallback()
     const mqString = `(resolution: ${window.devicePixelRatio}dppx)`
@@ -61,16 +67,19 @@ function registerDevicePixelRatioChangeListener(canvasComponent) {
     removeCallback = () => {
       media.removeEventListener('change', updatePixelRatio)
     }
+
     canvasComponent.devicePixelRatio = window.devicePixelRatio || 1
   }
   updatePixelRatio()
 }
+
 function registerDefaultCommands(graphComponent) {
   document.querySelector("button[data-command='NEW']")?.addEventListener('click', () => {
     graphComponent.graph.clear()
     graphComponent.graph.undoEngine?.clear()
     graphComponent.fitGraphBounds()
   })
+
   bindYFilesCommand(
     "[data-command='FIT_GRAPH_BOUNDS']",
     Command.FIT_GRAPH_BOUNDS,
@@ -99,12 +108,15 @@ function registerDefaultCommands(graphComponent) {
     1.0,
     'Zoom to original size'
   )
+
   bindYFilesCommand("[data-command='CUT']", Command.CUT, graphComponent, null, 'Cut')
   bindYFilesCommand("[data-command='COPY']", Command.COPY, graphComponent, null, 'Copy')
   bindYFilesCommand("[data-command='PASTE']", Command.PASTE, graphComponent, null, 'Paste')
   bindYFilesCommand("[data-command='DELETE']", Command.DELETE, graphComponent, null, 'Delete')
+
   bindYFilesCommand("[data-command='UNDO']", Command.UNDO, graphComponent, null, 'Undo')
   bindYFilesCommand("[data-command='REDO']", Command.REDO, graphComponent, null, 'Redo')
+
   bindYFilesCommand(
     "[data-command='GROUP_SELECTION']",
     Command.GROUP_SELECTION,

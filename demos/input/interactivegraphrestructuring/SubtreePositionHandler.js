@@ -42,6 +42,7 @@ import {
 import { Subtree } from './Subtree'
 import { RelocateSubtreeLayoutHelper } from './RelocateSubtreeLayoutHelper'
 import { EdgePositionHandler } from './EdgePositionHandler'
+
 /**
  * An {@link IPositionHandler} that moves a node and its subtree.
  */
@@ -53,6 +54,7 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
   compositeHandler
   subtree
   node2NormalStyle = new Map()
+
   /**
    * Creates a new instance of a SubtreePositionHandler.
    * @param node The selected node
@@ -65,28 +67,34 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
     this.nodePositionHandler = nodePositionHandler
     this.movingNodeStyle = movingNodeStyle
   }
+
   /**
    * Returns the location of the selected node.
    */
   get location() {
     return this.nodePositionHandler.location
   }
+
   /**
    * The subtree is upon to be dragged.
    * @param context The context to retrieve information about the drag from
    */
   initializeDrag(context) {
     this.subtree = new Subtree(context.graph, this.node)
+
     this.subtree.nodes.forEach((node) => {
       // store normal style of the node and set the moving node style while dragging
       this.node2NormalStyle.set(node, node.style)
       context.graph.setStyle(node, this.movingNodeStyle)
     })
+
     this.layoutHelper = new RelocateSubtreeLayoutHelper(context.canvasComponent, this.subtree)
     this.layoutHelper.initializeLayout()
+
     this.compositeHandler = SubtreePositionHandler.createCompositeHandler(this.subtree)
     this.compositeHandler.initializeDrag(context)
   }
+
   /**
    * The subtree is dragged.
    * @param context The context to retrieve information about the drag from
@@ -97,6 +105,7 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
     this.compositeHandler.handleMove(context, originalLocation, newLocation)
     this.layoutHelper.runLayout()
   }
+
   /**
    * The drag is canceled.
    * @param context The context to retrieve information about the drag from
@@ -107,6 +116,7 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
     this.layoutHelper.cancelLayout()
     this.resetStyles(context.graph)
   }
+
   /**
    * The drag is finished.
    * @param context The context to retrieve information about the drag from
@@ -118,6 +128,7 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
     this.layoutHelper.stopLayout()
     this.resetStyles(context.graph)
   }
+
   /**
    * Replaces the temporary styles used while moving nodes with the original styles.
    */
@@ -132,6 +143,7 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
     })
     nodeToStyle.clear()
   }
+
   /**
    * Creates an {@link IPositionHandler} that moves the whole subtree.
    * @param subtree The nodes and edges of the subtree
@@ -147,6 +159,7 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
         positionHandlers.push(subtreeHandler ? subtreeHandler.nodePositionHandler : positionHandler)
       }
     })
+
     subtree.edges.forEach((edge) => {
       const positionHandler = new EdgePositionHandler(edge)
       if (positionHandler) {

@@ -28,25 +28,32 @@
  ***************************************************************************/
 import { GraphModelManager } from '@yfiles/yfiles'
 import { isCrossReference } from './data-types'
+
 /**
  * Provides a special {@link IRenderTreeGroup} for cross-reference edges.
  */
 export class MindMapGraphModelManager extends GraphModelManager {
   /** The cross-reference canvas group */
   crossReferenceEdgeGroup = null
+
   install(canvasComponent, graph, contentGroup) {
     super.install(canvasComponent, graph, contentGroup)
+
     // create a new canvas object group for reference edges
     this.crossReferenceEdgeGroup = this.createEdgeGroup()
+
     // put this group above the node group
     this.crossReferenceEdgeGroup.above(this.nodeGroup)
+
     // put edge labels above node labels
     this.edgeLabelGroup.above(this.nodeLabelGroup)
   }
+
   uninstall(canvasComponent) {
     super.uninstall(canvasComponent)
     this.crossReferenceEdgeGroup = null
   }
+
   getEdgeRenderTreeGroup(edge) {
     return isCrossReference(edge)
       ? this.crossReferenceEdgeGroup

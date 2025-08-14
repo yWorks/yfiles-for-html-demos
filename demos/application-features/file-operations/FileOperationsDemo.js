@@ -33,6 +33,7 @@ import {
   GraphMLIOHandler,
   License
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
@@ -42,25 +43,35 @@ import { openStorageItem, saveStorageItem } from './storage-support'
 import { readGraphML, writeGraphML } from '@yfiles/demo-utils/graphml-support'
 import { readJSON, writeJSON } from './json-support'
 import sampleData from './file-operations-sample.json?raw'
+
 const storageKey = 'graph-file-operations-demo.graphml'
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('graphComponent')
   /// Enable folding since users might load GraphML files with folder nodes
   const foldingManager = new FoldingManager()
   graphComponent.graph = foldingManager.createFoldingView().graph
+
   initDemoStyles(graphComponent.graph, { foldingEnabled: true })
+
   graphComponent.inputMode = new GraphEditorInputMode()
+
   createSampleGraph(graphComponent)
+
   initializeUI(graphComponent)
 }
+
 /**
  * Creates the sample graph.
  */
 function createSampleGraph(graphComponent) {
   readJSON(graphComponent, sampleData)
+
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Adds event listeners to the demo's input elements.
  */
@@ -83,8 +94,10 @@ function initializeUI(graphComponent) {
       alert(err)
     }
   })
+
   const getSaveFormat = () =>
     document.querySelector('#file-format-select').selectedOptions.item(0)?.value ?? 'json'
+
   document.querySelector('#save-button').addEventListener('click', async () => {
     const saveFormat = getSaveFormat()
     const text =
@@ -95,12 +108,14 @@ function initializeUI(graphComponent) {
       alert(err)
     }
   })
+
   document.querySelector('#show-in-window-button').addEventListener('click', async () => {
     const saveFormat = getSaveFormat()
     const text =
       saveFormat === 'graphml' ? await writeGraphML(graphComponent) : writeJSON(graphComponent)
     openInWindow(`<pre>${text.replaceAll('<', '&lt;')}</pre>`, `File content (${saveFormat})`)
   })
+
   document.querySelector('#open-storage-button').addEventListener('click', async () => {
     try {
       const graphMLText = openStorageItem(storageKey)
@@ -109,6 +124,7 @@ function initializeUI(graphComponent) {
       alert(err)
     }
   })
+
   document.querySelector('#save-storage-button').addEventListener('click', async () => {
     try {
       const result = await new GraphMLIOHandler().write(graphComponent.graph)
@@ -119,4 +135,5 @@ function initializeUI(graphComponent) {
     }
   })
 }
+
 void run().then(finishLoading)

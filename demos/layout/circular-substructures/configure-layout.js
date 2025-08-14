@@ -33,6 +33,7 @@ import {
   LayoutExecutor
 } from '@yfiles/yfiles'
 import { getNodeType } from './types-popup'
+
 /**
  * Calculates a new graph layout and optionally applies the new layout in an animated fashion.
  * This method creates and configures a new circular layout algorithm for this purpose.
@@ -40,6 +41,7 @@ import { getNodeType } from './types-popup'
 export async function runLayoutCore(graphComponent, settings, animate) {
   // configure the circular layout algorithm
   const layout = new CircularLayout()
+
   const starStyle = getStarStyle(settings.starSubstructureStyle)
   if (starStyle !== CircularLayoutStarSubstructureStyle.NONE) {
     // for more compact layout, do not place children on common radius for star style radial and separated-radial
@@ -47,18 +49,23 @@ export async function runLayoutCore(graphComponent, settings, animate) {
   }
   // configure the star substructure style
   layout.starSubstructureStyle = starStyle
+
   // configure type separation for star substructures
   layout.starSubstructureTypeSeparation = settings.starSubstructureTypeSeparation
+
   // layout data is necessary to support data-driven features like node types
   const layoutData = new CircularLayoutData()
+
   if (settings.considerNodeTypes) {
     // if node types should be considered, define a delegate on the respective layout data property
     // that queries the type from the node's tag
     layoutData.nodeTypes = getNodeType
   }
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   // runs the layout algorithm and applies the result...
   if (animate) {
     //... with a morph animation
@@ -69,6 +76,7 @@ export async function runLayoutCore(graphComponent, settings, animate) {
     await graphComponent.fitGraphBounds()
   }
 }
+
 /**
  * Determines the desired star substructure style for layout calculations from the settings UI.
  */

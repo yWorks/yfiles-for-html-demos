@@ -37,6 +37,7 @@ import {
   PolylineEdgeStyle,
   Size
 } from '@yfiles/yfiles'
+
 import { LevelOfDetailNodeStyle } from './LevelOfDetailNodeStyle'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
@@ -47,30 +48,39 @@ import {
   overviewNodeStyleTemplateSource
 } from './style-templates'
 import { createLitNodeStyleFromSource } from '@yfiles/demo-utils/LitNodeStyle'
+
 let graphComponent
+
 /**
  * Support three styles for different zoom level.
  */
 let levelOfDetailNodeStyle = null
+
 /**
  * The Popup text that shows in which level we are now.
  */
 const detailLevelPopup = document.querySelector('#detailLevelPopup')
+
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('#graphComponent')
   // initialize input Mode
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // set default styles for the nodes and the edges
   initTutorialDefaults(graphComponent.graph)
+
   // check the zooming level and update the Popup text that shows in which level we are now
   updateDetailLevelIndicator()
+
   // build a sample graph
   createGraph()
+
   // center the graph
   graphComponent.fitGraphBounds()
 }
+
 /**
  * Initializes the defaults for the styling in this tutorial.
  *
@@ -79,6 +89,7 @@ async function run() {
 function initTutorialDefaults(graph) {
   // set styles that are the same for all tutorials
   initDemoStyles(graph)
+
   // set styles, sizes and locations specific for this tutorial
   levelOfDetailNodeStyle = new LevelOfDetailNodeStyle(
     createLitNodeStyleFromSource(detailNodeStyleTemplateSource),
@@ -92,6 +103,7 @@ function initTutorialDefaults(graph) {
     targetArrow: IArrow.NONE
   })
 }
+
 /**
  * Updates the indicator for the level of details to the current graph.
  */
@@ -108,6 +120,7 @@ function updateDetailLevelIndicator() {
     }, 200)
   })
 }
+
 /**
  * Updates the levels indicator.
  */
@@ -129,6 +142,7 @@ function updateIndicator() {
     }, 2000)
   }
 }
+
 /**
  * Create a sample graph.
  */
@@ -179,4 +193,5 @@ function createGraph() {
   graph.createEdge({ source: n2, target: n4, bends: [new Point(0, 230), new Point(175, 230)] })
   graphComponent.fitGraphBounds()
 }
+
 run().then(finishLoading)

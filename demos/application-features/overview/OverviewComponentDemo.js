@@ -38,25 +38,32 @@ import {
   Point,
   Size
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 /**
  * Application Features - Add an overview component to the application
  */
+
 // The graph component
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the GraphComponent
   graphComponent = new GraphComponent('#graphComponent')
   /////////////////////// overview component ///////////////////////
+
   // initialize the GraphOverviewComponent
   const overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
+
   // This code toggles the visibility of the overview.
   // Developers who want to keep the overview component always visible don't need this
   const overviewContainer = overviewComponent.htmlElement.parentElement
@@ -64,17 +71,23 @@ async function run() {
   overviewHeader.addEventListener('click', () => {
     overviewContainer.classList.toggle('collapsed')
   })
+
   //////////////////////////////////////////////////////////////////
+
   // configure user interaction
   graphComponent.inputMode = new GraphEditorInputMode()
+
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
   await graphComponent.fitGraphBounds()
+
   // add some nodes outside the visible area
   // to demonstrate the overview's viewport indicator
   graphComponent.graph.createNodeAt(new Point(-1000, -1000))
@@ -82,32 +95,39 @@ async function run() {
   graphComponent.graph.createNodeAt(new Point(-1000, 1000))
   graphComponent.graph.createNodeAt(new Point(1000, 1000))
   graphComponent.updateContentBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder.createNodesSource({
     data: graphData.nodeList.filter((item) => !item.isGroup),
     id: (item) => item.id,
     parentId: (item) => item.parentId
   })
+
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Initializes the defaults for the styles in this demo.
  * @param graph The graph.
@@ -115,6 +135,8 @@ function buildGraph(graph, graphData) {
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
+
   graph.nodeDefaults.size = new Size(40, 40)
 }
+
 run().then(finishLoading)

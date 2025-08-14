@@ -40,10 +40,12 @@ import {
   SimpleLabel,
   SimpleNode
 } from '@yfiles/yfiles'
+
 import { ActivityNodeStyle } from './activity-node/ActivityNodeStyle'
 import { getDate, getTaskColor, syncActivityWithNodeLayout } from './gantt-utils'
 import { hideInfo, showInfo } from './info-panel'
 import { ganttActivityHeight, ganttActivitySpacing, getTask, getTaskY } from './sweepline-layout'
+
 /**
  * An input mode that allows creating activities by dragging in the viewport.
  */
@@ -56,6 +58,7 @@ export class CreateActivityInputMode extends MoveInputMode {
     this.moveCursor = Cursor.EW_RESIZE
   }
 }
+
 /**
  * A handler that allows for creating a node with a drag gesture.
  * The drag gesture determines the duration of the activity.
@@ -67,7 +70,9 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
   nodeRenderTreeElement = null
   /** Canvas object for the label visualization during the gesture */
   labelRenderTreeElement = null
+
   initializeDrag(context) {}
+
   /**
    * Creates a temporary dummy node that will be converted to a normal node when the drag gesture will
    * be finished and shows an info popup with the date that corresponds to the mouse location.
@@ -82,10 +87,12 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
     // update the location of the node
     this.locationPoint.setLocation(newLocation)
     this.updateTemporaryNode(originalLocation, newLocation)
+
     // Show info text
     const text = getDate(this.temporaryNode.layout.maxX).format()
     showInfo(text, this.temporaryNode.layout.topRight, context.canvasComponent)
   }
+
   /**
    * Creates an actual node in the graph based on the layout, style, label, and tag of the temporary
    * node.
@@ -93,15 +100,19 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
   dragFinished(context, originalLocation, newLocation) {
     // update the location of the dummy node
     this.updateTemporaryNode(originalLocation, newLocation)
+
     // update the activity with the actual timestamps
     syncActivityWithNodeLayout(this.temporaryNode)
+
     // remove the dummy node from the graphComponent's content group and hide the popup info
     this.hideTemporaryNode(context)
     hideInfo()
+
     // create the new node as part of the actual graph
     this.createNode(context.graph)
     this.temporaryNode = null
   }
+
   /**
    * Removes the dummy node from the graph component and hides the popup info.
    */
@@ -110,9 +121,11 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
     this.temporaryNode = null
     hideInfo()
   }
+
   get location() {
     return this.locationPoint
   }
+
   /**
    * Creates the node in the graph at the end of the gesture.
    * The created node reuses the same layout, style, tag, and label
@@ -135,6 +148,7 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
       }
     }
   }
+
   /**
    * Creates the temporary node with an appropriate layout, style, and tag, so that it looks
    * just like a normal node.
@@ -142,6 +156,7 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
   createTemporaryNode(context, originalLocation, newLocation) {
     const layout = this.getTemporaryNodeLayout(originalLocation, newLocation)
     const task = getTask(layout.y)
+
     // add some initial activity data
     const activity = {
       name: 'New Activity',
@@ -151,7 +166,9 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
       followUpTime: 0,
       taskId: task.id
     }
+
     const graph = context.graph
+
     // create a dummy node which is not actually part of the graph
     const node = new SimpleNode({
       layout,
@@ -166,8 +183,10 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
     })
     label.adoptPreferredSizeFromStyle()
     node.labels = IListEnumerable.from([label])
+
     return node
   }
+
   /**
    * Updates the temporary node layout in response to a drag.
    */
@@ -176,6 +195,7 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
       this.temporaryNode.layout = this.getTemporaryNodeLayout(originalLocation, newLocation)
     }
   }
+
   /**
    * Calculates the temporary node layout based on the current pointer location during a drag.
    */
@@ -186,6 +206,7 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
       new Point(newLocation.x, y + ganttActivityHeight)
     )
   }
+
   /**
    * Shows the temporary node visualization.
    * Basically, add the node and its label directly to the graphComponent with
@@ -212,6 +233,7 @@ class CreateActivityHandler extends BaseClass(IPositionHandler) {
       }
     }
   }
+
   /**
    * Hides the temporary node visualization.
    */

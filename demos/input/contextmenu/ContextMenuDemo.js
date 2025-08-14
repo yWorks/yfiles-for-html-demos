@@ -43,31 +43,39 @@ import iconCopy from '@yfiles/demo-resources/icons/copy-16.svg'
 import iconCut from '@yfiles/demo-resources/icons/cut2-16.svg'
 import iconDelete from '@yfiles/demo-resources/icons/delete3-16.svg'
 import iconPaste from '@yfiles/demo-resources/icons/paste-16.svg'
+
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   // initialize the demo styles
   initDemoStyles(graphComponent.graph)
+
   // create a default editor input mode
   graphComponent.inputMode = new GraphEditorInputMode()
+
   // initialize the context menu
   configureContextMenu(graphComponent)
+
   // create the sample graph
   createSampleGraph(graphComponent.graph)
+
   graphComponent.fitGraphBounds()
 }
+
 /**
  * Initializes the context menu.
  * @param graphComponent The graph component to which the context menu belongs
  */
 function configureContextMenu(graphComponent) {
   const inputMode = graphComponent.inputMode
+
   // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   inputMode.addEventListener('populate-item-context-menu', (evt) =>
     populateContextMenu(graphComponent, evt)
   )
 }
+
 /**
  * Populates the context menu based on the item the mouse hovers over.
  * @param graphComponent The given graphComponent
@@ -77,28 +85,18 @@ function populateContextMenu(graphComponent, args) {
   if (args.handled) {
     return
   }
+
   const node = args.item instanceof INode ? args.item : null
   // If the cursor is over a node select it
   updateSelection(graphComponent, node)
+
   const inputMode = graphComponent.inputMode
   // Create the context menu items
   if (graphComponent.selection.nodes.size > 0) {
     args.contextMenu = [
-      {
-        label: 'Cut',
-        action: () => inputMode.cut(),
-        icon: `url("${iconCut}")`
-      },
-      {
-        label: 'Copy',
-        action: () => inputMode.copy(),
-        icon: `url("${iconCopy}")`
-      },
-      {
-        label: 'Delete',
-        action: () => inputMode.deleteSelection(),
-        icon: `url("${iconDelete}")`
-      }
+      { label: 'Cut', action: () => inputMode.cut(), icon: `url("${iconCut}")` },
+      { label: 'Copy', action: () => inputMode.copy(), icon: `url("${iconCopy}")` },
+      { label: 'Delete', action: () => inputMode.deleteSelection(), icon: `url("${iconDelete}")` }
     ]
   } else {
     // no node has been hit
@@ -113,6 +111,7 @@ function populateContextMenu(graphComponent, args) {
     ]
   }
 }
+
 /**
  * Helper function that updates the node selection state when the context menu is opened on a node.
  * @param graphComponent The given graphComponent
@@ -131,6 +130,7 @@ function updateSelection(graphComponent, node) {
     graphComponent.currentItem = node
   }
 }
+
 /**
  * Creates a sample graph.
  * @param graph The input graph
@@ -140,4 +140,5 @@ function createSampleGraph(graph) {
   graph.addLabel(graph.createNodeAt(new Point(200, 100)), '2')
   graph.addLabel(graph.createNodeAt(new Point(320, 100)), '3')
 }
+
 run().then(finishLoading)

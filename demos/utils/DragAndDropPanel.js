@@ -52,6 +52,7 @@ import {
   SvgExport
 } from '@yfiles/yfiles'
 import { EdgeDropInputMode } from './EdgeDropInputMode'
+
 /**
  * A drag and drop panel component, from which users can drag the items to a {@link GraphComponent}.
  *
@@ -69,6 +70,7 @@ export class DragAndDropPanel {
    * Whether the labels of the DnD node visual should be transferred to the created node or discarded.
    */
   copyNodeLabels = true
+
   /**
    * Create a new DragAndDropPanel and mount it to the provided div element.
    * @param div The element that will display the palette items.
@@ -76,6 +78,7 @@ export class DragAndDropPanel {
   constructor(div) {
     this.div = div
   }
+
   /**
    * Adds the provided items to this panel.
    */
@@ -90,6 +93,7 @@ export class DragAndDropPanel {
         item instanceof IPort
           ? item
           : item.modelItem
+
       let visual
       if (modelItem instanceof INode) {
         visual = this.createNodeVisual(modelItem, graphComponent)
@@ -104,9 +108,11 @@ export class DragAndDropPanel {
       this.div.appendChild(visual)
     }
   }
+
   beginDrag(element, data) {
     const dragPreviewElement = createDragPreviewElement(element)
     const dragSource = this.startDrag(element, dragPreviewElement, data)
+
     // let the GraphComponent handle the preview rendering if possible
     if (dragSource) {
       dragSource.addEventListener('query-continue-drag', (evt) => {
@@ -118,6 +124,7 @@ export class DragAndDropPanel {
       })
     }
   }
+
   startDrag(element, dragPreviewElement, data) {
     if (data instanceof INode) {
       return NodeDropInputMode.startDrag(
@@ -166,6 +173,7 @@ export class DragAndDropPanel {
       )
     }
   }
+
   /**
    * Creates an element that contains the visualization of the given node.
    * This method is used by populatePanel to create the visualization
@@ -174,6 +182,7 @@ export class DragAndDropPanel {
   createNodeVisual(original, graphComponent) {
     const graph = graphComponent.graph
     graph.clear()
+
     const originalNode = original instanceof INode ? original : original.modelItem
     const node = graph.createNode(originalNode.layout, originalNode.style, originalNode.tag)
     originalNode.labels.forEach((label) => {
@@ -186,47 +195,54 @@ export class DragAndDropPanel {
         label.tag
       )
     })
+
     return this.exportAndWrap(
       graphComponent,
       original instanceof INode ? undefined : original.tooltip
     )
   }
+
   /**
    * Creates an element that contains the visualization of the given edge.
    */
   createEdgeVisual(original, graphComponent) {
     const graph = graphComponent.graph
     graph.clear()
+
     const originalEdge = original instanceof IEdge ? original : original.modelItem
+
     const n1 = graph.createNode(new Rect(0, 10, 0, 0), INodeStyle.VOID_NODE_STYLE)
     const n2 = graph.createNode(new Rect(50, 40, 0, 0), INodeStyle.VOID_NODE_STYLE)
     const edge = graph.createEdge(n1, n2, originalEdge.style)
     graph.addBend(edge, new Point(25, 10))
     graph.addBend(edge, new Point(25, 40))
+
     return this.exportAndWrap(
       graphComponent,
       original instanceof IEdge ? undefined : original.tooltip
     )
   }
+
   /**
    * Creates an element that contains the visualization of the given label.
    */
   createLabelVisual(original, graphComponent) {
     const graph = graphComponent.graph
     graph.clear()
+
     const originalLabel = original instanceof ILabel ? original : original.modelItem
+
     const node = graph.createNode(new Rect(0, 10, 0, 0), INodeStyle.VOID_NODE_STYLE)
+
     let labelOwner
     if (originalLabel.owner instanceof IPort) {
-      labelOwner = graph.addPort({
-        owner: node,
-        style: IPortStyle.VOID_PORT_STYLE
-      })
+      labelOwner = graph.addPort({ owner: node, style: IPortStyle.VOID_PORT_STYLE })
     } else if (originalLabel.owner instanceof IEdge) {
       labelOwner = graph.createEdge(node, node, IEdgeStyle.VOID_EDGE_STYLE)
     } else {
       labelOwner = node
     }
+
     graph.addLabel(
       labelOwner,
       originalLabel.text,
@@ -235,46 +251,51 @@ export class DragAndDropPanel {
       originalLabel.preferredSize,
       originalLabel.tag
     )
+
     return this.exportAndWrap(
       graphComponent,
       original instanceof ILabel ? undefined : original.tooltip
     )
   }
+
   /**
    * Creates an element that contains the visualization of the given port.
    */
   createPortVisual(original, graphComponent) {
     const graph = graphComponent.graph
     graph.clear()
+
     const originalPort = original instanceof IPort ? original : original.modelItem
+
     const node = graph.createNode(new Rect(0, 10, 0, 0), INodeStyle.VOID_NODE_STYLE)
     const portOwner =
       originalPort.owner instanceof IEdge
         ? graph.createEdge(node, node, IEdgeStyle.VOID_EDGE_STYLE)
         : node
-    graph.addPort({
-      owner: portOwner,
-      style: originalPort.style
-    })
+
+    graph.addPort({ owner: portOwner, style: originalPort.style })
+
     return this.exportAndWrap(
       graphComponent,
       original instanceof IPort ? undefined : original.tooltip
     )
   }
+
   /**
    * Exports and wraps the original visualization in an HTML element.
    */
   exportAndWrap(graphComponent, tooltip) {
     graphComponent.updateContentBounds(10)
-    const exporter = new SvgExport({
-      worldBounds: graphComponent.contentBounds
-    })
+    const exporter = new SvgExport({ worldBounds: graphComponent.contentBounds })
+
     exporter.scale = exporter.calculateScaleForWidth(
       Math.min(this.maxItemWidth, graphComponent.contentBounds.width)
     )
     const visual = exporter.exportSvg(graphComponent)
+
     // Firefox does not display the SVG correctly because of the clip - so we remove it.
     visual.removeAttribute('clip-path')
+
     const div = document.createElement('div')
     div.setAttribute('class', 'demo-dnd-panel__item')
     div.appendChild(visual)
@@ -283,6 +304,7 @@ export class DragAndDropPanel {
     }
     return div
   }
+
   /**
    * Adds mousedown and pointer down listeners to the given element that starts the drag operation.
    */
@@ -314,6 +336,7 @@ export class DragAndDropPanel {
         this.beginDrag(element, simpleNode)
       }
     }
+
     element.addEventListener(
       'pointerdown',
       (evt) => {
@@ -327,6 +350,7 @@ export class DragAndDropPanel {
     )
   }
 }
+
 function createDragPreviewElement(templateElement) {
   const dragPreview = templateElement.cloneNode(true)
   dragPreview.style.margin = '0'

@@ -26,11 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { basicSetup, EditorView } from 'codemirror'
-import { lintGutter } from '@codemirror/lint'
-import { xml } from '@codemirror/lang-xml'
-import { javascript } from '@codemirror/lang-javascript'
-
 import {
   GraphBuilder,
   GraphComponent,
@@ -50,16 +45,17 @@ import { registerLitNodeStyleSerialization } from './LitNodeStyleMarkupExtension
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
-import { StateEffect, StateField } from '@codemirror/state'
-import { getJsonLinter } from '@yfiles/demo-resources/codeMirrorLinters'
+import {
+  createCodemirrorEditor,
+  EditorView,
+  StateEffect,
+  StateField
+} from '@yfiles/demo-resources/codemirror-editor'
 
 let graphComponent: GraphComponent
 
 let renderFunctionSourceTextArea: EditorView
-
 let tagTextArea: EditorView
-
-const jsonLinter = getJsonLinter()
 
 /**
  * Runs the demo.
@@ -95,15 +91,14 @@ function initializeTextAreas(): void {
     }
   })
 
-  renderFunctionSourceTextArea = new EditorView({
-    parent: document.querySelector<HTMLTextAreaElement>('#templateEditorContainer')!,
-    extensions: [
-      basicSetup,
-      xml(),
+  renderFunctionSourceTextArea = createCodemirrorEditor(
+    'xml',
+    document.querySelector<HTMLTextAreaElement>('#templateEditorContainer')!,
+    [
       renderFunctionSourceTextAreaEditable,
       EditorView.editable.from(renderFunctionSourceTextAreaEditable)
     ]
-  })
+  )
   const setTagTextAreaEditable = StateEffect.define<boolean>()
   const tagTextAreaEditable = StateField.define<boolean>({
     create: () => true,
@@ -116,17 +111,11 @@ function initializeTextAreas(): void {
       return value
     }
   })
-  tagTextArea = new EditorView({
-    parent: document.querySelector<HTMLTextAreaElement>('#tagEditorContainer')!,
-    extensions: [
-      basicSetup,
-      javascript(),
-      tagTextAreaEditable,
-      EditorView.editable.from(tagTextAreaEditable),
-      lintGutter(),
-      jsonLinter
-    ]
-  })
+  tagTextArea = createCodemirrorEditor(
+    'json',
+    document.querySelector<HTMLTextAreaElement>('#tagEditorContainer')!,
+    [tagTextAreaEditable, EditorView.editable.from(tagTextAreaEditable)]
+  )
 
   // disable standard selection and focus visualization
   graphComponent.selectionIndicatorManager.enabled = false

@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { FreeNodePortLocationModel, GraphItemTypes, IPort, Size } from '@yfiles/yfiles'
 import { CollapseExpandPortStyle } from '../orgchart/graph-style/CollapseExpandPortStyle'
+
 /**
  * This class is responsible for the implementation of the toggled ports.
  */
@@ -51,6 +52,7 @@ export class TogglePortButtonSupport {
       tag: { collapsed: false, collapsible: true, action }
     })
   }
+
   /**
    * Initializes the input mode and the click listener for the port items.
    * @param graphInputMode The given input mode
@@ -62,8 +64,9 @@ export class TogglePortButtonSupport {
       GraphItemTypes.NODE,
       GraphItemTypes.ALL
     ]
+
     graphInputMode.addEventListener('item-clicked', (evt) => {
-      if (!(evt.item instanceof IPort)) {
+      if (!(evt.item instanceof IPort) || !(evt.item.style instanceof CollapseExpandPortStyle)) {
         return
       }
       const port = evt.item

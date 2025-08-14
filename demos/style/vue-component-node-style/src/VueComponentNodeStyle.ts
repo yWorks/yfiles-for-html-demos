@@ -49,10 +49,7 @@ const WrapperComponent = defineComponent({
       }
     }
 
-    return {
-      state,
-      setState
-    }
+    return { state, setState }
   },
   render() {
     return h(this.component, this.state)

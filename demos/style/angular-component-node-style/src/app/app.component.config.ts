@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* SystemJS module definition */
-declare let module: NodeModule
-interface NodeModule {
-  id: string
+import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core'
+
+export const appComponentConfig: ApplicationConfig = {
+  providers: [provideBrowserGlobalErrorListeners()]
 }

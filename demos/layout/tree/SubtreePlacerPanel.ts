@@ -61,10 +61,7 @@ import {
 
 import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
 
-type LayerColor = {
-  fill: Fill
-  stroke: Stroke
-}
+type LayerColor = { fill: Fill; stroke: Stroke }
 
 // a list of colors that are assigned to the layers
 export const LayerColors: LayerColor[] = [
@@ -544,20 +541,14 @@ function createPreviewGraph(graphComponent: GraphComponent): void {
     })
   })
 
-  graphComponent.graph.edgeDefaults.style = createDemoEdgeStyle({
-    colorSetName: 'demo-palette-22'
-  })
+  graphComponent.graph.edgeDefaults.style = createDemoEdgeStyle({ colorSetName: 'demo-palette-22' })
   for (let i = 0; i < 5; i++) {
     if (i > 0) {
       graph.createEdge(
         root,
         graph.createNode({
           layout: new Rect(0, 0, i < 4 ? 60 : 80, 30),
-          style: new ShapeNodeStyle({
-            shape: 'round-rectangle',
-            fill: 'gray',
-            stroke: 'white'
-          })
+          style: new ShapeNodeStyle({ shape: 'round-rectangle', fill: 'gray', stroke: 'white' })
         })
       )
     } else {

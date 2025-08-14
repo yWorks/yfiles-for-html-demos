@@ -330,10 +330,7 @@ function createSampleGraph(graph: IGraph): void {
     tag: sharedBusinessObject,
     labels: ['Label 2']
   })
-  graph.createNodeAt({
-    location: new Point(100, 200),
-    tag: createNodeBusinessData()
-  })
+  graph.createNodeAt({ location: new Point(100, 200), tag: createNodeBusinessData() })
   graph.addLabel(graph.createEdge(node1, node2), 'Shared Object')
 }
 

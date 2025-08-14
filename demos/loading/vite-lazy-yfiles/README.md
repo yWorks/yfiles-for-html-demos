@@ -25,7 +25,7 @@ There are two possible approaches:
 
 - Create a separate diagram component that imports from the `yfiles` meta module.  
   This separate diagram component with yFiles can then be loaded dynamically on demand which is demonstrated in this application.
-- yFiles can also be split up further, such that only specific [yFiles ES modules](https://docs.yworks.com/yfileshtml/#/dguide/yfiles-modules#es-modules) are loaded when needed, e.g., initially only load the yFiles view, but lazy load the yFiles layout if needed.
+- yFiles can also be split up further, such that only specific yFiles ES modules are loaded when needed, e.g., initially only load the yFiles view, but lazy load the yFiles layout if needed.
 
 ## Running the demo
 

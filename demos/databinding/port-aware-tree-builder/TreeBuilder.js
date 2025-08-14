@@ -49,8 +49,10 @@ import {
   TreeNodesSource
 } from '@yfiles/yfiles'
 import { colorSets } from '@yfiles/demo-resources/demo-colors'
+
 let treeBuilder
 let nodesSource
+
 /**
  * Creates a new instance of a port-aware tree builder.
  * The builder uses the given node source.
@@ -59,17 +61,22 @@ let nodesSource
  */
 export function createPortAwareTreeBuilder(graph, nodesSourceData) {
   treeBuilder = new TreeBuilder(graph)
+
   nodesSource = treeBuilder.createRootNodesSource(nodesSourceData, 'id')
   const nodeCreator = new PortAwareNodeCreator({ defaults: graph.nodeDefaults })
   nodesSource.nodeCreator = nodeCreator
   const labelCreator = nodeCreator.createLabelBinding('name')
   configureStyles(nodeCreator, labelCreator)
+
   // Define the child node binding. Use the same source.
   nodesSource.addChildNodesSource('children', nodesSource)
+
   // Let the edges connect to ports
   nodesSource.parentEdgeCreator = new PortAwareEdgeCreator({ defaults: graph.edgeDefaults })
+
   return treeBuilder
 }
+
 /**
  * Demo specific: configures the styles to match the theme.
  */
@@ -77,6 +84,7 @@ function configureStyles(nodeCreator, labelCreator) {
   nodeCreator.styleProvider = createNodeStyle
   labelCreator.styleProvider = createLabelStyle
 }
+
 /**
  * Demo specific: configures the node style to match the theme
  * according to the optional color property of the node data.
@@ -96,6 +104,7 @@ function createNodeStyle(dataItem, forPortLabels = false) {
         fill: forPortLabels ? colorSets['demo-orange'].nodeLabelFill : colorSets['demo-orange'].fill
       })
 }
+
 /**
  * Demo specific: configures the label style to match the theme
  * according to the optional color property of the node data.
@@ -115,6 +124,7 @@ function createLabelStyle(dataItem, forPortLabels = false) {
         shape: forPortLabels ? 'rectangle' : 'round-rectangle'
       })
 }
+
 /**
  * Set new nodes data for the builder's nodes source.
  * @param nodesSourceData The new data to set.
@@ -122,6 +132,7 @@ function createLabelStyle(dataItem, forPortLabels = false) {
 export function setBuilderData(nodesSourceData) {
   treeBuilder.setData(nodesSource, nodesSourceData)
 }
+
 /**
  * A node creator which adds ports as supplied with the node data.
  * Overrides createNodeCore to add the ports.
@@ -134,8 +145,10 @@ class PortAwareNodeCreator extends NodeCreator {
     // this assumes that we don't use a custom tag provider,
     // i.e. the tag contains the node data as provided by the node source array
     const nodeData = tag
+
     // let the base implementation create the node
     const node = super.createNodeCore(graph, groupNode, parent, layout, style, tag)
+
     // add ports
     const ports = this.getPorts(nodeData)
     if (ports) {
@@ -145,6 +158,7 @@ class PortAwareNodeCreator extends NodeCreator {
     }
     return node
   }
+
   /**
    * Adds a port to the given node.
    * The port can be identified by its ID which is set to its tag.
@@ -166,6 +180,7 @@ class PortAwareNodeCreator extends NodeCreator {
     })
     this.addPortLabel(graph, port, portData)
   }
+
   /**
    * Adds a label to the port.
    * @param graph The graph to operate on.
@@ -183,6 +198,7 @@ class PortAwareNodeCreator extends NodeCreator {
       )
     }
   }
+
   /**
    * Updates a given node. This function is called for nodes which already exist in the graph.
    * The method itself updates the ports. The actual node update is delegated to the base method.
@@ -241,12 +257,14 @@ class PortAwareNodeCreator extends NodeCreator {
       }
     }
   }
+
   /* *****************************************************
    * Developers who want to use this tree builder
    * in their own applications can modify the following
    * methods to adapt to different NodeData and
    * PortData definitions.
    * *****************************************************/
+
   /**
    * Gets the label placement according to the port data.
    */
@@ -259,6 +277,7 @@ class PortAwareNodeCreator extends NodeCreator {
       angle: Math.PI / 2
     })
   }
+
   /**
    * Gets the label text to set from the port data.
    * Returns null if no label should be set.
@@ -266,6 +285,7 @@ class PortAwareNodeCreator extends NodeCreator {
   getPortLabel(portData) {
     return portData.id
   }
+
   /**
    * Gets an array of PortData from the given node data.
    * Might be undefined.
@@ -273,12 +293,14 @@ class PortAwareNodeCreator extends NodeCreator {
   getPorts(nodeData) {
     return nodeData.ports
   }
+
   /**
    * Gets the (relative) port location from the port data.
    */
   getPortLocation(portData) {
     return Point.from(portData.location)
   }
+
   /**
    * Gets the ID from the port data.
    */
@@ -286,6 +308,7 @@ class PortAwareNodeCreator extends NodeCreator {
     return portData.id
   }
 }
+
 /**
  * A custom edge creator connects the edges to specified ports.
  * Overrides createEdgeCore to extract a port ID from the source and target node ID.
@@ -302,6 +325,7 @@ class PortAwareEdgeCreator extends EdgeCreator {
    */
   createEdgeCore(graph, source, target, style, tag) {
     const data = tag
+
     // get the source port: if there is an ID specified (from), get the first with the matching ID
     // if no ID is specified: get the first port
     const sourcePortId = this.getSourcePortId(data)
@@ -313,6 +337,7 @@ class PortAwareEdgeCreator extends EdgeCreator {
     const targetPort = targetPortId
       ? target.ports.find((p) => p.tag === targetPortId)
       : target.ports.at(0)
+
     // create the edges between source and target port. if no port is provided, add a default port.
     return graph.createEdge(
       sourcePort ?? graph.addPort(source),
@@ -321,6 +346,7 @@ class PortAwareEdgeCreator extends EdgeCreator {
       tag
     )
   }
+
   /**
    * Updates a given edge. This function is called for edges which already exist in the graph.
    * It delegates to the base implementation for the actual edge update,
@@ -331,6 +357,7 @@ class PortAwareEdgeCreator extends EdgeCreator {
    */
   updateEdge(graph, edge, dataItem) {
     super.updateEdge(graph, edge, dataItem)
+
     // If there is no ID or the ID is already the current port ID don't update the port.
     // Otherwise, get the first port at the source node which matches the ID.
     const sourcePortId = this.getSourcePortId(dataItem)
@@ -347,8 +374,10 @@ class PortAwareEdgeCreator extends EdgeCreator {
     // remember the current source and target ports
     const oldSource = edge.sourcePort
     const oldTarget = edge.targetPort
+
     // now set the new ports
     graph.setEdgePorts(edge, sourcePort ?? edge.sourcePort, targetPort ?? edge.targetPort)
+
     // if the source or target port has been changed and the old port doesn't have a tag:
     // remove it since it has been auto-generated
     if (oldSource !== edge.sourcePort && !oldSource.tag) {
@@ -358,12 +387,14 @@ class PortAwareEdgeCreator extends EdgeCreator {
       graph.remove(oldTarget)
     }
   }
+
   /* *****************************************************
    * Developers who want to use this tree builder
    * in their own applications can modify the following
    * methods to adapt to different NodeData and
    * PortData definitions.
    * *****************************************************/
+
   /**
    * Gets the source port ID from the node data.
    * Returns undefined if the port to connect is not specified.
@@ -371,6 +402,7 @@ class PortAwareEdgeCreator extends EdgeCreator {
   getSourcePortId(data) {
     return data.from
   }
+
   /**
    * Gets the target port ID from the node data.
    * Returns undefined if the port to connect is not specified.

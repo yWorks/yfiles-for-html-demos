@@ -28,25 +28,19 @@
  ***************************************************************************/
 export function configureNodeLayoutWithProvider(graphBuilder) {
   const nodeData = [
-    {
-      id: '00',
-      layout: { x: 110, y: 20, width: 30, height: 30 }
-    },
-    {
-      id: '01',
-      layout: { x: 145, y: 95, width: 30, height: 30 }
-    },
-    {
-      id: '02',
-      layout: { x: 75, y: 95, width: 30, height: 30 }
-    }
+    { id: '00', layout: { x: 110, y: 20, width: 30, height: 30 } },
+    { id: '01', layout: { x: 145, y: 95, width: 30, height: 30 } },
+    { id: '02', layout: { x: 75, y: 95, width: 30, height: 30 } }
   ]
+
   // create the node using the id property
   const nodeSource = graphBuilder.createNodesSource(nodeData, 'id')
   // configure the layout provider that returns the layout information
   nodeSource.nodeCreator.layoutProvider = (data) => data.layout
+
   return nodeSource
 }
+
 export function configureBends(graphBuilder) {
   const edgeData = [
     {
@@ -66,12 +60,14 @@ export function configureBends(graphBuilder) {
       ]
     }
   ]
+
   // create the edges using the sourceId/targetId
   const edgeSources = graphBuilder.createEdgesSource(edgeData, 'sourceId', 'targetId', 'id')
   // configure the bend provider to return the location of each bend point
   edgeSources.edgeCreator.bendsProvider = (data) => data.bends
   return edgeSources
 }
+
 export function configureNodeLayoutWithBinding(graphBuilder) {
   const nodeData = [
     { id: '03', locationY: 20 },
@@ -79,10 +75,12 @@ export function configureNodeLayoutWithBinding(graphBuilder) {
   ]
   // create the node using the id property
   const nodeSources = graphBuilder.createNodesSource(nodeData, 'id')
+
   // create some binding for the x, y, width and height properties of the layout
   nodeSources.nodeCreator.layoutBindings.addBinding('x', () => 250)
   nodeSources.nodeCreator.layoutBindings.addBinding('y', (data) => data.locationY)
   nodeSources.nodeCreator.layoutBindings.addBinding('width', () => 50)
   nodeSources.nodeCreator.layoutBindings.addBinding('height', () => 30)
+
   return nodeSources
 }

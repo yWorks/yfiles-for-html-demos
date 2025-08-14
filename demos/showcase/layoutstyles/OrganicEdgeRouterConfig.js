@@ -34,6 +34,7 @@ import {
   OrganicEdgeRouter,
   OrganicEdgeRouterData
 } from '@yfiles/yfiles'
+
 import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -44,11 +45,13 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 export const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     LayoutGroup: [
       new LabelAttribute('General'),
@@ -103,6 +106,7 @@ export const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
       new TypeAttribute(Boolean)
     ]
   },
+
   /**
    * Setup default values for various configuration parameters.
    */
@@ -117,6 +121,7 @@ export const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
     this.allowMovingNodesItem = false
     this.title = 'Organic Edge Router'
   },
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
@@ -131,6 +136,7 @@ export const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
     router.allowMovingNodes = this.allowMovingNodesItem
     return router
   },
+
   /**
    * Creates and configures the layout data.
    * @returns The configured layout data.
@@ -142,22 +148,29 @@ export const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
     }
     return layoutData
   },
+
   /** @type {OptionGroup} */
   LayoutGroup: null,
+
   /** @type {string} */
   descriptionText: {
     get: function () {
       return "<p style='margin-top:0'>The organic edge routing algorithm routes edges in soft curves to ensure that they do not overlap with nodes. It is especially well suited for non-orthogonal, organic or circular diagrams.</p>"
     }
   },
+
   /** @type {boolean} */
   selectionOnlyItem: false,
+
   /** @type {number} */
   minimumNodeDistanceItem: 10,
+
   /** @type {boolean} */
   keepBendsItem: false,
+
   /** @type {boolean} */
   routeOnlyNecessaryItem: false,
+
   /** @type {boolean} */
   allowMovingNodesItem: false
 })

@@ -43,6 +43,7 @@ import {
   ShapeNodeStyle,
   StyleIndicatorZoomPolicy
 } from '@yfiles/yfiles'
+
 /**
  * A widget that can be used together with a {@link NeighborhoodView.graphComponent}
  * or an {@link IGraph} to display the neighborhood of a node.
@@ -52,26 +53,32 @@ export class NeighborhoodView {
    * Determines if the current root node(s) should be highlighted.
    */
   showHighlight = true
+
   /**
    * Checks whether to update the neighborhood view when the graph has been edited.
    */
   autoUpdatesEnabled = true
+
   /**
    * A callback that is invoked on a click in the neighborhood graph with the clicked node.
    */
   clickCallback
+
   /**
    * Maps nodes in NeighborhoodComponent's graph to nodes in SourceGraph.
    */
   originalNodes
+
   /**
    * Arranges this view's neighborhood graph whenever said graph is updated.
    */
   applyNeighborhoodLayout = () => {}
+
   /**
    * Builds this view's neighborhood graph whenever said graph is updated.
    */
   buildNeighborhoodGraph = () => {}
+
   /**
    * Invoked after the neighborhood graph has been updated.
    */
@@ -79,10 +86,12 @@ export class NeighborhoodView {
     // Ensure the neighborhood graph fits inside the neighborhood graph component.
     void view.neighborhoodComponent.fitGraphBounds(5)
   }
+
   /**
    * The GraphComponent that displays the neighborhood
    */
   neighborhoodComponent
+
   updateTimerId = -1
   _graphComponent = null
   _sourceGraph = null
@@ -95,6 +104,7 @@ export class NeighborhoodView {
   _useSelection = true
   editListeners = new Map()
   maxSelectedNodesCount = 25 // limit the neighborhood computation to avoid UI blocking
+
   /**
    * Creates a new instance of NeighborhoodView.
    */
@@ -107,12 +117,14 @@ export class NeighborhoodView {
     this.installHighlightStyle(this._highlightStyle)
     this.createEditListeners()
   }
+
   /**
    * Returns the GraphComponent whose graph is displayed in this view.
    */
   get graphComponent() {
     return this._graphComponent
   }
+
   /**
    * Specifies the GraphComponent whose graph is displayed in this view.
    */
@@ -139,12 +151,14 @@ export class NeighborhoodView {
       this._sourceGraph = null
     }
   }
+
   /**
    * Returns the graph that's currently displayed by the neighborhood view.
    */
   get sourceGraph() {
     return this._sourceGraph
   }
+
   /**
    * Specifies the graph that's currently displayed by the neighborhood view.
    */
@@ -164,18 +178,21 @@ export class NeighborhoodView {
     }
     this.update()
   }
+
   /**
    * Returns the graph that is displayed in this view.
    */
   get neighborhoodGraph() {
     return this.neighborhoodComponent.graph
   }
+
   /**
    * Returns the configurable highlight style. If none is assigned, a default highlight style is used.
    */
   get highlightStyle() {
     return this._highlightStyle
   }
+
   /**
    * Specifies the configurable highlight style. If none is assigned, a default highlight style is used.
    */
@@ -183,12 +200,14 @@ export class NeighborhoodView {
     this._highlightStyle = value
     this.installHighlightStyle(this._highlightStyle)
   }
+
   /**
    * Gets the nodes whose neighborhoods are shown.
    */
   get selectedNodes() {
     return this._selectedNodes
   }
+
   /**
    * Sets the nodes whose neighborhoods are shown.
    */
@@ -198,6 +217,7 @@ export class NeighborhoodView {
       this.update()
     }
   }
+
   /**
    * Gets whether to automatically synchronize the
    * {@link NeighborhoodView.graphComponent}'s selection to the
@@ -211,6 +231,7 @@ export class NeighborhoodView {
   get useSelection() {
     return this._useSelection
   }
+
   /**
    * Sets whether to automatically synchronize the
    * {@link NeighborhoodView.graphComponent}'s selection to the
@@ -232,6 +253,7 @@ export class NeighborhoodView {
       }
     }
   }
+
   createEditListeners() {
     const editListeners = this.editListeners
     editListeners.clear()
@@ -255,6 +277,7 @@ export class NeighborhoodView {
     editListeners.set('labelRemoved', () => this.scheduleAutoUpdate())
     editListeners.set('labelStyleChanged', () => this.scheduleAutoUpdate())
     editListeners.set('labelTextChanged', () => this.scheduleAutoUpdate())
+
     editListeners.set('isGroupNodeChanged', () => this.scheduleAutoUpdate())
     editListeners.set('parentChanged', () => this.scheduleAutoUpdate())
     editListeners.set('itemSelectionChanged', ({ item }) => {
@@ -263,6 +286,7 @@ export class NeighborhoodView {
       }
     })
   }
+
   /**
    * Installs listeners such that the neighborhood component is updated if the
    * source graph is edited.
@@ -291,6 +315,7 @@ export class NeighborhoodView {
     sourceGraph.addEventListener('is-group-node-changed', editListeners.get('isGroupNodeChanged'))
     sourceGraph.addEventListener('parent-changed', editListeners.get('parentChanged'))
   }
+
   /**
    * Removes the edit listeners.
    */
@@ -321,6 +346,7 @@ export class NeighborhoodView {
     )
     sourceGraph.removeEventListener('parent-changed', editListeners.get('parentChanged'))
   }
+
   /**
    * Schedules an {@link NeighborhoodView.update} if {@link NeighborhoodView.autoUpdatesEnabled}
    * is enabled.
@@ -333,6 +359,7 @@ export class NeighborhoodView {
       this.scheduleUpdate()
     }
   }
+
   /**
    * Installs the selection listeners.
    */
@@ -342,6 +369,7 @@ export class NeighborhoodView {
       this.editListeners.get('itemSelectionChanged')
     )
   }
+
   /**
    * Uninstalls the selection listeners.
    */
@@ -351,6 +379,7 @@ export class NeighborhoodView {
       this.editListeners.get('itemSelectionChanged')
     )
   }
+
   /**
    * Installs the given highlight style as node decorator.
    */
@@ -366,6 +395,7 @@ export class NeighborhoodView {
       nodeHighlightStyle
     )
   }
+
   /**
    * Initializes the input mode.
    */
@@ -379,6 +409,7 @@ export class NeighborhoodView {
       selectableItems: GraphItemTypes.NONE,
       marqueeSelectableItems: GraphItemTypes.NONE
     })
+
     // Disable collapsing and expanding of groups
     const navigationInputMode = graphViewerInputMode.navigationInputMode
     navigationInputMode.allowCollapseGroup = false
@@ -386,6 +417,7 @@ export class NeighborhoodView {
     navigationInputMode.useCurrentItemForCommands = true
     graphViewerInputMode.moveViewportInputMode.enabled = false
     navigationInputMode.enabled = false
+
     // If an item is clicked, we want the view to show the neighborhood
     // of the clicked node, and invoke the click callback with the original
     // node.
@@ -397,8 +429,10 @@ export class NeighborhoodView {
         }
       }
     })
+
     this.neighborhoodComponent.inputMode = graphViewerInputMode
   }
+
   /**
    * Schedules a call to {@link NeighborhoodView.update}.
    */
@@ -413,6 +447,7 @@ export class NeighborhoodView {
       this.updateTimerId = -1
     }, 100)
   }
+
   /**
    * Updates the neighborhood view.
    *
@@ -427,6 +462,7 @@ export class NeighborhoodView {
    */
   update() {
     this.neighborhoodComponent.graph.clear()
+
     if (
       this.sourceGraph === null ||
       this.selectedNodes.length === 0 ||
@@ -435,8 +471,11 @@ export class NeighborhoodView {
       this.onNeighborhoodUpdated(this)
       return
     }
+
     this.originalNodes = new Mapper()
+
     const copiedStartNodes = []
+
     this.buildNeighborhoodGraph(this, this.selectedNodes, (original, copy) => {
       if (original instanceof INode) {
         this.originalNodes.set(copy, original)
@@ -446,6 +485,7 @@ export class NeighborhoodView {
       }
     })
     this.applyNeighborhoodLayout(this, copiedStartNodes)
+
     // Highlight the root node in the neighborhood graph.
     if (this.showHighlight && copiedStartNodes.length > 0) {
       const highlights = this.neighborhoodComponent.highlights
@@ -454,6 +494,7 @@ export class NeighborhoodView {
         highlights.add(startNode)
       })
     }
+
     this.onNeighborhoodUpdated(this)
   }
 }

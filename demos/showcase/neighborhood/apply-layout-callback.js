@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { ComponentLayout, HierarchicalLayout, INode } from '@yfiles/yfiles'
 import { NeighborhoodType } from './NeighborhoodType'
+
 /**
  * Returns the layout callback suitable for neighborhood graphs of the given type.
  * @param neighborhoodType the type of neighborhood graph to be arranged by the returned callback.
@@ -37,11 +38,13 @@ export function getApplyLayoutCallback(neighborhoodType) {
     ? (view, nodes) => applyComponentLayout(view, nodes)
     : (view) => applyHierarchicalLayout(view)
 }
+
 function applyComponentLayout(view, selectedViewNodes) {
   if (selectedViewNodes.length > 1) {
     view.neighborhoodGraph.applyLayout(new ComponentLayout())
   }
 }
+
 function applyHierarchicalLayout(view) {
   view.neighborhoodGraph.applyLayout(new HierarchicalLayout())
 }

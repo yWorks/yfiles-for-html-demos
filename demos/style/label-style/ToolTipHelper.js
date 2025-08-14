@@ -37,6 +37,7 @@ import {
   TimeSpan,
   VerticalTextAlignment
 } from '@yfiles/yfiles'
+
 /**
  * Configures the given input mode to show tool tips for labels.
  * The tool tips show a description of the corresponding label's configuration.
@@ -47,12 +48,14 @@ export function configureToolTips(inputMode) {
   toolTipInputMode.toolTipLocationOffset = new Point(15, 15)
   toolTipInputMode.delay = TimeSpan.fromMilliseconds(50)
   toolTipInputMode.duration = TimeSpan.fromSeconds(10)
+
   // Register a listener for when a tool tip should be shown.
   inputMode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.handled) {
       // Tool tip content has already been assigned -> nothing to do.
       return
     }
+
     // Use a rich HTML element as tool tip content. Alternatively, a plain string would do as well.
     if (evt.item instanceof ILabel) {
       evt.toolTip = createToolTipContent(evt.item)
@@ -61,6 +64,7 @@ export function configureToolTips(inputMode) {
     }
   })
 }
+
 /**
  * The tool tip may either be a plain string or it can also be a rich HTML element. In this case, we
  * show the latter. We just extract the first label text from the given item and show it as
@@ -68,6 +72,7 @@ export function configureToolTips(inputMode) {
  */
 function createToolTipContent(label) {
   const style = label.style
+
   const title = document.createElement('h4')
   title.innerHTML = 'Properties of "' + label.text + '"'
   const grid1 = document.createElement('div')
@@ -79,6 +84,7 @@ function createToolTipContent(label) {
     'Insets',
     `[${style.padding.top}, ${style.padding.right}, ${style.padding.bottom}, ${style.padding.left}]`
   )
+
   const textTitle = document.createElement('h4')
   textTitle.innerHTML = 'Text properties'
   const grid2 = document.createElement('div')
@@ -92,6 +98,7 @@ function createToolTipContent(label) {
   )
   addToToolTipGrid(grid2, 'Vertical Alignment', VerticalTextAlignment[style.verticalTextAlignment])
   addToToolTipGrid(grid2, 'Wrapping', TextWrapping[style.wrapping])
+
   // build the tooltip container
   const toolTip = document.createElement('div')
   toolTip.classList.add('tooltip-container')
@@ -101,6 +108,7 @@ function createToolTipContent(label) {
   toolTip.appendChild(grid2)
   return toolTip
 }
+
 /**
  * Adds a property with a given key and value to the grid div element that shows properties
  * as key-value pairs.
@@ -109,6 +117,7 @@ function addToToolTipGrid(grid, key, value) {
   const keySpan = document.createElement('span')
   keySpan.innerHTML = key
   grid.appendChild(keySpan)
+
   const valueSpan = document.createElement('span')
   if (typeof value === 'string') {
     valueSpan.innerHTML = value
@@ -116,5 +125,6 @@ function addToToolTipGrid(grid, key, value) {
     valueSpan.classList.add('color')
     valueSpan.setAttribute('style', `background-color: ${value.value};`)
   }
+
   grid.appendChild(valueSpan)
 }

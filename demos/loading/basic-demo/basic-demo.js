@@ -27,14 +27,19 @@
  **
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode, License } from '@yfiles/yfiles'
+
 // Register the license
 const response = await fetch('./license.json')
 License.value = await response.json()
+
 // Initialize a graph component and enable interactive editing
 const graphComponent = new GraphComponent('#graphComponent')
 graphComponent.inputMode = new GraphEditorInputMode()
+
 createSampleGraph(graphComponent.graph)
+
 addUIElements(graphComponent)
+
 /**
  * Creates the sample graph for this demo.
  */
@@ -42,9 +47,11 @@ function createSampleGraph(graph) {
   graph.nodeDefaults.size = [60, 40]
   graph.addLabel(graph.createNodeAt([200, 200]), 'Node 1')
   graph.addLabel(graph.createNodeAt([400, 200]), 'Node 2')
+
   const nodes = graph.nodes.toArray()
   graph.createEdge(nodes[0], nodes[1])
 }
+
 /**
  * Adds UI elements to the demo.
  */
@@ -54,5 +61,6 @@ function addUIElements(graphComponent) {
   fitButton.addEventListener('click', async () => {
     await graphComponent.fitGraphBounds()
   })
+
   document.querySelector('#actionsArea').append(fitButton)
 }

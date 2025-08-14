@@ -61,9 +61,7 @@ async function run(): Promise<void> {
 
   // Disable automatic cleanup of unconnected ports since some nodes have a predefined set of ports
   graph.nodeDefaults.ports.autoCleanUp = false
-  graph.nodeDefaults.ports.style = new ShapePortStyle({
-    shape: 'ellipse'
-  })
+  graph.nodeDefaults.ports.style = new ShapePortStyle({ shape: 'ellipse' })
 
   // Initialize basic demo styles
   initDemoStyles(graph)
@@ -84,10 +82,7 @@ async function run(): Promise<void> {
 
   // crop the edge path at the port and not at the node bounds
   graph.decorator.ports.edgePathCropper.addConstant(
-    new EdgePathCropper({
-      cropAtPort: true,
-      extraCropLength: 3
-    })
+    new EdgePathCropper({ cropAtPort: true, extraCropLength: 3 })
   )
 
   // draw edges in front of the nodes
@@ -186,11 +181,7 @@ function createNode(
     style: createDemoNodeStyle(colorSet),
     tag: tag
   })
-  graph.addLabel({
-    owner: node,
-    text: labelText,
-    style: createDemoNodeLabelStyle(colorSet)
-  })
+  graph.addLabel({ owner: node, text: labelText, style: createDemoNodeLabelStyle(colorSet) })
   return node
 }
 

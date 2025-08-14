@@ -44,6 +44,7 @@ import {
   OrientedRectangle,
   Point
 } from '@yfiles/yfiles'
+
 /**
  * Custom implementation of @{link ILabelModel} that provides either continuous or discrete label
  * positions directly outside the node border.
@@ -59,10 +60,12 @@ export class CustomNodeLabelModel extends BaseClass(ILabelModel) {
    * A value of 0 signifies that continuous label positions are used.
    */
   candidateCount = 8
+
   /**
    * The offset of the label location, i.e., the distance to the node layout borders.
    */
   offset = 0
+
   /**
    * Calculates for the given parameter the actual geometry of the specified label in absolute world coordinates.
    *
@@ -91,12 +94,14 @@ export class CustomNodeLabelModel extends BaseClass(ILabelModel) {
     }
     return IOrientedRectangle.EMPTY
   }
+
   /**
    * Factory method that creates a parameter for a given rotation angle.
    */
   createParameter(ratio) {
     return new CustomNodeLabelModelParameter(this, ratio)
   }
+
   /**
    * Provides a lookup context for the given combination of label and parameter.
    */
@@ -104,6 +109,7 @@ export class CustomNodeLabelModel extends BaseClass(ILabelModel) {
     return new CustomNodeLabelModelLookup(label, this)
   }
 }
+
 /**
  * Custom implementation of {@link ILabelModelParameter} that is tailored to match
  * {@link CustomNodeLabelModel} instances.
@@ -121,6 +127,7 @@ export class CustomNodeLabelModelParameter extends BaseClass(ILabelModelParamete
     this._model = _model
     this.ratio = ratio
   }
+
   /**
    * Creates a clone of this {@link CustomNodeLabelModelParameter} object.
    */
@@ -128,6 +135,7 @@ export class CustomNodeLabelModelParameter extends BaseClass(ILabelModelParamete
     // we have no mutable state, so return this.
     return this
   }
+
   /**
    * Returns the model instance to which this parameter belongs.
    *
@@ -136,6 +144,7 @@ export class CustomNodeLabelModelParameter extends BaseClass(ILabelModelParamete
   get model() {
     return this._model
   }
+
   /**
    * Serialization handler for graphML I/O.
    */
@@ -156,6 +165,7 @@ export class CustomNodeLabelModelParameter extends BaseClass(ILabelModelParamete
       args.handled = true
     }
   }
+
   /**
    * Deserialization handler for graphML I/O.
    */
@@ -179,6 +189,7 @@ export class CustomNodeLabelModelParameter extends BaseClass(ILabelModelParamete
     }
   }
 }
+
 class CustomNodeLabelModelLookup extends BaseClass(
   ILookup,
   ILabelModelParameterProvider,
@@ -197,6 +208,7 @@ class CustomNodeLabelModelLookup extends BaseClass(
       throw new Error('This model supports only node labels.')
     }
   }
+
   /**
    * Returns instances of the support interfaces (which are actually the model instance itself)
    */
@@ -212,6 +224,7 @@ class CustomNodeLabelModelLookup extends BaseClass(
     }
     return null
   }
+
   /**
    * Returns an enumerator over a set of possible {@link ILabelModelParameter}
    * instances that can be used for the given label and model.
@@ -226,6 +239,7 @@ class CustomNodeLabelModelLookup extends BaseClass(
     }
     return parameters
   }
+
   /**
    * Tries to find a parameter that best matches the given layout for the provided label instance.
    *
@@ -238,6 +252,7 @@ class CustomNodeLabelModelLookup extends BaseClass(
     const ratio = Math.atan2(direction.y, -direction.x) / (Math.PI * 2)
     return this.model.createParameter(ratio)
   }
+
   clone() {
     // we have no mutable state, so return this.
     return this

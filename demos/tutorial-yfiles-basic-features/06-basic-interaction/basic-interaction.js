@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode } from '@yfiles/yfiles'
+
 export function configureInteraction(graphComponent) {
   // Create a new GraphEditorInputMode instance and register it as the main
   // input mode for the graphComponent

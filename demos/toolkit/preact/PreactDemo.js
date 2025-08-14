@@ -32,7 +32,9 @@ import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { License } from '@yfiles/yfiles'
 import ItemList from './components/items/ItemList'
 import PreactGraphComponent from './components/graphComponent/PreactGraphComponent'
+
 let idCount = 6
+
 const App = () => {
   const [items, setItems] = useState([
     { id: 0, state: true },
@@ -50,6 +52,7 @@ const App = () => {
     { from: 3, to: 5 }
   ])
   const [layoutRunning, setLayoutRunning] = useState(false)
+
   /**
    * Toggle the state property of a specific item.
    */
@@ -58,11 +61,13 @@ const App = () => {
     newItems[index] = { id: newItems[index].id, state: !newItems[index].state }
     setItems(newItems)
   }
+
   const removeDataItem = (index) => {
     const newItems = [...items]
     newItems.splice(index, 1)
     setItems(newItems)
   }
+
   /**
    * Add a new item and create a connection from a random
    * existing node to the new item.
@@ -83,6 +88,7 @@ const App = () => {
     }
     setConnections(newConnections)
   }
+
   return html`
     <${PreactGraphComponent}
       itemData="${items}"
@@ -98,9 +104,11 @@ const App = () => {
     />
   `
 }
+
 async function run() {
   License.value = await fetchLicense()
   render(html` <${App} /> `, document.querySelector('.preact-app'))
 }
+
 // noinspection JSIgnoredPromiseFromCall
 run()

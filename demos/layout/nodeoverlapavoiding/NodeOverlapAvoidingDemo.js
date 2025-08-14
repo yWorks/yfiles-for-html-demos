@@ -45,6 +45,7 @@ import {
   Rect,
   Size
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import SampleData from './resources/SampleData'
 import { NonOverlapPositionHandler } from './NonOverlapPositionHandler'
@@ -53,29 +54,37 @@ import { LayoutHelper } from './LayoutHelper'
 import { enableSingleSelection } from './SingleSelectionHelper'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
   initializeInputModes()
   initializeGraph()
+
   // bind the buttons to their actions
   initializeUI()
 }
+
 /**
  * Registers the {@link GraphEditorInputMode} as the {@link CanvasComponent.inputMode}
  * and initializes the marquee input mode that clears the area of the marquee rectangle.
  */
 function initializeInputModes() {
   const graph = graphComponent.graph
+
   // create a GraphEditorInputMode instance
   const editMode = new GraphEditorInputMode()
   graphComponent.inputMode = editMode
+
   // enable single selection
   enableSingleSelection(graphComponent)
+
   // enable orthogonal edge editing
   const orthogonalEdgeEditingContext = new OrthogonalEdgeEditingContext()
   editMode.orthogonalEdgeEditingContext = orthogonalEdgeEditingContext
+
   // disable orthogonal edge editing during node move or resize gestures
   const disableOrthogonalEdgeEditing = async () => {
     if (editMode.moveUnselectedItemsInputMode.affectedItems.size > 0) {
@@ -100,6 +109,7 @@ function initializeInputModes() {
     'drag-canceled',
     enableOrthogonalEdgeEditing
   )
+
   // use a position handler that avoids overlapping,
   // but only apply it to the moved node and not to the children of groups
   graph.decorator.nodes.positionHandler.addFactory(
@@ -122,6 +132,7 @@ function initializeInputModes() {
       return new NonOverlapPositionHandler(node, handler)
     }
   )
+
   // use a reshape handler that avoids overlapping
   graph.decorator.nodes.reshapeHandler.addFactory((node) => {
     // Lookup the node reshape handler that only reshapes the node itself (and not its parent group node)
@@ -129,12 +140,14 @@ function initializeInputModes() {
     // wrap it in a NonOverlapReshapeHandler that removes overlaps during and after the resize gesture
     return new NonOverlapReshapeHandler(node, defaultReshapeHandler)
   })
+
   // set a size constraint provider for a minimum node size for all nodes not already providing their own one
   const minimumSize = new Size(5, 5)
   const sizeConstraintProviderDecorator = graph.decorator.nodes.sizeConstraintProvider
   sizeConstraintProviderDecorator.addWrapperFactory((_, provider) => {
     return provider || new NodeSizeConstraintProvider(minimumSize, Size.INFINITE)
   })
+
   // avoid overlapping when creating, pasting or duplicating nodes
   editMode.addEventListener('node-created', async (evt) => {
     await makeSpace(evt.item)
@@ -152,12 +165,14 @@ function initializeInputModes() {
     await makeSpace(evt.copy)
   })
 }
+
 /**
  * Makes space for a new node.
  */
 async function makeSpace(node) {
   await new LayoutHelper(graphComponent, node).layoutImmediately()
 }
+
 /**
  * Initializes styles and loads a sample graph.
  */
@@ -165,14 +180,17 @@ function initializeGraph() {
   initDemoStyles(graphComponent.graph, { orthogonalEditing: true })
   loadGraph('hierarchical')
 }
+
 /**
  * Loads the sample graph associated with the given name
  */
 function loadGraph(sampleName) {
   // @ts-ignore We don't have proper types for the sample data
   const data = SampleData[sampleName]
+
   const graph = graphComponent.graph
   graph.clear()
+
   const defaultNodeSize = graph.nodeDefaults.size
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
@@ -190,7 +208,9 @@ function loadGraph(sampleName) {
     })
   }
   builder.createEdgesSource(data.edges, 'source', 'target', 'id')
+
   builder.buildGraph()
+
   graph.edges.forEach((edge) => {
     if (edge.tag.sourcePort) {
       graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
@@ -202,8 +222,10 @@ function loadGraph(sampleName) {
       graph.addBend(edge, bend)
     })
   })
+
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Registers commands and actions for the items in the toolbar.
  */
@@ -215,4 +237,5 @@ function initializeUI() {
     loadGraph(selectedOption.value)
   })
 }
+
 run().then(finishLoading)

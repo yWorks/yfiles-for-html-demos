@@ -171,9 +171,7 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler: Gra
 
   //Add property information for the extensions
   graphmlHandler.addTypeInformation(ReactComponentSvgNodeStyleMarkupExtension, {
-    properties: {
-      jsx: { default: null, type: String }
-    }
+    properties: { jsx: { default: null, type: String } }
   })
   graphmlHandler.addTypeInformation(ReactComponentSvgLabelStyleMarkupExtension, {
     properties: {
@@ -183,9 +181,7 @@ export function registerReactComponentNodeStyleSerialization(graphmlHandler: Gra
     }
   })
   graphmlHandler.addTypeInformation(ReactComponentHtmlNodeStyleMarkupExtension, {
-    properties: {
-      jsx: { default: null, type: String }
-    }
+    properties: { jsx: { default: null, type: String } }
   })
   graphmlHandler.addTypeInformation(ReactComponentHtmlLabelStyleMarkupExtension, {
     properties: {

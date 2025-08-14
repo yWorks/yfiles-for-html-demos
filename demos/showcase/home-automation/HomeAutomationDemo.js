@@ -44,25 +44,35 @@ import { configureFlowNodePorts } from './FlowNode/FlowNodePort'
 import { configureFlowEdges } from './FlowEdge/FlowEdge'
 import { importGraphData, initializeJsonIo } from './ImportExportManager/ImportExportManager'
 import { SampleData } from './resources/weather-data'
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('graphComponent')
   configureInputMode(graphComponent)
   configureFlowNodePorts(graphComponent)
   initializeSnapping(graphComponent)
+
   configureDragAndDrop(graphComponent)
   initializeDragAndDropPanel()
   configureGraphEvents(graphComponent)
   initializeTagExplorer(graphComponent)
+
   initializeJsonIo(graphComponent)
+
   graphComponent.graph.undoEngineEnabled = true
+
   initializeToolbar(graphComponent, initializeGrid(graphComponent))
   initializeTooltips(graphComponent)
   initializeContextMenu(graphComponent)
+
   configureFlowNodes(graphComponent)
   configureFlowEdges(graphComponent)
+
   await importGraphData(graphComponent, SampleData)
+
   void graphComponent.fitGraphBounds()
   graphComponent.graph.undoEngine.clear()
 }
+
 void run().then(finishLoading)

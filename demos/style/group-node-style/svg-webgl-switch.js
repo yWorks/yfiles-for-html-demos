@@ -34,9 +34,10 @@ import {
   WebGLGraphModelManagerRenderMode,
   WebGLSelectionIndicatorManager
 } from '@yfiles/yfiles'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
-import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'
+import { addNavigationButtons, BrowserDetection } from '@yfiles/demo-resources/demo-page'
+
 let changeListener
+
 /**
  * Adds an event listener to the HTML select element with the given selector.
  * @param selector The selector that describes the HTML select element
@@ -51,11 +52,13 @@ export function initializeSvgWebGlSwitchButton(selector, graphComponent) {
     optionElement.disabled = true
     optionElement.title = 'This style is disabled since WebGL is not available.'
   }
+
   changeListener = (e) => {
     changeRenderMode(graphComponent, e.target.value)
   }
   renderModeSelectElement.addEventListener('change', changeListener)
 }
+
 /**
  * Changes the style implementations in the given graph component from SVG to WebGL and vice versa.
  * @param graphComponent The demo's main graph view
@@ -73,6 +76,7 @@ function changeRenderMode(graphComponent, renderMode) {
     graphComponent.focusIndicatorManager = new FocusIndicatorManager()
   }
 }
+
 /**
  * Removes the event listener from the HTML select element with the given selector.
  * @param selector The selector that describes the HTML select element
@@ -81,10 +85,12 @@ function changeRenderMode(graphComponent, renderMode) {
 export function updateSvgWebGlSwitchButton(selector, graphComponent) {
   const renderModeSelectElement = document.querySelector(selector)
   renderModeSelectElement.removeEventListener('change', changeListener)
+
   changeListener = (e) => {
     changeRenderMode(graphComponent, e.target.value)
   }
   renderModeSelectElement.addEventListener('change', changeListener)
+
   // set to current render mode
   changeRenderMode(graphComponent, renderModeSelectElement.value)
 }

@@ -56,10 +56,7 @@ const graphSynchronizer = new GraphSynchronizer(graph, (message) => postMessage(
 
 // initialize the interactive organic layout
 const layoutHelper = new InteractiveOrganicLayoutInputHelper(graph, {
-  layout: () =>
-    new InteractiveOrganicLayout({
-      stopDuration: '2s'
-    })
+  layout: () => new InteractiveOrganicLayout({ stopDuration: '2s' })
 })
 
 // Handle messages from the UI thread. Some messages are to configure the layout for the

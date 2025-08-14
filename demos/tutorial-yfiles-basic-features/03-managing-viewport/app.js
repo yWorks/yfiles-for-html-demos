@@ -31,11 +31,16 @@ import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { addButtonListener, createSampleGraphViewport, initializeTutorialDefaults } from '../common'
 import { fitGraphAnimated, fitGraphBounds, resetViewport } from './managing-viewport'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
+
 createSampleGraphViewport(graphComponent.graph)
+
 finishLoading()
+
 addButtonListener('#fitGraphButton', () => fitGraphBounds(graphComponent))
 addButtonListener('#resetButton', () => resetViewport(graphComponent))
 addButtonListener('#fitGraphAnimatedButton', () => fitGraphAnimated(graphComponent))

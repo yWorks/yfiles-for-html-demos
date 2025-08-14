@@ -46,25 +46,30 @@ import {
   PortSides,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
+
 import MazeData from './resources/maze'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { MazeVisual } from './MazeVisual'
+
 /**
  * The graph component that displays the demo's graph.
  */
 let graphComponent
+
 /**
  * Holds whether a layout is current running.
  */
 let inLayout = false
+
 /**
  * Holds the filtered graph. The graph consists of the maze graph nodes which are the ones that
  * form the maze and the normal graph nodes. The maze nodes are visible only during the layout to
  * simulate the maze.
  */
 let filteredGraph
+
 /**
  * Starts the demo.
  */
@@ -72,37 +77,49 @@ async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
+
   // set some default styles
   initDemoStyles(graphComponent.graph, { theme: 'demo-palette-31' })
+
   // create the input mode
   createEditorInputMode()
+
   // create the sample graph
   createSampleGraph(graphComponent.graph)
+
   // create the visualization for the edge path routing obstacles
   await createMazeVisual()
+
   // route edges
   await routeEdges()
+
   // initialize undo and redo for the demo's graph
   initializeUndoEngine(graphComponent.graph)
+
   // wire up the UI
   initializeUI()
 }
+
 /**
  * Initializes the input mode.
  */
 function createEditorInputMode() {
   const inputMode = new GraphEditorInputMode()
+
   // route the newly created edge
   inputMode.createEdgeInputMode.addEventListener(
     'edge-created',
     async (evt) => await routeEdges([evt.item])
   )
+
   // add the listeners to route the edges affected by a node movement or node resize
   inputMode.moveSelectedItemsInputMode.addEventListener('drag-finished', onDragFinished)
   inputMode.moveUnselectedItemsInputMode.addEventListener('drag-finished', onDragFinished)
   inputMode.handleInputMode.addEventListener('drag-finished', onDragFinished)
+
   graphComponent.inputMode = inputMode
 }
+
 /**
  * Routes the edges affected by a node movement or resize.
  */
@@ -111,6 +128,7 @@ async function onDragFinished(_evt, inputMode) {
   // route the affected edges
   await routeEdges(affectedEdges)
 }
+
 /**
  * Routes only the affected edges.
  * @param affectedEdges The array of edges to be routed
@@ -120,6 +138,7 @@ async function routeEdges(affectedEdges) {
   // prevent starting another layout calculation
   inLayout = true
   setUIDisabled(true)
+
   try {
     // configure the routing style and the edge distances
     const router = new EdgeRouter({
@@ -128,6 +147,7 @@ async function routeEdges(affectedEdges) {
         minimumEdgeDistance: getEdgeDistance()
       }
     })
+
     // configure the edge ports allowed to be used by the edge router
     const edgeRouterData = new EdgeRouterData()
     const allowedPorts = getAllowedPorts()
@@ -135,6 +155,7 @@ async function routeEdges(affectedEdges) {
       edgeRouterData.ports.sourcePortCandidates = allowedPorts
       edgeRouterData.ports.targetPortCandidates = allowedPorts
     }
+
     // if there are edges marked as affected, as a result of edge creation, node movement or
     // node resize, route only them
     if (affectedEdges && affectedEdges.length > 0) {
@@ -148,6 +169,7 @@ async function routeEdges(affectedEdges) {
         edgeRouterData.scope.edges = selection.edges
       }
     }
+
     // apply the layout
     const layoutExecutor = new LayoutExecutor({
       graphComponent,
@@ -164,6 +186,7 @@ async function routeEdges(affectedEdges) {
     setUIDisabled(false)
   }
 }
+
 /**
  * Returns the selected routing style.
  */
@@ -173,6 +196,7 @@ function getRoutingStyle() {
     ? EdgeRouterRoutingStyle.ORTHOGONAL
     : EdgeRouterRoutingStyle.OCTILINEAR
 }
+
 /**
  * Checks whether the {@link EdgeRouter} should use specific ports,
  * and creates {@link EdgePortCandidates} for them.
@@ -190,6 +214,7 @@ function getAllowedPorts() {
   }
   return null
 }
+
 /**
  * Returns the minimum distance between a pair of edges.
  */
@@ -197,6 +222,7 @@ function getEdgeDistance() {
   const routingDistance = document.querySelector('#router-edge-distance').value
   return parseInt(routingDistance)
 }
+
 /**
  * Enables/disables the UI elements.
  * @param disabled True if the elements should be disabled, false otherwise
@@ -205,6 +231,7 @@ function setUIDisabled(disabled) {
   document.querySelector('#route-edges').disabled = disabled
   graphComponent.inputMode.waiting = disabled
 }
+
 /**
  * Enables and configures undo/redo for the given graph.
  */
@@ -214,16 +241,15 @@ function initializeUndoEngine(graph) {
   graph.undoEngineEnabled = true
   graph.undoEngine.mergeUnits = true
 }
+
 /**
  * Creates the sample graph. The graph consists of maze graph nodes which are the ones that
  * form the maze and normal graph nodes. The maze nodes are only "live" during the layout
  * calculations to serve as obstacles for edge path routing (thereby simulating the maze).
  */
 function createSampleGraph(graph) {
-  const mazeNodeStyle = new ShapeNodeStyle({
-    fill: '#242265',
-    stroke: null
-  })
+  const mazeNodeStyle = new ShapeNodeStyle({ fill: '#242265', stroke: null })
+
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
     data: MazeData.nodes,
@@ -235,20 +261,25 @@ function createSampleGraph(graph) {
   builder.createEdgesSource(MazeData.edges, 'from', 'to')
   builder.buildGraph()
 }
+
 /**
  * Creates the visualization for the obstacles that affect edge path routing.
  */
 async function createMazeVisual() {
   const graph = graphComponent.graph
+
   // determine the nodes that model the obstacles
   const mazeNodes = graph.nodes.filter((node) => node.tag.maze)
   // add the maze visualization for the obstacle nodes
   const mazeVisual = new MazeVisual(mazeNodes)
   graphComponent.renderTree.createElement(graphComponent.renderTree.backgroundGroup, mazeVisual)
+
   // route the edges according to the configured polylineEdgeRouter
   await routeEdges()
+
   // center the graph in the visible area
   await graphComponent.fitGraphBounds()
+
   // "hide" the obstacle nodes from the current view to prevent users from interacting with
   // the obstacles
   filteredGraph = new FilteredGraphWrapper(
@@ -258,10 +289,12 @@ async function createMazeVisual() {
   )
   graphComponent.graph = filteredGraph
 }
+
 /**
  * Wires up the UI.
  */
 function initializeUI() {
   document.querySelector('#route-edges').addEventListener('click', async () => await routeEdges())
 }
+
 run().then(finishLoading)

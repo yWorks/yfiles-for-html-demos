@@ -28,247 +28,63 @@
  ***************************************************************************/
 export default {
   gates: [
-    {
-      id: '00',
-      type: 'nand'
-    },
-    {
-      id: '01',
-      type: 'not'
-    },
-    {
-      id: '02',
-      type: 'nand'
-    },
-    {
-      id: '03',
-      type: 'not'
-    },
-    {
-      id: '04',
-      type: 'nand'
-    },
-    {
-      id: '10',
-      type: 'and'
-    },
-    {
-      id: '11',
-      type: 'nand'
-    },
-    {
-      id: '12',
-      type: 'and'
-    },
-    {
-      id: '20',
-      type: 'and'
-    },
-    {
-      id: '21',
-      type: 'not'
-    },
-    {
-      id: '30',
-      type: 'and'
-    },
-    {
-      id: '31',
-      type: 'not'
-    }
+    { id: '00', type: 'nand' },
+    { id: '01', type: 'not' },
+    { id: '02', type: 'nand' },
+    { id: '03', type: 'not' },
+    { id: '04', type: 'nand' },
+    { id: '10', type: 'and' },
+    { id: '11', type: 'nand' },
+    { id: '12', type: 'and' },
+    { id: '20', type: 'and' },
+    { id: '21', type: 'not' },
+    { id: '30', type: 'and' },
+    { id: '31', type: 'not' }
   ],
   connections: [
-    {
-      id: '00:0-10:0',
-      from: '00;out0',
-      to: '10;in0'
-    },
-    {
-      id: '01:0-10:1',
-      from: '01;out0',
-      to: '10;in1'
-    },
-    {
-      id: '01:0-11:0',
-      from: '01;out0',
-      to: '11;in0'
-    },
-    {
-      id: '02:0-11:1',
-      from: '02;out0',
-      to: '11;in1'
-    },
-    {
-      id: '03:0-12:0',
-      from: '03;out0',
-      to: '12;in0'
-    },
-    {
-      id: '04:0-12:1',
-      from: '04;out0',
-      to: '12;in1'
-    },
-    {
-      id: '05:0-12:1',
-      from: '05;out0',
-      to: '12;in1'
-    },
-    {
-      id: '10:0-20:0',
-      from: '10;out0',
-      to: '20;in0'
-    },
-    {
-      id: '11:0-20:1',
-      from: '11;out0',
-      to: '20;in1'
-    },
-    {
-      id: '12:0-21:0',
-      from: '12;out0',
-      to: '21;in0'
-    },
-    {
-      id: '20:0-30:0',
-      from: '20;out0',
-      to: '30;in0'
-    },
-    {
-      id: '21:0-30:1',
-      from: '21;out0',
-      to: '30;in1'
-    },
-    {
-      id: '21:0-31:0',
-      from: '21;out0',
-      to: '31;in0'
-    }
+    { id: '00:0-10:0', from: '00;out0', to: '10;in0' },
+    { id: '01:0-10:1', from: '01;out0', to: '10;in1' },
+    { id: '01:0-11:0', from: '01;out0', to: '11;in0' },
+    { id: '02:0-11:1', from: '02;out0', to: '11;in1' },
+    { id: '03:0-12:0', from: '03;out0', to: '12;in0' },
+    { id: '04:0-12:1', from: '04;out0', to: '12;in1' },
+    { id: '05:0-12:1', from: '05;out0', to: '12;in1' },
+    { id: '10:0-20:0', from: '10;out0', to: '20;in0' },
+    { id: '11:0-20:1', from: '11;out0', to: '20;in1' },
+    { id: '12:0-21:0', from: '12;out0', to: '21;in0' },
+    { id: '20:0-30:0', from: '20;out0', to: '30;in0' },
+    { id: '21:0-30:1', from: '21;out0', to: '30;in1' },
+    { id: '21:0-31:0', from: '21;out0', to: '31;in0' }
   ],
   updateGates: [
-    {
-      id: '01',
-      type: 'not'
-    },
-    {
-      id: '02',
-      type: 'nand'
-    },
-    {
-      id: '04',
-      type: 'nand'
-    },
-    {
-      id: '05',
-      type: 'or'
-    },
-    {
-      id: '10',
-      type: 'and'
-    },
-    {
-      id: '11',
-      type: 'nand'
-    },
-    {
-      id: '12',
-      type: 'and'
-    },
-    {
-      id: '20',
-      type: 'and'
-    },
-    {
-      id: '21',
-      type: 'not'
-    },
-    {
-      id: '30',
-      type: 'and'
-    },
-    {
-      id: '31',
-      type: 'not'
-    },
-    {
-      id: '40',
-      type: 'or'
-    }
+    { id: '01', type: 'not' },
+    { id: '02', type: 'nand' },
+    { id: '04', type: 'nand' },
+    { id: '05', type: 'or' },
+    { id: '10', type: 'and' },
+    { id: '11', type: 'nand' },
+    { id: '12', type: 'and' },
+    { id: '20', type: 'and' },
+    { id: '21', type: 'not' },
+    { id: '30', type: 'and' },
+    { id: '31', type: 'not' },
+    { id: '40', type: 'or' }
   ],
   updateConnections: [
-    {
-      id: '01:0-10:0',
-      from: '01;out0',
-      to: '10;in0'
-    },
-    {
-      id: '02:0-10:1',
-      from: '02;out0',
-      to: '10;in1'
-    },
-    {
-      id: '02:0-11:0',
-      from: '02;out0',
-      to: '11;in0'
-    },
-    {
-      id: '03:0-12:0',
-      from: '03;out0',
-      to: '12;in0'
-    },
-    {
-      id: '04:0-12:0',
-      from: '04;out0',
-      to: '12;in0'
-    },
-    {
-      id: '05:0-12:1',
-      from: '05;out0',
-      to: '12;in1'
-    },
-    {
-      id: '00:0-10:0',
-      from: '00;out0',
-      to: '10;in0'
-    },
-    {
-      id: '10:0-20:0',
-      from: '10;out0',
-      to: '20;in0'
-    },
-    {
-      id: '11:0-20:1',
-      from: '11;out0',
-      to: '20;in1'
-    },
-    {
-      id: '12:0-21:0',
-      from: '12;out0',
-      to: '21;in0'
-    },
-    {
-      id: '20:0-30:0',
-      from: '20;out0',
-      to: '30;in0'
-    },
-    {
-      id: '21:0-30:1',
-      from: '21;out0',
-      to: '30;in1'
-    },
-    {
-      id: '21:0-31:0',
-      from: '21;out0',
-      to: '31;in0'
-    },
-    {
-      id: '30:0-40:0',
-      from: '30;out0',
-      to: '40;in0'
-    },
-    {
-      id: '31:0-40:1',
-      from: '31;out0',
-      to: '40;in1'
-    }
+    { id: '01:0-10:0', from: '01;out0', to: '10;in0' },
+    { id: '02:0-10:1', from: '02;out0', to: '10;in1' },
+    { id: '02:0-11:0', from: '02;out0', to: '11;in0' },
+    { id: '03:0-12:0', from: '03;out0', to: '12;in0' },
+    { id: '04:0-12:0', from: '04;out0', to: '12;in0' },
+    { id: '05:0-12:1', from: '05;out0', to: '12;in1' },
+    { id: '00:0-10:0', from: '00;out0', to: '10;in0' },
+    { id: '10:0-20:0', from: '10;out0', to: '20;in0' },
+    { id: '11:0-20:1', from: '11;out0', to: '20;in1' },
+    { id: '12:0-21:0', from: '12;out0', to: '21;in0' },
+    { id: '20:0-30:0', from: '20;out0', to: '30;in0' },
+    { id: '21:0-30:1', from: '21;out0', to: '30;in1' },
+    { id: '21:0-31:0', from: '21;out0', to: '31;in0' },
+    { id: '30:0-40:0', from: '30;out0', to: '40;in0' },
+    { id: '31:0-40:1', from: '31;out0', to: '40;in1' }
   ]
 }

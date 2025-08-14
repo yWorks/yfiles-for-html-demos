@@ -46,7 +46,9 @@ import {
   createRealizationStyle
 } from './UMLEdgeStyleFactory'
 import { ExtensibilityButtonStyle, RelationButtonStyle } from './ButtonStyles'
+
 const DEFAULT_FILL = new CssFill('#607d8b')
+
 export function createExtensibilityButtons(sender, event, style) {
   const graphComponent = sender.graphComponent
   const buttonStyle = new ExtensibilityButtonStyle()
@@ -95,6 +97,7 @@ export function createExtensibilityButtons(sender, event, style) {
     text: 'A'
   })
 }
+
 export function createEdgeCreationButtons(sender, event) {
   const edgeStyles = [
     createRealizationStyle(),
@@ -104,7 +107,9 @@ export function createEdgeCreationButtons(sender, event) {
     createDirectedAssociationStyle(),
     createAssociationStyle()
   ]
+
   const paramFactory = new FreeNodeLabelModel()
+
   let radialStart = 5.235987755982989 // corresponds to 300 degrees
   const radialOffset = 0.6981317007977318 // corresponds to 40 degrees
   for (const style of edgeStyles) {
@@ -116,12 +121,14 @@ export function createEdgeCreationButtons(sender, event) {
         graphComponent.selection.clear()
         graphComponent.currentItem = null
         const createEdgeInputMode = graphComponent.inputMode.createEdgeInputMode
+
         // initialize dummy edge
         const umlEdgeType = style
         const previewGraph = createEdgeInputMode.previewGraph
         const previewEdge = createEdgeInputMode.previewEdge
         previewGraph.setStyle(previewEdge, umlEdgeType)
         previewGraph.edgeDefaults.style = umlEdgeType
+
         // start edge creation and hide buttons until the edge is finished
         createEdgeInputMode.startEdgeCreation(
           new PortCandidate(event.owner, FreeNodePortLocationModel.CENTER)
@@ -139,6 +146,7 @@ export function createEdgeCreationButtons(sender, event) {
     radialStart += radialOffset
   }
 }
+
 function rotate(vector, angle1) {
   const angle = angle1
   const cos = Math.cos(angle)

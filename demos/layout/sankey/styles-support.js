@@ -35,6 +35,7 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 import { getPoliticalParty, getVoterShift } from './data-types'
+
 /**
  * The colors used for the node/edge visualization.
  * Dark colors will be used for the node visualization and the highlighting of the edges.
@@ -50,19 +51,20 @@ export const colors = [
   { dark: '#242265', light: '#24226590' },
   { dark: '#2d4d3a', light: '#2d4d3a90' }
 ]
+
 /**
  * Configures the default size and style for nodes, edge labels, and edges.
  */
 export function initializeDefaultStyles(graphComponent) {
   const graph = graphComponent.graph
+
   // set the default node size
   graph.nodeDefaults.size = new Size(60, 40)
   // set a non-shared style for the nodes, so that each of them gets a color based on the
   // 'colorId' property stored in its data
   graph.nodeDefaults.shareStyleInstance = false
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    stroke: null
-  })
+  graph.nodeDefaults.style = new ShapeNodeStyle({ stroke: null })
+
   // set the default style for the node labels
   graph.nodeDefaults.labels.style = new LabelStyle({
     textFill: 'white',
@@ -71,25 +73,28 @@ export function initializeDefaultStyles(graphComponent) {
     verticalTextAlignment: 'center',
     horizontalTextAlignment: 'center'
   })
+
   // use a label model that stretches the label over the full node layout, with small insets
   graph.nodeDefaults.labels.layoutParameter = new StretchNodeLabelModel({
     padding: 3
   }).createParameter('center')
+
   // set a non-shared style for the edge, so that each of them gets a color based on the
   // 'colorId' property stored in its data
   graph.edgeDefaults.shareStyleInstance = false
   graph.edgeDefaults.style = new BezierEdgeStyle()
+
   // set a non-shared style for the labels, so that each of them gets a text color based on the
   // 'colorId' property stored in its owner property
   graph.edgeDefaults.labels.shareStyleInstance = false
-  graph.edgeDefaults.labels.style = new LabelStyle({
-    font: '14px Arial'
-  })
+  graph.edgeDefaults.labels.style = new LabelStyle({ font: '14px Arial' })
+
   // hide handles for edges
   graph.decorator.edges.handleProvider.hide()
   // hide label selection
   graph.decorator.labels.selectionRenderer.hide()
 }
+
 /**
  * Updates the styles of the graph elements.
  * It basically assigns a color to each node based on its label text, stores the given color to the
@@ -97,6 +102,7 @@ export function initializeDefaultStyles(graphComponent) {
  */
 export function updateStyles(graph) {
   const label2color = new Map()
+
   graph.nodeLabels.forEach((label) => {
     const node = label.owner
     // if no colorId is assigned, get one from the demo's colors
@@ -111,28 +117,33 @@ export function updateStyles(graph) {
       // update the node data
       getPoliticalParty(node).colorId = colorId
     }
+
     // update the node's color and its adjacent edges
     updateNodeColor(node, graph)
   })
 }
+
 /**
  * Returns the color used for the given node based on its colorId.
  */
 export function getNodeColor(node) {
   return colors[getPoliticalParty(node).colorId].dark
 }
+
 /**
  * Returns the color used for the given edge based on its colorId.
  */
 export function getEdgeColor(edge) {
   return colors[getVoterShift(edge).colorId].light
 }
+
 /**
  * Returns the color used for the given label based on the colorId of the associated edge.
  */
 export function getLabelColor(label) {
   return colors[getVoterShift(label.owner).colorId].dark
 }
+
 /**
  * Updates the color of the given node and its adjacent edges based on the colorId property
  * of its associated data.
@@ -142,6 +153,7 @@ export function updateNodeColor(node, graph) {
   style.fill = getNodeColor(node)
   updateAdjacentEdges(node, graph)
 }
+
 /**
  * Updates the adjacent edges of the given node based on the colorId property
  * of its associated data.
@@ -155,6 +167,7 @@ export function updateAdjacentEdges(node, graph) {
     updateEdgeStyle(edge)
   }
 }
+
 /**
  * Updates the color of the given edge and its associated labels based on the colorId property
  * of its associated data.

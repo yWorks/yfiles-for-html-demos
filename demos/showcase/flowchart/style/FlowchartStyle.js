@@ -36,6 +36,7 @@ import {
   Stroke,
   SvgVisual
 } from '@yfiles/yfiles'
+
 export var FlowchartNodeType
 ;(function (FlowchartNodeType) {
   FlowchartNodeType['Process'] = 'process'
@@ -67,6 +68,7 @@ export var FlowchartNodeType
   FlowchartNodeType['UserMessage'] = 'userMessage'
   FlowchartNodeType['NetworkMessage'] = 'networkMessage'
 })(FlowchartNodeType || (FlowchartNodeType = {}))
+
 /**
  * {@link INodeStyle} which draws a flowchart shape according to its type.
  * This style can be customized by changing the properties 'fill' and 'stroke' as well as with a css-stylesheet.
@@ -90,8 +92,10 @@ export class FlowchartNodeStyle extends NodeStyleBase {
     this.stroke = stroke
     this.cssClass = cssClass
   }
+
   createVisual(context, node) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     // add the shape according to the type
     const path = getPath(this.type, node).createSvgPath()
     if (this.cssClass == null) {
@@ -103,6 +107,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       Fill.setFill(this.fill, path, context)
     }
     container.appendChild(path)
+
     // add the decoration if there is any for this type
     const decoration = getDecoration(this.type, node, context)
     let decorationPath = null
@@ -118,6 +123,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       }
       container.appendChild(decorationPath)
     }
+
     // apply the css settings
     if (this.cssClass != null) {
       path.setAttribute('class', this.cssClass)
@@ -131,6 +137,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
         }
       }
     }
+
     // store relevant data for performance improvement in #updateVisual
     const cache = {
       location: node.layout.topLeft,
@@ -140,16 +147,20 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       fill: this.fill,
       cssClass: this.cssClass
     }
+
     return SvgVisual.from(container, cache)
   }
+
   updateVisual(context, oldVisual, node) {
     const cache = oldVisual.tag
     const container = oldVisual.svgElement
     const path = container.firstElementChild
     const decoration = container.childElementCount === 2 ? container.lastElementChild : null
+
     if (cache.type !== this.type) {
       return this.createVisual(context, node)
     }
+
     // update shape and decoration if the position or size of the node has changed,
     // annotations are always updated because the decoration might have changed according to the connected edges
     if (
@@ -165,6 +176,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       cache.location = node.layout.topLeft
       cache.size = node.layout.toSize()
     }
+
     // update the stroke if it has changed
     if (cache.stroke !== this.stroke) {
       if (this.cssClass == null) {
@@ -176,6 +188,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       }
       cache.stroke = this.stroke
     }
+
     // update the fill if it has changed
     if (cache.fill !== this.fill) {
       if (this.cssClass == null) {
@@ -186,6 +199,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       }
       cache.fill = this.fill
     }
+
     // update stroke and fill if the css-class has changed
     if (cache.cssClass !== this.cssClass) {
       if (this.cssClass != null) {
@@ -216,20 +230,24 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       }
       cache.cssClass = this.cssClass
     }
+
     return oldVisual
   }
+
   /**
    * Returns the bounds of the shape's outline according to the type.
    */
   getBounds(context, node) {
     return getPath(this.type, node).getBounds()
   }
+
   /**
    * Returns the outline of the shape according to the type.
    */
   getOutline(node) {
     return getPath(this.type, node)
   }
+
   /**
    * Returns whether the given location lies within the shape according to the type.
    */
@@ -239,6 +257,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
     }
     return getPath(this.type, node).areaContains(location)
   }
+
   /**
    * Returns whether the given location hits the shape according to the type.
    */
@@ -249,6 +268,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
     )
   }
 }
+
 /**
  * Returns the outline of the shape according to the type
  */
@@ -313,6 +333,7 @@ function getPath(type, node) {
       return renderUserMessagePath(node)
   }
 }
+
 /**
  * Returns the decorations according to the type
  */
@@ -334,12 +355,15 @@ function getDecoration(type, node, context) {
       return renderSequentialDataDecoration(node)
   }
 }
+
 function renderCardPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const borderDistance = Math.min(10, Math.min(width, height) * 0.5)
+
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + width, y)
@@ -349,13 +373,16 @@ function renderCardPath(node) {
   path.close()
   return path
 }
+
 function renderDataPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const inclination = 0.255
   const borderDistance = inclination * Math.min(width, height)
+
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + width, y)
@@ -364,6 +391,7 @@ function renderDataPath(node) {
   path.close()
   return path
 }
+
 function renderDatabasePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -371,6 +399,7 @@ function renderDatabasePath(node) {
   const height = node.layout.height
   const xOffset = 0.03
   const yOffset = 0.2
+
   const path = new GeneralPath()
   path.moveTo(x, y + yOffset * height)
   path.cubicTo(
@@ -393,6 +422,7 @@ function renderDatabasePath(node) {
   path.close()
   return path
 }
+
 function renderDatabaseDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -400,6 +430,7 @@ function renderDatabaseDecoration(node) {
   const height = node.layout.height
   const xOffset = 0.03
   const yOffset = 0.2
+
   const path = new GeneralPath()
   path.moveTo(x + width, y + yOffset * height)
   path.cubicTo(
@@ -412,13 +443,16 @@ function renderDatabaseDecoration(node) {
   )
   return path
 }
+
 function renderDirectDataPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const radius = 0.125
   const borderDistance = radius * Math.min(width, height)
+
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + (width - borderDistance), y)
@@ -433,13 +467,16 @@ function renderDirectDataPath(node) {
   path.close()
   return path
 }
+
 function renderDirectDataDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const radius = 0.125
   const borderDistance = radius * Math.min(width, height)
+
   const path = new GeneralPath()
   path.moveTo(x + (width - borderDistance), y)
   path.quadTo(
@@ -450,6 +487,7 @@ function renderDirectDataDecoration(node) {
   )
   return path
 }
+
 function renderCloudPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -460,6 +498,7 @@ function renderCloudPath(node) {
   const xOffset1 = 0.125
   const yOffset1 = 0.25
   const yOffset2 = 0.18
+
   const path = new GeneralPath()
   path.moveTo(x + xOffset1 * width, y + 0.5 * height + asymmetryConstY)
   path.cubicTo(
@@ -513,6 +552,7 @@ function renderCloudPath(node) {
   path.close()
   return path
 }
+
 function renderDecisionPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -526,16 +566,19 @@ function renderDecisionPath(node) {
   path.close()
   return path
 }
+
 function renderProcessPath(node) {
   const path = new GeneralPath()
   path.appendRectangle(node.layout, true)
   return path
 }
+
 function renderStart1Path(node) {
   const path = new GeneralPath()
   path.appendEllipse(node.layout, true)
   return path
 }
+
 function renderStart2Path(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -544,10 +587,12 @@ function renderStart2Path(node) {
   const diameter = Math.min(height, width)
   const borderDistanceX = Math.max((width - diameter) * 0.5, 0)
   const borderDistanceY = Math.max((height - diameter) * 0.5, 0)
+
   const path = new GeneralPath()
   path.appendEllipse(new Rect(x + borderDistanceX, y + borderDistanceY, diameter, diameter), true)
   return path
 }
+
 function renderTerminatorPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -556,6 +601,7 @@ function renderTerminatorPath(node) {
   const radius = Math.min(width, height) * 0.5
   const arcX = radius
   const arcY = radius
+
   const path = new GeneralPath()
   path.moveTo(x, y + arcY)
   path.quadTo(x, y, x + arcX, y)
@@ -568,13 +614,16 @@ function renderTerminatorPath(node) {
   path.close()
   return path
 }
+
 function renderDocumentPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const radius = 0.125
   const borderDistance = radius * Math.min(width, height)
+
   const path = new GeneralPath()
   path.moveTo(x, y)
   path.lineTo(x + width, y)
@@ -589,17 +638,21 @@ function renderDocumentPath(node) {
   path.close()
   return path
 }
+
 function renderPredefinedProcessPath(node) {
   const path = new GeneralPath()
   path.appendRectangle(node.layout, true)
   return path
 }
+
 function renderPredefinedProcessDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const borderDistance = Math.min(10, Math.min(width, height) * 0.5)
+
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + borderDistance, y + height)
@@ -609,13 +662,16 @@ function renderPredefinedProcessDecoration(node) {
   path.close()
   return path
 }
+
 function renderStoredDataPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const radius = 0.125
   const borderDistance = radius * Math.min(width, height)
+
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + width, y)
@@ -625,17 +681,21 @@ function renderStoredDataPath(node) {
   path.close()
   return path
 }
+
 function renderInternalStoragePath(node) {
   const path = new GeneralPath()
   path.appendRectangle(node.layout, true)
   return path
 }
+
 function renderInternalStorageDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const borderDistance = Math.min(10, Math.min(width, height) * 0.5)
+
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + borderDistance, y + height)
@@ -645,6 +705,7 @@ function renderInternalStorageDecoration(node) {
   path.close()
   return path
 }
+
 function renderSequentialDataPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -653,29 +714,36 @@ function renderSequentialDataPath(node) {
   const diameter = Math.min(height, width)
   const borderDistanceX = Math.max((width - diameter) * 0.5, 0)
   const borderDistanceY = Math.max((height - diameter) * 0.5, 0)
+
   const path = new GeneralPath()
   path.appendEllipse(new Rect(x + borderDistanceX, y + borderDistanceY, diameter, diameter), true)
   return path
 }
+
 function renderSequentialDataDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const diameter = Math.min(height, width)
   const borderDistanceX = Math.max((width - diameter) * 0.5, 0)
   const borderDistanceY = Math.max((height - diameter) * 0.5, 0)
+
   const path = new GeneralPath()
   path.moveTo(x + borderDistanceX + diameter * 0.5, y + borderDistanceY + diameter)
   path.lineTo(x + (width - borderDistanceX), y + borderDistanceY + diameter)
   return path
 }
+
 function renderManualInputPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const borderDistance = Math.min(10, Math.min(width, height) * 0.5)
+
   const path = new GeneralPath()
   path.moveTo(x, y + borderDistance)
   path.lineTo(x + width, y)
@@ -684,13 +752,16 @@ function renderManualInputPath(node) {
   path.close()
   return path
 }
+
 function renderPaperTapePath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const radius = 0.125
   const borderDistance = radius * Math.min(width, height)
+
   const path = new GeneralPath()
   path.moveTo(x, y + borderDistance)
   path.quadTo(x + 0.25 * width, y + 3 * borderDistance, x + 0.5 * width, y + borderDistance)
@@ -706,13 +777,16 @@ function renderPaperTapePath(node) {
   path.close()
   return path
 }
+
 function renderDelayPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const radius = 0.125
   const borderDistance = radius * Math.min(width, height)
+
   const path = new GeneralPath()
   path.moveTo(x, y)
   path.lineTo(x + (width - borderDistance), y)
@@ -726,13 +800,16 @@ function renderDelayPath(node) {
   path.close()
   return path
 }
+
 function renderDisplayPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const radius = 0.125
   const borderDistance = radius * Math.min(width, height)
+
   const path = new GeneralPath()
   path.moveTo(x, y + height * 0.5)
   path.quadTo(x + borderDistance, y + borderDistance, x + 4 * borderDistance, y)
@@ -748,12 +825,15 @@ function renderDisplayPath(node) {
   path.close()
   return path
 }
+
 function renderManualOperationPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const borderDistance = Math.min(10, Math.min(width, height) * 0.5)
+
   const path = new GeneralPath()
   path.moveTo(x, y)
   path.lineTo(x + width, y)
@@ -762,13 +842,16 @@ function renderManualOperationPath(node) {
   path.close()
   return path
 }
+
 function renderPreparationPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const inclination = 0.25
   const borderDistance = Math.min(inclination * height, inclination * width)
+
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + (width - borderDistance), y)
@@ -779,12 +862,15 @@ function renderPreparationPath(node) {
   path.close()
   return path
 }
+
 function renderLoopLimitPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const borderDistance = Math.min(Math.min(10, width * 0.5), height * 0.5)
+
   const path = new GeneralPath()
   path.moveTo(x + borderDistance, y)
   path.lineTo(x + (width - borderDistance), y)
@@ -795,12 +881,15 @@ function renderLoopLimitPath(node) {
   path.close()
   return path
 }
+
 function renderLoopLimitEndPath(node) {
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
   const height = node.layout.height
+
   const borderDistance = Math.min(Math.min(10, width * 0.5), height * 0.5)
+
   const path = new GeneralPath()
   path.moveTo(x, y)
   path.lineTo(x + width, y)
@@ -811,6 +900,7 @@ function renderLoopLimitEndPath(node) {
   path.close()
   return path
 }
+
 function renderOnPageReferencePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -819,10 +909,12 @@ function renderOnPageReferencePath(node) {
   const diameter = Math.min(height, width)
   const borderDistanceX = Math.max((width - diameter) / 2, 0)
   const borderDistanceY = Math.max((height - diameter) / 2, 0)
+
   const path = new GeneralPath()
   path.appendEllipse(new Rect(x + borderDistanceX, y + borderDistanceY, diameter, diameter), true)
   return path
 }
+
 function renderOffPageReferencePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -831,6 +923,7 @@ function renderOffPageReferencePath(node) {
   const minLength = Math.min(height, width)
   const borderDistanceX = Math.max((width - minLength) * 0.5, 0)
   const borderDistanceY = Math.max((height - minLength) * 0.5, 0)
+
   const path = new GeneralPath()
   path.moveTo(x + borderDistanceX, y + borderDistanceY)
   path.lineTo(x + minLength + borderDistanceX, y + borderDistanceY)
@@ -840,13 +933,16 @@ function renderOffPageReferencePath(node) {
   path.close()
   return path
 }
+
 function renderAnnotationPath(node) {
   const path = new GeneralPath()
   path.appendRectangle(node.layout, true)
   return path
 }
+
 function renderAnnotationDecoration(node, context) {
   const orientation = determineBracketOrientation(node, context)
+
   const x = node.layout.x
   const y = node.layout.y
   const width = node.layout.width
@@ -863,6 +959,7 @@ function renderAnnotationDecoration(node, context) {
       return createDownBracket(x, y, width, height)
   }
 }
+
 function createLeftBracket(x, y, width, height) {
   const path = new GeneralPath()
   path.moveTo(x + 0.125 * width, y)
@@ -871,6 +968,7 @@ function createLeftBracket(x, y, width, height) {
   path.lineTo(x + 0.125 * width, y + height)
   return path
 }
+
 function createRightBracket(x, y, width, height) {
   const path = new GeneralPath()
   path.moveTo(x + 0.875 * width, y)
@@ -879,6 +977,7 @@ function createRightBracket(x, y, width, height) {
   path.lineTo(x + 0.875 * width, y + height)
   return path
 }
+
 function createTopBracket(x, y, width, height) {
   const path = new GeneralPath()
   path.moveTo(x, y + 0.125 * height)
@@ -887,6 +986,7 @@ function createTopBracket(x, y, width, height) {
   path.lineTo(x + width, y + 0.125 * height)
   return path
 }
+
 function createDownBracket(x, y, width, height) {
   const path = new GeneralPath()
   path.moveTo(x, y + 0.875 * height)
@@ -895,6 +995,7 @@ function createDownBracket(x, y, width, height) {
   path.lineTo(x + width, y + 0.875 * height)
   return path
 }
+
 /**
  * Returns a constant representing the orientation/placement of the
  * annotation's bracket. One of
@@ -913,12 +1014,15 @@ function determineBracketOrientation(node, context) {
       const edge =
         graph.inDegree(node) === 1 ? graph.inEdgesAt(node).first() : graph.outEdgesAt(node).first()
       const intersection = getIntersection(edge, node)
+
       if (!intersection) {
         return 'left'
       }
+
       const x = intersection.x
       const y = intersection.y
       const epsilon = 0.1
+
       const minX = node.layout.x
       if (x + epsilon > minX && x - epsilon < minX) {
         return 'left'
@@ -939,6 +1043,7 @@ function determineBracketOrientation(node, context) {
   }
   return 'left'
 }
+
 /**
  * Returns the point where the edge intersects with the node.
  *
@@ -956,17 +1061,22 @@ function getIntersection(edge, node) {
     secondPort = edge.sourcePort
     bends = edge.bends.toReversed()
   }
+
   let lastBend = firstPort.location
   let bend = null
   for (const b of bends) {
     bend = b.location.toPoint()
+
     if (!node.layout.contains(bend)) {
       break
     }
+
     lastBend = bend
   }
+
   return node.layout.toRect().findLineIntersection(lastBend, bend ? bend : secondPort.location)
 }
+
 function renderUserMessagePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -974,6 +1084,7 @@ function renderUserMessagePath(node) {
   const height = node.layout.height
   const inclination = 0.25
   const borderDistance = Math.min(inclination * height, inclination * width)
+
   const path = new GeneralPath()
   path.moveTo(x, y)
   path.lineTo(x + (width - borderDistance), y)
@@ -983,6 +1094,7 @@ function renderUserMessagePath(node) {
   path.close()
   return path
 }
+
 function renderNetworkMessagePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -990,6 +1102,7 @@ function renderNetworkMessagePath(node) {
   const height = node.layout.height
   const inclination = 0.25
   const borderDistance = Math.min(inclination * height, inclination * width)
+
   const path = new GeneralPath()
   path.moveTo(x, y)
   path.lineTo(x + width, y)

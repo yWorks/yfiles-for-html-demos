@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Component } from '@angular/core'
+import { Component, ElementRef } from '@angular/core'
 
 @Component({
   selector: 'app-tooltip',
@@ -36,4 +36,5 @@ import { Component } from '@angular/core'
 export class TooltipComponent {
   title = 'title'
   content = 'content'
+  constructor(public elementRef: ElementRef<HTMLElement>) {}
 }

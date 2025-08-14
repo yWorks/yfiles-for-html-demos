@@ -1,0 +1,60 @@
+<svg>
+  <g>
+    <rect
+      fill="#C0C0C0"
+      width="285"
+      [attr.height]="zoom > zoomIntermediate ? 100 : 103"
+      [attr.transform]="'translate(' + (zoom > zoomIntermediate ? '2 2' : '-1 -1') + ')'"
+    />
+    <rect fill="#FFFFFF" stroke="#C0C0C0" width="285" height="100" />
+    <g
+      style="font-family: Roboto, sans-serif; font-weight: 300; fill: #444"
+      [style.font-size.px]="zoom > zoomDetail ? 10 : 15"
+    >
+      @if (zoom > zoomIntermediate) {
+        <image
+          [attr.xlink:href]="item.icon"
+          [attr.transform]="
+            zoom > zoomDetail ? 'scale(0.85) translate(15 20)' : 'scale(0.75) translate(15 30)'
+          "
+          width="75px"
+          height="75px"
+        />
+      }
+      <text
+        [attr.transform]="
+          'translate(' +
+          (zoom > zoomIntermediate ? (zoom > zoomDetail ? '100 25' : '75 40') : '30 60') +
+          ')'
+        "
+        fill="#336699"
+        [style.font-size.px]="zoom > zoomIntermediate ? (zoom > zoomDetail ? 16 : 24) : 40"
+      >
+        {{ nameAbbreviation }}
+      </text>
+      @if (zoom > zoomIntermediate) {
+        <ng-container>
+          <text
+            [attr.transform]="'translate(' + (zoom > zoomDetail ? '100 45' : '75 70') + ')'"
+            style="text-transform: uppercase; font-weight: 400"
+          >
+            {{ positionFirstLine }}
+          </text>
+          <text
+            [attr.transform]="'translate(' + (zoom > zoomDetail ? '100 60' : '75 90') + ')'"
+            style="text-transform: uppercase; font-weight: 400"
+          >
+            {{ positionSecondLine }}
+          </text>
+        </ng-container>
+      }
+      @if (zoom > zoomDetail) {
+        <ng-container>
+          <text transform="translate(100 75)">{{ item.email }}</text>
+          <text transform="translate(100 92)">{{ item.phone }}</text>
+          <text transform="translate(170 92)">{{ item.fax }}</text>
+        </ng-container>
+      }
+    </g>
+  </g>
+</svg>

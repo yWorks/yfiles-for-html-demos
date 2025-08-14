@@ -27,27 +27,32 @@
  **
  ***************************************************************************/
 import { Font, LabelStyleBase, Size, SvgVisual, TextRenderSupport } from '@yfiles/yfiles'
-const font = new Font({
-  fontFamily: 'Arial',
-  fontSize: 12
-})
+
+const font = new Font({ fontFamily: 'Arial', fontSize: 12 })
 const padding = 3
+
 export class CustomLabelStyle extends LabelStyleBase {
   createVisual(context, label) {
     // create an SVG text element that displays the label text
     const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+
     const labelSize = label.layout.toSize()
     // use a convenience method to place text content in the <text> element.
     TextRenderSupport.addText(textElement, label.text, font)
+
     // move the text to the right to leave a little padding space
     textElement.setAttribute('transform', `translate(${padding} 0)`)
+
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     gElement.appendChild(textElement)
+
     // move text to label location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(gElement)
+
     return new SvgVisual(gElement)
   }
+
   getPreferredSize(label) {
     return new Size(80, 14)
   }

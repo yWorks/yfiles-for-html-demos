@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { BaseClass, IRenderContext, IVisualCreator, SvgVisual } from '@yfiles/yfiles'
+
 export class RectangleVisualCreator extends BaseClass(IVisualCreator) {
   /**
    * Creates the visual for the background.
@@ -40,6 +41,7 @@ export class RectangleVisualCreator extends BaseClass(IVisualCreator) {
     this.updateVisual(context, svgVisual)
     return svgVisual
   }
+
   /**
    * Updates the visual for the background.
    * @param context The context that describes where the visual will be used

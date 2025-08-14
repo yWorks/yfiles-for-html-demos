@@ -127,7 +127,7 @@ async function run(): Promise<void> {
     movableSelectedItems: GraphItemTypes.NONE
   })
 
-  applicationState = new ApplicationState(graphEditorInputMode, true)
+  applicationState = new ApplicationState(graphEditorInputMode, graph, true)
 
   // and enable the undo feature.
   graph.undoEngineEnabled = true
@@ -175,10 +175,10 @@ function createSampleGraph(graph: IGraph): void {
     80,
     400,
     140,
-    50,
+    70,
     'demo-palette-510',
     'gold',
-    'Keep Aspect ratio\ndepending on state'
+    'Keep aspect ratio\ndepending on state:\n keep'
   )
 
   // clear undo after initial graph loading
@@ -212,11 +212,7 @@ function createNode(
     tag: tag
   })
 
-  graph.addLabel({
-    owner: node,
-    text: labelText,
-    style: createDemoNodeLabelStyle(colorSet)
-  })
+  graph.addLabel({ owner: node, text: labelText, style: createDemoNodeLabelStyle(colorSet) })
 }
 
 run().then(finishLoading)

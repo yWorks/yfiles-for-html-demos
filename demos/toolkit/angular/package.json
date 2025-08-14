@@ -10,29 +10,23 @@
     "build": "ng build --base-href ./"
   },
   "dependencies": {
-    "@angular/common": "~18.2.8",
-    "@angular/compiler": "~18.2.8",
-    "@angular/core": "~18.2.8",
-    "@angular/forms": "~18.2.8",
-    "@angular/platform-browser": "~18.2.8",
-    "@angular/platform-browser-dynamic": "~18.2.8",
+    "@angular/common": "~20.1.4",
+    "@angular/compiler": "~20.1.4",
+    "@angular/core": "~20.1.4",
+    "@angular/forms": "~20.1.4",
+    "@angular/platform-browser": "~20.1.4",
     "@yfiles/demo-resources": "../../resources",
     "rxjs": "~7.8.1",
     "tslib": "^2.8.0",
-    "zone.js": "~0.14.10",
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.2+dev.tgz"
+    "zone.js": "~0.15.1",
+    "@yfiles/yfiles": "../../../lib/yfiles-30.0.3+dev.tgz"
   },
   "devDependencies": {
-    "@angular-builders/custom-webpack": "~18.0.0",
-    "@angular-devkit/build-angular": "~18.2.9",
-    "@angular/cli": "~18.2.9",
-    "@angular/compiler-cli": "~18.2.8",
-    "@angular/language-service": "~18.2.8",
-    "@babel/core": "^7.25.9",
-    "@babel/preset-env": "^7.25.9",
-    "@babel/preset-typescript": "^7.25.9",
+    "@angular-builders/custom-webpack": "^20.0.0",
+    "@angular/build": "^20.1.4",
+    "@angular/cli": "~20.1.4",
+    "@angular/compiler-cli": "~20.1.4",
     "@yworks/optimizer": "^1.8.4",
-    "fs-extra": "^11.2.0",
-    "typescript": "~5.5.4"
+    "typescript": "~5.8.3"
   }
 }

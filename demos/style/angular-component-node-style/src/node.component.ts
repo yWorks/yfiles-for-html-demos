@@ -30,13 +30,12 @@ import { Component, Input } from '@angular/core'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 import { MatCardModule } from '@angular/material/card'
 import { MatButtonModule } from '@angular/material/button'
-import { NgIf } from '@angular/common'
 import { MatIconModule } from '@angular/material/icon'
 
 @Component({
-    imports: [MatSlideToggleModule, MatCardModule, MatButtonModule, NgIf, MatIconModule],
-    templateUrl: './node.component.html',
-    styleUrls: ['./node.component.css']
+  imports: [MatSlideToggleModule, MatCardModule, MatButtonModule, MatIconModule],
+  templateUrl: './node.component.html',
+  styleUrls: ['./node.component.css']
 })
 export class NodeComponent {
   @Input() zoom!: number

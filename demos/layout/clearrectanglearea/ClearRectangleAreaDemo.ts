@@ -211,9 +211,7 @@ function addClearRectInputModes(inputMode: MultiplexingInputMode): void {
   rectangleHandles.minimumSize = new Size(10, 10)
 
   // create a mode that deals with the handles
-  const handleInputMode = new HandleInputMode({
-    priority: 1
-  })
+  const handleInputMode = new HandleInputMode({ priority: 1 })
 
   // add it to the graph editor mode
   inputMode.add(handleInputMode)

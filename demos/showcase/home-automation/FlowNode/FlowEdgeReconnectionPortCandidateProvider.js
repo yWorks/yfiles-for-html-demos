@@ -37,20 +37,24 @@ import {
   PortCandidate,
   PortCandidateValidity
 } from '@yfiles/yfiles'
+
 export class FlowEdgeReconnectionPortCandidateProvider extends BaseClass(
   IEdgeReconnectionPortCandidateProvider
 ) {
   edge
+
   constructor(edge) {
     super()
     this.edge = edge
   }
+
   getSourcePortCandidates({ graph }) {
     const { edge } = this
     const candidates = new List()
     if (!graph) {
       return candidates
     }
+
     graph.ports
       // Exclude right-side port on the edge's source node:
       .filter((port) => port.owner !== edge.targetNode)
@@ -71,14 +75,17 @@ export class FlowEdgeReconnectionPortCandidateProvider extends BaseClass(
         portCandidate.validity = PortCandidateValidity.VALID
         candidates.add(portCandidate)
       })
+
     return candidates
   }
+
   getTargetPortCandidates({ graph }) {
     const { edge } = this
     const candidates = new List()
     if (!graph) {
       return candidates
     }
+
     graph.ports
       // Exclude left-side port on the edge's source node:
       .filter((port) => port.owner !== edge.sourceNode)
@@ -99,6 +106,7 @@ export class FlowEdgeReconnectionPortCandidateProvider extends BaseClass(
         portCandidate.validity = PortCandidateValidity.VALID
         candidates.add(portCandidate)
       })
+
     return candidates
   }
 }

@@ -39,6 +39,7 @@ import {
   IVisualCreator,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * A simple edge style that draws a line from source to target node following the
  * given bends into the HTML Canvas.
@@ -56,6 +57,7 @@ export class CanvasEdgeStyle extends EdgeStyleBase {
     this.color = color
     this.thickness = thickness
   }
+
   /**
    * Creates the visual representation for the given edge.
    * @param context The render context.
@@ -72,6 +74,7 @@ export class CanvasEdgeStyle extends EdgeStyleBase {
       this.thickness
     )
   }
+
   /**
    * Updates the visual representation for the given edge.
    * @param context The render context.
@@ -85,6 +88,7 @@ export class CanvasEdgeStyle extends EdgeStyleBase {
     return oldVisual
   }
 }
+
 /**
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
@@ -94,6 +98,7 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
   targetPortLocation
   thickness
   color
+
   /**
    * Creates an edge render visual instance for an edge.
    */
@@ -109,6 +114,7 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
     this.thickness = thickness
     this.color = `rgba(${color.r},${color.g},${color.b},${color.a})`
   }
+
   /**
    * Paints onto the context using HTML Canvas operations.
    * Implementations should not destroy the context's state, but should make sure to restore the
@@ -120,6 +126,7 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
     // simply draw a black line from the source port location via all bends to the target port location
     htmlCanvasContext.strokeStyle = this.color
     htmlCanvasContext.lineWidth = this.thickness
+
     htmlCanvasContext.beginPath()
     let location = this.sourcePortLocation
     htmlCanvasContext.moveTo(location.x, location.y)

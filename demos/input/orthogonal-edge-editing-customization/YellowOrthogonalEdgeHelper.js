@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { IShapeGeometry, OrthogonalEdgeHelper, Point } from '@yfiles/yfiles'
+
 /**
  * Creates one new bend if the first or last segment of an edge is moved.
  * If the old first (last) segment was a horizontal segment, the new first (last) segment will be
@@ -38,9 +39,11 @@ export class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
    * Stores if a new bend has been added when moving a segment of an orthogonal edge.
    */
   bendAddedState = BendAddedState.None
+
   constructor(edge) {
     super(edge)
   }
+
   /**
    * Prevents edge ports from being moved.
    * As a side effect, this method adds a new bend at the source or target end of the edge.
@@ -63,21 +66,27 @@ export class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
         BendAddedState.AtTarget
       )
     }
+
     return false
   }
+
   cleanUpEdge(inputModeContext, graph) {
     this.cleanUpEdgeImpl(graph)
     super.cleanUpEdge(inputModeContext, graph)
   }
+
   cleanUpEdgeImpl(graph) {
     const bendAddedState = this.bendAddedState
     this.bendAddedState = BendAddedState.None
+
     if (bendAddedState == BendAddedState.None || this.edge.bends.size < 1) {
       return
     }
+
     cleanUpEdgeEnd(graph, this.edge, bendAddedState)
   }
 }
+
 /**
  * Removes unnecessary bends inside the source or target node of the given edge, if
  * {@link #shouldMoveEndImplicitly} added a new bend at that end of the edge in the first place.
@@ -87,8 +96,10 @@ export class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
  */
 function cleanUpEdgeEnd(graph, edge, bendAddedState) {
   const atSource = bendAddedState == BendAddedState.AtSource
+
   const port = atSource ? edge.sourcePort : edge.targetPort
   const geometry = port.owner.lookup(IShapeGeometry)
+
   // remove all bend inside the respective node
   const bends = edge.bends
   while (bends.size > 0) {
@@ -99,15 +110,18 @@ function cleanUpEdgeEnd(graph, edge, bendAddedState) {
       break
     }
   }
+
   const portLocation = port.location.toPoint()
   const portX = portLocation.x
   const portY = portLocation.y
+
   const otherLocation =
     bends.size > 0
       ? (atSource ? bends.first() : bends.last()).location.toPoint()
       : (atSource ? edge.targetPort : edge.sourcePort).location
   const otherX = otherLocation.x
   const otherY = otherLocation.y
+
   // ensure the first (last) two segments are orthogonal segments
   if (portX !== otherX && portY !== otherY) {
     const candidate = new Point(otherX, portY)
@@ -118,6 +132,7 @@ function cleanUpEdgeEnd(graph, edge, bendAddedState) {
     }
   }
 }
+
 /**
  * Important: Do not change the numeric values of {@link #AtSource} and {@link #AtTarget}.
  * Changing the numeric values will break the `addBend` logic in

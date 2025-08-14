@@ -45,6 +45,7 @@ import {
   StraightLineEdgeRouter,
   SubgraphLayoutStage
 } from '@yfiles/yfiles'
+
 import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
@@ -61,6 +62,7 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
+
 export var RoutingStyle
 ;(function (RoutingStyle) {
   RoutingStyle[(RoutingStyle['ORTHOGONAL'] = 0)] = 'ORTHOGONAL'
@@ -68,6 +70,7 @@ export var RoutingStyle
   RoutingStyle[(RoutingStyle['STRAIGHT_LINE'] = 2)] = 'STRAIGHT_LINE'
   RoutingStyle[(RoutingStyle['BUNDLED'] = 3)] = 'BUNDLED'
 })(RoutingStyle || (RoutingStyle = {}))
+
 export var RadialTreeRootNodePolicy
 ;(function (RadialTreeRootNodePolicy) {
   RadialTreeRootNodePolicy[(RadialTreeRootNodePolicy['DIRECTED_ROOT'] = 0)] = 'DIRECTED_ROOT'
@@ -76,11 +79,13 @@ export var RadialTreeRootNodePolicy
     'WEIGHTED_CENTER_ROOT'
   RadialTreeRootNodePolicy[(RadialTreeRootNodePolicy['SELECTED_ROOT'] = 3)] = 'SELECTED_ROOT'
 })(RadialTreeRootNodePolicy || (RadialTreeRootNodePolicy = {}))
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     GeneralGroup: [
       new LabelAttribute('General'),
@@ -258,7 +263,7 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
       ),
       new OptionGroupAttribute('EdgePropertiesGroup', 10),
       new EnumValuesAttribute([
-        ['None', EdgeLabelPlacement.IGNORE],
+        ['Ignore', EdgeLabelPlacement.IGNORE],
         ['Integrated', EdgeLabelPlacement.INTEGRATED],
         ['Generic', EdgeLabelPlacement.GENERIC]
       ]),
@@ -328,6 +333,7 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
       new TypeAttribute(Number)
     ]
   },
+
   /**
    * Setup default values for various configuration parameters.
    */
@@ -335,6 +341,7 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
     // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
     const layout = new RadialTreeLayout()
+
     this.rootSelectionPolicyItem = RadialTreeRootNodePolicy.DIRECTED_ROOT
     this.routingStyleForNonTreeEdgesItem = RoutingStyle.ORTHOGONAL
     this.actOnSelectionOnlyItem = false
@@ -346,6 +353,7 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
     this.childOrderingPolicyItem = layout.childOrderingPolicy
     this.placeChildrenInterleavedItem = false
     this.straightenChainsItem = layout.chainStraighteningMode
+
     this.nodeLabelingStyleItem = layout.nodeLabelPlacement
     this.edgeLabelingItem = layout.edgeLabelPlacement
     this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
@@ -354,6 +362,7 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
     this.labelPlacementDistanceItem = 10.0
     this.title = 'Radial Tree Layout'
   },
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
@@ -362,6 +371,7 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
    */
   createConfiguredLayout: function (graphComponent) {
     const layout = new RadialTreeLayout()
+
     layout.componentLayout.style = ComponentArrangementStyle.MULTI_ROWS
     layout.rootSelectionPolicy = this.getRootNodePolicy(this.rootSelectionPolicyItem)
     layout.preferredChildSectorAngle = this.preferredChildSectorAngle
@@ -372,9 +382,11 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
     layout.childOrderingPolicy = this.childOrderingPolicyItem
     layout.chainStraighteningMode = this.straightenChainsItem
     layout.nodeLabelPlacement = this.nodeLabelingStyleItem
+
     // configures tree reduction state and non-tree edge routing.
     const subgraphLayout = layout.layoutStages.get(SubgraphLayoutStage)
     subgraphLayout.enabled = this.actOnSelectionOnlyItem
+
     const treeReductionStage = layout.treeReductionStage
     if (this.routingStyleForNonTreeEdgesItem === RoutingStyle.ORGANIC) {
       treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
@@ -389,6 +401,7 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
         bundled: this.routingStyleForNonTreeEdgesItem === RoutingStyle.BUNDLED
       })
     }
+
     layout.edgeLabelPlacement = this.edgeLabelingItem
     if (this.edgeLabelingItem === EdgeLabelPlacement.GENERIC && this.reduceAmbiguityItem) {
       const labeling = layout.layoutStages.get(GenericLabeling)
@@ -397,14 +410,17 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
     if (this.edgeLabelingItem === EdgeLabelPlacement.INTEGRATED) {
       treeReductionStage.nonTreeEdgeLabeling = new GenericLabeling()
     }
+
     return layout
   },
+
   /**
    * Creates and configures the layout data.
    * @returns The configured layout data.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
     const radialTreeLayoutData = new RadialTreeLayoutData()
+
     if (this.rootSelectionPolicyItem === RadialTreeRootNodePolicy.SELECTED_ROOT) {
       const selection = graphComponent.selection.nodes
       if (selection.size > 0) {
@@ -414,6 +430,7 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
     radialTreeLayoutData.interleavedNodes = this.placeChildrenInterleavedItem
       ? () => true
       : () => false
+
     let resultData = radialTreeLayoutData.combineWith(
       this.createLabelingLayoutData(
         graphComponent.graph,
@@ -428,6 +445,7 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
     }
     return resultData
   },
+
   getRootNodePolicy(policy) {
     switch (policy) {
       case RadialTreeRootNodePolicy.CENTER_ROOT:
@@ -440,16 +458,22 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
         return RootSelectionPolicy.DIRECTED_ROOT
     }
   },
+
   /** @type {OptionGroup} */
   GeneralGroup: null,
+
   /** @type {OptionGroup} */
   LabelingGroup: null,
+
   /** @type {OptionGroup} */
   NodePropertiesGroup: null,
+
   /** @type {OptionGroup} */
   EdgePropertiesGroup: null,
+
   /** @type {OptionGroup} */
   PreferredPlacementGroup: null,
+
   /** @type {string} */
   descriptionText: {
     get: function () {
@@ -460,42 +484,58 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
       )
     }
   },
+
   /** @type {RootSelectionPolicy} */
   rootSelectionPolicyItem: null,
+
   /** @type {RoutingStyle} */
   routingStyleForNonTreeEdgesItem: null,
+
   /** @type {boolean} */
   actOnSelectionOnlyItem: false,
+
   /** @type {number} */
   edgeBundlingStrengthItem: 1.0,
+
   /** @type {boolean} */
   shouldDisableEdgeBundlingStrengthItem: {
     get: function () {
       return this.routingStyleForNonTreeEdgesItem !== RoutingStyle.BUNDLED
     }
   },
+
   /** @type {number} */
   preferredChildSectorAngle: 0,
+
   /** @type {number} */
   preferredRootSectorAngle: 0,
+
   /** @type {number} */
   minimumEdgeLengthItem: 0,
+
   /** @type {number} */
   compactnessFactorItem: 0,
+
   /** @type {boolean} */
   allowOverlapsItem: false,
+
   /** @type {ChildOrderingPolicy} */
   childOrderingPolicyItem: null,
+
   /** @type {boolean} */
   placeChildrenInterleavedItem: false,
+
   /** @type {boolean} */
   straightenChainsItem: false,
+
   /** @type {RadialNodeLabelPlacement} */
   nodeLabelingStyleItem: null,
+
   /**
    * @type {EdgeLabelPlacement}
    */
   $edgeLabelingItem: null,
+
   /** @type {EdgeLabelPlacement} */
   edgeLabelingItem: {
     get: function () {
@@ -510,16 +550,20 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
       }
     }
   },
+
   /** @type {boolean} */
   reduceAmbiguityItem: false,
+
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
     get: function () {
       return this.edgeLabelingItem !== EdgeLabelPlacement.GENERIC
     }
   },
+
   /** @type {LabelPlacementOrientation} */
   labelPlacementOrientationItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
     get: function () {
@@ -529,8 +573,10 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
       )
     }
   },
+
   /** @type {LabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
     get: function () {
@@ -540,16 +586,20 @@ export const RadialTreeLayoutConfig = Class('RadialTreeLayoutConfig', {
       )
     }
   },
+
   /** @type {LabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
     get: function () {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
   },
+
   /** @type {number} */
   labelPlacementDistanceItem: 0,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
     get: function () {

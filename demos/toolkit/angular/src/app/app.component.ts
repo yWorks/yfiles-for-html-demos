@@ -30,8 +30,7 @@ import {
   AfterViewInit,
   ApplicationRef,
   Component,
-  ComponentFactoryResolver,
-  Injector,
+  EnvironmentInjector,
   NgZone
 } from '@angular/core'
 import {
@@ -48,10 +47,13 @@ import {
 } from '@yfiles/yfiles'
 import { EDGE_DATA, NODE_DATA } from './data'
 import { Person } from './person'
-import { NodeComponentStyle } from './NodeComponentStyle'
 import { GraphComponentService } from './services/graph-component.service'
 import { GraphSearch } from '../utils/GraphSearch'
-import { zoomDetail, zoomIntermediate } from './node.component'
+import { FormsModule } from '@angular/forms'
+import { GraphOverviewComponentComponent } from './graph-overview-component/graph-overview-component.component'
+import { GraphComponentComponent } from './graph-component/graph-component.component'
+import { PropertiesViewComponent } from './properties-view/properties-view.component'
+import { NodeComponentStyle } from './styles/NodeComponentStyle'
 
 const layoutWorker = new Worker(new URL('./layout.worker.ts', import.meta.url), { type: 'module' })
 
@@ -69,7 +71,13 @@ function downloadFile(content: string, filename: string, type: string): void {
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  imports: [
+    FormsModule,
+    GraphComponentComponent,
+    GraphOverviewComponentComponent,
+    PropertiesViewComponent
+  ]
 })
 export class AppComponent implements AfterViewInit {
   title = 'app'
@@ -80,10 +88,9 @@ export class AppComponent implements AfterViewInit {
   graphSearch!: GraphSearch
 
   constructor(
-    private _injector: Injector,
-    private _resolver: ComponentFactoryResolver,
     private _appRef: ApplicationRef,
     private _zone: NgZone,
+    private _environmentInjector: EnvironmentInjector,
     private _graphComponentService: GraphComponentService
   ) {}
 
@@ -95,36 +102,20 @@ export class AppComponent implements AfterViewInit {
 
     // hook up the properties view panel with the current item of the graph
     this.graphComponent.addEventListener('current-item-changed', () => {
-      this._zone.run(() => {
-        this.currentPerson = this.graphComponent.currentItem!.tag
-      })
+      this.currentPerson = this.graphComponent.currentItem!.tag
     })
 
     // create a sample graph from data
     createSampleGraph(this.graphComponent.graph)
     this.graphComponent.fitGraphBounds()
 
-    // Since the node component style runs "outside of angular", we have to
-    // trigger change detection manually if the level of detail needs to change.
-    let oldZoom = this.graphComponent.zoom
-    this.graphComponent.addEventListener('zoom-changed', () => {
-      const newZoom = this.graphComponent.zoom
-      if (
-        (newZoom > zoomDetail && oldZoom <= zoomDetail) ||
-        (newZoom <= zoomDetail && oldZoom > zoomDetail) ||
-        (newZoom > zoomIntermediate && oldZoom <= zoomIntermediate) ||
-        (newZoom <= zoomIntermediate && oldZoom > zoomIntermediate)
-      ) {
-        this._appRef.tick()
-      }
-      oldZoom = newZoom
-    })
-
     // Run the layout animation outside angular zone, so no change detection
     // is initiated for listeners registered during the layout process.
+    // See https://docs.yworks.com/yfileshtml/#/kb/article/848/Improving_performance_of_large_Angular_applications
     this._zone.runOutsideAngular(() => {
-      // arrange the graph elements in a tree-like fashion
-      runLayout(this.graphComponent)
+      // Arrange the graph elements in a tree-like fashion
+      // See https://docs.yworks.com/yfileshtml/#/kb/article/848/Improving_performance_of_large_Angular_applications
+      void runLayout(this.graphComponent)
     })
 
     // register the graph search
@@ -134,9 +125,8 @@ export class AppComponent implements AfterViewInit {
   private setDefaultStyles(graph: IGraph) {
     graph.nodeDefaults.size = new Size(285, 100)
     graph.nodeDefaults.style = new NodeComponentStyle(
-      this._injector,
-      this._resolver,
       this._appRef,
+      this._environmentInjector,
       this._zone
     )
 
@@ -166,9 +156,7 @@ export class AppComponent implements AfterViewInit {
    * Exports the graph component to an SVG file
    */
   async exportSvg() {
-    const exportComponent = new GraphComponent({
-      graph: this.graphComponent.graph
-    })
+    const exportComponent = new GraphComponent({ graph: this.graphComponent.graph })
     exportComponent.updateContentBounds()
     const exporter = new SvgExport({
       worldBounds: exportComponent.contentBounds,
@@ -183,8 +171,8 @@ export class AppComponent implements AfterViewInit {
       async () => this._appRef.tick()
     )
     // Dispose of the component and remove its references to the graph
-    exportComponent.cleanUp()
     exportComponent.graph = new Graph()
+    exportComponent.cleanUp()
 
     // download the result
     downloadFile(SvgExport.exportSvgString(svg), 'graph.svg', 'image/svg+xml')
@@ -199,9 +187,7 @@ function createSampleGraph(graph: IGraph): void {
   const nodeMap: { [name: string]: INode } = {}
 
   NODE_DATA.forEach((nodeData) => {
-    nodeMap[nodeData.name] = graph.createNode({
-      tag: new Person(nodeData)
-    })
+    nodeMap[nodeData.name] = graph.createNode({ tag: new Person(nodeData) })
   })
 
   EDGE_DATA.forEach(({ from, to }) => {

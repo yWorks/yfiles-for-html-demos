@@ -40,6 +40,7 @@ import {
   RankAssignment,
   ShortestPath
 } from '@yfiles/yfiles'
+
 /**
  * Calculates the critical path in this graph network. We run first the rank assignment algorithm and we
  * assign to each node a number that represents its rank and to each edge a number that represents its slack.
@@ -54,12 +55,15 @@ export function calculateCriticalPathEdges(graphComponent) {
   const taskDuration = (node) => node.tag.duration | 0
   // the duration when moving from the source's task to the target's task
   const transitionDuration = (edge) => edge.tag.transitionDuration | 0
+
   // runs the rank assignment algorithm to calculate the ranks and the slacks
   const results = calculateRanksAndSlacks(graph, taskDuration, transitionDuration)
+
   // Finds the nodes with the lowest/highest ranking...
   // In this graph, it is not really necessary since START and FINISH nodes will be the marked as
   // lowest/highest but for the general case, we have to find them based on the result of the algorithm
   const { lowestNode, highestNode } = findHighestLowestNodes(graph)
+
   // Calculates the shortest path between these two nodes on the graph when the edges
   // are weighted by their slack number
   const criticalPathEdges = new ShortestPath({
@@ -68,6 +72,7 @@ export function calculateCriticalPathEdges(graphComponent) {
     costs: results.slack,
     directed: true
   }).run(graph).edges
+
   // adds the result information to the edges' tags
   const criticalEdgeSet = new Set(criticalPathEdges)
   graph.edges.forEach((edge) => {
@@ -77,6 +82,7 @@ export function calculateCriticalPathEdges(graphComponent) {
     }
   })
 }
+
 /**
  * Returns the nodes with the lowest and highest ranking
  * @param graph The input graph
@@ -90,6 +96,7 @@ export function findHighestLowestNodes(graph) {
   highestNode.tag.highestNode = true
   return { lowestNode, highestNode }
 }
+
 /**
  * Runs the rank assignment algorithm to calculate a rank for each node and a slack for each edge.
  * @param graph The input graph
@@ -102,20 +109,24 @@ function calculateRanksAndSlacks(graph, taskDuration, transitionDuration) {
   const minDistance = (edge) => {
     return transitionDuration(edge) + taskDuration(edge.sourceNode)
   }
+
   // run the rank assignment algorithm
   const rankAssignmentResult = new RankAssignment({
     minimumEdgeLengths: (edge) => transitionDuration(edge) + taskDuration(edge.sourceNode)
   }).run(graph)
+
   // store the ranking of each node at its tag
   const rankIds = rankAssignmentResult.nodeRankIds
   graph.nodes.forEach((node) => {
     node.tag.layerId = rankIds.get(node) || 0
   })
+
   return {
     slack: (edge) =>
       (rankIds.get(edge.targetNode) || 0) - (rankIds.get(edge.sourceNode) || 0) - minDistance(edge)
   }
 }
+
 /**
  * Configures the HierarchicalLayout algorithm. Nodes will be placed in layers based on their ranks,
  * while edges that belong to the critical path will gain priority so that the corresponding nodes
@@ -128,6 +139,7 @@ export async function runLayout(graphComponent) {
     fromScratchLayeringStrategy: 'user-defined',
     layoutOrientation: 'left-to-right'
   })
+
   const layoutData = new HierarchicalLayoutData({
     // the information about the layering is stored in the node tags
     givenLayersIndices: (node) => node.tag.layerId,
@@ -141,6 +153,7 @@ export async function runLayout(graphComponent) {
         distanceToEdge: 5
       })
   })
+
   // run the layout
   await graphComponent.applyLayoutAnimated({
     layout,

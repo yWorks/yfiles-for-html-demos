@@ -38,9 +38,7 @@ import {
  * Configures the default style for group nodes.
  */
 export function configureGroupNodeStyles(graph: IGraph): void {
-  graph.groupNodeDefaults.style = new GroupNodeStyle({
-    tabFill: '#0b7189'
-  })
+  graph.groupNodeDefaults.style = new GroupNodeStyle({ tabFill: '#0b7189' })
 
   // Set a label style with right-aligned text
   graph.groupNodeDefaults.labels.style = new LabelStyle({

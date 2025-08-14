@@ -42,28 +42,40 @@ import { ColorDropInputMode } from './ColorDropInputMode'
 import SampleData from './resources/SampleData'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 const PALETTE_SIZE = 15
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('#graphComponent')
   initializeInputModes(graphComponent)
+
   initializeStyles(graphComponent.graph)
+
   initializePalette()
+
   createSampleGraph(graphComponent.graph)
+
   // center the sample graph in the visible area
   graphComponent.fitGraphBounds()
+
   // enable undo and redo
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Adds support for drop operations and enables interactive editing for the given graph component.
  */
 function initializeInputModes(graphComponent) {
   const graphEditorInputMode = new GraphEditorInputMode()
+
   // add the input mode to drop colors
   graphEditorInputMode.add(new ColorDropInputMode())
+
   graphComponent.inputMode = graphEditorInputMode
 }
+
 /**
  * Specifies the default styles for nodes and edges.
  */
@@ -75,21 +87,17 @@ function initializeStyles(graph) {
     fill: 'darkgray',
     stroke: '#ffffff00'
   })
+
   graph.edgeDefaults.shareStyleInstance = false
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '5px solid darkgray'
-  })
+  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '5px solid darkgray' })
 }
+
 /**
  * Creates a sample graph for this demo.
  */
 function createSampleGraph(graph) {
   const builder = new GraphBuilder(graph)
-  builder.createNodesSource({
-    data: SampleData.nodes,
-    id: 'id',
-    layout: 'layout'
-  })
+  builder.createNodesSource({ data: SampleData.nodes, id: 'id', layout: 'layout' })
   builder.createEdgesSource({
     data: SampleData.edges,
     id: 'id',
@@ -98,6 +106,7 @@ function createSampleGraph(graph) {
   })
   builder.buildGraph()
 }
+
 /**
  * Populates the palette with some colors, which can be dragged from the palette and dropped onto
  * a node or edge.
@@ -108,6 +117,7 @@ function initializePalette() {
     .map((color) => createPaletteEntry(color))
     .forEach((entry) => palette.appendChild(entry))
 }
+
 /**
  * Creates an array with the specified count of different colors.
  */
@@ -120,6 +130,7 @@ function generateColors(count, saturation, lightness) {
   }
   return colors
 }
+
 /**
  * Creates HTML element that visualizes the given color in the drag and drop panel.
  */
@@ -128,16 +139,20 @@ function createPaletteEntry(color) {
   const paletteImage = document.createElement('div')
   paletteImage.className = 'palette-image'
   paletteImage.style.backgroundColor = color
+
   // create a div element that holds the image of the color
   const paletteEntry = document.createElement('div')
   paletteEntry.className = 'palette-entry'
   paletteEntry.draggable = true
   paletteEntry.appendChild(paletteImage)
+
   const startDrag = () => {
     const dragPreview = document.createElement('div')
     dragPreview.appendChild(paletteImage.cloneNode(true))
+
     ColorDropInputMode.startDrag(paletteEntry, color, DragDropEffects.ALL, true, dragPreview)
   }
+
   // start the drop input mode when a drag from the palette begins
   paletteEntry.addEventListener(
     'dragstart',
@@ -147,6 +162,8 @@ function createPaletteEntry(color) {
     },
     false
   )
+
   return paletteEntry
 }
+
 run().then(finishLoading)

@@ -42,10 +42,7 @@ import {
   Visual
 } from '@yfiles/yfiles'
 
-export type CellId = {
-  rowIndex: number
-  columnIndex: number
-}
+export type CellId = { rowIndex: number; columnIndex: number }
 
 /**
  * Visualizes the layout grid that has been used in the last layout.

@@ -43,10 +43,7 @@ export async function loadSampleGraph(graphComponent: GraphComponent): Promise<v
     data: sampleData.nodes,
     id: 'id',
     parentId: 'parentId',
-    styleBindings: {
-      fill: (data) => data.fill,
-      stroke: (dataItem) => `1.5px ${dataItem.stroke}`
-    }
+    styleBindings: { fill: (data) => data.fill, stroke: (dataItem) => `1.5px ${dataItem.stroke}` }
   })
 
   // configure group node creation

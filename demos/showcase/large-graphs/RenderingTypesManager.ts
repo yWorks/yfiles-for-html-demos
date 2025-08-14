@@ -141,7 +141,11 @@ export class RenderingTypesManager {
         this.fireRenderingTypeChangedEvent()
       }
     }
-    this.zoomChangedListener()
+
+    // add time_out to make sure that everything will be correctly loaded also in slower devices (e.g., android)
+    setTimeout(() => {
+      this.zoomChangedListener()
+    }, 0)
   }
 
   get currentRenderingType(): RenderingType {

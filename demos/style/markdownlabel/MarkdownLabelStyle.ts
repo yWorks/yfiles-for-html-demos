@@ -132,10 +132,7 @@ export class MarkdownLabelStyle extends LabelStyleBase {
   private getMarkupText(label: ILabel): string {
     let cacheEntry = this.markupCache.get(label)
     if (!cacheEntry || cacheEntry.markdown !== label.text) {
-      cacheEntry = {
-        markdown: label.text,
-        markup: MarkdownLabelStyle.getMarkupText(label.text)
-      }
+      cacheEntry = { markdown: label.text, markup: MarkdownLabelStyle.getMarkupText(label.text) }
       this.markupCache.set(label, cacheEntry)
     }
     return cacheEntry.markup

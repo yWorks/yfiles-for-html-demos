@@ -28,6 +28,7 @@
  ***************************************************************************/
 const themeDarkIcon = new URL('../icons/theme-dark.svg', import.meta.url)
 const themeLightIcon = new URL('../icons/theme-light.svg', import.meta.url)
+
 const template = document.createElement('template')
 template.innerHTML = `
 <style>
@@ -55,16 +56,21 @@ template.innerHTML = `
   title='Switch theme'
 ></button>
 `
+
 class ThemeButtonComponent extends HTMLElement {
   themeButton = null
   themeHandler
+
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
+
     if (this.shadowRoot) {
       this.shadowRoot.appendChild(template.content.cloneNode(true))
+
       this.themeButton = this.shadowRoot.querySelector('.theme-button')
       this.themeHandler = () => this.switchTheme()
+
       this.themeButton?.classList.add(
         document.body.classList.contains('theme-dark')
           ? 'theme-button--dark'
@@ -72,15 +78,19 @@ class ThemeButtonComponent extends HTMLElement {
       )
     }
   }
+
   connectedCallback() {
     this.themeButton?.addEventListener('click', this.themeHandler)
   }
+
   disconnectedCallback() {
     this.themeButton?.removeEventListener('click', this.themeHandler)
   }
+
   switchTheme() {
     this.setTheme(document.body.classList.contains('theme-light'))
   }
+
   setTheme(light) {
     if (light) {
       localStorage.setItem('yfiles-readme-theme', 'theme-dark')
@@ -97,6 +107,8 @@ class ThemeButtonComponent extends HTMLElement {
     }
   }
 }
+
 customElements.define('theme-button', ThemeButtonComponent)
+
 // Empty export to force TypeScript to threat this as a module
 export {}

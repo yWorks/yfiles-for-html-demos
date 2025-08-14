@@ -1049,9 +1049,7 @@ class ParticipantParameter extends ChoreographyParameter {
   static get INTERIOR_LABEL_MODEL(): InteriorNodeLabelModel {
     return (
       ParticipantParameter._interiorNodeLabelModel ||
-      (ParticipantParameter._interiorNodeLabelModel = new InteriorNodeLabelModel({
-        padding: 3
-      }))
+      (ParticipantParameter._interiorNodeLabelModel = new InteriorNodeLabelModel({ padding: 3 }))
     )
   }
 
@@ -1437,10 +1435,7 @@ export class BpmnNodeStyle extends NodeStyleBase {
     const transform = new Matrix()
     transform.translate(node.layout.topLeft)
     container.transform = transform
-    ;(container as any)['render-data-cache'] = {
-      modCount: this.modCount,
-      bounds: bounds.toRect()
-    }
+    ;(container as any)['render-data-cache'] = { modCount: this.modCount, bounds: bounds.toRect() }
 
     return container
   }
@@ -1642,10 +1637,7 @@ class LineUpIcon extends Icon {
     const transform = new Matrix()
     transform.translate(new Point(bound.centerX - this.combinedSize.width * 0.5, bound.y))
     container.transform = transform
-    ;(container as any)['render-data-cache'] = {
-      location: bound.topLeft,
-      size: bound.size
-    }
+    ;(container as any)['render-data-cache'] = { location: bound.topLeft, size: bound.size }
 
     return container
   }
@@ -1663,10 +1655,7 @@ class LineUpIcon extends Icon {
       const transform = new Matrix()
       transform.translate(new Point(bound.centerX - this.combinedSize.width * 0.5, bound.y))
       container.transform = transform
-      ;(container as any)['render-data-cache'] = {
-        location: bound.topLeft,
-        size: bound.size
-      }
+      ;(container as any)['render-data-cache'] = { location: bound.topLeft, size: bound.size }
     }
     return container
   }
@@ -1792,10 +1781,7 @@ class CombinedIcon extends Icon {
     const transform = new Matrix()
     transform.translate(bound.topLeft)
     container.transform = transform
-    ;(container as any)['render-data-cache'] = {
-      location: bound.topLeft,
-      size: bound.size
-    }
+    ;(container as any)['render-data-cache'] = { location: bound.topLeft, size: bound.size }
 
     return container
   }
@@ -1828,10 +1814,7 @@ class CombinedIcon extends Icon {
     const transform = new Matrix()
     transform.translate(bound.topLeft)
     container.transform = transform
-    ;(container as any)['render-data-cache'] = {
-      location: bound.topLeft,
-      size: bound.size
-    }
+    ;(container as any)['render-data-cache'] = { location: bound.topLeft, size: bound.size }
 
     return container
   }
@@ -3067,10 +3050,7 @@ class IconFactory {
         stroke = new Stroke(outline || Color.GREEN)
         break
       case EventCharacteristic.SUB_PROCESS_NON_INTERRUPTING:
-        stroke = new Stroke({
-          fill: outline || Color.GREEN,
-          dashStyle: DashStyle.DASH
-        })
+        stroke = new Stroke({ fill: outline || Color.GREEN, dashStyle: DashStyle.DASH })
         break
       case EventCharacteristic.CATCHING:
       case EventCharacteristic.BOUNDARY_INTERRUPTING:
@@ -3078,10 +3058,7 @@ class IconFactory {
         stroke = new Stroke(outline || Color.GOLDENROD)
         break
       case EventCharacteristic.BOUNDARY_NON_INTERRUPTING:
-        stroke = new Stroke({
-          fill: outline || Color.GOLDENROD,
-          dashStyle: DashStyle.DASH
-        })
+        stroke = new Stroke({ fill: outline || Color.GOLDENROD, dashStyle: DashStyle.DASH })
         break
       case EventCharacteristic.END:
         stroke = new Stroke(outline || Color.RED, 3)
@@ -5228,9 +5205,7 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
 
   static get DEFAULT_TEXT_PLACEMENT(): ILabelModelParameter {
     if (!ChoreographyMessageLabelStyle._defaultTextPlacement) {
-      const model = new ExteriorNodeLabelModel({
-        margins: 5
-      })
+      const model = new ExteriorNodeLabelModel({ margins: 5 })
       ChoreographyMessageLabelStyle._defaultTextPlacement = model.createParameter('left')
     }
     return ChoreographyMessageLabelStyle._defaultTextPlacement
@@ -5542,12 +5517,7 @@ class RenderData {
 /**
  * Augment the SvgVisual type with the data used to cache the rendering information
  */
-type Cache = {
-  type: number
-  color: Fill | null
-  innerColor: Fill | null
-  path: GeneralPath
-}
+type Cache = { type: number; color: Fill | null; innerColor: Fill | null; path: GeneralPath }
 type BpmnEdgeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 /**
@@ -5695,17 +5665,10 @@ export class BpmnEdgeStyle extends EdgeStyleBase<BpmnEdgeStyleVisual> {
         })
         break
       case BpmnEdgeType.MESSAGE_FLOW:
-        result = new Stroke({
-          fill: fill ?? 'black',
-          dashStyle: DashStyle.DASH
-        })
+        result = new Stroke({ fill: fill ?? 'black', dashStyle: DashStyle.DASH })
         break
       case BpmnEdgeType.CONVERSATION:
-        result = new Stroke({
-          fill: fill ?? 'black',
-          thickness: 3,
-          lineJoin: LineJoin.ROUND
-        })
+        result = new Stroke({ fill: fill ?? 'black', thickness: 3, lineJoin: LineJoin.ROUND })
         break
     }
     result.freeze()
@@ -11946,9 +11909,7 @@ export function registerBpmnTypeInformation(graphmlHandler: GraphMLIOHandler): v
     }
   })
   graphmlHandler.addTypeInformation(ChoreographyMessageLabelStyleExtension, {
-    properties: {
-      textPlacement: { default: null, type: ILabelModelParameter }
-    }
+    properties: { textPlacement: { default: null, type: ILabelModelParameter } }
   })
   graphmlHandler.addTypeInformation(ChoreographyNodeStyle, {
     extension: (item: ChoreographyNodeStyle) => {
@@ -12028,9 +11989,7 @@ export function registerBpmnTypeInformation(graphmlHandler: GraphMLIOHandler): v
     }
   })
   graphmlHandler.addTypeInformation(ParticipantExtension, {
-    properties: {
-      multiInstance: { default: false, type: Boolean }
-    }
+    properties: { multiInstance: { default: false, type: Boolean } }
   })
   graphmlHandler.addTypeInformation(DataObjectNodeStyle, {
     extension: (item: DataObjectNodeStyle) => {
@@ -12240,9 +12199,6 @@ export function registerBpmnTypeInformation(graphmlHandler: GraphMLIOHandler): v
     }
   })
   graphmlHandler.addTypeInformation(ParticipantParameterExtension, {
-    properties: {
-      top: { type: Boolean },
-      index: { type: Number }
-    }
+    properties: { top: { type: Boolean }, index: { type: Number } }
   })
 }

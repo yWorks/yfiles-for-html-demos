@@ -43,10 +43,7 @@ import {
 export function createLayout(): ILayoutAlgorithm {
   return new HierarchicalLayout({
     groupLayeringPolicy: 'ignore-groups',
-    defaultEdgeDescriptor: {
-      minimumFirstSegmentLength: 25,
-      minimumLastSegmentLength: 25
-    }
+    defaultEdgeDescriptor: { minimumFirstSegmentLength: 25, minimumLastSegmentLength: 25 }
   })
 }
 

@@ -26,10 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { basicSetup, EditorView } from 'codemirror'
-import { javascript } from '@codemirror/lang-javascript'
+import { createCodemirrorEditor, EditorView } from '@yfiles/demo-resources/codemirror-editor'
+
 let container
 let sourceDataView
+
 /**
  * Initializes a data view in the element with the given selector.
  * The data view displays JSON data in a CodeMirror editor.
@@ -38,20 +39,22 @@ function initDataView(selector) {
   container = document.querySelector(selector)
   const header = document.createElement('div')
   const dataContainer = document.createElement('div')
+
   container.appendChild(header)
   container.appendChild(dataContainer)
+
   container.setAttribute('class', 'demo-overlay')
   dataContainer.setAttribute('class', 'data-container')
   header.setAttribute('class', 'demo-overlay__header')
+
   header.textContent = 'Source Data'
+
   header.addEventListener('click', () => {
     container.classList.toggle('collapsed')
   })
-  sourceDataView = new EditorView({
-    parent: container,
-    extensions: [basicSetup, javascript(), EditorView.editable.of(false)]
-  })
+  sourceDataView = createCodemirrorEditor('js', container, [EditorView.editable.of(false)])
 }
+
 /**
  * Updates the data view with the given data.
  * @param nodesSource An object or JSON string that contains the nodes data.
@@ -63,6 +66,7 @@ function updateDataView(nodesSource, groupsSource, edgesSource) {
     const nodesData = stringifyData(nodesSource)
     const groupsData = stringifyData(groupsSource)
     const edgesData = stringifyData(edgesSource)
+
     let editorData = `// nodes source:\n${nodesData}`
     if (groupsData) {
       editorData += `\n\n// groups source:\n${groupsData}`
@@ -70,17 +74,16 @@ function updateDataView(nodesSource, groupsSource, edgesSource) {
     if (edgesData) {
       editorData += `\n\n// edges source:\n${edgesData}`
     }
+
     sourceDataView.dispatch({
-      changes: {
-        from: 0,
-        to: sourceDataView.state.doc.length,
-        insert: editorData
-      }
+      changes: { from: 0, to: sourceDataView.state.doc.length, insert: editorData }
     })
   }
 }
+
 function stringifyData(data) {
   const t = typeof data
   return t === 'undefined' ? '' : t === 'string' ? data : JSON.stringify(data, null, 2)
 }
+
 export { initDataView, updateDataView }

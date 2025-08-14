@@ -29,14 +29,19 @@
 import { StringTemplatePortStyle } from './StringTemplatePortStyle'
 import { StringTemplateNodeStyle } from './StringTemplateNodeStyle'
 import { StringTemplateLabelStyle } from './StringTemplateLabelStyle'
+
 // Create a map to store the IDs and their corresponding texts
+
 const templateMap = new Map()
+
 function parseTemplateScripts() {
   if (templateMap.size > 0) {
     return templateMap
   }
+
   // Find all <script> elements with type "text/yfiles-template"
   const templateScripts = document.querySelectorAll('script[type="text/yfiles-template"]')
+
   // Iterate over the <script> elements
   templateScripts.forEach((script) => {
     // Create a temporary container to parse the template content
@@ -50,8 +55,10 @@ function parseTemplateScripts() {
       }
     })
   })
+
   return templateMap
 }
+
 function getTemplateString(arg) {
   if (typeof arg === 'string') {
     const id = arguments[0]
@@ -62,16 +69,19 @@ function getTemplateString(arg) {
     return { ...arg, svgContent: parseTemplateScripts().get(arg.renderTemplateId) ?? '<g></g>' }
   }
 }
+
 export class TemplatePortStyle extends StringTemplatePortStyle {
   constructor() {
     super(getTemplateString(arguments[0]))
   }
 }
+
 export class TemplateNodeStyle extends StringTemplateNodeStyle {
   constructor() {
     super(getTemplateString(arguments[0]))
   }
 }
+
 export class TemplateLabelStyle extends StringTemplateLabelStyle {
   constructor() {
     super(getTemplateString(arguments[0]))

@@ -39,6 +39,7 @@ import {
   Size,
   YList
 } from '@yfiles/yfiles'
+
 /**
  This stage can be used for automatically assigning a {@link LayoutGrid} instance that treats
  top-level group nodes as vertical rows/columns.
@@ -56,69 +57,87 @@ import {
 export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
   orderSwimlanesFromSketch = false
   _spacing = 0
+
   get spacing() {
     return this._spacing
   }
+
   set spacing(value) {
     if (value < 0) {
       throw new Exception('The spacing should be non-negative: ' + value)
     }
     this._spacing = value
   }
+
   applyLayoutImpl(graph) {
     // check if there is anything to do at all.
     if (graph.isEmpty || !LayoutGraphGrouping.isGrouped(graph)) {
       this.coreLayout.applyLayout(graph)
       return
     }
+
     const grouping = LayoutGraphGrouping.createReadOnlyView(graph)
+
     // count all descriptors
     let counter = 0
+
     const paddingProvider = graph.context.getItemData(LayoutKeys.GROUP_NODE_PADDING_DATA_KEY)
     const sizeProvider = graph.context.getItemData(LayoutKeys.MINIMUM_GROUP_NODE_SIZE_DATA_KEY)
+
     // now find all swimlane nodes by iterating all top-level group nodes
     const topLevelColumns = new YList()
     const root2MyDescriptor = new Mapper()
+
     graph.nodes
       .filter((node) => graph.isGroupNode(node) && !grouping.hasParent(node))
       .forEach((topLevelGroup) => {
         // construct column info for this top level group
         const column = new TopLevelColumn(topLevelGroup, counter++)
         topLevelColumns.add(column)
+
         column.rightInset = 0
         column.leftInset = 0
+
         const groupPadding = paddingProvider?.get(topLevelGroup)
         if (groupPadding != null) {
           column.leftInset = groupPadding.left
           // spacing is always to the right
           column.rightInset = groupPadding.right
         }
+
         const minimumGroupSize = sizeProvider?.get(topLevelGroup)
         if (minimumGroupSize != null) {
           column.minimumWidth = minimumGroupSize.width
         }
+
         // remember original spacing - we need it to model empty lanes
         column.originalLeftInset = column.leftInset
         column.originalRightInset = column.rightInset
+
         // add the spacing
         column.rightInset += this.spacing
+
         // mark it as fixed
         column.indexFixed = this.orderSwimlanesFromSketch
         // remember the descriptor
         root2MyDescriptor.set(topLevelGroup, column)
       })
+
     // create a hider that will hide the top-level groups (swim lanes) - edges are not being routed currently
     const hider = new LayoutGraphHider(graph)
+
     // hide roots
     for (const topLevelColumn of topLevelColumns) {
       if (topLevelColumn.group) {
         hider.hide(topLevelColumn.group)
       }
     }
+
     // at least reset edges between swim lane nodes ....
     for (const edge of hider.hiddenEdges) {
       edge.resetPath()
     }
+
     // check if this is a non-trivial task, i.e., the graph is not empty for the core layout after hiding top-level groups
     if (!graph.isEmpty) {
       // create a column for those nodes that don't belong to any group, which has not a fixed index
@@ -126,9 +145,11 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
       nonGroupedColumn.indexFixed = false
       nonGroupedColumn.leftInset = 0
       nonGroupedColumn.rightInset = this.spacing
+
       // remember which roots have been used at all, i.e., have nodes assigned to them
       const usedRootGroups = new Set()
       const allRootGroups = new Set(topLevelColumns.map((column) => column.group))
+
       // for all nodes, assign them to a top-level column
       const topLevelColumnMapping = graph.createNodeDataMap()
       for (const node of graph.nodes) {
@@ -140,6 +161,7 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
             topLevelColumnMapping.set(node, nonGroupedColumn)
             break
           }
+
           // walk up and find ancestor
           if (allRootGroups.has(parent)) {
             // we found the root group, use its descriptor
@@ -147,10 +169,12 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
             usedRootGroups.add(parent)
             break
           }
+
           // continue searching our way upwards
           parent = grouping.getParent(parent)
         }
       }
+
       // see if there are empty lanes that need to have some space reserved
       if (usedRootGroups.size != allRootGroups.size && this.orderSwimlanesFromSketch) {
         // sort them the way the code will sort them
@@ -179,8 +203,10 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
           }
         }
       }
+
       // sort descriptors and then add it in that order
       topLevelColumns.sort(TopLevelColumn.comparison)
+
       // specify layout grid and mapping
       const newGrid = new LayoutGrid(0, 0)
       newGrid.optimizeColumnOrder = !this.orderSwimlanesFromSketch
@@ -196,6 +222,7 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
       }
       // remove nonGroupedColumn - it was just temporarily in the list to add an actual column in the above loop
       topLevelColumns.pop()
+
       const newGridCellMapper = new Mapper()
       for (const node of graph.nodes) {
         newGridCellMapper.set(
@@ -207,16 +234,20 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
         )
       }
       graph.disposeNodeDataMap(topLevelColumnMapping)
+
       // Run the core layout
       // register new grid on a new graph context layer to avoid overwriting old, existing stuff
       graph.context.pushLayer()
       graph.context.addItemData(LayoutGrid.LAYOUT_GRID_CELL_DESCRIPTOR_DATA_KEY, newGridCellMapper)
       this.coreLayout.applyLayout(graph)
       graph.context.popLayer()
+
       // calculate the bounds
       const graphBounds = graph.getBounds()
+
       // unhide
       hider.unhideAll()
+
       let minY = graphBounds.y
       let maxY = graphBounds.y + graphBounds.height
       if (paddingProvider != null) {
@@ -233,6 +264,7 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
         minY -= 10
         maxY += 10
       }
+
       let height = maxY - minY
       if (sizeProvider != null) {
         for (const column of topLevelColumns) {
@@ -245,10 +277,12 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
           }
         }
       }
+
       // now place the top level group nodes that were hidden during the core layout
       let foundFirstReal = false
       let lastMaxX = Number.POSITIVE_INFINITY
       let maxX = -Number.MAX_VALUE
+
       if (usedRootGroups.size == 0) {
         // if only empty descriptors, except for the non-grouped column
         foundFirstReal = true
@@ -256,6 +290,7 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
           nonGroupedColumn.actualGridLayoutGridColumn.position +
           nonGroupedColumn.actualGridLayoutGridColumn.width
       }
+
       for (const column of topLevelColumns) {
         const group = column.group
         if (group) {
@@ -265,10 +300,12 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
             // assign the width to the computed one, but remember to subtract the extra padding for the dummy lanes
             let dRight = 0
             let dLeft = 0
+
             if (column != nonGroupedColumn) {
               dRight = columnDescriptor.leftPadding - column.originalLeftInset
               dLeft = columnDescriptor.rightPadding - column.originalRightInset
             }
+
             group.layout.width = columnDescriptor.width - (dRight + dLeft)
             group.layout.height = height
             group.layout.x = columnDescriptor.position + dRight
@@ -292,6 +329,7 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
                 }
               }
             }
+
             foundFirstReal = true
           } else {
             // append empty swim lane
@@ -303,6 +341,7 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
           }
         }
       }
+
       // if this was not from sketch append all empty lanes at the back...
       if (!this.orderSwimlanesFromSketch) {
         for (const column of topLevelColumns) {
@@ -323,11 +362,13 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
       if (this.orderSwimlanesFromSketch) {
         topLevelColumns.sort(TopLevelColumn.comparison)
       }
+
       const maximumHeight = topLevelColumns.reduce(
         (maxHeight, topLevelColumn) =>
           Math.max(maxHeight, topLevelColumn.group ? topLevelColumn.group.layout.height : 0),
         0
       )
+
       let x = 0.0
       // make them all the same height... and put them next to each other
       for (const column of topLevelColumns) {
@@ -341,6 +382,7 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
     }
   }
 }
+
 class TopLevelColumn {
   topLevelGroup
   index
@@ -352,12 +394,14 @@ class TopLevelColumn {
   leftInset = 0
   minimumWidth = 0
   indexFixed = false
+
   constructor(topLevelGroup, index) {
     this.topLevelGroup = topLevelGroup
     this.index = index
     this.group = topLevelGroup ?? null
     this.index = index ?? -1
   }
+
   static comparison = (c1, c2) => {
     if (!c1.group || !c2.group) {
       return !c1.group ? 1 : -1

@@ -27,10 +27,12 @@
  **
  ***************************************************************************/
 import { WebGLGraphModelManager } from '@yfiles/yfiles'
+
 /**
  * Whether labels are currently faded.
  */
 let labelsFaded = false
+
 /**
  * Whether labels are currently animated.
  */
@@ -39,10 +41,12 @@ let animated = false
  * Animation used to fade the labels.
  */
 let labelsFadeAnimation
+
 /**
  * Fade labels in/out depending on the configured threshold.
  */
 let toggleLabelVisibility
+
 /**
  * Registers label fading by adding the {@link toggleLabelVisibility} to zoom event of the
  * {@link GraphComponent}.
@@ -51,6 +55,7 @@ export function registerLabelFading(graphComponent, labelFadeThreshold) {
   if (toggleLabelVisibility) {
     graphComponent.removeEventListener('zoom-changed', toggleLabelVisibility)
   }
+
   toggleLabelVisibility = () => {
     const zoom = graphComponent.zoom
     document.querySelector('#current-zoom').textContent = `${Math.round(zoom * 100)}%`
@@ -60,10 +65,13 @@ export function registerLabelFading(graphComponent, labelFadeThreshold) {
       fadeInLabels(graphComponent)
     }
   }
+
   graphComponent.addEventListener('zoom-changed', toggleLabelVisibility)
+
   // trigger it once to apply the current state
   toggleLabelVisibility()
 }
+
 /**
  * Fades out all labels by assigning a fade animation to them and starting it.
  */
@@ -75,10 +83,12 @@ function fadeOutLabels(graphComponent) {
     return
   }
   const graphModelManager = graphComponent.graphModelManager
+
   labelsFadeAnimation = graphModelManager.createFadeAnimation({
     type: 'fade-out',
     timing: '500ms ease'
   })
+
   animated = true
   graphComponent.graph.labels.forEach((label) => {
     graphModelManager.setAnimations(label, [labelsFadeAnimation])
@@ -88,6 +98,7 @@ function fadeOutLabels(graphComponent) {
     animated = false
   })
 }
+
 /**
  * Fades in all labels by stopping the fade animation and subsequently removing it from the labels.
  * Note: When stopping a {@link WebGLAnimation} it runs "backward" and stays at the beginning.
@@ -99,10 +110,12 @@ function fadeInLabels(graphComponent) {
   ) {
     return
   }
+
   animated = true
   labelsFadeAnimation?.stop().then(() => {
     labelsFaded = false
     animated = false
   })
+
   labelsFadeAnimation = null
 }

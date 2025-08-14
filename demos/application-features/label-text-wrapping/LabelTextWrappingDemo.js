@@ -31,7 +31,6 @@ import {
   EdgeSides,
   ExteriorNodeLabelModel,
   Font,
-  Graph,
   GraphComponent,
   GraphEditorInputMode,
   GraphModelManager,
@@ -45,15 +44,17 @@ import {
   StretchNodeLabelModel,
   WebGLGraphModelManager
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { BrowserDetection, finishLoading } from '@yfiles/demo-resources/demo-page'
 import {
   initializeSvgWebGlSwitchButton,
   updateSvgWebGlSwitchButton
 } from '../../style/group-node-style/svg-webgl-switch'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
@@ -67,15 +68,20 @@ async function run() {
     : new GraphModelManager()
   graphComponent.inputMode = new GraphEditorInputMode()
   graphComponent.graph.undoEngineEnabled = true
+
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   // Configure default label model parameters for newly created graph elements
   setDefaultLabelLayoutParameters()
+
   // add a sample graph
   createGraph()
+
   // bind the buttons to their functionality
   initializeUI()
 }
+
 /**
  * Sets up default label model parameters for graph elements.
  * Label model parameters control the actual label placement as well as the available
@@ -90,6 +96,7 @@ function setDefaultLabelLayoutParameters() {
     padding: 5
   }).createParameter('center')
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  *
@@ -98,6 +105,7 @@ function setDefaultLabelLayoutParameters() {
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
+
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
@@ -108,17 +116,17 @@ function initializeGraph(graph) {
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
+
 /**
  * Creates a simple sample graph.
  */
 function createGraph() {
   // label model and style for the description labels above the node
   const topParameter = new ExteriorNodeLabelModel({ margins: 10 }).createParameter('top')
-  const topLabelStyle = new LabelStyle({
-    horizontalTextAlignment: 'center'
-  })
+  const topLabelStyle = new LabelStyle({ horizontalTextAlignment: 'center' })
   const graph = graphComponent.graph
   const defaultNodeStyle = graph.nodeDefaults.style
+
   // create nodes
   const node1 = graph.createNode(new Rect(0, 0, 190, 200))
   const node2 = graph.createNode(new Rect(250, -150, 190, 200))
@@ -157,10 +165,13 @@ function createGraph() {
       stroke: defaultNodeStyle.stroke
     })
   )
+
   // use a label model that stretches the label over the full node layout, with small margins
   const centerParameter = new StretchNodeLabelModel({ padding: 5 }).createParameter('center')
+
   // maybe showcase right-to-left text direction
   const rtlDirection = document.querySelector('#trl-toggle').checked
+
   // the text that should be displayed
   const longText = rtlDirection
     ? 'כל בני האדם נולדו בני חורין ושווים בערכם בזכויותיהם. כולם התברכו בתבונה ובמצפון, לפיכך חובה לנהוג איש ברעהו ברוח של אחווה.\n\n' +
@@ -171,6 +182,7 @@ function createGraph() {
       'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.\n' +
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
   const font = new Font({ fontSize: 16 })
+
   // A label that does not wrap at all. By default, it is clipped at the given bounds, though this can also be
   // disabled with the clipText property of the LabelStyle.
   const noWrappingStyle = new LabelStyle({
@@ -181,6 +193,7 @@ function createGraph() {
   })
   graph.addLabel(node1, longText, centerParameter, noWrappingStyle)
   graph.addLabel(node1, 'No Wrapping', topParameter, topLabelStyle)
+
   // A label that is wrapped at word boundaries.
   const wordWrappingStyle = new LabelStyle({
     font,
@@ -190,6 +203,7 @@ function createGraph() {
   })
   graph.addLabel(node2, longText, centerParameter, wordWrappingStyle)
   graph.addLabel(node2, 'Word Wrapping', topParameter, topLabelStyle)
+
   // A label that is wrapped at single characters.
   const characterWrappingStyle = new LabelStyle({
     font,
@@ -199,6 +213,7 @@ function createGraph() {
   })
   graph.addLabel(node3, longText, centerParameter, characterWrappingStyle)
   graph.addLabel(node3, 'Character Wrapping', topParameter, topLabelStyle)
+
   // A label that is wrapped at word boundaries but also renders ellipsis if there is not enough space.
   const ellipsisWordWrappingStyle = new LabelStyle({
     font,
@@ -208,6 +223,7 @@ function createGraph() {
   })
   graph.addLabel(node4, longText, centerParameter, ellipsisWordWrappingStyle)
   graph.addLabel(node4, 'Word Wrapping\nwith Ellipsis', topParameter, topLabelStyle)
+
   // A label that is wrapped at single characters but also renders ellipsis if there is not enough space.
   const ellipsisCharacterWrappingStyle = new LabelStyle({
     font,
@@ -217,6 +233,7 @@ function createGraph() {
   })
   graph.addLabel(node5, longText, centerParameter, ellipsisCharacterWrappingStyle)
   graph.addLabel(node5, 'Character Wrapping\nwith Ellipsis', topParameter, topLabelStyle)
+
   // A label that is wrapped at word boundaries but uses a hexagon shape to fit the text inside.
   // The textWrappingShape can be combined with any wrapping and the textWrappingPadding is kept
   // empty inside this shape.
@@ -230,6 +247,7 @@ function createGraph() {
   })
   graph.addLabel(node6, longText, centerParameter, wordHexagonShapeStyle)
   graph.addLabel(node6, 'Word Wrapping\nat Hexagon Shape', topParameter, topLabelStyle)
+
   // A label that is wrapped at single characters inside a triangular shape.
   const characterEllipsisTriangleShapeStyle = new LabelStyle({
     font,
@@ -241,6 +259,7 @@ function createGraph() {
   })
   graph.addLabel(node7, longText, centerParameter, characterEllipsisTriangleShapeStyle)
   graph.addLabel(node7, 'Character Wrapping\nat Triangle Shape', topParameter, topLabelStyle)
+
   // A label that is wrapped at single characters inside an elliptic shape.
   // In addition to the textWrappingPadding, some paddings are defined for the top and bottom side
   // to keep the upper and lower part of the ellipse empty.
@@ -260,6 +279,7 @@ function createGraph() {
     topParameter,
     topLabelStyle
   )
+
   // A label that is wrapped at word boundaries inside an octagon shape.
   // In addition to the textWrappingPadding, some paddings are defined for the top and bottom side
   // to keep the upper and lower part of the octagon empty.
@@ -279,16 +299,18 @@ function createGraph() {
     topParameter,
     topLabelStyle
   )
+
   graph.undoEngine.clear()
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Rebuilds the demo when the text direction changes.
  */
 function reinitializeDemo() {
   // Dispose of the previous component
   graphComponent.cleanUp()
-  graphComponent.graph = new Graph()
+
   const gcContainer = document.querySelector('#graphComponent')
   while (gcContainer.childElementCount > 0) {
     gcContainer.removeChild(gcContainer.firstElementChild)
@@ -303,8 +325,10 @@ function reinitializeDemo() {
   initializeGraph(graphComponent.graph)
   setDefaultLabelLayoutParameters()
   createGraph()
+
   updateSvgWebGlSwitchButton('#render-modes', graphComponent)
 }
+
 /**
  * Binds the buttons in the toolbar to their functionality.
  */
@@ -316,4 +340,5 @@ function initializeUI() {
   })
   initializeSvgWebGlSwitchButton('#render-modes', graphComponent)
 }
+
 run().then(finishLoading)

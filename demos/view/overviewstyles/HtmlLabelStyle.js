@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { HtmlVisual, LabelStyleBase, OrientedRectangle, Size } from '@yfiles/yfiles'
+
 /**
  * A label style which displays HTML markup as label text.
  */
@@ -38,6 +39,7 @@ export class HtmlLabelStyle extends LabelStyleBase {
   static stopPropagationAlwaysListener = (evt) => {
     evt.stopImmediatePropagation()
   }
+
   /**
    * Creates a new instance of the HTMLLabelStyle class.
    * @param font The font used for rendering the label text.
@@ -46,19 +48,24 @@ export class HtmlLabelStyle extends LabelStyleBase {
     super()
     this.font = font
   }
+
   /**
    * Creates an HTML-based visual to display an HTML-formatted text.
    * @see Overrides {@link LabelStyleBase.createVisual}
    */
   createVisual(context, label) {
     const layout = label.layout
+
     const htmlElement = document.createElement('div')
+
     this.updateElement(htmlElement, {
       text: label.text,
       font: this.font,
       layout: new OrientedRectangle(layout)
     })
+
     const stopPropagationOptions = { capture: true, passive: true }
+
     // Prevent event propagation for the mousewheel event.
     // Otherwise, it will be captured by the graph component, which calls preventDefault on it.
     for (const eventName of ['mousewheel', 'wheel']) {
@@ -69,6 +76,7 @@ export class HtmlLabelStyle extends LabelStyleBase {
         htmlElement.addEventListener(eventName, listenerForScrolling, stopPropagationOptions)
       }
     }
+
     // Prevent event propagation for the click event.
     // Otherwise, it will be captured by the graph component, which calls preventDefault on it.
     htmlElement.querySelectorAll('a').forEach((element) => {
@@ -80,10 +88,13 @@ export class HtmlLabelStyle extends LabelStyleBase {
         )
       }
     })
+
     // Move the element to the correct location
     LabelStyleBase.createLayoutTransform(context, layout, true).applyTo(htmlElement)
+
     return new HtmlVisual(htmlElement)
   }
+
   /**
    * Updates the HTML-based visual to display an HTML-formatted text.
    * @see Overrides {@link LabelStyleBase.updateVisual}
@@ -94,15 +105,19 @@ export class HtmlLabelStyle extends LabelStyleBase {
       // Re-create from scratch if the visual isn't as expected
       return this.createVisual(context, label)
     }
+
     this.updateElement(element, {
       text: label.text,
       font: this.font,
       layout: new OrientedRectangle(label.layout)
     })
+
     // Move the element to the correct location
     LabelStyleBase.createLayoutTransform(context, label.layout, true).applyTo(element)
+
     return oldVisual
   }
+
   /**
    * Updates the given element to match the given data.
    *
@@ -110,29 +125,30 @@ export class HtmlLabelStyle extends LabelStyleBase {
    */
   updateElement(element, newData) {
     // Get the data that describes the current state of the element
-    const currentData = element.cache ?? {
-      text: null,
-      font: null,
-      layout: null
-    }
+    const currentData = element.cache ?? { text: null, font: null, layout: null }
+
     if (currentData.layout?.width !== newData.layout.width) {
       element.style.width = `${newData.layout.width}px`
     }
     if (currentData.layout?.height !== newData.layout.height) {
       element.style.height = `${newData.layout.height}px`
     }
+
     if (!currentData.font || !currentData.font.equals(newData.font)) {
       element.style.fontFamily = this.font.fontFamily
       element.style.fontSize = `${this.font.fontSize}px`
       element.style.fontWeight = `${this.font.fontWeight}`
       element.style.fontStyle = `${this.font.fontStyle}`
     }
+
     if (currentData.text !== newData.text) {
       element.innerHTML = newData.text
     }
+
     // Update the cache
     element.cache = newData
   }
+
   /**
    * Returns the preferred size of the label.
    * @see Overrides {@link LabelStyleBase.getPreferredSize}
@@ -143,16 +159,20 @@ export class HtmlLabelStyle extends LabelStyleBase {
     const div = document.createElement('div')
     div.style.display = 'inline-block'
     div.style.position = 'absolute'
+
     div.innerHTML = label.text
+
     div.style.fontFamily = this.font.fontFamily
     div.style.fontWeight = `${this.font.fontWeight}`
     div.style.fontSize = `${this.font.fontSize}px`
     div.style.fontStyle = `${this.font.fontStyle}`
+
     document.body.appendChild(div)
     const clientRect = div.getBoundingClientRect()
     document.body.removeChild(div)
     return new Size(clientRect.width, clientRect.height)
   }
+
   /**
    * Detects whether the given element has the need for a scrollbar, i.e., it shows as scrollbar
    * in overflow: auto mode.
@@ -162,6 +182,7 @@ export class HtmlLabelStyle extends LabelStyleBase {
     const isHorizontalScrollbar = element.scrollWidth > element.clientWidth
     return isHorizontalScrollbar || isVerticalScrollbar
   }
+
   /**
    * Returns an event listener that stops event propagation if the element can be scrolled itself.
    */

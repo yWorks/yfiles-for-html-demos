@@ -33,6 +33,7 @@ import {
   OrganicLayout,
   OrganicLayoutData
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to run a {@link OrganicLayout} with configured sub structure styles.
  * @param graph The graph to be laid out
@@ -45,5 +46,6 @@ export function createFeatureLayoutConfiguration(graph) {
     chainSubstructureStyle: 'rectangular'
   })
   const layoutData = new OrganicLayoutData()
+
   return { layout, layoutData }
 }

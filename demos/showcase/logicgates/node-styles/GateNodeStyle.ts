@@ -98,9 +98,7 @@ export abstract class GateNodeStyle extends NodeStyleBase {
   }
 }
 
-export type CacheOwnerElement = SVGElement & {
-  'data-cache'?: Cache
-}
+export type CacheOwnerElement = SVGElement & { 'data-cache'?: Cache }
 
 export type Cache = {
   size: Size

@@ -42,20 +42,12 @@ const smoothingLength = 5
 const typeMap: Record<EdgeTypeEnum, IEdgeStyle> = {
   [EdgeTypeEnum.Hierarchy]: new PolylineEdgeStyle({
     stroke: '2px #1a3442',
-    targetArrow: new Arrow({
-      fill: '#1a3442',
-      stroke: '2px #1a3442',
-      type: 'triangle'
-    }),
+    targetArrow: new Arrow({ fill: '#1a3442', stroke: '2px #1a3442', type: 'triangle' }),
     smoothingLength
   }),
   [EdgeTypeEnum.Relation]: new PolylineEdgeStyle({
     stroke: '2px dashed #f26419',
-    targetArrow: new Arrow({
-      fill: '#f26419',
-      stroke: '1px #f26419',
-      type: 'triangle'
-    }),
+    targetArrow: new Arrow({ fill: '#f26419', stroke: '1px #f26419', type: 'triangle' }),
     smoothingLength: 100
   })
 }

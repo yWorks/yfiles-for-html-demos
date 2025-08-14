@@ -67,6 +67,7 @@ import {
   WritePrecedence
 } from '@yfiles/yfiles'
 import { ZOrderGraphClipboard } from './ZOrderGraphClipboard'
+
 /**
  * An utility class to add z-order consistency for nodes to a {@link GraphComponent}.
  */
@@ -74,69 +75,86 @@ export class ZOrderSupport {
   get masterGraph() {
     return this.$masterGraph
   }
+
   tempZOrders
   zOrderChangedListeners
   nodeComparison
+
   $graphComponent = null
   $masterGraph = null
   foldingView = null
   masterGroupingSupport = null
   zOrders
   tempParents
+
   /**
    * A flag indicating if nodes added to the master group should get a z-order assigned.
    */
   addZOrderForNewNodes = false
+
   get graphComponent() {
     return this.$graphComponent
   }
+
   /**
    * Creates a new instance and installs it on the given {@link ZOrderSupport.graphComponent}.
    */
   constructor(graphComponent) {
     this.zOrderChangedListeners = []
     this.nodeComparison = (x, y) => this.compare(x, y)
+
     // initialize maps
     this.zOrders = new HashMap()
     this.tempZOrders = new HashMap()
     this.tempParents = new HashMap()
+
     this.addZOrderForNewNodes = true
+
     this.initializeGraphComponent(graphComponent, true)
   }
+
   initializeGraphComponent(graphComponent, addInputMode) {
     this.$graphComponent = graphComponent
     this.foldingView = graphComponent.graph.foldingView
     this.$masterGraph =
       this.foldingView != null ? this.foldingView.manager.masterGraph : graphComponent.graph
     this.masterGroupingSupport = this.masterGraph.groupingSupport
+
     // use this ZOrderSupport as node comparer for the visualization
     this.$graphComponent.graphModelManager.nodeManager.comparator = this.nodeComparison
     // The ItemModelManager.Comparer needs the user objects to be accessible from the main render tree elements
     this.$graphComponent.graphModelManager.provideRenderTagOnMainRenderTreeElement = true
     // keep labels at their owners for this demo
     graphComponent.graphModelManager.nodeLabelLayerPolicy = LabelLayerPolicy.AT_OWNER
+
     graphComponent.graph.decorator.nodes.positionHandler.addFactory((node) => {
       return new ZOrderNodePositionHandler(node, this)
     })
+
     if (addInputMode) {
       // configure the edit mode to keep z-order consistent during grouping/folding/reparenting gestures
       const geim = new GraphEditorInputMode()
       this.configureInputMode(geim)
       graphComponent.inputMode = geim
     }
+
     // configure the clipboard that transfers the relative z-order of copied/cut nodes
     this.configureGraphClipboard()
+
     // listen for new nodes to assign an initial z-order
     this.masterGraph.addEventListener('node-created', this.onNodeCreated.bind(this))
   }
+
   configureGraphMLIOHandler(ioHandler) {
     let zOrderKeyDefinitionFound = false
     let maxExistingZOrder = Number.MIN_VALUE
+
     ioHandler.addEventListener('query-output-handlers', (evt) => {
       if (evt.scope === KeyScope.NODE) {
         evt.addOutputHandler(new ZOrderOutputHandler(this))
       }
     })
+
     ioHandler.addEventListener('query-input-handlers', (evt) => {
       if (
         !evt.handled &&
@@ -148,6 +166,7 @@ export class ZOrderSupport {
         evt.handled = true
       }
     })
+
     ioHandler.addEventListener('parsing', () => {
       // clear old z-orders of old graph
       if (ioHandler.clearGraphBeforeRead) {
@@ -159,6 +178,7 @@ export class ZOrderSupport {
       this.addZOrderForNewNodes = false
       zOrderKeyDefinitionFound = false
     })
+
     ioHandler.addEventListener('parsed', () => {
       // enable automatic z-order creation for new nodes again
       this.addZOrderForNewNodes = true
@@ -171,6 +191,7 @@ export class ZOrderSupport {
       this.applyTempZOrders()
     })
   }
+
   appendTempZOrdersToExisting(maxExistingZOrder) {
     if (maxExistingZOrder == Number.MIN_VALUE) {
       // no nodes in the graph, yet
@@ -186,9 +207,11 @@ export class ZOrderSupport {
         this.tempZOrders.set(key, value + delta)
       })
   }
+
   compare(x, y) {
     const masterX = this.getMasterNode(x)
     const masterY = this.getMasterNode(y)
+
     // the stored z-order is a partial order between children of the same parent
     const parentX = this.getParent(masterX)
     const parentY = this.getParent(masterY)
@@ -206,17 +229,20 @@ export class ZOrderSupport {
     const nca = this.masterGroupingSupport.getNearestCommonAncestor(masterX, masterY)
     const pathToRootX = this.masterGroupingSupport.getAncestors(masterX)
     const pathToRootY = this.masterGroupingSupport.getAncestors(masterY)
+
     const ancestorX = !nca ? pathToRootX.at(-1) : pathToRootX.at(pathToRootX.indexOf(nca) - 1)
     const ancestorY = !nca ? pathToRootY.at(-1) : pathToRootY.at(pathToRootY.indexOf(nca) - 1)
     // for these ancestors we can now compare the z-order values
     return this.zOrderOf(ancestorX) - this.zOrderOf(ancestorY)
   }
+
   /**
    * Gets the z-order value stored for `node`.
    */
   getZOrder(node) {
     return this.zOrderOf(this.getMasterNode(node))
   }
+
   /**
    * Sets the new z-order value stored for `key`.
    * An {@link IUndoUnit} for the changed z-order is added as well if undo is enabled.
@@ -243,21 +269,25 @@ export class ZOrderSupport {
       this.onZIndexChanged(key, newZOrder, oldZOrder)
     }
   }
+
   onZIndexChanged(item, newValue, oldValue) {
     const eventArgs = new ZIndexChangedEventArgs(item, newValue, oldValue)
     this.zOrderChangedListeners.forEach((listener) => {
       listener(this, eventArgs)
     })
   }
+
   addZIndexChangedLister(listener) {
     this.zOrderChangedListeners.push(listener)
   }
+
   removeZIndexChangedLister(listener) {
     const index = this.zOrderChangedListeners.indexOf(listener)
     if (index > 0) {
       this.zOrderChangedListeners.splice(index, 1)
     }
   }
+
   /**
    * Arranges the `node` according to its {@link ZOrderSupport.getZOrder z-order}.
    */
@@ -265,6 +295,7 @@ export class ZOrderSupport {
     // the update call triggers a new installation of the node visualization that considers the z-order
     this.graphComponent.graphModelManager.update(this.getViewNode(node))
   }
+
   /**
    * Sets new ascending z-orders for `viewNodes` starting from `zOrder` and sorts their
    * {@link GraphModelManager.getMainRenderTreeElement canvas objects} as well.
@@ -282,6 +313,7 @@ export class ZOrderSupport {
       prev = renderTreeElement
     }
   }
+
   /**
    * Sets a temporary z-order for `node` for a temporary `tempParent`.
    */
@@ -297,6 +329,7 @@ export class ZOrderSupport {
         : null
     this.tempParents.set(master, masterParent)
   }
+
   /**
    * Sets normalized z-orders for all children of `parent` and recurses into child group nodes.
    */
@@ -311,6 +344,7 @@ export class ZOrderSupport {
       }
     }
   }
+
   /**
    * Removes a temporary z-order for `node` that has been set previously via {@link ZOrderSupport.setTempZOrder}.
    */
@@ -319,6 +353,7 @@ export class ZOrderSupport {
     this.tempZOrders.delete(master)
     this.tempParents.delete(master)
   }
+
   /**
    * Transfers all temporary z-orders that have been set previously via {@link ZOrderSupport.setTempZOrder}.
    */
@@ -331,6 +366,7 @@ export class ZOrderSupport {
     })
     this.clearTempZOrders()
   }
+
   /**
    * Removes all temporary z-orders that has been set previously via {@link ZOrderSupport.setTempZOrder}.
    */
@@ -338,8 +374,10 @@ export class ZOrderSupport {
     this.tempZOrders.clear()
     this.tempParents.clear()
   }
+
   raise(nodes) {
     nodes.sort(this.nodeComparison)
+
     let prev = null
     for (let i = nodes.size - 1; i >= 0; i--) {
       const node = nodes.get(i)
@@ -359,8 +397,10 @@ export class ZOrderSupport {
       prev = node
     }
   }
+
   lower(nodes) {
     nodes.sort(this.nodeComparison)
+
     let prev = null
     for (const node of nodes) {
       const rte = this.graphComponent.graphModelManager.getMainRenderTreeElement(node)
@@ -375,13 +415,11 @@ export class ZOrderSupport {
       prev = node
     }
   }
+
   toFront(nodes) {
     for (const grouping of nodes.groupBy(
       (node) => this.graphComponent.graph.getParent(node),
-      (type, elements) => ({
-        groupNode: type,
-        children: elements ? elements.toList() : new List()
-      })
+      (type, elements) => ({ groupNode: type, children: elements ? elements.toList() : new List() })
     )) {
       const groupNode = grouping.groupNode
       const toFrontChildren = grouping.children
@@ -401,13 +439,11 @@ export class ZOrderSupport {
       }
     }
   }
+
   toBack(nodes) {
     for (const grouping of nodes.groupBy(
       (node) => this.graphComponent.graph.getParent(node),
-      (type, elements) => ({
-        groupNode: type,
-        children: elements ? elements.toList() : new List()
-      })
+      (type, elements) => ({ groupNode: type, children: elements ? elements.toList() : new List() })
     )) {
       const groupNode = grouping.groupNode
       const toBackChildren = grouping.children
@@ -420,6 +456,7 @@ export class ZOrderSupport {
         })
         const first = allChildren.get(0)
         let zOrder = this.getZOrder(first) - 1
+
         for (let i = toBackChildren.size - 1; i >= 0; i--) {
           const node = toBackChildren.get(i)
           this.setZOrder(node, zOrder--)
@@ -428,6 +465,7 @@ export class ZOrderSupport {
       }
     }
   }
+
   onNodeCreated(evt) {
     const undoEngine = this.graphComponent.graph.undoEngine
     if (!this.addZOrderForNewNodes || undoEngine.performingUndo || undoEngine.performingRedo) {
@@ -443,11 +481,13 @@ export class ZOrderSupport {
     this.zOrders.set(newNode, newZOrder)
     this.update(newNode)
   }
+
   clear() {
     this.zOrders.clear()
     this.tempZOrders.clear()
     this.tempParents.clear()
   }
+
   /**
    * Returns the master item of `node` if folding is enabled and `node` itself otherwise.
    */
@@ -465,6 +505,7 @@ export class ZOrderSupport {
     // no folding enabled
     return node
   }
+
   /**
    * Returns the view item of `node` if folding is enabled and `node` itself otherwise.
    */
@@ -480,6 +521,7 @@ export class ZOrderSupport {
     }
     return null
   }
+
   getParent(masterNode) {
     const parent = this.tempParents.get(masterNode)
     if (parent) {
@@ -488,6 +530,7 @@ export class ZOrderSupport {
     }
     return this.masterGraph.getParent(masterNode)
   }
+
   zOrderOf(node) {
     let zOrder = this.tempZOrders.get(node)
     if (zOrder) {
@@ -497,18 +540,24 @@ export class ZOrderSupport {
     zOrder = this.zOrders.get(node)
     return zOrder ?? 0
   }
+
   swapZOrder(node1, node2) {
     const zOrder1 = this.getZOrder(node1)
     const zOrder2 = this.getZOrder(node2)
     this.setZOrder(node1, zOrder2)
     this.setZOrder(node2, zOrder1)
   }
+
   ////////////////////////////////////////// Clipboard //////////////////////////////
+
   configureGraphClipboard() {
     this.graphComponent.clipboard = new ZOrderGraphClipboard(this)
   }
+
   ////////////////////////////////////////// Input mode configuration //////////////////////////////
+
   $inputMode = null
+
   configureInputMode(inputMode) {
     this.$inputMode = inputMode
     this.addCommandBinding(Command.RAISE, this.raise.bind(this))
@@ -522,6 +571,7 @@ export class ZOrderSupport {
     inputMode.reparentNodeHandler = new ZOrderReparentHandler(inputMode.reparentNodeHandler, this)
     this.configureMoveInputMode(inputMode)
   }
+
   addCommandBinding(newCommand, method) {
     this.$inputMode.keyboardInputMode.addCommandBinding(
       newCommand,
@@ -539,6 +589,7 @@ export class ZOrderSupport {
       }
     )
   }
+
   resolveParameter(parameter) {
     if (!parameter) {
       if (this.graphComponent.selection.nodes.size > 0) {
@@ -556,16 +607,20 @@ export class ZOrderSupport {
     }
     return null
   }
+
   ////////////////////////////////////////// Grouping operations ///////////////////////////////////
+
   beforeGrouping(e) {
     // get all selected nodes and sort by their current z-order
     const nodes = e.selection.nodes.toList()
     nodes.sort(this.nodeComparison)
+
     // set increasing z-orders
     for (let i = 0; i < nodes.size; i++) {
       this.setZOrder(nodes.get(i), i)
     }
   }
+
   beforeUngrouping(e) {
     const graph = this.$graphComponent.graph
     // store all selected nodes that have a parent group
@@ -574,15 +629,20 @@ export class ZOrderSupport {
         return graph.getParent(node) !== null
       })
       .toList()
+
     // sort selected nodes by their current z-order
     nodes.sort(this.nodeComparison)
+
     // collect top level nodes
     const topLevelNodes = graph.getChildren(null).toList()
     topLevelNodes.sort(this.nodeComparison)
+
     const newTopLevelNodes = new List()
     let topLevelIndex = 0
+
     let nextTopLevelNode = null
     const gs = graph.groupingSupport
+
     for (const node of nodes) {
       const topLevelAncestor = gs.getAncestors(node).at(-1)
       while (topLevelAncestor !== nextTopLevelNode) {
@@ -591,17 +651,22 @@ export class ZOrderSupport {
       }
       newTopLevelNodes.add(node)
     }
+
     for (let i = topLevelIndex; i < topLevelNodes.size; i++) {
       newTopLevelNodes.add(topLevelNodes.get(i))
     }
+
     for (let i = 0; i < newTopLevelNodes.size; i++) {
       this.setZOrder(newTopLevelNodes.get(i), i)
     }
   }
+
   ////////////////////////////////////////// Delete selection //////////////////////////////////////
+
   $deleteSelectionNewParents = null
   $absOrder = null
   $parentChangedListener = null
+
   beforeDeleteSelection(_e) {
     const graph = this.$graphComponent.graph
     // collect absolute order of all view items
@@ -617,9 +682,11 @@ export class ZOrderSupport {
     this.$parentChangedListener = this.onParentChanged.bind(this)
     graph.addEventListener('parent-changed', this.$parentChangedListener)
   }
+
   afterDeleteSelection(_e) {
     const graph = this.$graphComponent.graph
     graph.removeEventListener('parent-changed', this.$parentChangedListener)
+
     // for each new parent sort their children in previously stored absolute order
     for (const newParent of this.$deleteSelectionNewParents) {
       if (newParent === null || graph.contains(newParent)) {
@@ -631,19 +698,26 @@ export class ZOrderSupport {
     }
     this.$deleteSelectionNewParents = null
   }
+
   onParentChanged(evt) {
     const newParent = this.$graphComponent.graph.getParent(evt.item)
     this.$deleteSelectionNewParents.add(newParent)
   }
+
   ////////////////////////////////////////// MoveInputMode /////////////////////////////////////////
+
   // Moved nodes that might get reparented.
   $movedNodes = new List()
+
   // A mapping from moved nodes to their original parents
   $oldParents = new Map()
+
   // the maximum z-order of the children of a group node
   $maxOldZOrder = new Map()
+
   // the maximum z-order of top-level nodes
   $maxRootZOrder = Number.MIN_VALUE
+
   configureMoveInputMode(geim) {
     geim.moveUnselectedItemsInputMode.addEventListener(
       'drag-starting',
@@ -658,19 +732,23 @@ export class ZOrderSupport {
       this.moveCanceled.bind(this)
     )
   }
+
   ////////////////////////////////////////// Initialize fields on MoveStarting /////////////////////
+
   /**
    * Stores all moved nodes, their parents and the maximum z-order of children of their parents before the move gesture
    * starts.
    */
   moveStarting(_e) {
     const graph = this.$graphComponent.graph
+
     // store all selected nodes which might get reparented
     this.$movedNodes = this.$inputMode.moveUnselectedItemsInputMode.affectedItems
       .ofType(INode)
       .toList()
     // sort this list by their relative z-order
     this.$movedNodes.sort(this.nodeComparison)
+
     // calculate max z-order for all group nodes containing any moved node
     this.$movedNodes.forEach((node) => {
       const parent = graph.getParent(node)
@@ -680,6 +758,7 @@ export class ZOrderSupport {
     // calculate max z-order of top-level nodes
     this.getOrCalculateMaxZOrder(null)
   }
+
   /**
    * Returns the maximum z-order of the children of `parent`.
    * If the maximum z-order isn't stored, yet, it is calculated first.
@@ -712,6 +791,7 @@ export class ZOrderSupport {
     }
     return maxZOrder
   }
+
   /**
    * Returns a new z-order for `node` in its new `parent`.
    * As all MovedNodes will be reparented to the same parent, those nodes that had this parent initially will keep their
@@ -732,16 +812,19 @@ export class ZOrderSupport {
     }
     return 0
   }
+
   moveFinished(_e) {
     // Apply the temporary z-orders for all reparented nodes
     this.applyTempZOrders()
     this.cleanup()
   }
+
   moveCanceled(_e) {
     // clear temporary z-orders and keep the original ones.
     this.clearTempZOrders()
     this.cleanup()
   }
+
   cleanup() {
     this.$movedNodes.clear()
     this.$oldParents.clear()
@@ -749,26 +832,32 @@ export class ZOrderSupport {
     this.$maxRootZOrder = Number.MIN_VALUE
   }
 }
+
 export class ZIndexChangedEventArgs extends EventArgs {
   $item
   $newZIndex
   $oldZIndex
+
   constructor(item, newZIndex, oldZIndex) {
     super()
     this.$item = item
     this.$newZIndex = newZIndex
     this.$oldZIndex = oldZIndex
   }
+
   get item() {
     return this.$item
   }
+
   get newZIndex() {
     return this.$newZIndex
   }
+
   get oldZIndex() {
     return this.$oldZIndex
   }
 }
+
 /**
  * An {@link IPositionHandler} for nodes that tries to keep the z-order of its moved node relative to other moved nodes.
  * As the z-order doesn't change for normal move gestures, this class customizes only interactive reparent gestures.
@@ -778,6 +867,7 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
   $initialParent
   $currentParent
   $zOrderSupport
+
   constructor(node, zOrderSupport, wrappedHandler) {
     if (wrappedHandler) {
       super(node, wrappedHandler)
@@ -785,17 +875,22 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
       super(node)
     }
     this.$node = node
+
     this.$zOrderSupport = zOrderSupport
     this.$initialParent = null
     this.$currentParent = null
   }
+
   initializeDrag(context) {
     const graph = context.graph
+
     // store initial parent of the node...
     this.$initialParent = graph.getParent(this.$node)
     this.$currentParent = this.$initialParent
+
     super.initializeDrag(context)
   }
+
   /**
    * Customizes the temporary new parent of `node` and its z-order in its new {@link IRenderTreeGroup}
    */
@@ -810,54 +905,66 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
     } else if (parent !== this.$currentParent) {
       // node is reset to its initial parent: reset its temporary z-order so the original one is used again
       this.$zOrderSupport.removeTempZOrder(node)
+
       super.setCurrentParent(context, node, parent)
     }
     this.$currentParent = parent
   }
+
   dragFinished(context, originalLocation, newLocation) {
     super.dragFinished(context, originalLocation, newLocation)
     this.cleanUp()
   }
+
   cancelDrag(context, originalLocation) {
     super.cancelDrag(context, originalLocation)
     this.cleanUp()
   }
+
   cleanUp() {
     this.$initialParent = null
     this.$currentParent = null
   }
 }
+
 /**
  * An {@link InputHandlerBase input handler} that reads the z-order of nodes, edges and ports.
  */
 class ZOrderInputHandler extends InputHandlerBase {
   zOrderSupport
+
   constructor(zOrderSupport) {
     super(INode, Number)
     this.zOrderSupport = zOrderSupport
   }
+
   parseDataCore(context, node) {
     return Number.parseInt(node.textContent)
   }
+
   setValue(context, key, data) {
     if (this.zOrderSupport && key && data !== null) {
       this.zOrderSupport.setZOrder(key, data)
       this.zOrderSupport.update(key)
     }
   }
+
   applyDefault(context) {
     const key = context.getCurrent(INode)
     this.setValue(context, key, 0)
   }
 }
+
 /**
  * An {@link IOutputHandler} that writes the z-order of nodes, edges and ports.
  */
 class ZOrderOutputHandler extends OutputHandlerBase {
   zOrderSupport
+
   static get Z_ORDER_KEY_NAME() {
     return 'zOrder'
   }
+
   /**
    * The namespace URI for z-order extensions to GraphML.
    * This field has the constant value `http://www.yworks.com/xml/yfiles-bpmn/1.0`
@@ -865,6 +972,7 @@ class ZOrderOutputHandler extends OutputHandlerBase {
   static get Z_ORDER_N_S() {
     return 'http://www.yworks.com/xml/yfiles-z-order/1.0'
   }
+
   constructor(zOrderSupport) {
     super(INode, Number, KeyScope.NODE, ZOrderOutputHandler.Z_ORDER_KEY_NAME, KeyType.INT)
     this.zOrderSupport = zOrderSupport
@@ -874,9 +982,11 @@ class ZOrderOutputHandler extends OutputHandlerBase {
       ZOrderOutputHandler.Z_ORDER_N_S + '/' + ZOrderOutputHandler.Z_ORDER_KEY_NAME
     )
   }
+
   writeValueCore(context, data) {
     context.writer.writeString(data.toString())
   }
+
   getValue(context, key) {
     if (this.zOrderSupport) {
       return this.zOrderSupport.getZOrder(key)
@@ -884,6 +994,7 @@ class ZOrderOutputHandler extends OutputHandlerBase {
     return 0
   }
 }
+
 /**
  * Delegates reparenting to an external callback function. The callback function is intended to
  * provide pre- and post-processing only. The actual reparenting operation should be performed by
@@ -897,12 +1008,15 @@ class ZOrderReparentHandler extends BaseClass(IReparentNodeHandler) {
     this.handler = handler
     this.zOrderSupport = zOrderSupport
   }
+
   isReparentGesture(context, node) {
     return this.handler.isReparentGesture(context, node)
   }
+
   isValidParent(context, node, newParent) {
     return this.handler.isValidParent(context, node, newParent)
   }
+
   reparent(context, node, newParent) {
     // Determine the node's and the parent's representatives in the master graph.
     // This has to be done prior to the reparenting operation, because if the new parent is a
@@ -913,19 +1027,24 @@ class ZOrderReparentHandler extends BaseClass(IReparentNodeHandler) {
     // for decorating the default reparent handler here.
     const masterNode = this.zOrderSupport.getMasterNode(node)
     const masterParent = newParent ? this.zOrderSupport.getMasterNode(newParent) : null
+
     // reparent the node
     this.handler.reparent(context, node, newParent)
+
     // update the node's z-order index
     const zIndex = this.calculateNewZIndex(this.zOrderSupport.masterGraph, masterNode, masterParent)
     this.zOrderSupport.setZOrder(masterNode, zIndex)
+
     const viewNode = this.zOrderSupport.getViewNode(masterNode)
     if (viewNode) {
       this.zOrderSupport.graphComponent.graphModelManager.update(viewNode)
     }
   }
+
   shouldReparent(context, node) {
     return this.handler.shouldReparent(context, node)
   }
+
   /**
    * Calculates an appropriate z-order index for the given node in the given graph.
    */

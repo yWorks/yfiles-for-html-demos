@@ -35,6 +35,7 @@ import {
   IObstacleProvider,
   SvgVisual
 } from '@yfiles/yfiles'
+
 export class CustomEdgeStyle extends EdgeStyleBase {
   distance
   /**
@@ -45,72 +46,86 @@ export class CustomEdgeStyle extends EdgeStyleBase {
     super()
     this.distance = distance
   }
+
   createVisual(context, edge) {
     const group = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     const generalPath = super.getPath(edge)
     const distance = this.distance
     const loadColor = this.getLoadColor(edge)
     const croppedGeneralPath = super.cropPath(edge, IArrow.NONE, IArrow.NONE, generalPath)
+
     const pathWithBridges = this.createPathWithBridges(croppedGeneralPath, context)
     const obstacleHash = this.getObstacleHash(context)
+
     const widePath = pathWithBridges.createSvgPath()
     widePath.setAttribute('fill', 'none')
     widePath.setAttribute('stroke', 'black')
     widePath.setAttribute('stroke-width', String(distance + 2))
     group.append(widePath)
+
     const thinPath = pathWithBridges.createSvgPath()
     thinPath.setAttribute('fill', 'none')
     thinPath.setAttribute('stroke', loadColor)
     thinPath.setAttribute('stroke-width', String(distance))
     group.append(thinPath)
-    return SvgVisual.from(group, {
-      generalPath,
-      distance,
-      loadColor,
-      obstacleHash
-    })
+
+    return SvgVisual.from(group, { generalPath, distance, loadColor, obstacleHash })
   }
+
   updateVisual(context, oldVisual, edge) {
     const cache = oldVisual.tag
+
     const group = oldVisual.svgElement
     const widePath = group.children[0]
     const thinPath = group.children[1]
+
     const newGeneralPath = super.getPath(edge)
     const newObstacleHash = this.getObstacleHash(context)
     if (!newGeneralPath.hasSameValue(cache.generalPath) || newObstacleHash !== cache.obstacleHash) {
       const croppedGeneralPath = super.cropPath(edge, IArrow.NONE, IArrow.NONE, newGeneralPath)
       const pathWithBridges = this.createPathWithBridges(croppedGeneralPath, context)
       const pathData = pathWithBridges.createSvgPathData()
+
       widePath.setAttribute('d', pathData)
       thinPath.setAttribute('d', pathData)
+
       cache.generalPath = newGeneralPath
       cache.obstacleHash = newObstacleHash
     }
+
     if (this.distance !== cache.distance) {
       widePath.setAttribute('stroke-width', String(this.distance + 2))
       thinPath.setAttribute('stroke-width', String(this.distance))
       cache.distance = this.distance
     }
+
     const newLoadColor = this.getLoadColor(edge)
     if (newLoadColor !== cache.loadColor) {
       thinPath.setAttribute('stroke', newLoadColor)
       cache.loadColor = newLoadColor
     }
+
     return oldVisual
   }
+
   isHit(context, location, edge) {
     const thickness = this.distance + 2
     const edgePath = super.getPath(edge)
     return edgePath.pathContains(location, context.hitTestRadius + thickness * 0.5)
   }
+
   isVisible(context, rectangle, edge) {
     return rectangle.intersects(this.getBounds(context, edge))
   }
+
   getBounds(context, edge) {
     const path = super.getPath(edge)
     const thickness = this.distance + 2
+
     return path.getBounds().getEnlarged(thickness * 0.5)
   }
+
   lookup(edge, type) {
     if (type === IObstacleProvider) {
       const getPath = this.getPath.bind(this)
@@ -122,14 +137,17 @@ export class CustomEdgeStyle extends EdgeStyleBase {
     }
     return super.lookup(edge, type)
   }
+
   getObstacleHash(context) {
     const manager = context.lookup(BridgeManager)
     return manager ? manager.getObstacleHash(context) : 42
   }
+
   createPathWithBridges(path, context) {
     const manager = context.lookup(BridgeManager)
     return manager ? manager.addBridges(context, path) : path
   }
+
   /**
    * Returns the color of an edge based on the load property of its tag object.
    * @param edge The edge to get a color for.

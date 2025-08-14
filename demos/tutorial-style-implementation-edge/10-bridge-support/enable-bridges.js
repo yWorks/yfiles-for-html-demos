@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { BridgeManager, GraphObstacleProvider } from '@yfiles/yfiles'
+
 export function enableBridges(graphComponent) {
   const bridgeManager = new BridgeManager()
   bridgeManager.canvasComponent = graphComponent

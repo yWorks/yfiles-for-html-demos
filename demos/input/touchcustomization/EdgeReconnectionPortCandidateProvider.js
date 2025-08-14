@@ -38,6 +38,7 @@ import {
   List,
   PortCandidate
 } from '@yfiles/yfiles'
+
 /**
  * An {@link IEdgeReconnectionPortCandidateProvider} that allows moving ports to
  * any other port candidate that another node provides.
@@ -50,6 +51,7 @@ export class EdgeReconnectionPortCandidateProvider extends BaseClass(
     super()
     this.edge = edge
   }
+
   /**
    * Gets a list of port candidates for edge reconnection that matches the list of candidates the
    * IPortCandidateProvider interface returns.
@@ -58,6 +60,7 @@ export class EdgeReconnectionPortCandidateProvider extends BaseClass(
   getSourcePortCandidates(context) {
     return this.getPortCandidates(context, true)
   }
+
   /**
    * Gets a list of port candidates for edge reconnection that matches the list of candidates the
    * IPortCandidateProvider interface returns.
@@ -66,11 +69,14 @@ export class EdgeReconnectionPortCandidateProvider extends BaseClass(
   getTargetPortCandidates(context) {
     return this.getPortCandidates(context, false)
   }
+
   getPortCandidates(context, source) {
     const result = new List()
+
     // add the current one as the default
     const port = source ? this.edge.sourcePort : this.edge.targetPort
     result.add(new PortCandidate(port))
+
     const graph = context.graph
     if (!graph) {
       return result

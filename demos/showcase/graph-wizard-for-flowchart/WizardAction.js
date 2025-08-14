@@ -46,6 +46,7 @@ import {
   VerticalTextAlignment
 } from '@yfiles/yfiles'
 import { GraphWizardInputMode } from './GraphWizardInputMode'
+
 /**
  * The layout style buttons shall be arranged in.
  */
@@ -55,6 +56,7 @@ export var PickerLayout
   PickerLayout[(PickerLayout['Row'] = 1)] = 'Row'
   PickerLayout[(PickerLayout['Column'] = 2)] = 'Column'
 })(PickerLayout || (PickerLayout = {}))
+
 /**
  * An action managed by the {@link GraphWizardInputMode}.
  */
@@ -68,12 +70,14 @@ export class WizardAction {
   _description
   _noUndo
   button = null
+
   /**
    * The type of the action that is passed to the {@link WizardAction.handler}.
    */
   get type() {
     return this._type
   }
+
   /**
    * Creates a new {@link WizardAction}.
    * @param type The type of the action that is passed to the {@link WizardAction.handler}.
@@ -111,48 +115,56 @@ export class WizardAction {
     this._buttonOptions = buttonOptions || null
     this._noUndo = noUndo ?? false
   }
+
   /**
    * The pre-condition that has to be met so that the action is active.
    */
   get preCondition() {
     return this._preCondition
   }
+
   /**
    * The callback to decide whether an event should trigger this action.
    */
   get trigger() {
     return this._trigger
   }
+
   /**
    * The keyboard shortcuts that trigger this action.
    */
   get shortcuts() {
     return this._shortcuts
   }
+
   /**
    * The callback executing the action once it is triggered.
    */
   get handler() {
     return this._handler
   }
+
   /**
    * The description added to the legend when this action is active.
    */
   get description() {
     return this._description
   }
+
   /**
    * The configuration options for a button that is displayed when this action is active.
    */
   get buttonOptions() {
     return this._buttonOptions
   }
+
   /**
    * Whether the action should not be enqueued in the undo stack.
    */
   get noUndo() {
     return this._noUndo
   }
+
   /**
    * Returns the default action used for all picker buttons as well as for the main button if no
    * picker buttons are used is to handle this action.
@@ -162,10 +174,12 @@ export class WizardAction {
     return (button) =>
       mode.handleAction(this, button.owner, button.tag, mode.graphComponent.lastInputEvent)
   }
+
   /**
    * Clears the action state when the action gets deactivated.
    */
   clear() {}
+
   /**
    * Returns the type of the action triggered by the button configured by the button options.
    * @param options The {@link ButtonOptions} to determine the type for.
@@ -180,6 +194,7 @@ export class WizardAction {
     }
     return type
   }
+
   /**
    * Returns the {@link ILabelStyle style} used for the button configured by the button options.
    * @param options The {@link ButtonOptions} to determine the style for.
@@ -198,9 +213,7 @@ export class WizardAction {
       const fill = styleConfig.backgroundFill
         ? Fill.from(styleConfig.backgroundFill)
         : Color.WHITE_SMOKE
-      iconLabelStyle.wrappedStyle = new LabelStyle({
-        backgroundFill: fill
-      })
+      iconLabelStyle.wrappedStyle = new LabelStyle({ backgroundFill: fill })
       return iconLabelStyle
     } else if (styleConfig && styleConfig.type === 'rect') {
       return new LabelStyle({
@@ -234,6 +247,7 @@ export class WizardAction {
       return new LabelStyle()
     }
   }
+
   /**
    * Returns the text used for the button configured by the button options.
    *
@@ -249,6 +263,7 @@ export class WizardAction {
     }
     return ''
   }
+
   /**
    * Returns the {@link ILabelModelParameter layout} used for the button configured by the button options.
    * @param options The {@link ButtonOptions} to determine the layout for.
@@ -263,6 +278,7 @@ export class WizardAction {
       return GraphWizardInputMode.getBaseLayout(owner)
     }
   }
+
   /**
    * Returns the tooltip displayed when hovering over the button.
    * @param options The {@link ButtonOptions} to determine the tooltip for.
@@ -278,6 +294,7 @@ export class WizardAction {
     }
     return WizardAction.getTextWithShortcuts(tooltip, 'tooltip', shortcuts)
   }
+
   /**
    * Returns a styled html string that combines the text with a presentation of the shortcuts.
    *
@@ -298,6 +315,7 @@ export class WizardAction {
     htmlText += '</div>'
     return htmlText
   }
+
   /**
    * Returns a HTML string that visualizes the shortcut keys.
    * @param shortcuts The shortcuts to visualize.
@@ -305,11 +323,13 @@ export class WizardAction {
   static getShortcutsString(shortcuts) {
     const startKey = '<kbd class="shortcut">'
     const endKey = '</kbd>'
+
     let tooltip = ''
     for (let i = 0; i < shortcuts.length; i++) {
       if (i != 0) {
         tooltip += ' / '
       }
+
       const shortcut = shortcuts[i]
       if (shortcut.modifier) {
         if ((shortcut.modifier & ModifierKeys.CONTROL) === ModifierKeys.CONTROL) {
@@ -326,6 +346,7 @@ export class WizardAction {
     }
     return tooltip
   }
+
   static getKeyName(key) {
     if (key == 'ArrowUp') {
       return '&uarr;'
@@ -341,6 +362,7 @@ export class WizardAction {
     return key
   }
 }
+
 /**
  * Handles processing multiple {@link ActionStep}s that may be canceled to go back to previous steps.
  *
@@ -350,8 +372,10 @@ export class WizardAction {
 export async function handleMultipleSteps(steps) {
   let currentIndex = 0
   let wasCanceled = false
+
   const undoDataStore = []
   const nextStepDataStore = []
+
   // iterate until either the first step was canceled or the last succeeds
   while (currentIndex >= 0 && currentIndex < steps.length) {
     const currentStep = steps[currentIndex]

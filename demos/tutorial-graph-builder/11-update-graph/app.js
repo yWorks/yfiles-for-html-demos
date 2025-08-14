@@ -31,19 +31,31 @@ import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { configureStyles, getData, initializeTutorialDefaults, runLayout } from '../common'
 import { createDynamicNodesSource, resetGraph, updateGraph } from './update-graph'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 const graph = graphComponent.graph
+
 initializeTutorialDefaults(graphComponent)
+
 const data = await getData()
+
 const graphBuilder = new GraphBuilder(graph)
+
 const nodesSource = await createDynamicNodesSource(graphBuilder, data)
+
 nodesSource.nodeCreator.createLabelBinding('name')
 graphBuilder.createEdgesSource(data.edgesSource, 'sourceId', 'targetId', 'id')
+
 configureStyles([nodesSource])
+
 graphBuilder.buildGraph()
+
 await runLayout(graphComponent)
+
 finishLoading()
+
 document.querySelector('#updateGraphButton')?.addEventListener('click', async () => {
   updateGraph(graphBuilder)
   await runLayout(graphComponent, true)

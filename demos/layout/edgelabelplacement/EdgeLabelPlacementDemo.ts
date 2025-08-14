@@ -196,9 +196,7 @@ async function doLayout(fitViewToContent: boolean): Promise<void> {
 
   // fix node port stage is used to keep the bounding box of the graph in the view port
   layoutData.combineWith(
-    new LayoutAnchoringStageData({
-      nodeAnchoringPolicies: LayoutAnchoringPolicy.CENTER
-    })
+    new LayoutAnchoringStageData({ nodeAnchoringPolicies: LayoutAnchoringPolicy.CENTER })
   )
 
   // initialize layout executor

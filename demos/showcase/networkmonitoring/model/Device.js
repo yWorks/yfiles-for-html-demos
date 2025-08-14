@@ -39,26 +39,31 @@ export var DeviceKind
   DeviceKind[(DeviceKind['SERVER'] = 6)] = 'SERVER'
   DeviceKind[(DeviceKind['DATABASE'] = 7)] = 'DATABASE'
 })(DeviceKind || (DeviceKind = {}))
+
 /**
  * Class representing a device in the network.
  */
 export class Device {
   // Size of the workload history.
   static LOAD_HISTORY_SIZE = 15
+
   /**
    * Builds a new device for the network model.
    */
   constructor() {
     this.loadHistory = Array(Device.LOAD_HISTORY_SIZE).fill(0)
   }
+
   /**
    * The unique id of the device - used for wiring up connections
    */
   id = 0
+
   /**
    * The previous load values for this device. Consider this to be read-only.
    */
   loadHistory
+
   /**
    * The name of this device.
    */
@@ -67,16 +72,20 @@ export class Device {
    * The IP address of this device.
    */
   ip = null
+
   /**
    * The kind of the device.
    */
   kind = DeviceKind.WORKSTATION
+
   /**
    * Value indicating whether this device is enabled. Disabled devices are turned off and
    * can't send or receive packets.
    */
   enabled = false
+
   #failed = false
+
   /**
    * Value indicating whether this device failed. A failed device has to be repaired before
    * it can send or receive packets again.
@@ -86,14 +95,17 @@ export class Device {
   get failed() {
     return this.#failed
   }
+
   fail() {
     this.#failed = true
     this.enabled = false
   }
+
   repair() {
     this.#failed = false
     this.enabled = true
   }
+
   /**
    * Gets the load of this device.
    * Load is a value between 0 and 1 that indicates how utilized the device is (with 0 being not
@@ -103,6 +115,7 @@ export class Device {
   get load() {
     return this.loadHistory.at(-1)
   }
+
   /**
    * Sets the load of this device.
    * Load is a value between 0 and 1 that indicates how utilized the device is (with 0 being not
@@ -113,6 +126,7 @@ export class Device {
     this.loadHistory.push(value)
     this.loadHistory.shift()
   }
+
   /**
    * Determines whether this device can send packets.
    * By definition in our model, neither switches nor Wi-Fi access points can send packets; they
@@ -130,6 +144,7 @@ export class Device {
         return true
     }
   }
+
   /**
    * Determines whether this device can receive packets.
    * By definition in our model, switches and Wi-Fi access points only relay packets. Everything
@@ -148,6 +163,7 @@ export class Device {
         return false
     }
   }
+
   /**
    * Determines whether a packet may take a certain connection to a given device type, coming
    * from a certain type of device.
@@ -171,12 +187,14 @@ export class Device {
     if (this.kind === DeviceKind.SWITCH || targetNode.kind === DeviceKind.SWITCH) {
       return true
     }
+
     const clientTypes = [DeviceKind.LAPTOP, DeviceKind.SMARTPHONE, DeviceKind.WORKSTATION]
     return clientTypes.includes(this.kind)
       ? !clientTypes.includes(targetNode.kind)
       : this !== targetNode
   }
 }
+
 /**
  * Converts the given load to a color.
  * @returns A hex encoded color in the form 'hsla(h,s,l,a)'.

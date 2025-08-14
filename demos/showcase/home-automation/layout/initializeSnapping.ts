@@ -35,7 +35,5 @@ import {
 
 export function initializeSnapping(graphComponent: GraphComponent): void {
   const gcInputMode = graphComponent.inputMode as GraphEditorInputMode
-  gcInputMode.snapContext = new GraphSnapContext({
-    snappableItems: SnappableItems.NODE
-  })
+  gcInputMode.snapContext = new GraphSnapContext({ snappableItems: SnappableItems.NODE })
 }

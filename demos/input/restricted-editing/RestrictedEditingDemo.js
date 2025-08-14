@@ -40,26 +40,34 @@ import SampleData from './resources/SampleData'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { EdgePositionHandler } from './EdgePositionHandler'
+
 /**
  * Bootstraps this demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // create the demo's graph component
   const graphComponent = new GraphComponent('#graphComponent')
   // initially disable interactive editing
   configureUserInteraction(graphComponent)
+
   // configure default styles for the demo's graph
   initDemoStyles(graphComponent.graph)
+
   // create the demo's sample graph
   createSampleGraph(graphComponent.graph)
+
   // center the demo's graph in the demo's visible area
   await graphComponent.fitGraphBounds()
+
   // enable undo and redo
   graphComponent.graph.undoEngineEnabled = true
+
   // bind the demo's UI controls to their respective actions
   initializeUI(graphComponent)
 }
+
 /**
  * Creates the sample graph for this demo.
  */
@@ -71,11 +79,7 @@ function createSampleGraph(graph) {
     parentId: 'parent',
     layout: 'bounds'
   })
-  builder.createGroupNodesSource({
-    data: SampleData.groups,
-    id: 'id',
-    layout: 'bounds'
-  })
+  builder.createGroupNodesSource({ data: SampleData.groups, id: 'id', layout: 'bounds' })
   builder.createEdgesSource({
     data: SampleData.edges,
     id: 'id',
@@ -83,8 +87,10 @@ function createSampleGraph(graph) {
     targetId: 'tgt',
     bends: 'bends'
   })
+
   builder.buildGraph()
 }
+
 /**
  * Registers a {@link GraphEditorInputMode} instance that does not allow interactive editing of
  * the demo's graph initially.
@@ -118,11 +124,13 @@ function configureUserInteraction(graphComponent) {
     moveSelectedItemsInputMode: { enabled: false },
     moveUnselectedItemsInputMode: { enabled: false }
   })
+
   // register position handlers on edges so that they can be moved
   graphComponent.graph.decorator.edges.positionHandler.addFactory(
     (edge) => new EdgePositionHandler(edge)
   )
 }
+
 /**
  * Configures interactive editing according to the given operations value.
  * @param graphComponent the graph view for which interactive editing is configured.
@@ -145,6 +153,7 @@ function configureEditing(graphComponent, operations) {
     allowEditing(graphComponent.inputMode, true)
   }
 }
+
 /**
  * Turns interactive editing on or off
  * @param geim the input mode responsible for interactive editing.
@@ -168,11 +177,14 @@ function allowEditing(geim, enabled) {
   geim.allowReverseEdge = enabled
   geim.allowUndoOperations = enabled
   geim.allowUngroupSelection = enabled
+
   geim.deletableItems = enabled ? GraphItemTypes.ALL : GraphItemTypes.NONE
   geim.showHandleItems = enabled ? GraphItemTypes.ALL : GraphItemTypes.NONE
+
   geim.moveSelectedItemsInputMode.enabled = enabled
   geim.moveUnselectedItemsInputMode.enabled = enabled
 }
+
 /**
  * Binds actions to the demo's UI controls.
  */
@@ -182,4 +194,5 @@ function initializeUI(graphComponent) {
     configureEditing(graphComponent, allowEditing.value)
   )
 }
+
 run().then(finishLoading)

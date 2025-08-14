@@ -704,50 +704,12 @@ export default {
       }
     ],
     groups: [
-      {
-        id: 6,
-        x: 95,
-        y: 276,
-        width: 202.5,
-        height: 342
-      },
-      {
-        id: 7,
-        x: 302,
-        y: 150,
-        width: 108,
-        height: 66
-      },
-      {
-        id: 9,
-        x: 33.5,
-        y: 678,
-        width: 111,
-        height: 126
-      },
-      {
-        id: 10,
-        x: 386,
-        y: 678,
-        width: 108,
-        height: 126
-      },
-      {
-        id: 61,
-        x: 104,
-        y: 306,
-        width: 108,
-        height: 126,
-        parentId: 6
-      },
-      {
-        id: 62,
-        x: 111.5,
-        y: 462,
-        width: 177,
-        height: 126,
-        parentId: 6
-      }
+      { id: 6, x: 95, y: 276, width: 202.5, height: 342 },
+      { id: 7, x: 302, y: 150, width: 108, height: 66 },
+      { id: 9, x: 33.5, y: 678, width: 111, height: 126 },
+      { id: 10, x: 386, y: 678, width: 108, height: 126 },
+      { id: 61, x: 104, y: 306, width: 108, height: 126, parentId: 6 },
+      { id: 62, x: 111.5, y: 462, width: 177, height: 126, parentId: 6 }
     ]
   },
   orthogonal: {

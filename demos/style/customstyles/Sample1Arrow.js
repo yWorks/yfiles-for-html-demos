@@ -45,6 +45,7 @@ import {
   Visual
 } from '@yfiles/yfiles'
 import { SVGNS } from './Namespaces'
+
 /**
  * A demo IArrow implementation that renders the arrow as a custom filled shape.
  */
@@ -54,6 +55,7 @@ export class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
   thickness = 2.0
   arrowThickness = 0
   arrowFigure = null
+
   /**
    * Returns the length of the arrow, i.e. the distance from the arrow's tip to
    * the position where the visual representation of the edge's path should begin.
@@ -63,6 +65,7 @@ export class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
   get length() {
     return 7
   }
+
   /**
    * Gets the cropping length associated with this instance.
    * Value: Always returns 1
@@ -73,6 +76,7 @@ export class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
   get cropLength() {
     return 1
   }
+
   /**
    * Gets an {@link IVisualCreator} implementation that will create
    * the {@link IVisualCreator} for this arrow
@@ -90,6 +94,7 @@ export class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
     this.direction = direction
     return this
   }
+
   /**
    * Gets an {@link IBoundsProvider} implementation that can yield
    * this arrow's bounds if painted at the given location using the
@@ -110,6 +115,7 @@ export class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
     this.direction = direction
     return this
   }
+
   /**
    * Creates the visual for the arrow.
    * @param ctx The context that contains the information needed to create the visual.
@@ -121,19 +127,25 @@ export class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
     if (this.arrowFigure === null) {
       this.arrowFigure = Sample1Arrow.newArrowPath(this.arrowThickness)
     }
+
     const path = this.arrowFigure.createSvgPath()
+
     // add the gradient to the global defs section if necessary and returns the id
     const gradientId = ctx.getDefsId(GRADIENT)
     path.setAttribute('fill', `url(#${gradientId})`)
+
     // Remember thickness for update
     path['data-renderDataCache'] = this.arrowThickness
+
     // rotate the arrow and move it to correct position
     path.setAttribute(
       'transform',
       `matrix(${-this.direction.x} ${-this.direction.y} ${this.direction.y} ${-this.direction.x} ${this.anchor.x} ${this.anchor.y})`
     )
+
     return new SvgVisual(path)
   }
+
   /**
    * This method updates or replaces a previously created {@link Visual}.
    * The {@link CanvasComponent} uses this method to give implementations a chance to
@@ -158,12 +170,14 @@ export class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
       // re-render arrow
       return this.createVisual(ctx)
     }
+
     path.setAttribute(
       'transform',
       `matrix(${-this.direction.x} ${-this.direction.y} ${this.direction.y} ${-this.direction.x} ${this.anchor.x} ${this.anchor.y})`
     )
     return oldVisual
   }
+
   /**
    * Returns the bounds of the arrow for the current flyweight configuration.
    * @see Specified by {@link IBoundsProvider.getBounds}.
@@ -176,6 +190,7 @@ export class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
       16 + this.arrowThickness * 2
     )
   }
+
   /**
    * Configures the thickness to use for the next visual creation.
    * @param edge The edge to read the thickness from.
@@ -184,11 +199,13 @@ export class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
     // determine the edge's thickness
     const oldThickness = this.arrowThickness
     this.arrowThickness = this.getThickness(edge.style)
+
     // see if the old arrow figure needs to be invalidated...
     if (this.arrowThickness !== oldThickness) {
       this.arrowFigure = null
     }
   }
+
   getThickness(style) {
     if (typeof style.pathThickness !== 'undefined') {
       return style.pathThickness
@@ -196,6 +213,7 @@ export class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
       return this.thickness
     }
   }
+
   static newArrowPath(thickness) {
     const path = new GeneralPath()
     path.moveTo(new Point(7, -thickness * 0.5))
@@ -218,10 +236,12 @@ export class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
     path.close()
     return path
   }
+
   get cropAtPort() {
     return false
   }
 }
+
 /**
  * This class is needed in order to support automatic cleanup of the global defs section.
  * The SVG specification requires gradient elements to be put into a defs section. The
@@ -238,15 +258,20 @@ class CustomGradientSupport extends BaseClass(ISvgDefsCreator) {
     super()
     this.gradient = gradient
   }
+
   createDefsElement(context) {
     return this.gradient
   }
+
   accept(context, node, id) {
     return node instanceof Element && node.getAttribute('fill') === `url(#${id})`
   }
+
   updateDefsElement(context, oldElement) {}
 }
+
 const GRADIENT = createGradient()
+
 function createGradient() {
   // initialize gradient
   const linearGradient = document.createElementNS(SVGNS, 'linearGradient')
@@ -270,6 +295,7 @@ function createGradient() {
   stop3.setAttribute('stop-opacity', '1')
   stop3.setAttribute('offset', '1')
   linearGradient.appendChild(stop3)
+
   // initialize gradient support
   // This mechanism is needed to allow sharing of gradient instances between
   // multiple svg elements, as well as automatic cleanup of the global defs section.

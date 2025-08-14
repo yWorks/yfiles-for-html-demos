@@ -29,6 +29,7 @@
 import { IEnumerable, IGraph } from '@yfiles/yfiles'
 import { addItem } from './ProcessItemVisual'
 import { getProcessStepData, getProcessTransitionData } from '../process-graph-extraction'
+
 /**
  * Prepares the graph for the visualization of heat and events.
  * The nodes are associated with data about the workload.
@@ -40,10 +41,12 @@ export function prepareProcessVisualization(graph, eventLog) {
       (activity, events) => [activity, events?.toList()]
     )
   )
+
   // determine the heat over time for each process step
   graph.nodes.forEach((processStep) => {
     const processStepData = getProcessStepData(processStep)
     const events = eventsByActivities[processStepData.label]
+
     // add the event's heat value for its duration
     events?.forEach((event) => {
       processStepData.heat.addValues(
@@ -52,8 +55,10 @@ export function prepareProcessVisualization(graph, eventLog) {
         event.cost ?? 1
       )
     })
+
     processStepData.capacity = processStepData.heat.getMaxValue()
   })
+
   // determine the heat over time for each process transition
   graph.edges.forEach((processTransition) => {
     const processTransitionData = getProcessTransitionData(processTransition)
@@ -61,10 +66,7 @@ export function prepareProcessVisualization(graph, eventLog) {
     if (processTransition.isSelfLoop) {
       allEvents = eventsByActivities[processTransitionData.sourceLabel]
       allEvents.sort((event1, event2) => event1.timestamp - event2.timestamp)
-      allEvents = allEvents.map((event, index) => ({
-        source: index % 2 === 0,
-        event
-      }))
+      allEvents = allEvents.map((event, index) => ({ source: index % 2 === 0, event }))
     } else {
       const sourceEvents = eventsByActivities[processTransitionData.sourceLabel].map((event) => ({
         source: true,
@@ -76,6 +78,7 @@ export function prepareProcessVisualization(graph, eventLog) {
       }))
       allEvents = sourceEvents.concat(targetEvents)
     }
+
     allEvents
       .groupBy(
         (event) => event.event.caseId,
@@ -90,10 +93,13 @@ export function prepareProcessVisualization(graph, eventLog) {
           if (events[i].source && !events[i + 1].source) {
             const event = events[i].event
             const nextEvent = events[i + 1].event
+
             // add the transition's heat value for its duration
             processTransitionData.heat.addValues(event.timestamp, nextEvent.timestamp, 1)
+
             // add an item to the transition representing the event
             addItem(
+              events[0].event.caseId,
               processTransition,
               false,
               event.timestamp,
@@ -104,8 +110,10 @@ export function prepareProcessVisualization(graph, eventLog) {
           }
         }
       })
+
     processTransitionData.capacity = processTransitionData.heat.getMaxValue()
   })
+
   // return the maximum time
   const maxTime =
     eventLog.sort((event1, event2) => event1.timestamp - event2.timestamp).at(-1)?.timestamp ?? 0

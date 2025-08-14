@@ -95,12 +95,7 @@ export default {
         { x: 232.5, y: 45 }
       ]
     },
-    {
-      id: 1,
-      source: 3,
-      target: 7,
-      bends: []
-    },
+    { id: 1, source: 3, target: 7, bends: [] },
     {
       id: 2,
       source: 0,
@@ -209,12 +204,7 @@ export default {
         { x: 1110, y: 225 }
       ]
     },
-    {
-      id: 14,
-      source: 12,
-      target: 17,
-      bends: []
-    },
+    { id: 14, source: 12, target: 17, bends: [] },
     {
       id: 15,
       source: 11,
@@ -278,12 +268,7 @@ export default {
         { x: 712.5, y: 225 }
       ]
     },
-    {
-      id: 22,
-      source: 26,
-      target: 27,
-      bends: []
-    },
+    { id: 22, source: 26, target: 27, bends: [] },
     {
       id: 23,
       source: 24,
@@ -401,12 +386,7 @@ export default {
         { x: 67.5, y: 225 }
       ]
     },
-    {
-      id: 36,
-      source: 40,
-      target: 41,
-      bends: []
-    },
+    { id: 36, source: 40, target: 41, bends: [] },
     {
       id: 37,
       source: 38,
@@ -488,12 +468,7 @@ export default {
         { x: 120, y: 405 }
       ]
     },
-    {
-      id: 46,
-      source: 4,
-      target: 38,
-      bends: []
-    },
+    { id: 46, source: 4, target: 38, bends: [] },
     {
       id: 47,
       source: 1,
@@ -512,30 +487,10 @@ export default {
         { x: 390, y: 105 }
       ]
     },
-    {
-      id: 49,
-      source: 21,
-      target: 50,
-      bends: []
-    },
-    {
-      id: 50,
-      source: 50,
-      target: 51,
-      bends: []
-    },
-    {
-      id: 51,
-      source: 15,
-      target: 52,
-      bends: []
-    },
-    {
-      id: 52,
-      source: 52,
-      target: 53,
-      bends: []
-    },
+    { id: 49, source: 21, target: 50, bends: [] },
+    { id: 50, source: 50, target: 51, bends: [] },
+    { id: 51, source: 15, target: 52, bends: [] },
+    { id: 52, source: 52, target: 53, bends: [] },
     {
       id: 53,
       source: 53,

@@ -40,6 +40,7 @@ import {
   Rect,
   SvgVisual
 } from '@yfiles/yfiles'
+
 /**
  * A fast edge style. Compared to the default {@link PolylineEdgeStyle}, the edge is not cropped
  * at the node boundaries and does not support arrows.
@@ -59,6 +60,7 @@ export class SvgEdgeStyle extends EdgeStyleBase {
     this.color = color || Color.BLACK
     this.thickness = thickness || 1
   }
+
   /**
    * Creates the visual representation for the given edge.
    * @param context The render context.
@@ -69,6 +71,7 @@ export class SvgEdgeStyle extends EdgeStyleBase {
   createVisual(context, edge) {
     const source = edge.sourcePort.location
     const target = edge.targetPort.location
+
     // create the path
     const pathVisual = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     pathVisual.setAttribute('d', createSvgPath(source, target, edge))
@@ -76,10 +79,13 @@ export class SvgEdgeStyle extends EdgeStyleBase {
     const color = this.color
     pathVisual.setAttribute('stroke', `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`)
     pathVisual.setAttribute('stroke-width', `${this.thickness}`)
+
     // cache its values
     const cache = new RenderDataCache(edge, source, target)
+
     return SvgVisual.from(pathVisual, cache)
   }
+
   /**
    * Updates the visual representation for the given edge.
    * @param context The render context.
@@ -92,12 +98,15 @@ export class SvgEdgeStyle extends EdgeStyleBase {
   updateVisual(context, oldVisual, edge) {
     const source = edge.sourcePort.location
     const target = edge.targetPort.location
+
     // get the old path
     const pathVisual = oldVisual.svgElement
     const cache = oldVisual.tag
     const oldSource = cache.source
     const oldTarget = cache.target
+
     const bendLocations = getBendLocations(edge)
+
     // Did anything change at all? If not, we can just re-use the old visual ...
     if (
       oldSource.equals(source) &&
@@ -106,11 +115,13 @@ export class SvgEdgeStyle extends EdgeStyleBase {
     ) {
       return oldVisual
     }
+
     // ... otherwise we need to re-create the geometry and update the cache.
     pathVisual.setAttribute('d', createSvgPath(source, target, edge))
     oldVisual.tag = new RenderDataCache(edge, source, target)
     return oldVisual
   }
+
   /**
    * Override visibility test to optimize performance.
    */
@@ -121,11 +132,13 @@ export class SvgEdgeStyle extends EdgeStyleBase {
       .isVisible(context, rectangle)
   }
 }
+
 // an edge style instance for efficient visibility testing
 const helperEdgeStyle = new PolylineEdgeStyle({
   sourceArrow: IArrow.NONE,
   targetArrow: IArrow.NONE
 })
+
 /**
  * Stores the data that is necessary to determine whether the visual representation of
  * an edge has to be changed in {@link SvgEdgeStyle.updateVisual}.
@@ -134,12 +147,14 @@ class RenderDataCache {
   source
   target
   bendLocations
+
   constructor(edge, source, target) {
     this.source = source
     this.target = target
     this.bendLocations = getBendLocations(edge)
   }
 }
+
 /**
  * Creates the edge path's geometry.
  * @param source The source port location.
@@ -151,6 +166,7 @@ function createSvgPath(source, target, edge) {
   const path = edge.style.renderer.getPathGeometry(edge, edge.style).getPath()
   return path.createSvgPathData(new Matrix())
 }
+
 /**
  * Gets a list of bend locations from an edge.
  * @param edge The edge.
@@ -170,6 +186,7 @@ function getBendLocations(edge) {
     return []
   }
 }
+
 /**
  * Compares two arrays for equality.
  * @param a The first array.
@@ -181,9 +198,11 @@ function arrayEqual(a, b) {
   if (a === b) {
     return true
   }
+
   if (a.length !== b.length) {
     return false
   }
+
   for (let i = 0; i < a.length; i++) {
     if (!a[i].equals(b[i])) {
       return false

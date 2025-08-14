@@ -66,6 +66,7 @@ import {
   WebGLShapeNodeStyle,
   WebGLStroke
 } from '@yfiles/yfiles'
+
 import { ComplexCanvasNodeStyle } from './ComplexCanvasNodeStyle'
 import { CanvasLabelStyle } from './CanvasLabelStyle'
 import { CanvasEdgeStyle } from './CanvasEdgeStyle'
@@ -81,50 +82,62 @@ import samples from './resources/samples'
 import { createCanvasContext, createUrlIcon } from '@yfiles/demo-utils/IconCreation'
 import { FPSMeter } from './FPSMeter'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 import {
   addNavigationButtons,
+  BrowserDetection,
   finishLoading,
   showLoadingIndicator
 } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent
+
 /**
  * The time to wait after an edit event until a redrawing should be performed.
  */
 const AUTO_REDRAW_DELAY = 1000
+
 /**
  * Whether to use static label positions.
  */
 let fixLabelPositionsEnabled = false
+
 /**
  * Auto update setting.
  */
 let autoRedrawEnabled = true
+
 /**
  * Timer to control the schedule and cancel an auto redraw.
  */
 let redrawTimerId = 0
+
 /**
  * Holds the custom graphModelManager
  */
 let fastGraphModelManager
+
 /**
  * Controls for the benchmarking ui
  */
 let mainFrameRate
+
 /**
  * The pre-configurations for different sized graphs
  */
 let preConfigurator
+
 /**
  * Timer for setting the z-index after fade-out finished
  */
 let tooltipTimer = 0
+
 const webGLImageData = []
+
 /**
  * The default edge thickness
  */
 const edgeThickness = 5
+
 const redrawGraphButton = document.querySelector('#redrawGraphButton')
 const modeChooserBox = document.querySelector('#modeChooserBox')
 const graphChooserBox = document.querySelector('#graphChooserBox')
@@ -150,6 +163,7 @@ const autoRedrawCheckbox = document.querySelector('#autoRedrawCheckbox')
 const fpsCheckbox = document.querySelector('#fpsCheckbox')
 const zoomLevel = document.querySelector('#zoomLevel')
 const selectionCount = document.querySelector('#selection')
+
 /**
  * Holds the buttons that need to be disabled during animation
  */
@@ -159,28 +173,40 @@ const disabledButtonsDuringAnimation = [
   document.querySelector('#spiralAnimationBtn'),
   document.querySelector('#moveNodeAnimationBtn')
 ]
+
 /**
  * Runs the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
   graphComponent.minimumZoom = 0.005
+
   // assign the custom GraphModelManager
   fastGraphModelManager = createFastGraphModelManager()
+
   if (BrowserDetection.webGL2) {
     graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager()
   }
+
   await prepareWebGLRendering()
+
   // initialize fps meter
   mainFrameRate = new FPSMeter()
+
   registerListeners(graphComponent)
+
   preConfigurator = new PreConfigurator(graphComponent)
+
   initializeUI(graphComponent)
+
   registerTooltips()
+
   onGraphChooserSelectionChanged()
 }
+
 /**
  * Checks whether WebGL is supported and updates the corresponding UI buttons.
  */
@@ -194,6 +220,7 @@ async function prepareWebGLRendering() {
     levelOfDetailGmm.checked = true
   }
 }
+
 /**
  * Registers tooltips for the different performance settings.
  */
@@ -211,6 +238,7 @@ function registerTooltips() {
         hideTooltip()
       })
     }
+
     // input element listeners
     const inputElement = elements[i]
     inputElement.addEventListener('mouseover', () => {
@@ -222,21 +250,26 @@ function registerTooltips() {
     })
   }
 }
+
 /**
  * Helper method to show a tooltip
  */
 function showTooltip(id) {
   clearTimeout(tooltipTimer)
+
   const tooltipDiv = document.querySelector('#tooltip')
   const srcElement = document.getElementById(id)
   const infoElement = document.querySelector(`#${id}-info`)
+
   tooltipDiv.innerHTML = ''
+
   tooltipDiv.setAttribute('class', 'info-visible arrow')
   if (infoElement == null) {
     return
   }
   const tooltipContent = infoElement.cloneNode(true)
   tooltipDiv.appendChild(tooltipContent)
+
   const labelElement = srcElement.type === 'label' ? srcElement : srcElement.nextElementSibling
   if (labelElement.nodeName === 'LABEL') {
     const warning = labelElement.className.indexOf('warning') >= 0
@@ -252,10 +285,12 @@ function showTooltip(id) {
       tooltipDiv.appendChild(document.querySelector('#unrecommendedToolTip').cloneNode(true))
     }
   }
+
   const top =
     srcElement.getBoundingClientRect().top - tooltipDiv.getBoundingClientRect().height * 0.5
   tooltipDiv.setAttribute('style', `top:${top}px; right: 390px; overflow-wrap: break-word;`)
 }
+
 /**
  * Helper method that hides the tooltip.
  */
@@ -266,6 +301,7 @@ function hideTooltip() {
     tooltip.style.zIndex = '0'
   }, 350)
 }
+
 /**
  * Sets the custom {@link FastGraphModelManager} as the graphComponent's
  * {@link GraphComponent.graphModelManager}.
@@ -278,6 +314,7 @@ function createFastGraphModelManager() {
   fastGraphModelManager.overviewEdgeStyle = new SvgEdgeStyle(edgeColor, edgeThickness)
   return fastGraphModelManager
 }
+
 /**
  * Initialize the auto updates.
  */
@@ -289,6 +326,7 @@ function initializeAutoUpdates(graph) {
   graph.addEventListener('node-removed', () => scheduleRedraw())
   graph.addEventListener('edge-removed', () => scheduleRedraw())
 }
+
 /**
  * Starts the auto update timer, if not already running.
  */
@@ -296,10 +334,12 @@ function scheduleRedraw() {
   if (redrawTimerId) {
     clearTimeout(redrawTimerId)
   }
+
   const graphModelManager = graphComponent.graphModelManager
   if (!(graphModelManager instanceof FastGraphModelManager)) {
     return
   }
+
   const mode = graphModelManager.graphOptimizationMode
   if (
     autoRedrawEnabled &&
@@ -311,6 +351,7 @@ function scheduleRedraw() {
     redrawTimerId = window.setTimeout(redrawGraph, AUTO_REDRAW_DELAY)
   }
 }
+
 /**
  * Loads a graph from JSON data and places it in the {@link graphComponent}.
  * The loading indicator is shown prior to loading and hidden afterwards
@@ -318,33 +359,46 @@ function scheduleRedraw() {
  */
 async function loadGraph(fileName) {
   graphChooserBox.disabled = true
+
   // display the loading indicator
   await showLoadingIndicator(true)
+
   const fm = new FoldingManager()
   const fv = fm.createFoldingView()
   const graph = fv.graph
   updateDefaultStyles(graph)
+
   const graphData = await loadJSONData(`resources/${fileName}.json`)
   // load the graph from the data
   loadGraphCore(graph, graphData)
   graphComponent.graph = graph
+
   //Disable moving of individual edge segments in WebGL mode
   graphComponent.graph.decorator.edges.positionHandler.hide(
     () => getGraphOptimizationMode() == null
   )
+
   setWebGLItemStyles()
+
   graphChooserBox.disabled = false
+
   fastGraphModelManager.dirty = true
+
   // hide the loading indicator after the graphComponent has finished rendering
   graphComponent.addEventListener('updated-visual', onGraphComponentRendered)
+
   // check for labels
   onEdgeLabelsChanged(graphComponent.graph)
   onNodeLabelsChanged(graphComponent.graph)
   redrawGraph()
+
   initializeAutoUpdates(graphComponent.graph)
+
   preConfigurator.updatePreConfiguration()
+
   await graphComponent.fitGraphBounds()
 }
+
 /**
  * Parses the sample data and creates the graph elements.
  * @param graph The graph to populate with the items.
@@ -355,6 +409,7 @@ async function loadGraph(fileName) {
  */
 function loadGraphCore(graph, graphData) {
   graph.clear()
+
   // create a map to store the nodes for edge creation
   const nodeMap = {}
   // create the nodes
@@ -366,6 +421,7 @@ function loadGraphCore(graph, graphData) {
     node.tag = getRandomInt(10)
     nodeMap[id] = node
   }
+
   // create the edges
   for (const e of graphData.edgeList) {
     // get the source and target node from the mapping
@@ -374,6 +430,7 @@ function loadGraphCore(graph, graphData) {
     // create the source and target port
     const sp = typeof e.sp !== 'undefined' ? e.sp : {}
     const tp = typeof e.tp !== 'undefined' ? e.tp : {}
+
     const sx = typeof sp.x !== 'undefined' ? sp.x : sourceNode.layout.center.x
     const sy = typeof sp.y !== 'undefined' ? sp.y : sourceNode.layout.center.y
     const tx = typeof tp.x !== 'undefined' ? tp.x : targetNode.layout.center.x
@@ -390,10 +447,12 @@ function loadGraphCore(graph, graphData) {
       })
     }
   }
+
   // adjust default node size to have new nodes matching the graph
   graph.nodeDefaults.size =
     graph.nodes.size > 0 ? graph.nodes.first().layout.toSize() : new Size(30, 30)
 }
+
 /**
  * Reads the JSON data form a file.
  * @param url The URL of the file
@@ -403,6 +462,7 @@ async function loadJSONData(url) {
   const response = await fetch(url)
   return response.json()
 }
+
 /**
  * Forces repainting of the graph.
  */
@@ -411,14 +471,14 @@ function redrawGraph() {
   fastGraphModelManager.dirty = true
   graphComponent.invalidate()
 }
+
 /**
  * Helper method to initialize an {@link GraphEditorInputMode} for the graphComponent.
  * @param isMoveMode Whether the input mode should be configured for "move only".
  */
 function createEditorInputMode(isMoveMode) {
-  const graphEditorInputMode = new GraphEditorInputMode({
-    allowCreateBend: false
-  })
+  const graphEditorInputMode = new GraphEditorInputMode({ allowCreateBend: false })
+
   // disable anything besides moving of nodes
   if (isMoveMode) {
     graphEditorInputMode.showHandleItems = GraphItemTypes.NONE
@@ -430,16 +490,21 @@ function createEditorInputMode(isMoveMode) {
     graphEditorInputMode.allowCreateNode = false
     graphEditorInputMode.createEdgeInputMode.enabled = false
   }
+
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
   if (BrowserDetection.webGL2) {
     graphEditorInputMode.handleInputMode.handlesRenderer = new HandlesRenderer(RenderMode.WEBGL)
   }
+
   // assign a random number to each newly created node to determine its random svg image in the detail node style
   graphEditorInputMode.nodeCreator = (_, graph, location) =>
     graph.createNodeAt({ location, tag: getRandomInt(10) })
+
   updateGraphEditorInputMode(graphEditorInputMode)
+
   return graphEditorInputMode
 }
+
 /**
  * Returns the currently selected optimization mode of the {@link GraphModelManager}.
  */
@@ -467,6 +532,7 @@ function getGraphOptimizationMode() {
   }
   return null
 }
+
 /**
  * Registers listeners, that are needed by the UI, on the graph.
  */
@@ -486,6 +552,7 @@ function registerListeners(graphComponent) {
   graphComponent.selection.addEventListener('item-added', () => {
     selectionCount.textContent = graphComponent.selection.size.toString()
   })
+
   let updated = false
   // continuously reset the frame array every second, except when there were updateVisual calls
   const startFramerateTimer = () => {
@@ -503,6 +570,7 @@ function registerListeners(graphComponent) {
     updated = true
   })
 }
+
 /**
  * Updates the indicator that displays which rendering mode is currently active in
  * {@link fastGraphModelManager}.
@@ -520,6 +588,7 @@ function updateDetailLevelIndicator() {
     setTimeout(() => {
       indicator.className = ''
     }, 2000)
+
     if (showDetailLevelPopup(graphComponent.graphModelManager)) {
       detailLevelPopup.textContent = zoomState
       // show new level of detail popup
@@ -531,6 +600,7 @@ function updateDetailLevelIndicator() {
     }
   }
 }
+
 /**
  * Determines if users should get a level of detail popup notification in addition to
  * the regular level of detail indicator update.
@@ -541,6 +611,7 @@ function showDetailLevelPopup(manager) {
     manager.graphOptimizationMode === OptimizationMode.LEVEL_OF_DETAIL
   )
 }
+
 /**
  * Determines the detail level of the given graph model manager.
  * If the given manager is not a {@link FastGraphModelManager}, zoom factor independent
@@ -559,6 +630,7 @@ function getDetailLevel(graphModelManager) {
     return 'WebGL Rendering'
   }
 }
+
 /**
  * Initializes the graph chooser.
  */
@@ -569,19 +641,20 @@ function initializeGraphChooserBox() {
     option.text = displayName
     graphChooserBox.options.add(option)
   })
+
   graphChooserBox.selectedIndex = 1
 }
+
 /**
  * Called when the input mode is changed by the user.
  */
 function onModeChanged() {
   graphComponent.selection.clear()
+
   switch (modeChooserBox.selectedIndex) {
     default:
     case 0: {
-      graphComponent.inputMode = new GraphViewerInputMode({
-        allowClipboardOperations: false
-      })
+      graphComponent.inputMode = new GraphViewerInputMode({ allowClipboardOperations: false })
       preConfigurator.removeWarningCssClass()
       break
     }
@@ -599,6 +672,7 @@ function onModeChanged() {
   updateRedrawGraphButton()
   preConfigurator.updatePreConfiguration()
 }
+
 /**
  * Called when the optimization mode of the {@link GraphModelManager} is changed by the user.
  */
@@ -622,12 +696,15 @@ function updateOptimizationMode() {
     updateGraphEditorInputMode(graphComponent.inputMode)
   }
   graphComponent.invalidate()
+
   updateRedrawGraphButton()
   updateDetailLevelIndicator()
 }
+
 function onFixLabelPositionsChanged() {
   const fixLabelPositions = fixLabelPositionsCheckbox.checked
   const graph = graphComponent.graph
+
   if (fixLabelPositions) {
     const freeLabelModel = new FreeLabelModel()
     graph.edgeLabels.forEach((label) => {
@@ -644,8 +721,10 @@ function onFixLabelPositionsChanged() {
       graph.setLabelLayoutParameter(label, graph.nodeDefaults.labels.layoutParameter)
     })
   }
+
   fixLabelPositionsEnabled = fixLabelPositions
 }
+
 function updateGraphEditorInputMode(geim) {
   if (getGraphOptimizationMode() == null) {
     //additional optimizations for WebGL
@@ -657,6 +736,7 @@ function updateGraphEditorInputMode(geim) {
   }
   geim.requeryHandles()
 }
+
 /**
  * Called when the auto redraw is changed by the user.
  */
@@ -667,6 +747,7 @@ function onAutoRedrawChanged() {
   }
   autoRedrawEnabled = redrawEnabled
 }
+
 /**
  * Called when the selected item in the graph chooser combo box has changed.
  */
@@ -677,12 +758,14 @@ function onGraphChooserSelectionChanged() {
     void loadGraph(sampleObject.fileName)
   }
 }
+
 /**
  * Called when the fps checkbox is enabled/disabled.
  */
 function onFpsCheckboxChanged() {
   mainFrameRate.enabled = fpsCheckbox.checked
 }
+
 /**
  * Called when The 'Zoom animation' button was clicked.
  */
@@ -690,11 +773,13 @@ async function onZoomAnimationClicked() {
   startAnimation()
   const node = getRandomNode()
   graphComponent.center = node.layout.center
+
   const animation = new ZoomInAndBackAnimation(graphComponent, 10, TimeSpan.fromSeconds(5))
   const animator = new Animator(graphComponent)
   await animator.animate(animation)
   endAnimation()
 }
+
 /**
  * Called when the 'Pan animation' button was clicked.
  */
@@ -705,6 +790,7 @@ async function onPanAnimationClicked() {
   await animator.animate(animation)
   endAnimation()
 }
+
 /**
  * Called when the 'Spiral zoom animation' button was clicked.
  */
@@ -712,6 +798,7 @@ async function onSpiralZoomAnimationClicked() {
   startAnimation()
   const node = getRandomNode()
   graphComponent.center = node.layout.center.add(new Point(graphComponent.viewport.width / 4, 0))
+
   const zoom = new ZoomInAndBackAnimation(graphComponent, 10, TimeSpan.fromSeconds(10))
   const pan = new CirclePanAnimation(graphComponent, 14, TimeSpan.fromSeconds(10))
   const animation = IAnimation.createParallelAnimation([zoom, pan])
@@ -719,6 +806,7 @@ async function onSpiralZoomAnimationClicked() {
   await animator.animate(animation)
   endAnimation()
 }
+
 /**
  * Called when 'Move nodes' button was clicked.
  */
@@ -729,6 +817,7 @@ async function onNodeAnimationClicked() {
   if (selection.nodes.size === 0) {
     selection.add(getRandomNode())
   }
+
   const animation = new CircleNodeAnimation(
     graphComponent.graph,
     selection.nodes,
@@ -741,12 +830,14 @@ async function onNodeAnimationClicked() {
   endAnimation()
   redrawGraph()
 }
+
 /**
  * Called when the 'Select nothing' button was clicked..
  */
 function onSelectNothingClicked() {
   graphComponent.selection.clear()
 }
+
 /**
  * Called when the 'Select 1000 random nodes' button was clicked.
  */
@@ -757,6 +848,7 @@ function onSelect1000NodesClicked() {
     graphComponent.selection.add(node)
   })
 }
+
 /**
  * Called when the 'Select 1000 random edges' button was clicked.
  */
@@ -767,6 +859,7 @@ function onSelect1000EdgesClicked() {
     graphComponent.selection.add(edge)
   })
 }
+
 /**
  * Called when the 'Select 1000 random labels' button was clicked.
  */
@@ -779,6 +872,7 @@ function onSelect1000LabelsClicked() {
     graphComponent.selection.labels.add(label)
   })
 }
+
 /**
  * Called when the 'Select all nodes' button was clicked.
  */
@@ -788,6 +882,7 @@ function onSelectAllNodesClicked() {
     graphComponent.selection.add(node)
   })
 }
+
 /**
  * Called when the 'Select all edges' button was clicked.
  */
@@ -797,6 +892,7 @@ function onSelectAllEdgesClicked() {
     graphComponent.selection.add(edge)
   })
 }
+
 /**
  * Called when the 'Select all labels' button was clicked.
  */
@@ -807,6 +903,7 @@ function onSelectAllLabelsClicked() {
     graphComponent.selection.add(label)
   })
 }
+
 /**
  * Called when the 'Select everything' button was clicked.
  */
@@ -815,6 +912,7 @@ function onSelectEverythingClicked() {
   onSelectAllEdgesClicked()
   onSelectAllLabelsClicked()
 }
+
 /**
  * Disables/enables the redrawing graph button.
  */
@@ -826,6 +924,7 @@ function updateRedrawGraphButton() {
     mode !== OptimizationMode.DEFAULT &&
     mode !== OptimizationMode.LEVEL_OF_DETAIL &&
     !(mode === OptimizationMode.STATIC && (simpleCanvasStyle.checked || complexCanvasStyle.checked))
+
   redrawGraphButton.disabled = !redrawEnabled
   if (redrawEnabled) {
     autoRedrawCheckbox.setAttribute('checked', '')
@@ -835,6 +934,7 @@ function updateRedrawGraphButton() {
     autoRedrawCheckbox.setAttribute('disabled', '')
   }
 }
+
 /**
  * Helper method to hide the loading indicator after the {@link graphComponent} has finished
  * the initial rendering.
@@ -845,6 +945,7 @@ async function onGraphComponentRendered() {
   // hide the loading indicator
   await showLoadingIndicator(false)
 }
+
 /**
  * Helper method that disables the animation buttons and hides the scrollbars when starting an
  * animation.
@@ -852,6 +953,7 @@ async function onGraphComponentRendered() {
 function startAnimation() {
   updateButtonStateAtAnimation(true)
 }
+
 /**
  * Helper method to reset the animation buttons and the scrollbars when an animation has finished.
  */
@@ -859,6 +961,7 @@ function endAnimation() {
   mainFrameRate.resetFrameArray()
   updateButtonStateAtAnimation(false)
 }
+
 /**
  * Updates the buttons after animation is done.
  */
@@ -868,11 +971,13 @@ function updateButtonStateAtAnimation(disabled) {
     disabled ? button.classList.add('disabled-button') : button.classList.remove('disabled-button')
   })
 }
+
 function setWebGLItemStyles() {
   const graph = graphComponent.graph
   const webGLStyleCache = new WebGLStyleCache()
   const webGLStyles = updateDefaultStyles(graph)
   webGLStyleCache.defaultStyles = webGLStyles
+
   graph.nodes.forEach((node) => {
     graph.setStyle(node, webGLStyleCache.getDefaultNodeStyle(node))
   })
@@ -886,6 +991,7 @@ function setWebGLItemStyles() {
     graph.setStyle(label, webGLStyles.labelStyle)
   })
 }
+
 /**
  * Updates the styles according to the currently chosen graph item style.
  */
@@ -893,6 +999,7 @@ function updateItemStyles() {
   const graph = graphComponent.graph
   updateDefaultStyles(graph)
   updateRedrawGraphButton()
+
   if (graphComponent.graphModelManager instanceof WebGLGraphModelManager) {
     setWebGLItemStyles()
   } else {
@@ -908,11 +1015,14 @@ function updateItemStyles() {
     graph.edgeLabels.forEach((label) => {
       graph.setStyle(label, graph.edgeDefaults.labels.style)
     })
+
     // update the rendering
     fastGraphModelManager.dirty = true
   }
+
   graphComponent.invalidate()
 }
+
 /**
  * Creates the ImageData icons for the WebGL rendering from the original SVG files.
  */
@@ -929,26 +1039,31 @@ async function createWebGLImageData(webGLImageData) {
     'usericon_male4',
     'usericon_male5'
   ]
+
   // The size of the SVG graphic
   const imageSize = new Size(75, 75)
   // The size of the created ImageData
   // canvas used to pre-render the icons
   const ctx = createCanvasContext(128, 128)
+
   for (const image of await Promise.all(
     imageNames.map((name) => createUrlIcon(ctx, `resources/${name}.svg`, imageSize))
   )) {
     webGLImageData.push(image)
   }
 }
+
 function updateDefaultStyles(graph) {
   let nodeStyle
   let edgeStyle
   let labelStyle
   let webGLNodeStyle
+
   // level of detail colors
   let overviewColor
   let intermediateColor
   let edgeColor
+
   // handle the graph item style
   if (simpleSvgStyle.checked) {
     const color = Color.from('#AB2346')
@@ -1004,12 +1119,15 @@ function updateDefaultStyles(graph) {
       backgroundShape: 'ellipse'
     })
   }
+
   fastGraphModelManager.overviewNodeStyle = new SimpleSvgNodeStyle(overviewColor)
   fastGraphModelManager.intermediateNodeStyle = new SimpleSvgNodeStyle(intermediateColor)
+
   graph.nodeDefaults.style = nodeStyle
   graph.edgeDefaults.style = edgeStyle
   graph.nodeDefaults.labels.style = labelStyle
   graph.edgeDefaults.labels.style = labelStyle
+
   return {
     nodeStyle: webGLNodeStyle,
     edgeStyle: new WebGLPolylineEdgeStyle(new WebGLStroke(edgeColor, edgeThickness)),
@@ -1019,6 +1137,7 @@ function updateDefaultStyles(graph) {
     })
   }
 }
+
 /**
  * Adds a label to each node.
  */
@@ -1044,16 +1163,14 @@ function onNodeLabelsChanged(graph) {
     })
   }
 }
+
 /**
  * Adds a label to each edge.
  */
 function onEdgeLabelsChanged(graph) {
   if (edgeLabelsCheckbox.checked) {
     // add label on each edge
-    const edgeLabelModel = new EdgePathLabelModel({
-      distance: 5,
-      sideOfEdge: EdgeSides.ABOVE_EDGE
-    })
+    const edgeLabelModel = new EdgePathLabelModel({ distance: 5, sideOfEdge: EdgeSides.ABOVE_EDGE })
     const freeLabelModel = new FreeLabelModel()
     graph.edgeDefaults.labels.layoutParameter = edgeLabelModel.createRatioParameter()
     graph.edges.forEach((edge) => {
@@ -1071,6 +1188,7 @@ function onEdgeLabelsChanged(graph) {
     })
   }
 }
+
 /**
  * Returns a random node from the graph.
  * @returns A random node from the graph.
@@ -1079,9 +1197,11 @@ function getRandomNode() {
   const nodes = graphComponent.graph.nodes.toList()
   return nodes.get(getRandomInt(nodes.size))
 }
+
 function getRandomInt(upper) {
   return Math.floor(Math.random() * upper)
 }
+
 /**
  * Fisher Yates Shuffle for arrays.
  * @returns Shuffled Array.
@@ -1101,6 +1221,7 @@ function shuffle(array) {
   }
   return array
 }
+
 /**
  * Generates a different color shade
  * @param color The base color
@@ -1126,28 +1247,35 @@ function generateColorShade(color, factor) {
     return color
   }
 }
+
 /**
  * Binds actions to the demo's UI controls.
  */
 function initializeUI(graphComponent) {
   initializeGraphChooserBox()
+
   modeChooserBox.selectedIndex = 0
   onModeChanged()
+
   redrawGraphButton.disabled = true
   updateOptimizationMode()
+
   // initialize information fields
   zoomLevel.textContent = Math.floor(graphComponent.zoom * 100).toString()
   selectionCount.textContent = graphComponent.selection.size.toString()
+
   addNavigationButtons(graphChooserBox, true, true, 'select-button').addEventListener(
     'change',
     onGraphChooserSelectionChanged
   )
+
   document.querySelector('#panAnimationBtn').addEventListener('click', onPanAnimationClicked)
   document.querySelector('#zoomAnimationBtn').addEventListener('click', onZoomAnimationClicked)
   document
     .querySelector('#spiralAnimationBtn')
     .addEventListener('click', onSpiralZoomAnimationClicked)
   document.querySelector('#moveNodeAnimationBtn').addEventListener('click', onNodeAnimationClicked)
+
   document.querySelector('#selectNothingBtn').addEventListener('click', onSelectNothingClicked)
   document
     .querySelector('#selectEverythingBtn')
@@ -1160,22 +1288,29 @@ function initializeUI(graphComponent) {
   document
     .querySelector('#select1000LabelsBtn')
     .addEventListener('click', onSelect1000LabelsClicked)
+
   fpsCheckbox.addEventListener('change', onFpsCheckboxChanged)
+
   nodeLabelsCheckbox.addEventListener('change', () => {
     onNodeLabelsChanged(graphComponent.graph)
     redrawGraph()
   })
+
   edgeLabelsCheckbox.addEventListener('change', () => {
     onEdgeLabelsChanged(graphComponent.graph)
     redrawGraph()
   })
+
   redrawGraphButton.addEventListener('click', redrawGraph)
+
   modeChooserBox.addEventListener('change', onModeChanged)
+
   // register radio buttons
   simpleSvgStyle.addEventListener('change', updateItemStyles)
   complexSvgStyle.addEventListener('change', updateItemStyles)
   simpleCanvasStyle.addEventListener('change', updateItemStyles)
   complexCanvasStyle.addEventListener('change', updateItemStyles)
+
   defaultGmm.addEventListener('change', updateOptimizationMode)
   document.querySelector('#WebglGmm-radio').addEventListener('change', updateOptimizationMode)
   levelOfDetailGmm.addEventListener('change', updateOptimizationMode)
@@ -1184,19 +1319,27 @@ function initializeUI(graphComponent) {
   CanvasImageWithDrawCallbackGmm.addEventListener('change', updateOptimizationMode)
   CanvasImageWithItemStylesGmm.addEventListener('change', updateOptimizationMode)
   StaticCanvasImageGmm.addEventListener('change', updateOptimizationMode)
+
   fixLabelPositionsCheckbox.addEventListener('change', onFixLabelPositionsChanged)
+
   autoRedrawCheckbox.addEventListener('change', onAutoRedrawChanged)
 }
+
 run().then(finishLoading)
+
 class WebGLStyleCache {
   _defaultStyles = null
+
   _webGLStyles = []
+
   set defaultStyles(value) {
     this._defaultStyles = value
   }
+
   get defaultStyles() {
     return this._defaultStyles
   }
+
   getDefaultNodeStyle(node) {
     if (!this.defaultStyles || !this.defaultStyles.nodeStyle) {
       return new WebGLShapeNodeStyle()

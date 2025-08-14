@@ -27,5 +27,5 @@ You can interactively modify the diagram and automatically arrange it with the s
 - Auto-arrange the changed diagram with the BPMN layout algorithm.
 - Open a popup menu that allows you to customize the item by double-click a node, edge or boundary event. Double-clicking on an empty space closes any open popup.
 - Open a context menu by right-clicking a node or edge. The menu provides different actions depending on the clicked item.
-- Edit the label of a selected node or edge by pressing F2. Note that you can also select the label directly using the detail selection (Shift + Click).
+- Edit the label of a selected node or edge by pressing F2. Note that you can also select the label directly using the detail selection (Shift + click).
 - Add an additional label to a selected node or edge by pressing Shift + F2.

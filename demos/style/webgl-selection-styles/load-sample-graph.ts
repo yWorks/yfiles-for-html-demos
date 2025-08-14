@@ -109,11 +109,7 @@ export function createGraph(graph: IGraph): void {
   )
   graph.setStyle(
     nl2,
-    new WebGLLabelStyle({
-      shape: WebGLLabelShape.PILL,
-      backgroundColor: 'lightgray',
-      padding: 10
-    })
+    new WebGLLabelStyle({ shape: WebGLLabelShape.PILL, backgroundColor: 'lightgray', padding: 10 })
   )
 
   const e2 = graph.createEdge(n2, n3)
@@ -145,11 +141,7 @@ export function createGraph(graph: IGraph): void {
   const el2 = graph.addLabel(e3, 'edge 3')
   graph.setStyle(
     el2,
-    new WebGLLabelStyle({
-      shape: WebGLLabelShape.PILL,
-      backgroundColor: 'lightgray',
-      padding: 10
-    })
+    new WebGLLabelStyle({ shape: WebGLLabelShape.PILL, backgroundColor: 'lightgray', padding: 10 })
   )
 
   const n5 = graph.createNode([0, 600, 100, 100])

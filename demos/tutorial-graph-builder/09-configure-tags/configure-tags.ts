@@ -36,15 +36,9 @@ type EntityData = {
   jurisdiction?: string[]
 }
 
-type OwnerData = {
-  name: string
-  type: string
-}
+type OwnerData = { name: string; type: string }
 
-export type Data = {
-  nodesSource: EntityData[]
-  edgesSource: OwnerData[]
-}
+export type Data = { nodesSource: EntityData[]; edgesSource: OwnerData[] }
 
 export function createNodeTags(nodesSource: NodesSource<EntityData>): void {
   // configure the provider that returns an object with the name and the type property of the nodes

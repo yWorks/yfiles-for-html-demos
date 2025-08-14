@@ -165,9 +165,7 @@ async function fakeDatabaseAccess(time: number): Promise<void> {
  * Registers custom label helpers for nodes and node labels
  */
 function registerCustomEditLabelHelper(): void {
-  const firstLabelStyle = new LabelStyle({
-    textFill: 'firebrick'
-  })
+  const firstLabelStyle = new LabelStyle({ textFill: 'firebrick' })
 
   // Register the helper for both nodes and edges, but only when the global flag ist set
   // We can use more or less the same implementation for both items, so we just change the item to which the helper

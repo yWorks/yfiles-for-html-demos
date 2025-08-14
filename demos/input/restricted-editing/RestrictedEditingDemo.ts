@@ -79,11 +79,7 @@ function createSampleGraph(graph: IGraph): void {
     parentId: 'parent',
     layout: 'bounds'
   })
-  builder.createGroupNodesSource({
-    data: SampleData.groups,
-    id: 'id',
-    layout: 'bounds'
-  })
+  builder.createGroupNodesSource({ data: SampleData.groups, id: 'id', layout: 'bounds' })
   builder.createEdgesSource({
     data: SampleData.edges,
     id: 'id',

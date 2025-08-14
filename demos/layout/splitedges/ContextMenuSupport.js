@@ -40,6 +40,7 @@ import {
   PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs
 } from '@yfiles/yfiles'
+
 export class ContextMenuSupport {
   graphComponent
   runLayout
@@ -47,10 +48,12 @@ export class ContextMenuSupport {
     this.graphComponent = graphComponent
     this.runLayout = runLayout
   }
+
   createContextMenu() {
     const inputMode = this.graphComponent.inputMode
     inputMode.addEventListener('populate-item-context-menu', (evt) => this.populateContextMenu(evt))
   }
+
   /**
    * Adds menu items to the context menu depending on what type of graph element was hit.
    */
@@ -58,11 +61,13 @@ export class ContextMenuSupport {
     if (args.handled) {
       return
     }
+
     const item = args.item
     this.updateSelection(item)
     const graph = this.graphComponent.graph
     if (item instanceof IEdge) {
       const selectedEdges = this.graphComponent.selection.edges.toArray()
+
       const menuItems = []
       if (
         selectedEdges.length > 1 &&
@@ -110,6 +115,7 @@ export class ContextMenuSupport {
           action: () => this.splitInterEdgesAtGroups(selectedEdges)
         })
       }
+
       if (menuItems.length > 0) {
         args.contextMenu = menuItems
       }
@@ -120,6 +126,7 @@ export class ContextMenuSupport {
       ]
     }
   }
+
   /**
    * Ads the same split ids to the given edges.
    */
@@ -159,8 +166,10 @@ export class ContextMenuSupport {
         ContextMenuSupport.updateEdgeColor(edge1, color)
       }
     })
+
     await this.runLayout()
   }
+
   /**
    * Updates the color of the edge.
    */
@@ -169,11 +178,13 @@ export class ContextMenuSupport {
     edgeStyle.stroke = `3px ${color}`
     edgeStyle.targetArrow = `${color} 1.5 triangle`
   }
+
   /**
    * Removes the edges split ids.
    */
   async unalignSelectedEdges(edges) {
     const graph = this.graphComponent.graph
+
     // unalign predecessor and successor edges that have the same split id but there is no edge to align, anymore
     edges.forEach((edge) => {
       const sourceNode = edge.sourceNode
@@ -215,17 +226,21 @@ export class ContextMenuSupport {
           }
         })
       }
+
       // unalign the edge
       edge.tag = null
       graph.setStyle(edge, this.graphComponent.graph.edgeDefaults.style.clone())
     })
+
     await this.runLayout()
   }
+
   /**
    * Joins all edges with the same split id as the given edges.
    */
   async joinInterEdgesAtGroups(edges) {
     const graph = this.graphComponent.graph
+
     const visited = []
     edges.forEach((edge) => {
       if (visited.includes(edge)) {
@@ -285,8 +300,10 @@ export class ContextMenuSupport {
     visited.forEach((edge) => {
       graph.remove(edge)
     })
+
     await this.runLayout()
   }
+
   /**
    * Splits the inter-edges at all groups that they are crossing.
    */
@@ -297,6 +314,7 @@ export class ContextMenuSupport {
         edge.sourceNode,
         edge.targetNode
       )
+
       let splitId
       let color
       if (
@@ -316,10 +334,7 @@ export class ContextMenuSupport {
         const splitEdge = this.createSplitEdge(
           lastNode,
           walkerGroup,
-          {
-            sourceSplitId: splitId,
-            targetSplitId: splitId
-          },
+          { sourceSplitId: splitId, targetSplitId: splitId },
           color
         )
         graph.setPortLocation(
@@ -344,10 +359,7 @@ export class ContextMenuSupport {
         const splitEdge = this.createSplitEdge(
           walkerGroup,
           lastNode,
-          {
-            sourceSplitId: splitId,
-            targetSplitId: splitId
-          },
+          { sourceSplitId: splitId, targetSplitId: splitId },
           color
         )
         graph.setPortLocation(
@@ -368,10 +380,7 @@ export class ContextMenuSupport {
       const splitEdge = this.createSplitEdge(
         lastSourceNode,
         lastNode,
-        {
-          sourceSplitId: splitId,
-          targetSplitId: splitId
-        },
+        { sourceSplitId: splitId, targetSplitId: splitId },
         color
       )
       graph.setPortLocation(
@@ -388,8 +397,10 @@ export class ContextMenuSupport {
       )
       graph.remove(edge)
     })
+
     await this.runLayout()
   }
+
   /**
    * Splits all inter-edges a the given group.
    */
@@ -409,6 +420,7 @@ export class ContextMenuSupport {
         )
         .forEach((edge) => interEdges.push(edge))
     })
+
     interEdges.forEach((edge) => {
       let splitId
       let color
@@ -427,27 +439,23 @@ export class ContextMenuSupport {
       const sourceEdge = this.createSplitEdge(
         edge.sourceNode,
         group,
-        {
-          sourceSplitId: splitId,
-          targetSplitId: splitId
-        },
+        { sourceSplitId: splitId, targetSplitId: splitId },
         color
       )
       graph.setPortLocation(sourceEdge.targetPort, intersection)
       const targetEdge = this.createSplitEdge(
         group,
         edge.targetNode,
-        {
-          sourceSplitId: splitId,
-          targetSplitId: splitId
-        },
+        { sourceSplitId: splitId, targetSplitId: splitId },
         color
       )
       graph.setPortLocation(targetEdge.sourcePort, intersection)
       graph.remove(edge)
     })
+
     await this.runLayout()
   }
+
   /**
    * Finds the intersection point of the given edge and group. This is used for placing the edge ports for a smoother
    * animation when edges are split.
@@ -460,6 +468,7 @@ export class ContextMenuSupport {
     let outer = groupingSupport.isDescendant(edge.sourceNode, group)
       ? edge.targetPort
       : edge.sourcePort
+
     // find the intersecting segment of the edge
     let foundInner = false
     let lastBend = inner
@@ -473,11 +482,13 @@ export class ContextMenuSupport {
       }
       lastBend = bend
     })
+
     // find the intersection point
     return group.layout
       .toRect()
       .findLineIntersection(inner.location.toPoint(), outer.location.toPoint())
   }
+
   /**
    * Joins all edges with the same split ids that connect to the given group from outside and inside of the group.
    */
@@ -504,8 +515,10 @@ export class ContextMenuSupport {
           graph.remove(edge)
         }
       })
+
     await this.runLayout()
   }
+
   /**
    * Creates an edges that is associated with a specific split id and color.
    */
@@ -523,13 +536,10 @@ export class ContextMenuSupport {
         }),
         smoothingLength: 15
       }),
-      tag: {
-        sourceSplitId: splitId.sourceSplitId,
-        targetSplitId: splitId.targetSplitId,
-        color
-      }
+      tag: { sourceSplitId: splitId.sourceSplitId, targetSplitId: splitId.targetSplitId, color }
     })
   }
+
   /**
    * Updates the selection when an item is right-clicked for a context menu.
    */
@@ -550,6 +560,7 @@ export class ContextMenuSupport {
     }
   }
 }
+
 const colors = [
   'forestgreen',
   'mediumvioletred',
@@ -567,6 +578,7 @@ const colors = [
   'mediumslateblue'
 ]
 let colorIndex = 0
+
 /**
  * Returns the next color.
  */

@@ -46,6 +46,7 @@ import {
   OrthogonalLayoutTreeSubstructureStyle,
   NodeLabelPlacement
 } from '@yfiles/yfiles'
+
 import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
@@ -62,17 +63,20 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
+
 var GroupPolicy
 ;(function (GroupPolicy) {
   GroupPolicy[(GroupPolicy['LAYOUT_GROUPS'] = 0)] = 'LAYOUT_GROUPS'
   GroupPolicy[(GroupPolicy['FIX_GROUPS'] = 1)] = 'FIX_GROUPS'
   GroupPolicy[(GroupPolicy['IGNORE_GROUPS'] = 2)] = 'IGNORE_GROUPS'
 })(GroupPolicy || (GroupPolicy = {}))
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 export const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     LayoutGroup: [
       new LabelAttribute('General'),
@@ -148,7 +152,7 @@ export const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         '#/api/OrthogonalLayout#OrthogonalLayout-property-qualityTimeRatio'
       ),
       new OptionGroupAttribute('LayoutGroup', 30),
-      new MinMaxAttribute(0, 1),
+      new MinMaxAttribute(0, 1, 0.01),
       new ComponentAttribute(Components.SLIDER),
       new TypeAttribute(Number)
     ],
@@ -270,7 +274,7 @@ export const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
     minimumSegmentLengthItem: [
       new LabelAttribute(
         'Minimum Segment Length',
-        '#/api/OrthogonalLayoutEdgeDescriptor#OrthogonalLayoutEdgeDescriptor-property-minimumFirstSegmentLength'
+        '#/api/OrthogonalLayoutEdgeDescriptor#OrthogonalLayoutEdgeDescriptor-property-minimumSegmentLength'
       ),
       new OptionGroupAttribute('EdgesGroup', 20),
       new MinMaxAttribute(1, 100),
@@ -408,27 +412,32 @@ export const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
       new TypeAttribute(SubstructureOrientation)
     ]
   },
+
   /**
    * Setup default values for various configuration parameters.
    */
   constructor: function () {
     // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
+
     this.strategyItem = OrthogonalLayoutMode.STRICT
     this.gridSpacingItem = 15
     this.qualityTimeRatioItem = 0.6
     this.uniformPortAssignmentItem = false
     this.useExistingDrawingAsSketchItem = false
+
     this.nodeLabelingItem = NodeLabelPlacement.CONSIDER
     this.edgeLabelingItem = EdgeLabelPlacement.INTEGRATED
     this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
     this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
     this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
     this.labelPlacementDistanceItem = 10.0
+
     this.minimumFirstSegmentLengthItem = 15.0
     this.minimumSegmentLengthItem = 15.0
     this.minimumLastSegmentLengthItem = 15.0
     this.considerEdgeDirectionItem = false
+
     this.chainSubstructureStyleItem = OrthogonalLayoutChainSubstructureStyle.NONE
     this.chainSubstructureSizeItem = 2
     this.cycleSubstructureStyleItem = OrthogonalLayoutCycleSubstructureStyle.NONE
@@ -436,9 +445,11 @@ export const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
     this.treeSubstructureStyleItem = OrthogonalLayoutTreeSubstructureStyle.NONE
     this.treeSubstructureSizeItem = 3
     this.treeSubstructureOrientationItem = SubstructureOrientation.AUTO_DETECT
+
     this.groupLayoutPolicyItem = GroupPolicy.LAYOUT_GROUPS
     this.title = 'Orthogonal Layout'
   },
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
@@ -453,6 +464,7 @@ export const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
     } else if (this.groupLayoutPolicyItem === GroupPolicy.IGNORE_GROUPS) {
       layout.layoutStages.get(GroupHidingStage).enabled = true
     }
+
     layout.layoutMode = this.strategyItem
     layout.gridSpacing = this.gridSpacingItem
     layout.qualityTimeRatio = this.qualityTimeRatioItem
@@ -461,8 +473,10 @@ export const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
     layout.defaultEdgeDescriptor.minimumFirstSegmentLength = this.minimumFirstSegmentLengthItem
     layout.defaultEdgeDescriptor.minimumLastSegmentLength = this.minimumLastSegmentLengthItem
     layout.defaultEdgeDescriptor.minimumSegmentLength = this.minimumSegmentLengthItem
+
     // set edge labeling options
     const defaultStrategy = layout.layoutMode === OrthogonalLayoutMode.STRICT
+
     if (this.edgeLabelingItem === EdgeLabelPlacement.INTEGRATED && defaultStrategy) {
       layout.edgeLabelPlacement = 'integrated'
     } else if (this.edgeLabelingItem == EdgeLabelPlacement.GENERIC) {
@@ -475,11 +489,13 @@ export const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
     } else {
       layout.edgeLabelPlacement = 'ignore'
     }
+
     if (defaultStrategy) {
       layout.nodeLabelPlacement = this.nodeLabelingItem
     } else {
       layout.nodeLabelPlacement = 'ignore'
     }
+
     layout.chainSubstructureStyle = this.chainSubstructureStyleItem
     layout.chainSubstructureSize = this.chainSubstructureSizeItem
     layout.cycleSubstructureStyle = this.cycleSubstructureStyleItem
@@ -487,8 +503,10 @@ export const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
     layout.treeSubstructureStyle = this.treeSubstructureStyleItem
     layout.treeSubstructureSize = this.treeSubstructureSizeItem
     layout.treeSubstructureOrientation = this.treeSubstructureOrientationItem
+
     return layout
   },
+
   /**
    * Creates the layout data of the configuration.
    */
@@ -500,9 +518,11 @@ export const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
     } else {
       orthogonalLayoutData.edgeOrientation = 0
     }
+
     const recursiveGroupLayoutData = new RecursiveGroupLayoutData({
       groupNodeLayouts: RecursiveGroupLayout.FIX_GROUP_LAYOUT
     })
+
     const labelingData = this.createLabelingLayoutData(
       graphComponent.graph,
       this.labelPlacementAlongEdgeItem,
@@ -512,83 +532,115 @@ export const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
     )
     return orthogonalLayoutData.combineWith(recursiveGroupLayoutData).combineWith(labelingData)
   },
+
   createInterEdgeRouter() {
-    const innerEdgeRouter = new EdgeRouter({
-      minimumNodeToEdgeDistance: 0
-    })
+    const innerEdgeRouter = new EdgeRouter({ minimumNodeToEdgeDistance: 0 })
     innerEdgeRouter.defaultEdgeDescriptor.minimumEdgeDistance = 4
     return innerEdgeRouter
   },
+
   /** @type {OptionGroup} */
   LayoutGroup: null,
+
   /** @type {OptionGroup} */
   LabelingGroup: null,
+
   /** @type {OptionGroup} */
   NodePropertiesGroup: null,
+
   /** @type {OptionGroup} */
   EdgePropertiesGroup: null,
+
   /** @type {OptionGroup} */
   PreferredPlacementGroup: null,
+
   /** @type {OptionGroup} */
   EdgesGroup: null,
+
   /** @type {OptionGroup} */
   GroupingGroup: null,
+
   /** @type {OptionGroup} */
   SubstructureLayoutGroup: null,
+
   /** @type {string} */
   descriptionText: {
     get: function () {
       return "<p style='margin-top:0'>The orthogonal layout style is a multi-purpose layout style for undirected graphs. It is well suited for medium-sized sparse graphs, and produces compact drawings with no overlaps, few crossings, and few bends.</p><p>It is especially fitted for application domains such as</p><ul><li>Software engineering</li><li>Database schema</li><li>System management</li><li>Knowledge representation</li></ul>"
     }
   },
+
   /** @type {OrthogonalLayoutMode} */
   strategyItem: null,
+
   /** @type {boolean} */
   shouldDisableStrategyItem: {
     get: function () {
       return this.useExistingDrawingAsSketchItem === true
     }
   },
+
   /** @type {number} */
   gridSpacingItem: 1,
+
+  /** @type {number} */
+  qualityTimeRatioItem: 0.6,
+
+  /** @type {boolean} */
+  useExistingDrawingAsSketchItem: false,
+
+  /** @type {boolean} */
+  uniformPortAssignmentItem: false,
+
   /** @type {NodeLabelPlacement} */
   nodeLabelingItem: null,
+
   /** @type {EdgeLabelPlacement} */
   edgeLabelingItem: null,
+
   /** @type {boolean} */
   reduceAmbiguityItem: false,
+
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
     get: function () {
       return this.edgeLabelingItem !== EdgeLabelPlacement.GENERIC
     }
   },
+
   /** @type {LabelPlacementOrientation} */
   labelPlacementOrientationItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
     get: function () {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
   },
+
   /** @type {LabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
     get: function () {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
   },
+
   /** @type {LabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
     get: function () {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
   },
+
   /** @type {number} */
   labelPlacementDistanceItem: 0,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
     get: function () {
@@ -598,48 +650,64 @@ export const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
       )
     }
   },
+
   /** @type {number} */
   minimumFirstSegmentLengthItem: 1,
+
   /** @type {number} */
   minimumSegmentLengthItem: 1,
+
   /** @type {number} */
   minimumLastSegmentLengthItem: 1,
+
   /** @type {number} */
   considerEdgeDirectionItem: false,
+
   /** @type {GroupPolicy} */
   groupLayoutPolicyItem: null,
+
   /** @type {OrthogonalLayoutCycleSubstructureStyle} */
   cycleSubstructureStyleItem: null,
+
   /** @type {number} */
   cycleSubstructureSizeItem: 4,
+
   /** @type {boolean} */
   shouldDisableCycleSubstructureSizeItem: {
     get: function () {
       return this.cycleSubstructureStyleItem === OrthogonalLayoutCycleSubstructureStyle.NONE
     }
   },
+
   /** @type {OrthogonalLayoutChainSubstructureStyle} */
   chainSubstructureStyleItem: null,
+
   /** @type {number} */
   chainSubstructureSizeItem: 3,
+
   /** @type {boolean} */
   shouldDisableChainSubstructureSizeItem: {
     get: function () {
       return this.chainSubstructureStyleItem === OrthogonalLayoutChainSubstructureStyle.NONE
     }
   },
+
   /** @type {TreeSubstructureStyle} */
   treeSubstructureStyleItem: null,
+
   /** @type {number} */
   treeSubstructureSizeItem: 3,
+
   /** @type {boolean} */
   shouldDisableTreeSubstructureSizeItem: {
     get: function () {
       return this.treeSubstructureStyleItem === OrthogonalLayoutTreeSubstructureStyle.NONE
     }
   },
+
   /** @type {SubstructureOrientation} */
   treeSubstructureOrientationItem: null,
+
   /** @type {boolean} */
   shouldDisableTreeSubstructureOrientationItem: {
     get: function () {

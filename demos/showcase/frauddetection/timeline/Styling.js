@@ -35,6 +35,7 @@ import {
   StretchNodeLabelModel
 } from '@yfiles/yfiles'
 import { intervalsIntersect } from './Utilities'
+
 /**
  * Default style values used when no other styling is defined.
  */
@@ -50,6 +51,7 @@ export const defaultStyling = {
     odd: { backgroundFill: '#4281a4', textFill: 'white', font: 'bold 16px Arial' }
   }
 }
+
 /**
  * Manages the styling of the timeline component.
  */
@@ -58,9 +60,11 @@ export class Styling {
   style
   defaultStyle
   inTimeframeStyle
+
   groupStyle
   groupStyleEven
   groupStyleOdd
+
   constructor(graphComponent, style) {
     this.graphComponent = graphComponent
     this.style = style
@@ -80,15 +84,19 @@ export class Styling {
     nodeDecorator.groupPaddingProvider.addConstant(
       IGroupPaddingProvider.create(() => new Insets(0, 0, 20, 0))
     )
+
     this.defaultStyle = new ShapeNodeStyle({
       stroke: `1px solid ${this.style.bars?.stroke ?? defaultStyling.bars?.stroke}`,
       fill: this.style.bars?.fill ?? defaultStyling.bars?.fill
     })
+
     this.inTimeframeStyle = new ShapeNodeStyle({
       stroke: `1px solid ${this.style.inTimeframeBars?.stroke ?? defaultStyling.inTimeframeBars?.stroke}`,
       fill: this.style.inTimeframeBars?.fill ?? defaultStyling.inTimeframeBars?.fill
     })
+
     this.groupStyle = new ShapeNodeStyle({ fill: null, stroke: null })
+
     this.groupStyleEven = new LabelStyle({
       backgroundFill:
         this.style.legend?.even?.backgroundFill ?? defaultStyling.legend?.even?.backgroundFill,
@@ -105,11 +113,13 @@ export class Styling {
       this.style.legend?.odd?.textFill ?? defaultStyling.legend.odd.textFill
     this.groupStyleOdd.font = this.style.legend?.odd?.font ?? defaultStyling.legend.odd.font
   }
+
   /**
    * Applies the current styles to the current selection and highlight.
    */
   updateStyles([startDate, endDate]) {
     const graph = this.graphComponent.graph
+
     for (const node of graph.nodes) {
       const bucket = node.tag
       if (graph.isGroupNode(node)) {

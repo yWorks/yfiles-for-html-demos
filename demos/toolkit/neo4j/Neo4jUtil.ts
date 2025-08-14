@@ -89,11 +89,7 @@ function createCypherQueryRunner(neo4jDriver: any, databaseName: string) {
   }
 }
 
-export type Node = {
-  identity: Integer
-  labels: string[]
-  properties: object
-}
+export type Node = { identity: Integer; labels: string[]; properties: object }
 
 export type Relationship = {
   identity: Integer
@@ -117,7 +113,4 @@ export type Integer = {
   equals: (other: Integer | number | string) => boolean
 }
 
-export type Result = {
-  summary: Promise<any>
-  records: Neo4jRecord[]
-}
+export type Result = { summary: Promise<any>; records: Neo4jRecord[] }

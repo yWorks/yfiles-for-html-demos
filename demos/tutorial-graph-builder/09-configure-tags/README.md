@@ -44,10 +44,7 @@ Assume now that for each node, we need to store only the information about the n
 The desired [tag](https://docs.yworks.com/yfileshtml/#/api/IModelItem#ITagOwner-property-tag) types should then look like this:
 
 ```
-type OwnerData = {
-  name: string
-  type: string
-}
+type OwnerData = { name: string; type: string }
 ```
 
 ## Configuring the tag provider

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { IEnumerable, IGraph, INode, Rect } from '@yfiles/yfiles'
+
 /*
  * Provides utility functions for aligning nodes, i.e.
  *   alignTop               - nodes will get the same y-coordinate
@@ -40,6 +41,7 @@ import { IEnumerable, IGraph, INode, Rect } from '@yfiles/yfiles'
  *
  * For simplicity's sake, group nodes are currently not supported.
  */
+
 /**
  * Aligns the given nodes such that all nodes have the same y-coordinate.
  * @param graph the graph that contains the given nodes.
@@ -50,6 +52,7 @@ export function alignTop(graph, nodes) {
     alignMinCoordImpl(graph, nodes, 'y')
   }
 }
+
 /**
  * Aligns the given nodes such that all nodes have the same x-coordinate.
  * @param graph the graph that contains the given nodes.
@@ -60,6 +63,7 @@ export function alignLeft(graph, nodes) {
     alignMinCoordImpl(graph, nodes, 'x')
   }
 }
+
 /**
  * Aligns the given nodes such that `y + height` is the same value for all nodes.
  * @param graph the graph that contains the given nodes.
@@ -70,6 +74,7 @@ export function alignBottom(graph, nodes) {
     alignMaxCoordImpl(graph, nodes, 'y', 'height')
   }
 }
+
 /**
  * Aligns the given nodes such that `x + width` is the same value for all nodes.
  * @param graph the graph that contains the given nodes.
@@ -80,6 +85,7 @@ export function alignRight(graph, nodes) {
     alignMaxCoordImpl(graph, nodes, 'x', 'width')
   }
 }
+
 /**
  * Aligns the given nodes such that the centers of the nodes have the same x-coordinate.
  * @param graph the graph that contains the given nodes.
@@ -90,6 +96,7 @@ export function alignHorizontally(graph, nodes) {
     alignCenterCoordImpl(graph, nodes, 'x', 'width')
   }
 }
+
 /**
  * Aligns the given nodes such that the centers of the nodes have the same y-coordinate.
  * @param graph the graph that contains the given nodes.
@@ -100,6 +107,7 @@ export function alignVertically(graph, nodes) {
     alignCenterCoordImpl(graph, nodes, 'y', 'height')
   }
 }
+
 /**
  * Aligns the given nodes by the given coordinate property.
  * Used for top and left aligning nodes.
@@ -111,7 +119,9 @@ function alignMinCoordImpl(graph, nodes, coordinate) {
   if (nodes.size == 0) {
     return
   }
+
   const edit = graph.beginEdit('Align Nodes', 'Align Nodes')
+
   const min = nodes.reduce(
     (min, node) => Math.min(node.layout[coordinate], min),
     nodes.first().layout[coordinate]
@@ -119,8 +129,10 @@ function alignMinCoordImpl(graph, nodes, coordinate) {
   for (const node of nodes) {
     updateLayout(graph, node, coordinate, min)
   }
+
   edit.commit()
 }
+
 /**
  * Aligns the given nodes by the given coordinate and size properties.
  * Used for bottom and right aligning nodes.
@@ -133,7 +145,9 @@ function alignMaxCoordImpl(graph, nodes, coordinate, size) {
   if (nodes.size == 0) {
     return
   }
+
   const edit = graph.beginEdit('Align Nodes', 'Align Nodes')
+
   const max = nodes.reduce(
     (max, node) => Math.max(node.layout[coordinate] + node.layout[size], max),
     nodes.first().layout[coordinate]
@@ -145,8 +159,10 @@ function alignMaxCoordImpl(graph, nodes, coordinate, size) {
   for (const node of nodes) {
     updateLayout(graph, node, coordinate, max - node.layout[size])
   }
+
   edit.commit()
 }
+
 /**
  * Aligns the given nodes by the center of the given coordinate and size properties.
  * Used for vertical and horizontal aligning nodes.
@@ -159,7 +175,9 @@ function alignCenterCoordImpl(graph, nodes, coordinate, size) {
   if (nodes.size == 0) {
     return
   }
+
   const edit = graph.beginEdit('Align Nodes', 'Align Nodes')
+
   const node = nodes.reduce(
     (largestNode, node) => (largestNode.layout[size] < node.layout[size] ? node : largestNode),
     nodes.first()
@@ -168,8 +186,10 @@ function alignCenterCoordImpl(graph, nodes, coordinate, size) {
   for (const node of nodes) {
     updateLayout(graph, node, coordinate, center - node.layout[size] * 0.5)
   }
+
   edit.commit()
 }
+
 /**
  * Distributes the given nodes along the x-axis. I.e. the given nodes are repositioned such that
  * they do not overlap horizontally. (Vertical overlaps are not removed, though.)
@@ -182,6 +202,7 @@ export function distributeHorizontally(graph, nodes, minimumSpacing = 0) {
     distributeImpl(graph, nodes, minimumSpacing, 'x', 'width')
   }
 }
+
 /**
  * Distributes the given nodes along the y-axis. I.e. the given nodes are repositioned such that
  * they do not overlap vertically. (Horizontal overlaps are not removed, though.)
@@ -194,6 +215,7 @@ export function distributeVertically(graph, nodes, minimumSpacing = 0) {
     distributeImpl(graph, nodes, minimumSpacing, 'y', 'height')
   }
 }
+
 /**
  * Distributes the given nodes along the given coordinate axis.
  * @param graph the graph that contains the given nodes.
@@ -206,22 +228,29 @@ function distributeImpl(graph, nodes, minimumSpacing, coordinate, size) {
   if (nodes.size == 0) {
     return
   }
+
   const edit = graph.beginEdit('Distribute Nodes', 'Distribute Nodes')
+
   const fnl = nodes.first().layout
   let min = fnl[coordinate]
   let max = fnl[coordinate] + fnl[size]
   let occupied = 0
+
   const array = []
   for (const node of nodes) {
     const nl = node.layout
+
     min = Math.min(min, nl[coordinate])
     max = Math.max(max, nl[coordinate] + nl[size])
     occupied += nl[size]
+
     array.push(node)
   }
+
   const dist = Math.max(0, minimumSpacing)
   const availableSpace = max - min - occupied
   const spacingInBetween = availableSpace > dist ? availableSpace / (array.length - 1) : dist
+
   array.sort((n1, n2) => {
     const center1 = n1.layout.center[coordinate]
     const center2 = n2.layout.center[coordinate]
@@ -233,13 +262,16 @@ function distributeImpl(graph, nodes, minimumSpacing, coordinate, size) {
       return 0
     }
   })
+
   let pos = array[0].layout[coordinate]
   for (const node of array) {
     updateLayout(graph, node, coordinate, pos)
     pos += node.layout[size] + spacingInBetween
   }
+
   edit.commit()
 }
+
 /**
  * Determines if the given enumerable has at least two elements.
  * @param nodes the enumerable to check.
@@ -247,6 +279,7 @@ function distributeImpl(graph, nodes, minimumSpacing, coordinate, size) {
 function hasAtLeastTwoNodes(nodes) {
   return nodes.take(2).size === 2
 }
+
 /**
  * Sets the given value for the given coordinate of the given node.
  * @param graph the graph that contains the given node.

@@ -34,20 +34,25 @@ import {
   TextRenderSupport,
   TextWrapping
 } from '@yfiles/yfiles'
+
 import { createElement, useEffect, useId, useRef } from 'react'
+
 /**
  * A custom React component that maps to yFiles {@link TextRenderSupport}'s functionality
  * for wrapping SVG text.
  */
 export function SvgText(props) {
   const textRef = useRef(null)
+
   const clipId = useId()
+
   const dx =
     props.align === 'end'
       ? Number(props.width)
       : props.align === 'middle'
         ? Number(props.width) * 0.5
         : 0
+
   useEffect(() => {
     const textElement = textRef.current
     if (textElement) {
@@ -78,7 +83,9 @@ export function SvgText(props) {
     props.lineSpacing,
     props.wrapping
   ])
+
   const clipPathUrl = props.clipped ? `url(#${clipId})` : undefined
+
   /*
       Since the JSX compiler is only available at runtime, we use the non-JSX version of the following template:
       props.visible !== false ? (
@@ -107,14 +114,10 @@ export function SvgText(props) {
   return props.visible !== false
     ? createElement(
         'g',
-        {
-          transform: props.transform
-        },
+        { transform: props.transform },
         createElement(
           'g',
-          {
-            transform: `translate(${props.x ?? 0} ${props.y ?? 0})`
-          },
+          { transform: `translate(${props.x ?? 0} ${props.y ?? 0})` },
           createElement('text', {
             ref: textRef,
             dy: '1em',
@@ -127,19 +130,14 @@ export function SvgText(props) {
           clipPathUrl &&
             createElement(
               'clipPath',
-              {
-                id: clipId
-              },
-              createElement('rect', {
-                width: props.width,
-                height: props.height,
-                x: -dx
-              })
+              { id: clipId },
+              createElement('rect', { width: props.width, height: props.height, x: -dx })
             )
         )
       )
     : createElement('g', null)
 }
+
 function addText(
   value,
   w,
@@ -160,6 +158,7 @@ function addText(
   ) {
     return null
   }
+
   const text = String(value)
   // create the font which determines the visual text properties
   const fontSettings = {}
@@ -183,17 +182,21 @@ function addText(
   }
   const font = new Font(fontSettings)
   let textWrapping = TextWrapping.WRAP_CHARACTER_ELLIPSIS
+
   if (typeof wrapping !== 'undefined' && wrapping !== null) {
     textWrapping = TextWrapping.from(wrapping)
   }
+
   if (typeof w === 'undefined' || w === null) {
     w = Number.POSITIVE_INFINITY
   }
   if (typeof h === 'undefined' || h === null) {
     h = Number.POSITIVE_INFINITY
   }
+
   // do the text wrapping
   // This sample uses the strategy WRAP_CHARACTER_ELLIPSIS. You can use any other setting.
   TextRenderSupport.addText(textElement, text, font, new Size(Number(w), Number(h)), textWrapping)
+
   return textElement
 }

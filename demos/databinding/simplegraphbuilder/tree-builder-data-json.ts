@@ -41,31 +41,19 @@ export default {
               position: 'Senior Executive Assistant',
               name: 'Alexander Burns'
             },
-            '0_0_1': {
-              id: '0_0_1',
-              position: 'Junior Executive Assistant',
-              name: 'Linda Newland'
-            }
+            '0_0_1': { id: '0_0_1', position: 'Junior Executive Assistant', name: 'Linda Newland' }
           }
         },
         '0_1': {
           position: 'Vice President of Production',
           name: 'Amy Kain',
           children: {
-            '0_1_0': {
-              id: '0_1_0',
-              position: 'Production Supervisor',
-              name: 'Kathy Maxwell'
-            },
+            '0_1_0': { id: '0_1_0', position: 'Production Supervisor', name: 'Kathy Maxwell' },
             '0_1_1': {
               position: 'Shipping and Receiving Supervisor',
               name: 'Ray Hammond',
               children: {
-                '0_1_1_0': {
-                  id: '0_1_1_0',
-                  position: 'Stocker',
-                  name: 'Ronnie Garcia'
-                },
+                '0_1_1_0': { id: '0_1_1_0', position: 'Stocker', name: 'Ronnie Garcia' },
                 '0_1_1_1': {
                   id: '0_1_1_1',
                   position: 'Shipping and Receiving Clerk',
@@ -91,24 +79,15 @@ export default {
                 }
               }
             },
-            '0_1_3': {
-              position: 'Master Scheduler',
-              name: 'Larry Littlefield'
-            }
+            '0_1_3': { position: 'Master Scheduler', name: 'Larry Littlefield' }
           }
         },
         '0_2': {
           position: 'Marketing Manager',
           name: 'Angela Haase',
           children: {
-            '1_0': {
-              position: 'Marketing Assistant',
-              name: 'Lorraine Deaton'
-            },
-            '1_1': {
-              position: 'Marketing Specialist',
-              name: 'Jermaine Stewart'
-            }
+            '1_0': { position: 'Marketing Assistant', name: 'Lorraine Deaton' },
+            '1_1': { position: 'Marketing Specialist', name: 'Jermaine Stewart' }
           }
         }
       }

@@ -42,12 +42,7 @@ export type JSONPoint = [number, number]
  * Represents a rectangle.
  * This representation can be auto-converted into a yFiles {@link Rect}
  */
-export type JSONRectangle = {
-  x: number
-  y: number
-  width: number
-  height: number
-}
+export type JSONRectangle = { x: number; y: number; width: number; height: number }
 
 /**
  * Represents a rotated rectangle.
@@ -112,7 +107,4 @@ export type JSONEdge = {
 /**
  * Represents the data of a graph.
  */
-export type JSONGraph = {
-  nodeList: JSONNode[]
-  edgeList: JSONEdge[]
-}
+export type JSONGraph = { nodeList: JSONNode[]; edgeList: JSONEdge[] }

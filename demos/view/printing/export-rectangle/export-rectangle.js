@@ -39,9 +39,11 @@ import {
   RenderMode
 } from '@yfiles/yfiles'
 import { PositionHandler } from './PositionHandler'
-import { RectangleRenderer } from '../../../utils/RectangleRenderer'
+import { RectangleRenderer } from '@yfiles/demo-utils/RectangleRenderer'
+
 let renderTreeElement
 let exportHandleInputMode
+
 /**
  * Initializes user interaction.
  * Aside from basic editing, this demo provides a visual marker (the 'export rectangle') that
@@ -50,21 +52,27 @@ let exportHandleInputMode
 export function initializeExportRectangle(graphComponent) {
   // create the model for the export rectangle, ...
   const exportRect = new MutableRectangle(-20, 0, 300, 160)
+
   // ... visualize it in the canvas, ...
   renderTreeElement = graphComponent.renderTree.createElement(
     graphComponent.renderTree.highlightGroup,
     exportRect,
     new RectangleRenderer()
   )
+
   // add an input mode that allows the user resizing the rectangle
   makeRectResizable(graphComponent.inputMode, exportRect)
+
   // add an input mode that allows the user moving the rectangle
   makeRectMovable(graphComponent.inputMode, exportRect)
+
   // initially disable the rectangle
   renderTreeElement.visible = false
   exportHandleInputMode.enabled = false
+
   return exportRect
 }
+
 function makeRectResizable(inputMode, exportRect) {
   // create a mode that deals with resizing the export rectangle and ...
   exportHandleInputMode = new HandleInputMode({
@@ -83,6 +91,7 @@ function makeRectResizable(inputMode, exportRect) {
   // ... add it to the demo's main input mode
   inputMode.add(exportHandleInputMode)
 }
+
 function makeRectMovable(inputMode, exportRect) {
   // create a mode that deals with moving the export rectangle and ...
   const moveInputMode = new MoveInputMode({
@@ -99,9 +108,11 @@ function makeRectMovable(inputMode, exportRect) {
     // elements
     priority: 41
   })
+
   // ... add it to the demo's main input mode
   inputMode.add(moveInputMode)
 }
+
 /**
  * Toggles the visibility of the export rectangle.
  */

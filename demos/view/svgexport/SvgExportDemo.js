@@ -39,8 +39,10 @@ import { exportSvg } from './svg-export'
 import { initializeExportDialog, showExportDialog } from './export-dialog/export-dialog'
 import { retainAspectRatio } from './aspect-ratio'
 import { downloadFile } from '@yfiles/demo-utils/file-support'
+
 async function run() {
   License.value = await fetchLicense()
+
   if (window.location.protocol === 'file:') {
     alert(
       'This demo features image export with inlined images. ' +
@@ -48,12 +50,15 @@ async function run() {
         'Please start the demo from a web server.'
     )
   }
+
   // initialize the main graph component
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
   initDemoStyles(graphComponent.graph)
   retainAspectRatio(graphComponent.graph)
+
   const exportRect = initializeExportRectangle(graphComponent)
+
   initializeOptionPanel(async (options) => {
     const element = await exportSvg(
       graphComponent,
@@ -63,6 +68,7 @@ async function run() {
     )
     showExportDialog(element)
   })
+
   initializeExportDialog('SVG Export', (svgElement) => {
     const fileContent = SvgExport.exportSvgString(svgElement)
     try {
@@ -74,10 +80,13 @@ async function run() {
       )
     }
   })
+
   // wire up the export button
   initializeToggleWebGlRenderingButton(graphComponent)
+
   // create a sample graph
   await createSampleGraph(graphComponent)
   await graphComponent.fitGraphBounds()
 }
+
 void run().then(finishLoading)

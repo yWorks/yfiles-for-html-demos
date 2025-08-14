@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 // This file contains a generator for random user data objects for this demo.
+
 const FIRST_NAMES = [
   'Alexander',
   'Amy',
@@ -41,6 +42,7 @@ const FIRST_NAMES = [
   'Thomas',
   'Valerie'
 ]
+
 const FAMILY_NAMES = [
   'Burns',
   'Burnett',
@@ -52,7 +54,9 @@ const FAMILY_NAMES = [
   'Newland',
   'Roberts'
 ]
+
 const UNITS = ['Development', 'Management', 'Marketing', 'R&D', 'Sales']
+
 export function createNewRandomUserData() {
   const firstName = FIRST_NAMES[getRandomInt(FIRST_NAMES.length)]
   const familyName = FAMILY_NAMES[getRandomInt(FAMILY_NAMES.length)]
@@ -65,6 +69,7 @@ export function createNewRandomUserData() {
     fax: `555-${phoneNumber + 1}`
   }
 }
+
 /**
  * Returns a random integer.
  */

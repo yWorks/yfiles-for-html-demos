@@ -41,11 +41,13 @@ import {
   PolylineEdgeStyle,
   Rect
 } from '@yfiles/yfiles'
+
 import {
   colorSets,
   createDemoGroupStyle,
   createDemoNodeStyle
 } from '@yfiles/demo-resources/demo-styles'
+
 const pathNodeStyle = createDemoNodeStyle('demo-palette-403')
 const sideNodeStyle = createDemoNodeStyle('demo-palette-44')
 const clickableNodeStyle = createDemoNodeStyle('demo-palette-13')
@@ -61,7 +63,9 @@ const edgeStyle = new PolylineEdgeStyle({
   }),
   stroke: colorSets['demo-palette-44'].stroke
 })
+
 const targetZoom = 2
+
 /**
  * A component that displays a graph as an interactive decision tree.
  */
@@ -70,17 +74,24 @@ export class DecisionTree {
   beforeLayoutCallback
   afterLayoutCallback
   graphComponent
+
   graph
+
   // a mapping from copied nodes to original nodes
   copiedNodeToOriginalNode = new Map()
+
   nodeToLayerMap = new Map()
   layerToNodesMap = new Map()
   currentLayer = 0
+
   // the nodes that are currently clickable
   activeNodes = new Set()
+
   // the previously clicked nodes
   pathNodes = new Set()
+
   runningLayout = false
+
   /**
    * Creates a new instance of the decision tree component using the given graph, root node, and container element.
    * @param originalGraph the decision graph
@@ -104,12 +115,15 @@ export class DecisionTree {
     this.graph = graphComponent.graph
     this.graphComponent = graphComponent
     this.graphComponent.minimumZoom = 1.2
+
     // load the input module and initialize the input mode
     this.initializeInputModes()
+
     if (originalGraph.nodes.size > 0) {
       this.initializeDecisionGraph(rootNode)
     }
   }
+
   /**
    * Copies the root node and its direct descendants
    */
@@ -117,22 +131,26 @@ export class DecisionTree {
     // if root node is not explicitly specified, use the first node
     // that has the least incoming edges and is not a group node
     rootNode = rootNode ?? this.findRootNode(this.originalGraph)
+
     if (!rootNode || !this.originalGraph.contains(rootNode)) {
       throw new Error('Root node not found.')
     }
     // copy root node
     const copiedRootNode = this.copyNode(rootNode)
     this.activeNodes.add(copiedRootNode)
+
     if (this.getOriginalOutDegree(copiedRootNode) > 0) {
       // load the descendants
       void this.showSuccessors(copiedRootNode, false)
     } else {
       this.updateNodeStyles()
+
       // center the root node in the visible area
       this.graphComponent.updateContentBounds()
       this.graphComponent.zoomTo(targetZoom, copiedRootNode.layout.center)
     }
   }
+
   /**
    * Finds a node in the graph that has no incoming edges.
    */
@@ -150,6 +168,7 @@ export class DecisionTree {
     }
     return result
   }
+
   /**
    * Creates a viewer mode and registers it as the input mode for the decision tree graph component.
    */
@@ -166,11 +185,13 @@ export class DecisionTree {
       }
     })
     this.graphComponent.inputMode = graphViewerInputMode
+
     // disable selection, focus, and highlight indicators
     this.graphComponent.selectionIndicatorManager.enabled = false
     this.graphComponent.focusIndicatorManager.enabled = false
     this.graphComponent.highlightIndicatorManager.enabled = false
   }
+
   /**
    * Loads the successor nodes of the given node if the given node is an active node.
    * @param copiedNode the node that has been clicked
@@ -181,6 +202,7 @@ export class DecisionTree {
       // node is an end node or group
       return
     }
+
     let newNodes = []
     if (this.activeNodes.has(copiedNode)) {
       // a node in the current layer has been clicked
@@ -189,17 +211,22 @@ export class DecisionTree {
       // a node in a higher layer has been clicked
       newNodes = this.expandHigherNode(copiedNode)
     }
+
     this.updateNodeStyles()
+
     this.beforeLayoutCallback?.(true, this.graphComponent)
+
     await this.runLayout(newNodes, animateScroll)
     // calculate the bounding box of all new nodes
     let nodeArea = Rect.EMPTY
     for (const node of newNodes) {
       nodeArea = Rect.add(nodeArea, node.layout.toRect())
     }
+
     // if there are new nodes, ensure all of them are visible
     if (!nodeArea.isEmpty) {
       nodeArea = nodeArea.getEnlarged(10)
+
       let zoom = targetZoom
       if (nodeArea.width * targetZoom > this.graphComponent.size.width) {
         zoom = this.graphComponent.size.width / nodeArea.width
@@ -212,6 +239,7 @@ export class DecisionTree {
     }
     this.afterLayoutCallback?.(false, this.graphComponent)
   }
+
   /**
    * Expands the successor nodes of the given node.
    * Called when a node in the current layer has been clicked.
@@ -232,12 +260,14 @@ export class DecisionTree {
       if (!this.originalGraph.isGroupNode(originalTargetNode)) {
         // target is not a group, thus copy it
         const copiedTargetNode = this.copyNode(originalTargetNode)
+
         if (this.getOriginalOutDegree(copiedTargetNode) > 0) {
           // if the new node has outgoing edges, it's an active node now
           this.activeNodes.add(copiedTargetNode)
         }
         this.copyEdge(originalEdge, copiedNode, copiedTargetNode)
         copiedNodes.push(copiedTargetNode)
+
         // if the new node is in a group, copy its parent node
         const originalParentNode = this.originalGraph.getParent(originalTargetNode)
         if (originalParentNode !== null) {
@@ -254,23 +284,28 @@ export class DecisionTree {
       } else {
         // node is a group - copy the group and all its children
         const copiedGroupNode = this.copyGroupNode(originalTargetNode)
+
         // copy children
         this.originalGraph.getChildren(originalTargetNode).forEach((originalNode) => {
           const copiedChildNode = this.copyNode(originalNode, copiedGroupNode)
           copiedNodes.push(copiedChildNode)
         })
+
         this.copyEdge(originalEdge, copiedNode, copiedGroupNode)
+
         this.graph.getChildren(copiedGroupNode).forEach((copiedChildNode) => {
           if (this.getOriginalOutDegree(copiedChildNode) > 0) {
             // child nodes that have outgoing edges are clickable nodes
             this.activeNodes.add(copiedChildNode)
           }
         })
+
         copiedNodes.push(copiedGroupNode)
       }
     })
     return copiedNodes
   }
+
   /**
    * Removes all nodes in layers lower than the given node and expands the given node.
    * Called when a node in a layer above the current layer has been clicked.
@@ -300,6 +335,7 @@ export class DecisionTree {
     // expand the clicked node
     return this.expandActiveNode(copiedNode)
   }
+
   /**
    * Updates the styles of all nodes.
    */
@@ -318,6 +354,7 @@ export class DecisionTree {
       }
     })
   }
+
   /**
    * Copies a non-group node from the original graph to the decision graph.
    * If a parent node is specified, the copied node will be assigned to the given parent node.
@@ -342,10 +379,12 @@ export class DecisionTree {
         label.tag
       )
     )
+
     this.copiedNodeToOriginalNode.set(copiedNode, originalNode)
     this.setNodeLayer(copiedNode)
     return copiedNode
   }
+
   /**
    * Copies a group node from the original graph to the decision graph.
    * If a parent node is specified, the copied node will be assigned to the given parent node.
@@ -370,10 +409,12 @@ export class DecisionTree {
         label.tag
       )
     )
+
     this.copiedNodeToOriginalNode.set(copiedGroupNode, originalNode)
     this.setNodeLayer(copiedGroupNode)
     return copiedGroupNode
   }
+
   /**
    * Copies an edge from the original graph to the decision graph.
    * @param originalEdge the edge to copy
@@ -414,6 +455,7 @@ export class DecisionTree {
     )
     return copiedEdge
   }
+
   /**
    * Associates the given node with the current layer.
    * @param copiedNode a node from the decision graph
@@ -425,6 +467,7 @@ export class DecisionTree {
     }
     this.layerToNodesMap.get(this.currentLayer).add(copiedNode)
   }
+
   /**
    * Runs an incremental layout for the decision graph.
    * @param incrementalNodes the newly added nodes
@@ -434,13 +477,13 @@ export class DecisionTree {
     if (!this.runningLayout) {
       const layout = new HierarchicalLayout({
         fromSketchMode: true,
-        defaultEdgeDescriptor: {
-          minimumSlope: 0
-        }
+        defaultEdgeDescriptor: { minimumSlope: 0 }
       })
+
       const layoutData = new HierarchicalLayoutData()
       // move the incremental nodes between their neighbors before expanding for a smooth animation
       this.prepareSmoothExpandLayoutAnimation(incrementalNodes)
+
       // define sequence constraints for the incremental nodes to keep the x-order of the original graph
       incrementalNodes.sort((node1, node2) => {
         const originalNode1 = this.copiedNodeToOriginalNode.get(node1)
@@ -461,9 +504,11 @@ export class DecisionTree {
       }
       // configure the incremental hints
       layoutData.incrementalNodes = incrementalNodes
+
       // configure critical edges so the path edges are aligned
       layoutData.criticalEdgePriorities = (edge) =>
         this.pathNodes.has(edge.sourceNode) && this.pathNodes.has(edge.targetNode) ? 1 : 0
+
       this.runningLayout = true
       const layoutExecutor = new LayoutExecutor({
         graphComponent: this.graphComponent,
@@ -479,11 +524,13 @@ export class DecisionTree {
       }
     }
   }
+
   /**
    * Moves incremental nodes between their neighbors before expanding for a smooth animation.
    */
   prepareSmoothExpandLayoutAnimation(incrementalNodes) {
     const graph = this.graphComponent.graph
+
     // mark the new nodes and place them between their neighbors
     const layoutData = new PlaceNodesAtBarycenterStageData({
       affectedNodes: (node) => incrementalNodes.indexOf(node) > -1
@@ -491,14 +538,16 @@ export class DecisionTree {
     const layout = new PlaceNodesAtBarycenterStage()
     graph.applyLayout(layout, layoutData)
   }
+
   /**
    * Disposes the decision tree and removes it from its container element.
    */
   dispose() {
-    this.graphComponent.cleanUp()
     this.graphComponent.graph = new Graph()
+    this.graphComponent.cleanUp()
     this.graphComponent = null
   }
+
   /**
    * Returns the out degree of the original node for the given copied node.
    */

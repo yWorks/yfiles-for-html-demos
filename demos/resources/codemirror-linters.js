@@ -27,8 +27,12 @@
  **
  ***************************************************************************/
 import { linter } from '@codemirror/lint'
+import '@codemirror/lang-css'
+import '@codemirror/lang-json'
+import '@codemirror/lang-xml'
 import { XMLValidator } from 'fast-xml-parser'
 import postcss, { CssSyntaxError } from 'postcss'
+
 export const getXmlLinter = () =>
   linter((view) => {
     const diagnostics = []
@@ -40,15 +44,11 @@ export const getXmlLinter = () =>
       const startPos = view.state.doc.line(line).from + col
       const from = startPos > 0 ? startPos - 1 : startPos
       const to = from + 1
-      diagnostics.push({
-        from,
-        to,
-        severity: 'error',
-        message: result.err.msg
-      })
+      diagnostics.push({ from, to, severity: 'error', message: result.err.msg })
     }
     return diagnostics
   })
+
 export const getJsonLinter = () =>
   linter((view) => {
     const diagnostics = []
@@ -59,16 +59,12 @@ export const getJsonLinter = () =>
       if (e instanceof SyntaxError) {
         const match = /at position (\d+)/.exec(e.message)
         const pos = match ? parseInt(match[1]) : 0
-        diagnostics.push({
-          from: pos,
-          to: pos + 1,
-          severity: 'error',
-          message: e.message
-        })
+        diagnostics.push({ from: pos, to: pos + 1, severity: 'error', message: e.message })
       }
     }
     return diagnostics
   })
+
 export const getCssLinter = () =>
   linter((view) => {
     const text = view.state.doc.toString()
@@ -80,8 +76,10 @@ export const getCssLinter = () =>
         const error = e
         const line = error.line || 1
         const column = error.column || 0
+
         const lines = text.split('\n')
         const pos = lines.slice(0, line - 1).join('\n').length + column
+
         diagnostics.push({
           from: pos,
           to: pos + 1,
@@ -90,12 +88,7 @@ export const getCssLinter = () =>
         })
       } else {
         const error = e
-        diagnostics.push({
-          from: 0,
-          to: text.length,
-          severity: 'error',
-          message: error.message
-        })
+        diagnostics.push({ from: 0, to: text.length, severity: 'error', message: error.message })
       }
     }
     return diagnostics

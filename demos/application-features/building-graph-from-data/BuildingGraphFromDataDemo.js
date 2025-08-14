@@ -43,11 +43,14 @@ import {
   RectangleNodeStyle,
   Size
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
@@ -55,16 +58,22 @@ async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
+
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   // then build the graph with the given data set
   buildGraph(graphComponent.graph, graphData)
+
   graphComponent.fitGraphBounds()
+
   // Often, the input data has no layout information at all. In this case, you can apply any of the automatic layout
   // algorithms to automatically lay out your input data, e.g., with HierarchicalLayout.
+
   // Finally, enable the undo engine. This prevents undoing of the graph creation
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Iterates through the given data set and creates nodes and edges according to the given data.
  * How to iterate through the data set and which information are applied to the graph, depends on the structure of
@@ -85,6 +94,7 @@ function buildGraph(graph, graphData) {
   // It will be easier to assign them as parents or connect them with edges afterwards.
   const groups = {}
   const nodes = {}
+
   // Iterate the group data and create the according group nodes.
   graphData.groupsSource.forEach((groupData) => {
     groups[groupData.id] = graph.createGroupNode({
@@ -93,6 +103,7 @@ function buildGraph(graph, graphData) {
       tag: groupData
     })
   })
+
   // Iterate the node data and create the according nodes.
   graphData.nodesSource.forEach((nodeData) => {
     const node = graph.createNode({
@@ -108,12 +119,14 @@ function buildGraph(graph, graphData) {
     }
     nodes[nodeData.id] = node
   })
+
   // Set the parent groups after all nodes/groups are created.
   graph.nodes.forEach((node) => {
     if (node.tag.group) {
       graph.setParent(node, groups[node.tag.group])
     }
   })
+
   // Iterate the edge data and create the according edges.
   graphData.edgesSource.forEach((edgeData) => {
     // Note that nodes and groups need to have disjoint sets of ids, otherwise it is impossible to determine
@@ -125,6 +138,7 @@ function buildGraph(graph, graphData) {
       tag: edgeData
     })
   })
+
   // If given, apply the edge layout information
   graph.edges.forEach((edge) => {
     const edgeData = edge.tag
@@ -141,6 +155,7 @@ function buildGraph(graph, graphData) {
     }
   })
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  *
@@ -149,6 +164,7 @@ function buildGraph(graph, graphData) {
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
+
   // set the style, label and label parameter for group nodes
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#61a044',
@@ -161,11 +177,14 @@ function initializeGraph(graph) {
     textFill: '#eee'
   })
   graph.groupNodeDefaults.labels.layoutParameter = new GroupNodeLabelModel().createTabParameter()
+
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
+
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
     distance: 5,
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
+
 run().then(finishLoading)

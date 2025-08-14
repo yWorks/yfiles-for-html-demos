@@ -108,9 +108,7 @@ async function run(): Promise<void> {
   graphComponent.inputMode = graphEditorInputMode
 
   // Set a port style that makes the pre-defined ports visible
-  graph.nodeDefaults.ports.style = new ShapePortStyle({
-    shape: 'ellipse'
-  })
+  graph.nodeDefaults.ports.style = new ShapePortStyle({ shape: 'ellipse' })
 
   registerEdgePortCandidateProvider(graph)
 
@@ -124,9 +122,7 @@ async function run(): Promise<void> {
  */
 function createSampleGraph(graphComponent: GraphComponent): void {
   const graph = graphComponent.graph
-  const blackPortStyle = new ShapePortStyle({
-    shape: 'ellipse'
-  })
+  const blackPortStyle = new ShapePortStyle({ shape: 'ellipse' })
   createSubgraph(graph, 'demo-red', 'red', 0)
   createSubgraph(graph, 'demo-orange', 'orange', 200)
   createSubgraph(graph, 'demo-green', 'green', 600)

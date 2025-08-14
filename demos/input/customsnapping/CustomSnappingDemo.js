@@ -46,6 +46,7 @@ import {
   SmartEdgeLabelModel,
   SnappableItems
 } from '@yfiles/yfiles'
+
 import { AdditionalSnapLineVisualCreator } from './AdditionalSnapLineVisualCreator'
 import { OrthogonalLabelSnapLineProviderWrapper } from './OrthogonalLabelSnapLineProviderWrapper'
 import { ShapeBasedGridNodeSnapResultProvider } from './ShapeBasedGridNodeSnapResultProvider'
@@ -53,28 +54,34 @@ import { AdditionalSnapLineMoveInputMode } from './AdditionalSnapLineMoveInputMo
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * Returns a list of the free {@link AdditionalSnapLineVisualCreator}s used in this demo.
  * This property is used by {@link AdditionalSnapLineMoveInputMode} to access the
  * {@link AdditionalSnapLineVisualCreator}s used in this demo.
  */
 let additionalSnapLineVisualCreators = null
+
 async function run() {
   License.value = await fetchLicense()
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
+
   decorateModelItemLookupForCustomSnappingBehaviour(graph)
+
   const graphSnapContext = createGraphSnapContext()
+
   initializeGrid(graphComponent, graphSnapContext)
+
   // initialize two free snap lines that are also visualized in the demo's GraphComponent
   additionalSnapLineVisualCreators = new List()
   addAdditionalSnapLineVisualCreator(graphComponent, new Point(0, -70), new Point(500, -70))
   addAdditionalSnapLineVisualCreator(graphComponent, new Point(-230, -50), new Point(-230, 400))
+
   // initialize the input mode for this demo
-  const graphEditorInputMode = new GraphEditorInputMode({
-    snapContext: graphSnapContext
-  })
+  const graphEditorInputMode = new GraphEditorInputMode({ snapContext: graphSnapContext })
+
   // add an input mode that allows to move the additional snap lines
   const additionalSnapLineMoveInputMode = new AdditionalSnapLineMoveInputMode(
     additionalSnapLineVisualCreators
@@ -82,14 +89,19 @@ async function run() {
   // ensure the new mode is the first to process mouse events
   additionalSnapLineMoveInputMode.priority = -50
   graphEditorInputMode.add(additionalSnapLineMoveInputMode)
+
   graphComponent.inputMode = graphEditorInputMode
+
   graph.undoEngineEnabled = true
+
   initializeGraphDefaults(graph)
+
   // create a sample graph for the demo
   createSampleGraph(graph)
   // center the sample graph in the demo's GraphComponent
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Creates a pre-configured {@link GraphSnapContext}.
  */
@@ -111,6 +123,7 @@ function createGraphSnapContext() {
   })
   return context
 }
+
 /**
  * Registers the demo's custom snap line providers for nodes and edges.
  * @param graph The demo's graph
@@ -121,13 +134,16 @@ function decorateModelItemLookupForCustomSnappingBehaviour(graph) {
   decorator.nodes.snapReferenceProvider.addWrapperFactory(
     (node, wrappedProvider) => new OrthogonalLabelSnapLineProviderWrapper(node, wrappedProvider)
   )
+
   // add additional snap lines for orthogonal labels of edges
   decorator.edges.snapReferenceProvider.addWrapperFactory(
     (edge, wrappedProvider) => new OrthogonalLabelSnapLineProviderWrapper(edge, wrappedProvider)
   )
+
   // for nodes using ShapeNodeStyle use a customized grid snapping behavior based on their shape
   decorator.nodes.snapResultProvider.addConstant(new ShapeBasedGridNodeSnapResultProvider())
 }
+
 /**
  * Configures grid visualization and grid snapping for the given graph component.
  * @param graphComponent The graph component to set up for grid visualization and grid snapping
@@ -137,19 +153,23 @@ function initializeGrid(graphComponent, graphSnapContext) {
   const gridInfo = new GridInfo()
   gridInfo.horizontalSpacing = 200
   gridInfo.verticalSpacing = 200
+
   graphComponent.renderTree.createElement(
     graphComponent.renderTree.backgroundGroup,
     gridInfo,
     new GridRenderer()
   )
+
   graphComponent.invalidate()
   graphComponent.addEventListener('zoom-changed', () => {
     graphComponent.invalidate()
   })
   graphComponent.addEventListener('viewport-changed', () => graphComponent.invalidate())
+
   graphSnapContext.nodeGridConstraintProvider = new GridConstraintProvider(gridInfo)
   graphSnapContext.bendGridConstraintProvider = new GridConstraintProvider(gridInfo)
 }
+
 /**
  * Configures default styles for the given graph.
  * @param graph The graph for which default styles are configured
@@ -164,15 +184,18 @@ function initializeGraphDefaults(graph) {
     [0, 0],
     0.0
   )
+
   graph.edgeDefaults.labels.style = labelStyle
   graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(
     0,
     0,
     0.5
   )
+
   initDemoStyles(graph)
   graph.nodeDefaults.size = new Size(50, 50)
 }
+
 /**
  * Adds a new {@link AdditionalSnapLineVisualCreator} to the given graph component that spans between
  * `from` and `to`.
@@ -188,19 +211,19 @@ function addAdditionalSnapLineVisualCreator(graphComponent, from, to) {
     lineVisualCreator
   )
 }
+
 /**
  * Creates the demo's sample graph.
  * @param graph The graph to populate
  */
 function createSampleGraph(graph) {
   graph.clear()
-  const starShape = new ShapeNodeStyle({
-    shape: 'star5',
-    fill: '#46A8D5',
-    stroke: '#224556'
-  })
+
+  const starShape = new ShapeNodeStyle({ shape: 'star5', fill: '#46A8D5', stroke: '#224556' })
+
   graph.createNode(new Rect(-100, 260, 75, 75), starShape)
   graph.createNode(new Rect(40, 260, 75, 75), starShape)
+
   const n1 = graph.createNode(new Rect(-80, 60, 50, 50))
   graph.addLabel(
     n1,
@@ -208,6 +231,7 @@ function createSampleGraph(graph) {
   )
   const n2 = graph.createNode(new Rect(360, 280, 50, 50))
   graph.createNode(new Rect(50, -90, 50, 50))
+
   const edge = graph.createEdge(n1, n2)
   graph.addBend(edge, new Point(130, 85), 0)
   graph.addBend(edge, new Point(130, 210), 1)
@@ -220,4 +244,5 @@ function createSampleGraph(graph) {
     smartEdgeLabelModel.createParameterFromSource(2, 10, 0.5)
   )
 }
+
 run().then(finishLoading)

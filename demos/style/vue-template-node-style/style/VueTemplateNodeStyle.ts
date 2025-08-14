@@ -75,16 +75,9 @@ type State<TTag = any> = {
   focused: boolean
 }
 
-type ComponentProps<TTag> = State<TTag> & {
-  observedContext: ObservedContext<TTag>
-}
+type ComponentProps<TTag> = State<TTag> & { observedContext: ObservedContext<TTag> }
 
-type NodeLayout = {
-  x: number
-  y: number
-  width: number
-  height: number
-}
+type NodeLayout = { x: number; y: number; width: number; height: number }
 
 type RenderCache<TTag = unknown> = {
   app: App<SVGGElement>
@@ -232,14 +225,8 @@ export class VueTemplateNodeStyle<TTag = any> extends NodeStyleBase<VueVisual<TT
             observedContext: context
           }
         },
-        data(): {
-          idMap: Map<string, string>
-          urlMap: Map<string, string>
-        } {
-          return {
-            idMap: new Map<string, string>(),
-            urlMap: new Map<string, string>()
-          }
+        data(): { idMap: Map<string, string>; urlMap: Map<string, string> } {
+          return { idMap: new Map<string, string>(), urlMap: new Map<string, string>() }
         },
         methods: {
           localId(this: ComponentPublicInstance<ComponentProps<TTag>>, id: string): string {
@@ -470,96 +457,28 @@ export function initializeDesignerVueComponents(app: App): void {
 
   app.component('SvgText', {
     props: {
-      x: {
-        type: [String, Number],
-        required: false,
-        default: undefined
-      },
-      y: {
-        type: [String, Number],
-        required: false,
-        default: undefined
-      },
-      width: {
-        type: [String, Number],
-        required: false,
-        default: undefined
-      },
-      height: {
-        type: [String, Number],
-        required: false,
-        default: undefined
-      },
-      clipped: {
-        type: Boolean,
-        required: false,
-        default: false
-      },
-      align: {
-        type: String,
-        required: false,
-        default: 'start'
-      },
-      fill: {
-        type: String,
-        required: false,
-        default: undefined
-      },
-      content: {
-        type: [String, Number, Boolean],
-        required: false,
-        default: undefined
-      },
-      opacity: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      visible: {
-        type: [String, Boolean],
-        default: true,
-        required: false
-      },
+      x: { type: [String, Number], required: false, default: undefined },
+      y: { type: [String, Number], required: false, default: undefined },
+      width: { type: [String, Number], required: false, default: undefined },
+      height: { type: [String, Number], required: false, default: undefined },
+      clipped: { type: Boolean, required: false, default: false },
+      align: { type: String, required: false, default: 'start' },
+      fill: { type: String, required: false, default: undefined },
+      content: { type: [String, Number, Boolean], required: false, default: undefined },
+      opacity: { type: [String, Number], default: undefined, required: false },
+      visible: { type: [String, Boolean], default: true, required: false },
       wrapping: {
         type: [String, Number],
         default: TextWrapping.WRAP_CHARACTER_ELLIPSIS,
         required: false
       },
-      transform: {
-        type: String,
-        default: '',
-        required: false
-      },
-      fontFamily: {
-        type: String,
-        default: undefined,
-        required: false
-      },
-      fontSize: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      fontWeight: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      fontStyle: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      textDecoration: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      lineSpacing: {
-        type: [String, Number],
-        default: 0.5,
-        required: false
-      }
+      transform: { type: String, default: '', required: false },
+      fontFamily: { type: String, default: undefined, required: false },
+      fontSize: { type: [String, Number], default: undefined, required: false },
+      fontWeight: { type: [String, Number], default: undefined, required: false },
+      fontStyle: { type: [String, Number], default: undefined, required: false },
+      textDecoration: { type: [String, Number], default: undefined, required: false },
+      lineSpacing: { type: [String, Number], default: 0.5, required: false }
     },
     data(): { refId: string } {
       return { refId: `svg-text-${Date.now() + Math.random()}` }
@@ -688,66 +607,18 @@ export function initializeDesignerVueComponents(app: App): void {
 
   app.component('SvgRect', {
     props: {
-      x: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      y: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      width: {
-        type: [String, Number],
-        default: 50,
-        required: false
-      },
-      height: {
-        type: [String, Number],
-        default: 50,
-        required: false
-      },
-      cornerRadius: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      fill: {
-        type: String,
-        required: false,
-        default: 'orange'
-      },
-      stroke: {
-        type: String,
-        required: false,
-        default: 'orange'
-      },
-      strokeWidth: {
-        type: [String, Number],
-        default: 1,
-        required: false
-      },
-      strokeDasharray: {
-        type: String,
-        default: '',
-        required: false
-      },
-      opacity: {
-        type: [String, Number],
-        default: 1,
-        required: false
-      },
-      visible: {
-        type: [String, Boolean],
-        default: true,
-        required: false
-      },
-      transform: {
-        type: String,
-        default: '',
-        required: false
-      }
+      x: { type: [String, Number], default: 0, required: false },
+      y: { type: [String, Number], default: 0, required: false },
+      width: { type: [String, Number], default: 50, required: false },
+      height: { type: [String, Number], default: 50, required: false },
+      cornerRadius: { type: [String, Number], default: 0, required: false },
+      fill: { type: String, required: false, default: 'orange' },
+      stroke: { type: String, required: false, default: 'orange' },
+      strokeWidth: { type: [String, Number], default: 1, required: false },
+      strokeDasharray: { type: String, default: '', required: false },
+      opacity: { type: [String, Number], default: 1, required: false },
+      visible: { type: [String, Boolean], default: true, required: false },
+      transform: { type: String, default: '', required: false }
     },
     computed: {
       $transform(this: ShapePropsType): string | boolean {
@@ -760,61 +631,17 @@ export function initializeDesignerVueComponents(app: App): void {
 
   app.component('SvgEllipse', {
     props: {
-      x: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      y: {
-        type: [String, Number],
-        default: 0,
-        required: false
-      },
-      width: {
-        type: [String, Number],
-        default: 50,
-        required: false
-      },
-      height: {
-        type: [String, Number],
-        default: 50,
-        required: false
-      },
-      fill: {
-        type: String,
-        required: false,
-        default: 'orange'
-      },
-      stroke: {
-        type: String,
-        required: false,
-        default: 'orange'
-      },
-      strokeWidth: {
-        type: [String, Number],
-        default: 1,
-        required: false
-      },
-      strokeDasharray: {
-        type: String,
-        default: '',
-        required: false
-      },
-      opacity: {
-        type: [String, Number],
-        default: 1,
-        required: false
-      },
-      visible: {
-        type: [String, Boolean],
-        default: true,
-        required: false
-      },
-      transform: {
-        type: String,
-        default: '',
-        required: false
-      }
+      x: { type: [String, Number], default: 0, required: false },
+      y: { type: [String, Number], default: 0, required: false },
+      width: { type: [String, Number], default: 50, required: false },
+      height: { type: [String, Number], default: 50, required: false },
+      fill: { type: String, required: false, default: 'orange' },
+      stroke: { type: String, required: false, default: 'orange' },
+      strokeWidth: { type: [String, Number], default: 1, required: false },
+      strokeDasharray: { type: String, default: '', required: false },
+      opacity: { type: [String, Number], default: 1, required: false },
+      visible: { type: [String, Boolean], default: true, required: false },
+      transform: { type: String, default: '', required: false }
     },
     computed: {
       $cx(this: ShapePropsType): number {
@@ -839,46 +666,14 @@ export function initializeDesignerVueComponents(app: App): void {
 
   app.component('SvgImage', {
     props: {
-      x: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      y: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      width: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      height: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      src: {
-        type: String,
-        default: undefined,
-        required: false
-      },
-      opacity: {
-        type: [String, Number],
-        default: undefined,
-        required: false
-      },
-      visible: {
-        type: [String, Boolean],
-        default: true,
-        required: false
-      },
-      transform: {
-        type: String,
-        default: '',
-        required: false
-      }
+      x: { type: [String, Number], default: undefined, required: false },
+      y: { type: [String, Number], default: undefined, required: false },
+      width: { type: [String, Number], default: undefined, required: false },
+      height: { type: [String, Number], default: undefined, required: false },
+      src: { type: String, default: undefined, required: false },
+      opacity: { type: [String, Number], default: undefined, required: false },
+      visible: { type: [String, Boolean], default: true, required: false },
+      transform: { type: String, default: '', required: false }
     },
     computed: {
       $transform(this: ShapePropsType): string | boolean {
@@ -890,11 +685,7 @@ export function initializeDesignerVueComponents(app: App): void {
   })
 }
 
-type RefStoreEntry<T> = {
-  value: T
-  ref: Ref<T>
-  tracked: boolean
-}
+type RefStoreEntry<T> = { value: T; ref: Ref<T>; tracked: boolean }
 
 export class CustomRefStore<TKey extends string> {
   private refs = new Map<TKey, RefStoreEntry<unknown>>()

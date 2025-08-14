@@ -613,11 +613,7 @@ function configureSelectionIndication(graphComponent: GraphComponent): void {
   graphComponent.graph.decorator.nodes.focusRenderer.hide()
   graphComponent.graph.decorator.nodes.highlightRenderer.hide()
   graphComponent.graph.decorator.edges.highlightRenderer.addConstant(
-    new EdgeStyleIndicatorRenderer({
-      edgeStyle: new PolylineEdgeStyle({
-        stroke: '4px #2C4B52'
-      })
-    })
+    new EdgeStyleIndicatorRenderer({ edgeStyle: new PolylineEdgeStyle({ stroke: '4px #2C4B52' }) })
   )
 
   graphComponent.selection.addEventListener('item-added', (evt, selectionSender) => {
@@ -658,12 +654,7 @@ function createConfiguredGraph(): IGraph {
   const fill = '#662b00'
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: new Stroke(fill, 4),
-    targetArrow: new Arrow({
-      fill,
-      type: ArrowType.TRIANGLE,
-      lengthScale: 2,
-      widthScale: 2
-    })
+    targetArrow: new Arrow({ fill, type: ArrowType.TRIANGLE, lengthScale: 2, widthScale: 2 })
   })
 
   return graph
@@ -845,9 +836,7 @@ function createDnDPanelNodes(): INode[] {
   // A label model with insets for the expand/collapse button
   const groupLabelModel = new StretchNodeLabelModel({ padding: 4 })
 
-  const groupLabelStyle = new LabelStyle({
-    textFill: Color.WHITE
-  })
+  const groupLabelStyle = new LabelStyle({ textFill: Color.WHITE })
 
   const node = nodeContainer.createNode(new Rect(0, 0, 120, 120), groupNodeStyle)
   nodeContainer.addLabel(

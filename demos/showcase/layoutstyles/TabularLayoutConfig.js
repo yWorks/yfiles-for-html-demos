@@ -39,6 +39,7 @@ import {
   TabularLayoutMode,
   TabularLayoutNodeDescriptor
 } from '@yfiles/yfiles'
+
 import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -50,6 +51,7 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
+
 var LayoutPolicies
 ;(function (LayoutPolicies) {
   LayoutPolicies[(LayoutPolicies['AUTO_SIZE'] = 0)] = 'AUTO_SIZE'
@@ -58,23 +60,27 @@ var LayoutPolicies
   LayoutPolicies[(LayoutPolicies['FIXED_TABLE_SIZE'] = 3)] = 'FIXED_TABLE_SIZE'
   LayoutPolicies[(LayoutPolicies['FROM_SKETCH'] = 4)] = 'FROM_SKETCH'
 })(LayoutPolicies || (LayoutPolicies = {}))
+
 var HorizontalAlignments
 ;(function (HorizontalAlignments) {
   HorizontalAlignments[(HorizontalAlignments['LEFT'] = 0)] = 'LEFT'
   HorizontalAlignments[(HorizontalAlignments['CENTER'] = 1)] = 'CENTER'
   HorizontalAlignments[(HorizontalAlignments['RIGHT'] = 2)] = 'RIGHT'
 })(HorizontalAlignments || (HorizontalAlignments = {}))
+
 var VerticalAlignments
 ;(function (VerticalAlignments) {
   VerticalAlignments[(VerticalAlignments['TOP'] = 0)] = 'TOP'
   VerticalAlignments[(VerticalAlignments['CENTER'] = 1)] = 'CENTER'
   VerticalAlignments[(VerticalAlignments['BOTTOM'] = 2)] = 'BOTTOM'
 })(VerticalAlignments || (VerticalAlignments = {}))
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 export const TabularLayoutConfig = Class('TabularLayoutConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     GeneralGroup: [
       new LabelAttribute('General'),
@@ -179,13 +185,16 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
       new TypeAttribute(Number)
     ]
   },
+
   /**
    * Setup default values for various configuration parameters.
    */
   constructor: function () {
     // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
+
     const layout = new TabularLayout()
+
     this.layoutModeItem = LayoutPolicies.AUTO_SIZE
     this.rowCountItem = 8
     this.columnCountItem = 12
@@ -197,6 +206,7 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
     this.cellPaddingItem = 5
     this.title = 'Tabular Layout'
   },
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
@@ -205,6 +215,7 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
    */
   createConfiguredLayout: function (graphComponent) {
     const layout = new TabularLayout()
+
     switch (this.layoutModeItem) {
       case LayoutPolicies.AUTO_SIZE:
         layout.layoutMode = TabularLayoutMode.AUTO_SIZE
@@ -219,6 +230,7 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
         break
       default:
     }
+
     layout.nodeLabelPlacement = this.nodeLabelingItem
     if (this.nodeLabelingItem === NodeLabelPlacement.GENERIC) {
       graphComponent.graph.nodeLabels.forEach((label) => {
@@ -228,8 +240,10 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
         )
       })
     }
+
     return layout
   },
+
   /**
    * Creates and configures the layout data.
    * @returns The configured layout data.
@@ -265,6 +279,7 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
       horizontalAlignment,
       verticalAlignment
     })
+
     const nodeCount = graphComponent.graph.nodes.size
     let layoutGrid
     switch (this.layoutModeItem) {
@@ -288,6 +303,7 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
       default:
         layoutGrid = new LayoutGrid(1, 1)
     }
+
     const minimumRowHeight = this.minimumRowHeightItem
     const minimumColumnWidth = this.minimumColumnWidthItem
     const cellPadding = this.cellPaddingItem
@@ -301,15 +317,16 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
       column.leftPadding = cellPadding
       column.rightPadding = cellPadding
     })
-    const tabularLayoutData = new TabularLayoutData({
-      nodeDescriptors: nodeDescriptor
-    })
+
+    const tabularLayoutData = new TabularLayoutData({ nodeDescriptors: nodeDescriptor })
     tabularLayoutData.layoutGridData.layoutGridCellDescriptors = () =>
       layoutGrid.createDynamicCellDescriptor()
     return tabularLayoutData
   },
+
   /** @type {OptionGroup} */
   GeneralGroup: null,
+
   /** @type {string} */
   descriptionText: {
     get: function () {
@@ -320,34 +337,45 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
       )
     }
   },
+
   /** @type {LayoutPolicies} */
   layoutModeItem: null,
+
   /** @type {number} */
   rowCountItem: 1,
+
   /** @type {boolean} */
   shouldDisableRowCountItem: {
     get: function () {
       return this.layoutModeItem !== LayoutPolicies.FIXED_TABLE_SIZE
     }
   },
+
   /** @type {number} */
   columnCountItem: 1,
+
   /** @type {boolean} */
   shouldDisableColumnCountItem: {
     get: function () {
       return this.layoutModeItem !== LayoutPolicies.FIXED_TABLE_SIZE
     }
   },
+
   /** @type {NodeLabelPlacement} */
   nodeLabelingItem: false,
+
   /** @type {HorizontalAlignments} */
   horizontalAlignmentItem: null,
+
   /** @type {VerticalAlignments} */
   verticalAlignmentItem: null,
+
   /** @type {number} */
   cellPaddingItem: 0,
+
   /** @type {number} */
   minimumRowHeightItem: 0,
+
   /** @type {number} */
   minimumColumnWidthItem: 0
 })

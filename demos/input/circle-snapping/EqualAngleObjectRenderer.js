@@ -28,12 +28,14 @@
  ***************************************************************************/
 import { INode, ObjectRendererBase, Point, SnapResult, Stroke, SvgVisual } from '@yfiles/yfiles'
 import { EqualAngleSnapLine } from './SnapReferences'
+
 /**
  * Renders the visualization for snap lines that are bisecting the angles of two consecutive sibling
  * nodes.
  */
 export class EqualAngleObjectRenderer extends ObjectRendererBase {
   static INSTANCE = new EqualAngleObjectRenderer()
+
   createVisual(context, renderTag) {
     const snapReference = renderTag?.reference
     const item = renderTag?.item
@@ -43,20 +45,26 @@ export class EqualAngleObjectRenderer extends ObjectRendererBase {
       return null
     }
   }
+
   createVisualImpl(context, node, snapReference) {
     const stroke = Stroke.GRAY
+
     const p = context.worldToIntermediateCoordinates(snapReference.parent.layout.center)
     const s1 = context.worldToIntermediateCoordinates(snapReference.firstSibling.layout.center)
     const s2 = context.worldToIntermediateCoordinates(snapReference.secondSibling.layout.center)
     const c = context.worldToIntermediateCoordinates(snapReference.centeredPoint)
     const snappedLocation = context.worldToIntermediateCoordinates(node.layout.center)
+
     // add the three lines from the parent through the siblings and the moved node
     const line1 = this.createLine(p, s1)
     stroke.applyTo(line1, context)
+
     const line2 = this.createLine(p, s2)
     stroke.applyTo(line2, context)
+
     const line3 = this.createLine(p, c)
     stroke.applyTo(line3, context)
+
     // to indicate the same angle between the three lines, we add double arcs
     // the first arcs shall be placed at half the distance to the closest node (from the parent)
     let toStart = s1.subtract(p)
@@ -69,6 +77,7 @@ export class EqualAngleObjectRenderer extends ObjectRendererBase {
     const indicatorRadius = shortestDistance * 0.5
     // the second arc uses a radius increased by 5
     const equalAngleIndicatorRadius = indicatorRadius + 5
+
     // To use an arc we need to determine whether the arc is large (> Math.PI) and rendered clockwise.
     // We consider the line orthogonal to the line from p to snappedLocation:
     // If the snappedLocation and s1 are on different sides of this line, we need a large arc
@@ -76,14 +85,19 @@ export class EqualAngleObjectRenderer extends ObjectRendererBase {
     // For SVG arcs see https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths
     const normal = new Point(toSnapped.y, -toSnapped.x)
     const isLargeArc = this.isLeft(normal, toSnapped) != this.isLeft(normal, toStart)
+
     // if s1 is left of the snapped location, we sweep clockwise, otherwise counter-clockwise
     const clockwise = this.isLeft(toSnapped, toStart)
+
     toStart = toStart.normalized
     toEnd = toEnd.normalized
+
     const arc1 = this.createArc(p, indicatorRadius, toStart, toEnd, isLargeArc, clockwise)
     stroke.applyTo(arc1, context)
+
     const arc2 = this.createArc(p, equalAngleIndicatorRadius, toStart, toEnd, isLargeArc, clockwise)
     stroke.applyTo(arc2, context)
+
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     container.setAttribute('transform', context.intermediateTransform.toSvgTransform())
     container.appendChild(line1)
@@ -91,14 +105,17 @@ export class EqualAngleObjectRenderer extends ObjectRendererBase {
     container.appendChild(line3)
     container.appendChild(arc1)
     container.appendChild(arc2)
+
     return new SvgVisual(container)
   }
+
   /**
    * Determines if the vector from (0,0) to p1 is to the left of the vector from (0,0) to p2.
    */
   isLeft(p1, p2) {
     return p1.x * -p2.y - -p1.y * p2.x > 0
   }
+
   /**
    * Creates an SVG arc.
    */
@@ -113,6 +130,7 @@ export class EqualAngleObjectRenderer extends ObjectRendererBase {
     path.setAttribute('fill', 'none')
     return path
   }
+
   /**
    * Creates an SVG line from p1 to p2.
    */

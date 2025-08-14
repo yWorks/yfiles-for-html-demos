@@ -51,6 +51,7 @@ import {
   Size,
   TimeSpan
 } from '@yfiles/yfiles'
+
 /**
  * Calculates a new layout so that there is space at the current position of the moved or resized node.
  */
@@ -60,34 +61,42 @@ export class LayoutHelper {
    */
   executor
   resolveFinishLayoutPromise
+
   get graph() {
     return this.graphComponent.graph
   }
+
   /**
    * The control that displays the graph.
    */
   graphComponent
+
   /**
    * The graph layout copy that stores the original layout before the node has been changed.
    * This copy is used to restore the graph when the drag is canceled.
    */
   resetToOriginalGraphStageData
+
   /**
    * The node that is moved or resized.
    */
   node
+
   /**
    * The node that is moved and its descendants if the node is a group.
    */
   nodes
+
   /**
    * The initial size of the node.
    */
   oldSize
+
   /**
    * The state of the current gesture.
    */
   resizeState
+
   /**
    * Initializes the helper.
    */
@@ -110,6 +119,7 @@ export class LayoutHelper {
     this.state = 'CANCELLED'
     this.resolveFinishLayoutPromise = null
   }
+
   /**
    * Creates a {@link GivenCoordinatesLayoutData} that stores the layout of nodes and edges.
    */
@@ -124,6 +134,7 @@ export class LayoutHelper {
     }
     return data
   }
+
   /**
    * A {@link LayoutExecutor} that is used while dragging the node.
    */
@@ -142,11 +153,13 @@ export class LayoutHelper {
           TimeSpan.fromMilliseconds(150)
         )
   }
+
   static initializer(instance, p1, p2) {
     instance.layoutData = p1
     instance.animationDuration = p2
     return instance
   }
+
   getResizeState() {
     const newSize = this.node.layout.toSize()
     const anySmaller = newSize.width < this.oldSize.width || newSize.height < this.oldSize.height
@@ -159,6 +172,7 @@ export class LayoutHelper {
           ? 'GROWING'
           : 'NONE'
   }
+
   /**
    * Creates a layout algorithm suiting the `resizeState`.
    */
@@ -182,6 +196,7 @@ export class LayoutHelper {
         })
         sequentialLayout.layouts.add(this.fillLayout)
       }
+
       // clear the space of the moved/enlarged node
       sequentialLayout.layouts.add(
         new ClearAreaLayout({
@@ -193,37 +208,31 @@ export class LayoutHelper {
     }
     return new GivenCoordinatesLayout(sequentialLayout)
   }
+
   /**
    * Creates a layout data suiting the `resizeState`.
    */
   createLayoutData(resizeState) {
     const layoutData = new CompositeLayoutData(this.resetToOriginalGraphStageData)
     if (resizeState === 'SHRINKING') {
-      const fillAreaLayoutData = new FillAreaLayoutData({
-        fixedNodes: this.nodes
-      })
+      const fillAreaLayoutData = new FillAreaLayoutData({ fixedNodes: this.nodes })
       layoutData.items.add(fillAreaLayoutData)
       if (this.state === 'FINISHING') {
-        const edgeRouterData = new EdgeRouterData({
-          scope: { incidentNodes: this.nodes }
-        })
+        const edgeRouterData = new EdgeRouterData({ scope: { incidentNodes: this.nodes } })
         // only route edges for the final layout
         layoutData.items.add(edgeRouterData)
       }
     } else {
       if (resizeState === 'BOTH') {
-        const fillAreaLayoutData = new FillAreaLayoutData({
-          fixedNodes: this.nodes
-        })
+        const fillAreaLayoutData = new FillAreaLayoutData({ fixedNodes: this.nodes })
         layoutData.items.add(fillAreaLayoutData)
       }
-      const clearAreaLayoutData = new ClearAreaLayoutData({
-        areaNodes: this.nodes
-      })
+      const clearAreaLayoutData = new ClearAreaLayoutData({ areaNodes: this.nodes })
       layoutData.items.add(clearAreaLayoutData)
     }
     return layoutData
   }
+
   /**
    * A {@link LayoutExecutor} that is used after the drag is canceled.
    *
@@ -235,6 +244,7 @@ export class LayoutHelper {
     layoutExecutor.animationDuration = TimeSpan.fromMilliseconds(150)
     return layoutExecutor
   }
+
   /**
    * A {@link LayoutExecutor} that is used after the drag is finished.
    *
@@ -249,20 +259,24 @@ export class LayoutHelper {
     layoutExecutor.animationDuration = TimeSpan.fromMilliseconds(150)
     return layoutExecutor
   }
+
   /**
    * The current state of the gesture.
    */
   state
+
   /**
    * The {@link FillAreaLayout} used for "GROWING" and "BOTH".
    */
   fillLayout
+
   /**
    * Starts a layout calculation if none is already running.
    */
   runLayout() {
     return LayoutRunner.INSTANCE.runLayout(this)
   }
+
   /**
    * Initializes the layout calculation.
    */
@@ -275,15 +289,18 @@ export class LayoutHelper {
         return !this.isSubgraphEdge(e)
       }
     )
+
     this.executor = this.getDragLayoutExecutor()
     this.state = 'DRAGGING'
   }
+
   /**
    * Determines whether both source and target node of the given edge is part of {@link LayoutHelper.nodes}.
    */
   isSubgraphEdge(edge) {
     return this.nodes.has(edge.sourceNode) && this.nodes.has(edge.targetNode)
   }
+
   /**
    * Cancels the current layout calculation.
    */
@@ -292,6 +309,7 @@ export class LayoutHelper {
     await this.runLayout()
     return new Promise((resolve) => (this.resolveFinishLayoutPromise = resolve))
   }
+
   /**
    * Stops the current layout calculation.
    */
@@ -300,6 +318,7 @@ export class LayoutHelper {
     await this.runLayout()
     return new Promise((resolve) => (this.resolveFinishLayoutPromise = resolve))
   }
+
   /**
    * Run a layout immediately.
    */
@@ -311,6 +330,7 @@ export class LayoutHelper {
     this.state = 'FINISHING'
     await this.runLayout()
   }
+
   /**
    * Called before a layout run starts.
    */
@@ -336,6 +356,7 @@ export class LayoutHelper {
     }
     return this.executor
   }
+
   /**
    * Called after a layout run finished.
    */
@@ -350,6 +371,7 @@ export class LayoutHelper {
     }
   }
 }
+
 /**
  * Calculates the layout for the whole graph but only animates the part
  * that does not belong to the node and its descendants.
@@ -361,12 +383,14 @@ class DragLayoutExecutor extends LayoutExecutor {
    * This is the part of the graph that is morphed after a new layout has been calculated.
    */
   filteredGraph
+
   constructor(graphComponent, layout, nodes) {
     super({ graphComponent: graphComponent, layout: layout, animateViewport: false })
     this.filteredGraph = new FilteredGraphWrapper(graphComponent.graph, (n) => {
       return !nodes.has(n)
     })
   }
+
   /**
    * Creates an {@link IAnimation} that morphs all graph elements except the node and its descendants to the new layout.
    */
@@ -378,6 +402,7 @@ class DragLayoutExecutor extends LayoutExecutor {
     )
   }
 }
+
 /**
  * Singleton class that ensures no two layouts are running at the same time.
  */
@@ -386,15 +411,19 @@ export class LayoutRunner {
    * A lock which prevents re-entrant layout execution.
    */
   layoutIsRunning
+
   /**
    * Stores the pending layout. Only one layout can be pending at a time.
    */
   pendingLayout
+
   constructor() {
     this.layoutIsRunning = false
     this.pendingLayout = null
   }
+
   static instance
+
   /**
    * Returns the singleton instance of this class.
    */
@@ -403,6 +432,7 @@ export class LayoutRunner {
       ? LayoutRunner.instance
       : (LayoutRunner.instance = new LayoutRunner())
   }
+
   /**
    * Starts a layout calculation if none is already running.
    */

@@ -149,10 +149,7 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
     }
 
     // create own HandleInputMode for the handles
-    this.handleInputMode = new HandleInputMode({
-      priority: 1,
-      enabled: false
-    })
+    this.handleInputMode = new HandleInputMode({ priority: 1, enabled: false })
 
     // notify the GraphSnapContext which nodes are resized and shouldn't provide SnapLines
     this.handleInputMode.addEventListener(

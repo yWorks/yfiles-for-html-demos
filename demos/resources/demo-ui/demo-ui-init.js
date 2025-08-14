@@ -27,11 +27,13 @@
  **
  ***************************************************************************/
 import { registerErrorDialog } from '../demo-error'
+
 if (document.readyState !== 'loading') {
   initializeDemoUI()
 } else {
   addEventListener('DOMContentLoaded', initializeDemoUI)
 }
+
 /**
  * Creates some HTML elements of the demo UI.
  */

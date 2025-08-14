@@ -1,6 +1,8 @@
 **/build/
 **/dist/
 **/node_modules/
+**/.angular/
+**/.next/
 /application-features/webgl-rendering/resources/*.json
 /showcase/large-graphs/resources/*.json
 /internal/webgl-performance-tests/resources/*.json
@@ -8,4 +10,4 @@
 /starter-kits/**
 /view/large-graphs/resources/*.json
 /view/rendering-optimizations/resources/*.json
-/view/webgl-label-fading/resources/hierarchic_2000_2100.json
+/view/webgl-label-fading/resources/*.json

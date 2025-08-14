@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { IInputModeContext, INode, ReparentNodeHandler } from '@yfiles/yfiles'
+
 /**
  * Customized variant of the default {@link ReparentNodeHandler} that
  * determines the possible reparenting operations based on the node's tag.
@@ -45,6 +46,7 @@ export class DemoReparentNodeHandler extends ReparentNodeHandler {
   isReparentGesture(context, node) {
     return super.isReparentGesture(context, node) || node.tag === 'green'
   }
+
   /**
    * In general, this method determines whether the user may detach the
    * given node from its current parent in order to reparent it. In this case,
@@ -58,6 +60,7 @@ export class DemoReparentNodeHandler extends ReparentNodeHandler {
   shouldReparent(context, node) {
     return node.tag !== 'red'
   }
+
   /**
    * In general, this method determines whether the provided node
    * may be reparented to the given `newParent`.

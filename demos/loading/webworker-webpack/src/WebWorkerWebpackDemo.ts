@@ -117,12 +117,7 @@ async function cancelWebWorkerLayout() {
  * @returns The LayoutDescriptor for this layout
  */
 function createLayoutDescriptor(): LayoutDescriptor {
-  return {
-    name: 'HierarchicalLayout',
-    properties: {
-      nodeDistance: 50
-    }
-  }
+  return { name: 'HierarchicalLayout', properties: { nodeDistance: 50 } }
 }
 
 /**

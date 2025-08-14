@@ -32,6 +32,7 @@
  * @param currentMouseClickLocation The arguments that is used by the event.
  */
 import { IEdge, ILabel } from '@yfiles/yfiles'
+
 export function addSmartClickNavigation(graphComponent) {
   const graphInputMode = graphComponent.inputMode
   graphInputMode.addEventListener('item-left-clicked', async (event) => {
@@ -51,6 +52,7 @@ export function addSmartClickNavigation(graphComponent) {
       }
     }
   })
+
   function getFocusPoint(item, graphComponent) {
     const targetNodeCenter = item.targetNode.layout.center
     const sourceNodeCenter = item.sourceNode.layout.center

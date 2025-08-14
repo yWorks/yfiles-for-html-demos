@@ -32,18 +32,21 @@
 export function getNodeData(node) {
   return node.tag
 }
+
 /**
  * Sets the data to store in the node's tag.
  */
 export function setNodeData(node, nodeData) {
   node.tag = nodeData
 }
+
 /**
  * Returns the data stored in the edge's tag.
  */
 export function getEdgeData(edge) {
   return edge.tag
 }
+
 /**
  * Returns whether an edge is a cross-reference edge.
  */
@@ -51,6 +54,7 @@ export function isCrossReference(edge) {
   const edgeData = getEdgeData(edge)
   return edgeData?.type === 'cross-reference'
 }
+
 /**
  * Returns whether a node is collapsed.
  */
@@ -58,6 +62,7 @@ export function isCollapsed(node) {
   const nodeData = getNodeData(node)
   return nodeData.collapsed
 }
+
 /**
  * Returns whether a node is on the left of the root.
  */
@@ -65,12 +70,14 @@ export function isLeft(node) {
   const nodeData = getNodeData(node)
   return nodeData.left
 }
+
 /**
  * Returns whether a node is the root node.
  */
 export function isRoot(node) {
   return getDepth(node) === 0
 }
+
 /**
  * Returns the subtree-depth of a node.
  */

@@ -34,10 +34,7 @@ const url = 'http://localhost:4244/graphql'
 export async function graphQLQuery(query: string, variables: any = {}): Promise<any> {
   const response = await fetch(url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify({ query, variables })
   })
 

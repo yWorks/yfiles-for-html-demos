@@ -38,20 +38,27 @@ import {
   TextRenderSupport,
   TextWrapping
 } from '@yfiles/yfiles'
+
 const tabWidth = 50
 const tabHeight = 14
 const badgeRadius = 8
+
 export class CustomNodeStyle extends NodeStyleBase {
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
+
     const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     pathElement.setAttribute('d', createPathData(0, 0, width, height))
+
     const fillColor = node.tag?.color ?? '#0b7189'
     pathElement.setAttribute('fill', fillColor)
     pathElement.setAttribute('stroke', '#333')
+
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     SvgVisual.setTranslate(g, x, y)
+
     g.append(pathElement)
+
     const showBadge = node.tag?.showBadge
     if (showBadge) {
       const badge = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
@@ -60,11 +67,13 @@ export class CustomNodeStyle extends NodeStyleBase {
       badge.setAttribute('stroke', '#496c2e')
       g.append(badge)
     }
+
     const title = node.tag?.title
     if (title) {
       const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
       text.setAttribute('fill', '#eee')
       SvgVisual.setTranslate(text, 10, 2)
+
       TextRenderSupport.addText({
         targetElement: text,
         text: node.tag.title,
@@ -72,16 +81,13 @@ export class CustomNodeStyle extends NodeStyleBase {
         wrapping: TextWrapping.WRAP_CHARACTER_ELLIPSIS,
         maximumSize: new Size(tabWidth - 12, 15)
       })
+
       g.append(text)
     }
-    return SvgVisual.from(g, {
-      width,
-      height,
-      fillColor,
-      showBadge,
-      title
-    })
+
+    return SvgVisual.from(g, { width, height, fillColor, showBadge, title })
   }
+
   updateVisual(context, oldVisual, node) {
     const { x, y, width, height } = node.layout
     // get the path element that needs updating from the old visual
@@ -89,43 +95,49 @@ export class CustomNodeStyle extends NodeStyleBase {
     const pathElement = g.firstElementChild
     // get the cache object we stored in createVisual
     const cache = oldVisual.tag
+
     const showBadge = node.tag?.showBadge
     const title = node.tag?.title
     if (!pathElement || showBadge !== cache.showBadge || title !== cache.title) {
       // re-create the visual if the badge visibility or the title has changed
       return this.createVisual(context, node)
     }
+
     const fillColor = node.tag?.color ?? '#0b7189'
     if (fillColor !== cache.fillColor) {
       // update the fill color
       cache.fillColor = fillColor
       pathElement.setAttribute('fill', fillColor)
     }
+
     if (width !== cache.width || height !== cache.height) {
       // update the path data to fit the new width and height
       pathElement.setAttribute('d', createPathData(0, 0, width, height))
       cache.width = width
       cache.height = height
     }
+
     SvgVisual.setTranslate(g, x, y)
     return oldVisual
   }
+
+
   getBounds(context, node) {
     const { tag } = node
     // Do we even have a badge?
     if (tag?.showBadge) {
       // If so, return a rectangle that's larger to the left and top
-      return node.layout.toRect().getEnlarged({
-        left: badgeRadius,
-        top: badgeRadius
-      })
+      return node.layout.toRect().getEnlarged({ left: badgeRadius, top: badgeRadius })
     }
     return node.layout.toRect()
   }
+
+
   isVisible(context, rectangle, node) {
     const bounds = this.getBounds(context, node)
     return rectangle.intersects(bounds)
   }
+
   isHit(context, location, node) {
     // Check for bounding box
     if (!node.layout.toRect().contains(location, context.hitTestRadius)) {
@@ -133,6 +145,7 @@ export class CustomNodeStyle extends NodeStyleBase {
     }
     const { x, y } = location
     const { x: layoutX, y: layoutY } = node.layout
+
     // Check for the upper-right corner, which is empty
     if (
       x > layoutX + tabWidth + context.hitTestRadius &&
@@ -143,6 +156,7 @@ export class CustomNodeStyle extends NodeStyleBase {
     // all other points are either inside the tab or the rest of the node
     return true
   }
+
   getOutline(node) {
     // Use the node's layout, and enlarge it with half the stroke width
     // to ensure that the arrow ends exactly at the outline
@@ -157,6 +171,7 @@ export class CustomNodeStyle extends NodeStyleBase {
     path.close()
     return path
   }
+
   isInside(node, location) {
     // Check for bounding box
     if (!node.layout.contains(location)) {
@@ -164,6 +179,7 @@ export class CustomNodeStyle extends NodeStyleBase {
     }
     const { x, y } = location
     const { y: ly } = node.layout
+
     // Check for the upper-right corner, which is empty
     if (x > x + tabWidth && y < ly + tabHeight) {
       return false
@@ -173,6 +189,7 @@ export class CustomNodeStyle extends NodeStyleBase {
     return true
   }
 }
+
 /**
  * Creates the path data for the SVG path element.
  */

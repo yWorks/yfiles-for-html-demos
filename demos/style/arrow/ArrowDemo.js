@@ -40,18 +40,22 @@ import {
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { colorSets, createDemoEdgeLabelStyle } from '@yfiles/demo-resources/demo-styles'
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('graphComponent')
+
   // create nodes, edges and arrows to demonstrate all arrow types
   initializeGraph(graphComponent)
+
   initializeUI(graphComponent)
   initializeInteraction(graphComponent)
   await graphComponent.fitGraphBounds()
 }
+
 /**
  * Creates a new edge style with the provided arrow type and color.
  */
@@ -64,12 +68,14 @@ function createEdgeStyleWithArrow(arrowType, colorSet) {
     widthScale: 2,
     type: arrowType
   })
+
   // create a new edge style with the above arrow
   return new PolylineEdgeStyle({
     stroke: new Stroke(colorSets[colorSet].fill, 4),
     targetArrow: arrow
   })
 }
+
 /**
  * Creates nodes, edges, and arrows to demonstrate all arrow types.
  * @param graphComponent The graph in which to create nodes.
@@ -79,6 +85,7 @@ function initializeGraph(graphComponent) {
     fill: colorSets['demo-blue'].edgeLabelFill,
     stroke: null
   })
+
   // all available arrow types
   const arrowTypes = [
     'chevron',
@@ -91,6 +98,7 @@ function initializeGraph(graphComponent) {
     'stealth',
     'triangle'
   ]
+
   const colorSetNames = [
     'demo-orange',
     'demo-blue',
@@ -102,6 +110,7 @@ function initializeGraph(graphComponent) {
     'demo-palette-12',
     'demo-palette-14'
   ]
+
   /* iterate over all available arrows types and create arrows */
   let x = 0
   let y = 0
@@ -141,6 +150,7 @@ function initializeGraph(graphComponent) {
     i++
   }
 }
+
 /**
  * Updates the edge thickness and arrow scale of all edges in the graph.
  */
@@ -165,6 +175,7 @@ function updateEdgeThickness(thickness, graphComponent) {
     )
   })
 }
+
 /**
  * Updates the fill of all arrows in the graph.
  */
@@ -190,6 +201,7 @@ function updateArrowStyle(filled, graphComponent) {
     )
   })
 }
+
 /**
  * Registers event listeners to the toolbar editor.
  */
@@ -203,6 +215,7 @@ function initializeUI(graphComponent) {
     updateArrowStyle(selector.selectedIndex, graphComponent)
   })
 }
+
 /**
  * Sets up an input mode that assigns a random existing edge style to newly created edges.
  */
@@ -223,4 +236,5 @@ function initializeInteraction(graphComponent) {
   })
   graphComponent.inputMode = inputMode
 }
+
 run().then(finishLoading)

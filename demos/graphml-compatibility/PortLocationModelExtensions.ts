@@ -58,42 +58,21 @@ export function configureExtensions(
 ) {
   createMetadata(
     GenericPortLocationParameterExtension,
-    {
-      properties: {
-        Model: {
-          type: IPortLocationModel
-        }
-      }
-    },
+    { properties: { Model: { type: IPortLocationModel } } },
     callback
   )
   createMetadata(
     GenericPortLocationModelExtension,
-    {
-      properties: {
-        LocationParameters: {
-          type: IList<IPortLocationModelParameter>
-        }
-      }
-    },
+    { properties: { LocationParameters: { type: IList<IPortLocationModelParameter> } } },
     callback
   )
   createMetadata(
     SegmentRatioParameterExtension,
     {
       properties: {
-        Index: {
-          type: Number,
-          default: 0
-        },
-        Ratio: {
-          type: Number,
-          default: 0
-        },
-        Model: {
-          type: IPortLocationModel,
-          default: null
-        }
+        Index: { type: Number, default: 0 },
+        Ratio: { type: Number, default: 0 },
+        Model: { type: IPortLocationModel, default: null }
       }
     },
     callback

@@ -28,10 +28,12 @@
  ***************************************************************************/
 // @ts-ignore - We have no proper types for preact, here
 import { html } from '../../preact-loader'
+
 const NodeTemplate = ({ width, height, tag: { id, state } }) => html`
   <g class="node ${state ? 'node-enabled' : 'node-disabled'}">
     <rect class="node-rect" rx="3.5" ry="3.5" width="${width}" height="${height}"></rect>
     <text x="${width * 0.5}" y="${height * 0.5}" class="node-text">${id}</text>
   </g>
 `
+
 export default NodeTemplate

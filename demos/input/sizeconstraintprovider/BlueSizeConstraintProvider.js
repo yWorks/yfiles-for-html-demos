@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { BaseClass, INode, INodeSizeConstraintProvider, Rect, Size } from '@yfiles/yfiles'
+
 /**
  * An {@link INodeSizeConstraintProvider} that prevents shrinking of
  * nodes. Additionally, neither side of the node can become larger than
@@ -38,6 +39,7 @@ export class BlueSizeConstraintProvider extends BaseClass(INodeSizeConstraintPro
     super()
     this.node = node
   }
+
   /**
    * Returns the current node size to prevent the shrinking of nodes.
    * @see Specified by {@link INodeSizeConstraintProvider.getMinimumSize}.
@@ -45,6 +47,7 @@ export class BlueSizeConstraintProvider extends BaseClass(INodeSizeConstraintPro
   getMinimumSize() {
     return this.node.layout.toSize()
   }
+
   /**
    * Returns three times the current node size.
    * @see Specified by {@link INodeSizeConstraintProvider.getMaximumSize}.
@@ -52,6 +55,7 @@ export class BlueSizeConstraintProvider extends BaseClass(INodeSizeConstraintPro
   getMaximumSize() {
     return new Size(this.node.layout.width * 3, this.node.layout.height * 3)
   }
+
   /**
    * Returns an empty rectangle since this area is not constraint.
    * @see Specified by {@link INodeSizeConstraintProvider.getMinimumEnclosedArea}.

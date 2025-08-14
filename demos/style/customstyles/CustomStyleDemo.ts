@@ -56,7 +56,12 @@ import { Sample2NodeStyle, Sample2NodeStyleExtension } from './Sample2NodeStyle'
 import { Sample2Arrow, Sample2ArrowExtension } from './Sample2Arrow'
 import { applyDefaultStyles } from './style-utils'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-resources/demo-page'
+import {
+  addNavigationButtons,
+  addOptions,
+  BrowserDetection,
+  finishLoading
+} from '@yfiles/demo-resources/demo-page'
 import { saveGraphML } from '@yfiles/demo-utils/graphml-support'
 import { Sample1CollapsibleNodeStyleDecorator } from './Sample1CollapsibleNodeStyleDecorator'
 
@@ -133,7 +138,10 @@ function applySample2(graph: IGraph): void {
   graph.groupNodeDefaults.style = groupNodeStyle
 
   // define the demo edge style using the 'edge-color' css rule
-  graph.edgeDefaults.style = new Sample2EdgeStyle('edge-color')
+  const sample2EdgeStyle = new Sample2EdgeStyle('edge-color')
+  // Don't use marker arrows in Safari, because they are not supported there
+  sample2EdgeStyle.useMarkerArrows = BrowserDetection.safariVersion === 0
+  graph.edgeDefaults.style = sample2EdgeStyle
   graph.edgeDefaults.labels.style = new LabelStyle({
     backgroundFill: '#acb5a3',
     shape: 'pill',
@@ -185,9 +193,7 @@ function registerMarkupExtensions(graphMLIOHandler: GraphMLIOHandler) {
     }
   })
   graphMLIOHandler.addTypeInformation(Sample2NodeStyleExtension, {
-    properties: {
-      cssClass: { default: '', type: String }
-    }
+    properties: { cssClass: { default: '', type: String } }
   })
   graphMLIOHandler.addTypeInformation(Sample2GroupNodeStyle, {
     extension: (item: Sample2GroupNodeStyle) => {
@@ -229,9 +235,7 @@ function registerMarkupExtensions(graphMLIOHandler: GraphMLIOHandler) {
     }
   })
   graphMLIOHandler.addTypeInformation(Sample2ArrowExtension, {
-    properties: {
-      cssClass: { default: '', type: String }
-    }
+    properties: { cssClass: { default: '', type: String } }
   })
 }
 
@@ -240,46 +244,16 @@ function registerMarkupExtensions(graphMLIOHandler: GraphMLIOHandler) {
  */
 function createSampleGraph(graph: IGraph): void {
   graph.nodeDefaults.size = new Size(50, 50)
-  const n0 = graph.createNodeAt({
-    location: new Point(291, 433),
-    tag: 'rgb(108, 0, 255)'
-  })
-  const n1 = graph.createNodeAt({
-    location: new Point(396, 398),
-    tag: 'rgb(210, 255, 0)'
-  })
-  const n2 = graph.createNodeAt({
-    location: new Point(462, 308),
-    tag: 'rgb(0, 72, 255)'
-  })
-  const n3 = graph.createNodeAt({
-    location: new Point(462, 197),
-    tag: 'rgb(255, 0, 84)'
-  })
-  const n4 = graph.createNodeAt({
-    location: new Point(396, 107),
-    tag: 'rgb(255, 30, 0)'
-  })
-  const n5 = graph.createNodeAt({
-    location: new Point(291, 73),
-    tag: 'rgb(0, 42, 255)'
-  })
-  const n6 = graph.createNodeAt({
-    location: new Point(185, 107),
-    tag: 'rgb(114, 255, 0)'
-  })
-  const n7 = graph.createNodeAt({
-    location: new Point(119, 197),
-    tag: 'rgb(216, 0, 255)'
-  })
-  const n8 = graph.createNodeAt({
-    location: new Point(119, 308),
-    tag: 'rgb(36, 255, 0)'
-  })
-  const n9 = graph.createNodeAt({
-    location: new Point(185, 398),
-    tag: 'rgb(216, 0, 255)'
-  })
+  const n0 = graph.createNodeAt({ location: new Point(291, 433), tag: 'rgb(108, 0, 255)' })
+  const n1 = graph.createNodeAt({ location: new Point(396, 398), tag: 'rgb(210, 255, 0)' })
+  const n2 = graph.createNodeAt({ location: new Point(462, 308), tag: 'rgb(0, 72, 255)' })
+  const n3 = graph.createNodeAt({ location: new Point(462, 197), tag: 'rgb(255, 0, 84)' })
+  const n4 = graph.createNodeAt({ location: new Point(396, 107), tag: 'rgb(255, 30, 0)' })
+  const n5 = graph.createNodeAt({ location: new Point(291, 73), tag: 'rgb(0, 42, 255)' })
+  const n6 = graph.createNodeAt({ location: new Point(185, 107), tag: 'rgb(114, 255, 0)' })
+  const n7 = graph.createNodeAt({ location: new Point(119, 197), tag: 'rgb(216, 0, 255)' })
+  const n8 = graph.createNodeAt({ location: new Point(119, 308), tag: 'rgb(36, 255, 0)' })
+  const n9 = graph.createNodeAt({ location: new Point(185, 398), tag: 'rgb(216, 0, 255)' })
 
   const labelModel = new ExteriorNodeLabelModel({ margins: 15 })
 

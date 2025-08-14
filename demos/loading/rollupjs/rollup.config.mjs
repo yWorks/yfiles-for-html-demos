@@ -23,14 +23,7 @@ const plugins = [
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     preventAssignment: true
   }),
-  postcss({
-    extract: true,
-    plugins: [
-      postcssUrl({
-        url: 'inline'
-      })
-    ]
-  }),
+  postcss({ extract: true, plugins: [postcssUrl({ url: 'inline' })] }),
   nodeResolve(),
   json(),
   commonjs()
@@ -47,12 +40,6 @@ export default {
       console.log(warning.message)
     }
   },
-  input: {
-    bundle: 'src/RollupJsDemo.js',
-    LayoutWorker: 'src/LayoutWorker.js'
-  },
-  output: {
-    dir: distDir,
-    format: 'esm'
-  }
+  input: { bundle: 'src/RollupJsDemo.js', LayoutWorker: 'src/LayoutWorker.js' },
+  output: { dir: distDir, format: 'esm' }
 }

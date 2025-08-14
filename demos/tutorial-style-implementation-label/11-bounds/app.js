@@ -39,27 +39,38 @@ import {
 } from '../common'
 import { CustomLabelStyle } from './CustomLabelStyle'
 import { CustomLabelStyle as OldCustomLabelStyle } from '../09-hit-testing/CustomLabelStyle'
+
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
 initializeLabelModelHitTest(graphComponent)
 graphComponent.renderTree.createElement(
   graphComponent.renderTree.inputModeGroup,
   new BoundsVisual()
 )
+
 const graph = graphComponent.graph
 graph.nodeDefaults.labels.style = new CustomLabelStyle()
 graph.edgeDefaults.labels.style = new CustomLabelStyle()
+
 createSampleGraphGetBounds(graphComponent.graph)
+
 enableGraphEditing(graphComponent)
+
 // Inline old state
 const oldState = initializeInlineGraphComponent('#old-state')
 initializeLabelModelHitTest(oldState)
 oldState.graph.nodeDefaults.labels.style = new OldCustomLabelStyle()
 oldState.graph.edgeDefaults.labels.style = new OldCustomLabelStyle()
 oldState.renderTree.createElement(oldState.renderTree.inputModeGroup, new BoundsVisual())
+
 createSampleGraphGetBounds(oldState.graph)
+
 await fitGraphBounds(graphComponent)
 await fitGraphBounds(oldState)
+
 finishLoading()

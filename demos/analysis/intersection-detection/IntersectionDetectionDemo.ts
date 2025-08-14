@@ -378,9 +378,7 @@ function initializeGraph(graphComponent: GraphComponent): void {
   })
 
   const highlightEdgeStyle = new EdgeStyleIndicatorRenderer({
-    edgeStyle: new PolylineEdgeStyle({
-      stroke: '2px #ff6c00'
-    }),
+    edgeStyle: new PolylineEdgeStyle({ stroke: '2px #ff6c00' }),
     zoomPolicy: 'world-coordinates'
   })
 

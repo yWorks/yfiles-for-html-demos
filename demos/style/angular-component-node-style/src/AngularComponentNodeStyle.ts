@@ -44,15 +44,13 @@ import {
 
 type InputProvider<P extends object> = (context: IRenderContext, node: INode) => P
 
-const defaultInputProvider: InputProvider<any> = (context, node) => ({ tag: node.tag })
+const defaultInputProvider: InputProvider<any> = (_context, node) => ({ tag: node.tag })
 
 type AngularNodeStyleVisual<C> = TaggedHtmlVisual<HTMLDivElement, ComponentRef<C>>
 /**
  * An {@link INodeStyle} implementation that renders an Angular component as the visualization for a node.
  */
 export class AngularNodeComponentStyle<C> extends NodeStyleBase<AngularNodeStyleVisual<C>> {
-  private static readonly COMPONENT_KEY = Symbol('AngularComponentNodeStyle component')
-
   constructor(
     private component: Type<C>,
     private inputProvider = defaultInputProvider,
@@ -80,11 +78,9 @@ export class AngularNodeComponentStyle<C> extends NodeStyleBase<AngularNodeStyle
     // register a callback that destroys the Angular component when the visual is discarded
     renderContext.setDisposeCallback(
       visual,
-      (context: IRenderContext, visual: Visual, dispose: boolean) => {
-        const component = (visual as AngularNodeStyleVisual<C>).tag
-        if (component) {
-          component.destroy()
-        }
+      (_context: IRenderContext, _visual: Visual, _dispose: boolean) => {
+        this.applicationRef.detachView(componentRef.hostView)
+        componentRef.destroy()
         return null
       }
     )

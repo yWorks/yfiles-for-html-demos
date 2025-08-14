@@ -42,12 +42,7 @@ import {
 /**
  * Augment the SvgVisual type with the data used to cache the rendering information
  */
-type Cache = {
-  x: number
-  y: number
-  width: number
-  height: number
-}
+type Cache = { x: number; y: number; width: number; height: number }
 type SimpleSvgNodeStyleVisual = TaggedSvgVisual<SVGRectElement, Cache>
 
 /**

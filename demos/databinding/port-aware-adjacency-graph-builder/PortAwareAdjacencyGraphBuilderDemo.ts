@@ -184,9 +184,7 @@ function setGraphDefaults(graph: IGraph) {
     distance: 5
   }).createInsideParameter()
 
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '2px #662b00'
-  })
+  graph.edgeDefaults.style = new PolylineEdgeStyle({ stroke: '2px #662b00' })
 }
 
 /**

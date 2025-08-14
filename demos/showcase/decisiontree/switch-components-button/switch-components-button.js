@@ -31,10 +31,12 @@ import {
   showDecisionTree
 } from '../decision-tree-component/decision-tree-component'
 import './switch-components-button.css'
+
 /**
  * The div element representing a button that toggles between the decision tree and the editor graph.
  */
 const switchComponentsButton = document.querySelector('#toggle-decision-tree-button')
+
 /**
  * Wires up the button that toggles between the decision tree and the editor graph.
  * @yjs:keep = contains
@@ -52,19 +54,24 @@ export function initializeSwitchButton(graphComponent) {
     updateButtonState(graphComponent)
   })
 }
+
 /**
  * Shows the editor graph and hides the decision tree.
  */
 function showEditorComponent(graphComponent) {
   hideDecisionTree()
+
   document.getElementById('graphComponent').classList.remove('hidden')
   document.getElementById('editor-toolbar').classList.remove('hidden')
   document.getElementById('decision-tree').classList.add('hidden')
   document.getElementById('decision-tree-toolbar').classList.add('hidden')
+
   switchComponentsButton.classList.remove('decision-tree')
+
   // ensure the model graph is completely visible
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Shows the decision tree and hides the editor graph.
  */
@@ -73,9 +80,12 @@ function showDecisionTreeComponent(graphComponent) {
   document.getElementById('editor-toolbar').classList.add('hidden')
   document.getElementById('decision-tree').classList.remove('hidden')
   document.getElementById('decision-tree-toolbar').classList.remove('hidden')
+
   switchComponentsButton.classList.add('decision-tree')
+
   showDecisionTree(graphComponent.graph)
 }
+
 /**
  * Enables/disables the button to toggle two components: decision tree and editor graph.
  * The button gets disabled if the graph is empty or just has group nodes in it.

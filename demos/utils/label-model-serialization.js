@@ -60,6 +60,7 @@ import {
   StretchNodeLabelModel,
   StretchNodeLabelModelParameter
 } from '@yfiles/yfiles'
+
 export function serializeLabelModelParameter(parameter) {
   if (parameter instanceof FreeEdgeLabelModelParameter) {
     return {
@@ -67,9 +68,7 @@ export function serializeLabelModelParameter(parameter) {
       angle: parameter.angle,
       ratio: parameter.ratio,
       distance: parameter.distance,
-      modelProperties: {
-        edgeRelativeAngle: parameter.model.edgeRelativeAngle
-      }
+      modelProperties: { edgeRelativeAngle: parameter.model.edgeRelativeAngle }
     }
   } else if (parameter instanceof EdgePathLabelModelParameter) {
     return {
@@ -128,10 +127,7 @@ export function serializeLabelModelParameter(parameter) {
     return {
       model: 'NinePositionsEdgeLabelModel',
       position: parameter.position,
-      modelProperties: {
-        angle: parameter.model.angle,
-        distance: parameter.model.distance
-      }
+      modelProperties: { angle: parameter.model.angle, distance: parameter.model.distance }
     }
   } else if (parameter instanceof SmartEdgeLabelModelParameter) {
     return {
@@ -140,10 +136,7 @@ export function serializeLabelModelParameter(parameter) {
       distance: parameter.distance,
       placeAlongEdge: parameter.placeAlongEdge,
       segment: parameter.segment,
-      modelProperties: {
-        angle: parameter.model.angle,
-        autoRotation: parameter.model.autoRotation
-      }
+      modelProperties: { angle: parameter.model.angle, autoRotation: parameter.model.autoRotation }
     }
   } else if (parameter instanceof FreeNodeLabelModelParameter) {
     return {
@@ -244,6 +237,7 @@ export function serializeLabelModelParameter(parameter) {
     console.warn(`Serialization not supported for ${JSON.stringify(typeof parameter)}`)
   }
 }
+
 export function deserializeLabelModelParameter(serializedParameter) {
   switch (serializedParameter.model) {
     case 'FreeEdgeLabelModel': {

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { IEdge, IModelItem, INode, Intersection, Point } from '@yfiles/yfiles'
+
 /**
  * The tool tip may either be a plain string or it can also be a rich HTML element. In this case, we
  * show the latter. We just extract the first label text from the given item and show it as
@@ -42,15 +43,19 @@ export function createToolTipContent(item, intersectionInfoArray) {
   const title = document.createElement('h3')
   title.classList.add('tooltip-title')
   title.innerHTML = 'Intersections Info'
+
   const toolTip = document.createElement('div')
   toolTip.classList.add('tooltip-container')
   toolTip.appendChild(title)
+
   let n = 0
   for (const intersection of filteredIntersections) {
     const item1 = intersection.item1
     const item2 = intersection.item2
+
     const grid1 = document.createElement('div')
     grid1.classList.add('tooltip-content')
+
     let intersectionType
     if (item1 instanceof INode && item2 instanceof INode) {
       intersectionType = 'Node-Node'
@@ -76,9 +81,11 @@ export function createToolTipContent(item, intersectionInfoArray) {
     }
     addToToolTipGrid(grid1, 'Geometrical Result', result)
     toolTip.appendChild(grid1)
+
     const grid2 = document.createElement('div')
     grid2.classList.add('tooltip-content')
     addToToolTipGrid(grid2, 'Intersection Points', '')
+
     let i = 1
     for (const point of intersection.intersectionPoints) {
       addToToolTipGrid(grid2, `Point ${i++}`, getRoundedPoint(point))
@@ -92,9 +99,11 @@ export function createToolTipContent(item, intersectionInfoArray) {
   }
   return toolTip
 }
+
 function getRoundedPoint(p) {
   return `[${Math.round(p.x * 10) / 10}, ${Math.round(p.y * 10) / 10}]`
 }
+
 /**
  * Adds a property with a given key and value to the grid div element that shows properties
  * as key-value pairs.
@@ -104,6 +113,7 @@ function addToToolTipGrid(grid, key, value) {
   keySpan.classList.add('tooltip-key')
   keySpan.innerHTML = key
   grid.appendChild(keySpan)
+
   const valueSpan = document.createElement('span')
   valueSpan.innerHTML = value
   grid.appendChild(valueSpan)

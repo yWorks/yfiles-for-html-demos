@@ -41,30 +41,37 @@ import {
   Size,
   StyleIndicatorZoomPolicy
 } from '@yfiles/yfiles'
+
 import { LabelHandleProvider } from './LabelHandleProvider'
 import { createDemoNodeLabelStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { InteriorNodeLabelModel } from '@yfiles/yfiles/yfiles'
 import { RotatableLabelSelectionStyle } from './RotatableLabelSelectionStyle'
+
 let graphComponent
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
   initializeGraph()
   initializeInputMode()
 }
+
 /**
  * Sets the default styles and creates the graph.
  */
 function initializeGraph() {
   const graph = graphComponent.graph
+
   // add a custom handle provider for labels
   graph.decorator.labels.handleProvider.addFactory(getLabelHandleProvider)
+
   const labelDecorationRenderer = new LabelStyleIndicatorRenderer({
     labelStyle: new RotatableLabelSelectionStyle(),
     zoomPolicy: StyleIndicatorZoomPolicy.WORLD_COORDINATES
   })
+
   graphComponent.graph.decorator.labels.selectionRenderer.addConstant(
     (label) =>
       label.layoutParameter.model instanceof FreeNodeLabelModel ||
@@ -72,19 +79,23 @@ function initializeGraph() {
       label.layoutParameter.model instanceof FreeLabelModel,
     labelDecorationRenderer
   )
+
   initDemoStyles(graph)
   graphComponent.graph.nodeDefaults.size = new Size(100, 50)
+
   // Our resize logic does not work together with all label models resp. label model parameters
   // for simplicity, we just use a centered label for nodes
   const compositeLabelModel = new CompositeLabelModel()
   compositeLabelModel.addParameter(InteriorNodeLabelModel.CENTER)
   graph.nodeDefaults.labels.layoutParameter = compositeLabelModel.parameters.at(0)
+
   const labelModel = new EdgeSegmentLabelModel({ distance: 10 })
   graph.edgeDefaults.labels.layoutParameter = labelModel.createParameterFromSource(
     0,
     0.5,
     'right-of-edge'
   )
+
   // create sample graph
   const n1 = graph.createNodeAt({
     location: [100, 100],
@@ -102,13 +113,11 @@ function initializeGraph() {
       }
     ]
   })
-  graph.createEdge({
-    source: n2,
-    target: n1,
-    labels: ['Rotated Edge Label']
-  })
+  graph.createEdge({ source: n2, target: n1, labels: ['Rotated Edge Label'] })
+
   graphComponent.fitGraphBounds()
 }
+
 /**
  * Returns the LabelHandleProvider for the given label.
  * @param label The given label
@@ -116,6 +125,7 @@ function initializeGraph() {
 function getLabelHandleProvider(label) {
   return new LabelHandleProvider(label)
 }
+
 /**
  * Initializes the input mode.
  */
@@ -132,11 +142,14 @@ function initializeInputMode() {
       GraphItemTypes.ALL
     ]
   })
+
   // add a label to each created node
   mode.addEventListener('node-created', (evt) => {
     const graph = graphComponent.graph
     graph.addLabel(evt.item, `Node ${graph.nodes.size}`)
   })
+
   graphComponent.inputMode = mode
 }
+
 run().then(finishLoading)

@@ -323,6 +323,15 @@ function initializeTypePanel(graphComponent: GraphComponent): void {
             .toArray()
         : null)
   )
+  graphComponent.selection.addEventListener(
+    'item-removed',
+    () =>
+      (typePanel.currentItems = allowNodeTypeChange
+        ? graphComponent.selection.nodes
+            .filter((n) => !graphComponent.graph.isGroupNode(n))
+            .toArray()
+        : null)
+  )
 }
 
 /**

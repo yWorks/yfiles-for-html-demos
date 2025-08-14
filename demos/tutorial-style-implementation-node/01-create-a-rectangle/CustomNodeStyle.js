@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
+
 /**
  * A basic node style that renders a rectangle.
  */
@@ -43,6 +44,7 @@ export class CustomNodeStyle extends NodeStyleBase {
     return new SvgVisual(rect)
   }
 }
+
 /**
  * A second basic node style that uses the baseVal attribute instead of setAttribute.
  */

@@ -34,6 +34,7 @@ import {
   WebGLTransition
 } from '@yfiles/yfiles'
 import { updateSelectionStyles } from './graph-styles'
+
 /**
  * Binds the various interaction elements (buttons, sliders) to functions and commands.
  */
@@ -43,61 +44,76 @@ export function wireUpUI(style, graphComponent) {
     createGraph(graphComponent.graph)
     selectNodes(graphComponent)
   })
+
   document.getElementById('select-nodes-button')?.addEventListener('click', () => {
     selectNodes(graphComponent)
   })
+
   document.getElementById('select-edges-button')?.addEventListener('click', () => {
     selectEdges(graphComponent)
   })
+
   document.getElementById('select-labels-button')?.addEventListener('click', () => {
     selectLabels(graphComponent)
   })
+
   document.getElementById('clear-selection-button')?.addEventListener('click', () => {
     graphComponent.selection.clear()
   })
+
   document.getElementById('change-style-pattern')?.addEventListener('change', (e) => {
     const target = e.target
     style.stylePattern = target.value
     const selectedIndex = target.selectedIndex
+
     const dashAnimated = document.querySelector('#change--dash-animated')
     dashAnimated.disabled = selectedIndex < 9 || selectedIndex > 14
+
     updateSelectionStyles(style, graphComponent)
   })
+
   document.getElementById('change-primary-color')?.addEventListener('change', (e) => {
     const target = e.target
     style.primaryColor = target.value
     updateSelectionStyles(style, graphComponent)
   })
+
   document.getElementById('change-primary-transparency')?.addEventListener('change', (e) => {
     const target = e.target
     style.primaryTransparency = parseFloat(target.value) / 100
     updateSelectionStyles(style, graphComponent)
   })
+
   document.getElementById('change-secondary-color')?.addEventListener('change', (e) => {
     const target = e.target
     style.secondaryColor = target.value
     updateSelectionStyles(style, graphComponent)
   })
+
   document.getElementById('change-secondary-transparency')?.addEventListener('change', (e) => {
     const target = e.target
     style.secondaryTransparency = parseFloat(target.value) / 100
     updateSelectionStyles(style, graphComponent)
   })
+
   document.getElementById('change-thickness')?.addEventListener('change', (e) => {
     const target = e.target
     style.thickness = parseFloat(target.value)
     updateSelectionStyles(style, graphComponent)
   })
+
   document.getElementById('change-margins')?.addEventListener('change', (e) => {
     const target = e.target
     style.margins = parseFloat(target.value)
     updateSelectionStyles(style, graphComponent)
   })
+
   document.getElementById('change-transitioned')?.addEventListener('change', (e) => {
     const target = e.target
     style.transition = target.checked ? createTransition(style.easing) : undefined
     updateSelectionStyles(style, graphComponent)
   })
+
   document.getElementById('change--dash-animated')?.addEventListener('change', (e) => {
     const target = e.target
     style.animationTiming = target.checked
@@ -108,13 +124,17 @@ export function wireUpUI(style, graphComponent) {
           WebGLAnimationDirection.NORMAL
         )
       : undefined
+
     updateSelectionStyles(style, graphComponent)
   })
+
   document.getElementById('change-easing')?.addEventListener('change', (e) => {
     const target = e.target
     style.easing = target.value
+
     // also update transition and dash animation, if activated
     style.transition = style.transition ? createTransition(style.easing) : undefined
+
     style.animationTiming = style.animationTiming
       ? new WebGLAnimationTiming(
           TimeSpan.fromSeconds(1),
@@ -123,30 +143,32 @@ export function wireUpUI(style, graphComponent) {
           WebGLAnimationDirection.NORMAL
         )
       : undefined
+
     updateSelectionStyles(style, graphComponent)
   })
+
   document.getElementById('change-zoom-policy')?.addEventListener('change', (e) => {
     const target = e.target
     style.zoomPolicy = target.value
     updateSelectionStyles(style, graphComponent)
   })
 }
+
 export function selectNodes(graphComponent) {
   graphComponent.graph.nodes.forEach((item) => graphComponent.selection.add(item))
 }
+
 function selectEdges(graphComponent) {
   graphComponent.graph.edges.forEach((item) => graphComponent.selection.add(item))
 }
+
 function selectLabels(graphComponent) {
   graphComponent.graph.labels.forEach((item) => graphComponent.selection.add(item))
 }
+
 /**
  * Creates a WebGLTransition with the given easing and default values.
  */
 export function createTransition(easing) {
-  return new WebGLTransition({
-    properties: 'opacity',
-    easing,
-    duration: '0.5s'
-  })
+  return new WebGLTransition({ properties: 'opacity', easing, duration: '0.5s' })
 }

@@ -32,6 +32,7 @@ import { getEdgeStyle, updateStyles } from './styles/styles-support'
 import { layoutTree } from './mind-map-layout'
 import { SubtreePositionHandler } from './interaction/MindMapPositionHandlers'
 import { createTagChangeUndoUnit } from './interaction/TagChangeUndoUnit'
+
 /**
  * Initializes the movement of subtrees.
  * A node can be dragged and relocated with its whole subtree to another part of the tree.
@@ -64,6 +65,7 @@ export function initializeSubtrees(graphComponent) {
       await relocateSubtree(graphComponent, movedNode)
     }
   })
+
   // customize the position handler to move a whole subtree and update the styles and layout
   const filteredGraph = graphComponent.graph
   filteredGraph.decorator.nodes.positionHandler.addWrapperFactory((item, originalHandler) =>
@@ -72,15 +74,18 @@ export function initializeSubtrees(graphComponent) {
       : originalHandler
   )
 }
+
 /**
  * Holds the old node data.
  * This helps to restore any changes when reverting a drag operation with undo.
  */
 let oldNodeData
+
 /**
  * Holds the style of the subtree root's in-edge to be able to restore it after the drag is canceled.
  */
 let oldInEdgeStyle
+
 /**
  * Prepares to move the selected node and its subtree.
  * Information about the subtree is stored that helps undo or reset the relocation gesture.
@@ -89,12 +94,14 @@ export function prepareRelocateSubtree(graphComponent, movedNode) {
   // store the current node data to be able to undo
   const oldData = getNodeData(movedNode)
   oldNodeData = { ...oldData }
+
   // store the style of the current in edge of the subtree root to be able to cancel the gesture
   const inEdge = graphComponent.graph.inEdgesAt(movedNode).at(0)
   if (inEdge) {
     oldInEdgeStyle = inEdge.style
   }
 }
+
 /**
  * Updates the styles while a subtree is moved.
  * The styles of nodes and edges change with the position of the nodes within the tree and need to
@@ -111,6 +118,7 @@ export function updateSubtreeStylesAndLayout(graphComponent, movedNode) {
     fullGraph.setStyle(subtreeEdge, getEdgeStyle(depth))
   }
 }
+
 /**
  * Relocates the subtree when a new parent candidate was found, otherwise the subtree is deleted.
  */
@@ -118,8 +126,10 @@ export async function relocateSubtree(graphComponent, movedNode) {
   const filteredGraph = graphComponent.graph
   const fullGraph = getFullGraph(graphComponent)
   graphComponent.selection.clear()
+
   // begin a compound undo operation
   const compoundEdit = graphComponent.graph.beginEdit('Set State Label', 'Set State Label')
+
   const subtreeEdge = getInEdge(movedNode, fullGraph)
   if (subtreeEdge) {
     // update the depths and styles according to the new parent of the subtree root
@@ -127,6 +137,7 @@ export async function relocateSubtree(graphComponent, movedNode) {
     updateStyles(movedNode, fullGraph)
     adjustNodeBounds(movedNode, fullGraph)
     collapseSubtree(subtreeEdge.sourceNode, false, filteredGraph)
+
     // add an undo unit because the node data has changed
     const newNodeData = getNodeData(movedNode)
     graphComponent.graph.undoEngine.addUnit(
@@ -139,6 +150,7 @@ export async function relocateSubtree(graphComponent, movedNode) {
     )
   } else {
     // there is no connection to the rest of the tree anymore
+
     // add an undo unit because the node data has changed during the drag
     const newNodeData = getNodeData(movedNode)
     graphComponent.graph.undoEngine.addUnit(
@@ -146,13 +158,17 @@ export async function relocateSubtree(graphComponent, movedNode) {
         filteredGraph.nodePredicateChanged(node)
       )
     )
+
     // delete the whole subtree
     removeSubtree(fullGraph, movedNode)
   }
+
   // update the layout
   await layoutTree(graphComponent)
+
   compoundEdit.commit()
 }
+
 /**
  * Reverts the relocation of the subtree when the gesture is cancelled.
  * The depths and styles of the subtree nodes are restored,
@@ -173,6 +189,7 @@ export function resetSubtree(graphComponent, movedNode) {
   }
   oldInEdgeStyle = null
 }
+
 /**
  * Marks the given node as collapsed, which will result in hiding all of its children.
  */
@@ -180,15 +197,18 @@ export function collapseSubtree(node, collapsed, filteredGraph) {
   const oldData = node.tag
   const newData = { ...oldData, collapsed: collapsed }
   setNodeData(node, newData)
+
   // create a custom undo unit since the node data changed
   filteredGraph.undoEngine.addUnit(
     createTagChangeUndoUnit('Collapse/Expand', oldData, newData, node, () =>
       filteredGraph.nodePredicateChanged()
     )
   )
+
   // tell the filtered graph to update the graph structure
   filteredGraph.nodePredicateChanged()
 }
+
 /**
  * Returns the mind map root node.
  */
@@ -196,23 +216,24 @@ export function getRoot(graph) {
   // find the first node with no incoming mind map edges
   return graph.nodes.find((node) => !getInEdge(node, graph))
 }
+
 /**
  * Creates the arrays containing the nodes and edges of a given root's subtree.
  */
 export function getSubtree(graph, subtreeRoot) {
-  const treeAnalysis = new TreeAnalysis({
-    subgraphEdges: (e) => !isCrossReference(e)
-  })
+  const treeAnalysis = new TreeAnalysis({ subgraphEdges: (e) => !isCrossReference(e) })
   const analysisResult = treeAnalysis.run(graph)
   const subtree = analysisResult.getSubtree(subtreeRoot)
   return { nodes: [...subtree.nodes], edges: [...subtree.edges] }
 }
+
 /**
  * Gets the first incoming edge that's not a cross-reference or null.
  */
 export function getInEdge(node, graph) {
   return graph.inEdgesAt(node).find((edge) => !isCrossReference(edge))
 }
+
 /**
  * Creates a sibling node for a given node.
  * @param graph The input graph.
@@ -240,6 +261,7 @@ export function createSibling(graph, node, nodeStyle, edgeStyle, labelStyle) {
   }
   return null
 }
+
 /**
  * Creates a child node for a given parent.
  * @param graph The input graph.
@@ -252,6 +274,7 @@ export function createSibling(graph, node, nodeStyle, edgeStyle, labelStyle) {
 export function createChild(graph, parent, nodeStyle, edgeStyle, labelStyle) {
   const parentNodeData = getNodeData(parent)
   let left = parentNodeData.left
+
   // if parent is root, find side to keep the tree balanced
   if (isRoot(parent)) {
     // get all edges starting at root and count left or right
@@ -273,9 +296,11 @@ export function createChild(graph, parent, nodeStyle, edgeStyle, labelStyle) {
   const node = graph.createNode(parent.layout.toRect(), nodeStyle, nodeData)
   graph.addLabel(node, '', InteriorNodeLabelModel.CENTER, labelStyle)
   graph.createEdge(parent, node, edgeStyle)
+
   adjustNodeBounds(node, graph)
   return node
 }
+
 /**
  * Removes a node and its subtree.
  * @param graph The input graph.
@@ -283,6 +308,7 @@ export function createChild(graph, parent, nodeStyle, edgeStyle, labelStyle) {
  */
 export function removeSubtree(graph, subtreeRoot) {
   const nodesToCheck = [subtreeRoot]
+
   while (nodesToCheck.length > 0) {
     const node = nodesToCheck.pop()
     for (const outEdge of graph.outEdgesAt(node).filter((edge) => !isCrossReference(edge))) {
@@ -291,6 +317,7 @@ export function removeSubtree(graph, subtreeRoot) {
     graph.remove(node)
   }
 }
+
 /**
  * Sets the depth information of a given node and its subtree.
  * @param graph The input graph.
@@ -306,6 +333,7 @@ export function setSubtreeDepths(graph, node, depth) {
   const nodeData = getNodeData(node)
   nodeData.depth = depth
 }
+
 /**
  * Returns whether a node has children.
  * @param node The given node.
@@ -315,6 +343,7 @@ export function setSubtreeDepths(graph, node, depth) {
 export function hasChildNodes(node, graph) {
   return graph.outEdgesAt(node).filter((edge) => !isCrossReference(edge)).size > 0
 }
+
 /**
  * Gets the full graph from the graph in the graph component.
  */
@@ -325,6 +354,7 @@ export function getFullGraph(graphComponent) {
   }
   return graph
 }
+
 /**
  * Adjusts all node sizes to fit their labels' preferred size.
  */

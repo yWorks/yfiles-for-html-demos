@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { InteractiveOrganicLayoutHelper } from '@yfiles/demo-utils/InteractiveOrganicLayoutHelper'
 import {} from '@yfiles/yfiles'
+
 /**
  * Provides methods for configuring the interactive organic layout to
  * react to manual dragging of nodes.
@@ -35,10 +36,12 @@ import {} from '@yfiles/yfiles'
 export class InteractiveOrganicLayoutInputHelper {
   graph
   layoutHelper
+
   constructor(graph, config) {
     this.graph = graph
     this.layoutHelper = new InteractiveOrganicLayoutHelper(graph, config)
   }
+
   /**
    * Starts the layout using {@link setInterval}. Can be used in a worker thread.
    */
@@ -46,6 +49,7 @@ export class InteractiveOrganicLayoutInputHelper {
     this.prepareStructureChanges()
     this.layoutHelper.startInterval()
   }
+
   /**
    * Configures the layout to react to the user starting to drag a node.
    */
@@ -53,6 +57,7 @@ export class InteractiveOrganicLayoutInputHelper {
     this.layoutHelper.updateInertiaAndStressForAllNodes(0.8, 0.2)
     this.restartLayout(draggedNode, draggedComponent)
   }
+
   /**
    * Configures the layout to react to the user dragging a node.
    */
@@ -60,6 +65,7 @@ export class InteractiveOrganicLayoutInputHelper {
     this.updateStressAndInertiaForOtherNodes(draggedNode, draggedComponent, delta)
     this.layoutHelper.fixNode(draggedNode, 1)
   }
+
   /**
    * Configures the layout to react to the user finishing to drag a node.
    */
@@ -67,6 +73,7 @@ export class InteractiveOrganicLayoutInputHelper {
     this.layoutHelper.fixNode(draggedNode, 1, 0)
     this.updateStressAndInertiaForOtherNodes(draggedNode, draggedComponent, -1)
   }
+
   /**
    * Registers the necessary listeners that react to structural changes to the graph like node/edge
    * addition/deletion so that the layout algorithm is updated accordingly.
@@ -86,6 +93,7 @@ export class InteractiveOrganicLayoutInputHelper {
       this.layoutHelper.removeEdge(evt.sourcePortOwner, evt.targetPortOwner)
     })
   }
+
   /**
    * When a node is first dragged, the interactive layout is restarted with
    * an updated graph structure.
@@ -95,6 +103,7 @@ export class InteractiveOrganicLayoutInputHelper {
     this.layoutHelper.warmupNodes()
     this.layoutHelper.fixNode(draggedNode)
   }
+
   /**
    * Allow the nodes of the moved component to move close to the dragged node.
    * @param draggedNode the node that will be dragged.

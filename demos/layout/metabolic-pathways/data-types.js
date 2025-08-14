@@ -38,30 +38,35 @@ export var NodeTypes
   NodeTypes[(NodeTypes['PRODUCT'] = 4)] = 'PRODUCT'
   NodeTypes[(NodeTypes['OTHER'] = 5)] = 'OTHER'
 })(NodeTypes || (NodeTypes = {}))
+
 /**
  * Returns the type of the given node.
  */
 export function getType(node) {
   return getMetabolicData(node).type
 }
+
 /**
  * Returns the data associated with the given node.
  */
 export function getMetabolicData(node) {
   return node.tag
 }
+
 /**
  * Returns the alignment of the given node.
  */
 export function getAlignment(node) {
   return getMetabolicData(node).vAlign
 }
+
 /**
  * Returns whether the node belongs to a circle.
  */
 export function isOnCircle(node) {
   return getMetabolicData(node).circle ?? false
 }
+
 /**
  * A mapping between the string values of the node types in the data-set and the NodeTypes enum.
  */

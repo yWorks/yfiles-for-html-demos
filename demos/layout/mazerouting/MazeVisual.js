@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { BaseClass, IVisualCreator, SvgVisualGroup } from '@yfiles/yfiles'
+
 /**
  * This class implements the maze visualization based on the nodes that form the maze.
  */
@@ -39,6 +40,7 @@ export class MazeVisual extends BaseClass(IVisualCreator) {
     super()
     this.nodes = nodes
   }
+
   /**
    * Creates the maze visual.
    * @param context The render context
@@ -54,6 +56,7 @@ export class MazeVisual extends BaseClass(IVisualCreator) {
     }
     return visualGroup
   }
+
   /**
    * Updates the maze visual. As the maze cannot be changed in this demo, the old visual is
    * returned.

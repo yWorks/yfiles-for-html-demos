@@ -45,239 +45,59 @@ export class PreConfigurator {
   get preConfigurationLimits(): any {
     return {
       simpleSvgStyles: {
-        defaultGmm: {
-          view: 2000,
-          move: 500,
-          edit: 500
-        },
-        WebglGmm: {
-          view: 50000,
-          move: 50000,
-          edit: 50000
-        },
-        levelOfDetailGmm: {
-          view: 2000,
-          move: 500,
-          edit: 500
-        },
-        staticGmm: {
-          view: 2000,
-          move: 2000,
-          edit: 2000
-        },
-        svgImageGmm: {
-          view: 2000,
-          move: 2000,
-          edit: 2000
-        },
-        CanvasImageWithDrawCallbackGmm: {
-          view: 15000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithItemStylesGmm: {
-          view: 15000,
-          move: 15000,
-          edit: 15000
-        },
-        StaticCanvasImageGmm: {
-          view: 15000,
-          move: 15000,
-          edit: 15000
-        },
-        StaticWebglImageGmm: {
-          view: 20000,
-          move: 20000,
-          edit: 20000
-        }
+        defaultGmm: { view: 2000, move: 500, edit: 500 },
+        WebglGmm: { view: 50000, move: 50000, edit: 50000 },
+        levelOfDetailGmm: { view: 2000, move: 500, edit: 500 },
+        staticGmm: { view: 2000, move: 2000, edit: 2000 },
+        svgImageGmm: { view: 2000, move: 2000, edit: 2000 },
+        CanvasImageWithDrawCallbackGmm: { view: 15000, move: 15000, edit: 15000 },
+        CanvasImageWithItemStylesGmm: { view: 15000, move: 15000, edit: 15000 },
+        StaticCanvasImageGmm: { view: 15000, move: 15000, edit: 15000 },
+        StaticWebglImageGmm: { view: 20000, move: 20000, edit: 20000 }
       },
       complexSvgStyles: {
-        defaultGmm: {
-          view: 500,
-          move: 500,
-          edit: 500
-        },
-        WebglGmm: {
-          view: 50000,
-          move: 50000,
-          edit: 50000
-        },
-        levelOfDetailGmm: {
-          view: 2000,
-          move: 500,
-          edit: 500
-        },
-        staticGmm: {
-          view: 2000,
-          move: 2000,
-          edit: 2000
-        },
-        svgImageGmm: {
-          view: 2000,
-          move: 5000,
-          edit: 2000
-        },
-        CanvasImageWithDrawCallbackGmm: {
-          view: 15000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithItemStylesGmm: {
-          view: 15000,
-          move: 15000,
-          edit: 5000
-        },
-        StaticCanvasImageGmm: {
-          view: 15000,
-          move: 15000,
-          edit: 5000
-        },
-        StaticWebglImageGmm: {
-          view: 20000,
-          move: 20000,
-          edit: 20000
-        }
+        defaultGmm: { view: 500, move: 500, edit: 500 },
+        WebglGmm: { view: 50000, move: 50000, edit: 50000 },
+        levelOfDetailGmm: { view: 2000, move: 500, edit: 500 },
+        staticGmm: { view: 2000, move: 2000, edit: 2000 },
+        svgImageGmm: { view: 2000, move: 5000, edit: 2000 },
+        CanvasImageWithDrawCallbackGmm: { view: 15000, move: 15000, edit: 15000 },
+        CanvasImageWithItemStylesGmm: { view: 15000, move: 15000, edit: 5000 },
+        StaticCanvasImageGmm: { view: 15000, move: 15000, edit: 5000 },
+        StaticWebglImageGmm: { view: 20000, move: 20000, edit: 20000 }
       },
       simpleCanvasStyles: {
-        defaultGmm: {
-          view: 11000,
-          move: 5000,
-          edit: 5000
-        },
-        WebglGmm: {
-          view: 50000,
-          move: 50000,
-          edit: 50000
-        },
-        levelOfDetailGmm: {
-          view: 2000,
-          move: 500,
-          edit: 500
-        },
-        staticGmm: {
-          view: 11000,
-          move: 11000,
-          edit: 11000
-        },
-        svgImageGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithDrawCallbackGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithItemStylesGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        StaticCanvasImageGmm: {
-          view: 2000,
-          move: 2000,
-          edit: 2000
-        },
-        StaticWebglImageGmm: {
-          view: 20000,
-          move: 20000,
-          edit: 20000
-        }
+        defaultGmm: { view: 11000, move: 5000, edit: 5000 },
+        WebglGmm: { view: 50000, move: 50000, edit: 50000 },
+        levelOfDetailGmm: { view: 2000, move: 500, edit: 500 },
+        staticGmm: { view: 11000, move: 11000, edit: 11000 },
+        svgImageGmm: { view: 20000, move: 15000, edit: 15000 },
+        CanvasImageWithDrawCallbackGmm: { view: 20000, move: 15000, edit: 15000 },
+        CanvasImageWithItemStylesGmm: { view: 20000, move: 15000, edit: 15000 },
+        StaticCanvasImageGmm: { view: 2000, move: 2000, edit: 2000 },
+        StaticWebglImageGmm: { view: 20000, move: 20000, edit: 20000 }
       },
       complexCanvasStyles: {
-        defaultGmm: {
-          view: 500,
-          move: 500,
-          edit: 500
-        },
-        WebglGmm: {
-          view: 50000,
-          move: 50000,
-          edit: 50000
-        },
-        levelOfDetailGmm: {
-          view: 2000,
-          move: 500,
-          edit: 500
-        },
-        staticGmm: {
-          view: 500,
-          move: 500,
-          edit: 500
-        },
-        svgImageGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithDrawCallbackGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithItemStylesGmm: {
-          view: 20000,
-          move: 5000,
-          edit: 5000
-        },
-        StaticCanvasImageGmm: {
-          view: 2000,
-          move: 2000,
-          edit: 2000
-        },
-        StaticWebglImageGmm: {
-          view: 20000,
-          move: 20000,
-          edit: 20000
-        }
+        defaultGmm: { view: 500, move: 500, edit: 500 },
+        WebglGmm: { view: 50000, move: 50000, edit: 50000 },
+        levelOfDetailGmm: { view: 2000, move: 500, edit: 500 },
+        staticGmm: { view: 500, move: 500, edit: 500 },
+        svgImageGmm: { view: 20000, move: 15000, edit: 15000 },
+        CanvasImageWithDrawCallbackGmm: { view: 20000, move: 15000, edit: 15000 },
+        CanvasImageWithItemStylesGmm: { view: 20000, move: 5000, edit: 5000 },
+        StaticCanvasImageGmm: { view: 2000, move: 2000, edit: 2000 },
+        StaticWebglImageGmm: { view: 20000, move: 20000, edit: 20000 }
       },
       WebGLStyles: {
-        defaultGmm: {
-          view: 11000,
-          move: 5000,
-          edit: 5000
-        },
-        WebglGmm: {
-          view: 50000,
-          move: 50000,
-          edit: 50000
-        },
-        levelOfDetailGmm: {
-          view: 11000,
-          move: 5000,
-          edit: 5000
-        },
-        staticGmm: {
-          view: 11000,
-          move: 11000,
-          edit: 11000
-        },
-        svgImageGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithDrawCallbackGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        CanvasImageWithItemStylesGmm: {
-          view: 20000,
-          move: 15000,
-          edit: 15000
-        },
-        StaticCanvasImageGmm: {
-          view: 2000,
-          move: 2000,
-          edit: 2000
-        },
-        StaticWebglImageGmm: {
-          view: 20000,
-          move: 20000,
-          edit: 20000
-        }
+        defaultGmm: { view: 11000, move: 5000, edit: 5000 },
+        WebglGmm: { view: 50000, move: 50000, edit: 50000 },
+        levelOfDetailGmm: { view: 11000, move: 5000, edit: 5000 },
+        staticGmm: { view: 11000, move: 11000, edit: 11000 },
+        svgImageGmm: { view: 20000, move: 15000, edit: 15000 },
+        CanvasImageWithDrawCallbackGmm: { view: 20000, move: 15000, edit: 15000 },
+        CanvasImageWithItemStylesGmm: { view: 20000, move: 15000, edit: 15000 },
+        StaticCanvasImageGmm: { view: 2000, move: 2000, edit: 2000 },
+        StaticWebglImageGmm: { view: 20000, move: 20000, edit: 20000 }
       }
     }
   }

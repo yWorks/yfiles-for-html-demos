@@ -45,6 +45,7 @@ import {
   SvgVisual,
   Visual
 } from '@yfiles/yfiles'
+
 /**
  * Helper class that provides a handle for the first and last bend of an edge
  * that interactively determines the port candidate.
@@ -54,6 +55,7 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
   bend
   portCandidates
   renderTreeElement = null
+
   /**
    * Creates a new handle that wraps the base handle.
    */
@@ -66,6 +68,7 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
     this.bend = bend
     this.portCandidates = portCandidates
   }
+
   /**
    * Called when a drag of the handle is initialized.
    * To indicate in which direction the port candidate will be assigned, an arrow visual is added.
@@ -78,6 +81,7 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
     const renderTree = inputModeContext.canvasComponent.renderTree
     this.renderTreeElement = renderTree.createElement(renderTree.rootGroup, this)
   }
+
   /**
    * Called when a drag of the handle is canceled.
    * The arrow visual is removed.
@@ -89,6 +93,7 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
     this.uninstallArrowPath(inputModeContext)
     inputModeContext.canvasComponent?.renderTree.remove(this.renderTreeElement)
   }
+
   /**
    * Called when a drag of the handle is canceled.
    * The port candidates are assigned and the arrow visual is removed.
@@ -99,6 +104,7 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
     // remove the indicator
     this.uninstallArrowPath(inputModeContext)
     inputModeContext.canvasComponent?.renderTree.remove(this.renderTreeElement)
+
     // calculate the direction
     const port = this.sourceEnd ? this.bend.owner.sourcePort : this.bend.owner.targetPort
     const nodeLayout = port.owner.layout
@@ -120,6 +126,7 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
         pc = new EdgePortCandidates().addFreeCandidate(PortSides.TOP)
       }
     }
+
     // and set the port candidate
     if (pc === null) {
       this.portCandidates.delete(this.bend.owner)
@@ -127,6 +134,7 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
       this.portCandidates.set(this.bend.owner, pc)
     }
   }
+
   /**
    * Returns the unconstrained location.
    * @see overrides {@link ConstrainedHandle.constrainNewLocation}
@@ -134,6 +142,7 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
   constrainNewLocation(context, originalLocation, newLocation) {
     return newLocation
   }
+
   /**
    * Creates a visual that contains an arrow visualization for the direction of port candidates.
    * @see overrides {@link IVisualCreator.createVisual}
@@ -145,6 +154,7 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
     a.setAttribute('transform', transform.toSvgTransform())
     return new SvgVisual(a)
   }
+
   /**
    * Updates the arrow visualization for the direction of port candidates.
    * @see overrides {@link IVisualCreator.createVisual}
@@ -158,6 +168,7 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
     a.setAttribute('transform', transform.toSvgTransform())
     return oldVisual
   }
+
   /**
    * Returns a transform that put the arrow visualization in place.
    * The arrow is moved to the respective node and rotated in the according direction.
@@ -172,6 +183,7 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
     const delta = bendLocation.subtract(portLocation)
     if (delta.vectorLength > MIN_DISTANCE && !nodeLayout.contains(bendLocation)) {
       const direction = delta.normalized
+
       // rotate and translate arrow
       const arrowOffset = 11
       if (direction.isHorizontalVector) {
@@ -200,6 +212,7 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
     }
     return transform
   }
+
   /**
    * Creates the arrow path and stores it in the defs section of the CanvasComponent.
    */
@@ -214,9 +227,11 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
       svgPath.setAttribute('fill', 'green')
       svgPath.setAttribute('d', 'M-15,0 L-5,10 L-2,7 L-5,4 L8,4 L8,-4 L-5,-4 L-2,-7 L-5,-10 Z')
       svgPath.setAttribute('id', BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY)
+
       defs.appendChild(svgPath)
     }
   }
+
   /**
    * Removes the arrow path from the defs section of the CanvasComponent.
    */
@@ -232,10 +247,12 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
     }
   }
 }
+
 /**
  * The minimum distance to require for a port candidate
  */
 const MIN_DISTANCE = 12
+
 /**
  * The key to access the path element for the port candidate arrow in defs
  */

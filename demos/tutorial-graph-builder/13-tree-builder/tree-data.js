@@ -35,25 +35,14 @@ export const orgChartData = [
         position: 'Chief Executive Assistant',
         name: 'Gary Roberts',
         colleagues: [
-          {
-            position: 'Senior Executive Assistant',
-            name: 'Alexander Burns'
-          },
-          {
-            position: 'Junior Executive Assistant',
-            name: 'Linda Newland'
-          }
+          { position: 'Senior Executive Assistant', name: 'Alexander Burns' },
+          { position: 'Junior Executive Assistant', name: 'Linda Newland' }
         ]
       },
       {
         position: 'Vice President of Production',
         name: 'Amy Kain',
-        colleagues: [
-          {
-            position: 'Production Supervisor',
-            name: 'Kathy Maxwell'
-          }
-        ]
+        colleagues: [{ position: 'Production Supervisor', name: 'Kathy Maxwell' }]
       }
     ]
   }

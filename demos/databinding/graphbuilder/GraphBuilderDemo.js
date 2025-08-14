@@ -42,6 +42,7 @@ import {
   License,
   Size
 } from '@yfiles/yfiles'
+
 import SamplesData from './samples'
 import { EdgesSourceDialog, NodesSourceDialog } from './EditSourceDialog'
 import { SourcesListBox } from './SourcesListBox'
@@ -55,13 +56,18 @@ import {
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 const samplesComboBox = document.querySelector('#samples-combobox')
+
 const samples = SamplesData
+
 let layout
 let layoutData
 let layouting = false
+
 let graphComponent
 let graphBuilder
+
 let existingNodes
+
 /**
  * Shows building a graph from business data with class
  * {@link GraphBuilder}.
@@ -75,22 +81,31 @@ let existingNodes
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function run() {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
+
   graph.nodeDefaults.size = new Size(150, 60)
   graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(0)
+
   // configure the input mode
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // initialize the layout algorithm used in this demo
   initializeLayout()
+
   initializeSamplesComboBox()
+
   // load the initial data from samples
   loadSample(samples[0])
+
   // noinspection JSIgnoredPromiseFromCall
   buildGraphFromData(false)
+
   // register toolbar and other GUI element actions
   initializeUI()
 }
+
 /**
  * Bind various UI elements to the appropriate actions.
  */
@@ -100,11 +115,13 @@ function initializeUI() {
     await buildGraphFromData(false)
     samplesComboBox.disabled = false
   })
+
   document.querySelector('#update-graph-button').addEventListener('click', async () => {
     samplesComboBox.disabled = true
     await buildGraphFromData(true)
     samplesComboBox.disabled = false
   })
+
   samplesComboBox.addEventListener('change', async () => {
     const i = samplesComboBox.selectedIndex
     if (samples && samples[i]) {
@@ -114,8 +131,10 @@ function initializeUI() {
       samplesComboBox.disabled = false
     }
   })
+
   addNavigationButtons(samplesComboBox)
 }
+
 /**
  * Builds the graph from data.
  * @param update `true` when the following layout should be incremental, `false`
@@ -125,6 +144,7 @@ async function buildGraphFromData(update) {
   if (layouting) {
     return
   }
+
   if (update) {
     // remember existing nodes
     existingNodes = graphComponent.graph.nodes.toList()
@@ -142,8 +162,10 @@ async function buildGraphFromData(update) {
     }
     graphComponent.fitGraphBounds()
   }
+
   await applyLayout(update)
 }
+
 /**
  * Applies the layout.
  * @param update `true` when the following layout should be incremental, `false`
@@ -155,25 +177,32 @@ async function applyLayout(update) {
   }
   layout.fromSketchMode = update
   layouting = true
+
   try {
     // Ensure that the LayoutExecutor class is not removed by build optimizers
     // It is needed for the 'applyLayoutAnimated' method in this demo.
     LayoutExecutor.ensure()
+
     await graphComponent.applyLayoutAnimated(layout, '1s', layoutData)
   } finally {
     layouting = false
   }
 }
+
 /**
  * Instantiates the GraphBuilder and sources list boxes and applies the given sample data
  * @param sample The sample to use for instantiation / initialization
  */
 function loadSample(sample) {
   const sampleClone = JSON.parse(JSON.stringify(sample))
+
   // create the GraphBuilder
   graphBuilder = new GraphBuilder(graphComponent.graph)
+
   const sourcesFactory = new SourcesFactory(graphBuilder)
+
   const { nodesSourcesListBox, edgesSourcesListBox } = createSourcesLists(sourcesFactory)
+
   sampleClone.nodesSources.forEach((nodesSourceDefinition) => {
     const connector = sourcesFactory.createNodesSourceConnector(
       nodesSourceDefinition.name,
@@ -182,6 +211,7 @@ function loadSample(sample) {
     connector.applyDefinition()
     nodesSourcesListBox.addDefinition(connector)
   })
+
   sampleClone.edgesSources.forEach((edgesSourceDefinition) => {
     const connector = sourcesFactory.createEdgesSourceConnector(
       edgesSourceDefinition.name,
@@ -191,6 +221,7 @@ function loadSample(sample) {
     edgesSourcesListBox.addDefinition(connector)
   })
 }
+
 /**
  * Initializes the samples combobox with the loaded sample data
  */
@@ -203,11 +234,13 @@ function initializeSamplesComboBox() {
     samplesComboBox.appendChild(option)
   }
 }
+
 function removeAllChildren(htmlElement) {
   while (htmlElement.lastChild) {
     htmlElement.removeChild(htmlElement.lastChild)
   }
 }
+
 /**
  * Instantiates the sources list boxes
  */
@@ -216,6 +249,7 @@ function createSourcesLists(sourcesFactory) {
   const edgesSourcesListRootElement = document.querySelector('#edgesSourcesList')
   removeAllChildren(nodeSourcesListRootElement)
   removeAllChildren(edgesSourcesListRootElement)
+
   const nodesSourcesListBox = new SourcesListBox(
     (sourceName) => sourcesFactory.createNodesSourceConnector(sourceName),
     NodesSourceDialog,
@@ -224,6 +258,7 @@ function createSourcesLists(sourcesFactory) {
       buildGraphFromData(true)
     }
   )
+
   const edgesSourcesListBox = new SourcesListBox(
     (sourceName) => sourcesFactory.createEdgesSourceConnector(sourceName),
     EdgesSourceDialog,
@@ -232,16 +267,17 @@ function createSourcesLists(sourcesFactory) {
       buildGraphFromData(true)
     }
   )
+
   return { nodesSourcesListBox, edgesSourcesListBox }
 }
+
 /**
  * Configures the demo's layout algorithm as well as suitable layout data.
  */
 function initializeLayout() {
   // initialize layout algorithm
-  layout = new HierarchicalLayout({
-    fromScratchLayeringStrategy: 'hierarchical-topmost'
-  })
+  layout = new HierarchicalLayout({ fromScratchLayeringStrategy: 'hierarchical-topmost' })
+
   // initialize layout data
   // configure label placement
   layoutData = new HierarchicalLayoutData({
@@ -252,4 +288,5 @@ function initializeLayout() {
     })
   })
 }
+
 run().then(finishLoading)

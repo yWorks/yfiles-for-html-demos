@@ -43,10 +43,7 @@ import {
   SimpleEdge
 } from '@yfiles/yfiles'
 
-type SplitSegment = {
-  index: number
-  projection: Point
-}
+type SplitSegment = { index: number; projection: Point }
 
 /**
  * This {@link NodeDropInputMode} allows for dropping a node onto an edge. More precisely, when a node

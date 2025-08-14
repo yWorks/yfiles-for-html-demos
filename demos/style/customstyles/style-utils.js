@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { FoldingEdgeStateId } from '@yfiles/yfiles'
+
 /**
  * Applies the given graph's default styles to the graph's items.
  */
@@ -38,6 +39,7 @@ export function applyDefaultStyles(graph) {
     applyDefaultStylesImpl(graph)
   }
 }
+
 /**
  * Applies the default styles of the manager's master graph to the master graph's items as well as
  * to all the manager's folding states.
@@ -45,8 +47,10 @@ export function applyDefaultStyles(graph) {
 function applyDefaultStylesAndUpdateFoldingStates(foldingManager) {
   const graph = foldingManager.masterGraph
   applyDefaultStylesImpl(graph)
+
   const groupLabelDefaults = graph.groupNodeDefaults.labels
   const groupPortDefaults = graph.groupNodeDefaults.ports
+
   for (const node of graph.nodes) {
     if (graph.isGroupNode(node) && foldingManager.hasFolderNodeState(node)) {
       const state = foldingManager.getFolderNodeState(node)
@@ -59,7 +63,9 @@ function applyDefaultStylesAndUpdateFoldingStates(foldingManager) {
       }
     }
   }
+
   const edgeLabelDefaults = graph.edgeDefaults.labels
+
   for (const edge of graph.edges) {
     const source = edge.sourceNode
     const target = edge.targetNode
@@ -73,6 +79,7 @@ function applyDefaultStylesAndUpdateFoldingStates(foldingManager) {
             tmpTarget,
             tmpTarget !== target
           )
+
           if (foldingManager.hasFoldingEdgeState(stateId)) {
             const state = foldingManager.getFoldingEdgeState(stateId)
             state.style = edge.style
@@ -87,6 +94,7 @@ function applyDefaultStylesAndUpdateFoldingStates(foldingManager) {
     }
   }
 }
+
 /**
  * Applies the given graph's default styles to the graph's items.
  */

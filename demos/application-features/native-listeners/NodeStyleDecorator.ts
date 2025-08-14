@@ -99,10 +99,7 @@ export class NodeStyleDecorator extends NodeStyleBase {
     const group = new SvgVisualGroup()
     group.add(baseVisual)
     group.add(decorationVisual)
-    ;(group as any)['render-data-cache'] = {
-      cx: layout.center.x,
-      cy: layout.center.y
-    }
+    ;(group as any)['render-data-cache'] = { cx: layout.center.x, cy: layout.center.y }
 
     return group
   }
@@ -144,10 +141,7 @@ export class NodeStyleDecorator extends NodeStyleBase {
       button.setAttribute('cy', `${center.y}`)
 
       // store the button location in the render data cache
-      ;(oldVisual as any)['render-data-cache'] = {
-        cx: center.x,
-        cy: center.y
-      }
+      ;(oldVisual as any)['render-data-cache'] = { cx: center.x, cy: center.y }
     }
 
     return oldVisual

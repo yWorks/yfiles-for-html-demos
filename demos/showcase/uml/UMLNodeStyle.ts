@@ -958,17 +958,12 @@ export class UMLNodeStyle extends NodeStyleBase<UMLNodeStyleVisual> {
   private initializeStyles(): void {
     this.dummyNode = new SimpleNode()
     this.dummyNode.style = new ShapeNodeStyle({
-      stroke: new Stroke({
-        fill: this.$fill,
-        thickness: 2
-      }).freeze(),
+      stroke: new Stroke({ fill: this.$fill, thickness: 2 }).freeze(),
       shape: 'round-rectangle',
       fill: this.$fill
     })
 
-    this.backgroundLabelStyle = new LabelStyle({
-      backgroundFill: this.$fill
-    })
+    this.backgroundLabelStyle = new LabelStyle({ backgroundFill: this.$fill })
 
     this.stretchLabelModel = new StretchNodeLabelModel()
 
@@ -1017,10 +1012,7 @@ export class UMLNodeStyle extends NodeStyleBase<UMLNodeStyleVisual> {
     this.stereotypeLabel.style = new LabelStyle({
       textFill: Color.WHITE,
       horizontalTextAlignment: HorizontalTextAlignment.CENTER,
-      font: new Font({
-        fontStyle: FontStyle.ITALIC,
-        fontSize: 10
-      })
+      font: new Font({ fontStyle: FontStyle.ITALIC, fontSize: 10 })
     })
 
     // initialize the constraint label visualization
@@ -1033,10 +1025,7 @@ export class UMLNodeStyle extends NodeStyleBase<UMLNodeStyleVisual> {
       textFill: Color.WHITE,
       horizontalTextAlignment: HorizontalTextAlignment.CENTER,
       verticalTextAlignment: VerticalTextAlignment.BOTTOM,
-      font: new Font({
-        fontStyle: FontStyle.ITALIC,
-        fontSize: 10
-      })
+      font: new Font({ fontStyle: FontStyle.ITALIC, fontSize: 10 })
     })
   }
 }

@@ -134,10 +134,7 @@ export function configureExtensions(
   createMetadata(VoidShapeGeometry, { singletonContainers: [VoidShapeGeometry] }, callback)
   createMetadata(
     ShadowNodeStyleDecoratorExtension,
-    {
-      contentProperty: 'Wrapped',
-      properties: { Wrapped: { type: INodeStyle } }
-    },
+    { contentProperty: 'Wrapped', properties: { Wrapped: { type: INodeStyle } } },
     callback
   )
   createMetadata(

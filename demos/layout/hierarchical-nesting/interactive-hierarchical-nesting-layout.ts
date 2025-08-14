@@ -255,16 +255,12 @@ class InteractiveHierarchicalNestingLayout {
     edgesCoordinates: IMapper<IEdge, IEnumerable<IPoint>>
   ): Promise<void> {
     // configure hierarchical layout for a most stable outcome
-    const layout = new HierarchicalLayout({
-      fromSketchMode: true
-    })
+    const layout = new HierarchicalLayout({ fromSketchMode: true })
     layout.defaultEdgeDescriptor.recursiveEdgePolicy = 'directed'
 
     // the LayoutAnchoringStage is used to make sure that the expanded/collapsed group stays at their location
     // note that an input mode with the corresponding 'group node alignment policy' is used, too
-    const anchorNodeLayout = new LayoutAnchoringStage({
-      coreLayout: layout
-    })
+    const anchorNodeLayout = new LayoutAnchoringStage({ coreLayout: layout })
 
     const graph = this.graphComponent.graph
     const foldingView = graph.foldingView!

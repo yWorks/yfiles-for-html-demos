@@ -99,20 +99,24 @@ function initializeUI(graphComponent: GraphComponent): void {
       await loadGraph(graphComponent)
     })
 
-  document.querySelectorAll<HTMLButtonElement>('button[data-command="Shapes"]').forEach((element) => {
-    element.addEventListener('click', async () => {
-      document.querySelector<HTMLSelectElement>('#styles')!.value = 'shapes'
-      companyStructureView.useShapeNodeStyle = true
-      await loadGraph(graphComponent)
+  document
+    .querySelectorAll<HTMLButtonElement>('button[data-command="Shapes"]')
+    .forEach((element) => {
+      element.addEventListener('click', async () => {
+        document.querySelector<HTMLSelectElement>('#styles')!.value = 'shapes'
+        companyStructureView.useShapeNodeStyle = true
+        await loadGraph(graphComponent)
+      })
     })
-  })
-  document.querySelectorAll<HTMLButtonElement>('button[data-command="Tables"]').forEach((element) => {
-    element.addEventListener('click', async () => {
-      document.querySelector<HTMLSelectElement>('#styles')!.value = 'tables'
-      companyStructureView.useShapeNodeStyle = false
-      await loadGraph(graphComponent)
+  document
+    .querySelectorAll<HTMLButtonElement>('button[data-command="Tables"]')
+    .forEach((element) => {
+      element.addEventListener('click', async () => {
+        document.querySelector<HTMLSelectElement>('#styles')!.value = 'tables'
+        companyStructureView.useShapeNodeStyle = false
+        await loadGraph(graphComponent)
+      })
     })
-  })
 }
 
 /**

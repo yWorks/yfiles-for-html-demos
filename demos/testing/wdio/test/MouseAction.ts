@@ -46,12 +46,7 @@ export class MouseAction {
   }
 
   moveTo({ x, y }, duration = 0) {
-    this.actions.push({
-      type: 'pointerMove',
-      duration,
-      x: Math.floor(x),
-      y: Math.floor(y)
-    })
+    this.actions.push({ type: 'pointerMove', duration, x: Math.floor(x), y: Math.floor(y) })
     return this
   }
 

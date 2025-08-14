@@ -34,14 +34,17 @@ import {
   Visual,
   VisualCachingPolicy
 } from '@yfiles/yfiles'
+
 import { createRoot } from 'react-dom/client'
 import { createElement } from 'react'
+
 /**
  * The default implementation just uses the props from the tag of the item to be rendered.
  * @param context
  * @param node
  */
 const defaultTagProvider = (context, node) => node.tag
+
 /**
  * Helper method that will be used by the below style to release React resources when the
  * label gets removed from the yFiles scene graph.
@@ -62,6 +65,7 @@ function unmountReact(context, removedVisual, dispose) {
   }
   return null
 }
+
 /**
  * A simple ILabelStyle implementation that uses React Components/render functions
  * for rendering label visualizations using SVG
@@ -86,6 +90,7 @@ export class ReactComponentSvgLabelStyle extends LabelStyleBase {
   type
   tagProvider
   size
+
   /**
    * Creates a new instance
    * @param type the React component rendering the SVG content
@@ -98,6 +103,7 @@ export class ReactComponentSvgLabelStyle extends LabelStyleBase {
     this.tagProvider = tagProvider
     this.size = Size.from(size)
   }
+
   createProps(context, label) {
     const layout = label.layout
     return {
@@ -111,6 +117,7 @@ export class ReactComponentSvgLabelStyle extends LabelStyleBase {
       tag: this.tagProvider(context, label)
     }
   }
+
   createVisual(context, label) {
     const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const props = this.createProps(context, label)
@@ -123,8 +130,10 @@ export class ReactComponentSvgLabelStyle extends LabelStyleBase {
     LabelStyleBase.createLayoutTransform(context, label.layout, true).applyTo(gElement)
     return svgVisual
   }
+
   updateVisual(context, oldVisual, label) {
     const newProps = this.createProps(context, label)
+
     const cache = oldVisual.tag
     const oldProps = cache.props
     if (
@@ -141,6 +150,7 @@ export class ReactComponentSvgLabelStyle extends LabelStyleBase {
     LabelStyleBase.createLayoutTransform(context, label.layout, true).applyTo(oldVisual.svgElement)
     return oldVisual
   }
+
   getPreferredSize(label) {
     return this.size
   }

@@ -79,8 +79,8 @@ export default (props: Props) => {
 
     // return a cleanup function (like componentWillUnmount())
     return () => {
-      graphComponent.cleanUp()
       graphComponent.graph = new Graph()
+      graphComponent.cleanUp()
     }
   }, [])
 

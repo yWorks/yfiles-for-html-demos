@@ -292,85 +292,25 @@ export default {
   ],
 
   edgesSource: [
-    {
-      fromNode: 0,
-      toNode: 1
-    },
-    {
-      fromNode: 1,
-      toNode: 2
-    },
-    {
-      fromNode: 2,
-      toNode: 3
-    },
-    {
-      fromNode: 2,
-      toNode: 9
-    },
-    {
-      fromNode: 2,
-      toNode: 15
-    },
-    {
-      fromNode: 3,
-      toNode: 4
-    },
-    {
-      fromNode: 3,
-      toNode: 5
-    },
-    {
-      fromNode: 3,
-      toNode: 6
-    },
-    {
-      fromNode: 3,
-      toNode: 7
-    },
-    {
-      fromNode: 3,
-      toNode: 8
-    },
-    {
-      fromNode: 9,
-      toNode: 10
-    },
-    {
-      fromNode: 9,
-      toNode: 11
-    },
-    {
-      fromNode: 9,
-      toNode: 12
-    },
-    {
-      fromNode: 9,
-      toNode: 13
-    },
-    {
-      fromNode: 9,
-      toNode: 14
-    },
-    {
-      fromNode: 15,
-      toNode: 16
-    },
-    {
-      fromNode: 15,
-      toNode: 17
-    },
-    {
-      fromNode: 15,
-      toNode: 18
-    },
-    {
-      fromNode: 15,
-      toNode: 19
-    },
-    {
-      fromNode: 15,
-      toNode: 20
-    }
+    { fromNode: 0, toNode: 1 },
+    { fromNode: 1, toNode: 2 },
+    { fromNode: 2, toNode: 3 },
+    { fromNode: 2, toNode: 9 },
+    { fromNode: 2, toNode: 15 },
+    { fromNode: 3, toNode: 4 },
+    { fromNode: 3, toNode: 5 },
+    { fromNode: 3, toNode: 6 },
+    { fromNode: 3, toNode: 7 },
+    { fromNode: 3, toNode: 8 },
+    { fromNode: 9, toNode: 10 },
+    { fromNode: 9, toNode: 11 },
+    { fromNode: 9, toNode: 12 },
+    { fromNode: 9, toNode: 13 },
+    { fromNode: 9, toNode: 14 },
+    { fromNode: 15, toNode: 16 },
+    { fromNode: 15, toNode: 17 },
+    { fromNode: 15, toNode: 18 },
+    { fromNode: 15, toNode: 19 },
+    { fromNode: 15, toNode: 20 }
   ]
 }

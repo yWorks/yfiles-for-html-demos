@@ -249,9 +249,7 @@ async function placeLabels(): Promise<void> {
   }
   setUIDisabled(true)
   // configure the labeling algorithm
-  const labelingAlgorithm = new GenericLabeling({
-    scope: 'node-labels'
-  })
+  const labelingAlgorithm = new GenericLabeling({ scope: 'node-labels' })
   const labelCandidateComboBox = document.querySelector<HTMLSelectElement>('#label-candidates')!
   // select the label candidate set and configure the GenericLabelingData
   const labelCandidate = labelCandidateModes[labelCandidateComboBox.selectedIndex]

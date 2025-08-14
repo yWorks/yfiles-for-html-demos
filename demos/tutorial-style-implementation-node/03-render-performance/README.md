@@ -33,10 +33,7 @@ To be able to efficiently update the visualization in [updateVisual](https://doc
 
 ```
 // the values we use to render the graphics
-type Cache = {
-  width: number
-  height: number
-}
+type Cache = { width: number; height: number }
 
 // the type of visual we create and update in CustomNodeStyle
 type CustomNodeStyleVisual = TaggedSvgVisual<SVGPathElement, Cache>

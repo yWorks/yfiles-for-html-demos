@@ -32,18 +32,17 @@ import {
   HierarchicalLayoutData,
   NodePortCandidates
 } from '@yfiles/yfiles'
+
 /**
  * Creates and configures the layout algorithm.
  */
 export function createLayout() {
   return new HierarchicalLayout({
     groupLayeringPolicy: 'ignore-groups',
-    defaultEdgeDescriptor: {
-      minimumFirstSegmentLength: 25,
-      minimumLastSegmentLength: 25
-    }
+    defaultEdgeDescriptor: { minimumFirstSegmentLength: 25, minimumLastSegmentLength: 25 }
   })
 }
+
 /**
  * Creates and configures the layout data.
  * @param isHierarchyEdge Returns whether an edge is a hierarchy edge
@@ -53,6 +52,7 @@ export function createLayoutData(isHierarchyEdge, nodeId) {
   // create the port candidates for the edges
   const { createPortCandidateSet, createSourcePortCandidates, createTargetPortCandidates } =
     configureEdgeHierarchyCandidates(isHierarchyEdge)
+
   return new HierarchicalLayoutData({
     edgeDirectedness: (item) => (isHierarchyEdge(item) ? 1 : 0),
     sourceGroupIds: (item) =>
@@ -66,6 +66,7 @@ export function createLayoutData(isHierarchyEdge, nodeId) {
     }
   })
 }
+
 /**
  * Configures the port candidates for the edges.
  * @param isHierarchyEdge Returns whether an edge is a hierarchy edge
@@ -79,6 +80,7 @@ function configureEdgeHierarchyCandidates(isHierarchyEdge) {
   const regularEdgeTargetSideCandidates = new EdgePortCandidates()
     .addFreeCandidate('left')
     .addFreeCandidate('right')
+
   function createPortCandidateSet() {
     const nodePortCandidates = new NodePortCandidates()
     nodePortCandidates
@@ -88,9 +90,11 @@ function configureEdgeHierarchyCandidates(isHierarchyEdge) {
       .addFreeCandidate('left', 1000)
     return nodePortCandidates
   }
+
   const createSourcePortCandidates = (edge) =>
     isHierarchyEdge(edge) ? hierarchyEdgeSourceSideCandidates : regularEdgeSourceSideCandidates
   const createTargetPortCandidates = (edge) =>
     isHierarchyEdge(edge) ? hierarchyEdgeTargetSideCandidates : regularEdgeTargetSideCandidates
+
   return { createPortCandidateSet, createSourcePortCandidates, createTargetPortCandidates }
 }

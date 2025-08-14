@@ -49,6 +49,7 @@ import {
   SequentialLayout,
   TimeSpan
 } from '@yfiles/yfiles'
+
 import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
@@ -66,6 +67,7 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
+
 export var BusMembership
 ;(function (BusMembership) {
   BusMembership[(BusMembership['NONE'] = 0)] = 'NONE'
@@ -73,17 +75,20 @@ export var BusMembership
   BusMembership[(BusMembership['LABEL'] = 2)] = 'LABEL'
   BusMembership[(BusMembership['TAG'] = 3)] = 'TAG'
 })(BusMembership || (BusMembership = {}))
+
 export var PortSide
 ;(function (PortSide) {
   PortSide[(PortSide['ANY'] = 0)] = 'ANY'
   PortSide[(PortSide['LEFT_RIGHT'] = 1)] = 'LEFT_RIGHT'
   PortSide[(PortSide['TOP_BOTTOM'] = 2)] = 'TOP_BOTTOM'
 })(PortSide || (PortSide = {}))
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     LayoutGroup: [
       new LabelAttribute('General'),
@@ -156,7 +161,7 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         ['Fewer Bends', EdgeRouterCosts.EDGE_BENDS_OPTIMIZATION],
         ['Fewer Crossings', EdgeRouterCosts.EDGE_CROSSINGS_OPTIMIZATION],
         ['Shorter Edges', EdgeRouterCosts.EDGE_LENGTHS_OPTIMIZATION],
-        ['Low Quality', EdgeRouterCosts.LOW_QUALITY]
+        ['Low Quality and Fast', EdgeRouterCosts.LOW_QUALITY]
       ]),
       new TypeAttribute(EdgeRouterCosts)
     ],
@@ -362,7 +367,7 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
       new TypeAttribute(Boolean)
     ],
     busMembershipItem: [
-      new LabelAttribute('Membership', '#/api/EdgeRouterData#EdgeRouterData-property-buses'),
+      new LabelAttribute('Bus Membership', '#/api/EdgeRouterData#EdgeRouterData-property-buses'),
       new OptionGroupAttribute('BusGroup', 10),
       new EnumValuesAttribute([
         ['No Buses', BusMembership.NONE],
@@ -490,6 +495,7 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
       new TypeAttribute(Number)
     ]
   },
+
   /**
    * Setup default values for various configuration parameters.
    */
@@ -497,11 +503,13 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
     const router = new EdgeRouter()
+
     this.scopeItem = Scope.ROUTE_ALL_EDGES
     this.optimizationStrategyItem = EdgeRouterCosts.BALANCED_OPTIMIZATION
     this.monotonicRestrictionItem = MonotonicPathRestrictions.NONE
     this.enableReroutingItem = router.rerouting
     this.stopDurationItem = 30
+
     const descriptor = router.defaultEdgeDescriptor
     this.minimumEdgeDistanceItem = descriptor.minimumEdgeDistance
     this.minimumNodeToEdgeDistanceItem = router.minimumNodeToEdgeDistance
@@ -509,10 +517,13 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     this.minimumFirstSegmentLengthItem = descriptor.minimumFirstSegmentLength
     this.minimumLastSegmentLengthItem = descriptor.minimumLastSegmentLength
     this.routingPolicyItem = EdgeRouterScope.PATH
+
     this.useIntermediatePointsItem = false
+
     const gridSpacing = router.gridSpacing
     this.gridEnabledItem = gridSpacing > 0
-    this.gridSpacingItem = gridSpacing !== null ? gridSpacing : 10
+    this.gridSpacingItem = gridSpacing < 2 ? 2 : 100 < gridSpacing ? 100 : gridSpacing
+
     this.routingStyleItem = EdgeRouterRoutingStyle.ORTHOGONAL
     this.preferredOctilinearSegmentLengthItem = descriptor.preferredOctilinearSegmentLength
     this.maximumOctilinearSegmentRatioItem = descriptor.maximumOctilinearSegmentRatio
@@ -521,7 +532,9 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     this.curveUTurnSymmetryItem = descriptor.curveUTurnSymmetry
     this.curveShortcutsItem = descriptor.curveShortcuts
     this.portSidesItem = PortSide.ANY
+
     this.busMembershipItem = BusMembership.NONE
+
     this.nodeLabelingItem = router.nodeLabelPlacement
     this.edgeLabelingItem = router.edgeLabelPlacement
     this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
@@ -530,6 +543,7 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     this.labelPlacementDistanceItem = 10
     this.title = 'Edge Router'
   },
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
@@ -538,15 +552,19 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
    */
   createConfiguredLayout: function (graphComponent) {
     const router = new EdgeRouter()
+
     router.minimumNodeToEdgeDistance = this.minimumNodeToEdgeDistanceItem
+
     if (this.gridEnabledItem) {
       router.gridSpacing = this.gridSpacingItem
     } else {
       router.gridSpacing = 0
     }
+
     router.nodeLabelPlacement = this.nodeLabelingItem
     router.rerouting = this.enableReroutingItem
     router.stopDuration = TimeSpan.fromSeconds(parseFloat(this.stopDurationItem))
+
     // Note that CreateConfiguredLayoutData replaces the settings on the DefaultEdgeLayoutDescriptor
     // by providing a custom one for each edge.
     router.defaultEdgeDescriptor.routingStyle = this.routingStyleItem
@@ -556,18 +574,23 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
       this.maximumOctilinearSegmentRatioItem
     router.defaultEdgeDescriptor.sourceCurveConnectionStyle = this.sourceCurveConnectionStyleItem
     router.defaultEdgeDescriptor.targetCurveConnectionStyle = this.targetCurveConnectionStyleItem
+
     if (this.optimizationStrategyItem == EdgeRouterCosts.LOW_QUALITY) {
       router.stopDuration = TimeSpan.ZERO
     } else {
       router.stopDuration = TimeSpan.fromSeconds(this.stopDurationItem)
     }
+
     const layout = new SequentialLayout(router)
+
     router.edgeLabelPlacement = this.edgeLabelingItem
     if (this.edgeLabelingItem == EdgeRouterEdgeLabelPlacement.GENERIC && this.reduceAmbiguityItem) {
       router.genericLabeling.defaultEdgeLabelingCosts.ambiguousPlacementCost = 1.0
     }
+
     return layout
   },
+
   /**
    * Called by {@link LayoutConfiguration.apply} to create the layout data of the configuration.
    * This method is typically overridden to provide mappers for the different layouts.
@@ -590,6 +613,7 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
           edgeRouterCosts: this.optimizationStrategyItem,
           monotonicPathRestriction: this.monotonicRestrictionItem
         })
+
         if (this.useIntermediatePointsItem) {
           const intermediateRoutingPoints = new List()
           edge.bends.forEach((bend) =>
@@ -597,9 +621,11 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
           )
           descriptor.intermediateRoutingPoints = intermediateRoutingPoints
         }
+
         return descriptor
       }
     })
+
     const selection = graphComponent.selection
     if (this.scopeItem === Scope.ROUTE_EDGES_AT_AFFECTED_NODES) {
       layoutData.scope.incidentNodeMapping = (node) =>
@@ -610,6 +636,7 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     } else {
       layoutData.scope.edgeMapping = this.routingPolicyItem
     }
+
     if (this.portSidesItem !== PortSide.ANY) {
       let candidates
       if (this.portSidesItem === PortSide.LEFT_RIGHT) {
@@ -624,6 +651,7 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
       layoutData.ports.sourcePortCandidates = candidates
       layoutData.ports.targetPortCandidates = candidates
     }
+
     switch (this.busMembershipItem) {
       case BusMembership.SINGLE: {
         const busDescriptor = this.createBusDescriptor()
@@ -651,6 +679,7 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
             layoutData.buses.add(busDescriptor).item = edge
           } else if (!visitedTags.has(tag)) {
             visitedTags.add(tag)
+
             const busDescriptor = this.createBusDescriptor()
             layoutData.buses.add(busDescriptor).predicate = (edge) => edge.tag === tag
           }
@@ -658,6 +687,7 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         break
       }
     }
+
     return layoutData.combineWith(
       this.createLabelingLayoutData(
         graphComponent.graph,
@@ -668,6 +698,7 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
       )
     )
   },
+
   createBusDescriptor: function () {
     return new EdgeRouterBusDescriptor({
       automaticEdgeGrouping: this.automaticEdgeGroupingItem,
@@ -675,192 +706,252 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
       multipleBackboneSegments: this.allowMultipleBackboneSegmentsItem
     })
   },
+
   /**
    * Enables automatic bus routing.
    */
   enableCurvedRouting: function () {
     this.routingStyleItem = EdgeRouterRoutingStyle.CURVED
   },
+
   /** @type {OptionGroup} */
   LayoutGroup: null,
+
   /** @type {OptionGroup} */
   DistancesGroup: null,
+
   /** @type {OptionGroup} */
   GridGroup: null,
+
   /** @type {OptionGroup} */
   PolylineGroup: null,
+
   /** @type {OptionGroup} */
   LabelingGroup: null,
+
   /** @type {OptionGroup} */
   BusGroup: null,
+
   /** @type {OptionGroup} */
   NodePropertiesGroup: null,
+
   /** @type {OptionGroup} */
   EdgePropertiesGroup: null,
+
   /** @type {OptionGroup} */
   PreferredPlacementGroup: null,
+
   /** @type {string} */
   descriptionText: {
     get: function () {
       return "<p style='margin-top:0'>Edge routing calculates orthogonal, octilinear or curved edge paths for a diagram's edges. The positions of the nodes are not changed by this algorithm.</p><p>By default, edges will be routed orthogonally, that is, each edge path consists of horizontal and vertical segments. The Octilinear style inserts additional sloped segments between horizontal and vertical segments, and the Curved style replaces those segments with smooth curves.</p><p>This type of edge routing is especially well suited for technical diagrams.</p>"
     }
   },
+
   /** @type {Scope} */
   scopeItem: null,
+
   /** @type {EdgeRouterCosts} */
   optimizationStrategyItem: null,
+
   /** @type {MonotonicPathRestrictions} */
   monotonicRestrictionItem: null,
+
   /** @type {boolean} */
   enableReroutingItem: false,
+
   /** @type {boolean} */
   useIntermediatePointsItem: false,
+
   /** @type {boolean} */
   shouldDisableUseIntermediatePointsItem: {
     get: function () {
       return this.busMembershipItem !== BusMembership.NONE
     }
   },
+
   /** @type {number} */
   stopDurationItem: 5,
+
   /** @type {number} */
   routingPolicyItem: EdgeRouterScope.PATH,
+
   /** @type {PortSides} */
   portSidesItem: false,
+
   /** @type {number} */
   minimumEdgeDistanceItem: 0,
+
   /** @type {number} */
   minimumNodeToEdgeDistanceItem: 0,
+
   /** @type {number} */
   minimumNodeCornerDistanceItem: 0,
+
   /** @type {number} */
   minimumFirstSegmentLengthItem: 0,
+
   /** @type {number} */
   minimumLastSegmentLengthItem: 0,
+
   /** @type {boolean} */
   gridEnabledItem: false,
+
   /** @type {number} */
   gridSpacingItem: 2,
+
   /** @type {boolean} */
   shouldDisableGridSpacingItem: {
     get: function () {
       return this.gridEnabledItem === false
     }
   },
+
   /** @type {EdgeRouterRoutingStyle} */
   routingStyleItem: null,
+
   /** @type {number} */
   preferredOctilinearSegmentLengthItem: 5,
+
   /** @type {boolean} */
   shouldDisablePreferredOctilinearSegmentLengthItem: {
     get: function () {
       return this.routingStyleItem !== EdgeRouterRoutingStyle.OCTILINEAR
     }
   },
+
   /** @type {number} */
   maximumOctilinearSegmentRatioItem: 0.3,
+
   /** @type {boolean} */
   shouldDisableMaximumOctilinearSegmentRatioItem: {
     get: function () {
       return this.routingStyleItem !== EdgeRouterRoutingStyle.OCTILINEAR
     }
   },
+
   /** @type {CurveConnectionStyle} */
   sourceCurveConnectionStyleItem: null,
+
   /** @type {boolean} */
   shouldDisableSourceCurveConnectionStyleItem: {
     get: function () {
       return this.routingStyleItem !== EdgeRouterRoutingStyle.CURVED
     }
   },
+
   /** @type {CurveConnectionStyle} */
   targetCurveConnectionStyleItem: null,
+
   /** @type {boolean} */
   shouldDisableTargetCurveConnectionStyleItem: {
     get: function () {
       return this.routingStyleItem !== EdgeRouterRoutingStyle.CURVED
     }
   },
+
   /** @type {number} */
   curveUTurnSymmetryItem: 0,
+
   /** @type {boolean} */
   shouldDisableCurveUTurnSymmetryItem: {
     get: function () {
       return this.routingStyleItem !== EdgeRouterRoutingStyle.CURVED
     }
   },
+
   /** @type {number} */
   curveShortcutsItem: 0,
+
   /** @type {boolean} */
   shouldDisableCurveShortcutsItem: {
     get: function () {
       return this.routingStyleItem !== EdgeRouterRoutingStyle.CURVED
     }
   },
+
   /** @type {BusMembership} */
   busMembershipItem: null,
+
   /** @type {boolean} */
   automaticEdgeGroupingItem: true,
+
   /** @type {boolean} */
   shouldDisableAutomaticEdgeGroupingItem: {
     get: function () {
       return this.busMembershipItem === BusMembership.NONE
     }
   },
+
   /** @type {number} */
   minimumBackboneSegmentLengthItem: 100,
+
   /** @type {boolean} */
   shouldDisableMinimumBackboneSegmentLengthItem: {
     get: function () {
       return this.busMembershipItem === BusMembership.NONE
     }
   },
+
   /** @type {boolean} */
   allowMultipleBackboneSegmentsItem: true,
+
   /** @type {boolean} */
   shouldDisableAllowMultipleBackboneSegmentsItem: {
     get: function () {
       return this.busMembershipItem === BusMembership.NONE
     }
   },
+
   /** @type {EdgeRouterNodeLabelPlacement} */
   nodeLabelingItem: null,
+
   /** @type {EdgeRouterEdgeLabelPlacement} */
   edgeLabelingItem: null,
+
   /** @type {boolean} */
   reduceAmbiguityItem: false,
+
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
     get: function () {
       return this.edgeLabelingItem !== EdgeRouterEdgeLabelPlacement.GENERIC
     }
   },
+
   /** @type {LabelPlacementOrientation} */
   labelPlacementOrientationItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
     get: function () {
       return this.edgeLabelingItem === EdgeRouterEdgeLabelPlacement.IGNORE
     }
   },
+
   /** @type {LabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
     get: function () {
       return this.edgeLabelingItem === EdgeRouterEdgeLabelPlacement.IGNORE
     }
   },
+
   /** @type {LabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
     get: function () {
       return this.edgeLabelingItem === EdgeRouterEdgeLabelPlacement.IGNORE
     }
   },
+
   /** @type {number} */
   labelPlacementDistanceItem: 0,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
     get: function () {

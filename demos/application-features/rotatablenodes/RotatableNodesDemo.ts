@@ -94,9 +94,7 @@ let graphComponent: GraphComponent
 const selectLayout = document.querySelector<HTMLSelectElement>('#select-layout')!
 const selectSample = document.querySelector<HTMLSelectElement>('#select-sample')!
 
-const worker = new Worker(new URL('./WorkerLayout', import.meta.url), {
-  type: 'module'
-})
+const worker = new Worker(new URL('./WorkerLayout', import.meta.url), { type: 'module' })
 
 async function run(): Promise<void> {
   License.value = await fetchLicense()
@@ -457,10 +455,7 @@ function getLayoutDescriptor(selectedLayout: string): LayoutDescriptor {
     case 'hierarchical':
       return {
         name: 'HierarchicalLayout',
-        properties: {
-          minimumLayerDistance: 50,
-          nodeDistance: 100
-        }
+        properties: { minimumLayerDistance: 50, nodeDistance: 100 }
       }
     case 'organic':
       return {
@@ -471,34 +466,19 @@ function getLayoutDescriptor(selectedLayout: string): LayoutDescriptor {
         }
       }
     case 'orthogonal':
-      return {
-        name: 'OrthogonalLayout'
-      }
+      return { name: 'OrthogonalLayout' }
     case 'circular':
-      return {
-        name: 'CircularLayout'
-      }
+      return { name: 'CircularLayout' }
     case 'tree':
-      return {
-        name: 'TreeLayout'
-      }
+      return { name: 'TreeLayout' }
     case 'radial-tree':
-      return {
-        name: 'RadialTreeLayout'
-      }
+      return { name: 'RadialTreeLayout' }
     case 'radial':
-      return {
-        name: 'RadialLayout'
-      }
+      return { name: 'RadialLayout' }
     case 'edge-router':
       return { name: 'EdgeRouter' }
     case 'organic-edge-router':
-      return {
-        name: 'OrganicEdgeRouter',
-        properties: {
-          allowEdgeNodeOverlaps: false
-        }
-      }
+      return { name: 'OrganicEdgeRouter', properties: { allowEdgeNodeOverlaps: false } }
   }
 }
 

@@ -38,8 +38,10 @@ export class PropertiesView {
   constructor(element) {
     this.element = element
   }
+
   showProperties(node) {
     this.clear()
+
     // When the graph is created from the source data by class TreeSource,
     // the source data for each node is attached to the node as its tag.
     if (node == null || node.tag == null) {
@@ -53,10 +55,12 @@ export class PropertiesView {
     const nameElement = createElement('h2', employee.name)
     nameElement.style.display = 'inline-block'
     heading.appendChild(nameElement)
+
     const nameInput = document.createElement('input')
     nameInput.value = employee.name
     nameInput.style.display = 'none'
     heading.appendChild(nameInput)
+
     const editButton = document.createElement('button')
     editButton.setAttribute('class', 'demo-edit-name-button')
     editButton.setAttribute('title', 'Click to Edit')
@@ -64,12 +68,15 @@ export class PropertiesView {
     editButton.style.right = '0'
     heading.appendChild(editButton)
     heading.appendChild(createElement('div', employee.position))
+
     this.addNameEventListeners(employee, nameElement, nameInput, editButton)
+
     const icon = document.createElement('img')
     icon.setAttribute('width', '50')
     icon.setAttribute('height', '50')
     icon.setAttribute('src', `./resources/${employee.icon}.svg`)
     heading.appendChild(icon)
+
     // Display the individual properties
     const table = document.createElement('table')
     this.element.appendChild(table)
@@ -108,12 +115,14 @@ export class PropertiesView {
     statusTd.appendChild(statusSelect)
     statusSelect.value = employee.status.toLowerCase()
   }
+
   addNameEventListeners(employee, nameElement, nameInput, editButton) {
     editButton.addEventListener('click', () => {
       nameElement.style.display = 'none'
       nameInput.style.display = 'inline-block'
       nameInput.focus()
     })
+
     const cancelNameEdit = () => {
       nameInput.value = employee.name = nameElement.textContent
       // notify the template style binding engine of the property change
@@ -121,6 +130,7 @@ export class PropertiesView {
       nameInput.style.display = 'none'
       nameElement.style.display = 'inline-block'
     }
+
     nameInput.addEventListener('keydown', (evt) => {
       const newName = nameInput.value
       employee.name = newName
@@ -134,12 +144,15 @@ export class PropertiesView {
         cancelNameEdit()
       }
     })
+
     nameInput.addEventListener('blur', () => cancelNameEdit())
   }
+
   clear() {
     this.element.innerHTML = ''
   }
 }
+
 /**
  * Creates a DOM element with the specified text content
  */
@@ -148,6 +161,7 @@ function createElement(tagName, textContent) {
   element.textContent = textContent
   return element
 }
+
 function createStatusSelect() {
   const select = document.createElement('select')
   createStatusOption(select, 'Present')
@@ -155,6 +169,7 @@ function createStatusSelect() {
   createStatusOption(select, 'Unavailable')
   return select
 }
+
 function createStatusOption(select, val) {
   const option = document.createElement('option')
   option.setAttribute('value', val.toLowerCase())

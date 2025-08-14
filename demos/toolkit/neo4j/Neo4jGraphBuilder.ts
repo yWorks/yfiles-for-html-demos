@@ -40,30 +40,12 @@ function getId(identity: Integer): string {
 const labelNameCandidates = ['name', 'title', 'firstName', 'lastName', 'email', 'content']
 // some pre-defined node styles
 const predefinedNodesStyles = [
-  new ShapeNodeStyle({
-    shape: 'ellipse',
-    fill: '#00d8ff'
-  }),
-  new ShapeNodeStyle({
-    shape: 'triangle',
-    fill: '#f66a00'
-  }),
-  new ShapeNodeStyle({
-    shape: 'diamond',
-    fill: '#242265'
-  }),
-  new ShapeNodeStyle({
-    shape: 'rectangle',
-    fill: '#c0fc1a'
-  }),
-  new ShapeNodeStyle({
-    shape: 'hexagon',
-    fill: '#ba85ff'
-  }),
-  new ShapeNodeStyle({
-    shape: 'octagon',
-    fill: '#fcfe1f'
-  })
+  new ShapeNodeStyle({ shape: 'ellipse', fill: '#00d8ff' }),
+  new ShapeNodeStyle({ shape: 'triangle', fill: '#f66a00' }),
+  new ShapeNodeStyle({ shape: 'diamond', fill: '#242265' }),
+  new ShapeNodeStyle({ shape: 'rectangle', fill: '#c0fc1a' }),
+  new ShapeNodeStyle({ shape: 'hexagon', fill: '#ba85ff' }),
+  new ShapeNodeStyle({ shape: 'octagon', fill: '#fcfe1f' })
 ]
 
 /**

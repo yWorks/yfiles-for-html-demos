@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { Insets, IRenderContext, ObjectRendererBase, Rect, SvgVisual } from '@yfiles/yfiles'
+
 export class RectangleRenderer extends ObjectRendererBase {
   stroke
   fill
@@ -44,15 +45,19 @@ export class RectangleRenderer extends ObjectRendererBase {
     this.useViewCoordinates = useViewCoordinates
     this.margins = margins
   }
+
   createVisual(context, renderTag) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.setAttribute('fill', this.fill)
     rect.setAttribute('stroke', this.stroke)
     rect.setAttribute('stroke-width', '1')
+
     return this.updateVisual(context, new SvgVisual(rect), renderTag)
   }
+
   updateVisual(context, oldVisual, renderTag) {
     const rect = oldVisual.svgElement
+
     const bounds = renderTag
     const intermediateBounds = this.useViewCoordinates
       ? new Rect(
@@ -60,13 +65,16 @@ export class RectangleRenderer extends ObjectRendererBase {
           context.canvasComponent.worldToViewCoordinates(bounds.bottomRight)
         ).getEnlarged(this.margins)
       : renderTag
+
     rect.setAttribute('x', `${intermediateBounds.x}`)
     rect.setAttribute('y', `${intermediateBounds.y}`)
     rect.setAttribute('width', `${intermediateBounds.width}`)
     rect.setAttribute('height', `${intermediateBounds.height}`)
+
     if (this.useViewCoordinates) {
       context.intermediateTransform.applyTo(rect)
     }
+
     return oldVisual
   }
 }

@@ -27,37 +27,15 @@
  **
  ***************************************************************************/
 export const orgChartData = [
-  {
-    id: '0',
-    position: 'Chief Executive Officer',
-    name: 'Eric Joplin',
-    colleagues: ['0_0', '0_1']
-  },
+  { id: '0', position: 'Chief Executive Officer', name: 'Eric Joplin', colleagues: ['0_0', '0_1'] },
   {
     id: '0_0',
     position: 'Chief Executive Assistant',
     name: 'Gary Roberts',
     colleagues: ['0_0_0', '0_0_1']
   },
-  {
-    id: '0_0_0',
-    position: 'Senior Executive Assistant',
-    name: 'Alexander Burns'
-  },
-  {
-    id: '0_0_1',
-    position: 'Junior Executive Assistant',
-    name: 'Linda Newland'
-  },
-  {
-    id: '0_1',
-    position: 'Vice President of Production',
-    name: 'Amy Kain',
-    colleagues: ['0_1_0']
-  },
-  {
-    id: '0_1_0',
-    position: 'Production Supervisor',
-    name: 'Kathy Maxwell'
-  }
+  { id: '0_0_0', position: 'Senior Executive Assistant', name: 'Alexander Burns' },
+  { id: '0_0_1', position: 'Junior Executive Assistant', name: 'Linda Newland' },
+  { id: '0_1', position: 'Vice President of Production', name: 'Amy Kain', colleagues: ['0_1_0'] },
+  { id: '0_1_0', position: 'Production Supervisor', name: 'Kathy Maxwell' }
 ]

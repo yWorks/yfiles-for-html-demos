@@ -128,9 +128,7 @@ async function runLayout(): Promise<void> {
   }
 
   // create a configured hierarchical layout instance
-  const layout = new HierarchicalLayout({
-    automaticEdgeGrouping: true
-  })
+  const layout = new HierarchicalLayout({ automaticEdgeGrouping: true })
 
   // create layout data that defines bus structures
   const layoutData = createHierarchicalLayoutData(graph, busses)
@@ -218,10 +216,7 @@ function getBusSettings(
       beforeBusValue = parseInt(beforeBusSlider.value)
       afterBusValue = parseInt(afterBusSlider.value)
   }
-  return {
-    maxBeforeBus: beforeBusValue,
-    maxAfterBus: afterBusValue
-  }
+  return { maxBeforeBus: beforeBusValue, maxAfterBus: afterBusValue }
 }
 
 /**
@@ -265,10 +260,7 @@ function highlightEdges(graph: IGraph, edgeList: List<IEdge>): void {
 function newEdgeStyle(color: string): PolylineEdgeStyle {
   return new PolylineEdgeStyle({
     stroke: `3px ${color}`,
-    targetArrow: new Arrow({
-      fill: color,
-      type: ArrowType.TRIANGLE
-    }),
+    targetArrow: new Arrow({ fill: color, type: ArrowType.TRIANGLE }),
     smoothingLength: 15
   })
 }

@@ -102,6 +102,7 @@ export default {
       assistant: true
     }
   ],
+
   edges: [
     {
       src: '0',

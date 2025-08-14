@@ -44,27 +44,34 @@ import { initializeInteractiveHierarchicalNestingLayout } from './InteractiveHie
 import { DemoStyleOverviewRenderer, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent
 let builder
 let nodesSource
 let groupNodesSource
+
 /**
  * This demo shows how to nicely expand and collapse sub-graphs organized in groups.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode({
     focusableItems: 'none',
     selectableItems: 'none'
   })
+
   // initialize Overview
   initializeOverviewComponent(graphComponent)
+
   // set up folding for this graph component
   initializeFolding(graphComponent)
+
   // load the sample graph from the JSON data
   await loadSampleGraph()
+
   // set up the layout which is automatically applied when a group node is collapsed/expanded
   initializeInteractiveHierarchicalNestingLayout(
     graphComponent,
@@ -72,6 +79,7 @@ async function run() {
     addGroupDescendantsToGraph
   )
 }
+
 /**
  * Initializes folding for the graph in the given graph component and configures the corresponding
  * folder node converter.
@@ -82,14 +90,13 @@ function initializeFolding(graphComponent) {
   // collapse all folders in the beginning
   const foldingView = foldingManager.createFoldingView({ isExpanded: () => false })
   graphComponent.graph = foldingView.graph
+
   // managing the appearance of folder nodes
   foldingManager.folderNodeConverter = new FolderNodeConverter({
-    folderNodeDefaults: {
-      copyLabels: true,
-      size: new Size(110, 60)
-    }
+    folderNodeDefaults: { copyLabels: true, size: new Size(110, 60) }
   })
 }
+
 /**
  * Creates an overview component that is configured to show group nodes more prominently than usual.
  * @param graphComponent the current graph component
@@ -99,6 +106,7 @@ function initializeOverviewComponent(graphComponent) {
   // style the overviewComponent to make the group nodes stand out
   overviewComponent.graphOverviewRenderer = new DemoStyleOverviewRenderer()
 }
+
 /**
  * Loads the sample graph from JSON data with all nodes that are not inside of groups
  * and applies an initial layout.
@@ -106,9 +114,11 @@ function initializeOverviewComponent(graphComponent) {
 async function loadSampleGraph() {
   // use the default demo styles for the sample graph items
   initDemoStyles(graphComponent.graph, { foldingEnabled: true })
+
   // use the main graph to build the unfolded graph from the data
   const foldingView = graphComponent.graph.foldingView
   const mainGraph = foldingView.manager.masterGraph
+
   // only load the nodes that are not inside any group
   builder = new GraphBuilder(mainGraph)
   nodesSource = builder.createNodesSource({
@@ -122,18 +132,17 @@ async function loadSampleGraph() {
     labels: ['label'],
     parentId: 'parentGroup'
   })
-  builder.createEdgesSource({
-    data: graphData.edgesSource,
-    sourceId: 'from',
-    targetId: 'to'
-  })
+  builder.createEdgesSource({ data: graphData.edgesSource, sourceId: 'from', targetId: 'to' })
   builder.buildGraph()
+
   // no layout information available, yet
   // so we come up with an initial layout for the complete, expanded graph.
   graphComponent.graph.applyLayout(new HierarchicalLayout())
+
   // center the arranged graph in the visible area
   await graphComponent.fitGraphBounds()
 }
+
 /**
  * Retrieves data of all child nodes from a group node and add them to the graph
  * using graph builder.
@@ -156,4 +165,5 @@ function addGroupDescendantsToGraph(groupNode) {
   // update the graph
   builder.updateGraph()
 }
+
 void run().then(finishLoading)

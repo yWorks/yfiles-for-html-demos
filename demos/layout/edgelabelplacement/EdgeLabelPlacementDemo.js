@@ -54,24 +54,29 @@ import {
   Size,
   TreeLayout
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
 import { toDegrees, toRadians } from '@yfiles/demo-utils/LegacyGeometryUtilities'
+
 /**
  * The graph component.
  */
 let graphComponent
+
 /**
  * The graph that contains the labels.
  */
 let graph
+
 /**
  * The mapper which provides a PreferredPlacementDescriptor for each edge label.
  * This mapper is used by the layout algorithms to consider the preferred placement for the edge labels.
  */
 let descriptorMapper
+
 // init UI elements
 const layoutComboBox = document.querySelector('#algorithm-select-box')
 const layoutButton = document.querySelector('#layout-button')
@@ -84,6 +89,7 @@ const sideReferenceComboBox = document.querySelector('#side-reference-combobox')
 const angleReferenceComboBox = document.querySelector('#angle-reference-combobox')
 const angleRotationComboBox = document.querySelector('#angle-rotation-combobox')
 const add180CheckBox = document.querySelector('#add-180-checkbox')
+
 /**
  * This demo shows how to place edge labels using {@link EdgeLabelPreferredPlacement} together
  * with a generic labeling algorithm or a layout algorithm that supports integrated edge labeling.
@@ -92,32 +98,42 @@ async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
   graph = graphComponent.graph
+
   descriptorMapper = new Mapper()
+
   initializeUI()
+
   initializeGraph()
   initializeStyles()
   initializeInputMode()
+
   initializeOptions()
   initializeLayoutComboBox()
+
   // build the graph from the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(createHierarchicalLayout(LayoutOrientation.TOP_TO_BOTTOM))
   await graphComponent.fitGraphBounds()
+
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id,
     parentId: (item) => item.parentId
   })
+
   const edgesSource = graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
@@ -126,8 +142,10 @@ function buildGraph(graph, graphData) {
   edgesSource.edgeCreator.createLabelsSource((item) => item.labels).labelCreator.textProvider = (
     item
   ) => item.text
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Does the label placement using the selected labeling/layout algorithm. Before this, the
  * PreferredPlacementDescriptor of the labels is set according to the option handlers settings.
@@ -139,19 +157,22 @@ async function doLayout(fitViewToContent) {
   if (waitInputMode.waiting) {
     return
   }
+
   setUIDisabled(true)
+
   // retrieve current labeling/layout algorithm from the combo-box
   const layout = layoutComboBox.options[layoutComboBox.selectedIndex].myValue
+
   // provide preferred placement data to the layout algorithm
   const layoutData = new GenericLabelingData({
     edgeLabelPreferredPlacements: (edge) => descriptorMapper.get(edge)
   })
+
   // fix node port stage is used to keep the bounding box of the graph in the view port
   layoutData.combineWith(
-    new LayoutAnchoringStageData({
-      nodeAnchoringPolicies: LayoutAnchoringPolicy.CENTER
-    })
+    new LayoutAnchoringStageData({ nodeAnchoringPolicies: LayoutAnchoringPolicy.CENTER })
   )
+
   // initialize layout executor
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
@@ -160,6 +181,7 @@ async function doLayout(fitViewToContent) {
     animationDuration: '0.5s',
     animateViewport: fitViewToContent
   })
+
   // apply layout
   try {
     await layoutExecutor.start()
@@ -167,6 +189,7 @@ async function doLayout(fitViewToContent) {
     setUIDisabled(false)
   }
 }
+
 /**
  * Disables the HTML elements of the UI and the input mode.
  *
@@ -177,6 +200,7 @@ function setUIDisabled(disabled) {
   layoutButton.disabled = disabled
   layoutComboBox.disabled = disabled
 }
+
 /**
  * Called whenever a property of the option handler has changed.
  * @param source The HTMLElement that reported a change.
@@ -185,6 +209,7 @@ function onLabelPropertyChanged(source) {
   updateLabelValues(getAffectedLabels(), source)
   void doLayout(false)
 }
+
 /**
  * Updates the PreferredPlacementDescriptors for all affected labels.
  * Affected labels are part of the selection or all labels if no label is selected.
@@ -195,6 +220,7 @@ function updateLabelValues(labels, source) {
   labels.forEach((edgeLabel) => {
     const oldDescriptor = descriptorMapper.get(edgeLabel)
     const descriptor = oldDescriptor ?? new EdgeLabelPreferredPlacement()
+
     if (source === labelTextArea) {
       graph.setLabelText(edgeLabel, labelTextArea.value)
     }
@@ -238,6 +264,7 @@ function updateLabelValues(labels, source) {
     }
   })
 }
+
 /**
  * Updates the properties in the option handler when the selection has changed.
  * The options show the descriptor values for all selected labels or nothing if the values do not match.
@@ -254,6 +281,7 @@ function updateLabelProperties(labels) {
   let angleRotation = null
   let hasAngleOffset = null
   let distance = null
+
   for (const label of labels) {
     const descriptor = descriptorMapper.get(label)
     if (valuesUndefined) {
@@ -295,6 +323,7 @@ function updateLabelProperties(labels) {
       if (distance && distance !== descriptor.distanceToEdge) {
         distance = null
       }
+
       if (
         text === null &&
         placement === null &&
@@ -309,28 +338,38 @@ function updateLabelProperties(labels) {
       }
     }
   }
+
   // If, for a single property, there are multiple values present in the set of selected edge labels, the
   // respective option item is set to indicate an "undefined value" state.
   labelTextArea.value = text ? text : ''
+
   distanceToEdgeNumberField.value = distance ? distance.toString() : ''
+
   angleNumberField.value = angle ? toDegrees(angle).toString() : ''
+
   add180CheckBox.checked = hasAngleOffset === null ? false : hasAngleOffset
+
   placementAlongEdgeComboBox.selectedIndex = placement
     ? getIndex(placementAlongEdgeComboBox, placement)
     : -1
+
   placementSideOfEdgeComboBox.selectedIndex = side
     ? getIndex(placementSideOfEdgeComboBox, side)
     : -1
+
   sideReferenceComboBox.selectedIndex = sideReference
     ? getIndex(sideReferenceComboBox, sideReference)
     : -1
+
   angleReferenceComboBox.selectedIndex = angleReference
     ? getIndex(angleReferenceComboBox, angleReference)
     : -1
+
   angleRotationComboBox.selectedIndex = angleRotation
     ? getIndex(angleRotationComboBox, angleRotation)
     : -1
 }
+
 /**
  * Retrieves the index for the given option in the combo-box.
  * @param comboBox The combo-box that contains the given option.
@@ -346,11 +385,13 @@ function getIndex(comboBox, value) {
   }
   return -1
 }
+
 /**
  * Binds the actions to the buttons of the toolbar and the input elements of the option handler.
  */
 function initializeUI() {
   addNavigationButtons(layoutComboBox)
+
   layoutButton.addEventListener('click', () => doLayout(true))
   layoutComboBox.addEventListener('change', () => doLayout(true))
   placementAlongEdgeComboBox.addEventListener('change', () =>
@@ -368,6 +409,7 @@ function initializeUI() {
   angleRotationComboBox.addEventListener('change', () =>
     onLabelPropertyChanged(angleRotationComboBox)
   )
+
   distanceToEdgeNumberField.addEventListener(
     'change',
     (input) => {
@@ -389,6 +431,7 @@ function initializeUI() {
     false
   )
 }
+
 /**
  * Adds label listeners to the graph which ensure that each label has an associated preferred
  * placement descriptor.
@@ -402,15 +445,18 @@ function initializeGraph() {
     descriptorMapper.delete(evt.item)
   })
 }
+
 /**
  * Initializes node, edge and label styles that are applied when the graph is created.
  */
 function initializeStyles() {
   initDemoStyles(graph)
   graph.nodeDefaults.size = new Size(50, 30)
+
   graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createParameter()
   graph.edgeDefaults.labels.style.autoFlip = false
 }
+
 /**
  * Configures the input mode such that only labels can be added/removed to the graph.
  * Also, selecting labels will trigger an update of the option handler.
@@ -425,12 +471,15 @@ function initializeInputMode() {
     selectableItems: GraphItemTypes.LABEL | GraphItemTypes.EDGE,
     focusableItems: GraphItemTypes.NONE
   })
+
   // update the option handler settings when the selection changes
   inputMode.addEventListener('multi-selection-finished', () =>
     updateLabelProperties(getAffectedLabels())
   )
+
   graphComponent.inputMode = inputMode
 }
+
 /**
  * Initializes the properties in the option handler with options and default values.
  */
@@ -445,6 +494,7 @@ function initializeOptions() {
     onLabelPropertyChanged(placementAlongEdgeComboBox)
   )
   placementAlongEdgeComboBox.selectedIndex = 0
+
   addOption(placementSideOfEdgeComboBox, 'RightOfEdge', LabelEdgeSides.RIGHT_OF_EDGE)
   addOption(placementSideOfEdgeComboBox, 'OnEdge', LabelEdgeSides.ON_EDGE)
   addOption(placementSideOfEdgeComboBox, 'LeftOfEdge', LabelEdgeSides.LEFT_OF_EDGE)
@@ -453,6 +503,7 @@ function initializeOptions() {
     onLabelPropertyChanged(placementSideOfEdgeComboBox)
   )
   placementSideOfEdgeComboBox.selectedIndex = 1
+
   addOption(sideReferenceComboBox, 'RelativeToEdgeFlow', LabelSideReferences.RELATIVE_TO_EDGE_FLOW)
   addOption(
     sideReferenceComboBox,
@@ -468,6 +519,7 @@ function initializeOptions() {
     onLabelPropertyChanged(sideReferenceComboBox)
   )
   sideReferenceComboBox.selectedIndex = 0
+
   addOption(
     angleReferenceComboBox,
     'RelativeToEdgeFlow',
@@ -478,6 +530,7 @@ function initializeOptions() {
     onLabelPropertyChanged(angleReferenceComboBox)
   )
   angleReferenceComboBox.selectedIndex = 1
+
   addOption(angleRotationComboBox, 'Clockwise', LabelAngleOnRightSideRotations.CLOCKWISE)
   addOption(
     angleRotationComboBox,
@@ -488,17 +541,22 @@ function initializeOptions() {
     onLabelPropertyChanged(angleRotationComboBox)
   )
   angleRotationComboBox.selectedIndex = 0
+
   labelTextArea.addEventListener('change', () => onLabelPropertyChanged(labelTextArea))
   labelTextArea.value = 'Label'
+
   distanceToEdgeNumberField.addEventListener('change', () =>
     onLabelPropertyChanged(distanceToEdgeNumberField)
   )
   distanceToEdgeNumberField.value = '5.00'
+
   angleNumberField.addEventListener('change', () => onLabelPropertyChanged(angleNumberField))
   angleNumberField.value = '0.00'
+
   add180CheckBox.addEventListener('change', () => onLabelPropertyChanged(add180CheckBox))
   add180CheckBox.checked = false
 }
+
 /**
  * Initializes the layout combo-box with a selection of layout algorithms.
  */
@@ -517,25 +575,32 @@ function initializeLayoutComboBox() {
   addOption(layoutComboBox, 'Organic', createOrganicLayout())
   addOption(layoutComboBox, 'Generic Tree', createTreeLayout())
   addOption(layoutComboBox, 'Orthogonal', createOrthogonalLayout())
+
   layoutComboBox.selectedIndex = 0
 }
+
 /**
  * Creates a configured HierarchicalLayout.
  */
 function createHierarchicalLayout(layoutOrientation) {
   return new HierarchicalLayout({ layoutOrientation })
 }
+
 function createTreeLayout() {
   const layout = new TreeLayout()
   layout.parallelEdgeRouter.enabled = false
+
   const reductionStage = layout.treeReductionStage
   reductionStage.nonTreeEdgeRouter = new EdgeRouter()
   reductionStage.nonTreeEdgeLabeling = new GenericLabeling()
+
   return layout
 }
+
 function createOrthogonalLayout() {
   return new OrthogonalLayout()
 }
+
 function createOrganicLayout() {
   return new OrganicLayout({
     edgeLabelPlacement: 'integrated',
@@ -544,12 +609,14 @@ function createOrganicLayout() {
     defaultMinimumNodeDistance: 20
   })
 }
+
 function addOption(comboBox, text, value) {
   const option = document.createElement('option')
   option.text = text
   option.myValue = value
   comboBox.add(option)
 }
+
 /**
  * Returns a collection of labels that are currently affected by option changes.
  * Affected labels are all selected labels or all labels in case no label is selected.
@@ -558,4 +625,5 @@ function getAffectedLabels() {
   const selectedLabels = graphComponent.selection.labels
   return selectedLabels.size > 0 ? selectedLabels : graph.edgeLabels
 }
+
 void run().then(finishLoading)

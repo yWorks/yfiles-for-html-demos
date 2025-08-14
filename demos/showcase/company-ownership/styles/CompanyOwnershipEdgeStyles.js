@@ -34,34 +34,29 @@ import {
   LabelStyle,
   PolylineEdgeStyle
 } from '@yfiles/yfiles'
+
 // configures the style of the edges based on their type
 const smoothingLength = 5
 const typeMap = {
   [EdgeTypeEnum.Hierarchy]: new PolylineEdgeStyle({
     stroke: '2px #1a3442',
-    targetArrow: new Arrow({
-      fill: '#1a3442',
-      stroke: '2px #1a3442',
-      type: 'triangle'
-    }),
+    targetArrow: new Arrow({ fill: '#1a3442', stroke: '2px #1a3442', type: 'triangle' }),
     smoothingLength
   }),
   [EdgeTypeEnum.Relation]: new PolylineEdgeStyle({
     stroke: '2px dashed #f26419',
-    targetArrow: new Arrow({
-      fill: '#f26419',
-      stroke: '1px #f26419',
-      type: 'triangle'
-    }),
+    targetArrow: new Arrow({ fill: '#f26419', stroke: '1px #f26419', type: 'triangle' }),
     smoothingLength: 100
   })
 }
+
 /**
  * Returns the edge style for the given edge type.
  */
 export function getEdgeStyle(edge) {
   return typeMap[edge.type]
 }
+
 // configures the style of the edge labels
 export const edgeLabelStyle = new LabelStyle({
   backgroundFill: '#D3D7D9',
@@ -71,10 +66,12 @@ export const edgeLabelStyle = new LabelStyle({
   padding: [3, 5, 3, 5],
   shape: 'round-rectangle'
 })
+
 // configures the edge label model parameter
 export const edgeLabelParameter = new EdgePathLabelModel({
   autoRotation: false
 }).createRatioParameter(0.5)
+
 // sets some defaults for the edge labels
 export const edgeLabelDefaults = new LabelDefaults({
   style: edgeLabelStyle,

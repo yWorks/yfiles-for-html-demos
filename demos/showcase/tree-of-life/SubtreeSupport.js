@@ -36,10 +36,14 @@ import {
   TreeAnalysis,
   TreeAnalysisResult
 } from '@yfiles/yfiles'
+
 let globalRoot
+
 let treeAnalysisResult
+
 // caches for each node the subtree it is the root of
 const subtrees = new Map()
+
 /**
  * Returns the global root of the tree, i.e., the node without predecessors.
  */
@@ -49,6 +53,7 @@ export function getGlobalRoot(graph) {
   }
   return globalRoot
 }
+
 /**
  * Returns the subtree rooted by the given node.
  */
@@ -57,11 +62,13 @@ export function getSubtree(subtreeRoot, graph) {
   if (existingSubtree != null) {
     return existingSubtree
   }
+
   const treeAnalysis = getTreeAnalysis(graph)
   const subtree = treeAnalysis.getSubtree(subtreeRoot)
   subtrees.set(subtreeRoot, subtree)
   return subtree
 }
+
 /**
  * Returns the (cached) result of the tree analysis for the whole graph.
  */
@@ -69,21 +76,22 @@ function getTreeAnalysis(graph) {
   if (treeAnalysisResult != null) {
     return treeAnalysisResult
   }
-  const treeAnalysis = new TreeAnalysis({
-    customRootNode: getGlobalRoot(graph)
-  })
+  const treeAnalysis = new TreeAnalysis({ customRootNode: getGlobalRoot(graph) })
   treeAnalysisResult = treeAnalysis.run(graph)
   return treeAnalysisResult
 }
+
 /**
  * Highlights all items in the subtree with the given root or edge to the root.
  */
 export function highlightSubtree(item, graphComponent) {
   const highlights = graphComponent.highlights
   highlights.clear()
+
   if (item == null) {
     return
   }
+
   const graph = graphComponent.graph
   const subtreeRoot = getNode(item)
   const subtree = getSubtree(subtreeRoot, graph.wrappedGraph)
@@ -91,6 +99,7 @@ export function highlightSubtree(item, graphComponent) {
   subtree.edges.filter((edge) => graph.contains(edge)).forEach((edge) => highlights.add(edge))
   highlights.add(subtreeRoot.labels.first())
 }
+
 /**
  * Returns the node that is represented by the given item.
  */

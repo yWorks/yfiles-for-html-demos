@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { IInputModeContext, IOrthogonalEdgeHelper, OrthogonalEdgeHelper } from '@yfiles/yfiles'
+
 /**
  * An {@link OrthogonalEdgeHelper} that enables moving the
  * source/target of the edge to another port.

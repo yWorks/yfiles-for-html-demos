@@ -97,18 +97,21 @@ import {
   TemplateNodeStyle,
   TemplatePortStyle
 } from '@yfiles/demo-utils/template-styles/TemplateStyles'
+
 /**
  * The usage of yfiles.lang.Enum here is only for GraphML compatibility, and shouldn't be needed
  * elsewhere. For enums in your own application, use either TypeScript enums or a simple keyed
  * object with constants.
  */
 const Enum = yfiles.lang.Enum
+
 export function configureRenamings(callback) {
   const nameMappings = new Map()
   nameMappings.forEach((value, key) =>
     callback(new XmlName(key, YfilesForHtml_2_0_XamlNS), new XmlName(value, YfilesForHtmlXamlNS))
   )
 }
+
 export function configureExtensions(callback) {
   createMetadata(VoidPortStyleRenderer, { singletonContainers: [VoidPortStyleRenderer] }, callback)
   createMetadata(VoidEdgeStyleRenderer, { singletonContainers: [VoidEdgeStyleRenderer] }, callback)
@@ -127,10 +130,7 @@ export function configureExtensions(callback) {
   createMetadata(VoidShapeGeometry, { singletonContainers: [VoidShapeGeometry] }, callback)
   createMetadata(
     ShadowNodeStyleDecoratorExtension,
-    {
-      contentProperty: 'Wrapped',
-      properties: { Wrapped: { type: INodeStyle } }
-    },
+    { contentProperty: 'Wrapped', properties: { Wrapped: { type: INodeStyle } } },
     callback
   )
   createMetadata(
@@ -459,363 +459,504 @@ export function configureExtensions(callback) {
     callback
   )
 }
+
 function createMetadata(type, metadata, callback, ns = YfilesForHtml_2_0_XamlNS) {
   metadata.name = type.name
   metadata.xmlNamespace = ns
   callback(type, metadata)
 }
+
 // region Compatibility classes for void styles
+
 class VoidPortStyleRenderer extends BaseClass(IPortStyleRenderer) {
   static _instance = new VoidPortStyleRenderer()
+
   static get Instance() {
     return this._instance
   }
+
   getBoundsProvider() {
     return IBoundsProvider.EMPTY
   }
+
   getContext() {
     return ILookup.EMPTY
   }
+
   getHitTestable() {
     return IHitTestable.NEVER
   }
+
   getLassoTestable() {
     return ILassoTestable.NEVER
   }
+
   getMarqueeTestable() {
     return IMarqueeTestable.NEVER
   }
+
   getVisibilityTestable() {
     return IVisibilityTestable.NEVER
   }
+
   getVisualCreator() {
     return IVisualCreator.VOID_VISUAL_CREATOR
   }
 }
+
 class VoidEdgeStyleRenderer extends BaseClass(IEdgeStyleRenderer) {
   static _instance = new VoidEdgeStyleRenderer()
+
   static get Instance() {
     return this._instance
   }
+
   getPathGeometry() {
     return VoidPathGeometry.Instance
   }
+
   getBoundsProvider() {
     return IBoundsProvider.EMPTY
   }
+
   getContext() {
     return ILookup.EMPTY
   }
+
   getHitTestable() {
     return IHitTestable.NEVER
   }
+
   getLassoTestable() {
     return ILassoTestable.NEVER
   }
+
   getMarqueeTestable() {
     return IMarqueeTestable.NEVER
   }
+
   getVisibilityTestable() {
     return IVisibilityTestable.NEVER
   }
+
   getVisualCreator() {
     return IVisualCreator.VOID_VISUAL_CREATOR
   }
 }
+
 class VoidLabelStyleRenderer extends BaseClass(ILabelStyleRenderer) {
   static _instance = new VoidLabelStyleRenderer()
+
   static get Instance() {
     return this._instance
   }
+
   getPreferredSize() {
     return Size.EMPTY
   }
+
   getBoundsProvider() {
     return IBoundsProvider.EMPTY
   }
+
   getContext() {
     return ILookup.EMPTY
   }
+
   getHitTestable() {
     return IHitTestable.NEVER
   }
+
   getLassoTestable() {
     return ILassoTestable.NEVER
   }
+
   getMarqueeTestable() {
     return IMarqueeTestable.NEVER
   }
+
   getVisibilityTestable() {
     return IVisibilityTestable.NEVER
   }
+
   getVisualCreator() {
     return IVisualCreator.VOID_VISUAL_CREATOR
   }
 }
+
 class VoidNodeStyleRenderer extends BaseClass(INodeStyleRenderer) {
   static _instance = new VoidNodeStyleRenderer()
+
   static get Instance() {
     return this._instance
   }
+
   getShapeGeometry() {
     return IShapeGeometry.VOID_SHAPE_GEOMETRY
   }
+
   getBoundsProvider() {
     return IBoundsProvider.EMPTY
   }
+
   getContext() {
     return ILookup.EMPTY
   }
+
   getHitTestable() {
     return IHitTestable.NEVER
   }
+
   getLassoTestable() {
     return ILassoTestable.NEVER
   }
+
   getMarqueeTestable() {
     return IMarqueeTestable.NEVER
   }
+
   getVisibilityTestable() {
     return IVisibilityTestable.NEVER
   }
+
   getVisualCreator() {
     return IVisualCreator.VOID_VISUAL_CREATOR
   }
 }
+
 class VoidStripeStyleRenderer extends BaseClass(IStripeStyleRenderer) {
   static _instance = new VoidStripeStyleRenderer()
+
   static get Instance() {
     return this._instance
   }
+
   getContext() {
     return ILookup.EMPTY
   }
+
   getVisualCreator() {
     return IVisualCreator.VOID_VISUAL_CREATOR
   }
 }
+
 class VoidShapeGeometry extends BaseClass() {
   static _instance = IShapeGeometry.VOID_SHAPE_GEOMETRY
+
   static get Instance() {
     return this._instance
   }
 }
+
 class VoidPathGeometry extends BaseClass(IPathGeometry) {
   static _instance = new VoidPathGeometry()
+
   static get Instance() {
     return this._instance
   }
+
   getPath() {
     return null
   }
+
   getSegmentCount() {
     return 0
   }
+
   getTangent() {
     return null
   }
+
   getTangentForSegment() {
     return null
   }
 }
+
+
 // region Compatibility classes for ShadowNodeStyleDecorator
+
 class ShadowNodeStyleDecoratorExtension extends MarkupExtension {
   _Wrapped = new ShapeNodeStyle()
+
   get Wrapped() {
     return this._Wrapped
   }
+
   set Wrapped(value) {
     this._Wrapped = value
   }
+
   provideValue() {
     return new ShadowNodeStyleDecorator(this._Wrapped)
   }
 }
+
+
 // region Compatibility classes for GroupNodeStyle
+
 class GroupNodeStyleExtension extends MarkupExtension {
   static defaultTabFill = new Color(170, 170, 170, 255)
+
   _contentAreaInsets = new Insets(4)
+
   get contentAreaInsets() {
     return this._contentAreaInsets
   }
+
   set contentAreaInsets(value) {
     this._contentAreaInsets = value
   }
+
   _cornerRadius = 4
+
   get cornerRadius() {
     return this._cornerRadius
   }
+
   set cornerRadius(value) {
     this._cornerRadius = value
   }
+
   _tabSlope = 0.5
+
   get tabSlope() {
     return this._tabSlope
   }
+
   set tabSlope(value) {
     this._tabSlope = value
   }
+
   _tabWidth = 50
+
   get tabWidth() {
     return this._tabWidth
   }
+
   set tabWidth(value) {
     this._tabWidth = value
   }
+
   _tabHeight = 18
+
   get tabHeight() {
     return this._tabHeight
   }
+
   set tabHeight(value) {
     this._tabHeight = value
   }
+
   _tabInset = 4
+
   get tabInset() {
     return this._tabInset
   }
+
   set tabInset(value) {
     this._tabInset = value
   }
+
   _tabPosition = GroupNodeStyleTabPosition.TOP
+
   get tabPosition() {
     return this._tabPosition
   }
+
   set tabPosition(value) {
     this._tabPosition = value
   }
+
   _tabSizePolicy = GroupNodeStyleTabSizePolicy.FIXED
+
   get tabSizePolicy() {
     return this._tabSizePolicy
   }
+
   set tabSizePolicy(value) {
     this._tabSizePolicy = value
   }
+
   _iconPosition = GroupNodeStyleIconPosition.TRAILING
+
   get iconPosition() {
     return this._iconPosition
   }
+
   set iconPosition(value) {
     this._iconPosition = value
   }
+
   _groupIcon = GroupNodeStyleIconType.NONE
+
   get groupIcon() {
     return this._groupIcon
   }
+
   set groupIcon(value) {
     this._groupIcon = value
   }
+
   _iconBackgroundShape = GroupNodeStyleIconBackgroundShape.ROUND_RECTANGLE_SOLID
+
   get iconBackgroundShape() {
     return this._iconBackgroundShape
   }
+
   set iconBackgroundShape(value) {
     this._iconBackgroundShape = value
   }
+
   _folderIcon = GroupNodeStyleIconType.PLUS
+
   get folderIcon() {
     return this._folderIcon
   }
+
   set folderIcon(value) {
     this._folderIcon = value
   }
+
   _iconBackgroundFill = Color.WHITE
+
   get iconBackgroundFill() {
     return this._iconBackgroundFill
   }
+
   set iconBackgroundFill(value) {
     this._iconBackgroundFill = value
   }
+
   _iconForegroundFill = GroupNodeStyleExtension.defaultTabFill
+
   get iconForegroundFill() {
     return this._iconForegroundFill
   }
+
   set iconForegroundFill(value) {
     this._iconForegroundFill = value
   }
+
   _iconSize = 14
+
   get iconSize() {
     return this._iconSize
   }
+
   set iconSize(value) {
     this._iconSize = value
   }
+
   _iconOffset = 0
+
   get iconOffset() {
     return this._iconOffset
   }
+
   set iconOffset(value) {
     this._iconOffset = value
   }
+
   _drawShadow = false
+
   get drawShadow() {
     return this._drawShadow
   }
+
   set drawShadow(value) {
     this._drawShadow = value
   }
+
   _minimumContentAreaSize = new Size(0, 0)
+
   get minimumContentAreaSize() {
     return this._minimumContentAreaSize
   }
+
   set minimumContentAreaSize(value) {
     this._minimumContentAreaSize = value
   }
+
   _hitTransparentContentArea = false
+
   get hitTransparentContentArea() {
     return this._hitTransparentContentArea
   }
+
   set hitTransparentContentArea(value) {
     this._hitTransparentContentArea = value
   }
+
   _renderTransparentContentArea = false
+
   get renderTransparentContentArea() {
     return this._renderTransparentContentArea
   }
+
   set renderTransparentContentArea(value) {
     this._renderTransparentContentArea = value
   }
+
   _showFolderContentArea = false
+
   get showFolderContentArea() {
     return this._showFolderContentArea
   }
+
   set showFolderContentArea(value) {
     this._showFolderContentArea = value
   }
+
   _tabBackgroundFill = null
+
   get tabBackgroundFill() {
     return this._tabBackgroundFill
   }
+
   set tabBackgroundFill(value) {
     this._tabBackgroundFill = value
   }
+
   _contentAreaFill = Color.WHITE
+
   get contentAreaFill() {
     return this._contentAreaFill
   }
+
   set contentAreaFill(value) {
     this._contentAreaFill = value
   }
+
   _tabFill = GroupNodeStyleExtension.defaultTabFill
+
   get tabFill() {
     return this._tabFill
   }
+
   set tabFill(value) {
     this._tabFill = value
   }
+
   _stroke = null
+
   get stroke() {
     return this._stroke
   }
+
   set stroke(value) {
     this._stroke = value
   }
+
   _cssClass = ''
+
   get cssClass() {
     return this._cssClass
   }
+
   set cssClass(value) {
     this._cssClass = value
   }
+
   provideValue() {
     return new GroupNodeStyle({
       contentAreaFill: this._contentAreaFill,
@@ -847,31 +988,43 @@ class GroupNodeStyleExtension extends MarkupExtension {
     })
   }
 }
+
+
 // region Compatibility classes for CollapsibleNodeStyleDecorator
+
 class CollapsibleNodeStyleDecoratorExtension extends MarkupExtension {
   _insets = new Insets(16, 5, 5, 5)
+
   get insets() {
     return this._insets
   }
+
   set insets(value) {
     this._insets = value
   }
+
   _wrapped = null
+
   get wrapped() {
     return this._wrapped
   }
+
   set wrapped(value) {
     this._wrapped = value
   }
-  _buttonPlacement = new InteriorNodeLabelModel({
-    padding: new Insets(0)
-  }).createParameter(InteriorNodeLabelModelPosition.TOP_LEFT)
+
+  _buttonPlacement = new InteriorNodeLabelModel({ padding: new Insets(0) }).createParameter(
+    InteriorNodeLabelModelPosition.TOP_LEFT
+  )
+
   get buttonPlacement() {
     return this._buttonPlacement
   }
+
   set buttonPlacement(value) {
     this._buttonPlacement = value
   }
+
   provideValue() {
     return new CollapsibleNodeStyleDecorator({
       padding: this._insets,
@@ -880,43 +1033,61 @@ class CollapsibleNodeStyleDecoratorExtension extends MarkupExtension {
     })
   }
 }
+
+
 // region Compatibility classes for ImageNodeStyle
+
 class ImageNodeStyleExtension extends MarkupExtension {
   _aspectRatio = 0
+
   get aspectRatio() {
     return this._aspectRatio
   }
+
   set aspectRatio(value) {
     this._aspectRatio = value
   }
+
   _image = null
+
   get image() {
     return this._image
   }
+
   set image(value) {
     this._image = value
   }
+
   _fallbackImage = null
+
   get fallbackImage() {
     return this._fallbackImage
   }
+
   set fallbackImage(value) {
     this._fallbackImage = value
   }
+
   _cssClass = ''
+
   get cssClass() {
     return this._cssClass
   }
+
   set cssClass(value) {
     this._cssClass = value
   }
+
   _normalizedOutline = null
+
   get normalizedOutline() {
     return this._normalizedOutline
   }
+
   set normalizedOutline(value) {
     this._normalizedOutline = value
   }
+
   provideValue() {
     return new ImageNodeStyle({
       aspectRatio: this._aspectRatio,
@@ -926,7 +1097,10 @@ class ImageNodeStyleExtension extends MarkupExtension {
     })
   }
 }
+
+
 // region Compatibility classes for ShapeNodeStyle
+
 const ShapeNodeShape = Enum('ShapeNodeShape', {
   //@ts-ignore
   RECTANGLE: yfiles.styles.ShapeNodeShape.RECTANGLE,
@@ -961,42 +1135,58 @@ const ShapeNodeShape = Enum('ShapeNodeShape', {
   //@ts-ignore
   PILL: yfiles.styles.ShapeNodeShape.PILL
 })
+
 class ShapeNodeStyleExtension extends MarkupExtension {
   _fill = Color.WHITE
+
   get fill() {
     return this._fill
   }
+
   set fill(value) {
     this._fill = value
   }
+
   _shape = ShapeNodeShape.RECTANGLE
+
   get shape() {
     return this._shape
   }
+
   set shape(value) {
     this._shape = value
   }
+
   _keepIntrinsicAspectRatio = false
+
   get keepIntrinsicAspectRatio() {
     return this._keepIntrinsicAspectRatio
   }
+
   set keepIntrinsicAspectRatio(value) {
     this._keepIntrinsicAspectRatio = value
   }
+
   _cssClass = ''
+
   get cssClass() {
     return this._cssClass
   }
+
   set cssClass(value) {
     this._cssClass = value
   }
+
   _stroke = Stroke.BLACK
+
   get stroke() {
     return this._stroke
   }
+
   set stroke(value) {
     this._stroke = value
   }
+
   provideValue() {
     switch (this._shape) {
       case ShapeNodeShape.SHEARED_RECTANGLE:
@@ -1009,6 +1199,7 @@ class ShapeNodeStyleExtension extends MarkupExtension {
       case ShapeNodeShape.STAR5_UP:
         const path = ShapeNodeStyles.getPath(this._shape, this._keepIntrinsicAspectRatio)
         const ar = ShapeNodeStyles.getIntrinsicAspectRatio(this._shape)
+
         return new GeneralPathNodeStyle({
           fill: this._fill,
           aspectRatio: this._keepIntrinsicAspectRatio ? ar : 0,
@@ -1027,7 +1218,10 @@ class ShapeNodeStyleExtension extends MarkupExtension {
     }
   }
 }
+
+
 // region Compatibility classes for DefaultLabelStyle
+
 const TextWrappingShape = Enum('TextWrappingShape', {
   //@ts-ignore
   RECTANGLE: yfiles.styles.TextWrappingShape.RECTANGLE,
@@ -1060,6 +1254,7 @@ const TextWrappingShape = Enum('TextWrappingShape', {
   //@ts-ignore
   LABEL_SHAPE: yfiles.styles.TextWrappingShape.LABEL_SHAPE
 })
+
 // @ts-ignore
 const TextWrapping = Enum('TextWrapping', {
   // @ts-ignore
@@ -1073,126 +1268,178 @@ const TextWrapping = Enum('TextWrapping', {
   // @ts-ignore
   WORD_ELLIPSIS: yfiles.view.TextWrapping.WRAP_WORD_ELLIPSIS
 })
+
 class DefaultLabelStyleExtension extends MarkupExtension {
   _autoFlip = true
+
   get autoFlip() {
     return this._autoFlip
   }
+
   set autoFlip(value) {
     this._autoFlip = value
   }
+
   _backgroundFill = null
+
   get backgroundFill() {
     return this._backgroundFill
   }
+
   set backgroundFill(value) {
     this._backgroundFill = value
   }
+
   _backgroundStroke = null
+
   get backgroundStroke() {
     return this._backgroundStroke
   }
+
   set backgroundStroke(value) {
     this._backgroundStroke = value
   }
+
   _clipText = true
+
   get clipText() {
     return this._clipText
   }
+
   set clipText(value) {
     this._clipText = value
   }
+
   _cssClass = ''
+
   get cssClass() {
     return this._cssClass
   }
+
   set cssClass(value) {
     this._cssClass = value
   }
+
   _font = new Font('Arial', 12)
+
   get font() {
     return this._font
   }
+
   set font(value) {
     this._font = value
   }
+
   _horizontalTextAlignment = HorizontalTextAlignment.LEFT
+
   get horizontalTextAlignment() {
     return this._horizontalTextAlignment
   }
+
   set horizontalTextAlignment(value) {
     this._horizontalTextAlignment = value
   }
+
   _insets = Insets.EMPTY
+
   get insets() {
     return this._insets
   }
+
   set insets(value) {
     this._insets = value
   }
+
   _maximumSize = Size.INFINITE
+
   get maximumSize() {
     return this._maximumSize
   }
+
   set maximumSize(value) {
     this._maximumSize = value
   }
+
   _minimumSize = Size.ZERO
+
   get minimumSize() {
     return this._minimumSize
   }
+
   set minimumSize(value) {
     this._minimumSize = value
   }
+
   _shape = LabelShape.RECTANGLE
+
   get shape() {
     return this._shape
   }
+
   set shape(value) {
     this._shape = value
   }
+
   _textSize = 12
+
   get textSize() {
     return this._textSize
   }
+
   set textSize(value) {
     this._textSize = value
   }
+
   _textFill = Color.BLACK
+
   get textFill() {
     return this._textFill
   }
+
   set textFill(value) {
     this._textFill = value
   }
+
   _textWrappingPadding = 0
+
   get textWrappingPadding() {
     return this._textWrappingPadding
   }
+
   set textWrappingPadding(value) {
     this._textWrappingPadding = value
   }
+
   _textWrappingShape = TextWrappingShape.RECTANGLE
+
   get textWrappingShape() {
     return this._textWrappingShape
   }
+
   set textWrappingShape(value) {
     this._textWrappingShape = value
   }
+
   _verticalTextAlignment = VerticalTextAlignment.TOP
+
   get verticalTextAlignment() {
     return this._verticalTextAlignment
   }
+
   set verticalTextAlignment(value) {
     this._verticalTextAlignment = value
   }
+
   _wrapping = TextWrapping.NONE
+
   get wrapping() {
     return this._wrapping
   }
+
   set wrapping(value) {
     this._wrapping = value
   }
+
   provideValue() {
     return new LabelStyle({
       autoFlip: this._autoFlip,
@@ -1218,7 +1465,10 @@ class DefaultLabelStyleExtension extends MarkupExtension {
     })
   }
 }
+
+
 // region Compatibility classes for MarkupLabelStyle
+
 class MarkupLabelStyleExtension extends DefaultLabelStyleExtension {
   provideValue() {
     return new MarkupLabelStyle({
@@ -1245,59 +1495,83 @@ class MarkupLabelStyleExtension extends DefaultLabelStyleExtension {
     })
   }
 }
+
+
 // region Compatibility classes for IconLabelStyle
+
 class IconLabelStyleExtension extends MarkupExtension {
   _autoFlip = true
+
   get autoFlip() {
     return this._autoFlip
   }
+
   set autoFlip(value) {
     this._autoFlip = value
   }
+
   _cssClass = ''
+
   get cssClass() {
     return this._cssClass
   }
+
   set cssClass(value) {
     this._cssClass = value
   }
+
   _icon = null
+
   get icon() {
     return this._icon
   }
+
   set icon(value) {
     this._icon = value
   }
-  _iconPlacement = new ExteriorNodeLabelModel({
-    margins: new Insets(0)
-  }).createParameter(ExteriorNodeLabelModelPosition.LEFT)
+
+  _iconPlacement = new ExteriorNodeLabelModel({ margins: new Insets(0) }).createParameter(
+    ExteriorNodeLabelModelPosition.LEFT
+  )
+
   get iconPlacement() {
     return this._iconPlacement
   }
+
   set iconPlacement(value) {
     this._iconPlacement = value
   }
+
   _iconSize = Size.EMPTY
+
   get iconSize() {
     return this._iconSize
   }
+
   set iconSize(value) {
     this._iconSize = value
   }
+
   _wrapped = new LabelStyle()
+
   get wrapped() {
     return this._wrapped
   }
+
   set wrapped(value) {
     this._wrapped = value
   }
+
   _wrappedInsets = new Insets(0)
+
   get wrappedInsets() {
     return this._wrappedInsets
   }
+
   set wrappedInsets(value) {
     this._wrappedInsets = value
   }
+
   provideValue() {
     return new IconLabelStyle({
       autoFlip: this._autoFlip,
@@ -1310,36 +1584,51 @@ class IconLabelStyleExtension extends MarkupExtension {
     })
   }
 }
+
+
 // region Compatibility classes for NodeStyleLabelStyleAdapter
+
 class NodeStyleLabelStyleAdapterExtension extends MarkupExtension {
   _autoFlip = true
+
   get autoFlip() {
     return this._autoFlip
   }
+
   set autoFlip(value) {
     this._autoFlip = value
   }
+
   _nodeStyle = null
+
   get nodeStyle() {
     return this._nodeStyle
   }
+
   set nodeStyle(value) {
     this._nodeStyle = value
   }
+
   _labelStyle = null
+
   get labelStyle() {
     return this._labelStyle
   }
+
   set labelStyle(value) {
     this._labelStyle = value
   }
+
   _labelStyleInsets = new Insets(0)
+
   get labelStyleInsets() {
     return this._labelStyleInsets
   }
+
   set labelStyleInsets(value) {
     this._labelStyleInsets = value
   }
+
   provideValue() {
     return new NodeStyleLabelStyleAdapter({
       autoFlip: this._autoFlip,
@@ -1349,7 +1638,10 @@ class NodeStyleLabelStyleAdapterExtension extends MarkupExtension {
     })
   }
 }
+
+
 // region Compatibility classes for Arrow
+
 const ArrowType = Enum('ArrowType', {
   //@ts-ignore
   DEFAULT: yfiles.styles.ArrowType.STEALTH,
@@ -1368,6 +1660,7 @@ const ArrowType = Enum('ArrowType', {
   //@ts-ignore
   TRIANGLE: yfiles.styles.ArrowType.TRIANGLE
 })
+
 class ArrowExtension extends MarkupExtension {
   static DEFAULT = ArrowExtension.createArrow(ArrowType.DEFAULT)
   static SIMPLE = ArrowExtension.createArrow(ArrowType.SIMPLE)
@@ -1377,48 +1670,67 @@ class ArrowExtension extends MarkupExtension {
   static CIRCLE = ArrowExtension.createArrow(ArrowType.CIRCLE)
   static CROSS = ArrowExtension.createArrow(ArrowType.CROSS)
   static TRIANGLE = ArrowExtension.createArrow(ArrowType.TRIANGLE)
+
   _cropLength = 0
+
   get cropLength() {
     return this._cropLength
   }
+
   set cropLength(value) {
     this._cropLength = value
   }
+
   _fill = null
+
   get fill() {
     return this._fill
   }
+
   set fill(value) {
     this._fill = value
   }
+
   _isFrozen = false
+
   get isFrozen() {
     return this._isFrozen
   }
+
   set isFrozen(value) {
     this._isFrozen = value
   }
+
   _scale = 1
+
   get scale() {
     return this._scale
   }
+
   set scale(value) {
     this._scale = value
   }
+
   _stroke = null
+
   get stroke() {
     return this._stroke
   }
+
   set stroke(value) {
     this._stroke = value
   }
+
   _type = ArrowType.DEFAULT
+
   get type() {
     return this._type
   }
+
   set type(value) {
     this._type = value
   }
+
   static getWidthScale(type) {
     switch (type) {
       case ArrowType.DEFAULT:
@@ -1441,6 +1753,7 @@ class ArrowExtension extends MarkupExtension {
         return 1
     }
   }
+
   static getLengthScale(type) {
     switch (type) {
       case ArrowType.DEFAULT:
@@ -1463,6 +1776,7 @@ class ArrowExtension extends MarkupExtension {
         return 1
     }
   }
+
   static createArrow(type, stroke = Stroke.BLACK, fill = Color.BLACK, scale = 1, cropLength = 0) {
     return new Arrow({
       cropLength: cropLength,
@@ -1473,6 +1787,7 @@ class ArrowExtension extends MarkupExtension {
       widthScale: scale * ArrowExtension.getWidthScale(type)
     })
   }
+
   provideValue() {
     let stroke = this._stroke
     if (this.scale !== 1 && stroke) {
@@ -1483,50 +1798,71 @@ class ArrowExtension extends MarkupExtension {
     return ArrowExtension.createArrow(this._type, stroke, this._fill, this._scale, this._cropLength)
   }
 }
+
+
 // region Compatibility classes for Template Node Style
+
 export class TemplateNodeStyleExtension extends MarkupExtension {
   _normalizedOutline
+
   get normalizedOutline() {
     return this._normalizedOutline
   }
+
   set normalizedOutline(value) {
     this._normalizedOutline = value
   }
+
   _minimumSize = Size.EMPTY
+
   get minimumSize() {
     return this._minimumSize
   }
+
   set minimumSize(value) {
     this._minimumSize = value
   }
+
   _insets = new Insets(5)
+
   get insets() {
     return this._insets
   }
+
   set insets(value) {
     this._insets = value
   }
+
   _styleResourceKey = ''
+
   get styleResourceKey() {
     return this._styleResourceKey
   }
+
   set styleResourceKey(value) {
     this._styleResourceKey = value
   }
+
   _cssClass = ''
+
   get cssClass() {
     return this._cssClass
   }
+
   set cssClass(value) {
     this._cssClass = value
   }
+
   _styleTag
+
   get styleTag() {
     return this._styleTag
   }
+
   set styleTag(value) {
     this._styleTag = value
   }
+
   provideValue(serviceProvider) {
     const style = new TemplateNodeStyle({
       renderTemplateId: this.styleResourceKey,
@@ -1539,51 +1875,72 @@ export class TemplateNodeStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 //endregion
+
 // region Compatibility classes for Template Label Style
+
 export class TemplateLabelStyleExtension extends MarkupExtension {
   _normalizedOutline
+
   get normalizedOutline() {
     return this._normalizedOutline
   }
+
   set normalizedOutline(value) {
     this._normalizedOutline = value
   }
+
   _preferredSize = Size.EMPTY
+
   get preferredSize() {
     return this._preferredSize
   }
+
   set preferredSize(value) {
     this._preferredSize = value
   }
+
   _autoFlip = true
+
   get autoFlip() {
     return this._autoFlip
   }
+
   set autoFlip(value) {
     this._autoFlip = value
   }
+
   _styleResourceKey = ''
+
   get styleResourceKey() {
     return this._styleResourceKey
   }
+
   set styleResourceKey(value) {
     this._styleResourceKey = value
   }
+
   _cssClass = ''
+
   get cssClass() {
     return this._cssClass
   }
+
   set cssClass(value) {
     this._cssClass = value
   }
+
   _styleTag
+
   get styleTag() {
     return this._styleTag
   }
+
   set styleTag(value) {
     this._styleTag = value
   }
+
   provideValue(serviceProvider) {
     const style = new TemplateLabelStyle({
       renderTemplateId: this.styleResourceKey,
@@ -1596,50 +1953,71 @@ export class TemplateLabelStyleExtension extends MarkupExtension {
     return style
   }
 }
+
+
 // region Compatibility classes for Template Port Style
+
 export class TemplatePortStyleExtension extends MarkupExtension {
   _normalizedOutline
+
   get normalizedOutline() {
     return this._normalizedOutline
   }
+
   set normalizedOutline(value) {
     this._normalizedOutline = value
   }
+
   _renderSize = new Size(5, 5)
+
   get renderSize() {
     return this._renderSize
   }
+
   set renderSize(value) {
     this._renderSize = value
   }
+
   _offset = Point.ORIGIN
+
   get offset() {
     return this._offset
   }
+
   set offset(value) {
     this._offset = value
   }
+
   _styleResourceKey = ''
+
   get styleResourceKey() {
     return this._styleResourceKey
   }
+
   set styleResourceKey(value) {
     this._styleResourceKey = value
   }
+
   _cssClass = ''
+
   get cssClass() {
     return this._cssClass
   }
+
   set cssClass(value) {
     this._cssClass = value
   }
+
   _styleTag
+
   get styleTag() {
     return this._styleTag
   }
+
   set styleTag(value) {
     this._styleTag = value
   }
+
   provideValue(serviceProvider) {
     const style = new TemplatePortStyle({
       renderTemplateId: this.styleResourceKey,
@@ -1652,4 +2030,5 @@ export class TemplatePortStyleExtension extends MarkupExtension {
     return style
   }
 }
+
 //endregion

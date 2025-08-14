@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { FreeNodePortLocationModel } from '@yfiles/yfiles'
 import { CustomPortStyle } from './CustomPortStyle'
+
 export function createNodesAndPorts(graph) {
   const node1 = graph.createNode()
   const node2 = graph.createNodeAt([100, 150])
@@ -36,10 +37,12 @@ export function createNodesAndPorts(graph) {
   graph.createEdge(node1.ports.get(2), node2.ports.get(3))
   graph.createEdge(node2.ports.get(1), node1.ports.get(4))
 }
+
 function createPorts(owner, graph) {
   const defaultPortStyle = new CustomPortStyle()
   const largePortStyle = new CustomPortStyle(10)
   const smallPortStyle = new CustomPortStyle(4)
+
   graph.addPort({
     owner: owner,
     locationParameter: FreeNodePortLocationModel.CENTER,

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { Simulator } from './Simulator'
+
 /**
  * Represents a connection in the network.
  */
@@ -44,6 +45,7 @@ export class Connection {
     this.sender = sender
     this.receiver = receiver
   }
+
   /**
    * The load of this connection.
    * Load is a value between 0 and 1 that indicates how utilized the connection is (with 0 being
@@ -51,6 +53,7 @@ export class Connection {
    * in the {@link Simulator}.
    */
   load = 0
+
   /**
    * Gets a value indicating whether this connection is enabled.
    * A connection is enabled if and only if its attached devices are enabled and have not failed.
@@ -60,23 +63,29 @@ export class Connection {
     const isReceiverWorking = this.receiver.enabled && !this.receiver.failed
     return isSenderWorking && isReceiverWorking
   }
+
   #failed = false
+
   /**
    * Gets a value indicating whether this connection has failed.
    */
   get failed() {
     return this.#failed
   }
+
   fail() {
     this.#failed = true
   }
+
   repair() {
     this.#failed = false
   }
+
   /**
    * Value indicating whether this connection is delivering a packet in forward direction.
    */
   hasForwardPacket = false
+
   /**
    * Value indicating whether this connection is delivering a packet in backwards direction.
    */

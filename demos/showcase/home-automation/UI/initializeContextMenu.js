@@ -46,16 +46,20 @@ import RedoIcon from '../../../resources/icons/redo-16.svg'
 import FitContentIcon from '../../../resources/icons/fit-16.svg'
 import { runAutoLayout } from '../utils/customTriggers'
 import LayoutIcon from '../../../resources/icons/play2-16.svg'
+
 export function initializeContextMenu(graphComponent) {
   const graphEditorInputMode = graphComponent.inputMode
+
   // handle context menus only for nodes
   graphEditorInputMode.contextMenuItems = GraphItemTypes.NODE
+
   // Add an event listener that populates the context menu according to the hit elements,
   // or cancels showing a menu.
   graphEditorInputMode.addEventListener('populate-item-context-menu', (args) =>
     populateContextMenu(graphComponent, args)
   )
 }
+
 function populateContextMenu(graphComponent, evt) {
   const item = evt.item
   // Only show the context menu on nodes and the empty canvas.
@@ -65,10 +69,13 @@ function populateContextMenu(graphComponent, evt) {
   }
   return
 }
+
 function getMenuComponent(graphComponent, node, queryLocation) {
   const menuDiv = document.createElement('div')
   menuDiv.classList.add('flow-context-menu')
+
   const contextMenuInputMode = graphComponent.inputMode.contextMenuInputMode
+
   const inputMode = graphComponent.inputMode
   if (graphComponent.selection.nodes.size > 0) {
     menuDiv.appendChild(
@@ -80,6 +87,7 @@ function getMenuComponent(graphComponent, node, queryLocation) {
         DeleteIcon
       )
     )
+
     menuDiv.appendChild(createSeparator())
     menuDiv.appendChild(
       createMenuItem(contextMenuInputMode, 'Copy', () => inputMode.copy(), false, CopyIcon)
@@ -108,6 +116,7 @@ function getMenuComponent(graphComponent, node, queryLocation) {
       )
     )
   }
+
   menuDiv.appendChild(createSeparator())
   const undoEngine = graphComponent.graph.undoEngine
   menuDiv.appendChild(
@@ -147,19 +156,23 @@ function getMenuComponent(graphComponent, node, queryLocation) {
       LayoutIcon
     )
   )
+
   return menuDiv
 }
+
 function createSeparator() {
   const separator = document.createElement('div')
   separator.setAttribute('class', 'flow-context-menu__separator')
   return separator
 }
+
 function createMenuItem(contextMenuInputMode, label, clickListener, disabled, icon) {
   const menuButton = document.createElement('button')
   menuButton.classList.add('flow-context-menu__item')
   if (disabled) {
     menuButton.classList.add('flow-context-menu__item-disabled')
   }
+
   if (clickListener !== null) {
     menuButton.addEventListener(
       'click',
@@ -170,17 +183,21 @@ function createMenuItem(contextMenuInputMode, label, clickListener, disabled, ic
       false
     )
   }
+
   const iconItem = document.createElement('div')
   iconItem.classList.add('flow-context-menu__item-icon')
   if (icon) {
     iconItem.style.backgroundImage = `url(${icon})`
   }
   menuButton.appendChild(iconItem)
+
   const buttonText = document.createElement('span')
   buttonText.innerHTML = label
   menuButton.appendChild(buttonText)
+
   return menuButton
 }
+
 /**
  * Updates the selection of the given node.
  */

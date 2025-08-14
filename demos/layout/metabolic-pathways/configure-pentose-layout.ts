@@ -63,7 +63,7 @@ export function configurePentosePhosphateLayout(graphComponent: GraphComponent):
   })
 
   // create the layout data to assign different edge lengths for edges attached to enzymes
-  // and to add node halos to reaction nodes
+  // and to add margins to reaction nodes
   const organicLayoutData = new OrganicLayoutData({
     preferredEdgeLengths: (edge) =>
       getType(edge.sourceNode) === NodeTypes.ENZYME || getType(edge.targetNode) === NodeTypes.ENZYME

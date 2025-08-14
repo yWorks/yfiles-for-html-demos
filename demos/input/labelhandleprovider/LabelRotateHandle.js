@@ -46,6 +46,7 @@ import {
   Size
 } from '@yfiles/yfiles'
 import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectangleRendererBase'
+
 /**
  * A custom {@link IHandle} implementation that implements the functionality needed for rotating a label.
  */
@@ -58,6 +59,7 @@ export class LabelRotateHandle extends BaseClass(IHandle) {
   up = null
   rotationCenter = null
   rotationIndicator = null
+
   /**
    * Creates a rotate handler for the given label.
    * @param label The given label
@@ -68,27 +70,32 @@ export class LabelRotateHandle extends BaseClass(IHandle) {
     this.label = label
     this.inputModeContext = context
   }
+
   /**
    * Gets the type of the handler.
    */
   get type() {
     return HandleType.CUSTOM3
   }
+
   /**
    * Returns the cursor object.
    */
   get cursor() {
     return Cursor.CROSSHAIR
   }
+
   get tag() {
     return null
   }
+
   /**
    * Returns the handler's location.
    */
   get location() {
     return this.handleLocation
   }
+
   /**
    * Invoked when dragging is about to start.
    * @param context The context to retrieve information
@@ -100,12 +107,14 @@ export class LabelRotateHandle extends BaseClass(IHandle) {
     const labelLayout = this.label.layout
     this.dummyLocation = labelLayout.anchor
     this.up = labelLayout.upVector
+
     this.rotationCenter = labelLayout.center
     const canvasComponent = context.canvasComponent
     if (canvasComponent !== null) {
       this.createAngleIndicator(canvasComponent)
     }
   }
+
   /**
    * Creates the indicator that shows the rotation angle of the label during drag.
    */
@@ -117,6 +126,7 @@ export class LabelRotateHandle extends BaseClass(IHandle) {
       renderer
     )
   }
+
   /**
    * Invoked when an element has been dragged and its position should be updated.
    * @param context The context to retrieve information
@@ -126,15 +136,20 @@ export class LabelRotateHandle extends BaseClass(IHandle) {
   handleMove(context, originalLocation, newLocation) {
     // calculate the up vector
     this.up = newLocation.subtract(this.rotationCenter).normalized
+
     // and the anchor point
     const preferredSize = this.label.preferredSize
+
     const p2X = -preferredSize.width * 0.5
     const p2Y = preferredSize.height * 0.5
+
     const anchorX = this.rotationCenter.x - p2X * this.up.y - p2Y * this.up.x
     const anchorY = this.rotationCenter.y - (p2Y * this.up.y - p2X * this.up.x)
+
     // calculate the new location
     this.dummyLocation = new Point(anchorX, anchorY)
   }
+
   /**
    * Invoked when dragging has canceled.
    * @param context The context to retrieve information
@@ -149,6 +164,7 @@ export class LabelRotateHandle extends BaseClass(IHandle) {
     }
     this.rotationIndicator = null
   }
+
   /**
    * Invoked when dragging has finished.
    * @param context The context to retrieve information
@@ -167,6 +183,7 @@ export class LabelRotateHandle extends BaseClass(IHandle) {
     }
     this.cancelDrag(context, originalLocation)
   }
+
   /**
    * Returns the current label layout.
    */
@@ -182,11 +199,13 @@ export class LabelRotateHandle extends BaseClass(IHandle) {
       this.up.y
     )
   }
+
   /**
    * This implementation does nothing special when clicked.
    */
   handleClick(evt) {}
 }
+
 /**
  * Represents the new resize point for the given handler.
  */
@@ -200,6 +219,7 @@ class LabelRotateHandleLivePoint extends BaseClass(IPoint) {
     super()
     this.handle = handle
   }
+
   /**
    * Returns the x-coordinate of the location of the handle from the anchor, the size and the orientation.
    */
@@ -207,6 +227,7 @@ class LabelRotateHandleLivePoint extends BaseClass(IPoint) {
     const { anchor, up, preferredSize, offset } = this.getPositionInfo()
     return anchor.x + up.x * (preferredSize.height + offset) + -up.y * (preferredSize.width * 0.5)
   }
+
   /**
    * Returns the y-coordinate of the location of the handle from the anchor, the size and the orientation.
    */
@@ -214,6 +235,7 @@ class LabelRotateHandleLivePoint extends BaseClass(IPoint) {
     const { anchor, up, preferredSize, offset } = this.getPositionInfo()
     return anchor.y + up.y * (preferredSize.height + offset) + up.x * (preferredSize.width * 0.5)
   }
+
   /**
    * Prepares all relevant information needed to calculate the position of the handle.
    */
@@ -225,6 +247,7 @@ class LabelRotateHandleLivePoint extends BaseClass(IPoint) {
     return { anchor, up, preferredSize, offset: 20 }
   }
 }
+
 class RotatedRectangleRenderer extends OrientedRectangleRendererBase {
   createIndicatorElement(_context, size, _renderTag) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -235,11 +258,13 @@ class RotatedRectangleRenderer extends OrientedRectangleRendererBase {
     rect.setAttribute('fill', 'none')
     return rect
   }
+
   updateIndicatorElement(_context, size, _renderTag, oldSvgElement) {
     oldSvgElement.setAttribute('width', size.width.toString())
     oldSvgElement.setAttribute('height', size.height.toString())
     return oldSvgElement
   }
+
   getLayout(renderTag) {
     const handleLocation = renderTag.dummyLocation
     const handleSize = renderTag.label.preferredSize

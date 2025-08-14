@@ -32,6 +32,7 @@
 export function getAirportData(node) {
   return node.tag
 }
+
 /**
  * Returns the business data for a connection between airports type-safe.
  */

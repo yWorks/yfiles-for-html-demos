@@ -26,15 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
     include: ['test/*'],
     testTimeout: 60_000,
     hookTimeout: 60_000,
-    coverage: {
-      provider: 'v8'
-    }
+    coverage: { provider: 'v8' }
   }
 })

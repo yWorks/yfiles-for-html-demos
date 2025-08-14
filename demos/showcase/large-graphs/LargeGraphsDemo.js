@@ -36,6 +36,7 @@ import {
   License,
   NodeReshapeHandleProvider
 } from '@yfiles/yfiles'
+
 import { RenderingTypesManager } from './RenderingTypesManager'
 import {
   HierarchicalDemoConfiguration,
@@ -49,25 +50,32 @@ import {
   checkWebGL2Support,
   finishLoading
 } from '@yfiles/demo-resources/demo-page'
+
 let renderingTypesManager = null
+
 async function run() {
   if (!checkWebGL2Support()) {
     return
   }
+
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
   configureInteraction(graphComponent)
   initToolbar(graphComponent)
+
   await loadGraph(graphComponent, new HierarchicalDemoConfiguration())
+
   initGraphInformationUI(graphComponent)
   initRenderingInformationUI(graphComponent)
 }
+
 /**
  * Loads the graph using the specified {@link DemoConfiguration} and initializes
  * the {@link RenderingTypesManager}.
  */
 async function loadGraph(graphComponent, config) {
   const graph = graphComponent.graph
+
   if (renderingTypesManager) {
     /**
      * A RenderingTypesManager was instantiated already, which means we are switching from
@@ -78,6 +86,7 @@ async function loadGraph(graphComponent, config) {
     renderingTypesManager.dispose()
     graph.clear()
   }
+
   await config.initializeStyleDefaults(graph)
   const svgThresholdSelect = document.querySelector('#svgThreshold')
   const newIndex = Array.from(svgThresholdSelect.options).findIndex(
@@ -91,25 +100,31 @@ async function loadGraph(graphComponent, config) {
     config.edgeStyleProvider,
     config.nodeCreator
   )
+
   await config.loadGraph(graphComponent)
+
   void graphComponent.fitGraphBounds()
+
   renderingTypesManager.registerZoomChangedListener()
   renderingTypesManager.registerItemCreatedListeners()
+
   graph.undoEngineEnabled = true
   if (graph.undoEngine) {
     graph.undoEngine.clear()
   }
+
   initRenderingInformationUI(graphComponent)
 }
+
 /**
  * Configures the interaction options with the graph
  */
 function configureInteraction(graphComponent) {
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowClipboardOperations: true
-  })
+  graphComponent.inputMode = new GraphEditorInputMode({ allowClipboardOperations: true })
+
   // Disable moving of individual edge segments
   graphComponent.graph.decorator.edges.positionHandler.hide()
+
   graphComponent.graph.decorator.nodes.reshapeHandleProvider.addFactory((node) => {
     const keepAspectRatio = new NodeReshapeHandleProvider(
       node,
@@ -120,6 +135,7 @@ function configureInteraction(graphComponent) {
     return keepAspectRatio
   })
 }
+
 /**
  * Registers listeners to the graph component's input mode
  * that trigger the update of the graph information on the
@@ -127,18 +143,23 @@ function configureInteraction(graphComponent) {
  */
 function initGraphInformationUI(graphComponent) {
   const inputMode = graphComponent.inputMode
+
   const updateGraphInformationListener = () => {
     updateGraphInformation(graphComponent.graph)
   }
+
   inputMode.addEventListener('node-created', updateGraphInformationListener)
   inputMode.createEdgeInputMode.addEventListener('edge-created', updateGraphInformationListener)
   inputMode.addEventListener('deleted-item', updateGraphInformationListener)
+
   updateGraphInformation(graphComponent.graph)
 }
+
 function updateGraphInformation(graph) {
   document.querySelector('#numberNodes').textContent = String(graph.nodes.size)
   document.querySelector('#numberEdges').textContent = String(graph.edges.size)
 }
+
 /**
  * Initializes the UI elements that display information about the current rendering type
  * and zoom level.
@@ -148,6 +169,7 @@ function initRenderingInformationUI(graphComponent) {
     updateRenderingInformationUI(graphComponent)
   })
   updateRenderingInformationUI(graphComponent)
+
   // Show a popup when the rendering type changes
   renderingTypesManager.setRenderingTypeChangedListener((newMode) => {
     const thresholdPercent = Math.floor(renderingTypesManager.svgThreshold * 100)
@@ -162,6 +184,7 @@ function initRenderingInformationUI(graphComponent) {
     }, 3000)
   })
 }
+
 /**
  * Updates the display of zoom and rendering type on the left-hand side of the demo
  */
@@ -170,13 +193,16 @@ function updateRenderingInformationUI(graphComponent) {
   document.querySelector('#zoomLevel').textContent = zoomPercent.toString()
   document.querySelector('#renderType').textContent = renderingTypesManager.currentRenderingType
 }
+
 function setUIDisabled(disabled) {
   const popup = document.querySelector('#loadingPopup')
   popup.className = disabled ? 'visible' : ''
+
   document.querySelector('#sampleSelection').disabled = disabled
   document.querySelector('#svgThreshold').disabled = disabled
   return new Promise((resolve) => setTimeout(resolve, 0))
 }
+
 /**
  * Wires up the toolbar UI elements
  */
@@ -188,6 +214,7 @@ function initToolbar(graphComponent) {
     sampleSelect.disabled = true
     const hierarchicalOrganicDescription = document.querySelector('#hierarchicalOrganic')
     const orgChartDescription = document.querySelector('#orgChart')
+
     const select = e.target
     document.querySelector('#sampleName').innerText = select.value
     switch (select.value) {
@@ -218,6 +245,7 @@ function initToolbar(graphComponent) {
     await setUIDisabled(false)
   })
   addNavigationButtons(sampleSelect)
+
   const svgThresholdSelect = document.querySelector('#svgThreshold')
   addOptions(
     svgThresholdSelect,
@@ -234,4 +262,5 @@ function initToolbar(graphComponent) {
   })
   addNavigationButtons(svgThresholdSelect, false)
 }
+
 run().then(finishLoading)

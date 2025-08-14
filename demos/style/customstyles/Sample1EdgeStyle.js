@@ -44,15 +44,18 @@ import {
   Rect,
   SvgVisual
 } from '@yfiles/yfiles'
+
 import AnimatedLinearGradient from './AnimatedLinearGradient'
 import { Sample1Arrow } from './Sample1Arrow'
 import { SVGNS } from './Namespaces'
+
 /**
  * An example of a custom edge style based on {@link EdgeStyleBase}.
  */
 export class Sample1EdgeStyle extends EdgeStyleBase {
   arrows = new Sample1Arrow()
   pathThickness = 3
+
   /**
    * Creates the visual for an edge.
    * @see Overrides {@link EdgeStyleBase.createVisual}
@@ -67,6 +70,7 @@ export class Sample1EdgeStyle extends EdgeStyleBase {
     this.render(context, visual, edge)
     return visual
   }
+
   /**
    * Re-renders the edge using the old visual for performance reasons.
    * @see Overrides {@link EdgeStyleBase.updateVisual}
@@ -77,6 +81,7 @@ export class Sample1EdgeStyle extends EdgeStyleBase {
     const oldCache = oldVisual.tag
     // get the data for the new visual
     const newCache = this.createRenderDataCache(context, edge)
+
     // check if something changed
     if (!newCache.stateEquals(oldCache)) {
       // more than only the path changed - re-render the visual
@@ -85,6 +90,7 @@ export class Sample1EdgeStyle extends EdgeStyleBase {
       this.render(context, oldVisual, edge)
       return oldVisual
     }
+
     if (!newCache.pathEquals(oldCache)) {
       oldVisual.tag = newCache
       // only the path changed - update the old visual
@@ -92,6 +98,7 @@ export class Sample1EdgeStyle extends EdgeStyleBase {
     }
     return oldVisual
   }
+
   /**
    * Creates an object containing all necessary data to create an edge visual.
    */
@@ -104,19 +111,24 @@ export class Sample1EdgeStyle extends EdgeStyleBase {
       this.getPath(edge)
     )
   }
+
   /**
    * Creates the visual appearance of an edge.
    */
   render(context, visual, edge) {
     const cache = visual.tag
     const container = visual.svgElement
+
     if (!cache.path) {
       return
     }
+
     const path = cache.path.createSvgPath()
+
     path.setAttribute('fill', 'none')
     path.setAttribute('stroke-width', cache.thickness.toString())
     path.setAttribute('stroke-linejoin', 'round')
+
     if (cache.selected) {
       // Fill for selected state
       AnimatedLinearGradient.applyToElement(context, path)
@@ -124,10 +136,13 @@ export class Sample1EdgeStyle extends EdgeStyleBase {
       // Fill for non-selected state
       path.setAttribute('stroke', cache.color)
     }
+
     container.appendChild(path)
+
     // add the arrows to the container
     super.addArrows(context, container, edge, cache.path, this.arrows, this.arrows)
   }
+
   /**
    * Updates the edge path data as well as the arrow positions of the visuals stored in `container`.
    */
@@ -139,17 +154,22 @@ export class Sample1EdgeStyle extends EdgeStyleBase {
       this.render(context, oldVisual, edge)
       return
     }
+
     const cache = oldVisual.tag
+
     if (cache.path) {
       const path = container.childNodes[0]
+
       const updatedPath = cache.path.createSvgPath()
       path.setAttribute('d', updatedPath.getAttribute('d'))
+
       // update the arrows
       super.updateArrows(context, container, edge, cache.path, this.arrows, this.arrows)
     } else {
       Sample1EdgeStyle.clear(container)
     }
   }
+
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
    * @param edge The edge to create the path for.
@@ -164,9 +184,11 @@ export class Sample1EdgeStyle extends EdgeStyleBase {
       path.lineTo(bend.location)
     })
     path.lineTo(edge.targetPort.location)
+
     // shorten the path in order to provide room for drawing the arrows.
     return super.cropPath(edge, this.arrows, this.arrows, path)
   }
+
   /**
    * Determines whether the visual representation of the edge has been hit at the given location.
    * Overridden method to include the {@link Sample1EdgeStyle.pathThickness} and the HitTestRadius specified in
@@ -178,6 +200,7 @@ export class Sample1EdgeStyle extends EdgeStyleBase {
     const path = this.getPath(edge)
     return !!path && path.pathContains(location, context.hitTestRadius + this.pathThickness * 0.5)
   }
+
   /**
    * Determines whether the edge is visible in the given rectangle.
    * Overridden method to improve performance of the super implementation
@@ -191,6 +214,7 @@ export class Sample1EdgeStyle extends EdgeStyleBase {
       .getVisibilityTestable(edge, helperEdgeStyle)
       .isVisible(context, enlargedRectangle)
   }
+
   /**
    * This implementation of the look-up provides a custom implementation of the
    * {@link ISelectionRenderer} interface that better suits to this style.
@@ -198,12 +222,12 @@ export class Sample1EdgeStyle extends EdgeStyleBase {
    */
   lookup(edge, type) {
     if (type === ISelectionRenderer) {
-      return new EdgeStyleIndicatorRenderer({
-        edgeStyle: new PolylineEdgeStyle({ stroke: null })
-      })
+      return new EdgeStyleIndicatorRenderer({ edgeStyle: new PolylineEdgeStyle({ stroke: null }) })
     }
+
     return super.lookup(edge, type)
   }
+
   static getColor(style, node) {
     if (typeof style.getNodeColor !== 'undefined') {
       return style.getNodeColor(node)
@@ -213,16 +237,19 @@ export class Sample1EdgeStyle extends EdgeStyleBase {
       return '#0082b4'
     }
   }
+
   static clear(container) {
     while (container.lastChild) {
       container.removeChild(container.lastChild)
     }
   }
+
   static isSelected(context, edge) {
     const component = context.canvasComponent
     return component instanceof GraphComponent && component.selection.includes(edge)
   }
 }
+
 class EdgeRenderDataCache {
   thickness
   selected
@@ -234,6 +261,7 @@ class EdgeRenderDataCache {
     this.color = color
     this.path = path
   }
+
   stateEquals(other) {
     return (
       !!other &&
@@ -242,10 +270,12 @@ class EdgeRenderDataCache {
       other.color === this.color
     )
   }
+
   pathEquals(other) {
     return !!other && !!other.path && !!this.path && other.path.hasSameValue(this.path)
   }
 }
+
 const helperEdgeStyle = new PolylineEdgeStyle({
   sourceArrow: IArrow.NONE,
   targetArrow: IArrow.NONE

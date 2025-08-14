@@ -141,11 +141,7 @@ export class OrgChartDemoConfiguration extends DemoConfiguration {
       const edgeColor = 'rgb(100,100,100)'
       graph.edgeDefaults.style = new PolylineEdgeStyle({
         stroke: `2px ${edgeColor}`,
-        targetArrow: new Arrow({
-          type: 'triangle',
-          stroke: edgeColor,
-          fill: edgeColor
-        }),
+        targetArrow: new Arrow({ type: 'triangle', stroke: edgeColor, fill: edgeColor }),
         smoothingLength: 10
       })
       resolve()
@@ -153,10 +149,7 @@ export class OrgChartDemoConfiguration extends DemoConfiguration {
   }
 
   protected createNode(graph: IGraph, _id: any, layout: Rect, nodeData: any) {
-    return graph.createNode({
-      layout: layout,
-      tag: nodeData.tag
-    })
+    return graph.createNode({ layout: layout, tag: nodeData.tag })
   }
 
   private getColor(status: string) {

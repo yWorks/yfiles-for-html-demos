@@ -35,15 +35,23 @@ import {
   configureNodeLayoutWithBinding,
   configureNodeLayoutWithProvider
 } from './configure-layout'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
+
 const graph = graphComponent.graph
+
 const graphBuilder = new GraphBuilder(graph)
+
 const nodesSource1 = configureNodeLayoutWithProvider(graphBuilder)
 configureBends(graphBuilder)
 const nodesSource2 = configureNodeLayoutWithBinding(graphBuilder)
 configureStyles([nodesSource1, nodesSource2])
+
 graphBuilder.buildGraph()
+
 fitGraphBounds(graphComponent)
+
 finishLoading()

@@ -33,12 +33,15 @@ import {
   License,
   Rect
 } from '@yfiles/yfiles'
+
 import { CustomNodeLabelModel, CustomNodeLabelModelParameter } from './CustomNodeLabelModel'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
+
 let graphComponent = null
+
 /**
  * This demo shows how to create and use a custom label model.
  */
@@ -47,9 +50,12 @@ async function run() {
   // initialize graph component
   graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
+
   initializeGraph()
+
   enableGraphML()
 }
+
 /**
  * Enables loading and saving the graph to GraphML.
  */
@@ -71,6 +77,7 @@ function enableGraphML() {
     await saveGraphML(graphComponent, 'customLabelModel.graphml', graphMLIOHandler)
   })
 }
+
 /**
  * Sets a custom node label model parameter instance for newly created
  * node labels in the graph, creates an example node with a label using
@@ -82,14 +89,18 @@ function initializeGraph() {
   // set the defaults for nodes
   initDemoStyles(graph)
   graph.nodeDefaults.labels.layoutParameter = new CustomNodeLabelModel().createParameter(0.25)
+
   // create graph
   const node1 = graph.createNode(new Rect(90, 90, 100, 100))
   const node2 = graph.createNode(new Rect(250, 90, 100, 100))
+
   const customNodeLabelModel = new CustomNodeLabelModel()
   customNodeLabelModel.candidateCount = 0
   customNodeLabelModel.offset = 20
   graph.addLabel(node1, 'Click and Drag', customNodeLabelModel.createParameter(0.25))
   graph.addLabel(node2, 'Click and Drag To Snap')
+
   graphComponent.fitGraphBounds()
 }
+
 run().then(finishLoading)

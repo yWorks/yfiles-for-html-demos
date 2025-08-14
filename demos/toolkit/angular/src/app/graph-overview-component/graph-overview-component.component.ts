@@ -50,7 +50,8 @@ export class GraphOverviewComponentComponent implements AfterViewInit {
   }
 
   private initializeOverview(graphComponent: GraphComponent): void {
-    // instantiate a new GraphOverviewComponent
+    // Instantiate a new GraphOverviewComponent
+    // See https://docs.yworks.com/yfileshtml/#/kb/article/848/Improving_performance_of_large_Angular_applications
     this.zone.runOutsideAngular(() => {
       this.graphOverviewComponent = new GraphOverviewComponent(
         '#graph-overview-component',

@@ -33,6 +33,7 @@ import {
   SimplePort,
   SvgVisual
 } from '@yfiles/yfiles'
+
 /**
  * A port candidate renderer using colored circles as visualizations.
  */
@@ -42,6 +43,7 @@ export class PortCandidateRenderer extends ObjectRendererBase {
   validFocusedStroke = '#FFFFFFB2'
   validNonFocusedFill = '#0B55177F'
   validNonFocusedStroke = '#FFFFFF4C'
+
   /**
    * Renders the port candidate as a colored circle.
    *
@@ -51,6 +53,7 @@ export class PortCandidateRenderer extends ObjectRendererBase {
   createVisual(context, renderTag) {
     const portCandidate = renderTag.portCandidate
     const current = renderTag.isCurrentCandidate
+
     const circleElement = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
     circleElement.setAttribute('r', `${this.radius}`)
     const location = context.worldToViewCoordinates(
@@ -58,14 +61,17 @@ export class PortCandidateRenderer extends ObjectRendererBase {
     )
     circleElement.setAttribute('cx', `${location.x}`)
     circleElement.setAttribute('cy', `${location.y}`)
+
     circleElement.setAttribute('fill', current ? this.validFocusedFill : this.validNonFocusedFill)
     circleElement.setAttribute(
       'stroke',
       current ? this.validFocusedStroke : this.validNonFocusedStroke
     )
+
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     context.viewTransform.applyTo(g)
     g.append(circleElement)
+
     return new SvgVisual(g)
   }
 }

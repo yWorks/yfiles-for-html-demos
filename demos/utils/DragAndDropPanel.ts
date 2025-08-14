@@ -244,10 +244,7 @@ export class DragAndDropPanel {
 
     let labelOwner: ILabelOwner
     if (originalLabel.owner instanceof IPort) {
-      labelOwner = graph.addPort({
-        owner: node,
-        style: IPortStyle.VOID_PORT_STYLE
-      })
+      labelOwner = graph.addPort({ owner: node, style: IPortStyle.VOID_PORT_STYLE })
     } else if (originalLabel.owner instanceof IEdge) {
       labelOwner = graph.createEdge(node, node, IEdgeStyle.VOID_EDGE_STYLE)
     } else {
@@ -287,10 +284,7 @@ export class DragAndDropPanel {
         ? graph.createEdge(node, node, IEdgeStyle.VOID_EDGE_STYLE)
         : node
 
-    graph.addPort({
-      owner: portOwner,
-      style: originalPort.style
-    })
+    graph.addPort({ owner: portOwner, style: originalPort.style })
 
     return this.exportAndWrap(
       graphComponent,
@@ -303,9 +297,7 @@ export class DragAndDropPanel {
    */
   private exportAndWrap(graphComponent: GraphComponent, tooltip?: string): HTMLDivElement {
     graphComponent.updateContentBounds(10)
-    const exporter = new SvgExport({
-      worldBounds: graphComponent.contentBounds
-    })
+    const exporter = new SvgExport({ worldBounds: graphComponent.contentBounds })
 
     exporter.scale = exporter.calculateScaleForWidth(
       Math.min(this.maxItemWidth, graphComponent.contentBounds.width)

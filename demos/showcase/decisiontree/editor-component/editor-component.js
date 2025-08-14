@@ -45,12 +45,16 @@ import { configureContextMenu } from './context-menu'
 import { GroupNodePortCandidateProvider } from './GroupNodePortCandidateProvider'
 import { updateButtonState } from '../switch-components-button/switch-components-button'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
+
 let rootNode
+
 const graphMLIOHandler = new GraphMLIOHandler()
+
 /**
  * Indicates whether a layout calculation is currently running
  */
 let runningLayout = false
+
 /**
  * Configures the editor component.
  * Event listeners are registered, highlights are added, and node and edge styling is specified.
@@ -59,25 +63,27 @@ let runningLayout = false
 export function initializeEditorComponent(graphComponent) {
   // initialize the input mode
   initializeInputModes(graphComponent)
+
   // configures a green outline as custom highlight for the root node of the decision tree
   // see also setAsRootNode action
   graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(
     (node) => node === rootNode,
     new NodeStyleIndicatorRenderer({
-      nodeStyle: new ShapeNodeStyle({
-        fill: null,
-        stroke: '5px rgb(0, 153, 51)'
-      }),
+      nodeStyle: new ShapeNodeStyle({ fill: null, stroke: '5px rgb(0, 153, 51)' }),
       zoomPolicy: 'world-coordinates',
       margins: 1.5
     })
   )
+
   // initialize the context menu
   configureContextMenu(graphComponent, setAsRootNode)
+
   // initialize the graph
   initializeGraph(graphComponent.graph)
+
   // update the toggle button in case an empty graphml was imported
   graphMLIOHandler.addEventListener('parsed', () => updateButtonState(graphComponent))
+
   // wire-up layout buttons
   document.querySelector('#layout').addEventListener('click', () => runLayout(graphComponent, true))
   document.querySelector('#open-file-button').addEventListener('click', async () => {
@@ -87,15 +93,18 @@ export function initializeEditorComponent(graphComponent) {
     await saveGraphML(graphComponent, 'decisionTree.graphml', graphMLIOHandler)
   })
 }
+
 /**
  * Initializes default styles and behavior for the given graph.
  */
 function initializeGraph(graph) {
   // set up the default demo styles
   initDemoStyles(graph)
+
   // set a default size for nodes
   graph.nodeDefaults.size = new Size(146, 35)
   graph.nodeDefaults.shareStyleInstance = false
+
   // and a style for the labels
   graph.nodeDefaults.labels.style = new LabelStyle({
     wrapping: 'wrap-character-ellipsis',
@@ -103,6 +112,7 @@ function initializeGraph(graph) {
     horizontalTextAlignment: 'center'
   })
   graph.nodeDefaults.labels.layoutParameter = StretchNodeLabelModel.CENTER
+
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     smoothingLength: 30,
     targetArrow: new Arrow({
@@ -113,22 +123,26 @@ function initializeGraph(graph) {
     }),
     stroke: colorSets['demo-palette-44'].stroke
   })
+
   // provide a single port at the top of the node for group nodes
   graph.decorator.nodes.portCandidateProvider.addFactory(
     (node) => graph.isGroupNode(node),
     (node) => new GroupNodePortCandidateProvider(node)
   )
 }
+
 /**
  * Creates an editor mode and registers it as the GraphComponent's input mode.
  */
 function initializeInputModes(graphComponent) {
   // Create an editor input mode
   const graphEditorInputMode = new GraphEditorInputMode()
+
   // refresh the graph layout after an edge has been created
   graphEditorInputMode.createEdgeInputMode.addEventListener('edge-created', async (evt) => {
     await runLayout(graphComponent, true, [evt.item.sourceNode, evt.item.targetNode])
   })
+
   // add listeners for the insertion/deletion of nodes to enable the button for returning to the decision tree
   graphEditorInputMode.addEventListener('deleted-selection', (args) => {
     if (rootNode && args.items.indexOf(rootNode) > -1) {
@@ -137,13 +151,16 @@ function initializeInputModes(graphComponent) {
     updateButtonState(graphComponent)
   })
   graphEditorInputMode.addEventListener('node-created', () => updateButtonState(graphComponent))
+
   graphComponent.inputMode = graphEditorInputMode
 }
+
 /**
  * Sets the given node as root node for the decision tree.
  */
 export function setAsRootNode(graphComponent, node) {
   rootNode = node
+
   // highlight the new root node
   const highlights = graphComponent.highlights
   highlights.clear()
@@ -151,9 +168,11 @@ export function setAsRootNode(graphComponent, node) {
     highlights.add(node)
   }
 }
+
 export function getRootNode() {
   return rootNode
 }
+
 /**
  * Calculate a new layout for the demo's model graph.
  */
@@ -161,15 +180,17 @@ async function runLayout(graphComponent, animated, incrementalNodes) {
   if (runningLayout) {
     return
   }
+
   setLayoutRunning(true, graphComponent)
-  const layout = new HierarchicalLayout({
-    fromSketchMode: !!incrementalNodes
-  })
+
+  const layout = new HierarchicalLayout({ fromSketchMode: !!incrementalNodes })
+
   const layoutData = new HierarchicalLayoutData()
   if (incrementalNodes) {
     // configure the incremental hints
     layoutData.incrementalNodes = incrementalNodes
   }
+
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
     layout,
@@ -183,6 +204,7 @@ async function runLayout(graphComponent, animated, incrementalNodes) {
     setLayoutRunning(false, graphComponent)
   }
 }
+
 /**
  * Reads the sample graph corresponding to the currently selected name from the demo's sample combobox.
  * @returns the graph when it is imported completely.
@@ -197,6 +219,7 @@ export async function readSampleGraph(graphComponent) {
   await graphComponent.fitGraphBounds()
   return graph
 }
+
 /**
  * Updates the demo's UI depending on whether a layout is currently calculated.
  * @param running true indicates that a layout is currently calculated

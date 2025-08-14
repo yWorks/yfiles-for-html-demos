@@ -44,11 +44,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import OpenInNew from '@mui/icons-material/Favorite'
 import { ReactComponentHtmlNodeStyleProps } from './ReactComponentHtmlNodeStyle'
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark'
-  }
-})
+const darkTheme = createTheme({ palette: { mode: 'dark' } })
 
 type NodeComponentProps = {
   color: string

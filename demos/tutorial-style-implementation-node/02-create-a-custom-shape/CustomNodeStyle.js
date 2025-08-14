@@ -27,22 +27,28 @@
  **
  ***************************************************************************/
 import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
+
 /**
  * A node style that renders a simple card shape with a tab.
  */
 export class CustomNodeStyle extends NodeStyleBase {
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
+
     const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     pathElement.setAttribute('d', createPathData(x, y, width, height))
     pathElement.setAttribute('fill', '#0b7189')
     pathElement.setAttribute('stroke', '#042d37')
+
     // wrap the SVG path into an SvgVisual
     return new SvgVisual(pathElement)
   }
 }
+
+
 const tabWidth = 50
 const tabHeight = 10
+
 /**
  * Creates the path data for the SVG path element.
  */
@@ -56,3 +62,4 @@ function createPathData(x, y, width, height) {
     `h ${-width} z`
   )
 }
+

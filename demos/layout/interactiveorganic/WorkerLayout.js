@@ -37,25 +37,28 @@ import {
 import licenseData from '../../../lib/license.json'
 import { GraphSynchronizer } from './GraphSynchronizer'
 import { InteractiveOrganicLayoutInputHelper } from './InteractiveOrganicLayoutInputHelper'
+
 // register the yFiles license in the worker as well
 License.value = licenseData
+
 // create a graph that is synchronized with the UI graph using the GraphSynchronizer class
 const graph = createWorkerGraph()
 const graphSynchronizer = new GraphSynchronizer(graph, (message) => postMessage(message))
+
 // initialize the interactive organic layout
 const layoutHelper = new InteractiveOrganicLayoutInputHelper(graph, {
-  layout: () =>
-    new InteractiveOrganicLayout({
-      stopDuration: '2s'
-    })
+  layout: () => new InteractiveOrganicLayout({ stopDuration: '2s' })
 })
+
 // Handle messages from the UI thread. Some messages are to configure the layout for the
 // current input gesture. The other messages are for the GraphSynchronizer.
 self.addEventListener('message', (event) => {
   if (typeof event.data !== 'object') {
     return
   }
+
   const message = event.data
+
   switch (message.type) {
     case 'start-layout':
       handleStartLayout()
@@ -77,34 +80,42 @@ self.addEventListener('message', (event) => {
       break
   }
 })
+
 // signal the UI thread the worker is all set-up
 postMessage({ type: 'worker-ready' })
+
 function handleStartLayout() {
   layoutHelper.startInterval()
 }
+
 function handleDragStarted(message) {
   const draggedNode = graphSynchronizer.getItem(message.nodeId)
   const draggedComponent = getNodesForIds(message.componentIds)
   layoutHelper.startDrag(draggedNode, draggedComponent)
 }
+
 function handleDragged(message) {
   const draggedNode = graphSynchronizer.getItem(message.nodeId)
   const draggedComponent = getNodesForIds(message.componentIds)
   layoutHelper.drag(draggedNode, draggedComponent, 0.01)
 }
+
 function handleDragCanceled(message) {
   const draggedNode = graphSynchronizer.getItem(message.nodeId)
   const draggedComponent = getNodesForIds(message.componentIds)
   layoutHelper.finishDrag(draggedNode, draggedComponent)
 }
+
 function handleDragFinished(message) {
   const draggedNode = graphSynchronizer.getItem(message.nodeId)
   const draggedComponent = getNodesForIds(message.componentIds)
   layoutHelper.finishDrag(draggedNode, draggedComponent)
 }
+
 function getNodesForIds(ids) {
   return ids.map((id) => graphSynchronizer.getItem(id))
 }
+
 /**
  * Creates a new {@link IGraph} instance and uses void styles, since we cannot
  * use any DOM APIs in a web worker.

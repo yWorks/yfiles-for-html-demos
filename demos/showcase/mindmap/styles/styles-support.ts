@@ -75,25 +75,13 @@ export function initializeStyles(): void {
   edgeStyles = [new MindMapEdgeStyle(25, 8), new MindMapEdgeStyle(8, 3), new MindMapEdgeStyle(4, 3)]
   labelStyles = [
     new MindMapIconLabelStyle(
-      new IconLabelStyle({
-        wrappedStyle: new LabelStyle({
-          font: '30px Arial'
-        })
-      })
+      new IconLabelStyle({ wrappedStyle: new LabelStyle({ font: '30px Arial' }) })
     ),
     new MindMapIconLabelStyle(
-      new IconLabelStyle({
-        wrappedStyle: new LabelStyle({
-          font: '18px Arial'
-        })
-      })
+      new IconLabelStyle({ wrappedStyle: new LabelStyle({ font: '18px Arial' }) })
     ),
     new MindMapIconLabelStyle(
-      new IconLabelStyle({
-        wrappedStyle: new LabelStyle({
-          font: '16px Arial'
-        })
-      })
+      new IconLabelStyle({ wrappedStyle: new LabelStyle({ font: '16px Arial' }) })
     )
   ]
 }

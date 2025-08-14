@@ -63,11 +63,14 @@ import {
   WebGLShapeNodeStyle,
   WebGLStroke
 } from '@yfiles/yfiles'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { enableSingleSelection } from './SingleSelectionHelper'
 import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let connectedComponents
 let currentSelectedItem
+
 /**
  * Starts the demo.
  */
@@ -75,24 +78,27 @@ async function run() {
   if (!checkWebGL2Support()) {
     return
   }
+
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
+
   graphComponent.graphModelManager = new WebGLGraphModelManager()
   graphComponent.selectionIndicatorManager = new WebGLSelectionIndicatorManager({
-    nodeStyle: new WebGLNodeIndicatorStyle({
-      type: 'solid',
-      primaryColor: '#666',
-      thickness: 2
-    })
+    nodeStyle: new WebGLNodeIndicatorStyle({ type: 'solid', primaryColor: '#666', thickness: 2 })
   })
+
   // create an initial sample graph
   await loadGraph(graphComponent)
   await graphComponent.fitGraphBounds()
+
   connectedComponents = calculateComponents(graphComponent.graph)
   setWebGLStyles(graphComponent, connectedComponents, 'ellipse')
+
   configureInteraction(graphComponent)
+
   configureUI(graphComponent)
 }
+
 /**
  * Configures the UI elements.
  */
@@ -100,10 +106,12 @@ function configureUI(graphComponent) {
   document.querySelector('#use-labels').addEventListener('change', (e) => {
     changeLabels(graphComponent, e.target.checked)
   })
+
   document.querySelector('#shape-select').addEventListener('change', (e) => {
     setWebGLStyles(graphComponent, connectedComponents, e.target.value)
     graphComponent.invalidate()
   })
+
   document
     .getElementById('animation-configuration')
     .querySelectorAll('select')
@@ -112,6 +120,7 @@ function configureUI(graphComponent) {
         changeAnimation(graphComponent, currentSelectedItem)
       })
     })
+
   const animationDurationSelect = document.querySelector('#animation-duration')
   const iterationCountSelect = document.querySelector('#iteration-count')
   const animationDirectionSelect = document.querySelector('#animation-direction')
@@ -119,6 +128,7 @@ function configureUI(graphComponent) {
   const beaconPulseCountSelect = document.querySelector('#pulse-count')
   const beaconPulseWidthSelect = document.querySelector('#pulse-width')
   const beaconSmoothCheckbox = document.querySelector('#beacon-smooth')
+
   const animations = ['fade', 'pulse', 'beacon', 'scale', 'shake']
   const options = new Map(
     animations.map((animation) => [animation, document.querySelector(`#${animation}-options`)])
@@ -126,24 +136,30 @@ function configureUI(graphComponent) {
   options.set('fade-effect', document.querySelector(`#fade-options`))
   options.set('pulse-effect', document.querySelector(`#pulse-options`))
   options.set('scale-effect', document.querySelector(`#scale-options`))
+
   const magnitudeOptions = document.querySelector('#magnitude-options')
   const animatedElementOptions = document.querySelector('#animated-elements-options')
+
   const useViewCoordinatesOptions = document.querySelector('#use-view-coordinates-options')
+
   const pulseTypeSelect = document.querySelector('#pulse-type')
   pulseTypeSelect.addEventListener('change', (e) => {
     const select = e.target
     updateMagnitudeOptions(select.value)
   })
+
   const scaleTypeSelect = document.querySelector('#scale-type')
   scaleTypeSelect.addEventListener('change', (e) => {
     const select = e.target
     updateMagnitudeOptions(select.value)
   })
+
   const baseAnimationSelect = document.querySelector('#base-animation')
   baseAnimationSelect.addEventListener('change', (e) => {
     const select = e.target
     const animationType = select.value
     const animationMagnitudeSelect = document.querySelector('#animation-magnitude')
+
     // hide all specific options
     for (const value of options.values()) {
       value.style.display = 'none'
@@ -154,7 +170,9 @@ function configureUI(graphComponent) {
         value.style.display = 'block'
       }
     }
+
     updateMagnitudeOptions(select.value)
+
     switch (animationType) {
       case 'pulse':
         magnitudeOptions.style.display = 'block'
@@ -249,6 +267,7 @@ function configureUI(graphComponent) {
     }
   })
 }
+
 /**
  * Sets appropriate values for the magnitude selection dropdown.
  */
@@ -258,7 +277,7 @@ function updateMagnitudeOptions(type) {
     case 'both':
     case 'shrink':
     case 'grow':
-      values = [1, 2, 5, 10, 20, 30, 60]
+      values = [2, 5, 10, 20, 30, 60]
       break
     case 'scale-shrink-relative':
     case 'shrink-relative':
@@ -266,16 +285,18 @@ function updateMagnitudeOptions(type) {
       break
     case 'scale-grow-relative':
     case 'grow-relative':
-      values = [1, 2, 3, 4]
+      values = [2, 3, 4, 5]
       break
     case 'both-relative':
-      values = [0, 0.5, 0.75, 1, 2, 3, 4]
+      values = [0.5, 0.75, 2, 3, 4, 5]
       break
     default:
       values = [1, 2, 5, 10, 20, 30, 60]
       break
   }
+
   const animationMagnitudeSelect = document.querySelector('#animation-magnitude')
+
   for (let i = animationMagnitudeSelect.options.length - 1; i >= 0; i--) {
     animationMagnitudeSelect.options.remove(i)
   }
@@ -287,11 +308,13 @@ function updateMagnitudeOptions(type) {
     animationMagnitudeSelect.options.add(option)
   }
 }
+
 /**
  * Sets the WebGL node and edge styles with a distinct color per graph component.
  */
 function setWebGLStyles(graphComponent, connectedComponents, nodeShape) {
   const graph = graphComponent.graph
+
   const fillColors = [
     Color.GOLD,
     Color.ROYAL_BLUE,
@@ -306,8 +329,10 @@ function setWebGLStyles(graphComponent, connectedComponents, nodeShape) {
     Color.DARK_CYAN,
     Color.DARK_BLUE
   ]
+
   const nodeLabelParameter =
     nodeShape === 'triangle' ? InteriorNodeLabelModel.BOTTOM : InteriorNodeLabelModel.CENTER
+
   connectedComponents.forEach((component, idx) => {
     const fillColor = fillColors[idx % connectedComponents.length]
     const strokeColor = strokeColors[idx % connectedComponents.length]
@@ -357,7 +382,9 @@ function setWebGLStyles(graphComponent, connectedComponents, nodeShape) {
     })
   })
 }
+
 const componentToAnimationMap = new Map()
+
 /**
  * Gets the component of the given item.
  */
@@ -376,6 +403,7 @@ function getComponentForItem(item) {
   }
   return null
 }
+
 /**
  * Starts a new animation.
  */
@@ -388,9 +416,12 @@ function startNewAnimation(graphComponent, component) {
   if (!animateNodes && !animateEdges && !animateLabels) {
     return Promise.resolve(false)
   }
+
   const animation = getAnimation(graphComponent.graphModelManager)
   componentToAnimationMap.set(component, animation)
+
   const gmm = graphComponent.graphModelManager
+
   const animations = [animation]
   const nodesToAnimate = applyToComponentMembers
     ? component.nodes
@@ -398,6 +429,7 @@ function startNewAnimation(graphComponent, component) {
   const edgesToAnimate = applyToComponentMembers
     ? component.edges
     : graphComponent.graph.edges.filter((edge) => !component.edges.has(edge))
+
   nodesToAnimate.forEach((node) => {
     if (animateNodes) {
       gmm.setAnimations(node, animations)
@@ -418,35 +450,39 @@ function startNewAnimation(graphComponent, component) {
       })
     }
   })
+
   return animation.start()
 }
+
 /**
  * Configures the interaction behaviour.
  */
 function configureInteraction(graphComponent) {
   // Allow only viewing of the graph
-  const gvim = new GraphViewerInputMode({
-    selectableItems: 'node',
-    focusableItems: 'none'
-  })
+  const gvim = new GraphViewerInputMode({ selectableItems: 'node', focusableItems: 'none' })
+
   gvim.itemHoverInputMode.enabled = true
   gvim.itemHoverInputMode.hoverItems =
     GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
+
   // Add the configured animation either to the whole component the hovered item
   // is part of or to the rest of the graph.
   gvim.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     stopAnimation(graphComponent, evt.oldItem)
     startAnimation(graphComponent, evt.item)
   })
+
   gvim.addEventListener('multi-selection-finished', (evt) => {
     const item = evt.selection.at(0)
     stopAnimation(graphComponent, currentSelectedItem)
     startAnimation(graphComponent, item)
     currentSelectedItem = item
   })
+
   graphComponent.inputMode = gvim
   enableSingleSelection(graphComponent)
 }
+
 /**
  * Stops the animation of the given component, if existent.
  */
@@ -455,6 +491,7 @@ function stopAnimation(graphComponent, item) {
   if (component == null) {
     return
   }
+
   const existingAnimation = componentToAnimationMap.get(component)
   existingAnimation?.stop().then((reachedFinalState) => {
     // If we haven't reached the final state, this is because we have been restarted in
@@ -466,6 +503,7 @@ function stopAnimation(graphComponent, item) {
     }
   })
 }
+
 /**
  * Starts a new animation for the given component, or re-starts the existing one.
  */
@@ -474,13 +512,16 @@ function startAnimation(graphComponent, item) {
   if (component == null) {
     return
   }
+
   const existingAnimation = componentToAnimationMap.get(component)
   if (existingAnimation) {
     existingAnimation.start().catch(console.log)
     return
   }
+
   startNewAnimation(graphComponent, component)
 }
+
 /**
  * Starts a new animation for the given component with the current UI settings.
  * If there is an existing component, that is stopped, first.
@@ -490,6 +531,7 @@ function changeAnimation(graphComponent, item) {
   if (component == null) {
     return
   }
+
   const existingAnimation = componentToAnimationMap.get(component)
   return existingAnimation == null
     ? startNewAnimation(graphComponent, component)
@@ -501,6 +543,7 @@ function changeAnimation(graphComponent, item) {
         }
       })
 }
+
 /**
  * Removes all animations from all nodes and edges.
  */
@@ -526,6 +569,7 @@ function removeAnimation(graphComponent, animation) {
     }
   })
 }
+
 /**
  * Returns whether to animate nodes.
  */
@@ -540,6 +584,7 @@ function getAnimateNodes() {
     config.baseAnimation == 'halo'
   return checkBox.checked || alwaysNode
 }
+
 /**
  * Returns an animation type depending on the inputs.
  * @param animationType The fade type
@@ -596,6 +641,7 @@ function getAnimationType(animationType) {
       return WebGLFadeAnimationType.FADE_OUT
   }
 }
+
 /**
  * Gets the colors from the fade to color pickers
  */
@@ -610,12 +656,15 @@ function getConfiguredFadeColors() {
     color2: Color.from(color2pickerValue)
   }
 }
+
 /**
  * Returns the configurations made in the UI in one object.
  */
 function getAnimationConfiguration() {
   const baseAnimation = document.querySelector('#base-animation').value
+
   const colors = getConfiguredFadeColors()
+
   let animationType
   switch (baseAnimation) {
     default:
@@ -642,6 +691,7 @@ function getAnimationConfiguration() {
   const animationDuration = document.querySelector('#animation-duration').value
   const count = document.querySelector('#iteration-count').value
   const iterationCount = count === 'infinity' ? 255 : parseInt(count)
+
   let animationDirection
   const direction = document.querySelector('#animation-direction').value
   switch (direction) {
@@ -659,6 +709,7 @@ function getAnimationConfiguration() {
       animationDirection = WebGLAnimationDirection.ALTERNATE_REVERSE
       break
   }
+
   let easing
   const easingValue = document.querySelector('#animation-easing').value
   switch (easingValue) {
@@ -682,11 +733,13 @@ function getAnimationConfiguration() {
       easing = WebGLAnimationEasing.EASE_OUT
       break
   }
+
   const colorFade =
     animationType === WebGLFadeAnimationType.FADE_TO_COLOR ||
     animationType === WebGLFadeAnimationType.FADE_FROM_COLOR ||
     animationType === WebGLFadeAnimationType.FADE_OUT ||
     animationType === WebGLFadeAnimationType.FADE_IN
+
   return {
     baseAnimation,
     animationType,
@@ -708,6 +761,7 @@ function getAnimationConfiguration() {
     smooth: Boolean(document.querySelector('#beacon-smooth').checked)
   }
 }
+
 /**
  * Returns the {@link WebGLAnimation} according to the currently configured values.
  */
@@ -719,6 +773,7 @@ function getAnimation(gmm) {
     iterationCount: config.iterationCount,
     direction: config.animationDirection
   })
+
   switch (config.baseAnimation) {
     case 'shake':
       return gmm.createShakeAnimation({
@@ -792,6 +847,7 @@ function getAnimation(gmm) {
       return gmm.createFadeAnimation(WebGLFadeAnimationType.FADE_OUT)
   }
 }
+
 /**
  * Loads the graph sample.
  */
@@ -800,6 +856,7 @@ async function loadGraph(graphComponent) {
   const graphMLIOHandler = new GraphMLIOHandler()
   await graphMLIOHandler.readFromURL(graph, 'resources/graph.graphml')
 }
+
 /**
  * Adds or removes labels from the graph
  */
@@ -820,6 +877,7 @@ function changeLabels(graphComponent, showLabels) {
     setWebGLStyles(graphComponent, connectedComponents, shape)
   }
 }
+
 /**
  * Calculate all connected components, i.e. all sub-graphs that only contain nodes that are pair-wise
  * connected by a path of edges.
@@ -836,10 +894,12 @@ function calculateComponents(graph) {
   })
   return components
 }
+
 function collectComponent(graph, node) {
   const component = new ConnectedComponent()
   node.tag = component
   component.nodes.add(node)
+
   const nodes = new Array(node)
   while (nodes.length > 0) {
     const currentNode = nodes.pop()
@@ -855,7 +915,9 @@ function collectComponent(graph, node) {
   }
   return component
 }
+
 run().then(finishLoading)
+
 /**
  * A data holder for the nodes and edges that belong to a connected component.
  */

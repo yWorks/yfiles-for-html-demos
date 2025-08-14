@@ -108,6 +108,7 @@ import {
   SubState,
   TaskType
 } from './bpmn-view'
+
 /**
  * Parser for the BPMN 2.0 abstract syntax.
  */
@@ -118,6 +119,7 @@ export class BpmnDiParser {
   static _PARSE_FOLDED_DIAGRAMS
   static _PARSE_ALL_LABELS
   static _REARRANGE_LABELS
+
   onSetNodeTag = null
   onSetEdgeTag = null
   // The current parsed BpmnDocument
@@ -131,18 +133,21 @@ export class BpmnDiParser {
   bpmnMessageSize = new Size(20, 14)
   // Maps a process BpmnElement to the BpmnElement that referenced this process in a 'processRef'
   processRefSource = new HashMap()
+
   /**
    * The master graph
    */
   get masterGraph() {
     return this.view.manager.masterGraph
   }
+
   /**
    * The current folding manager and current folding view
    */
   get manager() {
     return this.view.manager
   }
+
   /**
    * Flag that sets the rearrangement of Labels. Does not work properly with custom label bounds
    */
@@ -150,8 +155,10 @@ export class BpmnDiParser {
     if (typeof BpmnDiParser._REARRANGE_LABELS === 'undefined') {
       BpmnDiParser._REARRANGE_LABELS = false
     }
+
     return BpmnDiParser._REARRANGE_LABELS
   }
+
   /**
    * Flag that decides if Labels should be parsed, if bpmndi:BPMNLabel XML element is missing
    */
@@ -159,8 +166,10 @@ export class BpmnDiParser {
     if (typeof BpmnDiParser._PARSE_ALL_LABELS === 'undefined') {
       BpmnDiParser._PARSE_ALL_LABELS = true
     }
+
     return BpmnDiParser._PARSE_ALL_LABELS
   }
+
   /**
    * Flag that decides if the folded Diagrams inside a selected diagram should also be parsed
    */
@@ -168,8 +177,10 @@ export class BpmnDiParser {
     if (typeof BpmnDiParser._PARSE_FOLDED_DIAGRAMS === 'undefined') {
       BpmnDiParser._PARSE_FOLDED_DIAGRAMS = true
     }
+
     return BpmnDiParser._PARSE_FOLDED_DIAGRAMS
   }
+
   /**
    * Flag that decides if only top level diagrams can be selected, or all possible Diagrams in the file
    */
@@ -177,8 +188,10 @@ export class BpmnDiParser {
     if (typeof BpmnDiParser._SHOW_ALL_DIAGRAMS === 'undefined') {
       BpmnDiParser._SHOW_ALL_DIAGRAMS = false
     }
+
     return BpmnDiParser._SHOW_ALL_DIAGRAMS
   }
+
   /**
    * Flag, if false, no edges are parsed (Debug)
    */
@@ -186,8 +199,10 @@ export class BpmnDiParser {
     if (typeof BpmnDiParser._PARSE_EDGES === 'undefined') {
       BpmnDiParser._PARSE_EDGES = true
     }
+
     return BpmnDiParser._PARSE_EDGES
   }
+
   /**
    * Flag to determine, if external node Labels should be single- or multiline Implementation left unfinished, since
    * the right way to do would be overriding the renderer
@@ -196,14 +211,17 @@ export class BpmnDiParser {
     if (typeof BpmnDiParser._MULTI_LINE_EXTERIOR_NODE_LABELS === 'undefined') {
       BpmnDiParser._MULTI_LINE_EXTERIOR_NODE_LABELS = false
     }
+
     return BpmnDiParser._MULTI_LINE_EXTERIOR_NODE_LABELS
   }
+
   /**
    * Constructs a new instance of the parser
    */
   constructor() {
     this.initGenericLabelModel()
   }
+
   /**
    * Called to parse and build a graph.
    * @param graph The graph Instance build the diagram in.
@@ -232,15 +250,19 @@ export class BpmnDiParser {
       reuseMasterPorts: true,
       reuseFolderNodePorts: true
     })
+
     // Clear previous Graph
     this.masterGraph.clear()
+
     // Create BpmnDocument from XML Stream
     const parser = new DOMParser()
     const doc = parser.parseFromString(data, 'application/xml')
     this.document = new BpmnDocument(doc)
+
     const topLevelDiagrams = BpmnDiParser.SHOW_ALL_DIAGRAMS
       ? this.document.diagrams
       : this.document.topLevelDiagrams
+
     // Get the Diagram to load
     let diaToLoad
     return new Promise((resolve) => {
@@ -266,13 +288,12 @@ export class BpmnDiParser {
       }
     })
   }
+
   /**
    * Initialize the genericLabelModel Using a model with 32 positions (better than ExteriorNodeLabelModel which only has 8) to enable more options for customization in the user interface.
    */
   initGenericLabelModel() {
-    let exteriorNodeLabelModel = new ExteriorNodeLabelModel({
-      margins: 3
-    })
+    let exteriorNodeLabelModel = new ExteriorNodeLabelModel({ margins: 3 })
     this.compositeLabelModel = new CompositeLabelModel()
     this.compositeLabelModel.addParameter(
       exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.BOTTOM)
@@ -299,9 +320,7 @@ export class BpmnDiParser {
       exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.RIGHT)
     )
     // Big Insets
-    exteriorNodeLabelModel = new ExteriorNodeLabelModel({
-      margins: 18
-    })
+    exteriorNodeLabelModel = new ExteriorNodeLabelModel({ margins: 18 })
     this.compositeLabelModel.addParameter(
       exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.BOTTOM)
     )
@@ -326,6 +345,7 @@ export class BpmnDiParser {
     this.compositeLabelModel.addParameter(
       exteriorNodeLabelModel.createParameter(ExteriorNodeLabelModelPosition.RIGHT)
     )
+
     // Label Positions between existing exterior positions
     const freeNodeLabelModel = new FreeNodeLabelModel()
     // Small Insets
@@ -475,6 +495,7 @@ export class BpmnDiParser {
       )
     )
   }
+
   /**
    * Builds the first diagram via drawing the individual nodes and edges.
    * @param diagram The diagram to draw
@@ -482,6 +503,7 @@ export class BpmnDiParser {
    */
   loadDiagram(diagram, localRoot) {
     this.currentDiagram = diagram
+
     // iterate the BpmnElements of the BpmnPlane and build up all with a BpmnShape first and with a BpmnEdge afterwards
     const bpmnEdges = new List()
     const plane = diagram.plane
@@ -491,6 +513,7 @@ export class BpmnDiParser {
     for (const bpmnEdge of bpmnEdges) {
       this.buildEdge(bpmnEdge)
     }
+
     // If we collapse the shape before we add edges, edge labels disappear -> Folding after edge creation
     // But we have to rearrange Labels first, otherwise they are not in sync with the positions after folding.
     this.rearrange()
@@ -500,6 +523,7 @@ export class BpmnDiParser {
         view.collapse(shape.element.node)
       }
     }
+
     if (BpmnDiParser.PARSE_FOLDED_DIAGRAMS) {
       for (const child of diagram.children) {
         const collapsed = !view.isExpanded(child.value.node)
@@ -513,6 +537,7 @@ export class BpmnDiParser {
         }
       }
     }
+
     const groupNodes = this.masterGraph.nodes
       .filter((node) => node.style instanceof GroupNodeStyle)
       .toList()
@@ -533,6 +558,7 @@ export class BpmnDiParser {
       }
     }
   }
+
   /**
    * Returns the {@link BpmnShape} for the `element` in the context of this `plane`.
    * @param element The element to get the shape for.
@@ -541,6 +567,7 @@ export class BpmnDiParser {
   getShape(element, plane) {
     const referencedElement =
       element.name === 'participantRef' ? this.document.elements.get(element.value) : null
+
     // check if there is a valid shape for this element or the referenced one
     for (const shape of plane.listOfShapes) {
       if (this.isValidShape(shape, element, referencedElement, plane)) {
@@ -549,6 +576,7 @@ export class BpmnDiParser {
     }
     return null
   }
+
   /**
    * Returns whether the `shape` belongs to this `element` or `referencedElement` in the context of the `plane`.
    * @param shape The shape to check validity for.
@@ -577,6 +605,7 @@ export class BpmnDiParser {
     }
     return false
   }
+
   /**
    * Returns the {@link BpmnEdge} for the `element` in the context of this `plane`.
    * @param element The element to get an BpmnEdge for.
@@ -590,6 +619,7 @@ export class BpmnDiParser {
     }
     return null
   }
+
   /**
    * Recursively builds BPMN items from `element` and its descendents.
    * @param element The element to build an BPMN item for.
@@ -642,6 +672,7 @@ export class BpmnDiParser {
       }
     }
   }
+
   /**
    * Looks up the {@link BpmnElement} registered by `id`.
    * @param id The id to look up the element for.
@@ -669,6 +700,7 @@ export class BpmnDiParser {
     }
     return false
   }
+
   /**
    * Uses a labeling algorithm to rearrange the labels to reduce overlaps
    */
@@ -702,6 +734,7 @@ export class BpmnDiParser {
     labeling.defaultEdgeLabelingCosts.ambiguousPlacementCost = 1.0
     this.masterGraph.applyLayout(labeling, labelingData)
   }
+
   /**
    * Creates an {@link INode} on the graph
    * @param shape The {@link BpmnShape} to draw.
@@ -709,6 +742,7 @@ export class BpmnDiParser {
    */
   buildShape(shape, originalElement) {
     const bounds = new Rect(shape.x, shape.y, shape.width, shape.height)
+
     switch (shape.element.name) {
       // Gateways
       case 'exclusiveGateway':
@@ -736,6 +770,7 @@ export class BpmnDiParser {
       case 'complexGateway':
         this.buildGatewayNode(shape, bounds, GatewayType.COMPLEX)
         break
+
       // Activities - Tasks
       case 'task':
         this.buildTaskNode(shape, bounds, TaskType.ABSTRACT)
@@ -761,6 +796,7 @@ export class BpmnDiParser {
       case 'businessRuleTask':
         this.buildTaskNode(shape, bounds, TaskType.BUSINESS_RULE)
         break
+
       // Activities - subProcess
       case 'subProcess':
         if (shape.getAttribute('triggeredByEvent') === 'true') {
@@ -769,6 +805,7 @@ export class BpmnDiParser {
           this.buildSubProcessNode(shape, bounds, ActivityType.SUB_PROCESS)
         }
         break
+
       // Activities - Ad-Hoc Sub-Process
       case 'adHocSubProcess':
         if (shape.getAttribute('triggeredByEvent') === 'true') {
@@ -777,14 +814,17 @@ export class BpmnDiParser {
           this.buildSubProcessNode(shape, bounds, ActivityType.SUB_PROCESS)
         }
         break
+
       // Activities - Transaction
       case 'transaction':
         this.buildSubProcessNode(shape, bounds, ActivityType.TRANSACTION)
         break
+
       // Activities - callActivity
       case 'callActivity':
         this.buildSubProcessNode(shape, bounds, ActivityType.CALL_ACTIVITY)
         break
+
       // Events
       case 'startEvent':
         if (shape.getAttribute('isInterrupting') === 'true') {
@@ -808,6 +848,7 @@ export class BpmnDiParser {
       case 'intermediateCatchEvent':
         this.buildEventNode(shape, bounds, EventCharacteristic.CATCHING)
         break
+
       // Conversation
       case 'conversation':
         this.buildConversationNode(shape, bounds, ConversationType.CONVERSATION, null)
@@ -848,12 +889,14 @@ export class BpmnDiParser {
       case 'subConversation':
         this.buildConversationNode(shape, bounds, ConversationType.SUB_CONVERSATION, null)
         break
+
       // Choreography
       case 'choreographyTask':
       case 'subChoreography':
       case 'callChoreography':
         this.buildChoreographyNode(shape, bounds)
         break
+
       // Participants
       case 'participant': {
         const parent = originalElement.parent
@@ -911,6 +954,7 @@ export class BpmnDiParser {
       this.setNodeTag(shape, iNode)
     }
   }
+
   /**
    * Creates an {@link IEdge} on the graph
    * @param edge The {@link BpmnEdge} to draw.
@@ -965,9 +1009,11 @@ export class BpmnDiParser {
     if (iEdge) {
       // Create label & set style
       this.addEdgeLabel(edge)
+
       this.setEdgeTag(edge, iEdge)
     }
   }
+
   /**
    * Callback to add some of the {@link BpmnShape} or {@link BpmnElement} data to the {@link ITagOwner.tag} of `iNode`.
    * @param shape The bpmn shape used to create the node.
@@ -978,6 +1024,7 @@ export class BpmnDiParser {
       iNode.tag = this.onSetNodeTag(shape)
     }
   }
+
   /**
    * Callback to add some of the {@link BpmnEdge} or {@link BpmnElement} data to the {@link ITagOwner.tag} of `iEdge`.
    * @param edge The bpmn edge used to create the edge.
@@ -988,6 +1035,7 @@ export class BpmnDiParser {
       iEdge.tag = this.onSetEdgeTag(edge)
     }
   }
+
   /**
    * Builds a Gateway node
    */
@@ -996,12 +1044,15 @@ export class BpmnDiParser {
     const element = shape.element
     this.setParent(node, element.parent.node)
     element.node = node
+
     // dataAssociations point to invisible children of activities, therefore, the INode has to be linked there
     element.setINodeInputOutput(node)
+
     // Add Style
     const gatewayStyle = new GatewayNodeStyle()
     gatewayStyle.type = type
     this.masterGraph.setStyle(node, gatewayStyle)
+
     // Add Label
     const label = this.addNodeLabel(node, shape)
     if (shape.hasLabelPosition()) {
@@ -1013,6 +1064,7 @@ export class BpmnDiParser {
       }
     }
   }
+
   /**
    * Builds a Task node
    */
@@ -1021,8 +1073,10 @@ export class BpmnDiParser {
     const element = shape.element
     this.setParent(node, element.parent.node)
     element.node = node
+
     // dataAssociations point to invisible children of activities, therefore, the INode has to be linked there
     element.setINodeInputOutput(node)
+
     // Add Style
     const activityStyle = new ActivityNodeStyle()
     activityStyle.compensation = shape.getAttribute('isForCompensation') === 'true'
@@ -1030,29 +1084,36 @@ export class BpmnDiParser {
     activityStyle.activityType = ActivityType.TASK
     activityStyle.taskType = type
     this.masterGraph.setStyle(node, activityStyle)
+
     // Add Label
     const label = this.addNodeLabel(node, shape)
     this.setInternalLabelStyle(label)
   }
+
   /**
    * Builds a SubProcess node
    */
   buildSubProcessNode(shape, bounds, type) {
     const node = this.masterGraph.createNode(bounds)
     const element = shape.element
+
     // All SubProcess have to be GroupNodes, so they can be collapsed/expanded
     this.masterGraph.setIsGroupNode(node, true)
+
     this.setParent(node, element.parent.node)
     element.node = node
     const calledElement = { value: null }
+
     // If this subProcess is a callActivity and calls an existing process, link the Node there as well
     if (element.calledElement) {
       if (this.tryGetElementForId(element.calledElement, calledElement)) {
         calledElement.value.node = node
       }
     }
+
     // dataAssociations point to invisible children of activities, therefore, the INode has to be linked there
     element.setINodeInputOutput(node)
+
     const activityStyle = new ActivityNodeStyle()
     activityStyle.compensation = shape.getAttribute('isForCompensation') === 'true'
     activityStyle.loopCharacteristic = element.getLoopCharacteristics()
@@ -1061,14 +1122,17 @@ export class BpmnDiParser {
     this.setSubProcessLabelStyle(label)
     activityStyle.activityType = type
     activityStyle.triggerEventType = BpmnDiParser.getEventType(shape)
+
     if (shape.getAttribute('isInterrupting') === 'true') {
       activityStyle.triggerEventCharacteristic = EventCharacteristic.SUB_PROCESS_INTERRUPTING
     } else {
       activityStyle.triggerEventCharacteristic = EventCharacteristic.SUB_PROCESS_NON_INTERRUPTING
     }
     activityStyle.subState = SubState.DYNAMIC
+
     this.masterGraph.setStyle(node, activityStyle)
   }
+
   /**
    * Builds an Event node
    */
@@ -1077,13 +1141,16 @@ export class BpmnDiParser {
     const element = shape.element
     this.setParent(node, element.parent.node)
     element.node = node
+
     // dataAssociations point to invisible children of activities, therefore, the INode has to be linked there
     element.setINodeInputOutput(node)
+
     // Add Style
     const eventStyle = new EventNodeStyle()
     eventStyle.type = BpmnDiParser.getEventType(shape)
     eventStyle.characteristic = characteristic
     this.masterGraph.setStyle(node, eventStyle)
+
     // Add Label
     const label = this.addNodeLabel(node, shape)
     if (shape.hasLabelPosition()) {
@@ -1095,6 +1162,7 @@ export class BpmnDiParser {
       }
     }
   }
+
   /**
    * Builds a Boundary Event, realized as a port instead of a node
    */
@@ -1107,10 +1175,12 @@ export class BpmnDiParser {
       shape.getAttribute('cancelActivity') === 'false'
         ? EventCharacteristic.BOUNDARY_NON_INTERRUPTING
         : EventCharacteristic.BOUNDARY_INTERRUPTING
+
     const parentValue = parent.value
     if (!parentValue) {
       throw new Error('Shape with no parent')
     }
+
     const parentNode = parentValue.node
     if (!parentNode) {
       this.document.messages.add(
@@ -1118,9 +1188,12 @@ export class BpmnDiParser {
       )
       return
     }
+
     const element = shape.element
+
     // dataAssociations point to invisible children of Tasks, therefore, the INode has to be linked there
     element.setINodeInputOutput(parentNode)
+
     const port = this.masterGraph.addPortAt(
       parentNode,
       new Point(shape.x + shape.width / 2, shape.y + shape.height / 2),
@@ -1130,6 +1203,7 @@ export class BpmnDiParser {
     element.port = port
     element.node = parentNode
     const label = this.addNodeLabel(port, shape)
+
     if (shape.hasLabelPosition()) {
       this.setFixedBoundsLabelStyle(label, shape.labelBounds)
     } else {
@@ -1143,6 +1217,7 @@ export class BpmnDiParser {
       }
     }
   }
+
   /**
    * Builds a Conversation node
    */
@@ -1150,13 +1225,17 @@ export class BpmnDiParser {
     const node = this.masterGraph.createNode(bounds)
     const element = shape.element
     this.setParent(node, element.parent.node)
+
     element.node = node
+
     // dataAssociations point to invisible children of Tasks, therefore, the INode has to be linked there
     element.setINodeInputOutput(node)
+
     // Add Style
     const conversationStyle = new ConversationNodeStyle()
     conversationStyle.type = type
     this.masterGraph.setStyle(node, conversationStyle)
+
     // Add Label
     const label = this.addNodeLabel(node, shape)
     if (shape.hasLabelPosition()) {
@@ -1168,6 +1247,7 @@ export class BpmnDiParser {
       }
     }
   }
+
   /**
    * Builds a Choreography node
    */
@@ -1176,14 +1256,17 @@ export class BpmnDiParser {
     const element = shape.element
     this.setParent(node, element.parent.node)
     element.node = node
+
     // dataAssociations point to invisible children of Tasks, therefore, the INode has to be linked there
     element.setINodeInputOutput(node)
+
     const choreographyStyle = new ChoreographyNodeStyle()
     choreographyStyle.loopCharacteristic = element.getLoopCharacteristics()
     // Get Loop Characteristics
     element.topParticipants = 0
     element.bottomParticipants = 0
     const label = this.addNodeLabel(node, shape)
+
     // Get SubState
     if (shape.isExpanded === 'true') {
       choreographyStyle.subState = SubState.NONE
@@ -1194,8 +1277,10 @@ export class BpmnDiParser {
     } else {
       this.masterGraph.setStyle(node, choreographyStyle)
     }
+
     this.setChoreographyLabelStyle(label)
   }
+
   /**
    * Builds a dataObject Node
    */
@@ -1204,13 +1289,17 @@ export class BpmnDiParser {
     const element = shape.element
     this.setParent(node, element.parent.node)
     element.node = node
+
     // dataAssociations point to invisible children of Tasks, therefore, the INode has to be linked there
     element.setINodeInputOutput(node)
+
     const objectStyle = new DataObjectNodeStyle()
     objectStyle.type = type
     objectStyle.collection = isCollection
     this.masterGraph.setStyle(node, objectStyle)
+
     const label = this.addNodeLabel(node, shape)
+
     if (shape.hasLabelPosition()) {
       this.setFixedBoundsLabelStyle(label, shape.labelBounds)
     } else {
@@ -1220,6 +1309,7 @@ export class BpmnDiParser {
       }
     }
   }
+
   /**
    * Builds a participant node (actually a pool)
    */
@@ -1233,21 +1323,26 @@ export class BpmnDiParser {
       !processElement.value.getChild('laneSet')
     ) {
       // not connected to a process so we need our own node
+
       const node = this.masterGraph.createNode(bounds)
       this.setParent(node, element.parent.node)
       element.node = node
       if (processElement.value) {
         processElement.value.node = node
       }
+
       // dataAssociations point to invisible children of Tasks, therefore, the INode has to be linked there
       element.setINodeInputOutput(node)
+
       const partStyle = BpmnDiParser.createTable(shape)
       if (element.hasChild('participantMultiplicity')) {
         if (convertToInt(element.getChildAttribute('participantMultiplicity', 'maximum')) > 1) {
           partStyle.multipleInstance = true
         }
       }
+
       this.masterGraph.setStyle(node, partStyle)
+
       const table = partStyle.tableNodeStyle.table
       if (shape.isHorizontal ?? false) {
         const row = table.rootRow.childRows.first()
@@ -1258,6 +1353,7 @@ export class BpmnDiParser {
       }
     }
   }
+
   /**
    * Builds a participant label inside a choreography node
    */
@@ -1269,6 +1365,7 @@ export class BpmnDiParser {
     const choreographyNodeStyle = node.style
     let multipleInstance = false
     const element = shape.element
+
     if (element.hasChild('participantMultiplicity')) {
       if (convertToInt(element.getChildAttribute('participantMultiplicity', 'maximum')) > 1) {
         multipleInstance = true
@@ -1341,14 +1438,17 @@ export class BpmnDiParser {
         break
     }
     element.node = node
+
     // Sets the label Style of the new participant
     let parameter = ChoreographyLabelModel.INSTANCE.createParticipantParameter(top, index)
     this.masterGraph.setLabelLayoutParameter(label, parameter)
     let defaultLabelStyle = this.setCustomLabelStyle(label)
     this.masterGraph.setStyle(label, defaultLabelStyle)
+
     // checks, if there is a message, if yes, tries to set text label
     if (shape.isMessageVisible && choreography.hasChild('messageFlowRef')) {
       const children = choreography.getChildren('messageFlowRef')
+
       for (const child of children) {
         const messageFlow = { value: null }
         if (this.tryGetElementForId(child.value, messageFlow)) {
@@ -1373,6 +1473,7 @@ export class BpmnDiParser {
       }
     }
   }
+
   /**
    * Builds a TextAnnotationNode
    */
@@ -1381,13 +1482,16 @@ export class BpmnDiParser {
     const element = shape.element
     this.setParent(node, element.parent.node)
     element.node = node
+
     // Add Style
     const annotationStyle = new AnnotationNodeStyle()
     this.masterGraph.setStyle(node, annotationStyle)
+
     // Add Label
     const label = this.addNodeLabel(node, shape)
     this.setInternalLabelStyle(label)
   }
+
   /**
    * Builds a Group Node
    */
@@ -1400,6 +1504,7 @@ export class BpmnDiParser {
       null
     )
     element.node = node
+
     // Before Adding a Label, we need to get the Label Text, which is located in a categoryValue
     // The id of this category value is located in the Label
     for (const childElement of this.document.elements) {
@@ -1408,10 +1513,12 @@ export class BpmnDiParser {
         break
       }
     }
+
     // Add Label
     const label = this.addNodeLabel(node, shape)
     this.setGroupLabelStyle(label)
   }
+
   /**
    * Builds a DataStoreReference Node
    */
@@ -1420,11 +1527,14 @@ export class BpmnDiParser {
     const element = shape.element
     this.setParent(node, element.parent.node)
     element.node = node
+
     // dataAssociations point to invisible children of Tasks, therefore, the INode has to be linked there
     element.setINodeInputOutput(node)
+
     // Add Style
     const dataStoreStyle = new DataStoreNodeStyle()
     this.masterGraph.setStyle(node, dataStoreStyle)
+
     // Add Label
     const label = this.addNodeLabel(node, shape)
     if (shape.hasLabelPosition()) {
@@ -1436,12 +1546,14 @@ export class BpmnDiParser {
       }
     }
   }
+
   /**
    * Retrieves the correct EventType, returns EventNodeStyle with the EventType set accordingly
    */
   static getEventType(shape) {
     let eventType = EventType.PLAIN
     const element = shape.element
+
     if (element.hasChild('messageEventDefinition')) {
       eventType = EventType.MESSAGE
     }
@@ -1480,6 +1592,7 @@ export class BpmnDiParser {
     }
     return eventType
   }
+
   /**
    * Sets the parentNode of a Node, if the parentNode is part of the current Graph
    */
@@ -1488,6 +1601,7 @@ export class BpmnDiParser {
       this.masterGraph.setParent(node, parentNode)
     }
   }
+
   /**
    * Adds a label to a node
    */
@@ -1500,6 +1614,7 @@ export class BpmnDiParser {
     }
     return this.masterGraph.addLabel({ owner, text: name, tag: shape.labelStyle || null })
   }
+
   /**
    * Adds a label to a participant
    */
@@ -1512,6 +1627,7 @@ export class BpmnDiParser {
     }
     return this.masterGraph.addLabel({ owner, text: name, tag: shape.labelStyle || null })
   }
+
   /**
    * Adds a label to a table object (rows/columns)
    */
@@ -1524,6 +1640,7 @@ export class BpmnDiParser {
     }
     table.addLabel({ owner, text: name, tag: shape.labelStyle || null })
   }
+
   /**
    * Adds a label to an edge
    */
@@ -1537,6 +1654,7 @@ export class BpmnDiParser {
     if (name !== '') {
       const owner = edge.element.edge
       const label = this.masterGraph.addLabel({ owner, text: name, tag: edge.labelStyle || null })
+
       if (edge.hasLabelPosition()) {
         this.setFixedBoundsLabelStyle(label, edge.labelBounds)
       } else {
@@ -1547,6 +1665,7 @@ export class BpmnDiParser {
       }
     }
   }
+
   /**
    * Sets label style, if there are fixed bounds for this label
    */
@@ -1558,13 +1677,12 @@ export class BpmnDiParser {
     this.masterGraph.setStyle(label, defaultLabelStyle)
     this.masterGraph.setLabelPreferredSize(label, new Size(bounds.width, bounds.height))
   }
+
   /**
    * Sets label style for tasks (Centered)
    */
   setInternalLabelStyle(label) {
-    const model = new StretchNodeLabelModel({
-      padding: 3
-    })
+    const model = new StretchNodeLabelModel({ padding: 3 })
     this.masterGraph.setLabelLayoutParameter(label, model.createParameter('center'))
     const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
@@ -1572,6 +1690,7 @@ export class BpmnDiParser {
     defaultLabelStyle.wrapping = TextWrapping.WRAP_WORD
     this.masterGraph.setStyle(label, defaultLabelStyle)
   }
+
   /**
    * Sets label style nodes that have an external label (bottom of the node).
    */
@@ -1581,6 +1700,7 @@ export class BpmnDiParser {
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
     this.masterGraph.setStyle(label, defaultLabelStyle)
+
     if (BpmnDiParser.MULTI_LINE_EXTERIOR_NODE_LABELS) {
       // Set some bounds to make labels multi - row
       const maxWidth = Math.max(label.owner.layout.width * 1.5, 100)
@@ -1594,6 +1714,7 @@ export class BpmnDiParser {
       this.masterGraph.setLabelPreferredSize(label, new Size(maxWidth, maxHeight))
     }
   }
+
   /**
    * Sets label style for the TaskNameBand in a Choreography
    */
@@ -1605,31 +1726,30 @@ export class BpmnDiParser {
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
     this.masterGraph.setStyle(label, defaultLabelStyle)
   }
+
   /**
    * Sets label style for SubProcesses (Upper left corner)
    */
   setSubProcessLabelStyle(label) {
-    const model = new StretchNodeLabelModel({
-      padding: 3
-    })
+    const model = new StretchNodeLabelModel({ padding: 3 })
     this.masterGraph.setLabelLayoutParameter(label, model.createParameter('top'))
     const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.LEFT
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.TOP
     this.masterGraph.setStyle(label, defaultLabelStyle)
   }
+
   /**
    * Sets label style for Groups (Upper boundary)
    */
   setGroupLabelStyle(label) {
-    const model = new StretchNodeLabelModel({
-      padding: 3
-    })
+    const model = new StretchNodeLabelModel({ padding: 3 })
     this.masterGraph.setLabelLayoutParameter(label, model.createParameter('top'))
     const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
     this.masterGraph.setStyle(label, defaultLabelStyle)
   }
+
   /**
    * Sets edge label style
    */
@@ -1651,6 +1771,7 @@ export class BpmnDiParser {
       this.masterGraph.setStyle(label, defaultLabelStyle)
     }
   }
+
   /**
    * Sets custom style elements
    */
@@ -1658,6 +1779,7 @@ export class BpmnDiParser {
     const styleName = label.tag
     return this.currentDiagram.getStyle(styleName)
   }
+
   /**
    * Builds all edges, except for message flows
    */
@@ -1666,6 +1788,7 @@ export class BpmnDiParser {
     const targetVar = edge.target
     const waypoints = edge.waypoints
     const id = edge.id
+
     // Check, if source and target were correctly parsed
     if (!sourceVar) {
       this.document.messages.add('Edge ' + id + ' has no valid Source.')
@@ -1675,12 +1798,15 @@ export class BpmnDiParser {
       this.document.messages.add('Edge ' + id + ' has no valid Target.')
       return null
     }
+
     // Get source & target node
     let sourceNode = sourceVar.node
     let targetNode = targetVar.node
+
     if (!sourceNode || !targetNode) {
       return null
     }
+
     // Get bends & ports from waypoints
     const count = waypoints.size
     let source = sourceNode.layout.center
@@ -1693,8 +1819,10 @@ export class BpmnDiParser {
       waypoints.remove(source)
       waypoints.remove(target)
     }
+
     let sourcePort = null
     let targetPort = null
+
     // Use boundary event port, if source is a boundary event
     if (sourceVar.name === 'boundaryEvent') {
       sourcePort = sourceVar.port
@@ -1709,6 +1837,7 @@ export class BpmnDiParser {
     } else if (sourceNode) {
       sourcePort = this.masterGraph.addPortAt(sourceNode, source)
     }
+
     // Use boundary event port, if target is a boundary event
     if (targetVar.name === 'boundaryEvent') {
       targetPort = targetVar.port
@@ -1723,15 +1852,18 @@ export class BpmnDiParser {
     } else if (targetNode) {
       targetPort = this.masterGraph.addPortAt(targetNode, target)
     }
+
     // Test for textAnnotation, workaround fix for textAnnotations
     if (type === BpmnEdgeType.ASSOCIATION) {
       if (!targetNode) {
         targetPort = this.masterGraph.addPortAt(sourceNode, target)
       }
+
       if (!sourceNode) {
         sourcePort = this.masterGraph.addPortAt(targetNode, source)
       }
     }
+
     // Test if one of the ports is still null, notify user and carry on.
     if (!sourcePort) {
       this.document.messages.add('Edge ' + id + ' has no valid Source.')
@@ -1741,18 +1873,23 @@ export class BpmnDiParser {
       this.document.messages.add('Edge ' + id + ' has no valid Target.')
       return null
     }
+
     // Create edge on graph
     const iEdge = this.masterGraph.createEdge(sourcePort, targetPort)
     for (const point of waypoints) {
       this.masterGraph.addBend(iEdge, point, -1)
     }
+
     edge.element.edge = iEdge
+
     // Set edge style
     const edgeStyle = new BpmnEdgeStyle()
     edgeStyle.type = type
     this.masterGraph.setStyle(iEdge, edgeStyle)
+
     return iEdge
   }
+
   /**
    * Builds MessageFlow edges
    */
@@ -1761,6 +1898,7 @@ export class BpmnDiParser {
     const targetVar = edge.target
     const waypoints = edge.waypoints
     const id = edge.id
+
     // Check, if source and target were correctly parsed
     if (!sourceVar) {
       this.document.messages.add('Edge ' + id + ' has no valid Source.')
@@ -1770,9 +1908,11 @@ export class BpmnDiParser {
       this.document.messages.add('Edge ' + id + ' has no valid Target.')
       return null
     }
+
     // Get source & target node
     const sourceNode = sourceVar.node
     const targetNode = targetVar.node
+
     // Get bends & ports from waypoints
     const count = waypoints.size
     let source = sourceNode.layout.center
@@ -1785,6 +1925,7 @@ export class BpmnDiParser {
       waypoints.remove(source)
       waypoints.remove(target)
     }
+
     // Get source & target port
     const sourcePort =
       sourceVar.name === 'boundaryEvent'
@@ -1794,11 +1935,13 @@ export class BpmnDiParser {
       targetVar.name === 'boundaryEvent'
         ? targetVar.port
         : this.masterGraph.addPortAt(targetNode, target)
+
     const iEdge = this.masterGraph.createEdge(sourcePort, targetPort)
     for (const point of waypoints) {
       this.masterGraph.addBend(iEdge, point, -1)
     }
     edge.element.edge = iEdge
+
     // If there is a message icon, add a corresponding label
     switch (edge.messageVisibleK) {
       case MessageVisibleKind.INITIATING: {
@@ -1846,20 +1989,25 @@ export class BpmnDiParser {
       case MessageVisibleKind.UNSPECIFIED:
         break
     }
+
     // Set edge style
     const edgeStyle = new BpmnEdgeStyle()
     edgeStyle.type = BpmnEdgeType.MESSAGE_FLOW
     this.masterGraph.setStyle(iEdge, edgeStyle)
+
     return iEdge
   }
+
   buildPool(element, plane, localRoot) {
     let parent = element.parent
     while (parent.name !== 'process' && parent.name !== 'subProcess') {
       parent = parent.parent
     }
+
     let layout = Rect.EMPTY
     let isHorizontal = null
     let multipleInstance = false
+
     let tableShape = this.getShape(element, plane)
     if (!tableShape && parent) {
       tableShape = this.getShape(parent, plane)
@@ -1876,6 +2024,7 @@ export class BpmnDiParser {
         }
       }
     }
+
     if (tableShape) {
       // table has a shape itself so we use its layout to initialize the table
       layout = new Rect(tableShape.x, tableShape.y, tableShape.width, tableShape.height)
@@ -1916,6 +2065,7 @@ export class BpmnDiParser {
         poolStyle.multipleInstance = multipleInstance
         this.masterGraph.setStyle(node, poolStyle)
         table = poolStyle.tableNodeStyle.table
+
         // create dummy stripe for the direction where no lanes are defined
         if (isHorizontal) {
           const col = table.createColumn(layout.width - table.rowDefaults.padding.left)
@@ -1925,17 +2075,21 @@ export class BpmnDiParser {
           row.tag = new Point(layout.x, layout.y)
         }
       }
+
       let parentStripe = isHorizontal
-        ? table.rootRow.childRows.at(0) ?? table.rootRow
-        : table.rootColumn.childColumns.at(0) ?? table.rootColumn
+        ? (table.rootRow.childRows.at(0) ?? table.rootRow)
+        : (table.rootColumn.childColumns.at(0) ?? table.rootColumn)
       if (tableShape) {
         parentStripe = this.addToTable(tableShape, table, node, parentStripe, isHorizontal)
       }
+
       element.node = node
       if (!parent.node) {
         parent.node = node
       }
+
       this.addChildLanes(element, table, parentStripe, plane, node, isHorizontal)
+
       // Resize the root row/column after adding a column/row with insets
       if (isHorizontal) {
         const max = table.rootRow.leaves
@@ -1948,6 +2102,7 @@ export class BpmnDiParser {
           .reduce((acc, val) => Math.max(acc, val), Number.MIN_VALUE)
         table.setSize(table.rootRow.childRows.first(), node.layout.height - max)
       }
+
       /*
        * There can be situations, in which the table Layout does not match the node size. In this case, we
        * resize the node
@@ -1967,6 +2122,7 @@ export class BpmnDiParser {
     }
     return node
   }
+
   addChildLanes(element, table, parentStripe, plane, node, isHorizontal) {
     for (const lane of element.getChildren('lane')) {
       const laneShape = this.getShape(lane, plane)
@@ -1985,13 +2141,16 @@ export class BpmnDiParser {
       }
     }
   }
+
   /**
    * Adds the given lane to the appropriate table (pool), or creates a new one
    */
   addToTable(shape, table, node, parentStripe, isHorizontal) {
     // lane element
     const element = shape.element
+
     // Link the node to the BpmnElement of the lane
+
     element.node = node
     if (isHorizontal) {
       const parentRow = parentStripe instanceof IRow ? parentStripe : null
@@ -1999,12 +2158,14 @@ export class BpmnDiParser {
       const index = parentRow
         ? parentRow.childRows.filter((siblingRow) => siblingRow.tag.y < shape.y).size
         : -1
+
       const row = table.createChildRow({
         parent: parentRow,
         height: shape.height,
         index: index,
         tag: new Point(shape.x, shape.y)
       })
+
       BpmnDiParser.addTableLabel(table, row, shape)
       return row
     } else {
@@ -2013,43 +2174,53 @@ export class BpmnDiParser {
       const index = parentCol
         ? parentCol.childColumns.filter((siblingCol) => siblingCol.tag.x < shape.x).size
         : -1
+
       const col = table.createChildColumn({
         parent: parentCol,
         width: shape.width,
         index: index,
         tag: new Point(shape.x, shape.y)
       })
+
       BpmnDiParser.addTableLabel(table, col, shape)
       return col
     }
   }
+
   /**
    * Creates table (participant/pool)
    */
   static createTable(shape) {
     const poolNodeStyle = BpmnDiParser.createPoolNodeStyle(shape.isHorizontal ?? false)
     const table = poolNodeStyle.tableNodeStyle.table
+
     // Create first row & column
     const col = table.createColumn(shape.width - table.rowDefaults.padding.left)
     const row = table.createRow(shape.height - table.columnDefaults.padding.top)
+
     const location = new Point(shape.x, shape.y)
     row.tag = location
     col.tag = location
     return poolNodeStyle
   }
+
   static createPoolNodeStyle(isHorizontal) {
     const partStyle = new PoolNodeStyle(!isHorizontal)
     const table = partStyle.tableNodeStyle.table
+
     if (isHorizontal) {
       table.columnDefaults.padding = Insets.EMPTY
     } else {
       table.rowDefaults.padding = Insets.EMPTY
     }
+
     // Set table padding to 0
     table.padding = Insets.EMPTY
+
     return partStyle
   }
 }
+
 /**
  * Class for BPMNDiagram objects.
  */
@@ -2070,6 +2241,7 @@ export class BpmnDiagram {
   // Get name, if it exists
   // The name of this diagram
   name
+
   /**
    * Constructs a new diagram instance
    * @param xNode The XML node which is the root for this diagram instance
@@ -2092,12 +2264,14 @@ export class BpmnDiagram {
       'resolution'
     )
   }
+
   /**
    * Adds a plane to this diagram. Only happens once, but is caught elsewhere
    */
   addPlane(plane) {
     this.plane = plane
   }
+
   /**
    * Adds a LabelStyle to the collection of styles in this diagram
    * @param style The {@link BpmnLabelStyle} to add
@@ -2105,6 +2279,7 @@ export class BpmnDiagram {
   addStyle(style) {
     this.styles.set(style.id, style)
   }
+
   /**
    * Returns the given Style, or the default style, in case it does nor exist
    * @param style The id (name) of the style to get
@@ -2118,6 +2293,7 @@ export class BpmnDiagram {
     }
     return this.defaultStyle.clone()
   }
+
   /**
    * Adds a child diagramm to this diagram
    * @param diagram The child diagram
@@ -2126,6 +2302,7 @@ export class BpmnDiagram {
   addChild(diagram, localRoot) {
     this.children.set(diagram, localRoot)
   }
+
   /**
    * @returns The name of the Diagram
    */
@@ -2133,6 +2310,7 @@ export class BpmnDiagram {
     return this.name
   }
 }
+
 /**
  * Utility class holding the information of a BPMN {@link Document}.
  */
@@ -2147,6 +2325,7 @@ export class BpmnDocument {
   elementToDiagram = new HashMap()
   // Collection of all warning during program flow
   messages = new List()
+
   /**
    * Creates a new instance for the BPMN {@link Document}.
    * @param doc The BPMN document to parse.
@@ -2155,6 +2334,7 @@ export class BpmnDocument {
     // parse the XML file
     const callingElements = new List()
     this.recursiveElements(doc.documentElement, null, callingElements)
+
     // collect all elements that are linked to from a plane
     for (const diagram of this.diagrams) {
       try {
@@ -2164,6 +2344,7 @@ export class BpmnDocument {
         this.messages.add(`Tried to add a diagram with the already existing id: ${diagram.id}`)
       }
     }
+
     // collect all diagrams where the plane corresponds to a Top Level BpmnElement (Process/Choreography/Collaboration)
     for (const diagram of this.diagrams) {
       const element = diagram.plane.element
@@ -2188,6 +2369,7 @@ export class BpmnDocument {
       }
     }
   }
+
   /**
    * Collect all {@link BpmnDiagram} where the plane corresponds to a {@link BpmnElement} in `diagram`.
    * @param bpmnElement The element to check.
@@ -2195,6 +2377,7 @@ export class BpmnDocument {
    */
   collectChildDiagrams(bpmnElement, diagram) {
     let currentDiagram = diagram
+
     if (this.elementToDiagram.has(bpmnElement)) {
       const childDiagram = this.elementToDiagram.get(bpmnElement)
       diagram.addChild(childDiagram, bpmnElement)
@@ -2208,6 +2391,7 @@ export class BpmnDocument {
       this.collectChildDiagrams(process, currentDiagram)
     }
   }
+
   /**
    * Traverses Depth-First through the bpmn XML file, collecting and linking all Elements.
    * @param xNode The XML node to start with
@@ -2221,6 +2405,7 @@ export class BpmnDocument {
     } else if (element.process) {
       callingElements.add(element)
     }
+
     // Only xml nodes with an id can be bpmn elements
     if (element.id) {
       try {
@@ -2237,11 +2422,13 @@ export class BpmnDocument {
         )
       }
     }
+
     // Double-link bpmn element to the given parent element
     if (parent) {
       parent.addChild(element)
     }
     element.parent = parent
+
     // Call all xml children
     for (let i = 0; i < xNode.children.length; ++i) {
       const xChild = xNode.children[i]
@@ -2267,6 +2454,7 @@ export class BpmnDocument {
       }
     }
   }
+
   /**
    * Creates a {@link BpmnDiagram}.
    * @param xNode The XML node to start with
@@ -2274,12 +2462,14 @@ export class BpmnDocument {
    */
   buildDiagram(xNode) {
     const diagram = new BpmnDiagram(xNode)
+
     const bpmnPlane = this.buildPlane(
       BpmnNamespaceManager.getElement(xNode, BpmnNamespaceManager.BPMN_DI, 'BPMNPlane')
     )
     if (bpmnPlane) {
       diagram.addPlane(bpmnPlane)
     }
+
     for (const xChild of BpmnNamespaceManager.getElements(
       xNode,
       BpmnNamespaceManager.BPMN_DI,
@@ -2288,10 +2478,13 @@ export class BpmnDocument {
       const style = new BpmnLabelStyle(xChild)
       diagram.addStyle(style)
     }
+
     // Setting a default LabelStyle for all labels that do not have their own style.
     diagram.defaultStyle = BpmnLabelStyle.newDefaultInstance()
+
     return diagram
   }
+
   /**
    * Parse all bpmn shapes and bpmn edges and their associations and attributes from one {@link BpmnPlane}
    * @param xNode The XML node to start with
@@ -2301,6 +2494,7 @@ export class BpmnDocument {
     if (!plane.element) {
       return null
     }
+
     // All Shapes
     for (const xChild of BpmnNamespaceManager.getElements(
       xNode,
@@ -2316,8 +2510,10 @@ export class BpmnDocument {
         )
         continue
       }
+
       // Shapes usually define their bounds
       shape.addBounds(BpmnNamespaceManager.getElement(xChild, BpmnNamespaceManager.DC, 'Bounds'))
+
       // Shapes can have a BPMNLabel as child
       const bpmnLabel = BpmnNamespaceManager.getElement(
         xChild,
@@ -2336,6 +2532,7 @@ export class BpmnDocument {
         )
       }
     }
+
     for (const xChild of BpmnNamespaceManager.getElements(
       xNode,
       BpmnNamespaceManager.BPMN_DI,
@@ -2350,6 +2547,7 @@ export class BpmnDocument {
         )
         continue
       }
+
       // Edges define 2 or more Waypoints
       for (const waypoint of BpmnNamespaceManager.getElements(
         xChild,
@@ -2358,6 +2556,7 @@ export class BpmnDocument {
       )) {
         edge.addWayPoint(waypoint)
       }
+
       // Edges can have a BPMNLabel as child
       const bpmnLabel = BpmnNamespaceManager.getElement(
         xChild,
@@ -2379,12 +2578,14 @@ export class BpmnDocument {
     return plane
   }
 }
+
 /**
  * Class for BPMNEdge objects
  */
 export class BpmnEdge {
   static _CALCULATE_SIZE_LABEL_STYLE
   static _CALCULATE_SIZE_LABEL
+
   // The custom style of this label
   labelStyle = null
   // List of all waypoints (ports and bends)
@@ -2404,6 +2605,7 @@ export class BpmnEdge {
   id
   // The {@link BpmnElement} this edge references to
   element
+
   static get CALCULATE_SIZE_LABEL() {
     if (typeof BpmnEdge._CALCULATE_SIZE_LABEL === 'undefined') {
       BpmnEdge._CALCULATE_SIZE_LABEL = new SimpleLabel(
@@ -2412,14 +2614,18 @@ export class BpmnEdge {
         FreeNodeLabelModel.CENTER
       )
     }
+
     return BpmnEdge._CALCULATE_SIZE_LABEL
   }
+
   static get CALCULATE_SIZE_LABEL_STYLE() {
     if (typeof BpmnEdge._CALCULATE_SIZE_LABEL_STYLE === 'undefined') {
       BpmnEdge._CALCULATE_SIZE_LABEL_STYLE = new LabelStyle()
     }
+
     return BpmnEdge._CALCULATE_SIZE_LABEL_STYLE
   }
+
   /**
    * Calculate the preferred size for `text` using a {@link LabelStyle}.
    * @param text The text to measure.
@@ -2432,6 +2638,7 @@ export class BpmnEdge {
       BpmnEdge.CALCULATE_SIZE_LABEL_STYLE
     )
   }
+
   /**
    * Constructs a new edge instance
    * @param xEdge The XML element which represents this edge
@@ -2440,6 +2647,7 @@ export class BpmnEdge {
   constructor(xEdge, elements) {
     // Visibility of a message envelope on this edge
     this.messageVisibleK = MessageVisibleKind.UNSPECIFIED
+
     // Get id
     // The id of this edge
     this.id = BpmnNamespaceManager.getAttributeValue(xEdge, BpmnNamespaceManager.BPMN_DI, 'Id')
@@ -2450,14 +2658,17 @@ export class BpmnEdge {
       'bpmnElement'
     )
     this.element = attribute ? (elements.has(attribute) ? elements.get(attribute) : null) : null
+
     // If there is no element, skip
     if (!this.element) {
       return
     }
+
     // Source and target elements can be specified as attribute of the element
     // or as children of the element (in data associations).
     let sourceRef
     let targetRef
+
     // Getting source element id
     const sourceVar = this.element.source
     if (sourceVar) {
@@ -2465,10 +2676,12 @@ export class BpmnEdge {
     } else {
       sourceRef = this.element.loadSourceFromChild()
     }
+
     // Getting and linking source element
     if (elements.has(sourceRef)) {
       this.source = elements.get(sourceRef)
     }
+
     // Getting target element id
     const targetVar = this.element.target
     if (targetVar) {
@@ -2476,10 +2689,12 @@ export class BpmnEdge {
     } else {
       targetRef = this.element.loadTargetFromChild()
     }
+
     // Getting and linking target element
     if (elements.has(targetRef)) {
       this.target = elements.get(targetRef)
     }
+
     switch (
       BpmnNamespaceManager.getAttributeValue(
         xEdge,
@@ -2498,6 +2713,7 @@ export class BpmnEdge {
         break
     }
   }
+
   /**
    * Add a label and its bounds to the edge
    * @param xBounds The XML element of the label bounds
@@ -2507,36 +2723,45 @@ export class BpmnEdge {
     if (!xBounds) {
       return
     }
+
     // If there are bounds, set standard values, first.
     let labelX = 0
     let labelY = 0
     let labelWidth = 100
     let labelHeight = 20
+
     let attr = BpmnNamespaceManager.getAttributeValue(xBounds, BpmnNamespaceManager.DC, 'x')
     if (attr) {
       labelX = convertToDouble(attr)
     }
+
     attr = BpmnNamespaceManager.getAttributeValue(xBounds, BpmnNamespaceManager.DC, 'y')
     if (attr) {
       labelY = convertToDouble(attr)
     }
+
     attr = BpmnNamespaceManager.getAttributeValue(xBounds, BpmnNamespaceManager.DC, 'height')
     if (attr) {
       labelHeight = convertToDouble(attr)
     }
+
     attr = BpmnNamespaceManager.getAttributeValue(xBounds, BpmnNamespaceManager.DC, 'width')
     if (attr) {
       labelWidth = convertToDouble(attr)
     }
+
     // In case, the label sizes were set to 0
     if (labelWidth < 1 || labelHeight < 1) {
       const text = this.element.label
       const preferredSize = BpmnEdge.calculatePreferredSize(text)
+
       labelWidth = preferredSize.width
       labelHeight = preferredSize.height
     }
+
     this.labelBounds = new Rect(labelX, labelY, labelWidth, labelHeight)
   }
+
   /**
    * Adds a waypoint to the edge
    * @param xWaypoint The waypoint to add
@@ -2544,6 +2769,7 @@ export class BpmnEdge {
   addWayPoint(xWaypoint) {
     let x = 0
     let y = 0
+
     let attr = BpmnNamespaceManager.getAttributeValue(xWaypoint, BpmnNamespaceManager.DI, 'x')
     if (attr) {
       x = convertToDouble(attr)
@@ -2552,9 +2778,11 @@ export class BpmnEdge {
     if (attr) {
       y = convertToDouble(attr)
     }
+
     const tuple = new Point(x, y)
     this.waypoints.add(tuple)
   }
+
   /**
    * Returns true, if the edge has width and height attributes set.
    * @returns True, if the label has size, false if not
@@ -2562,6 +2790,7 @@ export class BpmnEdge {
   hasLabelSize() {
     return this.labelBounds.width > 0 && this.labelBounds.height > 0
   }
+
   /**
    * Returns true, if the top left point of the bounds is not 0/0 (standard case)
    * @returns True, if the label has a given position, false if it is 0/0
@@ -2569,6 +2798,7 @@ export class BpmnEdge {
   hasLabelPosition() {
     return this.labelBounds.x > 0 && this.labelBounds.y > 0
   }
+
   /**
    * Returns the value of the given attribute of the linked BpmnElement, or null
    * @param attribute Id (name) of the attribute to get
@@ -2578,6 +2808,7 @@ export class BpmnEdge {
     return this.element.getValue(attribute)
   }
 }
+
 /**
  * Class for Bpmn Element objects
  */
@@ -2619,6 +2850,7 @@ export class BpmnElement {
   value
   // The name of the element type
   name
+
   /**
    * Class for BPMNElement objects
    * @param xNode The XML Node to turn into a BpmnElement
@@ -2659,6 +2891,7 @@ export class BpmnElement {
           break
       }
     }
+
     // The value (string text between XML tags) of this Element
     this.value = xNode.textContent
     // The name of the element type
@@ -2680,6 +2913,7 @@ export class BpmnElement {
       }
     }
   }
+
   /**
    * Adds a child to the current BpmnElement
    * @param child The child to be added
@@ -2687,6 +2921,7 @@ export class BpmnElement {
   addChild(child) {
     this.children.add(child)
   }
+
   /**
    * Returns true, if a child with the given name exists
    * @param name The name
@@ -2699,6 +2934,7 @@ export class BpmnElement {
     }
     return false
   }
+
   /**
    * Returns the Value of an Attribute of a given child
    * @param name The name
@@ -2713,6 +2949,7 @@ export class BpmnElement {
     }
     return value
   }
+
   /**
    * Returns the first child with the given name
    * @param name The name
@@ -2725,6 +2962,7 @@ export class BpmnElement {
     }
     return null
   }
+
   /**
    * Returns all children with the given name
    * @param name The name
@@ -2738,6 +2976,7 @@ export class BpmnElement {
     }
     return retChildren
   }
+
   /**
    * Retrieves the sourceRef string of the current element
    * @returns The sourceRef string
@@ -2751,6 +2990,7 @@ export class BpmnElement {
     }
     return ret
   }
+
   /**
    * Retrieves the targetRef string of the current element
    * @returns The targetRef string
@@ -2764,6 +3004,7 @@ export class BpmnElement {
     }
     return ret
   }
+
   /**
    * Sets the INode of all dataInput and dataOutput hidden children to the given node
    * @param node The node
@@ -2790,6 +3031,7 @@ export class BpmnElement {
       }
     }
   }
+
   /**
    * Returns the Loop Characteristics of this Element
    */
@@ -2798,13 +3040,17 @@ export class BpmnElement {
       if (this.getChildAttribute('multiInstanceLoopCharacteristics', 'isSequential') === 'true') {
         return LoopCharacteristic.SEQUENTIAL
       }
+
       return LoopCharacteristic.PARALLEL
     }
+
     if (this.hasChild('standardLoopCharacteristics')) {
       return LoopCharacteristic.LOOP
     }
+
     return LoopCharacteristic.NONE
   }
+
   /**
    * Returns the value of the given attribute, or null
    * @param attribute The attribute
@@ -2813,6 +3059,7 @@ export class BpmnElement {
   getValue(attribute) {
     return this.attributes.has(attribute) ? this.attributes.get(attribute) : null
   }
+
   /**
    * Searches until the nearest Ancestor in a given List of BpmnElements is found, or null if there is no ancestor in the List (Which means there is something wrong)
    * @param planeElements A list of BpmnElements
@@ -2828,11 +3075,13 @@ export class BpmnElement {
     return null
   }
 }
+
 /**
  * Class for BPMNLabelStyle objects
  */
 export class BpmnLabelStyle {
   static _LABEL_TEXT_SIZE
+
   // The id (name) of this style
   id
   // The font used in this style
@@ -2849,6 +3098,7 @@ export class BpmnLabelStyle {
   isStrikeThrough = false
   // {@link LabelStyle} that represents this BpmnLabelStyle
   labelStyle
+
   /**
    * Constant that sets the standard Text size of Labels. yFiles Standard is 12 pt, but the Bpmn Demo files look better with 11pt
    */
@@ -2856,17 +3106,22 @@ export class BpmnLabelStyle {
     if (typeof BpmnLabelStyle._LABEL_TEXT_SIZE === 'undefined') {
       BpmnLabelStyle._LABEL_TEXT_SIZE = 11
     }
+
     return BpmnLabelStyle._LABEL_TEXT_SIZE
   }
+
   /**
    * The default label Style
    */
   static newDefaultInstance() {
     const defaultLabelStyle = new LabelStyle()
+
     // Set font
     const font = 'Arial'
+
     // Set text size
     defaultLabelStyle.textSize = BpmnLabelStyle.LABEL_TEXT_SIZE
+
     // Set Typeface
     defaultLabelStyle.font = new Font(font, BpmnLabelStyle.LABEL_TEXT_SIZE)
     defaultLabelStyle.wrapping = TextWrapping.WRAP_WORD
@@ -2874,20 +3129,24 @@ export class BpmnLabelStyle {
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
     return defaultLabelStyle
   }
+
   /**
    * Constructs an instance of {@link LabelStyle} representing this Style
    * @param xStyle The XML Element to be converted into this style
    */
   constructor(xStyle) {
     this.id = BpmnNamespaceManager.getAttributeValue(xStyle, BpmnNamespaceManager.DC, 'id')
+
     // Parse Values of the Label Style
     const xFont = BpmnNamespaceManager.getElement(xStyle, BpmnNamespaceManager.DC, 'Font')
     if (xFont) {
       this.font = BpmnNamespaceManager.getAttributeValue(xFont, BpmnNamespaceManager.DC, 'name')
+
       let attr = BpmnNamespaceManager.getAttributeValue(xFont, BpmnNamespaceManager.DC, 'size')
       if (attr) {
         this.size = convertToDouble(attr)
       }
+
       attr = BpmnNamespaceManager.getAttributeValue(xFont, BpmnNamespaceManager.DC, 'isBold')
       if (attr) {
         this.isBold = convertToBoolean(attr)
@@ -2896,10 +3155,12 @@ export class BpmnLabelStyle {
       if (attr) {
         this.isItalic = convertToBoolean(attr)
       }
+
       attr = BpmnNamespaceManager.getAttributeValue(xFont, BpmnNamespaceManager.DC, 'isUnderline')
       if (attr) {
         this.isUnderline = convertToBoolean(attr)
       }
+
       attr = BpmnNamespaceManager.getAttributeValue(
         xFont,
         BpmnNamespaceManager.DC,
@@ -2913,21 +3174,25 @@ export class BpmnLabelStyle {
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
     this.labelStyle = defaultLabelStyle
+
     // Set text size
     if (this.size > 0) {
       this.labelStyle.textSize = this.size
     } else {
       this.labelStyle.textSize = BpmnLabelStyle.LABEL_TEXT_SIZE
     }
+
     let textDecoration = TextDecorations.NONE
     // Set Underline
     if (this.isUnderline) {
       textDecoration |= TextDecorations.UNDERLINE
     }
+
     // Set StrikeThrough
     if (this.isStrikeThrough) {
       textDecoration |= TextDecorations.LINE_THROUGH
     }
+
     this.labelStyle.font = new Font(
       this.font,
       BpmnLabelStyle.LABEL_TEXT_SIZE,
@@ -2935,8 +3200,10 @@ export class BpmnLabelStyle {
       this.isBold ? 'bold' : 'normal',
       textDecoration
     )
+
     this.labelStyle.wrapping = TextWrapping.WRAP_WORD
   }
+
   /**
    * Returns the {@link LabelStyle} that represents this BpmnLabelStyle instance
    */
@@ -2944,6 +3211,7 @@ export class BpmnLabelStyle {
     return this.labelStyle
   }
 }
+
 /**
  * Provides convenience methods to search for specific XElements and XAttributes and test results for the relevant BPMN Namespaces
  */
@@ -2953,36 +3221,47 @@ export class BpmnNamespaceManager {
   static _BPMN_DI
   static _BPMN
   static _XSI
+
   static get XSI() {
     if (typeof BpmnNamespaceManager._XSI === 'undefined') {
       BpmnNamespaceManager._XSI = 'http://www.w3.org/2001/XMLSchema-instance'
     }
+
     return BpmnNamespaceManager._XSI
   }
+
   static get BPMN() {
     if (typeof BpmnNamespaceManager._BPMN === 'undefined') {
       BpmnNamespaceManager._BPMN = 'http://www.omg.org/spec/BPMN/20100524/MODEL'
     }
+
     return BpmnNamespaceManager._BPMN
   }
+
   static get BPMN_DI() {
     if (typeof BpmnNamespaceManager._BPMN_DI === 'undefined') {
       BpmnNamespaceManager._BPMN_DI = 'http://www.omg.org/spec/BPMN/20100524/DI'
     }
+
     return BpmnNamespaceManager._BPMN_DI
   }
+
   static get DI() {
     if (typeof BpmnNamespaceManager._DI === 'undefined') {
       BpmnNamespaceManager._DI = 'http://www.omg.org/spec/DD/20100524/DI'
     }
+
     return BpmnNamespaceManager._DI
   }
+
   static get DC() {
     if (typeof BpmnNamespaceManager._DC === 'undefined') {
       BpmnNamespaceManager._DC = 'http://www.omg.org/spec/DD/20100524/DC'
     }
+
     return BpmnNamespaceManager._DC
   }
+
   /**
    * Returns all Attributes in the list that belong to the given namespace
    * @param list The given list
@@ -2993,6 +3272,7 @@ export class BpmnNamespaceManager {
     // Some Attributes do not have a namespace declared explicitly. Since we test the parent for the correct namespace this is ok.
     return list.filter((el) => !el.namespaceURI || el.namespaceURI === nameSpace)
   }
+
   /**
    * Returns the value of the given attribute in the given XElement
    * @param xElement The xElement
@@ -3002,6 +3282,7 @@ export class BpmnNamespaceManager {
   static getAttributeValue(xElement, nameSpace, attributeName) {
     return xElement.getAttributeNS(nameSpace, attributeName) || xElement.getAttribute(attributeName)
   }
+
   /**
    * Returns the child XML element with the given namespace and local name
    * @param xElement The element
@@ -3017,6 +3298,7 @@ export class BpmnNamespaceManager {
     }
     return null
   }
+
   /**
    * Returns the child XML element with the given namespace and local name
    * @param xElement The element
@@ -3034,6 +3316,7 @@ export class BpmnNamespaceManager {
     return result
   }
 }
+
 /**
  * Class for BPMNPlane objects
  */
@@ -3044,6 +3327,7 @@ export class BpmnPlane {
   listOfShapes = new List()
   // The {@link BpmnElement} this plane refers to
   element
+
   /**
    * Constructs a new plane instance
    * @param xNode The XML element which represents this plane
@@ -3058,6 +3342,7 @@ export class BpmnPlane {
     )
     this.element = elements.has(attribute) ? elements.get(attribute) : null
   }
+
   /**
    * Adds a new {@link BpmnEdge} to this planes list of edges.
    * @param edge Edge to add
@@ -3065,6 +3350,7 @@ export class BpmnPlane {
   addEdge(edge) {
     this.listOfEdges.add(edge)
   }
+
   /**
    * Adds a new {@link BpmnShape} to this planes list of shapes.
    * @param shape Shape to add
@@ -3072,6 +3358,7 @@ export class BpmnPlane {
   addShape(shape) {
     this.listOfShapes.add(shape)
   }
+
   /**
    * Returns the {@link BpmnShape} with the given id.
    * @param id Id
@@ -3086,6 +3373,7 @@ export class BpmnPlane {
     return null
   }
 }
+
 /**
  * Class for BPMNShape objects
  */
@@ -3123,6 +3411,7 @@ export class BpmnShape {
   isMessageVisible = false
   // The string id of the choreographyActivityShape if this shape is depicting a participant band
   choreographyActivityShape = null
+
   /**
    * Constructs a new shape instance
    * @param xShape The XML element which represents this shape
@@ -3136,11 +3425,14 @@ export class BpmnShape {
       'bpmnElement'
     )
     this.element = elements.has(attribute) ? elements.get(attribute) : null
+
     // If there is no element, skip
     if (!this.element) {
       return
     }
+
     this.id = BpmnNamespaceManager.getAttributeValue(xShape, BpmnNamespaceManager.BPMN_DI, 'id')
+
     const isHorizontalString = BpmnNamespaceManager.getAttributeValue(
       xShape,
       BpmnNamespaceManager.BPMN_DI,
@@ -3171,6 +3463,7 @@ export class BpmnShape {
       BpmnNamespaceManager.BPMN_DI,
       'choreographyActivityShape'
     )
+
     switch (
       BpmnNamespaceManager.getAttributeValue(
         xShape,
@@ -3198,6 +3491,7 @@ export class BpmnShape {
         break
     }
   }
+
   /**
    * Adds the bound of this shape
    * @param xBounds XML element representing the bounds
@@ -3207,26 +3501,32 @@ export class BpmnShape {
     if (attr) {
       this.x = convertToDouble(attr)
     }
+
     attr = BpmnNamespaceManager.getAttributeValue(xBounds, BpmnNamespaceManager.DC, 'y')
     if (attr) {
       this.y = convertToDouble(attr)
     }
+
     attr = BpmnNamespaceManager.getAttributeValue(xBounds, BpmnNamespaceManager.DC, 'height')
     if (attr) {
       this.height = convertToDouble(attr)
     }
+
     attr = BpmnNamespaceManager.getAttributeValue(xBounds, BpmnNamespaceManager.DC, 'width')
     if (attr) {
       this.width = convertToDouble(attr)
     }
+
     // Check for size 0
     if (this.height === 0) {
       this.height = 30
     }
+
     if (this.width === 0) {
       this.width = 30
     }
   }
+
   /**
    * Add the label bounds for this shapes label
    * @param xBounds The XML element representing this labels bounds
@@ -3236,27 +3536,33 @@ export class BpmnShape {
     if (!xBounds) {
       return
     }
+
     // If there are bounds, set standard values, first.
     let labelX = 0
     let labelY = 0
     let labelWidth = 0
     let labelHeight = 0
+
     let attr = BpmnNamespaceManager.getAttributeValue(xBounds, BpmnNamespaceManager.DC, 'x')
     if (attr) {
       labelX = convertToDouble(attr)
     }
+
     attr = BpmnNamespaceManager.getAttributeValue(xBounds, BpmnNamespaceManager.DC, 'y')
     if (attr) {
       labelY = convertToDouble(attr)
     }
+
     attr = BpmnNamespaceManager.getAttributeValue(xBounds, BpmnNamespaceManager.DC, 'height')
     if (attr) {
       labelHeight = convertToDouble(attr)
     }
+
     attr = BpmnNamespaceManager.getAttributeValue(xBounds, BpmnNamespaceManager.DC, 'width')
     if (attr) {
       labelWidth = convertToDouble(attr)
     }
+
     // In case, the label sizes were set to 0
     if (labelWidth < 1) {
       labelWidth = 100
@@ -3264,8 +3570,10 @@ export class BpmnShape {
     if (labelHeight < 1) {
       labelHeight = 20
     }
+
     this.labelBounds = new Rect(labelX, labelY, labelWidth, labelHeight)
   }
+
   /**
    * Returns the value of the given attribute of the linked {@link BpmnElement}, or null
    * @param attribute The attribute to receive
@@ -3273,6 +3581,7 @@ export class BpmnShape {
   getAttribute(attribute) {
     return this.element.getValue(attribute)
   }
+
   /**
    * Returns true, if the shape has width and height attributes set.
    * @returns True, if the label has size, false if not
@@ -3280,6 +3589,7 @@ export class BpmnShape {
   hasLabelSize() {
     return this.labelBounds.width > 0 && this.labelBounds.height > 0
   }
+
   /**
    * Returns true, if the top left point of the bounds is not (0,0)
    */
@@ -3287,16 +3597,20 @@ export class BpmnShape {
     return this.labelBounds.x > 0 && this.labelBounds.y > 0
   }
 }
+
 export class MultiLabelFolderNodeConverter extends FolderNodeConverter {
   choreographyFolderNodeDefaults
+
   constructor() {
     super()
     this.folderNodeDefaults = this.createFolderNodeDefaults()
     this.choreographyFolderNodeDefaults = this.createChoreographFolderNodeDefaults()
   }
+
   get labelDefaults() {
     return this.folderNodeDefaults.labels
   }
+
   createFolderNodeDefaults() {
     const folderNodeDefaults = new FolderNodeDefaults()
     folderNodeDefaults.copyLabels = true
@@ -3306,6 +3620,7 @@ export class MultiLabelFolderNodeConverter extends FolderNodeConverter {
     }).createParameter('center')
     return folderNodeDefaults
   }
+
   createChoreographFolderNodeDefaults() {
     const folderNodeDefaults = new FolderNodeDefaults()
     folderNodeDefaults.copyLabels = true
@@ -3315,6 +3630,7 @@ export class MultiLabelFolderNodeConverter extends FolderNodeConverter {
     folderNodeDefaults.labels.layoutParameter = null
     return folderNodeDefaults
   }
+
   updateFolderNodeState(state, foldingView, viewNode, masterNode) {
     if (viewNode.style instanceof ChoreographyNodeStyle) {
       this.choreographyFolderNodeDefaults.updateState(state, masterNode)
@@ -3322,6 +3638,7 @@ export class MultiLabelFolderNodeConverter extends FolderNodeConverter {
       this.folderNodeDefaults.updateState(state, masterNode)
     }
   }
+
   initializeFolderNodeState(state, foldingView, viewNode, masterNode) {
     if (viewNode.style instanceof ChoreographyNodeStyle) {
       this.choreographyFolderNodeDefaults.initializeState(state, masterNode)
@@ -3329,6 +3646,7 @@ export class MultiLabelFolderNodeConverter extends FolderNodeConverter {
       this.folderNodeDefaults.initializeState(state, masterNode)
     }
   }
+
   updateGroupNodeState(state, foldingView, viewNode, masterNode) {
     // TODO - implement and write back labels!
     if (state.labels.size === viewNode.labels.size) {
@@ -3338,16 +3656,14 @@ export class MultiLabelFolderNodeConverter extends FolderNodeConverter {
     }
   }
 }
+
 /**
  * Visibility of a message envelope on an edge
  * @readonly
  * @enum {number}
  */
-export const MessageVisibleKind = {
-  UNSPECIFIED: 0,
-  INITIATING: 1,
-  NON_INITIATING: 2
-}
+export const MessageVisibleKind = { UNSPECIFIED: 0, INITIATING: 1, NON_INITIATING: 2 }
+
 /**
  * Enum for the different participant bands
  * @readonly
@@ -3361,12 +3677,15 @@ export const ParticipantBandKind = {
   TOP_INITIATING: 4,
   MIDDLE_INITIATING: 5
 }
+
 function convertToBoolean(s) {
   return new RegExp('true', 'i').test(s)
 }
+
 function convertToInt(s) {
   return parseInt(s, 10)
 }
+
 function convertToDouble(s) {
   return parseFloat(s)
 }

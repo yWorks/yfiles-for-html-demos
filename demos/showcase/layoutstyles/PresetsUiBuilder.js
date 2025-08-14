@@ -27,12 +27,14 @@
  **
  ***************************************************************************/
 import { Tooltip } from './Tooltip'
+
 const CSS_CLASS_BUTTON_GRID = 'option-presets-button-grid'
 const CSS_CLASS_PRESET = 'option-presets-button'
 const CSS_CLASS_INVALID_PRESET = 'invalid-preset'
 const INVALID_PRESET_MESSAGE = '<p><b>Preset has no effect for this sample!</b></p>'
 export const CSS_CLASS_PRESET_APPLIED = 'active-preset'
 const CSS_CLASS_EDITOR_PRESET = 'editor-preset'
+
 export class PresetsUiBuilder {
   grid
   optionEditor
@@ -40,17 +42,20 @@ export class PresetsUiBuilder {
   onPresetApplied
   tooltip = new Tooltip()
   tooltipTimer
+
   constructor(options) {
     this.grid = newGrid(options.rootElement)
     this.optionEditor = options.optionEditor
     this.presetDefs = options.presetDefs
     this.onPresetApplied = options.onPresetApplied
+
     if (options.optionEditor) {
       options.optionEditor.addChangeListener(() => {
         this.clearAppliedState()
       })
     }
   }
+
   clearAppliedState() {
     document.getElementById('data-editor').classList.remove(CSS_CLASS_EDITOR_PRESET)
     this.optionEditor.setPresetName(null)
@@ -59,35 +64,44 @@ export class PresetsUiBuilder {
       child.classList.add(CSS_CLASS_PRESET)
     }
   }
+
   setPresetButtonDisabled(disabled) {
     clearTimeout(this.tooltipTimer)
     for (const child of getButtons(this.grid)) {
       child.disabled = disabled
     }
   }
+
   buildUi(samplePresets, appliedPresetId) {
     const grid = this.grid
     const optionEditor = this.optionEditor
     const presetDefs = this.presetDefs
+
     const invalidPresets = samplePresets.invalidPresets
+
     clearGrid(grid)
+
     let appliedPreset
+
     for (const presetId of samplePresets.presets) {
       const preset = presetDefs[presetId]
       if (preset) {
         const handler = newButtonHandler(optionEditor, preset)
         const btn = this.createPresetButton(preset, presetId, handler, invalidPresets)
         grid.appendChild(btn)
+
         if (presetId === appliedPresetId) {
           optionEditor.setPresetName(preset.label)
           appliedPreset = { handler, htmlElement: btn }
         }
       }
     }
+
     if (appliedPreset) {
       appliedPreset.handler(appliedPreset.htmlElement)
     }
   }
+
   createPresetButton(preset, presetId, handler, invalidPresets) {
     const btn = document.createElement('button')
     btn.innerText = preset.label
@@ -103,10 +117,12 @@ export class PresetsUiBuilder {
       this.tooltip.hide()
     })
     btn.classList.add(CSS_CLASS_PRESET)
+
     if (invalidPresets.indexOf(presetId) !== -1) {
       //preset is invalid for this sample -> add respective class
       btn.classList.add(CSS_CLASS_INVALID_PRESET)
     }
+
     if (preset.description) {
       btn.onmouseenter = (e) => {
         const invalid = btn.classList.contains(CSS_CLASS_INVALID_PRESET)
@@ -125,6 +141,7 @@ export class PresetsUiBuilder {
     }
     return btn
   }
+
   resetInvalidState() {
     //make all presets active (for the modified graph sample!)
     for (const child of getButtons(this.grid)) {
@@ -132,19 +149,23 @@ export class PresetsUiBuilder {
     }
   }
 }
+
 function newGrid(rootElement) {
   const div = document.createElement('div')
   div.setAttribute('class', CSS_CLASS_BUTTON_GRID)
   rootElement.appendChild(div)
   return div
 }
+
 function clearGrid(htmlElement) {
   while (htmlElement.lastChild) {
     htmlElement.removeChild(htmlElement.lastChild)
   }
 }
+
 function newButtonHandler(optionEditor, preset) {
   const config = optionEditor.config
+
   const setters = []
   const settings = preset.settings
   for (const setting in settings) {
@@ -155,11 +176,13 @@ function newButtonHandler(optionEditor, preset) {
       })
     }
   }
+
   return (htmlElement) => {
     updateCss(htmlElement, CSS_CLASS_PRESET_APPLIED)
     applyValues(optionEditor, setters)
   }
 }
+
 function updateCss(htmlElement, cssApplied) {
   document.getElementById('data-editor').classList.add(CSS_CLASS_EDITOR_PRESET)
   for (const child of getButtons(htmlElement.parentElement)) {
@@ -169,13 +192,17 @@ function updateCss(htmlElement, cssApplied) {
     }
   }
 }
+
 function getButtons(htmlElement) {
   return htmlElement.querySelectorAll(`.${CSS_CLASS_PRESET}`)
 }
+
 function applyValues(optionEditor, setters) {
   optionEditor.reset()
+
   for (const setter of setters) {
     setter()
   }
+
   optionEditor.refresh()
 }

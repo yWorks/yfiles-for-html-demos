@@ -32,11 +32,7 @@ import type { TimeEntry } from './timeline/Timeline'
 /**
  * Type describing entities in business data.
  */
-type BaseEntity = {
-  id: number
-  type: string
-  info: string | { [key: string]: string }
-}
+type BaseEntity = { id: number; type: string; info: string | { [key: string]: string } }
 
 /**
  * Type for importing business data containing strings as enter- and exit-dates.
@@ -51,20 +47,12 @@ export type Entity = BaseEntity & { enter: Date[]; exit: Date[]; fraud?: boolean
 /**
  * Type describing connections between entities
  */
-export type Connection = {
-  from: number
-  to: number
-  type?: string
-  fraud?: boolean
-}
+export type Connection = { from: number; to: number; type?: string; fraud?: boolean }
 
 /**
  * Type for a whole set of business data.
  */
-export type BusinessData = {
-  nodesSource: ImportEntity[]
-  edgesSource: Connection[]
-}
+export type BusinessData = { nodesSource: ImportEntity[]; edgesSource: Connection[] }
 
 /**
  * Type-safe getter for entity data stored in the node tag.

@@ -52,11 +52,7 @@ enum EdgeDirection {
   OUT = 1
 }
 
-type PortDescriptor = {
-  x: number
-  y: number
-  direction: number
-}
+type PortDescriptor = { x: number; y: number; direction: number }
 
 /**
  * Provides all available ports of the given graph with the specified edge direction.

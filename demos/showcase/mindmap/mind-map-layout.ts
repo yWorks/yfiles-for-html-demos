@@ -136,11 +136,7 @@ function createLayoutData(): LayoutData {
       }
     }
   })
-  return treeLayoutData.combineWith(
-    new TreeReductionStageData({
-      nonTreeEdges: isCrossReference
-    })
-  )
+  return treeLayoutData.combineWith(new TreeReductionStageData({ nonTreeEdges: isCrossReference }))
 }
 
 /**
@@ -239,9 +235,7 @@ export async function layoutTree(
       // mark the incremental nodes, so they end up in the barycenter of their neighbors after
       // layout for a smooth layout animation
       layoutData = layoutData.combineWith(
-        new PlaceNodesAtBarycenterStageData({
-          affectedNodes: incrementalNodes
-        })
+        new PlaceNodesAtBarycenterStageData({ affectedNodes: incrementalNodes })
       )
     }
   }
@@ -267,9 +261,7 @@ export async function layoutTree(
  */
 function prepareSmoothExpandLayoutAnimation(graph: IGraph, incrementalNodes: INode[]): void {
   // mark the new nodes and place them between their neighbors
-  const layoutData = new PlaceNodesAtBarycenterStageData({
-    affectedNodes: incrementalNodes
-  })
+  const layoutData = new PlaceNodesAtBarycenterStageData({ affectedNodes: incrementalNodes })
   const layout = new PlaceNodesAtBarycenterStage()
   graph.applyLayout(layout, layoutData)
 }

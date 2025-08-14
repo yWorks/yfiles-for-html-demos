@@ -177,10 +177,7 @@ function initializeHighlightStyles(): void {
   graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(nodeStyleHighlight)
 
   // a similar style for the edges, however, cropped by the highlight's insets
-  const dummyCroppingArrow = new Arrow({
-    type: ArrowType.NONE,
-    cropLength: 5
-  })
+  const dummyCroppingArrow = new Arrow({ type: ArrowType.NONE, cropLength: 5 })
 
   const edgeStyle = new PolylineEdgeStyle({
     stroke: orangeStroke,
@@ -513,12 +510,7 @@ function setUIDisabled(disabled: boolean): void {
  * Initializes the converters for the bindings of the template node styles.
  */
 function initializeConverters(): void {
-  const colors = {
-    present: '#76b041',
-    busy: '#ab2346',
-    travel: '#a367dc',
-    unavailable: '#c1c1c1'
-  }
+  const colors = { present: '#76b041', busy: '#ab2346', travel: '#a367dc', unavailable: '#c1c1c1' }
 
   StringTemplateNodeStyle.CONVERTERS.demoConverters = {
     // converter function for the background color of nodes

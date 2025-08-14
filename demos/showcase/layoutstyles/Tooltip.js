@@ -27,8 +27,10 @@
  **
  ***************************************************************************/
 import { CSS_CLASS_PRESET_APPLIED } from './PresetsUiBuilder'
+
 const CSS_CLASS_VISIBLE = 'visible'
 const CSS_CLASS_ACTIVE = 'active'
+
 /**
  * Manages the tooltips for the preset buttons.
  */
@@ -37,11 +39,13 @@ export class Tooltip {
   dummy
   hideTimer
   deltaHeight
+
   constructor() {
     this.element = document.querySelector('#preset-tooltip')
     this.dummy = Tooltip.createDummyElement(this.element)
     this.deltaHeight = this.element.parentElement.getBoundingClientRect().top
   }
+
   /**
    * Shows the tooltip text for the given activator element.
    * @param activator The button for which the tool tip is shown.
@@ -52,33 +56,40 @@ export class Tooltip {
     const activatorBounds = activator.getBoundingClientRect()
     const activatorAnchorX = activatorBounds.left + activatorBounds.width / 2
     const activatorAnchorY = activatorBounds.top + activatorBounds.height + triangleSize + 2
+
     const tooltipHeight = this.calculateTooltipHeight(content)
     if (Tooltip.fitsViewport(activatorAnchorY + tooltipHeight)) {
       // do not hide tooltip if a new one is already triggered
       clearTimeout(this.hideTimer)
+
       const element = this.element
       const contentDiv = element.querySelector('.content')
       contentDiv.innerHTML = content
       element.style.display = 'block'
       element.style.top = `${activatorAnchorY - this.deltaHeight}px`
+
       const tooltipBounds = element.getBoundingClientRect()
       const triangle = element.querySelector('.triangle')
       triangle.style.left = `${activatorAnchorX - tooltipBounds.left - triangleSize}px`
+
       this.updateActive(activator)
       element.classList.add(CSS_CLASS_VISIBLE)
     }
   }
+
   /**
    * Hides the tooltip.
    */
   hide() {
     const element = this.element
     element.classList.remove(CSS_CLASS_VISIBLE)
+
     // remove the tooltip from the DOM, after the fade-out CSS transition has finished
     this.hideTimer = setTimeout(() => {
       element.style.display = 'none'
     }, 210)
   }
+
   /**
    * @param activator The button for which the tool tip is shown.
    */
@@ -89,6 +100,7 @@ export class Tooltip {
       element.classList.add(CSS_CLASS_ACTIVE)
     }
   }
+
   /**
    * Whether the tooltip fits into the current view port without being clipped.
    * @param maxY The maximum y-coordinate of the current viewport.
@@ -96,6 +108,7 @@ export class Tooltip {
   static fitsViewport(maxY) {
     return document.documentElement.clientHeight > maxY
   }
+
   /**
    * @param content The tool tip text.
    */
@@ -105,6 +118,7 @@ export class Tooltip {
     this.dummy.innerHTML = ''
     return height
   }
+
   /**
    * Creates a dummy element to measure the tooltip height off-screen in order to not show the
    * tooltip content if it does not fit the current viewport.

@@ -318,9 +318,7 @@ export const TabularLayoutConfig = (Class as any)('TabularLayoutConfig', {
       column.rightPadding = cellPadding
     })
 
-    const tabularLayoutData = new TabularLayoutData({
-      nodeDescriptors: nodeDescriptor
-    })
+    const tabularLayoutData = new TabularLayoutData({ nodeDescriptors: nodeDescriptor })
     tabularLayoutData.layoutGridData.layoutGridCellDescriptors = () =>
       layoutGrid.createDynamicCellDescriptor()
     return tabularLayoutData

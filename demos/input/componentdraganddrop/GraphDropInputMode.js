@@ -49,6 +49,7 @@ import {
   Point,
   Rect
 } from '@yfiles/yfiles'
+
 /**
  * An {@link ItemDropInputMode} specialized to drag and drop {@link IGraph graphs}.
  *
@@ -75,10 +76,13 @@ export class GraphDropInputMode extends ItemDropInputMode {
    * feature is disabled.
    */
   allowFolderNodeAsParent
+
   // The center of the preview graph.
   center
+
   // The latest filtered graph.
   graphWrapper = null
+
   /**
    * Constructs a new instance of class {@link GraphDropInputMode}.
    */
@@ -88,12 +92,14 @@ export class GraphDropInputMode extends ItemDropInputMode {
     this.center = Point.ORIGIN
     this.allowFolderNodeAsParent = false
   }
+
   /**
    * Gets the currently dragged graph from the drop data.
    */
   get draggedItem() {
     return this.dropData
   }
+
   /**
    * Creates the dragged graph in the target graph after the dragged graph has been dropped.
    * This method is called by the {@link ItemDropInputMode.itemCreator} that
@@ -110,8 +116,10 @@ export class GraphDropInputMode extends ItemDropInputMode {
     // move the graph to the drop location
     const delta = dropLocation.subtract(this.getCenter(draggedGraph))
     this.move(draggedGraph, delta)
+
     // create the graph and collect the dropped nodes
     const droppedNodes = new Set()
+
     let targetGraph = graph
     let parent = null
     if (dropTarget instanceof INode) {
@@ -123,6 +131,7 @@ export class GraphDropInputMode extends ItemDropInputMode {
         parent = foldingView.getMasterItem(dropTarget)
       }
     }
+
     new GraphCopier().copy({
       sourceGraph: draggedGraph,
       targetGraph,
@@ -133,17 +142,22 @@ export class GraphDropInputMode extends ItemDropInputMode {
         }
       }
     })
+
     if (parent) {
       targetGraph.groupingSupport.enlargeGroupNode(context, parent, true)
     }
+
     // dispose any previous created graph instances to avoid memory leaks
     if (this.graphWrapper) {
       this.graphWrapper.dispose()
     }
+
     // return the dropped graph
     this.graphWrapper = new FilteredGraphWrapper(targetGraph, (node) => droppedNodes.has(node))
+
     return this.graphWrapper
   }
+
   /**
    * Fills the specified graph that is used to preview the dragged graph.
    * @param previewGraph The preview graph to fill.
@@ -153,10 +167,12 @@ export class GraphDropInputMode extends ItemDropInputMode {
     if (!draggedGraph) {
       return
     }
+
     // copy the dragged items into the preview graph
     new GraphCopier().copy(draggedGraph, previewGraph)
     this.center = this.getCenter(previewGraph)
   }
+
   /**
    * Updates the {@link GraphDropInputMode.previewGraph preview graph} so the dragged graph is
    * displayed at the specified {@link GraphDropInputMode.setDragLocation}.
@@ -168,13 +184,16 @@ export class GraphDropInputMode extends ItemDropInputMode {
     const delta = dragLocation.subtract(this.center)
     this.move(previewGraph, delta)
     this.center = dragLocation
+
     this.repaintCanvas()
   }
+
   repaintCanvas() {
     if (this.parentInputModeContext && this.parentInputModeContext.canvasComponent) {
       this.parentInputModeContext.canvasComponent.invalidate()
     }
   }
+
   /**
    * Returns the center of the given graph.
    */
@@ -183,27 +202,32 @@ export class GraphDropInputMode extends ItemDropInputMode {
       .map((node) => node.layout.toRect())
       .reduce((total, bounds) => Rect.add(total, bounds), Rect.EMPTY).center
   }
+
   /**
    * Moves the given graph by the given delta.
    */
   move(graph, delta) {
     const moveNode = (node) => graph.setNodeLayout(node, node.layout.toRect().getTranslated(delta))
     const moveBend = (bend) => graph.setBendLocation(bend, bend.location.toPoint().add(delta))
+
     graph.nodes.forEach(moveNode)
     graph.edges.flatMap((edge) => edge.bends).forEach(moveBend)
   }
+
   getDropTarget(dragLocation) {
     const validDrag =
       !this.lastDragEventArgs || this.lastDragEventArgs.dropEffect !== DragDropEffects.NONE
     if (!this.parentInputModeContext || !this.parentInputModeContext.graph || !validDrag) {
       return null
     }
+
     return this.getDropTargetParentNode(
       this.parentInputModeContext,
       this.parentInputModeContext.graph,
       dragLocation
     )
   }
+
   /**
    * Returns a valid parent node at the current mouse location to drop the dragged graph onto or null.
    */
@@ -216,6 +240,7 @@ export class GraphDropInputMode extends ItemDropInputMode {
         .find((node) => this.isValidDropTargetParentNode(graph, node)) ?? null
     )
   }
+
   /**
    * Checks whether the given node is a valid parent node to drop the dragged graph onto.
    */
@@ -225,6 +250,7 @@ export class GraphDropInputMode extends ItemDropInputMode {
       (graph.isGroupNode(node) || (this.allowFolderNodeAsParent && this.isFolderNode(graph, node)))
     )
   }
+
   /**
    * Checks whether the given node is a folder node.
    */
@@ -237,6 +263,7 @@ export class GraphDropInputMode extends ItemDropInputMode {
       : false
     return !isGroupNodeInViewGraph && isGroupNodeInMasterGraph
   }
+
   collectSnapResults(evt, snapContext) {
     if (!this.previewGraph || !this.draggedItem) {
       return
@@ -247,6 +274,7 @@ export class GraphDropInputMode extends ItemDropInputMode {
       provider.collectSnapResults(snapContext, evt, suggestedLayout, node)
     })
   }
+
   /**
    * Gets the layout of a given node at the given location.
    */
@@ -254,6 +282,7 @@ export class GraphDropInputMode extends ItemDropInputMode {
     const delta = location.subtract(this.center)
     return node.layout.toRect().getTranslated(delta)
   }
+
   /**
    * Initializes the information for a drag and drop operation from the graph palette and starts the operation.
    */

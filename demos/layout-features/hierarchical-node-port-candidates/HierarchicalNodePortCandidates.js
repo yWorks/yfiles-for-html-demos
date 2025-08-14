@@ -35,6 +35,7 @@ import {
   NodePortCandidates,
   PortSides
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates how to run a {@link HierarchicalLayout} with a configured set of {@link NodePortCandidates}.
  * @param graph The graph to be laid out
@@ -42,19 +43,24 @@ import {
  */
 export function createFeatureLayoutConfiguration(graph) {
   const layout = new HierarchicalLayout()
+
   // Create a set of NodePortCandidates
   const nodePortCandidates = new NodePortCandidates()
+
   // Add a LayoutPortCandidate for each side of the node. Allow only one connection to each candidate.
   nodePortCandidates.addFreeCandidate(PortSides.TOP)
   nodePortCandidates.addFreeCandidate(PortSides.BOTTOM)
   nodePortCandidates.addFreeCandidate(PortSides.RIGHT)
   nodePortCandidates.addFreeCandidate(PortSides.LEFT)
+
   // Only use the candidate set for node number 5.
   const layoutData = new HierarchicalLayoutData()
   layoutData.ports.nodePortCandidates = (node) =>
     parseInt(node.tag) === 5 ? nodePortCandidates : null
+
   return { layout, layoutData }
 }
+
 /**
  * Demonstrates how to run a {@link HierarchicalLayout} with the default configuration.
  * @param graph The graph to be laid out
@@ -63,5 +69,6 @@ export function createFeatureLayoutConfiguration(graph) {
 export function createDefaultLayoutConfiguration(graph) {
   const layout = new HierarchicalLayout()
   const layoutData = new HierarchicalLayoutData()
+
   return { layout, layoutData }
 }

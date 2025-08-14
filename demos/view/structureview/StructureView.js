@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { delegate, Graph, HashMap, INode } from '@yfiles/yfiles'
+
 /**
  * Stub implementation of the above-specified folding view type for flat graphs (or graphs without
  * folding). This stub implementation ensures that the structure view is properly populated even
@@ -36,11 +37,16 @@ const DummyFoldingView = {
   getViewItem(item) {
     return item
   },
+
   collapse() {},
+
   expand() {},
+
   addEventListener(_name, _listener) {},
+
   removeEventListener(_name, _listener) {}
 }
+
 /**
  * Displays a structured view of a given {@link IGraph}. The collapse/expand mechanism is based on
  * a checkbox state and CSS selectors. Therefore, the corresponding CSS file is required.
@@ -52,19 +58,23 @@ export class StructureView {
    */
   nodeLabelPlaceholder = '< node >'
   groupLabelPlaceholder = '< group >'
+
   /**
    * Whether the folding state should be synced between the structure view and the graph.
    */
   syncFoldingState = false
+
   foldingView = DummyFoldingView
   masterGraph = new Graph()
   rootListElement
   groupElementCounter = 0
+
   /**
    * Stores a mapping from graph nodes to structure view DOM elements.
    * Uses a yFiles HashMap because keys are yFiles objects of type INode.
    */
   nodeToElement
+
   /**
    * Initializes the structure view in the DOM element given by the id and the given click callback.
    * @param selector The selector for the container in which the structure view should be created.
@@ -74,27 +84,35 @@ export class StructureView {
     this.graph = graph
     this.nodeToElement = new HashMap()
     this.rootListElement = document.createElement('ol')
+
     const graphRoot = this.createGraphRootElement()
     graphRoot.appendChild(this.rootListElement)
+
     const graphList = document.createElement('div')
     graphList.className = 'structure-view__list'
     graphList.appendChild(graphRoot)
+
     const container = document.querySelector(selector)
     container.className = 'structure-view'
     container.appendChild(graphList)
+
     this.setGraph(this.graph)
   }
+
   /**
    * The callback that is executed when an element in the structure view is clicked.
    */
   elementClickedCallback = () => {}
+
   /**
    * Specifies the graph that is currently displayed by this structure view.
    */
   setGraph(graph) {
     //remove events from the previous graph
     this.uninstallEventListeners()
+
     this.graph = graph
+
     // re-initialize the StructureView with the new graph
     const foldingView = graph.foldingView
     this.foldingView = foldingView ?? DummyFoldingView
@@ -102,6 +120,7 @@ export class StructureView {
     this.installEventListeners()
     this.buildStructure()
   }
+
   /**
    * Installs listeners to update the structure view if the graph is edited.
    * The structure is updated on label editing, node creation/deletion and re-parenting.
@@ -114,6 +133,7 @@ export class StructureView {
     graph.addEventListener('node-created', delegate(this.onNodeCreated, this))
     graph.addEventListener('node-removed', delegate(this.onNodeRemoved, this))
     graph.addEventListener('parent-changed', delegate(this.onParentChanged, this))
+
     this.foldingView.addEventListener(
       'group-collapsed',
       delegate(this.syncGroupElementStateWithNode, this)
@@ -123,6 +143,7 @@ export class StructureView {
       delegate(this.syncGroupElementStateWithNode, this)
     )
   }
+
   /**
    * Uninstalls listeners added in {@link installEventListeners}.
    */
@@ -135,6 +156,7 @@ export class StructureView {
       'group-expanded',
       delegate(this.syncGroupElementStateWithNode, this)
     )
+
     const graph = this.masterGraph
     graph.removeEventListener('label-added', delegate(this.onLabelAdded, this))
     graph.removeEventListener('label-text-changed', delegate(this.onLabelTextChanged, this))
@@ -143,6 +165,7 @@ export class StructureView {
     graph.removeEventListener('node-removed', delegate(this.onNodeRemoved, this))
     graph.removeEventListener('parent-changed', delegate(this.onParentChanged, this))
   }
+
   // ========
   // Definition of event listener methods since we need to be able to remove them from the
   // old graph if the graph is updated.
@@ -165,6 +188,7 @@ export class StructureView {
   onParentChanged(args) {
     this.reParentNode(args.item)
   }
+
   /**
    * Clears the current structure component and builds it anew from scratch.
    */
@@ -175,6 +199,7 @@ export class StructureView {
       this.buildRecursiveTreeStructure(this.rootListElement, node)
     }
   }
+
   /**
    * A recursive helper function that actually builds the structure view. It
    * traverses all graph nodes and adds the respective DOM elements in the structure
@@ -192,6 +217,7 @@ export class StructureView {
       this.appendNodeElement(rootElement, node)
     }
   }
+
   /**
    * Helper method to clear the entire structure and its internal maps.
    */
@@ -202,6 +228,7 @@ export class StructureView {
     this.nodeToElement.clear()
     this.groupElementCounter = 0
   }
+
   /**
    * Creates the DOM element for the given node and adds it to
    * the structure view.
@@ -218,6 +245,7 @@ export class StructureView {
         }
       }
     }
+
     if (this.masterGraph.isGroupNode(node)) {
       const childRoot = this.appendGroupElement(rootElement, node)
       for (const child of this.masterGraph.getChildren(node)) {
@@ -227,11 +255,13 @@ export class StructureView {
       this.appendNodeElement(rootElement, node)
     }
   }
+
   /**
    * Removes the node element from the structure view and deletes the node to element mappings.
    */
   removeNode(node) {
     const element = this.getElement(node)
+
     if (element) {
       const listElement = this.getChildRootElement(element)
       if (listElement) {
@@ -241,12 +271,15 @@ export class StructureView {
           newGroupList.appendChild(listElement.lastChild)
         }
       }
+
       // removes the node from the node-to-element map
       this.nodeToElement.delete(node)
+
       // removes the element from the DOM
       element.remove()
     }
   }
+
   /**
    * Moves the structure view element which belongs to the given node to the element
    * of the new parent node.
@@ -263,11 +296,13 @@ export class StructureView {
         }
       }
     }
+
     const element = this.getElement(node)
     if (element) {
       newRoot.appendChild(element)
     }
   }
+
   /**
    * Synchronizes the name of the element in the structure view with the label of the node.
    * If the node has no label, the placeholder label will be used instead.
@@ -276,6 +311,7 @@ export class StructureView {
     if (!(modelItem instanceof INode)) {
       return
     }
+
     const element = this.getElement(modelItem)
     if (element) {
       const label = this.getLabelElement(element)
@@ -286,6 +322,7 @@ export class StructureView {
           : this.nodeLabelPlaceholder)
     }
   }
+
   /**
    * Creates the root element for the structure view. This element does not belong to any node
    * and also has no click events or callbacks. This just serves as a collapse/expand button for the
@@ -295,44 +332,58 @@ export class StructureView {
     // Create the 'Graph' root folder
     const graphRootElement = document.createElement('div')
     graphRootElement.className = 'structure-view__group'
+
     const label = document.createElement('label')
     label.setAttribute('for', 'graph-root')
     label.textContent = 'Graph'
+
     const collapseBox = document.createElement('input')
     collapseBox.id = 'graph-root'
     collapseBox.type = 'checkbox'
     collapseBox.checked = true
+
     graphRootElement.append(label, collapseBox)
+
     return graphRootElement
   }
+
   /**
    * Creates an HTML group element with its events and appends it to the DOM.
    * This returns the root element for the group's children.
    */
   appendGroupElement(parent, groupNode) {
     const groupId = this.groupElementCounter++
+
     // create the group
     const groupElement = document.createElement('li')
     groupElement.className = 'structure-view__group'
+
     // create the label
     const label = document.createElement('label')
     label.setAttribute('data-groupElement', `group-${groupId}`)
     label.textContent = groupNode.labels.at(0)?.text ?? this.groupLabelPlaceholder
     label.addEventListener('click', () => this.elementClickedCallback(groupNode))
+
     // the collapse/expand control is done via checkbox
     const collapseBox = document.createElement('input')
     collapseBox.id = `group-${groupId}`
     collapseBox.type = 'checkbox'
     collapseBox.checked = true
+
     // sync the folding state with the graph if enabled
     collapseBox.addEventListener('change', (e) => this.syncGroupNodeStateWithElement(e))
+
     const childRoot = document.createElement('ol')
+
     groupElement.append(label, collapseBox, childRoot)
     parent.appendChild(groupElement)
+
     // keep track of the elements
     this.addElementNodeMapping(groupElement, groupNode)
+
     return childRoot
   }
+
   /**
    * Creates an HTML node element with its click listener and appends it to the DOM.
    */
@@ -342,24 +393,30 @@ export class StructureView {
     nodeElement.className = 'structure-view__node'
     nodeElement.textContent = node.labels.at(0)?.text ?? this.nodeLabelPlaceholder
     nodeElement.addEventListener('click', () => this.elementClickedCallback(node))
+
     // keep track of the elements
     this.addElementNodeMapping(nodeElement, node)
+
     parent.appendChild(nodeElement)
   }
+
   /**
    * Stores bidirectional references from element to node and vice versa
    */
   addElementNodeMapping(element, node) {
     this.nodeToElement.set(node, element)
+
     const el = element
     el['data-nodeMapping'] = node
   }
+
   /**
    * Returns the HTMLElement in the structure view that represents the given graph node.
    */
   getElement(node) {
     return this.nodeToElement.get(node)
   }
+
   /**
    * Returns the Node in the graph that represents the given structure view HTMLElement.
    */
@@ -367,6 +424,7 @@ export class StructureView {
     const el = element
     return el['data-nodeMapping']
   }
+
   /**
    * Gets the first ol element within the structure view group element, which serves as the
    * child root element for this group.
@@ -374,6 +432,7 @@ export class StructureView {
   getChildRootElement(groupElement) {
     return groupElement.querySelector('ol')
   }
+
   /**
    * Gets the label of the given structure view element. For group elements this will return a label
    * and for node elements this will return the node itself
@@ -381,6 +440,7 @@ export class StructureView {
   getLabelElement(element) {
     return element.querySelector('label') ?? element
   }
+
   /**
    * Sets the graph's group node element state to the given collapsed state of
    * the structure view group element.
@@ -389,6 +449,7 @@ export class StructureView {
     if (!this.syncFoldingState) {
       return
     }
+
     const collapseBox = e.target
     const masterGroupNode = this.getNode(collapseBox.parentElement)
     if (!masterGroupNode) {
@@ -398,12 +459,14 @@ export class StructureView {
     if (!viewGroupNode) {
       return
     }
+
     if (!collapseBox.checked) {
       this.foldingView.collapse(viewGroupNode)
     } else {
       this.foldingView.expand(viewGroupNode)
     }
   }
+
   /**
    * Sets the structured view group element state to the given collapsed state of the graph's group nodes.
    */
@@ -411,6 +474,7 @@ export class StructureView {
     if (!this.syncFoldingState) {
       return
     }
+
     const groupNode = evt.item
     const masterGroupNode = src.getMasterItem(groupNode)
     const groupLi = this.getElement(masterGroupNode ? masterGroupNode : groupNode)

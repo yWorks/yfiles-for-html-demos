@@ -38,6 +38,7 @@ import {
   SvgExport
 } from '@yfiles/yfiles'
 import { openInWindow } from './open-in-window'
+
 /**
  * Helper class for printing the contents of a graph component.
  * Printing is done in multiple steps. First, the graph is exported to one or
@@ -88,6 +89,7 @@ export class PrintingSupport {
    * The styles set to the {@link SvgExport.cssStyleSheet} property.
    * */
   cssStyleSheet = ''
+
   /**
    * Prints the detail of the given graph that is specified by either a
    * rectangle in world coordinates or a collection of world coordinate points which
@@ -106,9 +108,10 @@ export class PrintingSupport {
       renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
     )
     // Dispose of the component and remove its references to the graph
-    exportComponent.cleanUp()
     exportComponent.graph = new Graph()
+    exportComponent.cleanUp()
   }
+
   /**
    * Prints the detail of the given GraphComponent's graph that is specified by either a
    * rectangle in world coordinates or a collection of world coordinate points which
@@ -140,11 +143,13 @@ export class PrintingSupport {
           )
       )
     }
+
     let rows
     let columns
     let tiles
     const invertedProjection = this.projection.clone()
     invertedProjection.invert()
+
     if ((this.tiledPrinting && this.fitToTile) || !this.tiledPrinting) {
       // no tiles - just one row and column
       rows = 1
@@ -154,9 +159,11 @@ export class PrintingSupport {
       // get the size of the printed tiles
       const tileSize = new Size(this.tileWidth, this.tileHeight)
       const tileSizeScaled = new Size(tileSize.width / this.scale, tileSize.height / this.scale)
+
       // calculate number of rows and columns
       rows = Math.ceil((targetRect.height * this.scale) / tileSize.height)
       columns = Math.ceil((targetRect.width * this.scale) / tileSize.width)
+
       // calculate tile bounds
       tiles = []
       for (let i = 0; i < rows; i++) {
@@ -211,6 +218,7 @@ export class PrintingSupport {
         invertedProjection
       )
     }
+
     const pageBreakStyle = 'display: block; page-break-after: always;'
     const fitToTileStyle =
       'display: flex; justify-content: center; align-items: center; height: 100vh;'
@@ -220,6 +228,7 @@ export class PrintingSupport {
       for (let k = 0; k < columns; k++) {
         const lastRow = i === rows - 1
         const lastColumn = k === columns - 1
+
         const exporter = new SvgExport({
           worldBounds: Rect.EMPTY, // dummy rectangle that's overwritten by worldPoints below
           worldPoints: tiles[i][k],
@@ -231,22 +240,26 @@ export class PrintingSupport {
           cssStyleSheet: this.cssStyleSheet
         })
         this.configureMargin(exporter, i === 0, lastRow, k === 0, lastColumn)
+
         // if fit to page option is selected, recalculate scale based on the tile size
         if (this.tiledPrinting && this.fitToTile) {
           const yScale = exporter.calculateScaleForHeight(this.tileHeight - 2 * this.margin)
           const xScale = exporter.calculateScaleForWidth(this.tileWidth - 2 * this.margin)
           exporter.scale = Math.min(xScale, yScale)
         }
+
         // export the svg to an XML string
         const svgElement = await exporter.exportSvgAsync(
           graphComponent,
           renderCompletionCallback ? renderCompletionCallback : () => Promise.resolve()
         )
+
         // skip current iteration if skip empty tiles option
         // is selected and current svg element is empty
         if (this.skipEmptyTiles && this.isEmpty(svgElement)) {
           continue
         }
+
         if (!lastRow || !lastColumn) {
           resultingHTML += `<div style='${pageBreakStyle}'>`
         } else {
@@ -258,9 +271,11 @@ export class PrintingSupport {
         resultingHTML += '</div>'
       }
     }
+
     // display exported svg in new window
     if (this.targetUrl) {
       const printWindow = window.open(this.targetUrl)
+
       if (printWindow) {
         // automatically close window after print dialog is closed
         printWindow.onafterprint = () => {
@@ -289,6 +304,7 @@ export class PrintingSupport {
       }, 0)
     }
   }
+
   // Returns the corners of the tile, projected back to world coordinates
   getPointsForTile(bounds, invertedProjection) {
     return [
@@ -298,6 +314,7 @@ export class PrintingSupport {
       invertedProjection.transform(bounds.bottomLeft)
     ]
   }
+
   // Returns the projected bounding box for the given points
   getBoundsFromPoints(points) {
     let bounds = Rect.EMPTY
@@ -306,6 +323,7 @@ export class PrintingSupport {
     }
     return bounds
   }
+
   configureMargin(exporter, firstRow, lastRow, firstColumn, lastColumn) {
     if (!this.tiledPrinting) {
       // set margin if we don't print tiles
@@ -316,13 +334,50 @@ export class PrintingSupport {
       const bottom = lastRow ? this.margin : 0
       const right = lastColumn ? this.margin : 0
       const left = firstColumn ? this.margin : 0
+
       exporter.margins = [top, right, bottom, left]
     }
   }
+
   /**
    * Checks whether the current svg element will produce an empty page
    */
   isEmpty(svg) {
-    return !svg.children[1].children[0].children[0].hasChildNodes()
+    const renderingTags = new Set([
+      'path',
+      'rect',
+      'circle',
+      'ellipse',
+      'polygon',
+      'polyline',
+      'line',
+      'text',
+      'image',
+      'foreignobject',
+      'use'
+    ])
+    function hasGraphicContent(svg) {
+      if (!svg || !svg.children) {
+        return false
+      }
+      // Iterate through all direct child elements of the current element
+      for (let i = 0; i < svg.children.length; i++) {
+        const child = svg.children[i]
+        const tagName = child.tagName.toLowerCase()
+        // If the child is a rendering graphic tag (e.g., <rect>, <text>), then we've found content
+        if (renderingTags.has(tagName)) {
+          return true
+        }
+        // If the child is a grouping element, recursively check its children for graphic content
+        if (tagName === 'g' || tagName === 'svg' || tagName === 'a') {
+          if (hasGraphicContent(child)) {
+            return true
+          }
+        }
+      }
+      // If no rendering graphic tag found, there is no content in this element
+      return false
+    }
+    return !hasGraphicContent(svg)
   }
 }

@@ -37,6 +37,7 @@ import {
   Point,
   Rect
 } from '@yfiles/yfiles'
+
 /**
  * Aggregates providers, configuration, graph generation etc. for one demo configuration
  */
@@ -47,11 +48,14 @@ export class DemoConfiguration {
   async loadGraph(graphComponent) {
     const graph = graphComponent.graph
     graph.undoEngineEnabled = false
+
     const response = await fetch(this.graphResourcePath)
     const graphData = await response.json()
     this.createGraph(graph, graphData)
+
     graph.undoEngineEnabled = true
   }
+
   /**
    * Parses the json graph data and builds a graph accordingly
    * @yjs:keep = edgeList
@@ -62,6 +66,7 @@ export class DemoConfiguration {
     graph.clear()
     // create a map to store the nodes for edge creation
     const nodeMap = new Map()
+
     // create the nodes
     for (const nodeData of graphData.nodeList) {
       const id = nodeData.id
@@ -69,8 +74,10 @@ export class DemoConfiguration {
       const layout = new Rect(l.x, l.y, l.w, l.h)
       const node = this.createNode(graph, id, layout, nodeData)
       graph.setStyle(node, this.nodeStyleProvider(node, graph))
+
       nodeMap.set(id, node)
     }
+
     // create the edges
     for (const edgeData of graphData.edgeList) {
       // get the source and target node from the mapping
@@ -83,9 +90,11 @@ export class DemoConfiguration {
         edgeData.tp != null ? Point.from(edgeData.tp) : targetNode.layout.center
       const sourcePort = graph.addPortAt(sourceNode, sourcePortLocation)
       const targetPort = graph.addPortAt(targetNode, targetPortLocation)
+
       // create the edge
       const edge = graph.createEdge(sourcePort, targetPort)
       graph.setStyle(edge, this.edgeStyleProvider(edge, graph))
+
       // add the bends
       if (edgeData.b != null) {
         const bendData = edgeData.b

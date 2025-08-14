@@ -27,11 +27,13 @@
  **
  ***************************************************************************/
 import { INode } from '@yfiles/yfiles'
+
 /**
  * Configure the context menu for this demo.
  */
 export function configureContextMenu(graphComponent, setAsRootNode) {
   const inputMode = graphComponent.inputMode
+
   // Add a listener that populates the context menu for the hit elements or cancels showing a menu.
   // This PopulateItemContextMenu event is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
   inputMode.addEventListener('populate-item-context-menu', (evt) => {
@@ -41,12 +43,14 @@ export function configureContextMenu(graphComponent, setAsRootNode) {
     }
   })
 }
+
 /**
  * Populates the context menu based on the item for which the menu was opened.
  */
 function populateContextMenu(graphComponent, setAsRootNode, evt, node) {
   // select the node
   updateSelection(graphComponent, node)
+
   // create the context menu items
   if (node && !graphComponent.graph.isGroupNode(node)) {
     evt.contextMenu = [
@@ -57,6 +61,7 @@ function populateContextMenu(graphComponent, setAsRootNode, evt, node) {
     evt.contextMenu = [{ label: 'Clear root node', action: () => setAsRootNode(graphComponent) }]
   }
 }
+
 /**
  * Updates the node selection state when the context menu is opened for a node.
  */

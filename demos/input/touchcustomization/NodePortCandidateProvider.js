@@ -37,6 +37,7 @@ import {
   PortCandidate,
   PortCandidateProviderBase
 } from '@yfiles/yfiles'
+
 /**
  * This port candidate provider provides port candidates at each side and in the center of a node.
  */
@@ -50,6 +51,7 @@ export class NodePortCandidateProvider extends PortCandidateProviderBase {
     super()
     this.node = node
   }
+
   /**
    * Returns a list that contains the port candidates.
    * @param context The context for which the candidates should be provided
@@ -64,6 +66,7 @@ export class NodePortCandidateProvider extends PortCandidateProviderBase {
     candidates.add(this.newCandidate(FreeNodePortLocationModel.BOTTOM))
     return candidates
   }
+
   newCandidate(parameter) {
     return new PortCandidate(this.node, parameter)
   }

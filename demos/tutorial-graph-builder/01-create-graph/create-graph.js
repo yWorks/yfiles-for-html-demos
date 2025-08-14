@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { GraphBuilder } from '@yfiles/yfiles'
+
 export function createGraph(graphComponent) {
   const data = {
     persons: [
@@ -35,10 +36,13 @@ export function createGraph(graphComponent) {
     ],
     relationships: [{ id: '0', sourceId: '0', targetId: '1' }]
   }
+
   // use the graph from the graph component, for example
   const graph = graphComponent.graph
+
   // instantiate the graph builder
   const graphBuilder = new GraphBuilder(graph)
+
   // add node and edge data
   graphBuilder.createNodesSource(data.persons, 'id')
   graphBuilder.createEdgesSource({
@@ -47,6 +51,7 @@ export function createGraph(graphComponent) {
     sourceId: 'sourceId',
     targetId: 'targetId'
   })
+
   // create the graph
   graphBuilder.buildGraph()
 }

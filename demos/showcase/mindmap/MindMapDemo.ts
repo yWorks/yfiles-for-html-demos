@@ -149,17 +149,13 @@ function initializeInputModes(): void {
     allowClipboardOperations: false,
     contextMenuItems: GraphItemTypes.NODE,
     focusableItems: GraphItemTypes.NODE,
-    editLabelInputMode: {
-      autoRemoveEmptyLabels: false
-    },
+    editLabelInputMode: { autoRemoveEmptyLabels: false },
     // enable panning without ctrl-key pressed
     moveViewportInputMode: { beginRecognizer: EventRecognizers.MOUSE_DOWN },
     movableSelectedItemsPredicate: (item) =>
       item instanceof INode && item !== getRoot(graphComponent.graph),
     // disable the moveUnselectedItemsInputMode so that only selected nodes can be moved
-    moveUnselectedItemsInputMode: {
-      enabled: false
-    },
+    moveUnselectedItemsInputMode: { enabled: false },
     // make only the nodes and the cross-reference edges selectable
     selectablePredicate: (item) => {
       if (item instanceof IEdge) {
@@ -264,9 +260,7 @@ function initializeNodeData(graph: IGraph): void {
     // Run a tree analysis algorithm to calculate the depth of each node,
     // i.e., the distance of a node from the root node.
     // Ignore the cross-reference edges, because they do not belong to the tree structure
-    const treeAnalysis = new TreeAnalysis({
-      subgraphEdges: (e) => !isCrossReference(e)
-    })
+    const treeAnalysis = new TreeAnalysis({ subgraphEdges: (e) => !isCrossReference(e) })
 
     const analysisResult = treeAnalysis.run(graph)
 

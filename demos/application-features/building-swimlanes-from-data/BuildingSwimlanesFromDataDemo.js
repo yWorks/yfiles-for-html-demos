@@ -58,47 +58,59 @@ import {
   TableNodeStyle,
   TimeSpan
 } from '@yfiles/yfiles'
+
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { downloadFile } from '@yfiles/demo-utils/file-support'
 import graphData from './graph-data.json'
+
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
-  graphComponent.inputMode = new GraphEditorInputMode({
-    allowGroupSelection: false
-  })
+  graphComponent.inputMode = new GraphEditorInputMode({ allowGroupSelection: false })
+
   // Enable general undo support
   graphComponent.graph.undoEngineEnabled = true
+
   // configures the table editor input mode
   configureTableEditing(graphComponent)
+
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   void loadGraph()
+
   // bind the buttons to their functionality
   initializeUI()
 }
+
 async function loadGraph() {
   // then build the graph with the given data set
   buildGraph(graphComponent.graph, graphData)
+
   // Automatically layout the swimlanes. The HierarchicalLayout respects the node to cell assignment based on the
   // node's center position.
   await runLayout('0s')
   // Finally, clear the undo engine to prevent undoing of the graph creation.
   graphComponent.graph.undoEngine?.clear()
 }
+
 function configureTableEditing(graphComponent) {
   const graphEditorInputMode = graphComponent.inputMode
+
   // use the undo support from the graph also for all future table instances
   Table.installStaticUndoSupport(graphComponent.graph)
+
   const reparentStripeHandler = new ReparentStripeHandler()
   reparentStripeHandler.maxColumnLevel = 1
   reparentStripeHandler.maxRowLevel = 1
+
   // Create a new TEIM instance which also allows drag and drop
   const tableInputMode = new TableEditorInputMode({
     reparentStripeHandler,
@@ -106,17 +118,21 @@ function configureTableEditing(graphComponent) {
     priority: graphEditorInputMode.handleInputMode.priority + 1
   })
   tableInputMode.stripeDropInputMode.enabled = true
+
   // Add to GEIM
   graphEditorInputMode.add(tableInputMode)
+
   // prevent re-parenting of tables into tables by copy & paste
   const clipboard = new GraphClipboard()
   clipboard.parentNodeDetection = ParentNodeDetectionModes.PREVIOUS_PARENT
   graphComponent.clipboard = clipboard
+
   // prevent selection of the table node
   graphEditorInputMode.selectablePredicate = (item) => {
     return !(item instanceof INode && ITable.getTable(item))
   }
 }
+
 /**
  * Iterates through the given data set and creates nodes and edges according to the given data.
  * How to iterate through the data set and which information are applied to the graph, depends on the structure of
@@ -137,16 +153,19 @@ function buildGraph(graph, graphData) {
   // It will be easier to assign lanes or connect them with edges afterwards.
   const nodes = {}
   const lanes = {}
+
   // Swimlanes are a special application of Tables, either one row with several columns (i.e. vertical swimlanes), or
   // one column with several rows (i.e. horizontal swimlanes).
   // In this case we go with the vertical swimlanes. Therefore, we create a Table with one row and multiple columns,
   // depending on the input data.
   const table = new Table()
+
   // Configure the row style, i.e. the container for the swimlanes. In this case, they should not be rendered at all,
   // since we are creating a vertical swimlane. However, in the general case of Tables, we could use a
   // semi-transparent style here to create overlapping cell colors.
   table.rowDefaults.padding = [10, 0, 0, 0]
   table.rowDefaults.style = IStripeStyle.VOID_STRIPE_STYLE
+
   // Configure the column style, i.e. the actual swimlanes.
   table.columnDefaults.padding = [30, 10, 10, 10]
   table.columnDefaults.labels.style = new LabelStyle({
@@ -159,22 +178,17 @@ function buildGraph(graph, graphData) {
   })
   table.columnDefaults.size = 200
   table.columnDefaults.style = new NodeStyleStripeStyleAdapter(
-    new ShapeNodeStyle({
-      fill: '#c4d7ed',
-      stroke: 'black',
-      shape: 'rectangle'
-    })
+    new ShapeNodeStyle({ fill: '#c4d7ed', stroke: 'black', shape: 'rectangle' })
   )
+
   // The second column style that is used for the even-odd styling of the columns.
   const alternateColumnStyle = new NodeStyleStripeStyleAdapter(
-    new ShapeNodeStyle({
-      fill: '#abc8e2',
-      stroke: 'black',
-      shape: 'rectangle'
-    })
+    new ShapeNodeStyle({ fill: '#abc8e2', stroke: 'black', shape: 'rectangle' })
   )
+
   // Create the single container row.
   table.createRow()
+
   // Iterate the lanes data and create the according lanes.
   graphData.lanesSource.forEach((laneData, index) => {
     const column = table.createColumn({
@@ -182,12 +196,15 @@ function buildGraph(graph, graphData) {
       style: index % 2 === 0 ? table.columnDefaults.style : alternateColumnStyle
     })
     table.addLabel(column, laneData.label || laneData.id)
+
     // We store the lane index to easily assign nodes to them later.
     lanes[laneData.id] = index
   })
+
   // Create a top-level group node and bind, via the TableNodeStyle, the table to it.
   const tableStyle = new TableNodeStyle(table)
   const tableGroupNode = graph.createGroupNode(null, table.layout.toRect(), tableStyle)
+
   // Iterate the node data and create the according nodes.
   graphData.nodesSource.forEach((nodeData) => {
     const size = nodeData.size || [50, 50]
@@ -203,6 +220,7 @@ function buildGraph(graph, graphData) {
       graph.setStyle(node, nodeStyle)
     }
     nodes[nodeData.id] = node
+
     if (nodeData.lane) {
       // Nodes are assigned to lanes based on their center location. We could either place them manually by getting
       // the respective lane's bounds, or we can use a helper function to place nodes in specific cells. In case of
@@ -217,6 +235,7 @@ function buildGraph(graph, graphData) {
       )
     }
   })
+
   // Iterate the edge data and create the according edges.
   graphData.edgesSource.forEach((edgeData) => {
     // Note that nodes and groups need to have disjoint sets of ids, otherwise it is impossible to determine
@@ -229,19 +248,18 @@ function buildGraph(graph, graphData) {
     })
   })
 }
+
 /**
  * Serializes the graph to JSON.
  * @param graph The graph
  */
 function writeToJSON(graph) {
-  const jsonOutput = {
-    nodesSource: [],
-    edgesSource: [],
-    lanesSource: []
-  }
+  const jsonOutput = { nodesSource: [], edgesSource: [], lanesSource: [] }
+
   // find the table, we assume there is only one
   const tableNode = graph.nodes.find((node) => !!ITable.getTable(node))
   const table = tableNode ? ITable.getTable(tableNode) : null
+
   // serialize the nodes with their swimlane information
   const node2id = new HashMap()
   graph.nodes.forEach((node, i) => {
@@ -249,8 +267,10 @@ function writeToJSON(graph) {
     if (node === tableNode) {
       return
     }
+
     // save the id to easily create the edgesSource afterwards
     node2id.set(node, i)
+
     // serialize the node
     const jsonNode = {
       id: i,
@@ -261,6 +281,7 @@ function writeToJSON(graph) {
       jsonNode.label = node.labels.first().text
     }
     jsonOutput.nodesSource.push(jsonNode)
+
     // store the lane of the node
     if (table) {
       const column = table.findColumn(tableNode, node.layout.center)
@@ -278,17 +299,17 @@ function writeToJSON(graph) {
       }
     }
   })
+
   // serialize the edges
   graph.edges.forEach((edge) => {
     const sourceId = node2id.get(edge.sourceNode)
     const targetId = node2id.get(edge.targetNode)
-    jsonOutput.edgesSource.push({
-      from: sourceId,
-      to: targetId
-    })
+    jsonOutput.edgesSource.push({ from: sourceId, to: targetId })
   })
+
   return jsonOutput
 }
+
 /**
  * Runs a {@link HierarchicalLayout} on the current graph. The
  * {@link HierarchicalLayout} respects the node to cell (or swimlane) assignment by considering the
@@ -300,6 +321,7 @@ function runLayout(duration) {
     layoutOrientation: 'top-to-bottom',
     componentLayout: { enabled: true }
   })
+
   // We use Layout executor convenience method that already sets up the whole layout pipeline correctly
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
@@ -309,9 +331,11 @@ function runLayout(duration) {
     animationDuration: duration,
     animateViewport: true
   })
+
   // Apply an initial layout
   return layoutExecutor.start()
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  *
@@ -320,6 +344,7 @@ function runLayout(duration) {
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph, { orthogonalEditing: true })
+
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
@@ -328,6 +353,7 @@ function initializeGraph(graph) {
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
+
 /**
  * Binds the buttons in the toolbar to their functionality.
  */
@@ -339,4 +365,5 @@ function initializeUI() {
   })
   document.querySelector('#layout-button').addEventListener('click', () => runLayout('1s'))
 }
+
 run().then(finishLoading)

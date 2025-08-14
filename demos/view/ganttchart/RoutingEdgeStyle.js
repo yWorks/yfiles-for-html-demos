@@ -35,6 +35,7 @@ import {
   Point,
   Stroke
 } from '@yfiles/yfiles'
+
 /**
  * An edge style that draws an edge in an orthogonal fashion.
  * All existing bends of the edge are ignored.
@@ -48,12 +49,16 @@ export class RoutingEdgeStyle extends PathEdgeStyleBase {
    * This only has an effect when the source location is right of the target location.
    */
   middleSegmentOffset = 32
+
   /** The amount of corner rounding */
   smoothing = 10
+
   /** The source arrow. */
   sourceArrow = IArrow.NONE
+
   /** The target arrow. */
   targetArrow
+
   /**
    * Creates a new instance of RoutingEdgeStyle.
    * @param outSegmentLength The length of the horizontal segment that connects to the source node.
@@ -66,11 +71,9 @@ export class RoutingEdgeStyle extends PathEdgeStyleBase {
     this.inSegmentLength = inSegmentLength
     this.stroke = stroke
     this.sourceArrow = IArrow.NONE
-    this.targetArrow = new Arrow({
-      fill: stroke.fill,
-      type: ArrowType.TRIANGLE
-    })
+    this.targetArrow = new Arrow({ fill: stroke.fill, type: ArrowType.TRIANGLE })
   }
+
   getPath(edge) {
     // create a new GeneralPath with the edge points
     const generalPath = new GeneralPath()
@@ -79,20 +82,25 @@ export class RoutingEdgeStyle extends PathEdgeStyleBase {
     for (const item of points) {
       generalPath.lineTo(item)
     }
-    return PathEdgeStyleBase.cropPath(edge, generalPath, this.sourceArrow, this.targetArrow)
+    return generalPath
   }
+
   getSmoothingLength(edge) {
     return this.smoothing
   }
+
   getSourceArrow(edge) {
     return this.sourceArrow
   }
+
   getTargetArrow(edge) {
     return this.targetArrow
   }
+
   getStroke(edge) {
     return this.stroke
   }
+
   /**
    * Calculates the points that define the edge path.
    * If the source and target are in the same row, it draws a straight-line,
@@ -104,10 +112,12 @@ export class RoutingEdgeStyle extends PathEdgeStyleBase {
     const targetPoint = edge.targetPort.location
     const points = []
     points.push(sourcePoint)
+
     // the source location with the x-offset
     const sourceX = sourcePoint.x + this.outSegmentLength
     // the target location with the x-offset
     const targetX = targetPoint.x - this.inSegmentLength
+
     if (sourceX <= targetX) {
       // the source is left of target and not in the same row, add two bends
       if (sourcePoint.y !== targetPoint.y) {
@@ -126,6 +136,7 @@ export class RoutingEdgeStyle extends PathEdgeStyleBase {
       points.push(new Point(targetX, middleSegmentY))
       points.push(new Point(targetX, targetPoint.y))
     }
+
     points.push(targetPoint)
     return points
   }

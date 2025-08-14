@@ -26,12 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { basicSetup, EditorView } from 'codemirror'
-import { xml } from '@codemirror/lang-xml'
-import { javascript } from '@codemirror/lang-javascript'
-import { lintGutter } from '@codemirror/lint'
-import { getXmlLinter } from '../../resources/codeMirrorLinters'
-const xmlLinter = getXmlLinter()
+import { createCodemirrorEditor, EditorView } from '@yfiles/demo-resources/codemirror-editor'
+
 /**
  * Editing dialog for schema graph nodes business data ({@link AdjacencyNodesSourceDefinition}
  */
@@ -39,11 +35,14 @@ export class EditAdjacencyNodesSourceDialog {
   dialogContainerModal
   dialogContainer
   acceptCallback
+
   nodesSourceConnector
+
   dataEditor
   idBindingInput
   templateEditor
   nameInput
+
   /**
    * Constructor for EditAdjacencyNodesSourceDialog
    * @param nodesSourceConnector the connector providing the business data
@@ -55,30 +54,39 @@ export class EditAdjacencyNodesSourceDialog {
     this.dialogContainer = document.querySelector('#editSourceDialog')
     this.nodesSourceConnector = nodesSourceConnector
   }
+
   /**
    * Creates the input fields for the dialog and initializes them with the {@link SourceDefinition}s
    * business data
    */
   initialize() {
     this.createHeading('Edit Nodes Source')
+
     this.nameInput = this.createInputField('Name', 'The name of the nodes source.')
-    this.dataEditor = this.createEditorField(
-      'Data',
-      'The nodes business data in JSON or JavaScript format. Either an array of node objects' +
-        ' or an object with strings as keys and node objects as values.',
-      'js'
+
+    this.dataEditor = createCodemirrorEditor(
+      'js',
+      this.createDescription(
+        'Data',
+        'The nodes business data in JSON or JavaScript format. Either an array of node objects' +
+          ' or an object with strings as keys and node objects as values.'
+      )
     )
+
     this.idBindingInput = this.createInputField(
       'ID Binding',
       'ID binding as string or function definition.'
     )
-    this.templateEditor = this.createEditorField(
-      'Template',
-      'Defines the SVG template that is used to visualize a node. This may contain dynamic' +
-        ' bindings as demonstrated in the samples that allow visualizing arbitrary properties of the node' +
-        ' business data, such as the name or id properties.',
-      'xml'
+    this.templateEditor = createCodemirrorEditor(
+      'xml',
+      this.createDescription(
+        'Template',
+        'Defines the SVG template that is used to visualize a node. This may contain dynamic' +
+          ' bindings as demonstrated in the samples that allow visualizing arbitrary properties' +
+          ' of the node business data, such as the name or id properties.'
+      )
     )
+
     this.nameInput.value = this.nodesSourceConnector.sourceDefinition.name
     this.dataEditor.dispatch({
       changes: {
@@ -96,6 +104,7 @@ export class EditAdjacencyNodesSourceDialog {
       }
     })
   }
+
   /**
    * Applies edited values to the {@link SourceDefinition}, recreates bindings
    * and calls the provided accept callback
@@ -105,44 +114,55 @@ export class EditAdjacencyNodesSourceDialog {
     this.nodesSourceConnector.sourceDefinition.idBinding = this.idBindingInput.value
     this.nodesSourceConnector.sourceDefinition.template = this.templateEditor.state.doc.toString()
     this.nodesSourceConnector.sourceDefinition.data = this.dataEditor.state.doc.toString()
+
     try {
       this.nodesSourceConnector.applyDefinition()
+
       this.dispose()
       this.acceptCallback()
     } catch (e) {
       alert(e)
     }
   }
+
   /**
    * Sets the dialog's div to visible and adds the accept and cancel buttons
    */
   async show() {
     // CodeMirror requires the textArea to be in the DOM and visible already when instantiating
     this.dialogContainerModal.style.removeProperty('display')
+
     return new Promise((resolve) => {
       setTimeout(() => {
         this.initialize()
+
         const buttonsContainer = document.createElement('div')
         buttonsContainer.classList.add('buttonsContainer')
+
         const cancelButton = document.createElement('button')
         cancelButton.textContent = 'Cancel'
         cancelButton.addEventListener('click', () => this.cancel())
         buttonsContainer.appendChild(cancelButton)
+
         const acceptButton = document.createElement('button')
         acceptButton.textContent = 'Accept and Update'
         acceptButton.addEventListener('click', () => this.accept())
         buttonsContainer.appendChild(acceptButton)
+
         this.dialogContainer.appendChild(buttonsContainer)
+
         resolve()
       })
     })
   }
+
   /**
    * discards/ignores entered/changed data and disposes the dialog
    */
   cancel() {
     this.dispose()
   }
+
   /**
    * Disposes the dialog by removing all children and setting the display property accordingly
    */
@@ -152,6 +172,7 @@ export class EditAdjacencyNodesSourceDialog {
     }
     this.dialogContainerModal.style.setProperty('display', 'none')
   }
+
   /**
    * creates a simple HTMLHeadingElement
    * @param text the text used in the heading
@@ -162,6 +183,7 @@ export class EditAdjacencyNodesSourceDialog {
     this.dialogContainer.appendChild(heading)
     return heading
   }
+
   /**
    * creates a simple HTMLInputElement adorned with heading and documentation
    * @param labelText the heading text for the input
@@ -174,25 +196,7 @@ export class EditAdjacencyNodesSourceDialog {
     label.appendChild(input)
     return input
   }
-  /**
-   * creates an CodeMirror text/code input field component adorned with heading and documentation
-   * @param labelText the heading label
-   * @param doc the documentation text. Can be longer as it is rendered as a HTML paragraph
-   * @param mode the language syntax configuration object for CodeMirror
-   */
-  createEditorField(labelText, doc, mode) {
-    const container = this.createDescription(labelText, doc)
-    const extensions = [basicSetup]
-    if (mode == 'js') {
-      extensions.push(javascript())
-    } else {
-      extensions.push(xml(), xmlLinter, lintGutter())
-    }
-    return new EditorView({
-      parent: container,
-      extensions: extensions
-    })
-  }
+
   /**
    * Creates a HTMLDivElement containing a heading and a documentation paragraph
    * @param labelText the heading text
@@ -203,10 +207,13 @@ export class EditAdjacencyNodesSourceDialog {
     const label = document.createElement('h3')
     label.textContent = labelText
     container.appendChild(label)
+
     const docParagraph = document.createElement('p')
     docParagraph.textContent = doc
     container.appendChild(docParagraph)
+
     this.dialogContainer.appendChild(container)
+
     return container
   }
 }

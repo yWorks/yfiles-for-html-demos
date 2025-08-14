@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { GraphItemTypes, INode, NodeStyleIndicatorRenderer, ShapeNodeStyle } from '@yfiles/yfiles'
+
 export function initializeHighlights(graphComponent) {
   // highlight node style
   graphComponent.graph.decorator.nodes.highlightRenderer.addConstant(
@@ -40,6 +41,7 @@ export function initializeHighlights(graphComponent) {
       margins: 2
     })
   )
+
   // selection node style
   graphComponent.graph.decorator.nodes.selectionRenderer.addConstant(
     new NodeStyleIndicatorRenderer({
@@ -52,6 +54,7 @@ export function initializeHighlights(graphComponent) {
       zoomPolicy: 'mixed'
     })
   )
+
   const inputMode = graphComponent.inputMode
   // configure the input mode to highlight nodes on hover
   const graphItemHoverInputMode = inputMode.itemHoverInputMode
@@ -59,16 +62,19 @@ export function initializeHighlights(graphComponent) {
   graphItemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     updateHighlights(graphComponent, evt.item, evt.oldItem)
   })
+
   const graph = graphComponent.graph
   graph.addEventListener('node-removed', (evt) => {
     // if the node is removed, remove the highlights
     graphComponent.highlights.remove(evt.item)
   })
+
   graph.addEventListener('edge-removed', (evt) => {
     // if the edge is removed, remove the highlights
     graphComponent.highlights.remove(evt.item)
   })
 }
+
 /**
  * Clears the previously highlighted element, if any, and highlights the new one.
  */

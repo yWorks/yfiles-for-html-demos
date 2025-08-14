@@ -58,6 +58,7 @@ export async function loadExternalFonts() {
     })
   )
 }
+
 async function bytesToBase64DataUrl(bytes, type = 'application/octet-stream') {
   return await new Promise((resolve, reject) => {
     const reader = new FileReader()

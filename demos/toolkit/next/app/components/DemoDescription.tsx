@@ -97,14 +97,8 @@ export default function DemoDescription() {
           </li>
           <li>
             After the graph has been changed, click{' '}
-            <img
-              style={{
-                verticalAlign: 'middle'
-              }}
-              src={reloadIcon}
-              alt="reload-icon"
-            />{' '}
-            to reload the initial sample graph.
+            <img style={{ verticalAlign: 'middle' }} src={reloadIcon} alt="reload-icon" /> to reload
+            the initial sample graph.
           </li>
           <li>
             Next.js&apos;s development server automatically updates the application upon code

@@ -114,10 +114,7 @@ function initializeGraph(graph: IGraph): void {
  * Configures the default node size and style as well as the default style for the edges for this demo.
  */
 function initializeDefaultStyles(graph: IGraph): void {
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    shape: 'rectangle',
-    fill: 'black'
-  })
+  graph.nodeDefaults.style = new ShapeNodeStyle({ shape: 'rectangle', fill: 'black' })
   graph.nodeDefaults.size = new Size(3, 3)
   graph.nodeDefaults.labels.style = getLabelStyle()
   graph.edgeDefaults.style = new PolylineEdgeStyle()

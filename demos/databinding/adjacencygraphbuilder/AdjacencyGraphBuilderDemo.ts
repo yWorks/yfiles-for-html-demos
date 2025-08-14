@@ -205,9 +205,7 @@ function initializeSamplesComboBox(): void {
  */
 function initializeLayout() {
   // initialize layout algorithm
-  layout = new HierarchicalLayout({
-    fromScratchLayeringStrategy: 'hierarchical-topmost'
-  })
+  layout = new HierarchicalLayout({ fromScratchLayeringStrategy: 'hierarchical-topmost' })
 
   // initialize layout data
   // configure label placement

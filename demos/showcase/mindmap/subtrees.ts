@@ -261,9 +261,7 @@ export function getRoot(graph: IGraph): INode {
  * Creates the arrays containing the nodes and edges of a given root's subtree.
  */
 export function getSubtree(graph: IGraph, subtreeRoot: INode): { nodes: INode[]; edges: IEdge[] } {
-  const treeAnalysis = new TreeAnalysis({
-    subgraphEdges: (e) => !isCrossReference(e)
-  })
+  const treeAnalysis = new TreeAnalysis({ subgraphEdges: (e) => !isCrossReference(e) })
   const analysisResult = treeAnalysis.run(graph)
   const subtree = analysisResult.getSubtree(subtreeRoot)
   return { nodes: [...subtree.nodes], edges: [...subtree.edges] }

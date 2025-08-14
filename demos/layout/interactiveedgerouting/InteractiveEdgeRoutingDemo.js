@@ -45,8 +45,11 @@ import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
+
 let graphComponent
+
 const routingPolicy = document.querySelector('#select-routing-policy')
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('#graphComponent')
@@ -57,17 +60,22 @@ async function run() {
   const foldingView = manager.createFoldingView()
   foldingView.enqueueNavigationalUndoUnits = true
   graphComponent.graph = foldingView.graph
+
   // configure interaction
   graphComponent.inputMode = createInputMode()
+
   // configures default styles for newly created graph elements
   initDemoStyles(graphComponent.graph, { foldingEnabled: true, orthogonalEditing: true })
   graphComponent.graph.nodeDefaults.shareStyleInstance = false
   graphComponent.graph.nodeDefaults.size = new Size(125, 100)
+
   // load the sample graph
   await loadSampleGraph()
+
   // bind the demo buttons to their functionality
   initializeUI()
 }
+
 /**
  * Loads the sample graph.
  */
@@ -78,6 +86,7 @@ async function loadSampleGraph() {
   // the sample graph bootstrapping should not be undoable
   graphComponent.graph.undoEngine.clear()
 }
+
 /**
  * Configure interaction.
  */
@@ -88,6 +97,7 @@ function createInputMode() {
   mode.showHandleItems = GraphItemTypes.NODE
   mode.selectableItems = GraphItemTypes.NODE
   mode.marqueeSelectableItems = GraphItemTypes.NODE
+
   // register listener which trigger a re-routing after each
   mode.moveSelectedItemsInputMode.addEventListener('drag-finished', () => reRouteEdges())
   mode.moveUnselectedItemsInputMode.addEventListener('drag-finished', () => reRouteEdges())
@@ -100,6 +110,7 @@ function createInputMode() {
   mode.addEventListener('items-pasted', () => reRouteEdges())
   return mode
 }
+
 /**
  * Re-Route the edges.
  *
@@ -112,6 +123,7 @@ function createInputMode() {
  */
 async function reRouteEdges() {
   const router = new EdgeRouter()
+
   // keep existing edge groups
   const data = new EdgeRouterData({
     sourceGroupIds: (e) => `s: ${e.sourceNode.layout.center} - ${e.sourcePort.location}`,
@@ -123,6 +135,7 @@ async function reRouteEdges() {
           : EdgeRouterScope.SEGMENTS_AS_NEEDED
     }
   })
+
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
     layout: router,
@@ -133,6 +146,7 @@ async function reRouteEdges() {
   })
   await layoutExecutor.start()
 }
+
 function initializeUI() {
   document.querySelector('#reload').addEventListener('click', loadSampleGraph)
   document.querySelector('#open-file-button').addEventListener('click', async () => {
@@ -142,4 +156,5 @@ function initializeUI() {
     await saveGraphML(graphComponent, 'interactiveEdgeRouting.graphml')
   })
 }
+
 run().then(finishLoading)

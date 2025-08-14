@@ -30,18 +30,22 @@ import { GraphModelManager, IObjectRenderer, Rect, Size } from '@yfiles/yfiles'
 import { AugmentationNodeRenderer } from './AugmentationNodeRenderer'
 import { IsometricWebGLNodeStyle } from './IsometricWebGLNodeStyle'
 import { IsometricBarLabelNodeStyle } from './IsometricBarLabelNodeStyle'
+
 let barManager
 let barLabelManager
+
 /**
  * Enable the isometric bar augmentations and their labels.
  */
 export function initializeAugmentations(graphComponent, getTagData) {
   // bars should have a floor space of 10x10 at the node center
   const layoutProvider = (node) => Rect.fromCenter(node.layout.center, new Size(10, 10))
+
   // bars should be visualized on top of the normal content group
   const renderTree = graphComponent.renderTree
   const barGroup = renderTree.createGroup(renderTree.rootGroup)
   barGroup.above(renderTree.contentGroup)
+
   // use the layoutProvider and getTagData method to provide render information to the IsometricWebGLNodeStyle
   // which uses WebGL rendering
   const barRenderer = new AugmentationNodeRenderer(
@@ -53,6 +57,7 @@ export function initializeAugmentations(graphComponent, getTagData) {
   // to the GraphComponent
   barManager = createAugmentationGraphModelManager(barRenderer)
   barManager.install(graphComponent, graphComponent.graph, barGroup)
+
   // place the additional labels on top of the bars
   const barLabelGroup = renderTree.createGroup(renderTree.rootGroup)
   barLabelGroup.above(barGroup)
@@ -69,6 +74,7 @@ export function initializeAugmentations(graphComponent, getTagData) {
   barLabelManager = createAugmentationGraphModelManager(barLabelRenderer)
   barLabelManager.install(graphComponent, graphComponent.graph, barLabelGroup)
 }
+
 function createAugmentationGraphModelManager(nodeRenderer) {
   const graphModelManager = new GraphModelManager()
   graphModelManager.nodeRenderer = nodeRenderer
@@ -79,6 +85,7 @@ function createAugmentationGraphModelManager(nodeRenderer) {
   graphModelManager.portLabelRenderer = IObjectRenderer.VOID_OBJECT_RENDERER
   return graphModelManager
 }
+
 /**
  * Handles a selection change in the bar data combo box.
  */
@@ -89,8 +96,10 @@ export function showBars(graphComponent) {
     barManager.install(graphComponent, graphComponent.graph)
     barLabelManager.install(graphComponent, graphComponent.graph)
   }
+
   graphComponent.invalidate()
 }
+
 /**
  * Handles a selection change in the bar data combo box.
  */
@@ -101,8 +110,10 @@ export function hideBars(graphComponent) {
     barManager.uninstall(graphComponent)
     barLabelManager.uninstall(graphComponent)
   }
+
   graphComponent.invalidate()
 }
+
 /**
  * Shows or hides the labels
  */

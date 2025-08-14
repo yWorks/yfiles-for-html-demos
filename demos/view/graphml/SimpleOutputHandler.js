@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { IGraph, IModelItem, IWriteContext, KeyType, OutputHandlerBase } from '@yfiles/yfiles'
+
 /**
  * An output handler that writes primitive data types and ignores complex types.
  */
@@ -42,6 +43,7 @@ export class SimpleOutputHandler extends OutputHandlerBase {
       this.defaultValue = property.defaultValue
     }
   }
+
   /**
    * Writes the property data to xml.
    *
@@ -76,6 +78,7 @@ export class SimpleOutputHandler extends OutputHandlerBase {
       }
     }
   }
+
   /**
    * Gets the value for the given key.
    * @see Overrides {@link OutputHandlerBase.getValue}

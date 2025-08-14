@@ -42,6 +42,7 @@ import {
   SimpleBend,
   SimpleEdge
 } from '@yfiles/yfiles'
+
 /**
  * This {@link NodeDropInputMode} allows for dropping a node onto an edge. More precisely, when a node
  * is dropped onto an edge, a new node is created and the edge is split in two edges such that:
@@ -59,6 +60,7 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
   getDropTarget(dragLocation) {
     // return the edge as hit item as well
     let hitItem = null
+
     const inputModeContext = this.parentInputModeContext
     const parentMode = inputModeContext.canvasComponent.inputMode
     if (parentMode) {
@@ -73,6 +75,7 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
     }
     return hitItem ?? super.getDropTarget(dragLocation)
   }
+
   /**
    * Creates the node in the graph after it's been dropped.
    * @param context The context for which the node should be created
@@ -92,12 +95,15 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
           graph.isGroupNode(item)
         )
         ?.at(0)
+
       if (groupAtDropLocation instanceof INode) {
         dropTarget = groupAtDropLocation
       }
     }
+
     return super.createNode(context, graph, node, dropTarget, layout)
   }
+
   /**
    * Splits the edge if the node is dropped on an edge.
    */
@@ -108,6 +114,7 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
       super.onItemCreated(evt)
       return
     }
+
     const edge = this.dropTarget
     const targetGraph = this.parentInputModeContext.graph
     const size = edge.bends.size
@@ -117,6 +124,7 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
       // these self loops are drawn specifically
       splitEdge = this.getDummyEdgeFromPath(edge)
     }
+
     // get the closest segment to the node center and create the ports for the new edges
     const closestSegment = this.getClosestSegment(droppedNodeCenter, splitEdge)
     const newPort1 = targetGraph.addPortAt(newNode, closestSegment.projection)
@@ -131,6 +139,7 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
         targetGraph.addBend(newEdge2, bend.location.toPoint())
       }
     })
+
     // copy the labels of the original edge to the newly created edges
     edge.labels.forEach((label) => {
       targetGraph.addLabel(
@@ -150,11 +159,14 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
         label.tag ? { ...label.tag } : null
       )
     })
+
     // remove the original edge from the graph
     targetGraph.remove(edge)
+
     // trigger the default event
     super.onItemCreated(evt)
   }
+
   /**
    * Returns the closest segment of the edge from the center of the node.
    * @returns closest segment index
@@ -169,9 +181,11 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
         projection: point.getProjectionOnSegment(sourcePortLocation, targetPortLocation)
       }
     }
+
     let minDistance = Number.MAX_VALUE
     let closestSegmentIndex = -1
     let closestProjection = null
+
     let lastPoint = sourcePortLocation
     edge.bends.concat(new SimpleBend(edge, targetPortLocation)).forEach((bend, i) => {
       const currentPoint = bend.location.toPoint()
@@ -182,15 +196,19 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
         closestSegmentIndex = i
         closestProjection = projectionOnSegment
       }
+
       lastPoint = currentPoint
     })
+
     return { index: closestSegmentIndex, projection: closestProjection }
   }
+
   /**
    * Creates a dummy edge for the given self-loop edge. The new edge will take the bends from the edge style renderer.
    */
   getDummyEdgeFromPath(edge) {
     const previewEdge = new SimpleEdge(edge.sourcePort, edge.targetPort)
+
     const path = edge.style.renderer.getPathGeometry(edge, edge.style).getPath()
     const pathCursor = path.createCursor()
     const bends = []
@@ -198,6 +216,7 @@ export class SubdivideEdgeDropInputMode extends NodeDropInputMode {
       bends.push(new SimpleBend(previewEdge, pathCursor.currentEndPoint))
     }
     previewEdge.bends = IListEnumerable.from(bends)
+
     return previewEdge
   }
 }

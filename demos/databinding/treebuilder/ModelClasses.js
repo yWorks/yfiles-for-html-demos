@@ -29,11 +29,14 @@
 /**
  * Non-UI model classes for the tree builder demo
  */
+
 import { TreeBuilder, TreeNodesSource } from '@yfiles/yfiles'
+
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
 // @ts-ignore Import via URL
 // eslint-disable-next-line import/no-unresolved
 import { nothing, svg } from 'lit-html'
+
 /**
  * Defines a tree node source consisting of data and bindings
  */
@@ -42,6 +45,7 @@ export class TreeNodesSourceDefinition {
   data
   idBinding
   template
+
   constructor() {
     this.name = ''
     this.data = ''
@@ -49,6 +53,7 @@ export class TreeNodesSourceDefinition {
     this.template = ''
   }
 }
+
 /**
  * Connector for {@link TreeNodesSource}s, {@link TreeNodesSourceDefinition}s and {@link TreeBuilder}
  */
@@ -56,6 +61,7 @@ export class TreeNodesSourceDefinitionBuilderConnector {
   sourceDefinition
   nodesSource
   graphBuilder
+
   /**
    * @param nodesSourceDefinition the {@link TreeNodesSourceDefinition} to connect
    * @param nodesSource the {@link TreeNodesSource} to connect
@@ -66,6 +72,7 @@ export class TreeNodesSourceDefinitionBuilderConnector {
     this.nodesSource = nodesSource
     this.graphBuilder = graphBuilder
   }
+
   /**
    * Updates/sets the sources' bindings and new data content
    */
@@ -84,6 +91,7 @@ export class TreeNodesSourceDefinitionBuilderConnector {
     }
     this.graphBuilder.setData(this.nodesSource, parseData(this.sourceDefinition.data))
   }
+
   createRenderFunction(template) {
     return new Function(
       'const svg = arguments[0]; const nothing = arguments[1]; const renderFunction = ' +
@@ -93,15 +101,18 @@ export class TreeNodesSourceDefinitionBuilderConnector {
         '\n return renderFunction'
     )(svg, nothing)
   }
+
   reset() {
     this.sourceDefinition.data = ''
     this.applyDefinition()
   }
 }
+
 /**
  * flag to prevent error messages from being repeatedly displayed for each graph item
  */
 let bindingErrorCaught = false
+
 /**
  * Returns a binding for the given string.
  * If the parameter is a function definition, a function object is
@@ -139,6 +150,7 @@ export function createBinding(bindingString) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (dataItem) => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
 }
+
 /**
  * Parses the string entered by the user and returns the parsed object
  * @param data the data entered by the user

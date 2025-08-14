@@ -46,20 +46,26 @@ import {
   Size,
   Stroke
 } from '@yfiles/yfiles'
+
 import { colorSets, createDemoEdgeLabelStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * Runs the demo.
  */
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
+
   // Create and configure ports using shape port style
   initializeGraph(graphComponent.graph)
+
   initializeInteraction(graphComponent)
+
   await graphComponent.fitGraphBounds()
 }
+
 /**
  * Creates a new shape port style with the provided shape and color.
  */
@@ -71,6 +77,7 @@ function createShapePortStyle(portShape, colorSet) {
     stroke: null
   })
 }
+
 /**
  * Creates nodes, ports, and edges to demonstrate all port shapes.
  * @param graph The graph in which to create nodes.
@@ -83,6 +90,7 @@ function initializeGraph(graph) {
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: new Stroke(colorSets['demo-blue'].edgeLabelFill, 3)
   })
+
   // available port shapes
   const shapes = [
     'star5',
@@ -102,6 +110,7 @@ function initializeGraph(graph) {
     'pentagon',
     'ellipse'
   ]
+
   const colorSetNames = [
     'demo-blue',
     'demo-orange',
@@ -110,6 +119,7 @@ function initializeGraph(graph) {
     'demo-purple',
     'demo-lightblue'
   ]
+
   /* iterate over all available port shapes and create ports */
   let x = 0
   let y = 0
@@ -120,6 +130,7 @@ function initializeGraph(graph) {
     lastNode = currNode
     currNode = graph.createNode({ layout: [x, y, 145, 100] })
     const colorSet = colorSetNames[i % 6]
+
     // for each node, create two ports with the current port shape
     const portShape = shapes.pop()
     if (i % 4 !== 1) {
@@ -128,10 +139,7 @@ function initializeGraph(graph) {
         locationParameter: FreeNodePortLocationModel.LEFT,
         style: createShapePortStyle(portShape, colorSet)
       })
-      graph.createEdge({
-        sourcePort: lastNode.ports.last(),
-        targetPort: targetPort
-      })
+      graph.createEdge({ sourcePort: lastNode.ports.last(), targetPort: targetPort })
     }
     if (i % 4 !== 0) {
       graph.addPort({
@@ -140,6 +148,7 @@ function initializeGraph(graph) {
         style: createShapePortStyle(portShape, colorSet)
       })
     }
+
     // add port shape as node label
     graph.addLabel(
       currNode,
@@ -147,6 +156,7 @@ function initializeGraph(graph) {
       InteriorNodeLabelModel.CENTER,
       createDemoEdgeLabelStyle(colorSet)
     )
+
     // display 4 nodes in every row
     if (i % 4 === 0) {
       x = 0
@@ -157,6 +167,7 @@ function initializeGraph(graph) {
     i++
   }
 }
+
 /**
  * Initializes the interactive behavior for this demo.
  */
@@ -166,17 +177,20 @@ function initializeInteraction(graphComponent) {
     allowAddLabel: false,
     allowEditLabel: false
   })
+
   // provide port candidates for all existing ports
   graphComponent.graph.decorator.nodes.portCandidateProvider.addFactory(
     (node) => new CustomPortCandidateProvider(node)
   )
 }
+
 /**
  * This port candidate provider provides port candidates for the
  * ports of a node.
  */
 class CustomPortCandidateProvider extends PortCandidateProviderBase {
   node
+
   /**
    * Creates a new instance of {@link CustomPortCandidateProvider}.
    * @param node The given node.
@@ -185,6 +199,7 @@ class CustomPortCandidateProvider extends PortCandidateProviderBase {
     super()
     this.node = node
   }
+
   /**
    * Returns a list that contains a port candidate for each of the node's
    * ports. Each candidate has the same location as the port.
@@ -202,4 +217,5 @@ class CustomPortCandidateProvider extends PortCandidateProviderBase {
     return candidates
   }
 }
+
 run().then(finishLoading)

@@ -41,11 +41,14 @@ import {
   RectangleNodeStyle,
   Size
 } from '@yfiles/yfiles'
+
 import { CornerSizeHandleProvider } from './CornerSizeHandleProvider'
 import { enableSingleSelection } from './SingleSelectionHelper'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { colorSets } from '@yfiles/demo-resources/demo-colors'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 const [yellow, orange, green, blue, gray] = [
   colorSets['demo-palette-71'],
   colorSets['demo-palette-72'],
@@ -53,6 +56,7 @@ const [yellow, orange, green, blue, gray] = [
   colorSets['demo-palette-74'],
   colorSets['demo-palette-75']
 ]
+
 /**
  * Runs the demo.
  */
@@ -60,10 +64,14 @@ async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
   initializeGraph(graphComponent.graph)
+
   initializeInteraction(graphComponent)
+
   graphComponent.fitGraphBounds()
+
   initializeUI(graphComponent)
 }
+
 /**
  * Initializes defaults for the given graph and
  * creates a small sample with different node style settings.
@@ -73,6 +81,7 @@ function initializeGraph(graph) {
   graph.nodeDefaults.style = new RectangleNodeStyle({ fill: gray.fill, stroke: gray.stroke })
   graph.nodeDefaults.size = new Size(300, 100)
   graph.nodeDefaults.shareStyleInstance = false
+
   // Create nodes with round corners with different resizing behaviors
   createNode(graph, new Point(0, 0), yellow, RectangleCornerStyle.ROUND, false, 10)
   createNode(graph, new Point(0, 200), orange, RectangleCornerStyle.ROUND, true, 0.2)
@@ -86,6 +95,7 @@ function initializeGraph(graph) {
     0.8,
     RectangleCorners.BOTTOM
   )
+
   // Create nodes with cut-off corners with different resizing behaviors
   createNode(graph, new Point(400, 0), yellow, RectangleCornerStyle.CUT, false, 10)
   createNode(graph, new Point(400, 200), orange, RectangleCornerStyle.CUT, true, 0.2)
@@ -100,6 +110,7 @@ function initializeGraph(graph) {
     RectangleCorners.BOTTOM
   )
 }
+
 /**
  * Creates a node with a label that describes the configuration of the RectangleNodeStyle.
  * @param graph The graph to which the node belongs.
@@ -119,9 +130,12 @@ function createNode(graph, location, color, cornerStyle, scaleCornerSize, corner
     cornerSize,
     corners
   })
+
   const node = graph.createNodeAt(location, style)
+
   addLabel(graph, node, color)
 }
+
 /**
  * Adds a label that describes the owner's style configuration.
  * @param graph The graph to which the label belongs.
@@ -140,6 +154,7 @@ function addLabel(graph, node, color) {
     })
   })
 }
+
 /**
  * Sets up an input mode for the GraphComponent, and adds a custom handle
  * that allows to change the corner size.
@@ -147,18 +162,23 @@ function addLabel(graph, node, color) {
 function initializeInteraction(graphComponent) {
   const inputMode = new GraphEditorInputMode()
   graphComponent.inputMode = inputMode
+
   enableSingleSelection(graphComponent)
+
   // add a label to newly created node that shows the current style settings
   inputMode.addEventListener('node-created', (evt) => {
     const node = evt.item
     addLabel(graphComponent.graph, node, gray)
   })
+
   const nodeDecorator = graphComponent.graph.decorator.nodes
+
   // add handle that enables the user to change the corner size of a node
   nodeDecorator.handleProvider.addWrapperFactory(
     (n) => n.style instanceof RectangleNodeStyle,
     (node, delegateProvider) => new CornerSizeHandleProvider(node, delegateProvider)
   )
+
   // only provide reshape handles for the right, bottom and bottom-right sides, so they don't clash with the corner size handle
   nodeDecorator.reshapeHandleProvider.addFactory(
     (node) =>
@@ -168,20 +188,24 @@ function initializeInteraction(graphComponent) {
         'bottom-right'
       ])
   )
+
   graphComponent.graph.decorator.nodes.selectionRenderer.hide()
 }
+
 /**
  * Updates the style properties editor when a different node is selected.
  */
 function onSelectionChanged(selectedNode) {
   if (selectedNode != null) {
     const style = selectedNode.style
+
     const cornerStyle = style.cornerStyle === RectangleCornerStyle.ROUND ? 'rounded' : 'cut'
     const cornerSizeScaling = style.scaleCornerSize ? 'relative' : 'absolute'
     const topLeftCornerAffected = (style.corners & RectangleCorners.TOP_LEFT) !== 0
     const topRightCornerAffected = (style.corners & RectangleCorners.TOP_RIGHT) !== 0
     const bottomLeftCornerAffected = (style.corners & RectangleCorners.BOTTOM_LEFT) !== 0
     const bottomRightCornerAffected = (style.corners & RectangleCorners.BOTTOM_RIGHT) !== 0
+
     setComboBoxState('#corner-style', false, cornerStyle)
     setComboBoxState('#corner-size-scaling', false, cornerSizeScaling)
     setCheckboxState('#corner-top-left', false, topLeftCornerAffected)
@@ -191,6 +215,7 @@ function onSelectionChanged(selectedNode) {
     setPropertiesViewState(false)
     return
   }
+
   setComboBoxState('#corner-style', true, '')
   setComboBoxState('#corner-size-scaling', true, '')
   setCheckboxState('#corner-top-left', true, false)
@@ -199,6 +224,7 @@ function onSelectionChanged(selectedNode) {
   setCheckboxState('#corner-bottom-right', true, false)
   setPropertiesViewState(true)
 }
+
 /**
  * Sets the style properties when they have been changed in the editor.
  */
@@ -207,12 +233,16 @@ function updateStyleProperties(graphComponent) {
   if (node == null) {
     return
   }
+
   const style = node.style
+
   const cornerStyle = document.querySelector('#corner-style').value
   style.cornerStyle =
     cornerStyle === 'rounded' ? RectangleCornerStyle.ROUND : RectangleCornerStyle.CUT
+
   const cornerSizeScaling = document.querySelector('#corner-size-scaling').value
   style.scaleCornerSize = cornerSizeScaling === 'relative'
+
   let corners = RectangleCorners.NONE
   if (document.querySelector('#corner-top-left').checked) {
     corners |= RectangleCorners.TOP_LEFT
@@ -227,13 +257,16 @@ function updateStyleProperties(graphComponent) {
     corners |= RectangleCorners.BOTTOM_RIGHT
   }
   style.corners = corners
+
   if (node.labels.size === 0) {
     graphComponent.graph.addLabel(node, styleToText(style))
   } else {
     graphComponent.graph.setLabelText(node.labels.first(), styleToText(style))
   }
+
   graphComponent.invalidate()
 }
+
 /**
  * Shows the properties of the selected node if a node is selected. Otherwise, it shows an information message to select a node.
  */
@@ -241,6 +274,7 @@ function setPropertiesViewState(disabled) {
   document.querySelector('.demo-form-block').style.display = disabled ? 'none' : ''
   document.querySelector('.info-message').style.display = disabled ? 'inline-block' : 'none'
 }
+
 /**
  * Returns a text description of the style configuration.
  */
@@ -251,6 +285,7 @@ function styleToText(style) {
     `Affected Corners: ${cornersToText(style.corners)}`
   )
 }
+
 /**
  * Returns a text description of the given corner configuration.
  */
@@ -276,12 +311,14 @@ function cornersToText(corners) {
     .map((corner) => cornerValueToText(corner))
   return affected.length > 0 ? affected.join(' & ') : 'none'
 }
+
 /**
  * Returns the display text for the given corner value.
  */
 function cornerValueToText(corner) {
   return RectangleCorners[corner].toLocaleLowerCase().replace('_', '-')
 }
+
 /**
  * Binds actions to the toolbar and style property input elements.
  */
@@ -289,11 +326,13 @@ function initializeUI(graphComponent) {
   for (const element of document.getElementsByClassName('option-element')) {
     element.addEventListener('change', () => updateStyleProperties(graphComponent))
   }
+
   // Update the values of the input elements when the selected element changes
   graphComponent.selection.addEventListener('item-added', (_, graphComponent) =>
     onSelectionChanged(graphComponent.nodes.first())
   )
 }
+
 /**
  * Sets the disabled and checked states of the `input` element with the given ID.
  */
@@ -302,6 +341,7 @@ function setCheckboxState(id, disabled, checked) {
   checkbox.disabled = disabled
   checkbox.checked = checked
 }
+
 /**
  * Sets the disabled state and value of the `select` element with the given ID.
  */
@@ -310,4 +350,5 @@ function setComboBoxState(id, disabled, value) {
   comboBox.disabled = disabled
   comboBox.value = value
 }
+
 run().then(finishLoading)

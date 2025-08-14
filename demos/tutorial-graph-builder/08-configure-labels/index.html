@@ -164,38 +164,15 @@
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> data = {
   <span class="hljs-attr">nodeData</span>: [
-    {
-      <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>,
-      <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Investment Capital&#x27;</span>,
-      <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Corporation&#x27;</span>
-    },
+    { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Investment Capital&#x27;</span>, <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Corporation&#x27;</span> },
     { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;1&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Melissa Barner&#x27;</span>, <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Trust&#x27;</span> },
     { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;2&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Monster Inc&#x27;</span>, <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Corporation&#x27;</span> },
-    {
-      <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;3&#x27;</span>,
-      <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;International Group&#x27;</span>,
-      <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Trust&#x27;</span>
-    }
+    { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;3&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;International Group&#x27;</span>, <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Trust&#x27;</span> }
   ],
   <span class="hljs-attr">edgeData</span>: [
-    {
-      <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>,
-      <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;1&#x27;</span>,
-      <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;0&#x27;</span>,
-      <span class="hljs-attr">ownership</span>: <span class="hljs-number">30</span>
-    },
-    {
-      <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;1&#x27;</span>,
-      <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;2&#x27;</span>,
-      <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;0&#x27;</span>,
-      <span class="hljs-attr">ownership</span>: <span class="hljs-number">60</span>
-    },
-    {
-      <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;2&#x27;</span>,
-      <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;3&#x27;</span>,
-      <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;0&#x27;</span>,
-      <span class="hljs-attr">ownership</span>: <span class="hljs-number">5</span>
-    }
+    { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;1&#x27;</span>, <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">ownership</span>: <span class="hljs-number">30</span> },
+    { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;1&#x27;</span>, <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;2&#x27;</span>, <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">ownership</span>: <span class="hljs-number">60</span> },
+    { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;2&#x27;</span>, <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;3&#x27;</span>, <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">ownership</span>: <span class="hljs-number">5</span> }
   ]
 }</code></pre>
                 </div>
@@ -381,9 +358,7 @@ typeLabelCreator.<span class="hljs-property">preferredSizeBindings</span>.<span 
                     class="highlight"
                   ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// configure the position of the label</span>
 edgeLabelCreator.<span class="hljs-property">layoutParameterProvider</span> = (): <span class="hljs-function"><span class="hljs-params">ILabelModelParameter</span> =&gt;</span>
-  <span class="hljs-keyword">new</span> <span class="hljs-title class_">EdgePathLabelModel</span>({
-    <span class="hljs-attr">autoRotation</span>: <span class="hljs-literal">false</span>
-  }).<span class="hljs-title function_">createRatioParameter</span>()
+  <span class="hljs-keyword">new</span> <span class="hljs-title class_">EdgePathLabelModel</span>({ <span class="hljs-attr">autoRotation</span>: <span class="hljs-literal">false</span> }).<span class="hljs-title function_">createRatioParameter</span>()
 
 <span class="hljs-comment">// configure its style</span>
 edgeLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">shareStyleInstance</span> = <span class="hljs-literal">false</span>

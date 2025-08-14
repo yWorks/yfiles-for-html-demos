@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { BaseClass, IPositionHandler, MutablePoint, Point } from '@yfiles/yfiles'
+
 /**
  * An {@link IPositionHandler} that manages the position of a given {@link MutableRectangle}.
  */
@@ -36,16 +37,19 @@ export class PositionHandler extends BaseClass(IPositionHandler) {
    * Stores the offset from the mouse event location to the handled rectangle's upper left corner.
    */
   offset = new MutablePoint()
+
   constructor(rectangle) {
     super()
     this.rectangle = rectangle
   }
+
   /**
    * The rectangle's top-left coordinate.
    */
   get location() {
     return this.rectangle.topLeft
   }
+
   /**
    * Initializes the mouse event offset before the actual move gesture starts.
    */
@@ -54,6 +58,7 @@ export class PositionHandler extends BaseClass(IPositionHandler) {
     const y = this.rectangle.y - context.canvasComponent.lastEventLocation.y
     this.offset.setLocation(x, y)
   }
+
   /**
    * Updates the rectangle's position during each drag.
    */
@@ -62,12 +67,14 @@ export class PositionHandler extends BaseClass(IPositionHandler) {
     const newY = newLocation.y + this.offset.y
     this.rectangle.setLocation(new Point(newX, newY))
   }
+
   /**
    * Resets the rectangle's position when the move gesture was cancelled.
    */
   cancelDrag(context, originalLocation) {
     this.rectangle.setLocation(originalLocation)
   }
+
   /**
    * Finalizes the rectangle's position when the move gesture ends.
    */

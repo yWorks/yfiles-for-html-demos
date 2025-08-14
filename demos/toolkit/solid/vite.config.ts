@@ -34,12 +34,8 @@ import optimizer from '@yworks/optimizer/rollup-plugin'
 export default defineConfig(({ mode }) => {
   return {
     base: './',
-    server: {
-      port: 3000
-    },
-    resolve: {
-      preserveSymlinks: true
-    },
+    server: { port: 3000 },
+    resolve: { preserveSymlinks: true },
     plugins: [
       /*
        Uncomment the following line to enable solid-devtools.

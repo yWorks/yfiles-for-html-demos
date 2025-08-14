@@ -121,9 +121,7 @@ export class NodeStyleDecorator extends NodeStyleBase {
     group.add(decorationVisual)
 
     // save image URL with the visual for the update method
-    ;(group as any)['data-renderDataCache'] = {
-      imageUrl: this.imageUrl
-    }
+    ;(group as any)['data-renderDataCache'] = { imageUrl: this.imageUrl }
 
     return group
   }
@@ -179,9 +177,7 @@ export class NodeStyleDecorator extends NodeStyleBase {
     }
 
     // update the stored image URL for the next update visual call
-    ;(oldVisual as any)['data-renderDataCache'] = {
-      imageUrl: this.imageUrl
-    }
+    ;(oldVisual as any)['data-renderDataCache'] = { imageUrl: this.imageUrl }
 
     return oldVisual
   }

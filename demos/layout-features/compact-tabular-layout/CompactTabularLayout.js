@@ -34,6 +34,7 @@ import {
   TabularLayoutData,
   TabularLayoutMode
 } from '@yfiles/yfiles'
+
 /**
  * Demonstrates various settings of the {@link TabularLayout} algorithm.
  * @param graph The graph to be laid out
@@ -42,28 +43,31 @@ import {
 export function createFeatureLayoutConfiguration(graph) {
   // initialize the tabular layout algorithm
   // edges are considered to minimize the overall edge length
-  const tabularLayout = new TabularLayout({
-    considerEdges: true,
-    layoutMode: getLayoutMode()
-  })
+  const tabularLayout = new TabularLayout({ considerEdges: true, layoutMode: getLayoutMode() })
+
   // the tabular layout algorithm supports only straight-line edges
   // the edge router algorithm is used as a post-processing to get orthogonal edge paths instead
   const layout = new EdgeRouter({ coreLayout: tabularLayout })
+
   // calculate a layout grid for a compact arrangement of the graph's nodes
   const layoutGrid = calculateGrid(getLayoutMode())
+
   // create the layout data for the tabular layout algorithm
   // the layout data is necessary to support data-driven features like the layout grid
   const layoutData = new TabularLayoutData()
   layoutData.layoutGridData.layoutGridCellDescriptors = () =>
     layoutGrid.createDynamicCellDescriptor()
+
   return { layout, layoutData }
 }
+
 /**
  * Calculates the size of the layout grid based on whether the aspect ratio of the
  * graphComponent's width/height should be preserved.
  */
 function calculateGrid(policy) {
   const graphComponent = CanvasComponent.getComponent(document.getElementById('graphComponent'))
+
   let layoutGrid
   if (policy === TabularLayoutMode.FIXED_SIZE) {
     // get the aspect ratio of the graphComponent's width/height and calculate how many rows/columns are
@@ -77,6 +81,7 @@ function calculateGrid(policy) {
     // if the table's size should be automatically assigned, no layout grid is required
     layoutGrid = new LayoutGrid(1, 1)
   }
+
   // calculate the maximum node width and maximum node height
   // these values are used as minimum width and minimum height for the grids columns and rows
   // to ensure a nice uniform grid
@@ -87,10 +92,13 @@ function calculateGrid(policy) {
     maxWidth = Math.max(maxWidth, nodeBounds.width)
     maxHeight = Math.max(maxHeight, nodeBounds.height)
   }
+
   layoutGrid.rows.forEach((row) => (row.minimumHeight = maxHeight + 20))
   layoutGrid.columns.forEach((column) => (column.minimumWidth = maxWidth + 20))
+
   return layoutGrid
 }
+
 /**
  * Returns the selected layout mode for the tabular layout algorithm.
  */

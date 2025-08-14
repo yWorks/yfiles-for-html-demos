@@ -38,6 +38,7 @@ import {
   Point,
   Rect
 } from '@yfiles/yfiles'
+
 import { createNewRandomUserData } from './UserDataFactory'
 import { DataTableLabelStyle } from './DataTableLabelStyle'
 import { DataTableNodeStyle } from './DataTableNodeStyle'
@@ -45,35 +46,47 @@ import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { DataTableRenderSupport } from './DataTableRenderSupport'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
+
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   // since the labels always show the data of their owners, they can only be copied together with their owner
   graphComponent.clipboard.independentCopyItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
+
   // initialize default demo styles
   initializeStyles(graphComponent.graph)
+
   // initialize the input mode
   initializeInputMode(graphComponent)
+
   // enable the graphml support for loading and saving
   enableGraphML(graphComponent)
+
   // create a sample graph
   createSampleGraph(graphComponent.graph, 4)
+
   graphComponent.fitGraphBounds()
+
   // enable the undo engine
   graphComponent.graph.undoEngineEnabled = true
+
   // wire up the UI
   initializeUI(graphComponent)
 }
+
 /**
  * Initializes the default styles for nodes and labels.
  */
 function initializeStyles(graph) {
   // initialize node style
   graph.nodeDefaults.style = new DataTableNodeStyle()
+
   // initialize default label
   graph.nodeDefaults.labels.style = new DataTableLabelStyle()
 }
+
 /**
  * Initializes the input mode.
  */
@@ -93,12 +106,14 @@ function initializeInputMode(graphComponent) {
   })
   graphComponent.inputMode = mode
 }
+
 /**
  * Enables loading and saving the graph from/to GraphML.
  */
 function enableGraphML(graphComponent) {
   // create a new graphMLIOHandler instance that handles save and load operations
   const graphMLIOHandler = new GraphMLIOHandler()
+
   // enable serialization of the custom styles - at the very minimum, we need to register a namespace for the classes
   graphMLIOHandler.addTypeInformation(DataTableNodeStyle, {
     name: 'DataTableNodeStyle',
@@ -108,6 +123,7 @@ function enableGraphML(graphComponent) {
     name: 'DataTableLabelStyle',
     xmlNamespace: 'http://www.yworks.com/yFilesHTML/demos/DataTableLabelStyle/1.0'
   })
+
   graphMLIOHandler.addEventListener('parsed', (evt) => {
     onToggleLabels(evt.context.graph)
   })
@@ -118,6 +134,7 @@ function enableGraphML(graphComponent) {
     await saveGraphML(graphComponent, 'dataTable.graphml', graphMLIOHandler)
   })
 }
+
 /**
  * Executed when Toggle Labels button is pressed.
  */
@@ -127,6 +144,7 @@ function onToggleLabels(graph) {
     onToggleNodeLabel(graph, node, addLabels)
   }
 }
+
 /**
  * Executed for each node when Toggle Labels button is pressed.
  */
@@ -145,18 +163,21 @@ function onToggleNodeLabel(graph, node, addLabels) {
     }
   }
 }
+
 /**
  * Determines whether to add or to remove labels.
  */
 function shouldAddLabels() {
   return document.querySelector('#toggle-labels-btn').checked
 }
+
 function updateNodeSize(node, graph) {
   const userData = node.tag
   const size = DataTableRenderSupport.calculateTableSize(userData, 'data-table-node')
   const origLayout = node.layout
   graph.setNodeLayout(node, new Rect(origLayout.x, origLayout.y, size.width, size.height))
 }
+
 /**
  * Creates an initial graph.
  */
@@ -170,8 +191,10 @@ function createSampleGraph(graph, nodeCount) {
       tag: createNewRandomUserData()
     })
   }
+
   // resize nodes
   graph.nodes.forEach((node) => updateNodeSize(node, graph))
+
   // Create some edges
   if (nodes.length > 1) {
     graph.createEdge(nodes[0], nodes[1])
@@ -181,6 +204,7 @@ function createSampleGraph(graph, nodeCount) {
     graph.createEdge(nodes[i - 2], nodes[i])
   }
 }
+
 /**
  * Binds actions to the demo's UI controls.
  */
@@ -191,4 +215,5 @@ function initializeUI(graphComponent) {
     void graphComponent.ensureVisible(graphComponent.contentBounds)
   })
 }
+
 run().then(finishLoading)

@@ -42,17 +42,21 @@ import {
   WebGLSelectionIndicatorManager
 } from '@yfiles/yfiles'
 import { isWebGLEdgeStyle, isWebGLLabelStyle, isWebGLNodeStyle } from './webgl-styles-util'
+
 class PreloadingWebGLGraphModelManager extends WebGLGraphModelManager {
   getWebGLNodeStyle(node) {
     return node.tag || null
   }
+
   getWebGLEdgeStyle(edge) {
     return edge.tag || null
   }
+
   getWebGLLabelStyle(label) {
     return label.tag || null
   }
 }
+
 export async function preloadWebglStyles(...styles) {
   const gc = new GraphComponent()
   const splitStyles = splitStylesByType(styles)
@@ -69,12 +73,11 @@ export async function preloadWebglStyles(...styles) {
     gc.updateVisual()
   })
 }
+
 function createGraph(graph, splitStyles) {
   const { nodeStyles, edgeStyles, labelStyles, indicatorStyles } = splitStyles
   for (const nodeStyle of nodeStyles) {
-    graph.createNode({
-      tag: nodeStyle
-    })
+    graph.createNode({ tag: nodeStyle })
   }
   const n1 = graph.createNode()
   const n2 = graph.createNode()
@@ -89,11 +92,7 @@ function createGraph(graph, splitStyles) {
     })
   }
   for (const labelStyle of labelStyles) {
-    graph.addLabel({
-      owner: n1,
-      text: '',
-      tag: labelStyle
-    })
+    graph.addLabel({ owner: n1, text: '', tag: labelStyle })
   }
   const indicatorNode = graph.createNode()
   const indicatorEdge = graph.createEdge(indicatorNode, indicatorNode)
@@ -101,12 +100,15 @@ function createGraph(graph, splitStyles) {
   const selection = new WebGLSelectionIndicatorManager()
   const focus = new WebGLFocusIndicatorManager()
   const highlight = new WebGLHighlightIndicatorManager()
+
   for (const item of [indicatorNode, indicatorEdge, indicatorLabel]) {
     selection.items.add(item)
     focus.focusedItem = item
     highlight.items?.add(item)
   }
+
   const indicatorManagers = [selection, focus, highlight]
+
   for (let i = 0; i < 3; i++) {
     if (indicatorStyles.node[i]) {
       indicatorManagers[i].nodeStyle = indicatorStyles.node[i]
@@ -121,23 +123,18 @@ function createGraph(graph, splitStyles) {
       indicatorManagers[i].edgeLabelStyle = indicatorStyles.label[2 * i + 1]
     }
   }
-  return {
-    selection,
-    focus,
-    highlight
-  }
+
+  return { selection, focus, highlight }
 }
+
 function splitStylesByType(styles) {
   const result = {
     nodeStyles: [],
     edgeStyles: [],
     labelStyles: [],
-    indicatorStyles: {
-      node: [],
-      edge: [],
-      label: []
-    }
+    indicatorStyles: { node: [], edge: [], label: [] }
   }
+
   for (const style of styles) {
     if (isWebGLNodeStyle(style)) {
       result.nodeStyles.push(style)
@@ -153,6 +150,7 @@ function splitStylesByType(styles) {
       result.indicatorStyles.label.push(style)
     }
   }
+
   if (
     result.indicatorStyles.node.length > 3 ||
     result.indicatorStyles.edge.length > 3 ||

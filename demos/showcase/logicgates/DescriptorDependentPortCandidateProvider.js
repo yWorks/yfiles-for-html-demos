@@ -39,11 +39,13 @@ import {
   SimplePort
 } from '@yfiles/yfiles'
 import { LogicGateType } from './LogicGateType'
+
 var EdgeDirection
 ;(function (EdgeDirection) {
   EdgeDirection[(EdgeDirection['IN'] = 0)] = 'IN'
   EdgeDirection[(EdgeDirection['OUT'] = 1)] = 'OUT'
 })(EdgeDirection || (EdgeDirection = {}))
+
 /**
  * Provides all available ports of the given graph with the specified edge direction.
  */
@@ -56,6 +58,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
     super()
     this.node = node
   }
+
   /**
    * Returns all port candidates that apply for the provided opposite port candidate.
    * @param context The context for which the candidates should be provided
@@ -64,6 +67,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
   getSourcePortCandidates(context, target) {
     return this.getPortCandidatesForDirection(EdgeDirection.OUT)
   }
+
   /**
    * Returns all port candidates that apply for the provided opposite port candidate.
    * @param context The context for which the candidates should be provided
@@ -72,6 +76,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
   getTargetPortCandidates(context, source) {
     return this.getPortCandidatesForDirection(EdgeDirection.IN)
   }
+
   /**
    * Returns all source port candidates that belong to the context of this provider.
    * @param context The context for which the candidates should be provided
@@ -79,6 +84,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
   getAllSourcePortCandidates(context) {
     return this.getPortCandidatesForDirection(EdgeDirection.OUT)
   }
+
   /**
    * Returns all target port candidates that belong to the context of this provider.
    * @param context The context for which the candidates should be provided
@@ -86,6 +92,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
   getAllTargetPortCandidates(context) {
     return this.getPortCandidatesForDirection(EdgeDirection.IN)
   }
+
   /**
    * Returns the suitable candidates based on the specified edge direction.
    * @param direction The direction of the edge
@@ -97,6 +104,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
       // create a port candidate, invalidate it (so it is visible but not usable)
       const candidate = new PortCandidate(port)
       candidate.validity = PortCandidateValidity.INVALID
+
       // get the port descriptor which is stored in the port's tag
       const portDescriptor = port.tag
       // make the candidate valid if the direction is the same as the one supplied
@@ -110,6 +118,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
     return candidates
   }
 }
+
 /**
  * Creates the port descriptors for the given nodes. If a graph is provided, the ports are directly added
  * to the graph. Otherwise they are added as SimplePorts to the node's port list.
@@ -121,6 +130,7 @@ export function createPortDescriptors(nodes, graph) {
     const portDescriptors = createPortDescriptorsForNode(node)
     const model = new FreeNodePortLocationModel()
     const ports = []
+
     // iterate through all descriptors and add their ports, using the descriptor as the tag for the port
     for (const descriptor of portDescriptors) {
       // use the descriptor's location as offset
@@ -136,11 +146,13 @@ export function createPortDescriptors(nodes, graph) {
         ports.push(port)
       }
     }
+
     if (!graph && node instanceof SimpleNode) {
       node.ports = IListEnumerable.from(ports)
     }
   }
 }
+
 /**
  * Creates a list of all edges belonging to the type of the node as specified by its logic gate type.
  * @param node The given node

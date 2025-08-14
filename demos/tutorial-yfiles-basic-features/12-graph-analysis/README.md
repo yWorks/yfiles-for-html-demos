@@ -43,7 +43,7 @@ reachabilityResult.reachableNodes.forEach((n: INode): void => {
 })
 ```
 
-- Select two nodes with Ctrl+Click and click 'Run Shortest Path' to calculate the shortest path. If a path is found, the nodes on the path and the edges will be highlighted. The distance to the target node will be shown as a tooltip on the target node.
+- Select two nodes by holding Ctrl and click 'Run Shortest Path' to calculate the shortest path. If a path is found, the nodes on the path and the edges will be highlighted. The distance to the target node will be shown as a tooltip on the target node.
 
 Run Shortest Path
 

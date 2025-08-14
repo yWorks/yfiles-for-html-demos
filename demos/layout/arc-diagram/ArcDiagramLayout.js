@@ -34,6 +34,7 @@ import {
   LayoutGraphAlgorithms,
   Point
 } from '@yfiles/yfiles'
+
 /**
  * Arranges graphs in a manner that is suitable for arc diagrams.
  *
@@ -69,6 +70,7 @@ export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
    * @see {@link NodeOrder}
    */
   nodeOrder = NodeOrder.FROM_SKETCH
+
   /**
    * Arranges the given graph.
    * @param graph the graph to be arranged.
@@ -77,10 +79,12 @@ export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
     if (graph.nodes.size > 0) {
       this.placeNodes(graph)
     }
+
     if (graph.edges.size > 0) {
       this.routeEdges(graph)
     }
   }
+
   /**
    * Places the nodes of the given graph on a horizontal line from left to right.
    * The order in which the nodes are placed is determined by property {@link nodeOrder}.
@@ -91,6 +95,7 @@ export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
     for (const node of graph.nodes) {
       maxW = Math.max(maxW, node.layout.width)
     }
+
     const dist = maxW + this.minimumNodeDistance
     const order = calculateNodeOrder(graph, this.nodeOrder)
     for (const node of graph.nodes) {
@@ -98,6 +103,7 @@ export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
       node.layout.center = new Point(pos * dist, 0)
     }
   }
+
   /**
    * Routes the edges in the given graph.
    * @param graph the graph to be arranged.
@@ -105,19 +111,24 @@ export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
   routeEdges(graph) {
     const bezier = this.createBezierControlPoints
     const bezierFactor = (4 * (Math.sqrt(2) - 1)) / 3
+
     for (const edge of graph.edges) {
       edge.resetPath()
       if (edge.selfLoop) {
         continue
       }
+
       const src = edge.source
       const tgt = edge.target
+
       const cxSrc = src.layout.centerX
       const cxTgt = tgt.layout.centerX
       const cxCircle = (cxSrc + cxTgt) * 0.5
       const radius = cxCircle - Math.min(cxSrc, cxTgt)
+
       if (bezier) {
         const sign = cxSrc > cxTgt ? -1 : 1
+
         const d = radius * bezierFactor
         graph.addBend(edge, cxSrc, -d)
         graph.addBend(edge, cxCircle - sign * d, -radius)
@@ -130,6 +141,7 @@ export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
     }
   }
 }
+
 /**
  * Calculates the left-to-right order of nodes for the given graph according to the given node order
  * policy.
@@ -138,6 +150,7 @@ export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
  */
 function calculateNodeOrder(graph, nodeOrderPolicy) {
   const order = new Array(graph.nodes.size)
+
   switch (nodeOrderPolicy) {
     case NodeOrder.MINIMIZE_CROSSINGS:
       minimizeCrossings(graph, order)
@@ -153,8 +166,10 @@ function calculateNodeOrder(graph, nodeOrderPolicy) {
       fill(order)
       break
   }
+
   return order
 }
+
 /**
  * Fills the given array with numbers from `0` to `array.length - 1`
  * in ascending order.
@@ -165,6 +180,7 @@ function fill(order) {
     order[i] = i
   }
 }
+
 /**
  * Calculate a node order with few crossings for the given graph.
  * This implementation leverages {@link HierarchicalLayout}'s sequencing phase towards this end.
@@ -177,18 +193,18 @@ function minimizeCrossings(graph, order) {
   // run hierarchical layout's sequencing phase to calculate a node order with few crossings
   const hierarchicalLayout = new HierarchicalLayout({
     fromScratchLayeringStrategy: 'user-defined',
-    core: {
-      stopAfterSequencing: false
-    }
+    core: { stopAfterSequencing: false }
   })
   const hierarchicalLayoutData = hierarchicalLayout.createLayoutData(graph)
   hierarchicalLayoutData.givenLayersIndices = () => 0
   graph.applyLayout(hierarchicalLayout, hierarchicalLayoutData)
+
   // write the node sequence to the order array
   graph.nodes.forEach((node, index) => {
     order[index] = hierarchicalLayoutData.sequenceIndicesResult.get(node)
   })
 }
+
 /**
  * Specifies policies for calculating the node order in an arc diagram.
  */

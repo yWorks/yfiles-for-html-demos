@@ -36,6 +36,7 @@ import {
   validateParserXmlNode,
   validateStorageReadWriteNode
 } from './FlowNodeValidators'
+
 export const flowNodeProperties = {
   storageWriteFile: {
     variant: 'storageWriteFile',

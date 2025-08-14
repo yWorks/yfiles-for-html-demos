@@ -79,10 +79,13 @@
 .demo-icon-yIconPlay {
   background-image: url('../icons/play2-16.svg');
 }
+.demo-icon-yIconPause {
+  background-image: url('../icons/pause.svg');
+}
 .demo-icon-yIconLayout {
   background-image: url('../icons/play2-16.svg');
 }
-.demo-icon-yIconLayoutHierarchic {
+.demo-icon-yIconLayoutHierarchical {
   background-image: url('../icons/layout-hierarchic-16.svg');
 }
 .demo-icon-yIconLayoutOrganic {

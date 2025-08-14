@@ -43,34 +43,46 @@ import { ArcDiagramLayout, NodeOrder } from './ArcDiagramLayout'
 import SampleData from './resources/SampleData'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+
 const chooser = document.querySelector('#node-order')
+
 /**
  * Bootstraps this demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // create the demo's graph component
   const graphComponent = new GraphComponent('#graphComponent')
   // initially disable interactive editing
   configureUserInteraction(graphComponent)
+
   // configure default styles for the demo's graph
   configureGraph(graphComponent.graph)
+
   // create the demo's sample graph
   createSampleGraph(graphComponent.graph)
+
   // center the demo's graph in the demo's visible area
   await graphComponent.fitGraphBounds()
+
   // bind the demo's new node alignment and node distribution operations to the demo's UI controls
   initializeUI(graphComponent)
+
   // initialize the application's CSS and JavaScript for the description
   finishLoading()
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   // calculate and animate an initial layout for the demo's sample graph
   await graphComponent.applyLayoutAnimated(new ArcDiagramLayout())
+
   // enable undo and redo
   graphComponent.graph.undoEngineEnabled = true
 }
+
 /**
  * Configures default styles for the given graph.
  * @param graph the graph whose default styles are set.
@@ -82,9 +94,9 @@ function configureGraph(graph) {
     shape: 'ellipse',
     stroke: '1.5px #662b00'
   })
-  graph.edgeDefaults.style = new BezierEdgeStyle({
-    stroke: '4px #662b00'
-  })
+
+  graph.edgeDefaults.style = new BezierEdgeStyle({ stroke: '4px #662b00' })
+
   graph.nodeDefaults.labels.style = new LabelStyle({
     backgroundFill: '#ffc499',
     textFill: '#662b00',
@@ -92,24 +104,17 @@ function configureGraph(graph) {
     padding: [2, 4, 2, 4]
   })
 }
+
 /**
  * Creates the sample graph for this demo.
  */
 function createSampleGraph(graph) {
   const builder = new GraphBuilder(graph)
-  builder.createNodesSource({
-    data: SampleData.nodes,
-    id: 'id',
-    labels: ['id']
-  })
-  builder.createEdgesSource({
-    data: SampleData.edges,
-    id: 'id',
-    sourceId: 'src',
-    targetId: 'tgt'
-  })
+  builder.createNodesSource({ data: SampleData.nodes, id: 'id', labels: ['id'] })
+  builder.createEdgesSource({ data: SampleData.edges, id: 'id', sourceId: 'src', targetId: 'tgt' })
   builder.buildGraph()
 }
+
 /**
  * Enables interactive editing for the given graph view.
  * @param graphComponent the demo's main graph view.
@@ -126,6 +131,7 @@ function configureUserInteraction(graphComponent) {
     GraphItemTypes.PORT_LABEL
   graphComponent.inputMode = geim
 }
+
 /**
  * Arranges the graph displayed in the given graph view.
  * @param graphComponent the demo's main graph view.
@@ -135,6 +141,7 @@ async function arrange(graphComponent) {
   algorithm.nodeOrder = getNodeOrder()
   await graphComponent.applyLayoutAnimated(algorithm)
 }
+
 /**
  * Determines the currently chosen node order policy.
  */
@@ -142,6 +149,7 @@ function getNodeOrder() {
   const nodeOrder = chooser.options[chooser.selectedIndex].value
   return NodeOrder[nodeOrder]
 }
+
 /**
  * Binds actions and commands to the demo's UI controls.
  */
@@ -153,5 +161,6 @@ function initializeUI(graphComponent) {
   })
   document.querySelector('#arrange').addEventListener('click', () => arrange(graphComponent))
 }
+
 // noinspection JSIgnoredPromiseFromCall
 run()

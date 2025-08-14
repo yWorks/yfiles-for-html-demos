@@ -26,10 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { basicSetup, EditorView } from 'codemirror'
-import { lintGutter } from '@codemirror/lint'
-import { xml } from '@codemirror/lang-xml'
-import { javascript } from '@codemirror/lang-javascript'
 import {
   GraphBuilder,
   GraphComponent,
@@ -47,25 +43,34 @@ import { registerLitNodeStyleSerialization } from './LitNodeStyleMarkupExtension
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
-import { StateEffect, StateField } from '@codemirror/state'
-import { getJsonLinter } from '@yfiles/demo-resources/codeMirrorLinters'
+import {
+  createCodemirrorEditor,
+  EditorView,
+  StateEffect,
+  StateField
+} from '@yfiles/demo-resources/codemirror-editor'
+
 let graphComponent
+
 let renderFunctionSourceTextArea
 let tagTextArea
-const jsonLinter = getJsonLinter()
+
 /**
  * Runs the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // initialize demo
   initializeTextAreas()
   initializeStyles()
   loadSampleGraph()
   initializeUI()
 }
+
 /**
  * Initializes text areas to use CodeMirror and to update when the selection in the graph has
  * changed.
@@ -83,15 +88,15 @@ function initializeTextAreas() {
       return value
     }
   })
-  renderFunctionSourceTextArea = new EditorView({
-    parent: document.querySelector('#templateEditorContainer'),
-    extensions: [
-      basicSetup,
-      xml(),
+
+  renderFunctionSourceTextArea = createCodemirrorEditor(
+    'xml',
+    document.querySelector('#templateEditorContainer'),
+    [
       renderFunctionSourceTextAreaEditable,
       EditorView.editable.from(renderFunctionSourceTextAreaEditable)
     ]
-  })
+  )
   const setTagTextAreaEditable = StateEffect.define()
   const tagTextAreaEditable = StateField.define({
     create: () => true,
@@ -104,20 +109,15 @@ function initializeTextAreas() {
       return value
     }
   })
-  tagTextArea = new EditorView({
-    parent: document.querySelector('#tagEditorContainer'),
-    extensions: [
-      basicSetup,
-      javascript(),
-      tagTextAreaEditable,
-      EditorView.editable.from(tagTextAreaEditable),
-      lintGutter(),
-      jsonLinter
-    ]
-  })
+  tagTextArea = createCodemirrorEditor('json', document.querySelector('#tagEditorContainer'), [
+    tagTextAreaEditable,
+    EditorView.editable.from(tagTextAreaEditable)
+  ])
+
   // disable standard selection and focus visualization
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
+
   graphComponent.selection.addEventListener('item-added', () => {
     const selectedNode = graphComponent.selection.nodes.at(0)
     if (selectedNode.style instanceof LitNodeStyle) {
@@ -150,6 +150,7 @@ function initializeTextAreas() {
     document.querySelector('#apply-template-button').disabled = false
     document.querySelector('#apply-tag-button').disabled = false
   })
+
   graphComponent.selection.addEventListener('item-removed', () => {
     renderFunctionSourceTextArea.dispatch({
       effects: setRenderFunctionSourceTextAreaEditable.of(false),
@@ -171,6 +172,7 @@ function initializeTextAreas() {
     document.querySelector('#apply-tag-button').disabled = true
   })
 }
+
 /**
  * Initializes the default styles for the graph. By default, org-chart nodes are used.
  */
@@ -200,22 +202,27 @@ $\{zoom >= 0.5 ? svg\`
   \`}
 </g>
 \``)
+
   graph.nodeDefaults.size = new Size(290, 100)
   graph.nodeDefaults.shareStyleInstance = false
+
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '2px rgb(170, 170, 170)',
     targetArrow: IArrow.NONE
   })
 }
+
 /**
  * Initializes GraphML writing and reading for files containing LitNodeStyle.
  */
 function initializeIO() {
   const graphmlHandler = new GraphMLIOHandler()
+
   // we want to be able to write and store LitNodeStyles in GraphML
   registerLitNodeStyleSerialization(graphmlHandler)
   return graphmlHandler
 }
+
 /**
  * Loads the sample graph.
  */
@@ -233,11 +240,14 @@ function loadSampleGraph() {
   })
   graphBuilder.createEdgesSource(SampleData.edges, 'src', 'tgt').edgeCreator.bendsProvider = (e) =>
     e.bends
+
   const graph = graphBuilder.buildGraph()
   void graphComponent.fitGraphBounds(30)
+
   // select one node to initialize the text box with some sample data
   graphComponent.selection.add(graph.nodes.last())
 }
+
 /**
  * Wires up the UI. Buttons are linked with their respective actions.
  */
@@ -268,9 +278,11 @@ function initializeUI() {
       style.renderer
         .getVisualCreator(graphComponent.selection.nodes.first(), style)
         .createVisual(graphComponent.createRenderContext())
+
       graphComponent.selection.nodes.forEach((node) => {
         graphComponent.graph.setStyle(node, style)
       })
+
       document.getElementById('template-text-area-error').classList.remove('open-error')
     } catch (err) {
       const errorArea = document.getElementById('template-text-area-error')
@@ -279,6 +291,7 @@ function initializeUI() {
       errorArea.classList.add('open-error')
     }
   })
+
   document.querySelector('#apply-tag-button').addEventListener('click', () => {
     const errorArea = document.getElementById('tag-text-area-error')
     graphComponent.selection.nodes.forEach((node) => {
@@ -292,6 +305,8 @@ function initializeUI() {
     })
     graphComponent.invalidate()
   })
+
   document.querySelector('#reload').addEventListener('click', loadSampleGraph)
 }
+
 run().then(finishLoading)

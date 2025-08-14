@@ -104,10 +104,7 @@ export function createPortAwareGraphBuilder(
 ): GraphBuilder {
   graphBuilder = new GraphBuilder(graph)
 
-  nodesSource = graphBuilder.createNodesSource({
-    data: sampleNodes,
-    id: 'id'
-  })
+  nodesSource = graphBuilder.createNodesSource({ data: sampleNodes, id: 'id' })
   // change the node creator but keep the original's defaults
   nodesSource.nodeCreator = new TypeAwareNodeCreator({ defaults: nodesSource.nodeCreator.defaults })
   nodesSource.nodeCreator.styleProvider = (nodeData) => {

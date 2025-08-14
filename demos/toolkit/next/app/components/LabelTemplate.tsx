@@ -39,11 +39,7 @@ export default function LabelTemplate({
   return (
     <g>
       <rect
-        style={{
-          fill: selected ? '#441c36' : '#dad2d7',
-          stroke: '#66485B',
-          strokeWidth: 1.5
-        }}
+        style={{ fill: selected ? '#441c36' : '#dad2d7', stroke: '#66485B', strokeWidth: 1.5 }}
         x={0}
         y={0}
         rx={10}

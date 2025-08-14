@@ -38,6 +38,7 @@ import {
   RecursiveGroupLayout,
   RecursiveGroupLayoutData
 } from '@yfiles/yfiles'
+
 import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
@@ -49,16 +50,19 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
+
 var GroupLayout
 ;(function (GroupLayout) {
   GroupLayout[(GroupLayout['NONE'] = 0)] = 'NONE'
   GroupLayout[(GroupLayout['RECURSIVE'] = 1)] = 'RECURSIVE'
 })(GroupLayout || (GroupLayout = {}))
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
 export const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     generalGroup: [
       new LabelAttribute('General'),
@@ -119,16 +123,20 @@ export const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
       new TypeAttribute(RadialNodeLabelPlacement)
     ]
   },
+
   constructor: function () {
     // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
     const layout = new CompactDiskLayout()
+
     this.useDrawingAsSketchItem = layout.fromSketchMode
     this.minimumNodeDistanceItem = layout.minimumNodeDistance
     this.nodeLabelingStyleItem = layout.nodeLabelPlacement
     this.layoutGroupsItem = GroupLayout.NONE
+
     this.title = 'Compact Disk Layout'
   },
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the configuration on.
@@ -151,9 +159,11 @@ export const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
         fromSketchMode: this.useDrawingAsSketchItem
       })
     }
+
     // just use plain CompactDiskLayout
     return this.createCompactDiskLayout(graphComponent)
   },
+
   /**
    * Creates and configures the layout data.
    * @returns The configured layout data.
@@ -161,21 +171,24 @@ export const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
   createConfiguredLayoutData: function (graphComponent, layout) {
     if (this.layoutGroupsItem === GroupLayout.RECURSIVE) {
       const compactDiskLayout = this.createCompactDiskLayout(graphComponent)
-      return new RecursiveGroupLayoutData({
-        groupNodeLayouts: compactDiskLayout
-      })
+      return new RecursiveGroupLayoutData({ groupNodeLayouts: compactDiskLayout })
     }
     return undefined
   },
+
   /**
    * Creates and configures the actual compact disk layout algorithm.
    * @returns The configured compact disk layout.
    */
   createCompactDiskLayout: function (graphComponent) {
     const layout = new CompactDiskLayout()
+
     layout.fromSketchMode = this.useDrawingAsSketchItem
+
     layout.minimumNodeDistance = this.minimumNodeDistanceItem
+
     layout.nodeLabelPlacement = this.nodeLabelingStyleItem
+
     if (
       this.nodeLabelingStyleItem !== RadialNodeLabelPlacement.IGNORE &&
       this.nodeLabelingStyleItem !== RadialNodeLabelPlacement.CONSIDER
@@ -187,24 +200,32 @@ export const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
         )
       })
     }
+
     return layout
   },
+
   /** @type {OptionGroup} */
   generalGroup: null,
+
   /** @type {OptionGroup} */
   labelingGroup: null,
+
   /** @type {string} */
   descriptionText: {
     get: function () {
       return "<p>The nodes are arranged on a disk such that the disk's radius is minimized.</p><p>The layout mostly optimizes the dense placement of the nodes, while edges play a minor role. Hence, the compact disk layout is mostly suitable for graphs with small components whose loosely connected nodes should be grouped and packed in a small area.</p>"
     }
   },
+
   /** @type {boolean} */
   useDrawingAsSketchItem: false,
+
   /** @type {number} */
   minimumNodeDistanceItem: 0,
+
   /** @type {GroupLayout} */
   layoutGroupsItem: null,
+
   /** @type {RadialNodeLabelPlacement} */
   nodeLabelingStyleItem: null
 })

@@ -28,16 +28,8 @@
  ***************************************************************************/
 export default {
   nodeList: [
-    {
-      id: 0,
-      layout: { x: 1110, y: -229.25, width: 30, height: 76 },
-      isEllipse: true
-    },
-    {
-      id: 1,
-      layout: { x: 165, y: -267.75, width: 127.5, height: 123 },
-      isEllipse: true
-    },
+    { id: 0, layout: { x: 1110, y: -229.25, width: 30, height: 76 }, isEllipse: true },
+    { id: 1, layout: { x: 165, y: -267.75, width: 127.5, height: 123 }, isEllipse: true },
     { id: 2, layout: { x: 386.5, y: -485.75, width: 30, height: 132.25 } },
     { id: 3, layout: { x: 386.5, y: -567.5, width: 30, height: 66 } },
     { id: 4, layout: { x: 1013, y: -396.75, width: 57, height: 30 } },

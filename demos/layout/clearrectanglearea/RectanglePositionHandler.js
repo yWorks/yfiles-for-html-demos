@@ -35,12 +35,14 @@ import {
   MutableRectangle,
   Point
 } from '@yfiles/yfiles'
+
 /**
  * Simple implementation of an {@link IPositionHandler} that moves a {@link MutableRectangle}
  */
 export class RectanglePositionHandler extends BaseClass(IPositionHandler) {
   rectangle
   startPosition = null
+
   /**
    * Creates a position handler updates the provided rectangles position
    * @param rectangle The rectangle that will be read and changed.
@@ -49,15 +51,18 @@ export class RectanglePositionHandler extends BaseClass(IPositionHandler) {
     super()
     this.rectangle = rectangle
   }
+
   get location() {
     return this.rectangle.dynamicLocation
   }
+
   /**
    * Stores the initial position of the {@link IMutablePoint}
    */
   initializeDrag(context) {
     this.startPosition = this.rectangle.topLeft
   }
+
   /**
    * Moves the {@link IMutablePoint} away from the start position by the difference
    * between newLocation and originalLocation
@@ -74,6 +79,7 @@ export class RectanglePositionHandler extends BaseClass(IPositionHandler) {
       }
     }
   }
+
   /**
    * Moves the {@link IMutablePoint} back to the start position.
    */
@@ -85,6 +91,7 @@ export class RectanglePositionHandler extends BaseClass(IPositionHandler) {
       }
     }
   }
+
   dragFinished(context, originalLocation, newLocation) {
     // eslint-disable-next-line no-useless-return
     return

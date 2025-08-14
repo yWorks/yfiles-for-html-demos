@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { IEdge, INode, Point } from '@yfiles/yfiles'
 import { getCompany, getRelationship } from './data-types'
+
 /**
  * Enables the tooltips for node and edge elements.
  */

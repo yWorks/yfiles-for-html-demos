@@ -43,44 +43,52 @@ import {
   ModifierKeys,
   Size
 } from '@yfiles/yfiles'
+
 import { LinkItemHoverInputMode } from './LinkItemHoverInputMode'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
+
 let graphComponent
+
 /**
  * Bootstraps the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   const inputMode = new GraphEditorInputMode()
   graphComponent.inputMode = inputMode
+
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
+
   // then build the graph with the given data set
   buildGraph(graphComponent.graph, graphData)
+
   LayoutExecutor.ensure()
-  graphComponent.graph.applyLayout(
-    new HierarchicalLayout({
-      minimumLayerDistance: 35
-    })
-  )
+  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
   await graphComponent.fitGraphBounds()
+
   // Finally, enable the undo engine. This prevents undoing of the graph creation
   graphComponent.graph.undoEngineEnabled = true
+
   // the click listener for labels that represent external links
   initializeLinkListener()
+
   // an optional custom ItemHoverInputMode which highlights clickable links by underlining the text
   inputMode.add(new LinkItemHoverInputMode())
 }
+
 /**
  * Creates nodes and edges from to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   graphBuilder
     .createNodesSource({
       data: graphData.nodeList.filter((item) => !item.isGroup),
@@ -88,19 +96,23 @@ function buildGraph(graph, graphData) {
       parentId: (item) => item.parentId
     })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder
     .createGroupNodesSource({
       data: graphData.nodeList.filter((item) => item.isGroup),
       id: (item) => item.id
     })
     .nodeCreator.createLabelBinding((item) => item.label)
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 function initializeLinkListener() {
   graphComponent.inputMode.addEventListener('item-left-clicked', (evt) => {
     if (evt.modifiers !== ModifierKeys.CONTROL) {
@@ -109,6 +121,7 @@ function initializeLinkListener() {
     }
     const clickedItem = evt.item
     let url = ''
+
     if (clickedItem instanceof ILabel) {
       const label = clickedItem
       url = label.text.startsWith('www.') || label.text.startsWith('http') ? label.text : ''
@@ -121,12 +134,14 @@ function initializeLinkListener() {
         }
       })
     }
+
     if (url) {
       window.open(url.startsWith('http') ? url : `https://${url}`, '_blank')
       evt.handled = true
     }
   })
 }
+
 /**
  * Initializes the defaults for the styling in this demo.
  *
@@ -135,6 +150,7 @@ function initializeLinkListener() {
 function initializeGraph(graph) {
   // set styles for this demo
   initDemoStyles(graph)
+
   // set sizes and locations specific for this demo
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
@@ -145,4 +161,5 @@ function initializeGraph(graph) {
     autoRotation: true
   }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
 }
+
 run().then(finishLoading)

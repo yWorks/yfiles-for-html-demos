@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { DelegatingNodeStyle, INode, INodeStyle, Rect, SimpleNode, Visual } from '@yfiles/yfiles'
+
 /**
  * A custom node style that scales the visual representation of a node.
  * Extends the functionality of the {@link DelegatingNodeStyle} by applying a scaling transformation.
@@ -36,6 +37,7 @@ export class ScalingNodeStyle extends DelegatingNodeStyle {
   sx
   sy
   scaledNode = new SimpleNode()
+
   /**
    * Initializes a new instance of the ScalingNodeStyle class.
    * @param style The wrapped node style to which the scaling transformation is applied.
@@ -48,6 +50,7 @@ export class ScalingNodeStyle extends DelegatingNodeStyle {
     this.sx = sx
     this.sy = sy
   }
+
   /**
    * Retrieves a scaled version of the node, applying the scaling transformation.
    *
@@ -69,6 +72,7 @@ export class ScalingNodeStyle extends DelegatingNodeStyle {
     this.scaledNode.layout = new Rect(x - w / 2, y - h / 2, w, h)
     return this.scaledNode
   }
+
   /**
    * Gets the wrapped node style for the specified node.
    * @param node The node for which the wrapped style is retrieved.
@@ -77,12 +81,14 @@ export class ScalingNodeStyle extends DelegatingNodeStyle {
   getStyle(node) {
     return this.style
   }
+
   /**
    * Creates the visual representation of the node, applying the scaling transformation.
    */
   createVisual(context, node) {
     return super.createVisual(context, this.getNode(node))
   }
+
   /**
    * Updates the visual representation of the node to reflect any changes, preserving the scaling transformation.
    */

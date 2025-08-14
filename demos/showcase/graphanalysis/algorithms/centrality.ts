@@ -72,10 +72,7 @@ export function calculateDegreeCentrality(graph: IGraph): void {
   graph.nodes.forEach((node) => {
     const centrality = normalizedNodeCentrality.get(node)!
     setCentrality(node, centrality)
-    graph.addLabel({
-      owner: node,
-      text: nodeCentrality.get(node)!.toFixed(2)
-    })
+    graph.addLabel({ owner: node, text: nodeCentrality.get(node)!.toFixed(2) })
   })
 }
 
@@ -250,10 +247,7 @@ export function calculateEigenvectorCentrality(graph: IGraph): void {
   graph.nodes.forEach((node) => {
     const centrality = nodeCentrality.get(node)!
     setCentrality(node, centrality)
-    graph.addLabel({
-      owner: node,
-      text: Number.isNaN(centrality) ? 'Inf' : centrality.toFixed(2)
-    })
+    graph.addLabel({ owner: node, text: Number.isNaN(centrality) ? 'Inf' : centrality.toFixed(2) })
   })
 }
 
@@ -279,9 +273,7 @@ export const pageRankDescription = `
  * Calculates the page rank values for the given graph.
  */
 export function calculatePageRankCentrality(graph: IGraph, config: AlgorithmConfig): void {
-  const result = new PageRank({
-    edgeWeights: config.edgeWeights
-  }).run(graph)
+  const result = new PageRank({ edgeWeights: config.edgeWeights }).run(graph)
 
   const pageRank = result.pageRank
 
@@ -292,9 +284,6 @@ export function calculatePageRankCentrality(graph: IGraph, config: AlgorithmConf
   graph.nodes.forEach((node) => {
     const rank = pageRank.get(node)!
     setCentrality(node, rank / maximumRank)
-    graph.addLabel({
-      owner: node,
-      text: rank.toFixed(2)
-    })
+    graph.addLabel({ owner: node, text: rank.toFixed(2) })
   })
 }

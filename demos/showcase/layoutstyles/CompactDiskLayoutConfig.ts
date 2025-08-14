@@ -173,9 +173,7 @@ export const CompactDiskLayoutConfig = (Class as any)('CompactDiskLayoutConfig',
   ): LayoutData | undefined {
     if (this.layoutGroupsItem === GroupLayout.RECURSIVE) {
       const compactDiskLayout = this.createCompactDiskLayout(graphComponent)
-      return new RecursiveGroupLayoutData({
-        groupNodeLayouts: compactDiskLayout
-      })
+      return new RecursiveGroupLayoutData({ groupNodeLayouts: compactDiskLayout })
     }
     return undefined
   },

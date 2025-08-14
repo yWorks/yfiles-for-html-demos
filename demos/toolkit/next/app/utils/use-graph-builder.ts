@@ -57,10 +57,7 @@ function createGraphBuilder(graph: IGraph) {
     // Edge label text should contain the names of the source and target node
     text: (edgeData) => idToName(edgeData.fromNode) + ' - ' + idToName(edgeData.toNode),
     tag: (edgeData) => {
-      return {
-        fromNode: idToName(edgeData.fromNode),
-        toNode: idToName(edgeData.toNode)
-      }
+      return { fromNode: idToName(edgeData.fromNode), toNode: idToName(edgeData.toNode) }
     }
   })
   return { graphBuilder, nodesSource, edgesSource }

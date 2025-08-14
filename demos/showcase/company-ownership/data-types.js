@@ -34,6 +34,7 @@ export var EdgeTypeEnum
   EdgeTypeEnum['Hierarchy'] = 'Hierarchy'
   EdgeTypeEnum['Relation'] = 'Relation'
 })(EdgeTypeEnum || (EdgeTypeEnum = {}))
+
 /**
  * The types of the nodes.
  */
@@ -53,12 +54,14 @@ export var NodeTypeEnum
   NodeTypeEnum['PE_RISK'] = 'PE_Risk'
   NodeTypeEnum['TRAPEZOID'] = 'Trapezoid'
 })(NodeTypeEnum || (NodeTypeEnum = {}))
+
 /**
  * Returns the data stored in the node's tag.
  */
 export function getCompany(node) {
   return node.tag
 }
+
 /**
  * Returns the data stored in the edge's tag.
  */

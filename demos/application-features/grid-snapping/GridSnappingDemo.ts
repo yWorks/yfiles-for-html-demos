@@ -55,8 +55,7 @@ import {
 
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+import { BrowserDetection, finishLoading } from '@yfiles/demo-resources/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
@@ -86,10 +85,7 @@ async function run(): Promise<void> {
   // layout and center the graph
   LayoutExecutor.ensure()
   graphComponent.graph.applyLayout(
-    new HierarchicalLayout({
-      minimumLayerDistance: 70,
-      nodeDistance: 70
-    })
+    new HierarchicalLayout({ minimumLayerDistance: 70, nodeDistance: 70 })
   )
   await graphComponent.fitGraphBounds()
 

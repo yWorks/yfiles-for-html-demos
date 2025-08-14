@@ -29,11 +29,14 @@
 import { getActivity } from './resources/data-model'
 import { ganttChartData as dataModel } from './resources/gantt-chart-data'
 import { Animator, IAnimation, Rect, TimeSpan } from '@yfiles/yfiles'
+
 export const ganttActivityHeight = 40
 export const ganttActivitySpacing = 20
 export const ganttTaskSpacing = 10
+
 const subRowMap = new Map()
 const subRowCountMap = new Map()
+
 /**
  * Gets the y-coordinate for a given task.
  */
@@ -46,6 +49,7 @@ export function getTaskY(task) {
   }
   return height
 }
+
 /**
  * Gets the task at the given y-coordinate.
  */
@@ -61,6 +65,7 @@ export function getTask(y) {
   }
   return tasks[tasks.length - 1]
 }
+
 /**
  * Gets the y-coordinate for a given activity, considering the sub-row information.
  */
@@ -72,6 +77,7 @@ export function getActivityY(activity) {
   y += subRow * (ganttActivityHeight + ganttActivitySpacing)
   return y
 }
+
 /**
  * Calculates the task height, including sub-rows and spacing.
  */
@@ -79,6 +85,7 @@ export function getCompleteTaskHeight(task) {
   const subRowCount = getSubRowCount(task)
   return subRowCount * (ganttActivityHeight + ganttActivitySpacing) + ganttActivitySpacing
 }
+
 /**
  * Calculates the height of all tasks, including their sub-rows and spacing
  */
@@ -88,6 +95,7 @@ export function getTotalTasksHeight() {
     0
   )
 }
+
 /**
  * Gets the sub-row in which the given activity is placed.
  */
@@ -97,12 +105,14 @@ export function getSubRowIndex(activity) {
   }
   return 0
 }
+
 /**
  * Gets the number of sub-rows for a given task.
  */
 export function getSubRowCount(task) {
   return typeof subRowCountMap.get(task.id) === 'number' ? subRowCountMap.get(task.id) : 1
 }
+
 /**
  * Calculates the new height for each task row, spreading overlapping activity nodes
  * on multiple sub-rows.
@@ -115,6 +125,7 @@ export function updateSubRowMappings(graphComponent) {
   // maps each task row to the number of sub-rows
   subRowMap.clear()
   subRowCountMap.clear()
+
   // create the task mapping for each activity and initialize the sub-row mapping with 0
   for (const node of graphComponent.graph.nodes) {
     const activity = getActivity(node)
@@ -125,12 +136,14 @@ export function updateSubRowMappings(graphComponent) {
     taskId2Activities.get(taskId).push(node)
     subRowMap.set(activity, 0)
   }
+
   // calculate the sub-row mapping for each task
   dataModel.tasks.forEach((task) => {
     const maxRowIndex = calculateMappingForTask(task, taskId2Activities, subRowMap, graphComponent)
     subRowCountMap.set(task.id, maxRowIndex + 1)
   })
 }
+
 /**
  * Analyzes node overlaps within the same task lane
  * and splits up those nodes in sub-rows.
@@ -148,6 +161,7 @@ export async function updateSubRows(graphComponent, animate) {
     const subRowIndex = getSubRowIndex(activity)
     if (typeof subRowIndex !== 'undefined') {
       const layout = node.layout
+
       const yTop = getActivityY(activity)
       // calculate the new node layout
       const newLayout = new Rect(layout.x, yTop, layout.width, layout.height)
@@ -172,6 +186,7 @@ export async function updateSubRows(graphComponent, animate) {
       }
     }
   }
+
   if (animate && animations.length > 0) {
     // create a composite animation that executes all node transitions at the same time
     const compositeAnimation = IAnimation.createParallelAnimation(animations)
@@ -182,6 +197,7 @@ export async function updateSubRows(graphComponent, animate) {
     geim.waiting = false
   }
 }
+
 /**
  * Calculates the sub-row mapping for a given task.
  * In order to do that, a sweep line, or scan line algorithm is used:
@@ -206,18 +222,11 @@ export function calculateMappingForTask(task, taskId2Activities, subRowMap, grap
       const xEnd = bounds.x + bounds.width
       const activity = getActivity(node)
       // push the information where the activity starts
-      sweeplineData.push({
-        x: xStart,
-        activity,
-        open: true
-      })
+      sweeplineData.push({ x: xStart, activity, open: true })
       // push the information where the task ends
-      sweeplineData.push({
-        x: xEnd,
-        activity,
-        open: false
-      })
+      sweeplineData.push({ x: xEnd, activity, open: false })
     })
+
     // sort by x-coordinates
     sweeplineData.sort((t1, t2) => t1.x - t2.x)
     const subRows = [] // holds information about available and unavailable sub-rows

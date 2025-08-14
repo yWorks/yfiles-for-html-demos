@@ -101,9 +101,7 @@ class LabelTemplateContext extends TemplateContext<ILabel> {
 
 export type StringTemplateLabelStyleOptions = StringTemplateStyleOptions & {
   preferredSize: Size | SizeConvertible
-} & Partial<{
-    autoFlip: boolean
-  }>
+} & Partial<{ autoFlip: boolean }>
 
 export class StringTemplateLabelStyle extends LabelStyleBase<TemplateLabelStyleVisual> {
   static CONVERTERS: typeof converters = converters
@@ -154,10 +152,9 @@ export class StringTemplateLabelStyle extends LabelStyleBase<TemplateLabelStyleV
    * This mimics the old yFiles 2.x API
    * @param obj
    */
-  static makeObservable<T>(obj: T): T &
-    IPropertyObservable & {
-      firePropertyChanged: (propertyName: string) => void
-    } {
+  static makeObservable<T>(
+    obj: T
+  ): T & IPropertyObservable & { firePropertyChanged: (propertyName: string) => void } {
     makeObservable(obj)
     return obj
   }

@@ -65,12 +65,7 @@ if (showBadge) {
   g.append(badge)
 }
 
-return SvgVisual.from(g, {
-  width,
-  height,
-  fillColor,
-  showBadge
-})
+return SvgVisual.from(g, { width, height, fillColor, showBadge })
 ```
 
 Note

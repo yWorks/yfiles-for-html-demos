@@ -37,14 +37,8 @@ export const DefaultTree = {
           layer: 1,
           assistant: true,
           children: [
-            {
-              id: '20',
-              layer: 2
-            },
-            {
-              id: '21',
-              layer: 2
-            }
+            { id: '20', layer: 2 },
+            { id: '21', layer: 2 }
           ]
         },
         {
@@ -59,65 +53,28 @@ export const DefaultTree = {
                   id: '30',
                   layer: 3,
                   children: [
-                    {
-                      id: '40',
-                      layer: 4
-                    },
-                    {
-                      id: '41',
-                      layer: 4
-                    },
-                    {
-                      id: '42',
-                      layer: 4
-                    },
-                    {
-                      id: '40a',
-                      layer: 4
-                    },
-                    {
-                      id: '41a',
-                      layer: 4
-                    }
+                    { id: '40', layer: 4 },
+                    { id: '41', layer: 4 },
+                    { id: '42', layer: 4 },
+                    { id: '40a', layer: 4 },
+                    { id: '41a', layer: 4 }
                   ]
                 },
                 {
                   id: '31',
                   layer: 3,
                   children: [
-                    {
-                      id: '43',
-                      layer: 4
-                    },
-                    {
-                      id: '44',
-                      layer: 4
-                    },
-                    {
-                      id: '45',
-                      layer: 4
-                    },
-                    {
-                      id: '43a',
-                      layer: 4
-                    },
-                    {
-                      id: '44a',
-                      layer: 4
-                    },
-                    {
-                      id: '45a',
-                      layer: 4
-                    }
+                    { id: '43', layer: 4 },
+                    { id: '44', layer: 4 },
+                    { id: '45', layer: 4 },
+                    { id: '43a', layer: 4 },
+                    { id: '44a', layer: 4 },
+                    { id: '45a', layer: 4 }
                   ]
                 }
               ]
             },
-            {
-              id: '23',
-              layer: 2,
-              assistant: true
-            },
+            { id: '23', layer: 2, assistant: true },
             {
               id: '24',
               layer: 2,
@@ -126,128 +83,50 @@ export const DefaultTree = {
                   id: '32',
                   layer: 3,
                   children: [
-                    {
-                      id: '46',
-                      layer: 4
-                    },
-                    {
-                      id: '47',
-                      layer: 4
-                    },
-                    {
-                      id: '48',
-                      layer: 4
-                    },
-                    {
-                      id: '49',
-                      layer: 4
-                    },
-                    {
-                      id: '450',
-                      layer: 4
-                    },
-                    {
-                      id: '46a',
-                      layer: 4
-                    },
-                    {
-                      id: '47a',
-                      layer: 4
-                    },
-                    {
-                      id: '48a',
-                      layer: 4
-                    },
-                    {
-                      id: '49a',
-                      layer: 4
-                    },
-                    {
-                      id: '450a',
-                      layer: 4
-                    }
+                    { id: '46', layer: 4 },
+                    { id: '47', layer: 4 },
+                    { id: '48', layer: 4 },
+                    { id: '49', layer: 4 },
+                    { id: '450', layer: 4 },
+                    { id: '46a', layer: 4 },
+                    { id: '47a', layer: 4 },
+                    { id: '48a', layer: 4 },
+                    { id: '49a', layer: 4 },
+                    { id: '450a', layer: 4 }
                   ]
                 },
                 {
                   id: '33',
                   layer: 3,
                   children: [
-                    {
-                      id: '451',
-                      layer: 4
-                    },
-                    {
-                      id: '452',
-                      layer: 4
-                    },
-                    {
-                      id: '451a',
-                      layer: 4
-                    }
+                    { id: '451', layer: 4 },
+                    { id: '452', layer: 4 },
+                    { id: '451a', layer: 4 }
                   ]
                 },
                 {
                   id: '34',
                   layer: 3,
                   children: [
-                    {
-                      id: '453',
-                      layer: 4
-                    },
-                    {
-                      id: '454',
-                      layer: 4
-                    },
-                    {
-                      id: '455',
-                      layer: 4
-                    },
-                    {
-                      id: '456',
-                      layer: 4
-                    },
-                    {
-                      id: '457',
-                      layer: 4
-                    },
-                    {
-                      id: '453a',
-                      layer: 4
-                    },
-                    {
-                      id: '454a',
-                      layer: 4
-                    },
-                    {
-                      id: '455a',
-                      layer: 4
-                    },
-                    {
-                      id: '456a',
-                      layer: 4
-                    },
-                    {
-                      id: '457a',
-                      layer: 4
-                    }
+                    { id: '453', layer: 4 },
+                    { id: '454', layer: 4 },
+                    { id: '455', layer: 4 },
+                    { id: '456', layer: 4 },
+                    { id: '457', layer: 4 },
+                    { id: '453a', layer: 4 },
+                    { id: '454a', layer: 4 },
+                    { id: '455a', layer: 4 },
+                    { id: '456a', layer: 4 },
+                    { id: '457a', layer: 4 }
                   ]
                 },
                 {
                   id: '35',
                   layer: 3,
                   children: [
-                    {
-                      id: '458',
-                      layer: 4
-                    },
-                    {
-                      id: '458a',
-                      layer: 4
-                    },
-                    {
-                      id: '458b',
-                      layer: 4
-                    }
+                    { id: '458', layer: 4 },
+                    { id: '458a', layer: 4 },
+                    { id: '458b', layer: 4 }
                   ]
                 }
               ]
@@ -266,100 +145,41 @@ export const DefaultTree = {
                   id: '36',
                   layer: 3,
                   children: [
-                    {
-                      id: '459',
-                      layer: 4
-                    },
-                    {
-                      id: '460',
-                      layer: 4
-                    },
-                    {
-                      id: '461',
-                      layer: 4
-                    },
-                    {
-                      id: '459a',
-                      layer: 4
-                    },
-                    {
-                      id: '460a',
-                      layer: 4
-                    }
+                    { id: '459', layer: 4 },
+                    { id: '460', layer: 4 },
+                    { id: '461', layer: 4 },
+                    { id: '459a', layer: 4 },
+                    { id: '460a', layer: 4 }
                   ]
                 },
                 {
                   id: '37',
                   layer: 3,
                   children: [
-                    {
-                      id: '462',
-                      layer: 4
-                    },
-                    {
-                      id: '463',
-                      layer: 4
-                    },
-                    {
-                      id: '464',
-                      layer: 4
-                    },
-                    {
-                      id: '462a',
-                      layer: 4
-                    },
-                    {
-                      id: '463a',
-                      layer: 4
-                    },
-                    {
-                      id: '464a',
-                      layer: 4
-                    }
+                    { id: '462', layer: 4 },
+                    { id: '463', layer: 4 },
+                    { id: '464', layer: 4 },
+                    { id: '462a', layer: 4 },
+                    { id: '463a', layer: 4 },
+                    { id: '464a', layer: 4 }
                   ]
                 },
                 {
                   id: '38',
                   layer: 3,
                   children: [
-                    {
-                      id: '465',
-                      layer: 4
-                    },
-                    {
-                      id: '466',
-                      layer: 4
-                    },
-                    {
-                      id: '467',
-                      layer: 4
-                    },
-                    {
-                      id: '465a',
-                      layer: 4
-                    },
-                    {
-                      id: '466a',
-                      layer: 4
-                    },
-                    {
-                      id: '467a',
-                      layer: 4
-                    }
+                    { id: '465', layer: 4 },
+                    { id: '466', layer: 4 },
+                    { id: '467', layer: 4 },
+                    { id: '465a', layer: 4 },
+                    { id: '466a', layer: 4 },
+                    { id: '467a', layer: 4 }
                   ]
                 },
-                {
-                  id: '39',
-                  layer: 3,
-                  assistant: true
-                }
+                { id: '39', layer: 3, assistant: true }
               ]
             },
-            {
-              id: '26',
-              layer: 2,
-              assistant: true
-            },
+            { id: '26', layer: 2, assistant: true },
             {
               id: '27',
               layer: 2,
@@ -368,60 +188,24 @@ export const DefaultTree = {
                   id: '310',
                   layer: 3,
                   children: [
-                    {
-                      id: '468',
-                      layer: 4
-                    },
-                    {
-                      id: '469',
-                      layer: 4
-                    },
-                    {
-                      id: '468a',
-                      layer: 4
-                    },
-                    {
-                      id: '469a',
-                      layer: 4
-                    },
-                    {
-                      id: '468b',
-                      layer: 4
-                    }
+                    { id: '468', layer: 4 },
+                    { id: '469', layer: 4 },
+                    { id: '468a', layer: 4 },
+                    { id: '469a', layer: 4 },
+                    { id: '468b', layer: 4 }
                   ]
                 },
                 {
                   id: '311',
                   layer: 3,
                   children: [
-                    {
-                      id: '470',
-                      layer: 4
-                    },
-                    {
-                      id: '471',
-                      layer: 4
-                    },
-                    {
-                      id: '470a',
-                      layer: 4
-                    },
-                    {
-                      id: '471a',
-                      layer: 4
-                    },
-                    {
-                      id: '470b',
-                      layer: 4
-                    },
-                    {
-                      id: '471b',
-                      layer: 4
-                    },
-                    {
-                      id: '470c',
-                      layer: 4
-                    }
+                    { id: '470', layer: 4 },
+                    { id: '471', layer: 4 },
+                    { id: '470a', layer: 4 },
+                    { id: '471a', layer: 4 },
+                    { id: '470b', layer: 4 },
+                    { id: '471b', layer: 4 },
+                    { id: '470c', layer: 4 }
                   ]
                 }
               ]
@@ -432,6 +216,7 @@ export const DefaultTree = {
     }
   ]
 }
+
 export const CategoryTree = {
   nodesSource: [
     {
@@ -486,6 +271,7 @@ export const CategoryTree = {
     }
   ]
 }
+
 export const GeneralGraph = {
   nodesSource: [
     {
@@ -556,6 +342,7 @@ export const GeneralGraph = {
     }
   ]
 }
+
 export const LargeTree = {
   nodesSource: [
     {

@@ -39,9 +39,6 @@ export default defineConfig(({ mode }) => {
         ? optimizer({ logLevel: 'info', blacklist: ['theme', 'mode', 'variant'] })
         : undefined
     ],
-    build: {
-      minify: false,
-      chunkSizeWarningLimit: 3000
-    }
+    build: { minify: false, chunkSizeWarningLimit: 3000 }
   }
 })

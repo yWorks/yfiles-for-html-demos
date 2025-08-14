@@ -51,6 +51,7 @@ export const detailNodeStyleTemplateSource = `({layout, tag, selected, zoom}) =>
   <text transform="translate(70 88)">$\{tag.fax}</text>
 </g>
 \``
+
 //language=HTML
 export const intermediateNodeStyleTemplateSource = `({layout, tag, selected, zoom}) => svg\`
 <rect fill="#C0C0C0" width="285" height="100" transform="translate(2 2)" />
@@ -70,6 +71,7 @@ export const intermediateNodeStyleTemplateSource = `({layout, tag, selected, zoo
   transform="translate(10 70)"
   style="font-size:15px; font-family:Roboto,sans-serif; text-transform: uppercase; font-weight: 400">$\{tag.position}</text>
 \``
+
 //language=HTML
 export const overviewNodeStyleTemplateSource = `({layout, tag, selected, zoom}) => svg\`
 <rect fill="#AAA" width="288" height="103" transform="translate(-1 -1)" />

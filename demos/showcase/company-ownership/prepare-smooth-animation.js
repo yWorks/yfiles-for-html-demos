@@ -32,6 +32,7 @@ import {
   PlaceNodesAtBarycenterStageData,
   SimplePort
 } from '@yfiles/yfiles'
+
 /**
  * Prepares the graph for running a smooth animation so that the new nodes that are added
  * in the visualization appear near their neighbors.
@@ -44,9 +45,11 @@ export function modifyGraph(modification, graph) {
   const newNodeCollector = (evt) => {
     newNodes.push(evt.item)
   }
+
   const newEdgeCollector = (evt) => {
     newEdges.push(evt.item)
   }
+
   function getSimulatedParameter(port, simulatedOwner) {
     const dummyPort = new SimplePort({
       owner: simulatedOwner,
@@ -54,6 +57,7 @@ export function modifyGraph(modification, graph) {
     })
     return FreeNodePortLocationModel.INSTANCE.createParameter(port.owner, dummyPort.location)
   }
+
   const edgeChangedCollector = (evt) => {
     graph.setPortLocationParameter(
       evt.item.sourcePort,
@@ -64,6 +68,7 @@ export function modifyGraph(modification, graph) {
       getSimulatedParameter(evt.item.targetPort, evt.targetPortOwner)
     )
   }
+
   graph.addEventListener('node-created', newNodeCollector)
   graph.addEventListener('edge-created', newEdgeCollector)
   graph.addEventListener('edge-ports-changed', edgeChangedCollector)
@@ -71,6 +76,7 @@ export function modifyGraph(modification, graph) {
   graph.removeEventListener('node-created', newNodeCollector)
   graph.removeEventListener('edge-created', newEdgeCollector)
   graph.removeEventListener('edge-ports-changed', edgeChangedCollector)
+
   // first, we place the new nodes at the barycenter of their neighbors
   graph.applyLayout({
     layout: new PlaceNodesAtBarycenterStage({
@@ -80,6 +86,7 @@ export function modifyGraph(modification, graph) {
     }),
     layoutData: new PlaceNodesAtBarycenterStageData({ affectedNodes: newNodes })
   })
+
   // then we reset the new edges so that they grow out of their source nodes by placing the target port at
   // the source port's location
   newEdges.forEach((e) => {

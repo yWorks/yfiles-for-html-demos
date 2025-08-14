@@ -69,36 +69,46 @@ import { ActivityNodeStyle } from './activity-node/ActivityNodeStyle'
 import { GridVisual } from './GridVisual'
 import { RoutingEdgeStyle } from './RoutingEdgeStyle'
 import { ActivityNodePositionHandler } from './activity-node/ActivityNodePositionHandler'
+
 /**
  * The main graph component displaying activities and their dependencies.
  */
 let graphComponent
+
 /**
  * The html component that visualizes the tasks.
  */
 let taskComponent
+
 async function run() {
   License.value = await fetchLicense()
   // create and initializes the main graph component
   graphComponent = createGraphComponent()
+
   // create the component that visualizes the tasks and add the tasks from the data-model
   taskComponent = new TaskComponent('task-component', graphComponent)
+
   // create the component that visualizes the timeline
   new TimelineComponent('timeline-component', graphComponent)
+
   // configure graph item styles
   initializeStyles()
   configureInteraction(graphComponent, onGraphModified)
+
   // create the graph items from the source data
   await populateGraph()
+
   taskComponent.createTasks()
   updateScrollArea()
 }
+
 /**
  * Creates the graph from the data model.
  */
 async function populateGraph() {
   const graph = graphComponent.graph
   const graphBuilder = new AdjacencyGraphBuilder(graph)
+
   const nodesSource = graphBuilder.createNodesSource(
     dataModel.activities,
     (activity) => activity.id
@@ -116,9 +126,12 @@ async function populateGraph() {
     return new ActivityNodeStyle(getTaskColor(task))
   }
   nodesSource.nodeCreator.tagProvider = (activity) => activity
+
   nodesSource.nodeCreator.createLabelBinding('name')
+
   // Create all nodes of the graph
   graphBuilder.buildGraph()
+
   // Now add the edges, which require specific port location models, so we cannot create
   // them via GraphBuilder
   for (const activity of dataModel.activities) {
@@ -132,9 +145,11 @@ async function populateGraph() {
       }
     }
   }
+
   // put overlapping nodes in sub rows
   await updateSubRows(graphComponent, false)
 }
+
 /**
  *  Creates and assigns the default styles for graph items
  */
@@ -151,8 +166,10 @@ function initializeStyles() {
   })
   // set the label model that places the label centered in the "main" activity part of the node
   graph.nodeDefaults.labels.layoutParameter = new ActivityNodeLabelModel().createDefaultParameter()
+
   // set the edge style as graph default
   graph.edgeDefaults.style = new RoutingEdgeStyle(20, 20)
+
   // disable default node decorators
   const nodeDecorator = graph.decorator.nodes
   nodeDecorator.reshapeHandleProvider.hide()
@@ -168,6 +185,7 @@ function initializeStyles() {
     })
   )
 }
+
 /**
  * Does the necessary updates after all structural graph changes,
  * i.e. updating the sub-row information and refreshing the background.
@@ -177,11 +195,14 @@ async function onGraphModified() {
   await updateSubRows(graphComponent, true)
   // update the lane height of each task
   taskComponent.updateTasks()
+
   updateScrollArea()
+
   // trigger a background refresh
   graphComponent.renderTree.backgroundGroup.dirty = true
   graphComponent.invalidate()
 }
+
 /**
  * Configures the main graph component displaying activities and their dependencies.
  */
@@ -192,25 +213,32 @@ function createGraphComponent() {
   // switch off mousewheel zoom
   gc.mouseWheelBehavior = MouseWheelBehaviors.SCROLL
   gc.mouseWheelScrollFactor = 50
+
   // limit zoom to 1
   gc.maximumZoom = 1
   gc.minimumZoom = 1
+
   // add the background visualization to the component
   const gridVisual = new GridVisual(dataModel)
   gc.renderTree.createElement(gc.renderTree.backgroundGroup, gridVisual)
+
   gc.addEventListener('viewport-changed', () => hideActivityInfo())
+
   return gc
 }
+
 /**
  * Updates the scrollable area for the component.
  */
 function updateScrollArea() {
   graphComponent.updateContentBounds()
   const mainCr = graphComponent.contentBounds
+
   // updateContentRect for the graphComponent will calculate the y-coordinate and the height
   // of the content rectangle from the bounds of all activity nodes.
   // Instead, we want the y-direction to extend from 0 to the total height of all tasks.
   graphComponent.contentBounds = new Rect(mainCr.x, 0, mainCr.width, getTotalTasksHeight())
+
   // install a viewport limiter, so it's impossible to vertically scroll out of the graph area
   // add some large constant to be able to scroll horizontally out of the graph area
   const maxScrollWidth = 80000
@@ -223,4 +251,5 @@ function updateScrollArea() {
   )
   graphComponent.viewportLimiter.policy = ViewportLimitingPolicy.STRICT
 }
+
 void run().then(finishLoading)

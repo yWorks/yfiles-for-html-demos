@@ -27,90 +27,77 @@
  **
  ***************************************************************************/
 import { Arrow, ArrowType, Color, DashStyle, PolylineEdgeStyle, Stroke } from '@yfiles/yfiles'
+
 /**
  * Static helpers class to create UML styles and provide methods to check for certain styles.
  */
 export function createAssociationStyle() {
   return new PolylineEdgeStyle({ orthogonalEditing: true })
 }
+
 export function createDirectedAssociationStyle() {
   return new PolylineEdgeStyle({
-    targetArrow: new Arrow({
-      stroke: Stroke.BLACK,
-      fill: Color.BLACK,
-      type: ArrowType.STEALTH
-    }),
+    targetArrow: new Arrow({ stroke: Stroke.BLACK, fill: Color.BLACK, type: ArrowType.STEALTH }),
     orthogonalEditing: true
   })
 }
+
 export function createRealizationStyle() {
   return new PolylineEdgeStyle({
-    stroke: new Stroke({
-      dashStyle: DashStyle.DASH
-    }),
-    sourceArrow: new Arrow({
-      stroke: Stroke.BLACK,
-      fill: Color.WHITE,
-      type: ArrowType.TRIANGLE
-    }),
+    stroke: new Stroke({ dashStyle: DashStyle.DASH }),
+    sourceArrow: new Arrow({ stroke: Stroke.BLACK, fill: Color.WHITE, type: ArrowType.TRIANGLE }),
     orthogonalEditing: true
   })
 }
+
 export function createGeneralizationStyle() {
   return new PolylineEdgeStyle({
-    sourceArrow: new Arrow({
-      stroke: Stroke.BLACK,
-      fill: Color.WHITE,
-      type: ArrowType.TRIANGLE
-    }),
+    sourceArrow: new Arrow({ stroke: Stroke.BLACK, fill: Color.WHITE, type: ArrowType.TRIANGLE }),
     orthogonalEditing: true
   })
 }
+
 export function createAggregationStyle() {
   return new PolylineEdgeStyle({
-    sourceArrow: new Arrow({
-      stroke: Stroke.BLACK,
-      fill: Color.WHITE,
-      type: ArrowType.DIAMOND
-    }),
+    sourceArrow: new Arrow({ stroke: Stroke.BLACK, fill: Color.WHITE, type: ArrowType.DIAMOND }),
     orthogonalEditing: true
   })
 }
+
 export function createDependencyStyle() {
   return new PolylineEdgeStyle({
-    stroke: new Stroke({
-      dashStyle: DashStyle.DASH
-    }),
-    targetArrow: new Arrow({
-      stroke: Stroke.BLACK,
-      fill: Color.BLACK,
-      type: ArrowType.STEALTH
-    }),
+    stroke: new Stroke({ dashStyle: DashStyle.DASH }),
+    targetArrow: new Arrow({ stroke: Stroke.BLACK, fill: Color.BLACK, type: ArrowType.STEALTH }),
     orthogonalEditing: true
   })
 }
+
 /**
  * Inheritance styles, i.e. generalization or realization
  */
 export function isInheritance(style) {
   return isGeneralization(style) || isRealization(style)
 }
+
 /**
  * If the style symbolizes a generalization.
  */
 export function isGeneralization(style) {
   return hasStroke(style, DashStyle.SOLID) && hasArrow(style, ArrowType.TRIANGLE)
 }
+
 /**
  * If the style symbolizes a realization.
  */
 export function isRealization(style) {
   return hasStroke(style, DashStyle.DASH) && hasArrow(style, ArrowType.TRIANGLE)
 }
+
 function hasStroke(edgeStyle, dashStyle) {
   const stroke = edgeStyle.stroke
   return !!stroke && stroke.dashStyle === dashStyle
 }
+
 function hasArrow(style, arrowType) {
   const arrow = style.sourceArrow
   return !!arrow && arrow instanceof Arrow && arrow.type === arrowType

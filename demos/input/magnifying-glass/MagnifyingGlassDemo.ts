@@ -86,11 +86,7 @@ function populateGraph(graph: IGraph): void {
   // Set default graph item styling
   graph.nodeDefaults.size = new Size(40, 40)
   graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: new Stroke({
-      thickness: 5,
-      fill: colorSets['demo-green'].fill,
-      lineCap: 'round'
-    })
+    stroke: new Stroke({ thickness: 5, fill: colorSets['demo-green'].fill, lineCap: 'round' })
   })
   graph.decorator.ports.edgePathCropper.addConstant(
     new EdgePathCropper({ cropAtPort: false, extraCropLength: 10.0 })

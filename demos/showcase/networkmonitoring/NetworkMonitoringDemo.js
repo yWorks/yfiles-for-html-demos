@@ -46,6 +46,7 @@ import {
   Size,
   ViewportLimitingPolicy
 } from '@yfiles/yfiles'
+
 import { Simulator } from './model/Simulator'
 import { DeviceKind } from './model/Device'
 import { ConnectionEdgeStyle } from './ConnectionEdgeStyle'
@@ -54,37 +55,51 @@ import { networkData } from './model/network-sample'
 import { Network } from './model/Network'
 import { initializeDeviceDetailsPopup, updateBarChart } from './device-popup'
 import { initializeToolTips } from './tooltips'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 import {
   addFailureHighlight,
   installFailureHighlight,
   removeFailureHighlight
 } from './failure-highlight'
+
 LayoutExecutor.ensure()
+
 // This demo creates a network monitoring tool for dynamic data.
 // The mock-up model is created and updated by class Simulator.
+
 /**
  * Manages the animation of packets that travel along the edges.
  */
 let edgeAnimator
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('graphComponent')
   // we don't want to show the labels for the nodes, initially,
   // so we hide the whole group
   graphComponent.graphModelManager.nodeLabelGroup.visible = false
+
   const graphInputMode = createInputMode()
+
   initializeToolTips(graphInputMode, (item) =>
     item instanceof INode
       ? getDeviceTooltip(getDevice(item))
       : getConnectionTooltip(getConnection(item))
   )
+
   initializeDeviceDetailsPopup(graphComponent, graphInputMode, getDevice)
+
   enableRepairOnItemClick(graphInputMode)
+
   graphComponent.inputMode = graphInputMode
   installFailureHighlight(graphComponent)
+
   const network = Network.loadFromJSON(networkData)
+
   // Build the graph and calculate a nice initial layout
   const graphBuilder = createGraphBuilder(network, graphComponent)
   graphComponent.graph = graphBuilder.buildGraph()
@@ -98,11 +113,13 @@ async function run() {
       compactnessFactor: 0.9
     })
   )
+
   network.onDeviceFailure = async (device) => {
     const node = graphBuilder.getNodeById(device.id)
     addFailureHighlight(node)
     await zoomToBounds(graphComponent, node.layout.toRect())
   }
+
   network.onConnectionFailure = async (connection) => {
     const sourceNode = graphBuilder.getNodeById(connection.sender.id)
     const targetNode = graphBuilder.getNodeById(connection.receiver.id)
@@ -112,14 +129,18 @@ async function run() {
       Rect.add(sourceNode.layout.toRect(), targetNode.layout.toRect())
     )
   }
+
   network.onDataUpdated = () => {
     updateBarChart()
     graphComponent.invalidate()
   }
+
   const simulator = new Simulator(network)
+
   enableViewportLimiter(graphComponent)
   initializeUI(graphComponent, simulator)
 }
+
 /**
  * Creates and configures a viewer input mode for the graphComponent of this demo.
  */
@@ -130,8 +151,10 @@ function createInputMode() {
     marqueeSelectableItems: GraphItemTypes.NONE
   })
 }
+
 function enableRepairOnItemClick(graphInputMode) {
   graphInputMode.clickableItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
+
   graphInputMode.addEventListener('item-clicked', (evt) => {
     if (evt.item instanceof INode) {
       const device = getDevice(evt.item)
@@ -142,6 +165,7 @@ function enableRepairOnItemClick(graphInputMode) {
       }
       return
     }
+
     if (evt.item instanceof IEdge) {
       const connection = getConnection(evt.item)
       if (connection.failed) {
@@ -154,21 +178,26 @@ function enableRepairOnItemClick(graphInputMode) {
     }
   })
 }
+
 function enableViewportLimiter(graphComponent) {
   void graphComponent.fitGraphBounds(200)
+
   graphComponent.viewportLimiter.policy = ViewportLimitingPolicy.TOWARDS_LIMIT
   graphComponent.viewportLimiter.viewportContentMargins = new Insets(100)
   graphComponent.maximumZoom = 3
   graphComponent.minimumZoom = 0.2
 }
+
 function createGraphBuilder(data, graphComponent) {
   const graphBuilder = new GraphBuilder()
+
   const nodeCreator = graphBuilder.createNodesSource({
     data: data.devices,
     id: (item) => item.id
   }).nodeCreator
   nodeCreator.defaults.style = new DeviceNodeStyle(getDevice, getImage)
   nodeCreator.defaults.size = new Size(64, 64)
+
   const nodeLabelCreator = nodeCreator.createLabelBinding(
     (device) => `${device.name}\n${device.ip}`
   )
@@ -181,53 +210,67 @@ function createGraphBuilder(data, graphComponent) {
     [0, -15],
     [0.5, 0]
   )
+
   const edgeCreator = graphBuilder.createEdgesSource({
     data: data.connections,
     sourceId: (item) => item.sender.id,
     targetId: (item) => item.receiver.id
   }).edgeCreator
+
   // create an animator instance that can be used by the edge style
   edgeAnimator = new Animator(graphComponent)
   edgeAnimator.allowUserInteraction = true
   edgeAnimator.autoInvalidation = false
+
   edgeCreator.defaults.style = new ConnectionEdgeStyle(edgeAnimator)
+
   return graphBuilder
 }
+
 async function zoomToBounds(graphComponent, bounds) {
   // Don't do anything if the failing element is visible already
   if (graphComponent.viewport.containsRectangle(bounds) && graphComponent.zoom > 0.8) {
     return
   }
+
   // Zoom to enlarged bounds, so we get an overview of the neighborhood as well
   await graphComponent.zoomToAnimated(bounds.getEnlarged(350))
 }
+
 function initializeUI(graphComponent, simulator) {
   document.querySelector('#toggleLabels').addEventListener('click', (event) => {
     const button = event.target
     graphComponent.graphModelManager.nodeLabelGroup.visible = button.checked
   })
+
   document.querySelector('#toggleFailures').addEventListener('click', (evt) => {
     const button = evt.target
     simulator.failuresEnabled = button.checked
   })
+
   document.querySelector('#pauseSimulation').addEventListener('click', (evt) => {
     const button = evt.target
     edgeAnimator.paused = button.checked
     simulator.paused = button.checked
   })
 }
+
 function getDevice(node) {
   return node.tag
 }
+
 function getConnection(edge) {
   return edge.tag
 }
+
 function getDeviceTooltip(device) {
   return device.failed ? `Repair ${device.name}` : `Load: ${(device.load * 100).toFixed(1)}%`
 }
+
 function getConnectionTooltip(connection) {
   return connection.failed ? 'Repair connection.' : `Load: ${(connection.load * 100).toFixed(1)}%`
 }
+
 function getImage(device) {
   switch (device.kind) {
     case DeviceKind.WORKSTATION:
@@ -248,4 +291,5 @@ function getImage(device) {
       return './resources/workstation.svg'
   }
 }
+
 void run().then(finishLoading)

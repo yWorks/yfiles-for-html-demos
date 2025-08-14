@@ -174,9 +174,5 @@ function selectLabels(graphComponent: GraphComponent): void {
  * Creates a WebGLTransition with the given easing and default values.
  */
 export function createTransition(easing: WebGLAnimationEasingStringValues): WebGLTransition {
-  return new WebGLTransition({
-    properties: 'opacity',
-    easing,
-    duration: '0.5s'
-  })
+  return new WebGLTransition({ properties: 'opacity', easing, duration: '0.5s' })
 }

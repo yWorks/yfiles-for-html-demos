@@ -35,14 +35,20 @@ import {
   initializeTutorialDefaults
 } from '../common'
 import { CustomLabelStyle } from './CustomLabelStyle'
+
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
 initializeLabelModel(graphComponent)
+
 const graph = graphComponent.graph
 graph.nodeDefaults.labels.style = new CustomLabelStyle()
 graph.edgeDefaults.labels.style = new CustomLabelStyle()
+
 graph.createNode({
   layout: [60, -125, 30, 30],
   labels: [
@@ -88,6 +94,9 @@ graph.createNode({
     }
   ]
 })
+
 enableGraphEditing(graphComponent)
+
 await fitGraphBounds(graphComponent)
+
 finishLoading()

@@ -448,11 +448,7 @@ export class SchemaComponent {
     const sourceConnector = edge.sourceNode.tag as AdjacencyNodesSourceDefinitionBuilderConnector
     const targetConnector = edge.targetNode.tag as AdjacencyNodesSourceDefinitionBuilderConnector
 
-    edge.tag = {
-      provider: neighborDataMap,
-      binding: createBinding(neighborDataMap),
-      neighborType
-    }
+    edge.tag = { provider: neighborDataMap, binding: createBinding(neighborDataMap), neighborType }
 
     const neighborProvider = (dataItem: DataItemType): DataType => edge.tag.binding(dataItem)
     const neighborSource = targetConnector.nodesSource
@@ -609,11 +605,7 @@ export class SchemaComponent {
 
     // each edge creation should use another random target node color
     createEdgeInputMode.addEventListener('gesture-starting', (_, src) => {
-      const nodeStyle = new ShapeNodeStyle({
-        shape: 'ellipse',
-        fill: '#6495ED',
-        stroke: 'white'
-      })
+      const nodeStyle = new ShapeNodeStyle({ shape: 'ellipse', fill: '#6495ED', stroke: 'white' })
 
       src.previewGraph.nodeDefaults.style = nodeStyle
       src.previewGraph.setStyle(src.previewEndNode, nodeStyle)
@@ -684,17 +676,9 @@ export class SchemaComponent {
     nodesSourceDefinition: AdjacencyNodesSourceDefinition
   ): INodeStyle {
     if (SchemaComponent.hasData(nodesSourceDefinition)) {
-      return new ShapeNodeStyle({
-        shape: 'octagon',
-        fill: '#6495ED',
-        stroke: 'white'
-      })
+      return new ShapeNodeStyle({ shape: 'octagon', fill: '#6495ED', stroke: 'white' })
     } else {
-      return new ShapeNodeStyle({
-        shape: 'ellipse',
-        fill: '#eee',
-        stroke: '5px solid #6495ED'
-      })
+      return new ShapeNodeStyle({ shape: 'ellipse', fill: '#eee', stroke: '5px solid #6495ED' })
     }
   }
 }

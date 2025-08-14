@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 import { getNodeHighlightInfo } from '../NodeHighlightInfo'
+
 /**
  * The base class for the logic gate node style. This handles the create
  * and update of the node visuals.
@@ -38,10 +39,12 @@ export class GateNodeStyle extends NodeStyleBase {
   static IN_COLOR = '#E01A4F'
   // color for output pins
   static OUT_COLOR = '#01BAFF'
+
   constructor(gateType) {
     super()
     this.gateType = gateType
   }
+
   createVisual(context, node) {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -53,6 +56,7 @@ export class GateNodeStyle extends NodeStyleBase {
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
     return new SvgVisual(g)
   }
+
   /**
    * Re-renders the node using the old visual for performance reasons.
    * @param context The render context
@@ -69,6 +73,7 @@ export class GateNodeStyle extends NodeStyleBase {
     const oldCache = container['data-cache']
     // get the data for the new visual
     const newCache = createRenderDataCache(node)
+
     // check if something changed except for the location of the node
     if (!newCache.equals(oldCache)) {
       // something changed - re-render the visual
@@ -82,6 +87,7 @@ export class GateNodeStyle extends NodeStyleBase {
     return oldVisual
   }
 }
+
 /**
  * Creates an object containing all necessary data to create a visual for the node.
  * @param node The node to which this style instance is assigned.
@@ -102,6 +108,7 @@ export function createRenderDataCache(node) {
     }
   }
 }
+
 /**
  * Calculates a point on the Bézier cubic curve based on the given t value.
  * @param t The parametric value t in [0,1]
@@ -119,6 +126,7 @@ export function getPointOnCurve(t, firstPoint, endPoint, c1, c2) {
     t * t * t * endPoint.x
   )
 }
+
 /**
  * Creates an SVG ellipse and appends it to the given container element.
  * @param container The SVG element to append the ellipse to
@@ -138,6 +146,7 @@ export function appendEllipse(container, cx, cy, rx, ry) {
   setAttribute(ellipse, 'stroke-width', '2')
   container.appendChild(ellipse)
 }
+
 /**
  * Creates a svg path from the given general path and appends it to the given container element.
  * @param container The svg element to append the path to
@@ -153,6 +162,7 @@ export function createPath(container, generalPath, fill, stroke) {
   setAttribute(path, 'stroke-linejoin', 'round')
   container.appendChild(path)
 }
+
 /**
  * Creates a svg text element with the given content and font size.
  * @param textContent The text content
@@ -165,11 +175,13 @@ export function createText(textContent, fontSize, color) {
   text.textContent = textContent
   setAttribute(text, 'font-family', 'Arial')
   setAttribute(text, 'fill', color)
+
   setAttribute(text, 'font-size', `${fontSize}px`)
   setAttribute(text, 'font-family', 'Arial')
   setAttribute(text, 'font-weight', 'bold')
   return text
 }
+
 export function setAttribute(element, name, value) {
   element.setAttribute(name, value.toString())
 }

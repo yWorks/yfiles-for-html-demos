@@ -41,20 +41,26 @@ import {
   Point,
   PolylineEdgeStyle
 } from '@yfiles/yfiles'
+
 import { HTMLPopupSupport } from './HTMLPopupSupport'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './resources/graph-data.json'
+
 /**
  * Runs the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('graphComponent')
   initializeInputMode(graphComponent)
+
   initializePopups(graphComponent)
+
   buildGraph(graphComponent)
 }
+
 /**
  * Creates the pop-ups for nodes and edges and adds the event listeners that show and hide these pop-ups.
  *
@@ -63,25 +69,31 @@ async function run() {
 function initializePopups(graphComponent) {
   // Creates a label model parameter that is used to position the node pop-up
   const nodeLabelModel = new ExteriorNodeLabelModel({ margins: 10 })
+
   // Creates the pop-up for the node pop-up template
   const nodePopup = new HTMLPopupSupport(
     graphComponent,
     getDiv('#nodePopupContent'),
     nodeLabelModel.createParameter('top')
   )
+
   // Creates the edge pop-up for the edge pop-up template with a suitable label model parameter
   // We use the EdgePathLabelModel for the edge pop-up
   const edgeLabelModel = new EdgePathLabelModel({ autoRotation: false })
+
   // Creates the pop-up for the edge pop-up template
   const edgePopup = new HTMLPopupSupport(
     graphComponent,
     getDiv('#edgePopupContent'),
     edgeLabelModel.createRatioParameter()
   )
+
   // The following works with both GraphEditorInputMode and GraphViewerInputMode
   const inputMode = graphComponent.inputMode
+
   // The pop-up is shown for the currentItem thus nodes and edges should be focusable
   inputMode.focusableItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
+
   // Register a listener that shows the pop-up for the currentItem
   graphComponent.addEventListener('current-item-changed', () => {
     const item = graphComponent.currentItem
@@ -102,27 +114,32 @@ function initializePopups(graphComponent) {
       edgePopup.currentItem = null
     }
   })
+
   // On clicks on empty space, set currentItem to `null` to hide the pop-ups
   inputMode.addEventListener('canvas-clicked', () => {
     graphComponent.currentItem = null
   })
+
   // On press of the ESCAPE key, set currentItem to `null` to hide the pop-ups
   inputMode.keyboardInputMode.addKeyBinding('Escape', ModifierKeys.NONE, () => {
     graphComponent.currentItem = null
   })
 }
+
 /**
  * Returns the HTMLDivElement with the given ID.
  */
 function getDiv(id) {
   return document.querySelector(id)
 }
+
 /**
  * Updates the node pop-up content with the elements from the node's tag.
  */
 function updateNodePopupContent(nodePopup, node) {
   // get business data from node tag
   const data = node.tag
+
   // get all divs in the pop-up
   const divs = nodePopup.div.getElementsByTagName('div')
   for (let i = 0; i < divs.length; i++) {
@@ -137,6 +154,7 @@ function updateNodePopupContent(nodePopup, node) {
   const img = nodePopup.div.getElementsByTagName('img').item(0)
   img.setAttribute('src', `resources/${data.icon}.svg`)
 }
+
 /**
  * Updates the edge pop-up content with the elements from the edge's tag.
  */
@@ -144,6 +162,7 @@ function updateEdgePopupContent(edgePopup, edge) {
   // get business data from node tags
   const sourceData = edge.sourcePort.owner.tag
   const targetData = edge.targetPort.owner.tag
+
   // get all divs in the pop-up
   const divs = edgePopup.div.getElementsByTagName('div')
   for (let i = 0; i < divs.length; i++) {
@@ -159,11 +178,13 @@ function updateEdgePopupContent(edgePopup, edge) {
     }
   }
 }
+
 /**
  * Iterates through the given data set and creates nodes and edges according to the given data.
  */
 function buildGraph(graphComponent) {
   const graphBuilder = new GraphBuilder(graphComponent.graph)
+
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id,
@@ -172,15 +193,19 @@ function buildGraph(graphComponent) {
   })
   nodesSource.nodeCreator.styleProvider = (item) =>
     new ImageNodeStyle(`./resources/${item.tag.icon}.svg`)
+
   const edgeSource = graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
   edgeSource.edgeCreator.defaults.style = new PolylineEdgeStyle({ targetArrow: 'none' })
+
   graphBuilder.buildGraph()
+
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Creates a viewer input mode for the graphComponent of this demo.
  */
@@ -190,8 +215,10 @@ function initializeInputMode(graphComponent) {
     selectableItems: GraphItemTypes.NONE,
     marqueeSelectableItems: GraphItemTypes.NONE
   })
+
   // As the selection is deactivated, the focused item is highlighted instead
   graphComponent.focusIndicatorManager.showFocusPolicy = 'when-focused'
+
   mode.toolTipInputMode.toolTipLocationOffset = new Point(10, 10)
   mode.addEventListener('query-item-tool-tip', (evt) => {
     if (evt.item instanceof INode && !evt.handled) {
@@ -202,6 +229,8 @@ function initializeInputMode(graphComponent) {
       }
     }
   })
+
   graphComponent.inputMode = mode
 }
+
 run().then(finishLoading)

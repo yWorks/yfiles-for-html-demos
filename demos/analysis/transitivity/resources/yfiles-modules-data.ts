@@ -28,244 +28,67 @@
  ***************************************************************************/
 export default {
   nodes: [
-    {
-      id: 0,
-      label: 'yfiles'
-    },
-    {
-      id: 1,
-      label: 'layout-core'
-    },
-    {
-      id: 2,
-      label: 'layout-radial'
-    },
-    {
-      id: 3,
-      label: 'layout-familytree'
-    },
-    {
-      id: 4,
-      label: 'layout-multipage'
-    },
-    {
-      id: 5,
-      label: 'layout-orthogonal-compact'
-    },
-    {
-      id: 6,
-      label: 'layout-orthogonal'
-    },
-    {
-      id: 7,
-      label: 'layout-seriesparallel'
-    },
-    {
-      id: 8,
-      label: 'layout-hierarchical'
-    },
-    {
-      id: 9,
-      label: 'layout-organic'
-    },
-    {
-      id: 10,
-      label: 'router-other'
-    },
-    {
-      id: 11,
-      label: 'router-polyline'
-    },
-    {
-      id: 12,
-      label: 'layout-tree'
-    },
-    {
-      id: 13,
-      label: 'view-layout-bridge'
-    },
-    {
-      id: 14,
-      label: 'view-folding'
-    },
-    {
-      id: 15,
-      label: 'view-graphml'
-    },
-    {
-      id: 16,
-      label: 'view-editor'
-    },
-    {
-      id: 17,
-      label: 'view-table'
-    },
-    {
-      id: 18,
-      label: 'view-component'
-    },
-    {
-      id: 19,
-      label: 'styles-other'
-    },
-    {
-      id: 20,
-      label: 'styles-template'
-    }
+    { id: 0, label: 'yfiles' },
+    { id: 1, label: 'layout-core' },
+    { id: 2, label: 'layout-radial' },
+    { id: 3, label: 'layout-familytree' },
+    { id: 4, label: 'layout-multipage' },
+    { id: 5, label: 'layout-orthogonal-compact' },
+    { id: 6, label: 'layout-orthogonal' },
+    { id: 7, label: 'layout-seriesparallel' },
+    { id: 8, label: 'layout-hierarchical' },
+    { id: 9, label: 'layout-organic' },
+    { id: 10, label: 'router-other' },
+    { id: 11, label: 'router-polyline' },
+    { id: 12, label: 'layout-tree' },
+    { id: 13, label: 'view-layout-bridge' },
+    { id: 14, label: 'view-folding' },
+    { id: 15, label: 'view-graphml' },
+    { id: 16, label: 'view-editor' },
+    { id: 17, label: 'view-table' },
+    { id: 18, label: 'view-component' },
+    { id: 19, label: 'styles-other' },
+    { id: 20, label: 'styles-template' }
   ],
 
   edges: [
-    {
-      from: 0,
-      to: 1
-    },
-    {
-      from: 0,
-      to: 2
-    },
-    {
-      from: 0,
-      to: 3
-    },
-    {
-      from: 0,
-      to: 4
-    },
-    {
-      from: 0,
-      to: 5
-    },
-    {
-      from: 0,
-      to: 7
-    },
-    {
-      from: 0,
-      to: 8
-    },
-    {
-      from: 0,
-      to: 13
-    },
-    {
-      from: 0,
-      to: 15
-    },
-    {
-      from: 0,
-      to: 17
-    },
-    {
-      from: 0,
-      to: 18
-    },
-    {
-      from: 0,
-      to: 19
-    },
-    {
-      from: 2,
-      to: 8
-    },
-    {
-      from: 3,
-      to: 8
-    },
-    {
-      from: 3,
-      to: 10
-    },
-    {
-      from: 4,
-      to: 9
-    },
-    {
-      from: 4,
-      to: 10
-    },
-    {
-      from: 4,
-      to: 11
-    },
-    {
-      from: 5,
-      to: 6
-    },
-    {
-      from: 5,
-      to: 10
-    },
-    {
-      from: 5,
-      to: 11
-    },
-    {
-      from: 5,
-      to: 12
-    },
-    {
-      from: 6,
-      to: 12
-    },
-    {
-      from: 7,
-      to: 1
-    },
-    {
-      from: 8,
-      to: 1
-    },
-    {
-      from: 9,
-      to: 1
-    },
-    {
-      from: 10,
-      to: 1
-    },
-    {
-      from: 11,
-      to: 1
-    },
-    {
-      from: 12,
-      to: 1
-    },
-    {
-      from: 13,
-      to: 1
-    },
-    {
-      from: 13,
-      to: 18
-    },
-    {
-      from: 14,
-      to: 18
-    },
-    {
-      from: 15,
-      to: 14
-    },
-    {
-      from: 16,
-      to: 18
-    },
-    {
-      from: 17,
-      to: 16
-    },
-    {
-      from: 17,
-      to: 20
-    },
-    {
-      from: 19,
-      to: 18
-    },
-    {
-      from: 20,
-      to: 18
-    }
+    { from: 0, to: 1 },
+    { from: 0, to: 2 },
+    { from: 0, to: 3 },
+    { from: 0, to: 4 },
+    { from: 0, to: 5 },
+    { from: 0, to: 7 },
+    { from: 0, to: 8 },
+    { from: 0, to: 13 },
+    { from: 0, to: 15 },
+    { from: 0, to: 17 },
+    { from: 0, to: 18 },
+    { from: 0, to: 19 },
+    { from: 2, to: 8 },
+    { from: 3, to: 8 },
+    { from: 3, to: 10 },
+    { from: 4, to: 9 },
+    { from: 4, to: 10 },
+    { from: 4, to: 11 },
+    { from: 5, to: 6 },
+    { from: 5, to: 10 },
+    { from: 5, to: 11 },
+    { from: 5, to: 12 },
+    { from: 6, to: 12 },
+    { from: 7, to: 1 },
+    { from: 8, to: 1 },
+    { from: 9, to: 1 },
+    { from: 10, to: 1 },
+    { from: 11, to: 1 },
+    { from: 12, to: 1 },
+    { from: 13, to: 1 },
+    { from: 13, to: 18 },
+    { from: 14, to: 18 },
+    { from: 15, to: 14 },
+    { from: 16, to: 18 },
+    { from: 17, to: 16 },
+    { from: 17, to: 20 },
+    { from: 19, to: 18 },
+    { from: 20, to: 18 }
   ]
 }

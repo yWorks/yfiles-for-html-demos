@@ -154,14 +154,10 @@ function configureGraph(graphComponent: GraphComponent): void {
   directedEdgeStyle = createDemoEdgeStyle({ colorSetName: 'demo-palette-401' })
 
   // set the default style for node labels
-  graph.nodeDefaults.labels.style = new LabelStyle({
-    font: 'bold Arial'
-  })
+  graph.nodeDefaults.labels.style = new LabelStyle({ font: 'bold Arial' })
 
   // set the default style for edge labels
-  graph.edgeDefaults.labels.style = new LabelStyle({
-    font: 'bold 10px Arial'
-  })
+  graph.edgeDefaults.labels.style = new LabelStyle({ font: 'bold 10px Arial' })
 
   // For edge labels, the default is a label that is rotated to match the associated edge segment
   // We'll start by creating a model that is similar to the default:
@@ -490,11 +486,7 @@ function visualizeClusteringResult(): void {
       case ClusteringAlgorithm.EDGE_BETWEENNESS:
       case ClusteringAlgorithm.BICONNECTED_COMPONENTS: {
         // create a polygonal visual that encloses the nodes that belong to the same cluster
-        const clusters = {
-          number: clustering.size,
-          clustering,
-          centroids: []
-        }
+        const clusters = { number: clustering.size, clustering, centroids: [] }
         clusterVisual = new PolygonVisual(false, clusters)
         break
       }
@@ -502,20 +494,14 @@ function visualizeClusteringResult(): void {
         const centroids = (result as KMeansClusteringResult).centroids
         if (clustering.size >= 3 && graphComponent.contentBounds) {
           // create a voronoi diagram
-          const clusters = {
-            centroids: centroids
-          }
+          const clusters = { centroids: centroids }
           clusterVisual = new VoronoiVisual(
             new VoronoiDiagram(centroids, graphComponent.contentBounds),
             clusters
           )
         } else {
           // if there exist only two clusters, create a polygonal visual with center marking
-          const clusters = {
-            number: clustering.size,
-            clustering,
-            centroids: centroids
-          }
+          const clusters = { number: clustering.size, clustering, centroids: centroids }
           clusterVisual = new PolygonVisual(true, clusters)
         }
         break

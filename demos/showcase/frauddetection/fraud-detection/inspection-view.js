@@ -43,6 +43,7 @@ import {
   PlaceNodesAtBarycenterStageData,
   Rect
 } from '@yfiles/yfiles'
+
 import { getEntityData, getNode, getTimeEntry, isFraud } from '../entity-data'
 import { getComponentIdx, getComponentNodes } from './fraud-components'
 import { Timeline } from '../timeline/Timeline'
@@ -50,6 +51,7 @@ import { clearPropertiesView, initializePropertiesView } from '../properties-vie
 import { enableTooltips } from '../entity-tooltip'
 import { initializeHighlights } from '../initialize-highlights'
 import { useSingleSelection } from '../../mindmap/interaction/single-selection'
+
 let fraudToolbarInitialized = false
 let fraudDetectionComponent
 let fraudDetectionTimeline
@@ -57,10 +59,12 @@ let filteredGraph
 let incrementalNodes = []
 let graphChanged = false
 let componentIndex = -1
+
 function getLayoutStyle() {
   const bankFraud = document.querySelector('#samples').value === 'bank-fraud'
   return bankFraud ? 'organic' : 'hierarchical'
 }
+
 /**
  * Runs the layout.
  */
@@ -68,11 +72,10 @@ async function runLayout(incremental = false) {
   if (!incremental) {
     void fraudDetectionComponent.fitGraphBounds()
   }
+
   if (getLayoutStyle() === 'organic') {
-    const layout = new OrganicLayout({
-      deterministic: true,
-      avoidNodeEdgeOverlap: true
-    })
+    const layout = new OrganicLayout({ deterministic: true, avoidNodeEdgeOverlap: true })
+
     if (incremental) {
       // move the new nodes between their neighbors before the actual layout for a smooth animation
       const layoutData = new PlaceNodesAtBarycenterStageData({
@@ -81,6 +84,7 @@ async function runLayout(incremental = false) {
       const initialLayout = new PlaceNodesAtBarycenterStage()
       fraudDetectionComponent.graph.applyLayout(initialLayout, layoutData)
     }
+
     // run the actual layout algorithm
     const organicLayoutData = new OrganicLayoutData()
     if (incremental) {
@@ -89,6 +93,7 @@ async function runLayout(incremental = false) {
           ? OrganicScope.INCLUDE_EXTENDED_NEIGHBORHOOD
           : OrganicScope.FIXED
     }
+
     await fraudDetectionComponent.applyLayoutAnimated({
       layout: layout,
       layoutData: organicLayoutData
@@ -97,25 +102,26 @@ async function runLayout(incremental = false) {
     const layout = new HierarchicalLayout({
       layoutOrientation: 'bottom-to-top',
       fromSketchMode: incremental,
-      defaultEdgeDescriptor: {
-        routingStyleDescriptor: {
-          defaultRoutingStyle: 'octilinear'
-        }
-      }
+      defaultEdgeDescriptor: { routingStyleDescriptor: { defaultRoutingStyle: 'octilinear' } }
     })
+
     const hierarchicalLayoutData = new HierarchicalLayoutData()
     if (incremental) {
       hierarchicalLayoutData.incrementalNodes = incrementalNodes
     }
+
     await fraudDetectionComponent.applyLayoutAnimated({
       layout: layout,
       layoutData: hierarchicalLayoutData
     })
   }
+
   void fraudDetectionComponent.fitGraphBounds()
+
   incrementalNodes.length = 0
   graphChanged = false
 }
+
 /**
  * Initializes the input mode for the fraud detection graph component.
  */
@@ -138,6 +144,7 @@ function initializeInputMode() {
     movableUnselectedItems: 'none'
   })
   inputMode.marqueeSelectionInputMode.enabled = false
+
   inputMode.addEventListener('deleting-selection', (evt) => {
     const selection = evt.selection
     for (const item of selection) {
@@ -157,9 +164,12 @@ function initializeInputMode() {
       }
     }
   })
+
   fraudDetectionComponent.inputMode = inputMode
+
   useSingleSelection(fraudDetectionComponent)
 }
+
 /**
  * Copies to the fraud detection component graph only the part of the input graph that belongs to the investigated
  * component.
@@ -173,6 +183,7 @@ function copyGraph(graph, componentNodes) {
     )
   })
 }
+
 /**
  * Creates and configures the timeline components.
  */
@@ -182,7 +193,9 @@ function initializeTimelineComponent() {
   fraudDetectionTimeline.setBarHoverListener((nodes) => {
     const highlights = fraudDetectionComponent.highlights
     highlights.clear()
+
     const selected = new Set(nodes.map((node) => node.id))
+
     fraudDetectionComponent.graph.nodes.forEach((node) => {
       const entity = getEntityData(node)
       if (selected.has(entity.id)) {
@@ -190,6 +203,7 @@ function initializeTimelineComponent() {
       }
     })
   })
+
   fraudDetectionTimeline.setBarSelectListener((nodes) => {
     fraudDetectionComponent.selection.clear()
     if (nodes.length > 0) {
@@ -220,11 +234,13 @@ function initializeTimelineComponent() {
   })
   fraudDetectionTimeline.setFilterChangedListener(() => {
     filteredGraph.nodePredicateChanged()
+
     if (incrementalNodes.length > 0 || graphChanged) {
       void runLayout(true)
     }
   })
 }
+
 /**
  * Initializes the graph of the fraud detection view.
  */
@@ -232,9 +248,11 @@ function initializeGraph(graph) {
   // get the graph from the timeline component
   filteredGraph = new FilteredGraphWrapper(graph, (node) => {
     const visible = fraudDetectionTimeline.filter(getEntityData(node))
+
     if (!visible) {
       return false
     }
+
     // In bank fraud detection, there exist bank branch nodes that are connected to many nodes,
     // and thus the enter/exit dates may cover a really wide time range.
     // To avoid having isolated bank nodes, we remove them after filtering if they have no
@@ -249,13 +267,16 @@ function initializeGraph(graph) {
         return false
       }
     }
+
     return true
   })
   fraudDetectionComponent.graph = filteredGraph
+
   filteredGraph.addEventListener('node-created', (evt) => {
     const node = evt.item
     incrementalNodes.push(node)
   })
+
   filteredGraph.addEventListener('edge-created', (evt) => {
     const sourceNode = evt.item.sourceNode
     const targetNode = evt.item.targetNode
@@ -266,6 +287,7 @@ function initializeGraph(graph) {
       incrementalNodes.push(targetNode)
     }
   })
+
   filteredGraph.addEventListener('edge-removed', (evt) => {
     const sourceNode = evt.item.sourceNode
     const targetNode = evt.item.targetNode
@@ -276,12 +298,15 @@ function initializeGraph(graph) {
       incrementalNodes.push(targetNode)
     }
   })
+
   filteredGraph.addEventListener('node-removed', () => {
     graphChanged = true
   })
+
   incrementalNodes = []
   graphChanged = false
 }
+
 /**
  * Wires up the buttons of the inspection view component.
  */
@@ -289,6 +314,7 @@ function initializeFraudToolbarButtons() {
   toggleMainViewActionsVisibility(false)
   if (!fraudToolbarInitialized) {
     fraudToolbarInitialized = true
+
     document.getElementById('layout-button').addEventListener(
       'click',
       () => {
@@ -302,19 +328,24 @@ function initializeFraudToolbarButtons() {
       .addEventListener('click', closeFraudDetectionView, true)
   }
 }
+
 /**
  * Toggles the visibility of toolbar buttons that are not available in the fraud ring view.
  */
 function toggleMainViewActionsVisibility(visible) {
   document.querySelector('.main-view-buttons').style.display = visible ? 'flex' : 'none'
 }
+
 /**
  * Invoked when an edge/node of a fraud ring is clicked or a fraud warning button is pressed.
  */
 export function openFraudDetectionView(compIndex, graphComponent) {
   if (compIndex === componentIndex) return
+
   closeFraudDetectionView()
+
   componentIndex = compIndex
+
   // create the fraud detection component div
   fraudDetectionComponent = new GraphComponent()
   const fraudDetectionViewDiv = document.querySelector('.fraud-detection-view')
@@ -323,20 +354,24 @@ export function openFraudDetectionView(compIndex, graphComponent) {
   const fraudDetectionLayoutButton = document.querySelector('#layout-button')
   fraudDetectionViewDiv.insertBefore(fraudDetectionComponent.htmlElement, fraudDetectionTimeline)
   fraudDetectionComponent.htmlElement.id = 'fraud-detection-component'
+
   // display the component
   fraudDetectionViewDiv.classList.add('fraud-detection-view--visible')
   fraudDetectionLayoutButton.classList.add('visible')
   fraudDetectionTitle.innerHTML = `Fraud Ring ${compIndex}`
+
   initializeFraudToolbarButtons()
   initializeInputMode()
   initializeHighlights(fraudDetectionComponent)
   enableTooltips(fraudDetectionComponent)
   initializePropertiesView(fraudDetectionComponent)
+
   copyGraph(graphComponent.graph.wrappedGraph, getComponentNodes(compIndex))
   initializeTimelineComponent()
   initializeGraph(fraudDetectionComponent.graph)
   void runLayout()
 }
+
 export function openInspectionViewForItem(item, graphComponent) {
   if (item instanceof INode) {
     if (isFraud(item)) {
@@ -348,17 +383,20 @@ export function openInspectionViewForItem(item, graphComponent) {
     }
   }
 }
+
 export function closeFraudDetectionView() {
   if (componentIndex !== -1) {
     const fraudDetectionViewDiv = document.querySelector('.fraud-detection-view')
     fraudDetectionViewDiv.classList.remove('fraud-detection-view--visible')
     const fraudDetectionLayoutButton = document.querySelector('#layout-button')
     fraudDetectionLayoutButton.classList.remove('visible')
+
     const fraudDetectionComponentDiv = document.getElementById('fraud-detection-component')
     if (fraudDetectionComponentDiv) {
       fraudDetectionComponentDiv.parentNode.removeChild(fraudDetectionComponentDiv)
     }
     fraudDetectionTimeline.cleanUp()
+
     // remove elements from the div of the fraud detection timeline
     const graphTimeline = document.querySelector('#fraud-detection-timeline-component')
     while (graphTimeline.hasChildNodes()) {
@@ -368,6 +406,7 @@ export function closeFraudDetectionView() {
       }
       graphTimeline.removeChild(child)
     }
+
     const animation = fraudDetectionTimeline.getTimeframeAnimation()
     if (animation.animating) {
       animation.stopAnimation()

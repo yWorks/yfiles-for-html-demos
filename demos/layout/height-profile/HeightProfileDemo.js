@@ -43,29 +43,37 @@ import { drawAxis } from './draw-axis'
 import { initializeGraph } from './create-graph'
 import { configureHighlight } from './configure-highlight'
 import { nodeData } from './resources/TrekkingData'
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('#graphComponent')
   // configure user interaction, disable selection and focus
   graphComponent.inputMode = new GraphViewerInputMode({
     selectableItems: GraphItemTypes.NONE,
     focusableItems: GraphItemTypes.NONE
   })
+
   // assign the default style and size for the waypoints
   initializeStyles(graphComponent.graph)
+
   // configure highlights for hovered nodes
   configureHighlight(graphComponent)
+
   // scale the data and draw the trekking trail and the axis
   const originalTrail = nodeData.trail
   const scaledTrail = scaleData(originalTrail)
   drawTrekkingTrail(graphComponent, scaledTrail)
   drawAxis(graphComponent, originalTrail)
+
   // read the waypoints from the dataset and creates the associated label nodes
   initializeGraph(graphComponent)
+
   // configure and run an OrganicLayout with the constraints for aligning waypoints and their
   // associated labels
   void runLayout(graphComponent)
 }
+
 /**
  * Runs the {@link OrganicLayout} with the necessary constraints to obtain a height profile visualization.
  */
@@ -73,8 +81,11 @@ async function runLayout(graphComponent) {
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   const { layout, layoutData } = configureLayout(graphComponent.graph)
   graphComponent.graph.applyLayout(layout, layoutData)
+
   await graphComponent.fitGraphBounds()
 }
+
 void run().then(finishLoading)

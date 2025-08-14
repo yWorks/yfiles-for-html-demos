@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { CanvasComponent, INode, Matrix, Point } from '@yfiles/yfiles'
 import { IsometricNodeStyle } from './IsometricNodeStyle'
+
 /**
  * Orders nodes such their z-order in a graph component works well for the component's current
  * projection.
@@ -37,10 +38,12 @@ export class IsometricNodeComparator {
   projection = new Matrix()
   leftFaceVisible = false
   backFaceVisible = false
+
   constructor(canvasComponent) {
     this.canvasComponent = canvasComponent
     this.update()
   }
+
   /**
    * Updates which faces are visible and therefore which corners should be used for the z-order comparison.
    * This method has to be called when the {@link CanvasComponent}'s projection has changed.
@@ -54,6 +57,7 @@ export class IsometricNodeComparator {
       this.backFaceVisible = upVector.y > 0
     }
   }
+
   compare(n1, n2) {
     if (!n1 && !n2) {
       return 0
@@ -66,6 +70,7 @@ export class IsometricNodeComparator {
     }
     const leftFaceVisible = this.leftFaceVisible
     const backFaceVisible = this.backFaceVisible
+
     let xViewCenter = Point.ORIGIN
     let yViewCenter = Point.ORIGIN
     let xViewRight = Point.ORIGIN
@@ -101,12 +106,15 @@ export class IsometricNodeComparator {
       xViewLeft = n1.layout.topLeft
       yViewLeft = n2.layout.topLeft
     }
+
     const sgnX = leftFaceVisible ? -1 : 1
     const sgnY = backFaceVisible ? -1 : 1
+
     const projectionMatrix = this.projection
     const dViewCenter = projectionMatrix
       .transform(yViewCenter)
       .subtract(projectionMatrix.transform(xViewCenter))
+
     // determine order in two steps:
     // 1) compare view coordinates of ViewCenter values to determine which node corners to compare in step 2
     // 2) compare the world coordinates of the corners found in step 1 considering which faces are visible

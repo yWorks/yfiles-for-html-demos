@@ -28,11 +28,13 @@
  ***************************************************************************/
 import { Component, Input } from '@angular/core'
 import { Person } from '../person'
+import { FormsModule } from '@angular/forms'
 
 @Component({
   selector: 'properties-view',
   templateUrl: './properties-view.component.html',
-  styleUrls: ['./properties-view.component.css']
+  styleUrls: ['./properties-view.component.css'],
+  imports: [FormsModule]
 })
 export class PropertiesViewComponent {
   @Input() person!: Person

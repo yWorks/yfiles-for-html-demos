@@ -58,10 +58,7 @@ export class SvelteComponentNodeStyle extends NodeStyleBase {
   protected createVisual(context: IRenderContext, node: INode): Visual {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const props = $state(createProps(context, node))
-    const svelteComponent = mount(this.component, {
-      target: g,
-      props
-    })
+    const svelteComponent = mount(this.component, { target: g, props })
 
     const svgVisual = new SvgVisual(g) as SvgVisual & Cache
     svgVisual.component = svelteComponent

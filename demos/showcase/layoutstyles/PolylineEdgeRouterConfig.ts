@@ -159,7 +159,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
         ['Fewer Bends', EdgeRouterCosts.EDGE_BENDS_OPTIMIZATION],
         ['Fewer Crossings', EdgeRouterCosts.EDGE_CROSSINGS_OPTIMIZATION],
         ['Shorter Edges', EdgeRouterCosts.EDGE_LENGTHS_OPTIMIZATION],
-        ['Low Quality', EdgeRouterCosts.LOW_QUALITY]
+        ['Low Quality and Fast', EdgeRouterCosts.LOW_QUALITY]
       ]),
       new TypeAttribute(EdgeRouterCosts)
     ],
@@ -365,7 +365,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       new TypeAttribute(Boolean)
     ],
     busMembershipItem: [
-      new LabelAttribute('Membership', '#/api/EdgeRouterData#EdgeRouterData-property-buses'),
+      new LabelAttribute('Bus Membership', '#/api/EdgeRouterData#EdgeRouterData-property-buses'),
       new OptionGroupAttribute('BusGroup', 10),
       new EnumValuesAttribute([
         ['No Buses', BusMembership.NONE],
@@ -520,7 +520,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
 
     const gridSpacing = router.gridSpacing
     this.gridEnabledItem = gridSpacing > 0
-    this.gridSpacingItem = gridSpacing !== null ? gridSpacing : 10
+    this.gridSpacingItem = gridSpacing < 2 ? 2 : 100 < gridSpacing ? 100 : gridSpacing
 
     this.routingStyleItem = EdgeRouterRoutingStyle.ORTHOGONAL
     this.preferredOctilinearSegmentLengthItem = descriptor.preferredOctilinearSegmentLength

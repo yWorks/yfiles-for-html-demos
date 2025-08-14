@@ -27,36 +27,12 @@
  **
  ***************************************************************************/
 export default [
-  {
-    displayName: 'Small',
-    fileName: 'small'
-  },
-  {
-    displayName: 'Radial Tree: 2000 nodes 1999 edges',
-    fileName: 'radial_tree_2000_1999'
-  },
-  {
-    displayName: 'Radial Tree: 5000 nodes 4999 edges',
-    fileName: 'radial_tree_5000_4999'
-  },
-  {
-    displayName: 'Radial Tree: 10000 nodes 9999 edges',
-    fileName: 'radial_tree_10000_9999'
-  },
-  {
-    displayName: 'Radial Tree: 15000 nodes 14999 edges',
-    fileName: 'radial_tree_15000_14999'
-  },
-  {
-    displayName: 'Hierarchical: 2000 nodes 2100 edges',
-    fileName: 'hierarchic_2000_2100'
-  },
-  {
-    displayName: 'Hierarchical: 5000 nodes 5100 edges',
-    fileName: 'hierarchic_5000_5100'
-  },
-  {
-    displayName: 'Hierarchical: 10000 nodes 11000 edges',
-    fileName: 'hierarchic_10000_11000'
-  }
+  { displayName: 'Small', fileName: 'small' },
+  { displayName: 'Radial Tree: 2000 nodes 1999 edges', fileName: 'radial_tree_2000_1999' },
+  { displayName: 'Radial Tree: 5000 nodes 4999 edges', fileName: 'radial_tree_5000_4999' },
+  { displayName: 'Radial Tree: 10000 nodes 9999 edges', fileName: 'radial_tree_10000_9999' },
+  { displayName: 'Radial Tree: 15000 nodes 14999 edges', fileName: 'radial_tree_15000_14999' },
+  { displayName: 'Hierarchical: 2000 nodes 2100 edges', fileName: 'hierarchic_2000_2100' },
+  { displayName: 'Hierarchical: 5000 nodes 5100 edges', fileName: 'hierarchic_5000_5100' },
+  { displayName: 'Hierarchical: 10000 nodes 11000 edges', fileName: 'hierarchic_10000_11000' }
 ]

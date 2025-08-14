@@ -29,6 +29,7 @@
 import { IGraph } from '@yfiles/yfiles'
 import { NodeData } from './NodeData'
 import { EdgeData } from './EdgeData'
+
 /**
  * A simple, minimal data structure that can be used for exporting Graph data
  * and re-creating the Graph.
@@ -36,6 +37,7 @@ import { EdgeData } from './EdgeData'
 export class GraphData {
   nodeDataItems
   edgeDataItems
+
   /**
    * Creates GraphData from an actual node. We exclude the validator function,
    * if present as it cannot be serialized, and it will be automatically set
@@ -43,6 +45,7 @@ export class GraphData {
    */
   static fromGraph(graph) {
     const nodes = graph.nodes.toArray()
+
     const edges = graph.edges
       .toArray()
       .map((edge) => [
@@ -50,19 +53,23 @@ export class GraphData {
         nodes.findIndex((node) => node === edge.sourceNode),
         nodes.findIndex((node) => node === edge.targetNode)
       ])
+
     const nodeDataItems = nodes.map(NodeData.fromGraphItem)
     const edgeDataItems = edges.map((edge) => EdgeData.fromGraphItem(...edge))
     return new GraphData({ nodeDataItems, edgeDataItems })
   }
+
   /**
    * Converts an arbitrary piece of data to GraphData after validation.
    */
   static fromJSONData(data) {
     this.validate(data)
+
     const nodeDataItems = data.nodes.map(NodeData.fromJSONData)
     const edgeDataItems = data.edges.map(EdgeData.fromJSONData)
     return new GraphData({ nodeDataItems, edgeDataItems })
   }
+
   /**
    * Checks if an arbitrary piece of data (as it comes from a JSON source)
    * conforms to the format required by GraphData.
@@ -73,10 +80,12 @@ export class GraphData {
     }
     throw new Error('Malformed graph data')
   }
+
   constructor({ nodeDataItems, edgeDataItems }) {
     this.nodeDataItems = nodeDataItems
     this.edgeDataItems = edgeDataItems
   }
+
   /**
    * Applies data to the actual Graph after clearing it.
    */
@@ -85,6 +94,7 @@ export class GraphData {
     const nodes = this.nodeDataItems.map((n) => n.createGraphItem(graph))
     this.edgeDataItems.forEach((e) => e.createGraphItem(graph, ...e.matchPorts(nodes)))
   }
+
   /**
    * Converts GraphData to a JSON string.
    */

@@ -33,6 +33,7 @@ import {
   IPortCandidateProvider,
   PortCandidate
 } from '@yfiles/yfiles'
+
 /**
  * A port candidate provider for defining two ports on the left and right side of the activity nodes.
  */
@@ -42,6 +43,7 @@ export class ActivityNodePortCandidateProvider extends BaseClass(IPortCandidateP
     super()
     this.node = node
   }
+
   /**
    * Returns a port candidate on the right side of the node where an edge can start.
    */
@@ -49,6 +51,7 @@ export class ActivityNodePortCandidateProvider extends BaseClass(IPortCandidateP
     const candidate = new PortCandidate(this.node, FreeNodePortLocationModel.RIGHT)
     return IEnumerable.from([candidate])
   }
+
   /**
    * Returns a port candidate on the left side of the node where an edge can end.
    */
@@ -56,12 +59,14 @@ export class ActivityNodePortCandidateProvider extends BaseClass(IPortCandidateP
     const candidate = new PortCandidate(this.node, FreeNodePortLocationModel.LEFT)
     return IEnumerable.from([candidate])
   }
+
   /**
    * Returns all port candidates that apply for the provided opposite target port candidate.
    */
   getSourcePortCandidates(context, _target) {
     return this.getAllSourcePortCandidates(context)
   }
+
   /**
    * Returns all port candidates that apply for the provided opposite source port candidate.
    */

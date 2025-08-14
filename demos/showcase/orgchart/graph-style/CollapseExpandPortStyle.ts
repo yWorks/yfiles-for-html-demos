@@ -82,9 +82,7 @@ export class CollapseExpandPortStyle extends PortStyleBase<CollapseExpandVisual>
 
     SvgVisual.setTranslate(container, port.location.x, port.location.y)
 
-    return SvgVisual.from(container, {
-      collapsed: collapsed
-    })
+    return SvgVisual.from(container, { collapsed: collapsed })
   }
 
   protected updateVisual(

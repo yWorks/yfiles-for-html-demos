@@ -42,6 +42,7 @@ import {
   TextWrapping,
   VerticalTextAlignment
 } from '@yfiles/yfiles'
+
 import { configureToolTips } from './ToolTipHelper'
 import {
   colorSets,
@@ -51,22 +52,28 @@ import {
 } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 /**
  * Runs the demo.
  */
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('#graphComponent')
   const graph = graphComponent.graph
   initDemoStyles(graph)
+
   // Create node and edge labels using different label style settings
   createSampleNodeLabels(graph)
   createSampleEdgeLabels(graph)
+
   // Configure the interaction features and tool tips
   configureInteraction(graphComponent)
+
   // Initialize the UI and show the demo
   void graphComponent.fitGraphBounds()
 }
+
 /**
  * Creates some sample node labels with different background styles.
  * @param graph The graph to add node labels to.
@@ -100,11 +107,13 @@ function createSampleNodeLabels(graph) {
     layoutParameter: createNodeLabelParameter([1, 0.8], [100, 0]),
     style: createNodeLabelStyle({ shape: LabelShape.PILL })
   })
+
   // Create two more nodes, the bottom one and the right one
   const n2 = graph.createNode({ layout: [275, 600, 50, 50] })
   graph.setStyle(n2, createDemoNodeStyle('demo-palette-14'))
   const n3 = graph.createNode({ layout: [525, -100, 50, 200] })
   graph.setStyle(n3, createDemoNodeStyle('demo-palette-12'))
+
   // Add three node labels to the right node showing different text clipping and text wrapping options
   graph.addLabel({
     owner: n3,
@@ -117,6 +126,7 @@ function createSampleNodeLabels(graph) {
     }),
     preferredSize: [140, 25]
   })
+
   graph.addLabel({
     owner: n3,
     text: `Un-wrapped but clipped label text`,
@@ -128,6 +138,7 @@ function createSampleNodeLabels(graph) {
     }),
     preferredSize: [140, 25]
   })
+
   // For the last label, disable text clipping
   graph.addLabel({
     owner: n3,
@@ -141,17 +152,19 @@ function createSampleNodeLabels(graph) {
     preferredSize: [140, 25]
   })
 }
+
 /**
  * Creates some sample edge labels with different background styles.
  * @param graph The graph to add edge labels to.
  */
 function createSampleEdgeLabels(graph) {
-  const edgeLabelModel = new SmartEdgeLabelModel({
-    angle: Math.PI / 2
-  })
+  const edgeLabelModel = new SmartEdgeLabelModel({ angle: Math.PI / 2 })
+
   graph.edgeDefaults.labels.layoutParameter = edgeLabelModel.createParameterFromSource(0)
+
   const edge1 = graph.createEdge(graph.nodes.get(0), graph.nodes.get(1))
   graph.addBend(edge1, [0, 400])
+
   //Add sample edge labels on the first edge segment, distributed evenly on the path and with different
   //background shapes
   graph.addLabel({
@@ -182,6 +195,7 @@ function createSampleEdgeLabels(graph) {
     layoutParameter: edgeLabelModel.createParameterFromSource(0, 0, 0.8),
     style: createEdgeLabelStyle({ shape: LabelShape.PILL })
   })
+
   //Add rotated edge labels on the second edge segment, distributed evenly and with different
   //background shapes
   graph.addLabel({
@@ -229,9 +243,11 @@ function createSampleEdgeLabels(graph) {
       font: new Font('Monospace', 16)
     })
   })
+
   const edge2 = graph.createEdge(graph.nodes.get(2), graph.nodes.get(1))
   graph.addBend(edge2, [550, 625])
   graph.setStyle(edge2, createDemoEdgeStyle({ colorSetName: 'demo-palette-12' }))
+
   // Add larger edge labels with different vertical and horizontal text alignment settings to the second edge
   graph.addLabel({
     owner: edge2,
@@ -292,6 +308,7 @@ function createSampleEdgeLabels(graph) {
     preferredSize: [150, 120]
   })
 }
+
 /**
  * Creates and configures a node label style.
  * @param theme The name of the color set to use for the style's fills and stroke.
@@ -323,6 +340,7 @@ function createNodeLabelStyle({
     horizontalTextAlignment
   })
 }
+
 /**
  * Creates and configures an edge label style.
  * @param theme The name of the color set to use for the style's fills and stroke.
@@ -354,6 +372,7 @@ function createEdgeLabelStyle({
     horizontalTextAlignment
   })
 }
+
 /**
  * Creates a node label at the specified vertical ratio.
  * @param layoutRatio The ratio that describes the point on the node's layout relative to its upper-left corner.
@@ -366,6 +385,7 @@ function createNodeLabelParameter(layoutRatio, layoutOffset) {
     labelRatio: [0.5, 0.5]
   })
 }
+
 /**
  * Configures the interaction behavior and the tooltips.
  *
@@ -389,6 +409,8 @@ function configureInteraction(graphComponent) {
     }
   })
   configureToolTips(inputMode)
+
   graphComponent.inputMode = inputMode
 }
+
 run().then(finishLoading)

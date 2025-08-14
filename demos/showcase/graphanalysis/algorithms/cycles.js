@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { ConnectedComponents, CycleEdges } from '@yfiles/yfiles'
 import { markItem } from './algorithms'
+
 /**
  * Description of the algorithm which determines all cycle edges in the graph.
  */
@@ -36,6 +37,7 @@ export const cyclesDescription = `
   This part of the demo shows an algorithm that finds edges that belong to a cycle in a graph.</p>
   <p>Independent cycles are presented with different colors. Cycles which share common nodes and
   edges get the same color. This algorithm is able to take the <em>direction of edges</em> into account.</p>`
+
 /**
  * Calculates the cycle edges in the given graph.
  */
@@ -43,15 +45,18 @@ export function calculateCycles(graph, config) {
   // find all edges that belong to a cycle
   const result = new CycleEdges({ directed: config.directed }).run(graph)
   const cycleEdges = result.edges
+
   if (cycleEdges.size === 0) {
     return
   }
+
   // find the edges that belong to the same component within the subgraph
   // consisting only of elements that belong a cycle
   const connectedComponentsResult = new ConnectedComponents({
     subgraphEdges: cycleEdges,
     subgraphNodes: (node) => graph.edgesAt(node).some((edge) => cycleEdges.includes(edge))
   }).run(graph)
+
   // color the cycle edges depending on which component they belong to
   connectedComponentsResult.components.forEach((cycle, cycleId) => {
     cycle.nodes.forEach((node) => markItem(node, cycleId))

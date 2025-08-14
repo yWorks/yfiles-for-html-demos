@@ -1,9 +1,5 @@
 {
   "extends": "@tsconfig/node18/tsconfig.json",
   "include": ["vite.config.*"],
-  "compilerOptions": {
-    "composite": true,
-    "module": "ESNext",
-    "types": ["node"]
-  }
+  "compilerOptions": { "composite": true, "module": "ESNext", "types": ["node"] }
 }

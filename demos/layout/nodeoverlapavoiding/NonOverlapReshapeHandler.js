@@ -40,20 +40,25 @@ import {
   WaitInputMode
 } from '@yfiles/yfiles'
 import { LayoutHelper } from './LayoutHelper'
+
 export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
   /**
    * The node we are currently resizing.
    */
   node
+
   /**
    * The original {@link IReshapeHandler}.
    */
   handler
+
   /**
    * Creates space if the node grows.
    */
   layoutHelper
+
   timeoutHandle
+
   constructor(node, handler) {
     super()
     this.node = node
@@ -61,9 +66,11 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
     this.layoutHelper = null
     this.timeoutHandle = null
   }
+
   get bounds() {
     return this.handler.bounds
   }
+
   /**
    * The node is upon to be resized.
    */
@@ -72,6 +79,7 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
     this.layoutHelper.initializeLayout()
     this.handler.initializeReshape(context)
   }
+
   /**
    * The node is resized.
    */
@@ -82,38 +90,47 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
       await this.layoutHelper.runLayout()
     }, 50)
   }
+
   /**
    * The resize gesture is canceled.
    */
   async cancelReshape(context, originalBounds) {
     this.clearTimeout()
     this.handler.cancelReshape(context, originalBounds)
+
     const waitInputMode = context.lookup(WaitInputMode)
     if (waitInputMode) {
       // disable user interaction while the finish cancel is running
       waitInputMode.waiting = true
     }
+
     await this.layoutHelper.cancelLayout()
+
     if (waitInputMode) {
       waitInputMode.waiting = false
     }
   }
+
   /**
    * The resize gesture is finished.
    */
   async reshapeFinished(context, originalBounds, newBounds) {
     this.clearTimeout()
     this.handler.reshapeFinished(context, originalBounds, newBounds)
+
     const waitInputMode = context.lookup(WaitInputMode)
     if (waitInputMode) {
       // disable user interaction while the finish layout is running
       waitInputMode.waiting = true
     }
+
     await this.layoutHelper.finishLayout()
+
     if (waitInputMode) {
       waitInputMode.waiting = false
     }
   }
+
   clearTimeout() {
     if (this.timeoutHandle !== null) {
       clearTimeout(this.timeoutHandle)

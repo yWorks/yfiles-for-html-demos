@@ -34,18 +34,22 @@ import {
   setAttribute,
   setBindingValue
 } from './helpers'
+
 const INITIAL_VALUE_SENTINEL = {}
 export const converters = {}
+
 function applyConverter(binding, value) {
   // Apply converter if specified
   if (binding.converter) {
     const converter = resolvePath(converters, binding.converter) ?? window[binding.converter]
+
     if (typeof converter === 'function') {
       return converter(value, binding.converterParameter)
     }
   }
   return value
 }
+
 /**
  * Parses a template string into a virtual DOM.
  * @param template - The template string to parse.
@@ -58,7 +62,9 @@ export function parseTemplate(template, defaultNamespace) {
     `<root xmlns="${PARSING_PLACEHOLDER_NS}" xmlns:xlink="${PARSING_PLACEHOLDER_XLINK_NS}"><g>${template}</g></root>`,
     'text/xml'
   )
+
   const idMap = collectTemplateIds(xmlDoc.documentElement.firstElementChild)
+
   // Recursive parsing function
   const parseNode = (domNode) => {
     if (domNode.nodeType === Node.ELEMENT_NODE) {
@@ -73,6 +79,7 @@ export function parseTemplate(template, defaultNamespace) {
         children: [],
         idMap: idMap
       }
+
       // Process attributes using helper functions
       Array.from(element.attributes).forEach((attr) => {
         const bindingConfig = createBindingConfig(attr)
@@ -86,12 +93,15 @@ export function parseTemplate(template, defaultNamespace) {
           }
         }
       })
+
       // Process child nodes
       element.childNodes.forEach((child) => {
         virtualNode.children.push(parseNode(child))
       })
+
       return virtualNode
     }
+
     if (domNode.nodeType === Node.TEXT_NODE) {
       return {
         type: 'text',
@@ -101,6 +111,7 @@ export function parseTemplate(template, defaultNamespace) {
         children: []
       }
     }
+
     return {
       type: 'comment',
       textContent: domNode.textContent || '',
@@ -109,18 +120,17 @@ export function parseTemplate(template, defaultNamespace) {
       children: []
     }
   }
+
   let virtualNode = parseNode(xmlDoc.documentElement.firstElementChild)
   if (virtualNode.children.length == 1) {
     virtualNode = virtualNode.children[0]
   }
+
   return (context, templateContext, idPrefix) => {
-    return renderTemplateCore(virtualNode, {
-      bindingContext: context,
-      templateContext,
-      idPrefix
-    })
+    return renderTemplateCore(virtualNode, { bindingContext: context, templateContext, idPrefix })
   }
 }
+
 /**
  * Renders a virtual DOM node into a real DOM node.
  * @param virtualNode - The virtual DOM node to render.
@@ -129,6 +139,7 @@ export function parseTemplate(template, defaultNamespace) {
 function renderTemplateCore(virtualNode, renderContext) {
   const attributeUpdates = []
   const cleanupFunctions = []
+
   // Check if context is observable
   const isObservable = (obj) => {
     return (
@@ -137,16 +148,20 @@ function renderTemplateCore(virtualNode, renderContext) {
       typeof obj.removePropertyChangedListener === 'function'
     )
   }
+
   const renderNode = (node) => {
     if (node.type === 'text') {
       return document.createTextNode(node.textContent || '')
     }
+
     if (node.type === 'comment') {
       return document.createComment(node.textContent || '')
     }
+
     const element = node.namespace
       ? document.createElementNS(node.namespace, node.name || 'div')
       : document.createElement(node.name || 'div')
+
     // Set attributes using helper function
     Object.entries(node.attributes).forEach(([name, value]) => {
       if (typeof value === 'string') {
@@ -155,6 +170,7 @@ function renderTemplateCore(virtualNode, renderContext) {
         setAttribute(element, name, value[1], value[0], renderContext)
       }
     })
+
     node.bindings.forEach((binding) => {
       const context = binding.templateBinding
         ? renderContext.templateContext
@@ -164,44 +180,55 @@ function renderTemplateCore(virtualNode, renderContext) {
       const updateFn = (newContext) => {
         // Resolve the property path
         const value = resolvePath(newContext, binding.path)
+
         if (lastValueBeforeConverter !== value) {
           lastValueBeforeConverter = value
           const resolvedValue = applyConverter(binding, value)
+
           if (resolvedValue !== lastValue) {
             lastValue = resolvedValue
             setBindingValue(element, binding, resolvedValue, renderContext)
           }
         }
       }
+
       // Initial update
       updateFn(context)
       attributeUpdates.push((newContext, newTemplateContext) =>
         updateFn(binding.templateBinding ? newTemplateContext : newContext)
       )
+
       // Set up property change listener if context is observable
+
       if (isObservable(context)) {
         const propertyPath = binding.path.split('.')
         const propertyName = propertyPath[0] // Listen to the root property
+
         const propertyChangedListener = (changedProperty) => {
           if (changedProperty === propertyName) {
             updateFn(context)
           }
         }
+
         context.addPropertyChangedListener(propertyChangedListener)
         cleanupFunctions.push(() => {
           context.removePropertyChangedListener(propertyChangedListener)
         })
       }
     })
+
     // Recursively render children with the same ID prefix
     node.children.forEach((child) => {
       const renderedChild = renderNode(child)
       element.appendChild(renderedChild)
     })
+
     return element
   }
+
   renderContext.idMap = virtualNode.idMap
   const renderedNode = renderNode(virtualNode)
+
   return {
     node: renderedNode,
     update: (newContext, templateContext) => {
@@ -212,6 +239,7 @@ function renderTemplateCore(virtualNode, renderContext) {
     }
   }
 }
+
 /**
  * Registers a global converter.
  * @param name - The name of the converter.
@@ -220,19 +248,23 @@ function renderTemplateCore(virtualNode, renderContext) {
 export function registerConverter(name, converter) {
   converters[name] = converter
 }
+
 /**
  * Makes an object observable for the binding engine.
  * @param obj - The object to make observable.
  */
 export function makeObservable(obj) {
   const listeners = []
+
   obj.addPropertyChangedListener = (listener) => {
     listeners.push(listener)
   }
+
   obj.removePropertyChangedListener = (listener) => {
     const index = listeners.indexOf(listener)
     if (index !== -1) listeners.splice(index, 1)
   }
+
   obj.firePropertyChanged = (propertyName) => {
     listeners.forEach((listener) => listener(propertyName))
   }

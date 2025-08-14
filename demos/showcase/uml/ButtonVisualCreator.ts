@@ -343,10 +343,7 @@ class ButtonIconRenderer {
   renderTextButton(text: string): SVGGElement {
     const textSize = TextRenderSupport.measureText(
       text,
-      new Font({
-        fontFamily: 'monospace',
-        fontSize: 18
-      })
+      new Font({ fontFamily: 'monospace', fontSize: 18 })
     )
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect')

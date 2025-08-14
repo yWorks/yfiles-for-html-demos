@@ -42,29 +42,37 @@ import { DirectedEdgeLabelStyle } from './DirectedEdgeLabelStyle'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 async function run() {
   License.value = await fetchLicense()
+
   const graphComponent = new GraphComponent('graphComponent')
   initDemoStyles(graphComponent.graph, { theme: 'demo-palette-31', orthogonalEditing: true })
   const labelStyle = graphComponent.graph.edgeDefaults.labels.style
   labelStyle.minimumSize = new Size(0, 22)
+
   // Initialize the input mode
   graphComponent.inputMode = new GraphEditorInputMode({
     allowEditLabel: true,
     allowAddLabel: false,
     deletableItems: GraphItemTypes.ALL - GraphItemTypes.LABEL
   })
+
   graphComponent.graph.addEventListener('edge-created', (evt, graphComponent) =>
     addLabels(graphComponent, evt.item)
   )
+
   // Create some graph elements
   createSampleGraph(graphComponent.graph)
   graphComponent.fitGraphBounds()
 }
+
 const toSourceStyle = new DirectedEdgeLabelStyle(true)
 toSourceStyle.arrowFill = 'red'
+
 const toTargetStyle = new DirectedEdgeLabelStyle(false)
 toTargetStyle.arrowFill = 'green'
+
 function addLabels(graph, edge) {
   graph.addLabel(
     edge,
@@ -72,11 +80,13 @@ function addLabels(graph, edge) {
     new EdgePathLabelModel(0, 0, 0, false, 'on-edge').createRatioParameter(0, 'on-edge'),
     toSourceStyle
   )
+
   graph.addLabel(
     edge,
     'Center',
     new EdgePathLabelModel(0, 0, 0, false, 'on-edge').createRatioParameter(0.5, 'on-edge')
   )
+
   graph.addLabel(
     edge,
     'To Target',
@@ -84,6 +94,7 @@ function addLabels(graph, edge) {
     toTargetStyle
   )
 }
+
 /**
  * Creates the initial sample graph.
  */
@@ -93,15 +104,18 @@ function createSampleGraph(graph) {
     target: graph.createNodeAt([-200, 100]),
     bends: [new Point(-100, 0), new Point(-200, 0)]
   })
+
   graph.createEdge({
     source: graph.createNodeAt([100, -100]),
     target: graph.createNodeAt([200, 100]),
     bends: [new Point(100, 0), new Point(200, 0)]
   })
+
   graph.createEdge({
     source: graph.createNodeAt([-200, 150]),
     target: graph.createNodeAt([200, 150]),
     bends: []
   })
 }
+
 run().then(finishLoading)

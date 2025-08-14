@@ -66,6 +66,7 @@ import {
   TimeSpan,
   TreeLayout
 } from '@yfiles/yfiles'
+
 import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
@@ -83,11 +84,13 @@ import {
   TypeAttribute
 } from '@yfiles/demo-resources/demo-option-editor'
 import { TopLevelGroupToSwimlaneStage } from './TopLevelGroupToSwimlaneStage'
+
 /**
  * Configuration options for the layout algorithm of the same name.
  */
-export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
+export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
   $extends: LayoutConfiguration,
+
   _meta: {
     GeneralGroup: [
       new LabelAttribute('General'),
@@ -265,7 +268,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
     ],
     edgeRoutingItem: [
       new LabelAttribute(
-        'Edge Routing Style',
+        'Routing Style',
         '#/api/HierarchicalLayoutEdgeDescriptor#HierarchicalLayoutEdgeDescriptor-property-routingStyleDescriptor'
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 10),
@@ -385,7 +388,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
     ],
     recursiveEdgeStyleItem: [
       new LabelAttribute(
-        'Recursive Edge Routing Style',
+        'Recursive Edge Routing Policy',
         '#/api/HierarchicalLayoutEdgeDescriptor#HierarchicalLayoutEdgeDescriptor-property-recursiveEdgePolicy'
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 150),
@@ -506,7 +509,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
         'Maximum Size',
         '#/api/FromSketchLayerAssigner#FromSketchLayerAssigner-property-maximumNodeSize'
       ),
-      new MinMaxAttribute(0, 100),
+      new MinMaxAttribute(0, 1000),
       new ComponentAttribute(Components.SLIDER),
       new TypeAttribute(Number)
     ],
@@ -687,6 +690,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       new TypeAttribute(HierarchicalLayoutPortAssignmentMode)
     ]
   },
+
   /**
    * Setup default values for various configuration parameters.
    */
@@ -731,6 +735,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
     this.subComponentsItem = false
     this.highlightCriticalPath = false
   },
+
   /**
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
@@ -739,35 +744,48 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
    */
   createConfiguredLayout: function (graphComponent) {
     const layout = new HierarchicalLayout()
+
     //  mark incremental elements if required
     const fromSketch = this.useDrawingAsSketchItem
     const incrementalLayout = this.selectedElementsIncrementallyItem
     const selectedElements =
       graphComponent.selection.edges.size !== 0 || graphComponent.selection.nodes.size !== 0
+
     if (incrementalLayout && selectedElements) {
       layout.fromSketchMode = true
     } else layout.fromSketchMode = !!fromSketch
+
     layout.coordinateAssigner.symmetryOptimizationStrategy = this.symmetricPlacementItem
+
     layout.componentLayout.enabled = this.LayoutComponentsSeparatelyItem
+
     layout.minimumLayerDistance = this.minimumLayerDistanceItem
     layout.nodeToEdgeDistance = this.nodeToEdgeDistanceItem
     layout.nodeDistance = this.nodeDistanceItem
     layout.edgeDistance = this.edgeDistanceItem
+
     const nld = layout.defaultNodeDescriptor
     const eld = layout.defaultEdgeDescriptor
+
     layout.automaticEdgeGrouping = this.automaticEdgeGroupingEnabledItem
+
     eld.routingStyleDescriptor = new RoutingStyleDescriptor(this.edgeRoutingItem)
     eld.routingStyleDescriptor.curveShortcuts = this.curveShortcutsItem
     eld.routingStyleDescriptor.curveUTurnSymmetry = this.curveUTurnSymmetryItem
     eld.minimumFirstSegmentLength = this.minimumFirstSegmentLengthItem
     eld.minimumLastSegmentLength = this.minimumLastSegmentLengthItem
+
     eld.minimumDistance = this.minimumEdgeDistanceItem
     eld.minimumLength = this.minimumEdgeLengthItem
+
     eld.minimumSlope = this.minimumSlopeItem
+
     eld.recursiveEdgePolicy = this.recursiveEdgeStyleItem
+
     nld.minimumDistance = Math.min(layout.nodeDistance, layout.nodeToEdgeDistance)
     nld.minimumLayerHeight = 0
     nld.layerAlignment = this.layerAlignmentItem
+
     layout.layoutOrientation = this.orientationItem
     layout.nodeLabelPlacement = this.nodeLabelingItem
     layout.edgeLabelPlacement = this.edgeLabelingItem
@@ -778,10 +796,12 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
     if (this.edgeLabelingItem === EdgeLabelPlacement.INTEGRATED) {
       layout.coordinateAssigner.labelCompaction = this.compactEdgeLabelPlacementItem
     }
+
     layout.fromScratchLayeringStrategy = this.rankingPolicyItem
     layout.componentArrangementPolicy = this.componentArrangementPolicyItem
     layout.coordinateAssigner.nodeCompaction = this.nodeCompactionItem
     layout.coordinateAssigner.straightenEdges = this.straightenEdgesItem
+
     // configure FromSketchLayerer
     const layerer = layout.fromSketchMode
       ? layout.core.fixedElementsLayerAssigner
@@ -792,12 +812,17 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       layerer.minimumNodeSize = this.minimumSizeItem
       layerer.maximumNodeSize = this.maximumSizeItem
     }
+
     // configure grouping
     layout.coordinateAssigner.groupCompaction = this.groupHorizontalCompactionItem
+
     if (!fromSketch) {
       layout.groupLayeringPolicy = this.groupLayeringPolicyItem
       layout.groupAlignmentPolicy = this.groupAlignmentItem
+    } else {
+      layout.groupLayeringPolicy = GroupLayeringPolicy.RECURSIVE_COMPACT
     }
+
     // append the stage only if the graph does not already contain table nodes
     if (this.treatRootGroupAsSwimlanesItem && !this.containsTable(graphComponent.graph)) {
       const stage = new TopLevelGroupToSwimlaneStage()
@@ -805,13 +830,17 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       stage.spacing = this.swimlineSpacingItem
       layout.layoutStages.prepend(stage)
     }
+
     layout.defaultEdgeDescriptor.backLoopRouting = this.backloopRoutingItem
     layout.stopDuration = TimeSpan.fromSeconds(parseFloat(this.stopDurationItem))
+
     if (this.gridEnabledItem) {
       layout.gridSpacing = this.gridSpacingItem
     }
+
     return layout
   },
+
   /**
    * Creates and configures the layout data.
    * @returns The configured layout data.
@@ -819,18 +848,22 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
   createConfiguredLayoutData: function (graphComponent, layout) {
     const graph = graphComponent.graph
     const layoutData = new HierarchicalLayoutData()
+
     const incrementalLayout = this.selectedElementsIncrementallyItem
     const selectedElements =
       graphComponent.selection.edges.size !== 0 || graphComponent.selection.nodes.size !== 0
+
     if (incrementalLayout && selectedElements) {
       // configure the mode
       // mark the selected nodes and edges as incremental
       layoutData.incrementalNodes = graphComponent.selection.nodes
       layoutData.incrementalEdges = graphComponent.selection.edges
     }
+
     if (this.rankingPolicyItem === HierarchicalLayoutLayeringStrategy.BFS) {
       layoutData.bfsLayerAssignerCoreNodes = (node) => graphComponent.selection.includes(node)
     }
+
     if (this.gridEnabledItem) {
       const nld = layout.defaultNodeDescriptor
       layoutData.nodeDescriptors = (node) =>
@@ -843,6 +876,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
           portAssignment: this.gridPortAssignmentItem
         })
     }
+
     if (this.edgeDirectednessItem) {
       layoutData.edgeDirectedness = (edge) => {
         const style = edge.style
@@ -856,6 +890,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
         }
       }
     }
+
     if (this.edgeThicknessItem) {
       layoutData.edgeThickness = (edge) => {
         const style = edge.style
@@ -865,6 +900,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
         return 0
       }
     }
+
     if (this.subComponentsItem) {
       // layout all siblings with label 'TL' separately with tree layout
       const treeLayout = new TreeLayout()
@@ -892,6 +928,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
         ).items = listOfNodes
       }
     }
+
     if (this.highlightCriticalPath) {
       // highlight the longest path in the graph as critical path
       // since the longest path algorithm only works for acyclic graphs,
@@ -912,6 +949,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
         }
       }
     }
+
     if (this.automaticBusRoutingEnabledItem) {
       const allBusNodes = new Set()
       graph.nodes.forEach((node) => {
@@ -944,6 +982,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
         }
       })
     }
+
     return layoutData.combineWith(
       this.createLabelingLayoutData(
         graphComponent.graph,
@@ -954,11 +993,13 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       )
     )
   },
+
   getComponentEdges: function (graph, node, allBusNodes, edges) {
     if (graph.isGroupNode(node)) {
       // exclude groups for bus structures
       return []
     }
+
     const busNodes = new Set()
     // count the edges that are not bus edges but connect to the bus nodes
     // -> if there are many, then the bus structure may not look that great
@@ -979,6 +1020,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
         }
       }
     }
+
     const finalBusEdges = []
     const removedBusEdges = new Set()
     let busSize = busNodes.size
@@ -1002,8 +1044,10 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
         }
       }
     }
+
     return finalBusEdges
   },
+
   /**
    * Determines subcomponents by label text and group membership.
    * This is necessary because {@link HierarchicalLayout} does not support sub-components with nodes
@@ -1022,6 +1066,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
     }
     return nodeToComponent.values()
   },
+
   /**
    * Checks whether the graph contains a table node.
    * @param graph The input graph
@@ -1029,84 +1074,120 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
   containsTable(graph) {
     return !!graph.nodes.find((node) => !!ITable.getTable(node))
   },
+
   /** @type {boolean} */
   subComponentsItem: false,
+
   /**
    * Enables automatic bus routing.
    */
   enableCurvedRouting: function () {
     this.edgeRoutingItem = HierarchicalLayoutRoutingStyle.CURVED
   },
+
   /** @type {OptionGroup} */
   GeneralGroup: null,
+
   /** @type {OptionGroup} */
   IncrementalGroup: null,
+
   /** @type {OptionGroup} */
   DistanceGroup: null,
+
   /** @type {OptionGroup} */
   EdgeSettingsGroup: null,
+
   /** @type {OptionGroup} */
   RankGroup: null,
+
   /** @type {OptionGroup} */
   LabelingGroup: null,
+
   /** @type {OptionGroup} */
   NodePropertiesGroup: null,
+
   /** @type {OptionGroup} */
   EdgePropertiesGroup: null,
+
   /** @type {OptionGroup} */
   PreferredPlacementGroup: null,
+
   /** @type {OptionGroup} */
   GroupingGroup: null,
+
   /** @type {OptionGroup} */
   SwimlanesGroup: null,
+
   /** @type {OptionGroup} */
   GridGroup: null,
+
   /** @type {string} */
   descriptionText: {
     get: function () {
       return "<p style='margin-top:0'>The hierarchical layout style highlights the main direction or flow of a directed graph. It places the nodes of a graph in hierarchically arranged layers such that the (majority of) its edges follows the overall orientation, for example, top-to-bottom.</p><p>This style is tailored for application domains in which it is crucial to clearly visualize the dependency relations between entities. In particular, if such relations form a chain of dependencies between entities, this layout style nicely exhibits them. Generally, whenever the direction of information flow matters, the hierarchical layout style is an invaluable tool.</p><p>Suitable application domains of this layout style include, for example:</p><ul><li>Workflow visualization</li><li>Software engineering like call graph visualization or activity diagrams</li><li>Process modeling</li><li>Database modeling and Entity-Relationship diagrams</li><li>Bioinformatics, for example biochemical pathways</li><li>Network management</li><li>Decision diagrams</li></ul>"
     }
   },
+
   /** @type {boolean} */
   selectedElementsIncrementallyItem: false,
+
   /** @type {boolean} */
   useDrawingAsSketchItem: false,
+
   /** @type {LayoutOrientation} */
   orientationItem: null,
+
   /** @type {boolean} */
   LayoutComponentsSeparatelyItem: false,
+
   /** @type {SymmetryOptimizationStrategy} */
   symmetricPlacementItem: null,
+
   /** @type {number} */
   stopDurationItem: 5,
+
   /** @type {number} */
   nodeDistanceItem: 0,
+
   /** @type {number} */
   nodeToEdgeDistanceItem: 0,
+
   /** @type {number} */
   edgeDistanceItem: 0,
+
   /** @type {number} */
   minimumLayerDistanceItem: 0,
+
   /** @type {RoutingStyleDescriptor} */
   edgeRoutingItem: null,
+
   /** @type {boolean} */
   backloopRoutingItem: false,
+
   /** @type {boolean} */
   automaticEdgeGroupingEnabledItem: false,
+
   /** @type {boolean} */
   automaticBusRoutingEnabledItem: false,
+
   /** @type {boolean} */
   highlightCriticalPath: false,
+
   /** @type {number} */
   minimumFirstSegmentLengthItem: 0,
+
   /** @type {number} */
   minimumLastSegmentLengthItem: 0,
+
   /** @type {number} */
   minimumEdgeLengthItem: 0,
+
   /** @type {number} */
   minimumEdgeDistanceItem: 0,
+
   /** @type {number} */
   minimumSlopeItem: 0,
+
   /** @type {boolean} */
   shouldDisableMinimumSlopeItem: {
     get: function () {
@@ -1116,48 +1197,64 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       )
     }
   },
+
   /** @type {boolean} */
   edgeDirectednessItem: false,
+
   /** @type {boolean} */
   edgeThicknessItem: false,
+
   /** @type {boolean} */
   straightenEdgesItem: false,
+
   /** @type {boolean} */
   shouldDisableStraightenEdgesItem: {
     get: function () {
       return this.symmetricPlacementItem !== SymmetryOptimizationStrategy.NONE
     }
   },
+
   /** @type {RecursiveEdgePolicy} */
   recursiveEdgeStyleItem: null,
+
   /** @type {number} */
   curveUTurnSymmetryItem: 0,
+
   /** @type {boolean} */
   shouldDisableCurveUTurnSymmetryItem: {
     get: function () {
       return this.edgeRoutingItem !== HierarchicalLayoutRoutingStyle.CURVED
     }
   },
+
   /** @type {boolean} */
   curveShortcutsItem: false,
+
   /** @type {boolean} */
   shouldDisableCurveShortcutsItem: {
     get: function () {
       return this.edgeRoutingItem !== HierarchicalLayoutRoutingStyle.CURVED
     }
   },
+
   /** @type {HierarchicalLayoutLayeringStrategy} */
   rankingPolicyItem: null,
+
   /** @type {number} */
   layerAlignmentItem: 0,
+
   /** @type {ComponentArrangementPolicy} */
   componentArrangementPolicyItem: null,
+
   /** @type {boolean} */
   nodeCompactionItem: false,
+
   /** @type {OptionGroup} */
   SketchGroup: null,
+
   /** @type {number} */
   scaleItem: 0,
+
   /**
    * @type {boolean}
    */
@@ -1166,8 +1263,10 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       return this.rankingPolicyItem !== HierarchicalLayoutLayeringStrategy.FROM_SKETCH
     }
   },
+
   /** @type {number} */
   nodeMarginItem: 0,
+
   /**
    * @type {boolean}
    */
@@ -1176,8 +1275,10 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       return this.rankingPolicyItem !== HierarchicalLayoutLayeringStrategy.FROM_SKETCH
     }
   },
+
   /** @type {number} */
   minimumSizeItem: 0,
+
   /**
    * @type {boolean}
    */
@@ -1186,8 +1287,10 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       return this.rankingPolicyItem !== HierarchicalLayoutLayeringStrategy.FROM_SKETCH
     }
   },
+
   /** @type {number} */
   maximumSizeItem: 0,
+
   /**
    * @type {boolean}
    */
@@ -1196,52 +1299,66 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       return this.rankingPolicyItem !== HierarchicalLayoutLayeringStrategy.FROM_SKETCH
     }
   },
+
   /** @type {NodeLabelPlacement} */
   nodeLabelingItem: null,
+
   /** @type {EdgeLabelPlacement} */
   edgeLabelingItem: null,
+
   /** @type {boolean} */
   compactEdgeLabelPlacementItem: false,
+
   /** @type {boolean} */
   shouldDisableCompactEdgeLabelPlacementItem: {
     get: function () {
       return this.edgeLabelingItem !== EdgeLabelPlacement.INTEGRATED
     }
   },
+
   /** @type {boolean} */
   reduceAmbiguityItem: false,
+
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
     get: function () {
       return this.edgeLabelingItem !== EdgeLabelPlacement.GENERIC
     }
   },
+
   /** @type {LabelPlacementOrientation} */
   labelPlacementOrientationItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
     get: function () {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
   },
+
   /** @type {LabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
     get: function () {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
   },
+
   /** @type {LabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: null,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
     get: function () {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
   },
+
   /** @type {number} */
   labelPlacementDistanceItem: 0,
+
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
     get: function () {
@@ -1251,8 +1368,10 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       )
     }
   },
+
   /** @type {GroupLayeringPolicy} */
   groupLayeringPolicyItem: null,
+
   /**
    * @type {boolean}
    */
@@ -1261,8 +1380,10 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       return this.useDrawingAsSketchItem
     }
   },
+
   /** @type {GroupAlignmentPolicy} */
   groupAlignmentItem: 0,
+
   /**
    * @type {boolean}
    */
@@ -1271,12 +1392,16 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       return this.groupLayeringPolicyItem === GroupLayeringPolicy.IGNORE_GROUPS
     }
   },
+
   /** @type {boolean} */
   groupHorizontalCompactionItem: true,
+
   /** @type {boolean} */
   treatRootGroupAsSwimlanesItem: false,
+
   /** @type {boolean} */
   useOrderFromSketchItem: false,
+
   /**
    * @type {boolean}
    */
@@ -1285,8 +1410,10 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       return !this.treatRootGroupAsSwimlanesItem
     }
   },
+
   /** @type {number} */
   swimlineSpacingItem: 0,
+
   /**
    * @type {boolean}
    */
@@ -1295,10 +1422,13 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       return !this.treatRootGroupAsSwimlanesItem
     }
   },
+
   /** @type {boolean} */
   gridEnabledItem: false,
+
   /** @type {number} */
   gridSpacingItem: 0,
+
   /**
    * @type {boolean}
    */
@@ -1307,8 +1437,10 @@ export const HierarchicalLayoutConfig = Class('HierarchicLayoutConfig', {
       return !this.gridEnabledItem
     }
   },
+
   /** @type {HierarchicalLayoutPortAssignmentMode} */
   gridPortAssignmentItem: null,
+
   /**
    * @type {boolean}
    */

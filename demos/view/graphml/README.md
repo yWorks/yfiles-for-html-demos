@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/graphml/).
 
-This demo provides a live view of the graph's [GraphML](https://docs.yworks.com/yfileshtml/index.html#/dguide/customizing_io_graphml#customizing_io_graphml) representation. GraphML is the default serialization format for yFiles graphs.
+This demo provides a live view of the graph's [GraphML](https://docs.yworks.com/yfileshtml/#/dguide/customizing_io_graphml#customizing_io_graphml) representation. GraphML is the default serialization format for yFiles graphs.
 
 ## Things to Try
 
@@ -24,7 +24,9 @@ This demo provides a live view of the graph's [GraphML](https://docs.yworks.com/
 - Select a node, edge, or label in the graph view: the corresponding serialization is highlighted in the GraphML panel.
 - Select a node, edge, or label serialization in the GraphML panel: the corresponding graph item is selected in the graph view.
 - Edit the graph (create/modify/remove nodes/edges/labels): The serialization in the GraphML panel is updated to reflect the changes.
-- Edit the graph's GraphML representation: the GraphML is parsed and the view is updated accordingly. If the GraphML is not valid, the error message will be shown in the editor's output panel.
+- Edit the graph's GraphML representation: the GraphML is parsed and the view is updated accordingly.
+
+If the GraphML is not valid, an error message will be shown in the editor's output panel. In this case, no graph elements can be selected until the GraphML is valid again.
 
 ### Custom GraphML Data Panel
 

@@ -49,33 +49,43 @@ import {
   SnapResult,
   Stroke
 } from '@yfiles/yfiles'
+
 import { EditablePathNodeStyle, PathHandle, updateHandles } from './EditablePathNodeStyle'
 import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
+
 let graphComponent = null
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
   // initialize the graph
   initializeGraph()
+
   // initialize the input mode
   graphComponent.inputMode = createEditorMode()
+
   void graphComponent.fitGraphBounds()
+
   graphComponent.graph.undoEngine.clear()
 }
+
 /**
  * Sets a custom node style instance as a template for newly created
  * nodes in the graph.
  */
 function initializeGraph() {
   const graph = graphComponent.graph
+
   graph.undoEngineEnabled = true
+
   const selectionStroke = new Stroke({
     fill: 'black',
     thickness: 2,
     dashStyle: DashStyle.DASH
   }).freeze()
+
   // Highlight the selected nodes along their outline
   graph.decorator.nodes.selectionRenderer.addFactory(
     (node) => node.style instanceof EditablePathNodeStyle,
@@ -90,29 +100,32 @@ function initializeGraph() {
         })
       })
   )
+
   // Create a new style and use it as default node style
-  graph.nodeDefaults.style = new EditablePathNodeStyle({
-    fill: '#FF6C00',
-    stroke: '1.5px #662b00'
-  })
+  graph.nodeDefaults.style = new EditablePathNodeStyle({ fill: '#FF6C00', stroke: '1.5px #662b00' })
   graph.nodeDefaults.size = new Size(200, 200)
+
   // Set some defaults for the edges
   graph.edgeDefaults.style = createDemoEdgeStyle()
+
   // Create some graph elements with the above defined styles.
   createSampleGraph()
 }
+
 /**
  * Creates the default input mode for the graphComponent,
  * a {@link GraphEditorInputMode} configured to show and create path handles.
  */
 function createEditorMode() {
   const graphEditorInputMode = new GraphEditorInputMode()
+
   // add handle input to handle change shape handles
   const changeShapeHandleInputMode = new HandleInputMode({
     priority: graphEditorInputMode.handleInputMode.priority - 1,
     exclusive: true
   })
   graphEditorInputMode.add(changeShapeHandleInputMode)
+
   const locations = new List()
   changeShapeHandleInputMode.snapContext = new GraphSnapContext()
   changeShapeHandleInputMode.snapContext.createSnapResultsModelManager(
@@ -138,6 +151,7 @@ function createEditorMode() {
       }
     }
   })
+
   changeShapeHandleInputMode.snapContext.addEventListener('collect-snap-results', (evt) => {
     locations
       .filter((p) => Math.abs(p.x - evt.newLocation.x) < evt.snapDistance)
@@ -202,7 +216,9 @@ function createEditorMode() {
         }
       })
   })
+
   let currentNode = null
+
   // hide handles when a node is removed
   graphComponent.graph.addEventListener('node-removed', (evt) => {
     if (evt.item === currentNode) {
@@ -211,12 +227,14 @@ function createEditorMode() {
       currentNode = null
     }
   })
+
   // deselect the control point handles using right-click on canvas
   graphEditorInputMode.addEventListener('canvas-clicked', (evt) => {
     if (evt.pointerButtons === PointerButtons.MOUSE_RIGHT) {
       changeShapeHandleInputMode.handles.clear()
     }
   })
+
   // select existing or add new handles on double-click on path
   graphEditorInputMode.addEventListener('item-left-double-clicked', (evt) => {
     if (evt.item instanceof INode && evt.item.style instanceof EditablePathNodeStyle) {
@@ -258,6 +276,7 @@ function createEditorMode() {
       }
     }
   })
+
   // remove a handle and control point on right click
   graphEditorInputMode.addEventListener('item-right-clicked', (evt) => {
     let handle = null
@@ -268,6 +287,7 @@ function createEditorMode() {
       if (handle) {
         handle.removeSegment()
         currentNode.style.normalizePath(currentNode, graphEditorInputMode.graph)
+
         // reset handles to update their locations and order
         changeShapeHandleInputMode.handles.clear()
         currentNode.style
@@ -277,21 +297,26 @@ function createEditorMode() {
       }
     }
   })
+
   graphComponent.graph.undoEngine.addEventListener('unit-undone', () => {
     updateHandles(currentNode, changeShapeHandleInputMode)
   })
   graphComponent.graph.undoEngine.addEventListener('unit-redone', () => {
     updateHandles(currentNode, changeShapeHandleInputMode)
   })
+
   return graphEditorInputMode
 }
+
 /**
  * Creates the initial sample graph.
  */
 function createSampleGraph() {
   const graph = graphComponent.graph
   graph.nodeDefaults.shareStyleInstance = false
+
   const n1 = graph.createNode()
+
   const path = new GeneralPath(4)
   path.moveTo(0, 0)
   path.lineTo(0.5, 0.25)
@@ -299,10 +324,13 @@ function createSampleGraph() {
   path.lineTo(1, 1)
   path.lineTo(0, 1)
   path.close()
+
   const n2 = graph.createNode({
     layout: [300, 0, 200, 100],
     style: new EditablePathNodeStyle({ path, fill: '#FF6C00', stroke: '1.5px #662b00' })
   })
+
   graph.createEdge(n1, n2)
 }
+
 run().then(finishLoading)

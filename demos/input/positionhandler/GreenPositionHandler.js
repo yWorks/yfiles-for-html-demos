@@ -35,6 +35,7 @@ import {
   IPositionHandler,
   Point
 } from '@yfiles/yfiles'
+
 /**
  * A position handler that constrains the movement of a node to one axis
  * (for each gesture) and delegates for other aspects to another (the
@@ -46,6 +47,7 @@ import {
 export class GreenPositionHandler extends BaseClass(IPositionHandler) {
   handler
   lastLocation = null
+
   /**
    * Creates a new instance of {@link GreenPositionHandler}
    * @param handler The default handler
@@ -54,12 +56,14 @@ export class GreenPositionHandler extends BaseClass(IPositionHandler) {
     super()
     this.handler = handler
   }
+
   /**
    * Returns the location of the item.
    */
   get location() {
     return this.handler.location
   }
+
   /**
    * Stores the initial location of the movement for reference and calls the base method.
    * @param inputModeContext The context to retrieve information about the drag from
@@ -69,6 +73,7 @@ export class GreenPositionHandler extends BaseClass(IPositionHandler) {
     this.handler.initializeDrag(inputModeContext)
     this.lastLocation = this.handler.location.toPoint()
   }
+
   /**
    * Constrains the movement to one axis. This is done by calculating the
    * constrained location for the given new location, and invoking the
@@ -86,16 +91,20 @@ export class GreenPositionHandler extends BaseClass(IPositionHandler) {
     // a horizontal or vertical movement.
     const delta = newLocation.subtract(originalLocation)
     const isHorizontalMovement = Math.abs(delta.x) > Math.abs(delta.y)
+
     const updatedNewLocation = isHorizontalMovement
       ? new Point(newLocation.x, originalLocation.y)
       : new Point(originalLocation.x, newLocation.y)
+
     if (updatedNewLocation.equals(this.lastLocation)) {
       return false
     }
+
     this.handler.handleMove(inputModeContext, originalLocation, updatedNewLocation)
     this.lastLocation = updatedNewLocation
     return true
   }
+
   /**
    * Called when dragging has been canceled by the user.
    * @param inputModeContext The context to retrieve information about the drag from
@@ -106,6 +115,7 @@ export class GreenPositionHandler extends BaseClass(IPositionHandler) {
   cancelDrag(inputModeContext, originalLocation) {
     this.handler.cancelDrag(inputModeContext, originalLocation)
   }
+
   /**
    * Called when dragging has finished.
    * @param inputModeContext The context to retrieve information about the drag from

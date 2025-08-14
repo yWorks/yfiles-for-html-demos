@@ -57,7 +57,9 @@ import { generateGraphMLIOHandler } from './style/generate-graphMLIO-handler'
 import { initializeSnapping } from './interaction/snapping'
 import { initializeDnd } from './interaction/drag-and-drop'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
+
 let graphComponent = null
+
 async function run() {
   License.value = await fetchLicense()
   graphComponent = new GraphComponent('graphComponent')
@@ -67,6 +69,7 @@ async function run() {
   initializeUI(graphComponent)
   await loadSample()
 }
+
 function initializeUI(graphComponent) {
   const graphMLIOHandler = generateGraphMLIOHandler()
   document.querySelector('#open-file-button').addEventListener('click', async () => {
@@ -76,33 +79,41 @@ function initializeUI(graphComponent) {
     await saveGraphML(graphComponent, 'flowchart.graphml', graphMLIOHandler)
   })
 }
+
 async function loadSample() {
   const sample = getSample()
   loadFlowchart(graphComponent, sample)
   await runLayout()
 }
+
 async function runLayout() {
   enableUI(false)
   const layoutOptions = getLayoutOptions()
   await layoutFlowchart(graphComponent, layoutOptions)
   enableUI(true)
 }
+
 /**
  * Configures the input mode for the given graphComponent.
  */
 function configureUserInteraction() {
   const graphEditorInputMode = new GraphEditorInputMode()
+
   initializeSnapping(graphEditorInputMode)
   initializeDnd(graphEditorInputMode)
+
   graphComponent.inputMode = graphEditorInputMode
+
   // use two-finger panning to allow easier editing with touch gestures
   configureTwoPointerPanning(graphComponent)
 }
+
 /**
  * Initializes defaults for the graph.
  */
 function initializeGraphDefaults() {
   const graph = graphComponent.graph
+
   const nodeDefaults = graph.nodeDefaults
   nodeDefaults.style = new FlowchartNodeStyle(FlowchartNodeType.Start1)
   nodeDefaults.size = new Size(80, 40)
@@ -110,6 +121,7 @@ function initializeGraphDefaults() {
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
   })
   nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.CENTER
+
   const edgeDefaults = graph.edgeDefaults
   edgeDefaults.style = new PolylineEdgeStyle({
     targetArrow: new Arrow(ArrowType.STEALTH),
@@ -121,11 +133,11 @@ function initializeGraphDefaults() {
   edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel({
     autoRotation: false
   }).createParameterFromSource(0)
+
   const groupNodeDefaults = graph.groupNodeDefaults
-  groupNodeDefaults.style = new GroupNodeStyle({
-    tabFill: 'rgb(214, 229, 248)'
-  })
+  groupNodeDefaults.style = new GroupNodeStyle({ tabFill: 'rgb(214, 229, 248)' })
   groupNodeDefaults.labels.layoutParameter =
     new GroupNodeLabelModel().createTabBackgroundParameter()
 }
+
 void run().then(finishLoading)

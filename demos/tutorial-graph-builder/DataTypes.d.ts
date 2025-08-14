@@ -26,10 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-export type Data = {
-  nodesSource: EntityData[]
-  edgesSource: ConnectionData[]
-}
+export type Data = { nodesSource: EntityData[]; edgesSource: ConnectionData[] }
 
 export type EntityData = {
   id: string
@@ -37,12 +34,7 @@ export type EntityData = {
   type?: 'Trust' | 'Corporation' | 'Branch' | 'PE_Risk'
   currency?: 'USD' | 'EUR'
   jurisdiction?: ('Germany' | 'Spain')[]
-  layout?: {
-    x?: number
-    y?: number
-    width?: number
-    height?: number
-  }
+  layout?: { x?: number; y?: number; width?: number; height?: number }
 }
 
 export type ConnectionData = {

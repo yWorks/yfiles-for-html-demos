@@ -60,7 +60,5 @@ export function createFeatureLayoutConfiguration(graph: IGraph): ILayoutAlgorith
  * @returns the configured hierarchical layout algorithm
  */
 export function createDefaultLayoutConfiguration(graph: IGraph): ILayoutAlgorithm {
-  return new HierarchicalLayout({
-    layoutOrientation: 'left-to-right'
-  })
+  return new HierarchicalLayout({ layoutOrientation: 'left-to-right' })
 }

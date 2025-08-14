@@ -37,12 +37,19 @@ import {
 } from '../common'
 import { CustomNodeStyle } from './CustomNodeStyle'
 import { createNodes } from './create-nodes'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
+
 initializeTutorialDefaults(graphComponent)
+
 graphComponent.graph.nodeDefaults.style = new CustomNodeStyle()
+
 createNodes(graphComponent.graph)
 enableGraphEditing(graphComponent)
 configureMinimumSize(graphComponent)
+
 fitGraphBounds(graphComponent)
+
 finishLoading()

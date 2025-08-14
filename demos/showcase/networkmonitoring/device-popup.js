@@ -29,26 +29,32 @@
 import { ExteriorNodeLabelModel, INode } from '@yfiles/yfiles'
 import { HTMLPopupSupport } from './HTMLPopupSupport'
 import { D3BarChart } from './ui/D3BarChart'
+
 let devicePopup
+
 /**
  * Enables an HTML panel on top of the GraphComponent's content that displays detailed information
  * about a node (device).
  */
 export function initializeDeviceDetailsPopup(graphComponent, graphInputMode, getDevice) {
   createDeviceDetailsPopup(graphComponent)
+
   // On item click, update the popup with the device's data
   graphInputMode.addEventListener('item-clicked', (evt) => {
     if (!(evt.item instanceof INode)) {
       return
     }
+
     const device = getDevice(evt.item)
     updateDeviceInfoElement(device)
     updatePowerButtonState(device.enabled)
     barChart?.barChart(device)
     devicePopup.currentItem = evt.item
   })
+
   // On canvas click, hide the popup
   graphInputMode.addEventListener('canvas-clicked', () => (devicePopup.currentItem = null))
+
   // On click of the power button, toggle a device enabled/disabled
   devicePopup.div.querySelector('#powerButton').addEventListener(
     'click',
@@ -61,19 +67,23 @@ export function initializeDeviceDetailsPopup(graphComponent, graphInputMode, get
     true
   )
 }
+
 function createDeviceDetailsPopup(graphComponent) {
   // create a label model parameter that is used to position the node pop-up
   const nodeLabelModel = new ExteriorNodeLabelModel({ margins: 10 })
   const popupPositionParameter = nodeLabelModel.createParameter('top')
+
   devicePopup = new HTMLPopupSupport(
     graphComponent,
     document.getElementById('nodePopupContent'),
     popupPositionParameter
   )
+
   devicePopup.div
     .querySelector('#closeButton')
     .addEventListener('click', () => (devicePopup.currentItem = null), true)
 }
+
 function updatePowerButtonState(enabled) {
   const powerButtonPath = devicePopup.div.querySelector('.power-button-path')
   if (enabled) {
@@ -82,6 +92,7 @@ function updatePowerButtonState(enabled) {
     powerButtonPath.classList.add('switched-off')
   }
 }
+
 function updateDeviceInfoElement(device) {
   // Find and update elements according to their data-id attribute
   devicePopup.div.querySelectorAll('div[data-id]').forEach((element) => {
@@ -89,13 +100,16 @@ function updateDeviceInfoElement(device) {
     element.textContent = String(device[key] ?? '')
   })
 }
+
 export function updateBarChart() {
   barChart?.animate()
 }
+
 /**
  * The bar chart which is displayed in the node popup.
  */
 const barChart = initializeD3BarChart()
+
 /**
  * Tries to load d3 for rendering the bar charts in the popup.
  * If this fails for any reason, we disable the bar chart display.

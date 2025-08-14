@@ -52,71 +52,82 @@ import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
 import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './resources/graph-data.json'
+
 async function run() {
   License.value = await fetchLicense()
+
   // initialize a GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = createInputMode()
+
   // configure a vivid selection indicator and some default styling for graph items
   initializeSelectionIndicator(graphComponent)
   initDemoStyles(graphComponent.graph)
+
   graphComponent.focusIndicatorManager.enabled = false
+
   // create and configure the NeighborhoodView component
   const neighborhoodView = createNeighborhoodView(graphComponent)
   // then build the graph with the given data set
   buildGraph(graphComponent.graph, graphData)
+
   graphComponent.graph.applyLayout(
-    new OrganicLayout({
-      defaultMinimumNodeDistance: 60,
-      avoidNodeEdgeOverlap: true
-    })
+    new OrganicLayout({ defaultMinimumNodeDistance: 60, avoidNodeEdgeOverlap: true })
   )
   await graphComponent.fitGraphBounds()
+
   //pre-select a node to show its neighborhood
   graphComponent.selection.clear()
   const node = graphComponent.graph.nodes.at(0)
   if (node) {
     graphComponent.selection.add(node)
   }
+
   // wire up the UI elements of this demo
   initializeUI(neighborhoodView)
 }
+
 /**
  * Iterates through the given data set and creates nodes and edges according to the given data.
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
   const nodesSource = graphBuilder.createNodesSource({
     data: graphData.nodeList,
     id: (item) => item.id,
     parentId: (item) => item.parentId
   })
+
   nodesSource.nodeCreator.styleProvider = (item) =>
     new ImageNodeStyle(`./resources/${item.tag}.svg`)
+
   nodesSource.nodeCreator.createLabelBinding((item) => item.label)
+
   nodesSource.nodeCreator.defaults.size = new Size(48, 48)
   nodesSource.nodeCreator.defaults.labels.style = new LabelStyle({
     textFill: '#000000',
     backgroundFill: '#ffffffb0',
-    font: new Font({
-      fontFamily: 'Arial',
-      fontSize: 10
-    }),
+    font: new Font({ fontFamily: 'Arial', fontSize: 10 }),
     padding: 2
   })
   nodesSource.nodeCreator.defaults.labels.layoutParameter = InteriorNodeLabelModel.BOTTOM
+
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
     sourceId: (item) => item.source,
     targetId: (item) => item.target
   })
+
   graphBuilder.buildGraph()
 }
+
 /**
  * Creates a neighborhood view component associated to the graph of the given graph component.
  */
 function createNeighborhoodView(graphComponent) {
   let layoutCircleInfo = []
+
   const neighborhoodView = new NeighborhoodView('#neighborhood-graph-component')
   neighborhoodView.applyNeighborhoodLayout = getApplyLayoutCallback((_, circles) => {
     layoutCircleInfo = circles
@@ -133,12 +144,14 @@ function createNeighborhoodView(graphComponent) {
     // graph is empty)
     const isEmpty = view.neighborhoodGraph.nodes.size < 1
     updateNeighborhoodBackground(view, isEmpty ? [] : layoutCircleInfo)
+
     // ensure the neighborhood graph and the circle visualizations in the neighborhood view's
     // background fit inside the neighborhood graph component
     fitGraphAndBackground(view.neighborhoodComponent, layoutCircleInfo)
   }
   return neighborhoodView
 }
+
 /**
  * Updates the view port of the given graph component to show its graph as well as the circle
  * visualizations corresponding to the given circle information.
@@ -147,6 +160,7 @@ function fitGraphAndBackground(graphComponent, circles) {
   const margin = 5
   if (circles.length > 0) {
     graphComponent.updateContentBounds(margin)
+
     const strokeRadius = 5
     let bounds = graphComponent.contentBounds
     for (const info of circles) {
@@ -156,12 +170,16 @@ function fitGraphAndBackground(graphComponent, circles) {
         bounds = Rect.add(bounds, new Rect(c.x - r, c.y - r, 2 * r, 2 * r))
       }
     }
+
     if (bounds.width > 0 && bounds.height > 0) {
       const size = graphComponent.innerSize
       const margins = graphComponent.contentMargins
+
       const width = Math.max(1.0, size.width - margins.left - margins.right)
       const height = Math.max(1.0, size.height - margins.top - margins.bottom)
+
       const zoom = Math.min(width / bounds.width, height / bounds.height)
+
       graphComponent.zoom = Math.min(1.0, zoom)
       graphComponent.center = bounds.center
     }
@@ -169,26 +187,31 @@ function fitGraphAndBackground(graphComponent, circles) {
     void graphComponent.fitGraphBounds(margin)
   }
 }
+
 /**
  * Adds circle visualizations to the background of the given neighborhood view.
  */
 function updateNeighborhoodBackground(view, circles) {
   const renderTree = view.neighborhoodComponent.renderTree
   const group = renderTree.backgroundGroup
+
   // remove old circle visuals
   for (let child = group.lastChild; child; child = child.previousSibling) {
     renderTree.remove(child)
   }
+
   // add new circle visuals
   if (circles.length > 0) {
     renderTree.createElement(group, createCircleVisual(circles))
   }
 }
+
 /**
  * Creates circle visualizations for the background of the demo's neighborhood view.
  */
 function createCircleVisual(circles) {
   const svgNs = 'http://www.w3.org/2000/svg'
+
   const group = document.createElementNS(svgNs, 'g')
   for (const info of circles) {
     if (info.radius > 0) {
@@ -199,11 +222,13 @@ function createCircleVisual(circles) {
       circle.setAttribute('fill', 'none')
       circle.setAttribute('stroke', 'lightgray')
       circle.setAttribute('stroke-width', '10px')
+
       group.appendChild(circle)
     }
   }
   return new SvgVisual(group)
 }
+
 /**
  * Configure a vivid, rectangular selection indicator.
  */
@@ -225,6 +250,7 @@ function initializeSelectionIndicator(graphComponent) {
   )
   graphComponent.graph.decorator.nodes.focusRenderer.hide()
 }
+
 /**
  * Creates a read-only input mode for the graph component that limits item selection to nodes.
  */
@@ -236,6 +262,7 @@ function createInputMode() {
     marqueeSelectableItems: GraphItemTypes.NODE
   })
 }
+
 /**
  * Binds actions to the demo's UI controls.
  */
@@ -247,6 +274,7 @@ function initializeUI(neighborhoodView) {
   )
   addNavigationButtons(neighborhoodTypeSelect)
   populateSelectElement(neighborhoodTypeSelect, ['Neighbors', 'Predecessors', 'Successors', 'Both'])
+
   // initialize the depth slider for the NeighborhoodView
   const neighborhoodDistanceSlider = document.querySelector('#neighborhood-distance-slider')
   neighborhoodDistanceSlider.min = '1'
@@ -256,6 +284,7 @@ function initializeUI(neighborhoodView) {
     changeNeighborhoodDistance(neighborhoodView, parseInt(neighborhoodDistanceSlider.value))
   })
 }
+
 /**
  * Adds the given items to the given HTML select element.
  */
@@ -267,6 +296,7 @@ function populateSelectElement(element, items) {
     element.add(option)
   }
 }
+
 /**
  * Updates the given neighborhood view's neighbor buildNeighborhoodGraph callback to create
  * neighborhood graphs of the given type.
@@ -276,19 +306,24 @@ function changeNeighborhoodType(neighborhoodView, neighborhoodMode) {
     neighborhoodMode,
     parseInt(document.querySelector('#neighborhood-distance-slider').value)
   )
+
   neighborhoodView.update()
 }
+
 /**
  * Updates the given neighborhood view's buildNeighborhoodGraph callback to include neighbors
  * up to the given maximum distance in the created neighborhood graphs.
  */
 function changeNeighborhoodDistance(neighborhoodView, distance) {
   document.getElementById('neighborhood-distance-label').textContent = `${distance}`
+
   const neighborhoodTypeSelect = document.querySelector('#neighborhood-type-select')
   neighborhoodView.buildNeighborhoodGraph = getBuildGraphCallback(
     neighborhoodTypeSelect.selectedIndex,
     distance
   )
+
   neighborhoodView.update()
 }
+
 void run().then(finishLoading)

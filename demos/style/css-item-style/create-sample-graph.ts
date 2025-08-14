@@ -47,10 +47,7 @@ type SampleDataNode = {
   layout: { x: number; y: number; width: number; height: number }
   tag: { type: number }
 }
-type SampleDataType = {
-  nodeList: SampleDataNode[]
-  edgeList: { source: number; target: number }[]
-}
+type SampleDataType = { nodeList: SampleDataNode[]; edgeList: { source: number; target: number }[] }
 
 const SampleData: SampleDataType = {
   nodeList: [
@@ -173,11 +170,7 @@ export function createSampleGraph(graph: IGraph): void {
         smoothingLength: 50,
         cssClass: 'edge',
         stroke: '1px solid currentColor',
-        targetArrow: new Arrow({
-          stroke: null,
-          fill: 'currentColor',
-          type: 'triangle'
-        })
+        targetArrow: new Arrow({ stroke: null, fill: 'currentColor', type: 'triangle' })
       })
     }
   })
@@ -192,9 +185,7 @@ export function createSampleGraph(graph: IGraph): void {
 
   builder.buildGraph()
 
-  const layout = new HierarchicalLayout({
-    nodeDistance: 50
-  })
+  const layout = new HierarchicalLayout({ nodeDistance: 50 })
   const layoutData = new HierarchicalLayoutData({
     // consider the node types of the sample data
     nodeTypes: (node: INode) => (node.tag as SampleDataNode['tag']).type

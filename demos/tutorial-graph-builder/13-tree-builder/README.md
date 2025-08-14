@@ -30,24 +30,15 @@ Consider the following data object, which represents a basic organization chart:
       position: 'Chief Executive Assistant',
       name: 'Gary Roberts',
       colleagues: [
-        {
-          position: 'Senior Executive Assistant',
-          name: 'Alexander Burns'
-        },
-        {
-          position: 'Junior Executive Assistant',
-          name: 'Linda Newland'
-        }
+        { position: 'Senior Executive Assistant', name: 'Alexander Burns' },
+        { position: 'Junior Executive Assistant', name: 'Linda Newland' }
       ]
     },
     {
       position: 'Vice President of Production',
       name: 'Amy Kain',
       colleagues: [
-        {
-          position: 'Production Supervisor',
-          name: 'Kathy Maxwell'
-        }
+        { position: 'Production Supervisor', name: 'Kathy Maxwell' }
       ]
     }
   ]

@@ -453,11 +453,7 @@ export class ButtonInputMode extends InputModeBase {
   private getHitButtons(context: IInputModeContext, location: Point) {
     const graphComponent = context.canvasComponent as GraphComponent
     return graphComponent.renderTree
-      .hitElementsAt({
-        context,
-        location,
-        root: this.buttonLabelManager.renderTreeGroup
-      })
+      .hitElementsAt({ context, location, root: this.buttonLabelManager.renderTreeGroup })
       .map((element) => element.tag as Button)
   }
 
@@ -1533,12 +1529,7 @@ class DummyContext extends BaseClass(IRenderContext) {
 /**
  * Augment the SvgVisual type with the data used to cache the rendering information
  */
-type Cache = {
-  x: number
-  y: number
-  width: number
-  height: number
-}
+type Cache = { x: number; y: number; width: number; height: number }
 type FocusLabelStyleVisual = TaggedSvgVisual<SVGRectElement, Cache>
 
 /**

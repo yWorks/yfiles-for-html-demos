@@ -40,6 +40,7 @@ import {
   ShapePortStyle,
   Size
 } from '@yfiles/yfiles'
+
 export class PortReshapeHandle extends BaseClass(IHandle) {
   context
   port
@@ -51,10 +52,12 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
    * The margins are applied in view coordinates. Default is `4`.
    */
   margins
+
   /**
    * The initial render size (i.e. the size of the port visualization). Used to reset the visualization size on cancel.
    */
   initialRenderSize = Size.EMPTY
+
   /**
    * Creates a new instance for port and its adapter.
    * @param context The context of the reshape gesture.
@@ -72,12 +75,14 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     this.minimumSize = minimumSize
     this.margins = 4
   }
+
   /**
    * Returns the current location of the handle.
    */
   get location() {
     return this.calculateLocation()
   }
+
   /**
    * Calculates the location of the handle considering the {@link IPort.location port location},
    * {@link ShapePortStyle.renderSize render size} and {@link margins}.
@@ -115,6 +120,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     }
     return new Point(handleX, handleY)
   }
+
   /**
    * Stores the initial {@link ShapePortStyle.renderSize render size}.
    * @param context The context of the reshape gesture.
@@ -122,6 +128,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
   initializeDrag(context) {
     this.initialRenderSize = this.portStyle.renderSize
   }
+
   /**
    * Calculates and applies the new {@link ShapePortStyle.renderSize render size}.
    * @param context The context of the reshape gesture.
@@ -134,6 +141,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     // calculate and apply the new render size
     this.portStyle.renderSize = this.calculateNewSize(delta)
   }
+
   /**
    * Calculates the size adjustment for the port's render size from the previous and current
    * mouse location.
@@ -164,6 +172,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     }
     return Size.EMPTY
   }
+
   /**
    * Calculates the new render size for the port from the current render size and the given
    * size adjustment while respecting the {@link minimumSize minimum size}.
@@ -177,6 +186,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     )
     return new Size(newWidth, newHeight)
   }
+
   /**
    * Resets the {@link ShapePortStyle.renderSize render size} to its initial value.
    * @param context The context of the reshape gesture.
@@ -185,6 +195,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
   cancelDrag(context, originalLocation) {
     this.portStyle.renderSize = this.initialRenderSize
   }
+
   /**
    * Calculates and applies the final {@link ShapePortStyle.renderSize render size}.
    * @param context The context of the reshape gesture.
@@ -195,18 +206,21 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     const delta = this.calculateDelta(originalLocation, newLocation)
     this.portStyle.renderSize = this.calculateNewSize(delta)
   }
+
   /**
    * Returns {@link HandleType.RESIZE}.
    */
   get type() {
     return HandleType.RESIZE
   }
+
   /**
    *  Gets an optional tag object associated with the handle.
    */
   get tag() {
     return null
   }
+
   /**
    * Returns a resize cursor matching the handle position.
    */
@@ -227,6 +241,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     }
     return Cursor.NONE
   }
+
   /**
    * This implementation does nothing special when clicked.
    */

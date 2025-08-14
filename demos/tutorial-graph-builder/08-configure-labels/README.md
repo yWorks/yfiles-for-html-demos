@@ -26,38 +26,15 @@ In this step, we will use a simple company ownership diagram.
 ```
 const data = {
   nodeData: [
-    {
-      id: '0',
-      name: 'Investment Capital',
-      type: 'Corporation'
-    },
+    { id: '0', name: 'Investment Capital', type: 'Corporation' },
     { id: '1', name: 'Melissa Barner', type: 'Trust' },
     { id: '2', name: 'Monster Inc', type: 'Corporation' },
-    {
-      id: '3',
-      name: 'International Group',
-      type: 'Trust'
-    }
+    { id: '3', name: 'International Group', type: 'Trust' }
   ],
   edgeData: [
-    {
-      id: '0',
-      sourceId: '1',
-      targetId: '0',
-      ownership: 30
-    },
-    {
-      id: '1',
-      sourceId: '2',
-      targetId: '0',
-      ownership: 60
-    },
-    {
-      id: '2',
-      sourceId: '3',
-      targetId: '0',
-      ownership: 5
-    }
+    { id: '0', sourceId: '1', targetId: '0', ownership: 30 },
+    { id: '1', sourceId: '2', targetId: '0', ownership: 60 },
+    { id: '2', sourceId: '3', targetId: '0', ownership: 5 }
   ]
 }
 ```
@@ -153,9 +130,7 @@ Following a similar approach, we can configure the edge labels. In this example,
 ```
 // configure the position of the label
 edgeLabelCreator.layoutParameterProvider = (): ILabelModelParameter =>
-  new EdgePathLabelModel({
-    autoRotation: false
-  }).createRatioParameter()
+  new EdgePathLabelModel({ autoRotation: false }).createRatioParameter()
 
 // configure its style
 edgeLabelCreator.defaults.shareStyleInstance = false

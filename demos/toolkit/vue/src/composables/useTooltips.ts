@@ -109,10 +109,7 @@ export function useTooltips(getGraphComponent: () => GraphComponent) {
     const vueTooltip = (defineComponent as any)({
       extends: Tooltip,
       data() {
-        return {
-          title,
-          content
-        }
+        return { title, content }
       }
     })
 
@@ -121,7 +118,5 @@ export function useTooltips(getGraphComponent: () => GraphComponent) {
     return root.firstElementChild as HTMLElement
   }
 
-  return {
-    register
-  }
+  return { register }
 }

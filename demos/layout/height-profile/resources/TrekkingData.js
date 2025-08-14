@@ -40,12 +40,14 @@ export var MultiPageNodeType
    */
   MultiPageNodeType[(MultiPageNodeType['LABEL'] = 1)] = 'LABEL'
 })(MultiPageNodeType || (MultiPageNodeType = {}))
+
 /**
  * Returns the data associated with each waypoint.
  */
 export function getWayPoint(node) {
   return node.tag
 }
+
 /**
  * The dataset for this demo.
  */
@@ -364,14 +366,7 @@ export const nodeData = {
     { x: 929, y: 322.6, lon: 9.035272, lat: 48.508643 },
     { x: 951, y: 322.9, lon: 9.035471, lat: 48.508789 },
     { x: 1006, y: 321.8, lon: 9.035821, lat: 48.509225 },
-    {
-      x: 1019,
-      y: 321.2,
-      lon: 9.035927,
-      lat: 48.509325,
-      name: 'Camping Site',
-      category: 'camping'
-    },
+    { x: 1019, y: 321.2, lon: 9.035927, lat: 48.509325, name: 'Camping Site', category: 'camping' },
     { x: 1061, y: 319.2, lon: 9.036261, lat: 48.509632 },
     { x: 1094, y: 320.1, lon: 9.036575, lat: 48.509845 },
     { x: 1104, y: 320.4, lon: 9.036669, lat: 48.509905 },
@@ -427,27 +422,13 @@ export const nodeData = {
     { x: 2338, y: 321.8, lon: 9.048875, lat: 48.516723 },
     { x: 2364, y: 321.2, lon: 9.048727, lat: 48.516931 },
     { x: 2381, y: 321, lon: 9.048616, lat: 48.517071 },
-    {
-      x: 2393,
-      y: 321.4,
-      lon: 9.04854,
-      lat: 48.517157,
-      name: 'Alleenbrücke',
-      category: 'bridge'
-    },
+    { x: 2393, y: 321.4, lon: 9.04854, lat: 48.517157, name: 'Alleenbrücke', category: 'bridge' },
     { x: 2417, y: 322.8, lon: 9.04843, lat: 48.517367 },
     { x: 2439, y: 324.1, lon: 9.048354, lat: 48.517556 },
     { x: 2462, y: 325.6, lon: 9.048248, lat: 48.517747 },
     { x: 2481, y: 327.1, lon: 9.048126, lat: 48.517901 },
     { x: 2502, y: 332.4, lon: 9.048015, lat: 48.518074 },
-    {
-      x: 2774,
-      y: 349.8,
-      lon: 9.049259,
-      lat: 48.520373,
-      name: 'Tunnel',
-      category: 'tunnel'
-    },
+    { x: 2774, y: 349.8, lon: 9.049259, lat: 48.520373, name: 'Tunnel', category: 'tunnel' },
     { x: 2791, y: 351, lon: 9.049464, lat: 48.520444 },
     { x: 2809, y: 351.7, lon: 9.049698, lat: 48.520501 },
     { x: 2825, y: 351.8, lon: 9.049905, lat: 48.520543 },
@@ -457,14 +438,7 @@ export const nodeData = {
     { x: 2940, y: 340.2, lon: 9.051264, lat: 48.521012 },
     { x: 2949, y: 338.9, lon: 9.051366, lat: 48.521066 },
     { x: 2982, y: 337.8, lon: 9.05178, lat: 48.521158 },
-    {
-      x: 2992,
-      y: 337.7,
-      lon: 9.051917,
-      lat: 48.521185,
-      name: 'Krummebrücke',
-      category: 'bridge'
-    },
+    { x: 2992, y: 337.7, lon: 9.051917, lat: 48.521185, name: 'Krummebrücke', category: 'bridge' },
     { x: 3004, y: 336.6, lon: 9.052023, lat: 48.521263 },
     { x: 3024, y: 335.4, lon: 9.052037, lat: 48.521443 },
     { x: 3059, y: 333.3, lon: 9.052089, lat: 48.521759 },
@@ -602,14 +576,7 @@ export const nodeData = {
     { x: 5775, y: 349.5, lon: 9.024958, lat: 48.525272 },
     { x: 5794, y: 351.4, lon: 9.024939, lat: 48.525437 },
     { x: 5800, y: 350.8, lon: 9.024976, lat: 48.525387 },
-    {
-      x: 5804,
-      y: 350.3,
-      lon: 9.024994,
-      lat: 48.525352,
-      name: 'yWorks',
-      category: 'yWorks'
-    },
+    { x: 5804, y: 350.3, lon: 9.024994, lat: 48.525352, name: 'yWorks', category: 'yWorks' },
     { x: 5828, y: 352.3, lon: 9.024771, lat: 48.525516 },
     { x: 5848, y: 353.2, lon: 9.024576, lat: 48.525632 },
     { x: 5866, y: 352.9, lon: 9.024414, lat: 48.52575 },
@@ -694,14 +661,7 @@ export const nodeData = {
     { x: 7561, y: 394.1, lon: 9.01912, lat: 48.539914 },
     { x: 7576, y: 393.8, lon: 9.019094, lat: 48.540049 },
     { x: 7599, y: 393.7, lon: 9.019119, lat: 48.540249 },
-    {
-      x: 7614,
-      y: 393.5,
-      lon: 9.019128,
-      lat: 48.540385,
-      name: 'Hagelloch',
-      category: 'village'
-    },
+    { x: 7614, y: 393.5, lon: 9.019128, lat: 48.540385, name: 'Hagelloch', category: 'village' },
     { x: 7632, y: 394, lon: 9.019321, lat: 48.540488 },
     { x: 7651, y: 394.2, lon: 9.019576, lat: 48.540487 },
     { x: 7666, y: 399.1, lon: 9.019785, lat: 48.540502 },
@@ -949,14 +909,7 @@ export const nodeData = {
     { x: 13064, y: 364.1, lon: 9.060383, lat: 48.558637 },
     { x: 13077, y: 362.9, lon: 9.060394, lat: 48.558755 },
     { x: 13103, y: 359.9, lon: 9.060445, lat: 48.558991 },
-    {
-      x: 13133,
-      y: 356,
-      lon: 9.06072,
-      lat: 48.559192,
-      name: 'Bebenhausen',
-      category: 'village'
-    },
+    { x: 13133, y: 356, lon: 9.06072, lat: 48.559192, name: 'Bebenhausen', category: 'village' },
     { x: 13140, y: 355.3, lon: 9.060759, lat: 48.559248 },
     { x: 13144, y: 355.5, lon: 9.060706, lat: 48.559258 },
     { x: 13157, y: 356.2, lon: 9.060744, lat: 48.559148 },
@@ -1109,14 +1062,7 @@ export const nodeData = {
     { x: 16536, y: 395.1, lon: 9.090801, lat: 48.559871 },
     { x: 16545, y: 395.4, lon: 9.090907, lat: 48.559918 },
     { x: 16580, y: 395.1, lon: 9.091307, lat: 48.560088 },
-    {
-      x: 16612,
-      y: 392.9,
-      lon: 9.091633,
-      lat: 48.56028,
-      name: 'Picnic Area',
-      category: 'picnic'
-    },
+    { x: 16612, y: 392.9, lon: 9.091633, lat: 48.56028, name: 'Picnic Area', category: 'picnic' },
     { x: 16628, y: 391.1, lon: 9.091774, lat: 48.560378 },
     { x: 16631, y: 390.6, lon: 9.091802, lat: 48.560404 },
     { x: 16666, y: 391.5, lon: 9.092071, lat: 48.560664 },
@@ -1181,14 +1127,7 @@ export const nodeData = {
     { x: 17795, y: 415.2, lon: 9.095064, lat: 48.569981 },
     { x: 17810, y: 414, lon: 9.094983, lat: 48.570104 },
     { x: 17848, y: 410.7, lon: 9.094695, lat: 48.570395 },
-    {
-      x: 17873,
-      y: 410,
-      lon: 9.094568,
-      lat: 48.570602,
-      name: 'Picnic Area',
-      category: 'picnic'
-    },
+    { x: 17873, y: 410, lon: 9.094568, lat: 48.570602, name: 'Picnic Area', category: 'picnic' },
     { x: 17885, y: 410.2, lon: 9.094497, lat: 48.570696 },
     { x: 17921, y: 410.4, lon: 9.094336, lat: 48.571005 },
     { x: 17943, y: 410.4, lon: 9.094275, lat: 48.571195 },
@@ -1493,14 +1432,7 @@ export const nodeData = {
     { x: 23690, y: 499, lon: 9.140231, lat: 48.593413 },
     { x: 23718, y: 497.9, lon: 9.140586, lat: 48.593518 },
     { x: 23723, y: 497.7, lon: 9.140642, lat: 48.593534 },
-    {
-      x: 23734,
-      y: 496.9,
-      lon: 9.140792,
-      lat: 48.593553,
-      name: 'Drehscheibe',
-      category: 'parking'
-    },
+    { x: 23734, y: 496.9, lon: 9.140792, lat: 48.593553, name: 'Drehscheibe', category: 'parking' },
     { x: 23761, y: 494.4, lon: 9.141148, lat: 48.593534 },
     { x: 23771, y: 493.6, lon: 9.141292, lat: 48.593531 },
     { x: 23791, y: 493, lon: 9.141565, lat: 48.593541 },
@@ -1646,14 +1578,7 @@ export const nodeData = {
     { x: 28429, y: 404.7, lon: 9.179766, lat: 48.575669 },
     { x: 28455, y: 405.6, lon: 9.180089, lat: 48.575575 },
     { x: 28492, y: 405.9, lon: 9.180477, lat: 48.575357 },
-    {
-      x: 28512,
-      y: 405.9,
-      lon: 9.180673,
-      lat: 48.575245,
-      name: 'Gniebel',
-      category: 'village'
-    },
+    { x: 28512, y: 405.9, lon: 9.180673, lat: 48.575245, name: 'Gniebel', category: 'village' },
     { x: 28529, y: 406, lon: 9.180853, lat: 48.575149 },
     { x: 28552, y: 406.2, lon: 9.181108, lat: 48.575027 },
     { x: 28569, y: 406.4, lon: 9.181313, lat: 48.574949 },
@@ -1678,14 +1603,7 @@ export const nodeData = {
     { x: 29759, y: 369.9, lon: 9.174623, lat: 48.56583 },
     { x: 29824, y: 368.4, lon: 9.174565, lat: 48.565252 },
     { x: 29893, y: 369.2, lon: 9.174296, lat: 48.564655 },
-    {
-      x: 29929,
-      y: 369.9,
-      lon: 9.174264,
-      lat: 48.564336,
-      name: 'Rübgarten',
-      category: 'village'
-    },
+    { x: 29929, y: 369.9, lon: 9.174264, lat: 48.564336, name: 'Rübgarten', category: 'village' },
     { x: 29985, y: 368.6, lon: 9.173992, lat: 48.563859 },
     { x: 30056, y: 367.1, lon: 9.17372, lat: 48.563245 },
     { x: 30093, y: 367.3, lon: 9.173611, lat: 48.562921 },
@@ -1784,14 +1702,7 @@ export const nodeData = {
     { x: 33581, y: 306.4, lon: 9.153788, lat: 48.544227 },
     { x: 33600, y: 306.1, lon: 9.153537, lat: 48.544204 },
     { x: 33622, y: 305.6, lon: 9.153259, lat: 48.544143 },
-    {
-      x: 33657,
-      y: 305.4,
-      lon: 9.152787,
-      lat: 48.544143,
-      name: 'Lake',
-      category: 'lake'
-    },
+    { x: 33657, y: 305.4, lon: 9.152787, lat: 48.544143, name: 'Lake', category: 'lake' },
     { x: 33663, y: 305.7, lon: 9.152723, lat: 48.544185 },
     { x: 33739, y: 308.7, lon: 9.151771, lat: 48.54445 },
     { x: 33760, y: 309.3, lon: 9.151489, lat: 48.544454 },
@@ -2253,14 +2164,7 @@ export const nodeData = {
     { x: 44318, y: 325, lon: 9.059236, lat: 48.51479 },
     { x: 44328, y: 324.9, lon: 9.059106, lat: 48.514817 },
     { x: 44329, y: 324.9, lon: 9.059092, lat: 48.514819 },
-    {
-      x: 44329,
-      y: 324.9,
-      lon: 9.059088,
-      lat: 48.514822,
-      name: 'Tübingen',
-      category: 'city'
-    },
+    { x: 44329, y: 324.9, lon: 9.059088, lat: 48.514822, name: 'Tübingen', category: 'city' },
     { x: 44343, y: 325.1, lon: 9.059077, lat: 48.514702 },
     { x: 44376, y: 324.9, lon: 9.058782, lat: 48.514476 },
     { x: 44381, y: 324.8, lon: 9.058757, lat: 48.514439 },
@@ -2359,14 +2263,7 @@ export const nodeData = {
     { x: 46223, y: 332.5, lon: 9.061588, lat: 48.499884 },
     { x: 46236, y: 332.5, lon: 9.061732, lat: 48.499824 },
     { x: 46237, y: 332.5, lon: 9.061724, lat: 48.499833 },
-    {
-      x: 46248,
-      y: 332.3,
-      lon: 9.06182,
-      lat: 48.499754,
-      name: 'Derendingen',
-      category: 'village'
-    },
+    { x: 46248, y: 332.3, lon: 9.06182, lat: 48.499754, name: 'Derendingen', category: 'village' },
     { x: 46285, y: 332.1, lon: 9.062071, lat: 48.499465 },
     { x: 46312, y: 332.4, lon: 9.062201, lat: 48.499241 },
     { x: 46336, y: 332.6, lon: 9.062339, lat: 48.499046 },
@@ -2567,14 +2464,7 @@ export const nodeData = {
     { x: 49457, y: 445.9, lon: 9.056608, lat: 48.479956 },
     { x: 49482, y: 447.3, lon: 9.056343, lat: 48.479817 },
     { x: 49487, y: 447.9, lon: 9.056272, lat: 48.479804 },
-    {
-      x: 49501,
-      y: 448.9,
-      lon: 9.056095,
-      lat: 48.479761,
-      name: 'Kressbach',
-      category: 'village'
-    },
+    { x: 49501, y: 448.9, lon: 9.056095, lat: 48.479761, name: 'Kressbach', category: 'village' },
     { x: 49512, y: 449.6, lon: 9.055961, lat: 48.479729 },
     { x: 49522, y: 450.4, lon: 9.055825, lat: 48.479696 },
     { x: 49531, y: 450.7, lon: 9.055745, lat: 48.479639 },
@@ -2629,14 +2519,7 @@ export const nodeData = {
     { x: 50800, y: 429.4, lon: 9.039141, lat: 48.481265 },
     { x: 50886, y: 425.8, lon: 9.038048, lat: 48.481514 },
     { x: 51045, y: 411.9, lon: 9.036135, lat: 48.482179 },
-    {
-      x: 51098,
-      y: 401.8,
-      lon: 9.035697,
-      lat: 48.482549,
-      name: 'Picnic Area',
-      category: 'picnic'
-    },
+    { x: 51098, y: 401.8, lon: 9.035697, lat: 48.482549, name: 'Picnic Area', category: 'picnic' },
     { x: 51147, y: 393.2, lon: 9.0353, lat: 48.4829 },
     { x: 51281, y: 367.8, lon: 9.034322, lat: 48.483924 },
     { x: 51337, y: 357.9, lon: 9.033835, lat: 48.484301 },
@@ -2671,14 +2554,7 @@ export const nodeData = {
     { x: 52279, y: 332.3, lon: 9.033934, lat: 48.491149 },
     { x: 52294, y: 332, lon: 9.034072, lat: 48.491244 },
     { x: 52327, y: 331.1, lon: 9.034175, lat: 48.491538 },
-    {
-      x: 52358,
-      y: 330.6,
-      lon: 9.03394,
-      lat: 48.491768,
-      name: 'Weilheim',
-      category: 'village'
-    },
+    { x: 52358, y: 330.6, lon: 9.03394, lat: 48.491768, name: 'Weilheim', category: 'village' },
     { x: 52371, y: 330.6, lon: 9.033802, lat: 48.491833 },
     { x: 52395, y: 329.9, lon: 9.033531, lat: 48.491959 },
     { x: 52432, y: 328.6, lon: 9.033153, lat: 48.492168 },

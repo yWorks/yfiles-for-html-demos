@@ -27,10 +27,7 @@ onMounted(() => {
   graphComponent.graph.nodeDefaults.size = new Size(width, height)
 
   for (const { x, y, tag } of graphData) {
-    graphComponent.graph.createNode({
-      layout: [x, y, width, height],
-      tag
-    })
+    graphComponent.graph.createNode({ layout: [x, y, width, height], tag })
   }
 
   graphComponent.fitGraphBounds()

@@ -46,6 +46,7 @@ import {
   SvgVisual
 } from '@yfiles/yfiles'
 import { SVGNS } from './Namespaces'
+
 /** bounds of the "tab" */
 const TAB_H = 16
 const TAB_W = 48
@@ -55,6 +56,7 @@ const INNER_RADIUS = 3
 const INSET = 2
 const CORNER_SIZE = 16
 const BUTTON_SIZE = 14
+
 /**
  * This group node style creates a visualization that is mainly a round
  * rectangle. Additionally, it displays a textual description in a tab-like
@@ -68,6 +70,7 @@ const BUTTON_SIZE = 14
  */
 export class Sample1GroupNodeStyle extends NodeStyleBase {
   nodeColor = 'rgba(0, 130, 180, 1)'
+
   createVisual(renderContext, node) {
     const g = document.createElementNS(SVGNS, 'g')
     const cache = this.createRenderDataCache(renderContext, node)
@@ -76,12 +79,14 @@ export class Sample1GroupNodeStyle extends NodeStyleBase {
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
     return visual
   }
+
   updateVisual(renderContext, oldVisual, node) {
     const container = oldVisual.svgElement
     // get the data with which the oldVisual was created
     const oldCache = oldVisual.tag
     // get the data for the new visual
     const newCache = this.createRenderDataCache(renderContext, node)
+
     // check if something changed except for the location of the node
     if (!newCache.equals(oldCache)) {
       oldVisual.tag = newCache
@@ -96,14 +101,17 @@ export class Sample1GroupNodeStyle extends NodeStyleBase {
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
     return oldVisual
   }
+
   /**
    * Creates the actual visualization of this style and adds it to the given container.
    */
   static render(visual) {
     const cache = visual.tag
     const container = visual.svgElement
+
     const width = cache.width
     const height = cache.height
+
     if (!cache.isCollapsed) {
       // create outer path
       const outerPath = createOuterPath(width, height)
@@ -111,6 +119,7 @@ export class Sample1GroupNodeStyle extends NodeStyleBase {
       outerPathElement.setAttribute('fill', cache.color)
       outerPathElement.setAttribute('fill-opacity', '0.1')
       container.appendChild(outerPathElement)
+
       // create border path
       const borderPath = outerPath
       borderPath.append(createInnerPath(width, height), false)
@@ -125,6 +134,7 @@ export class Sample1GroupNodeStyle extends NodeStyleBase {
       outerPathElement.setAttribute('fill', cache.color)
       container.appendChild(outerPathElement)
     }
+
     if (!displayTextInTab(width)) {
       return
     }
@@ -137,6 +147,7 @@ export class Sample1GroupNodeStyle extends NodeStyleBase {
     text.setAttribute('fill', '#333333')
     container.appendChild(text)
   }
+
   /**
    * Creates an object containing all necessary data to create a visual for the node.
    */
@@ -148,6 +159,7 @@ export class Sample1GroupNodeStyle extends NodeStyleBase {
       isCollapsed(context, node)
     )
   }
+
   /**
    * Overridden to customize the behavior of this style with respect to certain user interaction.
    * @see Overrides {@link NodeStyleBase.lookup}
@@ -166,10 +178,12 @@ export class Sample1GroupNodeStyle extends NodeStyleBase {
             bounds = Rect.add(bounds, label.layout.bounds)
           })
         })
+
         const paddingProvider = node.lookup(IGroupPaddingProvider)
         return paddingProvider === null ? bounds : bounds.getEnlarged(paddingProvider.getPadding())
       })
     }
+
     // Determines the paddings used for the group contents.
     if (type === IGroupPaddingProvider) {
       // use a custom padding provider that reserves space for the tab and the toggle button
@@ -177,6 +191,7 @@ export class Sample1GroupNodeStyle extends NodeStyleBase {
         () => new Insets(TAB_H + 6, CORNER_SIZE - 1, CORNER_SIZE - 1, 6)
       )
     }
+
     // Determines the minimum and maximum node size.
     if (type === INodeSizeConstraintProvider) {
       // use a custom size constraint provider to make sure that the tab
@@ -196,6 +211,7 @@ export class Sample1GroupNodeStyle extends NodeStyleBase {
     }
     return super.lookup(node, type)
   }
+
   /**
    * Returns whether the given point hits the visualization of the
    * given node. This implementation is strict, it returns
@@ -221,6 +237,7 @@ export class Sample1GroupNodeStyle extends NodeStyleBase {
       context.hitTestRadius
     )
   }
+
   /**
    * Returns the exact outline for the given node. This information is used
    * to clip the node's edges correctly.
@@ -231,6 +248,7 @@ export class Sample1GroupNodeStyle extends NodeStyleBase {
     path.transform(new Matrix(1, 0, 0, 1, node.layout.x, node.layout.y))
     return path
   }
+
   /**
    * Determines the color to use for filling the node.
    * This implementation uses the {@link Sample1GroupNodeStyle.nodeColor} property unless
@@ -243,6 +261,7 @@ export class Sample1GroupNodeStyle extends NodeStyleBase {
     return typeof node.tag === 'string' ? node.tag : this.nodeColor
   }
 }
+
 class NodeRenderDataCache {
   color
   width
@@ -254,6 +273,7 @@ class NodeRenderDataCache {
     this.height = height
     this.isCollapsed = isCollapsed
   }
+
   equals(other) {
     return (
       !!other &&
@@ -264,6 +284,7 @@ class NodeRenderDataCache {
     )
   }
 }
+
 /**
  * Returns whether the given group node is collapsed.
  */
@@ -278,12 +299,14 @@ function isCollapsed(context, node) {
   }
   return false
 }
+
 /**
  * Creates the inner group path
  */
 function createInnerPath(width, height) {
   const i = INSET
   const r = INNER_RADIUS
+
   // helper variables for curve coordinates
   const c = 0.551915024494
   const sx = width - i - r
@@ -296,6 +319,7 @@ function createInnerPath(width, height) {
   const c1y = sy
   const c2x = ex
   const c2y = ey - dc
+
   const path = new GeneralPath()
   path.moveTo(i + r, i + TAB_H)
   path.lineTo(sx, i + TAB_H)
@@ -313,6 +337,7 @@ function createInnerPath(width, height) {
   path.close()
   return path
 }
+
 /**
  * Creates the outer group path
  */
@@ -334,8 +359,10 @@ function createOuterPath(width, height) {
   path.lineTo(tabWidth, TAB_H - r)
   path.quadTo(tabWidth, TAB_H, tabWidth + r, TAB_H)
   path.close()
+
   return path
 }
+
 /**
  * Checks whether the node is wide enough to display the large tab.
  * @param w The node width.

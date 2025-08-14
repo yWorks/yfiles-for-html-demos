@@ -43,8 +43,10 @@ import { retainAspectRatio } from './aspect-ratio'
 import { downloadFile } from '@yfiles/demo-utils/file-support'
 import { loadExternalFonts } from './load-external-fonts'
 import { DelayedNodeStyle } from './node-styles/delayed-node-style'
+
 async function run() {
   License.value = await fetchLicense()
+
   if (window.location.protocol === 'file:') {
     alert(
       'This demo features image export with inlined images. ' +
@@ -52,15 +54,20 @@ async function run() {
         'Please start the demo from a web server.'
     )
   }
+
   // initialize the main graph component
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
   initDemoStyles(graphComponent.graph)
   retainAspectRatio(graphComponent.graph)
+
   const exportRect = initializeExportRectangle(graphComponent)
+
   let pdf = ''
+
   initializeOptionPanel(async (options) => {
     const rect = options.useExportRectangle ? exportRect.toRect() : undefined
+
     if (options.serverExport) {
       await exportPdfServerSide(graphComponent, options.scale, options.margin, rect, () =>
         // wait for styles to finish rendering
@@ -82,6 +89,7 @@ async function run() {
       showExportDialog(previewElement)
     }
   })
+
   initializeExportDialog('Client-side PDF Export', () => {
     try {
       downloadFile(pdf, 'graph.pdf')
@@ -91,12 +99,16 @@ async function run() {
       )
     }
   })
+
   // initialize server-side export in a non-blocking way
   initializeServerSideExport(NODE_SERVER_URL)
+
   // wire up the button to toggle webgl rendering
   initializeToggleWebGlRenderingButton(graphComponent)
+
   // create a sample graph
   await createSampleGraph(graphComponent)
   await graphComponent.fitGraphBounds()
 }
+
 void run().then(finishLoading)

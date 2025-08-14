@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { EdgeStyleBase, HtmlCanvasVisual } from '@yfiles/yfiles'
 import { getStroke } from './graph-styles'
+
 /**
  * A very basic edge style that uses HTML canvas high-performance rendering.
  * Arrows are not supported by this implementation.
@@ -39,12 +40,14 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
   createVisual(context, edge) {
     return new EdgeRenderVisual(edge)
   }
+
   /**
    * Updates the visual for an edge.
    */
   updateVisual(context, oldVisual, edge) {
     return oldVisual
   }
+
   /**
    * Determines whether the visual representation of the edge has been hit at the given location.
    */
@@ -53,6 +56,7 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
     if (!super.isHit(canvasContext, p, edge)) {
       return false
     }
+
     // but we exclude hits on the source and target node
     const s = edge.sourceNode
     const t = edge.targetNode
@@ -62,6 +66,7 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
     )
   }
 }
+
 /**
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
@@ -75,6 +80,7 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
     this.edge = edge
     this.edge = edge
   }
+
   /**
    * Paints onto the context using HTML Canvas operations.
    */

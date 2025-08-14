@@ -172,9 +172,7 @@ export const cliquesSubstructuresDescription = `
  * Calculates the clique substructures in the graph in the given graph.
  */
 export function calculateCliqueSubstructures(graph: IGraph): void {
-  const cliqueSubstructures = new CliqueSubstructures({
-    minimumSize: 2
-  })
+  const cliqueSubstructures = new CliqueSubstructures({ minimumSize: 2 })
   const substructures = cliqueSubstructures.run(graph)
 
   substructures.cliques.forEach((clique, cliqueIndex) => {

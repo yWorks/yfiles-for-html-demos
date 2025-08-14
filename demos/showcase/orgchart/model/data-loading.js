@@ -28,6 +28,7 @@
  ***************************************************************************/
 import { TreeBuilder } from '@yfiles/yfiles'
 import { orgChartData } from './orgchart-data'
+
 /**
  * Creates the sample graph of this demo.
  * @param graph The graph which will be populated
@@ -35,6 +36,7 @@ import { orgChartData } from './orgchart-data'
 export function buildGraph(graph) {
   const data = orgChartData
   addParentReferences(data[0])
+
   const treeBuilder = new TreeBuilder(graph)
   // configure the root nodes
   const rootSource = treeBuilder.createRootNodesSource(data, null)
@@ -42,6 +44,7 @@ export function buildGraph(graph) {
   rootSource.addChildNodesSource((dataItem) => dataItem.subordinates, rootSource)
   treeBuilder.buildGraph()
 }
+
 /**
  * Adds a "parent" reference to all subordinates contained in the source data.
  * The parent reference is needed to create the colleague and parent links
@@ -58,6 +61,7 @@ function addParentReferences(nodesSourceItem) {
     }
   }
 }
+
 /**
  * Retrieves the Employee from a node's tag.
  */

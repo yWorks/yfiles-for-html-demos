@@ -65,10 +65,7 @@ import { createDemoNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 
-type EdgeTag = {
-  sourceGroupId?: string
-  targetGroupId?: string
-}
+type EdgeTag = { sourceGroupId?: string; targetGroupId?: string }
 
 let graphComponent: GraphComponent = null!
 
@@ -91,9 +88,7 @@ async function runLayout(fromSketch: boolean) {
   const layout = new HierarchicalLayout({
     minimumLayerDistance: 70,
     fromSketchMode: fromSketch,
-    coordinateAssigner: {
-      bendReduction: false
-    }
+    coordinateAssigner: { bendReduction: false }
   })
 
   const layoutData = new HierarchicalLayoutData({
@@ -128,10 +123,7 @@ function createSampleGraph(): void {
   graph.nodeDefaults.size = [50, 30]
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '3px #BBBBBB',
-    targetArrow: new Arrow({
-      fill: '#BBBBBB',
-      type: ArrowType.TRIANGLE
-    }),
+    targetArrow: new Arrow({ fill: '#BBBBBB', type: ArrowType.TRIANGLE }),
     smoothingLength: 15
   })
   graph.edgeDefaults.shareStyleInstance = false

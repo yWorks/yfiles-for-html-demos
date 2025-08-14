@@ -35,42 +35,53 @@ export class PropertiesPanel {
   constructor(element) {
     this.element = element
   }
+
   showProperties(node) {
     this.clear()
+
     if (!node || !node.tag) {
       return
     }
+
     // When the graph is created with the GraphBuilder, the business data of each object is made
     // available in the node's tag.
     const person = node.tag
+
     const heading = document.createElement('div')
     heading.classList.add('user-detail')
     this.element.appendChild(heading)
+
     // The person's icon
     const icon = document.createElement('span')
     icon.classList.add('usericon')
     icon.classList.add(person.icon)
     heading.appendChild(icon)
+
     // The person's name
     heading.appendChild(createElement('h2', person.name))
+
     // Display the individual properties
     const table = document.createElement('table')
     this.element.appendChild(table)
+
     // The person's id
     let tr = document.createElement('tr')
     tr.appendChild(createElement('td', 'ID'))
     tr.appendChild(createElement('td', `${person.id}`))
     table.appendChild(tr)
+
     // The person's icon
     tr = document.createElement('tr')
     tr.appendChild(createElement('td', 'Icon'))
     tr.appendChild(createElement('td', person.icon))
     table.appendChild(tr)
+
     // The person's friends count
     tr = document.createElement('tr')
     tr.appendChild(createElement('td', 'Nr. of Friends'))
     tr.appendChild(createElement('td', `${person.friendsCount}`))
     table.appendChild(tr)
+
     // Create a list of friends
     const subTr = document.createElement('tr')
     subTr.appendChild(createElement('td', 'Visible Friends'))
@@ -86,6 +97,7 @@ export class PropertiesPanel {
     subTr.appendChild(subTd)
     table.appendChild(subTr)
   }
+
   /**
    * Clears the properties panel.
    */
@@ -93,6 +105,7 @@ export class PropertiesPanel {
     this.element.innerHTML = ''
   }
 }
+
 /**
  * Creates a DOM element with the specified text content
  */

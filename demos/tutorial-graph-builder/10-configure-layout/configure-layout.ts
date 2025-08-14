@@ -30,12 +30,7 @@ import type { EdgesSource, GraphBuilder, NodesSource } from '@yfiles/yfiles'
 
 type NodeLayoutData = {
   id: string
-  layout: {
-    x: number
-    y: number
-    width: number
-    height: number
-  }
+  layout: { x: number; y: number; width: number; height: number }
 }
 type EdgeLayoutData = {
   sourceId: string
@@ -47,18 +42,9 @@ export function configureNodeLayoutWithProvider(
   graphBuilder: GraphBuilder
 ): NodesSource<NodeLayoutData> {
   const nodeData: NodeLayoutData[] = [
-    {
-      id: '00',
-      layout: { x: 110, y: 20, width: 30, height: 30 }
-    },
-    {
-      id: '01',
-      layout: { x: 145, y: 95, width: 30, height: 30 }
-    },
-    {
-      id: '02',
-      layout: { x: 75, y: 95, width: 30, height: 30 }
-    }
+    { id: '00', layout: { x: 110, y: 20, width: 30, height: 30 } },
+    { id: '01', layout: { x: 145, y: 95, width: 30, height: 30 } },
+    { id: '02', layout: { x: 75, y: 95, width: 30, height: 30 } }
   ]
 
   // create the node using the id property

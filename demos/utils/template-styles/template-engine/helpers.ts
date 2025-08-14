@@ -89,7 +89,9 @@ export function processIdReferenceValue(
  * @param value - The binding expression string.
  * @returns An object containing the binding path, converter, and parameter, or null if parsing fails.
  */
-export function parseBindingExpression(value: string): {
+export function parseBindingExpression(
+  value: string
+): {
   templateBinding: boolean
   path: string
   converter?: string

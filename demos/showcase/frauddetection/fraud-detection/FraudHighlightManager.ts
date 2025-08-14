@@ -105,9 +105,7 @@ export class FraudHighlightManager extends HighlightIndicatorManager<IModelItem>
         })
       : item instanceof IEdge
         ? new EdgeStyleIndicatorRenderer({
-            edgeStyle: new PolylineEdgeStyle({
-              stroke: `8px solid ${getStroke(item)}`
-            }),
+            edgeStyle: new PolylineEdgeStyle({ stroke: `8px solid ${getStroke(item)}` }),
             zoomPolicy: 'world-coordinates'
           })
         : super.getRenderer(item)

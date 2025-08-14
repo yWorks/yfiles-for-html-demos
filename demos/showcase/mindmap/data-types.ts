@@ -32,29 +32,19 @@ import type { IEdge, INode } from '@yfiles/yfiles'
  * Data format that is used to build a mind map in this demo.
  * It contains information about nodes and edges.
  */
-export type MindMapData = {
-  concepts: Concept[]
-  connections: Connection[]
-}
+export type MindMapData = { concepts: Concept[]; connections: Connection[] }
 
 /**
  * Type that describes the format of the input node data in this mind map demo.
  * It is used for building the graph structure and adding labels to the nodes.
  */
-export type Concept = {
-  id: number
-  text: string
-}
+export type Concept = { id: number; text: string }
 
 /**
  * Type that describes the format of the input edge data in this mind map demo.
  * It is used for building the graph structure, creating the edges and associating them with a type.
  */
-export type Connection = {
-  from: number
-  to: number
-  type: 'association' | 'cross-reference'
-}
+export type Connection = { from: number; to: number; type: 'association' | 'cross-reference' }
 
 /**
  * Type of data associated with a node.
@@ -72,9 +62,7 @@ export type NodeData = {
  * Type of data associated with an edge.
  * It contains information that is used for the edge visualization and layout.
  */
-export type EdgeData = {
-  type: 'association' | 'cross-reference'
-}
+export type EdgeData = { type: 'association' | 'cross-reference' }
 
 /**
  * Returns the data stored in the node's tag.

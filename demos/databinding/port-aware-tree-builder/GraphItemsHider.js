@@ -35,7 +35,9 @@ import {
   IPortStyle,
   Mapper
 } from '@yfiles/yfiles'
+
 const itemToStyle = new Mapper()
+
 /**
  * Hides the visualizations of the given nodes and their related items.
  * In this context, the items related to a node are
@@ -50,9 +52,11 @@ const itemToStyle = new Mapper()
  */
 export function hideNodesAndRelatedItems(graph, nodes) {
   itemToStyle.clear()
+
   for (const node of nodes) {
     itemToStyle.set(node, node.style)
     graph.setStyle(node, INodeStyle.VOID_NODE_STYLE)
+
     for (const edge of graph.edgesAt(node)) {
       const style = edge.style
       if (style != IEdgeStyle.VOID_EDGE_STYLE) {
@@ -60,13 +64,16 @@ export function hideNodesAndRelatedItems(graph, nodes) {
         graph.setStyle(edge, IEdgeStyle.VOID_EDGE_STYLE)
       }
     }
+
     for (const label of node.labels) {
       itemToStyle.set(label, label.style)
       graph.setStyle(label, ILabelStyle.VOID_LABEL_STYLE)
     }
+
     for (const port of node.ports) {
       itemToStyle.set(port, port.style)
       graph.setStyle(port, IPortStyle.VOID_PORT_STYLE)
+
       for (const label of port.labels) {
         itemToStyle.set(label, label.style)
         graph.setStyle(label, ILabelStyle.VOID_LABEL_STYLE)
@@ -74,6 +81,7 @@ export function hideNodesAndRelatedItems(graph, nodes) {
     }
   }
 }
+
 /**
  * Shows the visualizations of the given nodes and their related items again.
  * Before using this method, {@link #hideNodesAndRelatedItems} has to be called.
@@ -87,18 +95,23 @@ export function hideNodesAndRelatedItems(graph, nodes) {
 export function showNodesAndRelatedItems(graph, nodes) {
   for (const node of nodes) {
     graph.setStyle(node, itemToStyle.get(node))
+
     for (const edge of graph.edgesAt(node)) {
       graph.setStyle(edge, itemToStyle.get(edge))
     }
+
     for (const label of node.labels) {
       graph.setStyle(label, itemToStyle.get(label))
     }
+
     for (const port of node.ports) {
       graph.setStyle(port, itemToStyle.get(port))
+
       for (const label of port.labels) {
         graph.setStyle(label, itemToStyle.get(label))
       }
     }
   }
+
   itemToStyle.clear()
 }

@@ -69,14 +69,8 @@ function getOrganicLayoutConfiguration(affectedNodes?: INode[] | undefined): {
 } {
   const organicLayout: OrganicLayout = new OrganicLayout({
     deterministic: true,
-    componentLayout: {
-      style: ComponentArrangementStyle.TRY_KEEP_CENTERS
-    },
-    genericLabeling: {
-      enabled: true,
-      scope: 'edge-labels',
-      deterministic: true
-    }
+    componentLayout: { style: ComponentArrangementStyle.TRY_KEEP_CENTERS },
+    genericLabeling: { enabled: true, scope: 'edge-labels', deterministic: true }
   })
   organicLayout.layoutStages.prepend(new CentralityStage(organicLayout))
 

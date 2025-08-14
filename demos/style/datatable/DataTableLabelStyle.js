@@ -28,12 +28,14 @@
  ***************************************************************************/
 import { HtmlVisual, ILabel, IRenderContext, LabelStyleBase, Size } from '@yfiles/yfiles'
 import { DataTableRenderSupport, RenderDataCache } from './DataTableRenderSupport'
+
 /**
  * A label style to display data in a tabular fashion.
  * The style uses the {@link HtmlVisual} and an HTML table to render the visual
  */
 export class DataTableLabelStyle extends LabelStyleBase {
   renderSupport = new DataTableRenderSupport()
+
   /**
    * Creates the visual for the given label.
    * @see Overrides {@link LabelStyleBase.createVisual}
@@ -43,13 +45,17 @@ export class DataTableLabelStyle extends LabelStyleBase {
     const divElement = document.createElement('div')
     // Get the necessary data for rendering of the label
     const cache = new RenderDataCache(label.owner.tag)
+
     // Render the label
     this.renderSupport.render(divElement, cache, 'data-table-label')
+
     // move container to correct location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(divElement)
+
     return new HtmlVisual(divElement)
   }
+
   /**
    * Re-renders the label using the old visual for performance reasons.
    * @see Overrides {@link LabelStyleBase.updateVisual}
@@ -60,15 +66,19 @@ export class DataTableLabelStyle extends LabelStyleBase {
     const oldCache = container['data-renderDataCache']
     // Get the data for the new visual
     const newCache = new RenderDataCache(label.owner.tag)
+
     if (!newCache.equals(oldCache)) {
       // The data changed, create a new visual
       this.renderSupport.render(container, newCache, 'data-table-label')
     }
+
     // arrange because the layout might have changed
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(container)
+
     return oldVisual
   }
+
   /**
    * Returns the preferred size of the label.
    * @see Overrides {@link LabelStyleBase.getPreferredSize}

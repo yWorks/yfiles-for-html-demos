@@ -31,12 +31,20 @@ import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { initializeTutorialDefaults, runLayout } from '../common'
 import { createGroupNodes } from './create-group-nodes'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
+
 const graph = graphComponent.graph
+
 const graphBuilder = new GraphBuilder(graph)
+
 createGroupNodes(graphBuilder)
+
 graphBuilder.buildGraph()
+
 void runLayout(graphComponent)
+
 finishLoading()

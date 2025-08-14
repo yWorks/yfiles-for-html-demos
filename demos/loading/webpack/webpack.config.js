@@ -38,63 +38,28 @@ const baseConfig = {
   optimization: {
     splitChunks: {
       cacheGroups: {
-        yfiles: {
-          test: /[\\/]yfiles[\\/]/,
-          name: 'yfiles',
-          chunks: 'all',
-          priority: 10
-        },
-        defaultVendors: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all'
-        }
+        yfiles: { test: /[\\/]yfiles[\\/]/, name: 'yfiles', chunks: 'all', priority: 10 },
+        defaultVendors: { test: /[\\/]node_modules[\\/]/, name: 'vendors', chunks: 'all' }
       }
     }
   },
   module: {
     rules: [
-      {
-        test: /\.ts$/,
-        loader: 'ts-loader',
-        options: { allowTsInNodeModules: true }
-      },
+      { test: /\.ts$/, loader: 'ts-loader', options: { allowTsInNodeModules: true } },
       {
         test: /\.css$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: './'
-            }
-          },
-          'css-loader'
-        ],
+        use: [{ loader: MiniCssExtractPlugin.loader, options: { publicPath: './' } }, 'css-loader'],
         sideEffects: true
       },
-      {
-        test: /\.(png|svg|jpg|gif)$/,
-        type: 'asset/resource'
-      }
+      { test: /\.(png|svg|jpg|gif)$/, type: 'asset/resource' }
     ]
   },
-  resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
-    symlinks: false
-  },
+  resolve: { extensions: ['.tsx', '.ts', '.js'], symlinks: false },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, 'index.template.html')
-    }),
-    new MiniCssExtractPlugin({
-      filename: '[name].css',
-      chunkFilename: '[id].css'
-    })
+    new HtmlWebpackPlugin({ template: path.resolve(__dirname, 'index.template.html') }),
+    new MiniCssExtractPlugin({ filename: '[name].css', chunkFilename: '[id].css' })
   ],
-  output: {
-    clean: true,
-    path: path.resolve(__dirname, 'dist')
-  },
+  output: { clean: true, path: path.resolve(__dirname, 'dist') },
   target: 'web'
 }
 

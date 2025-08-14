@@ -28,19 +28,25 @@
  ***************************************************************************/
 import { GraphComponent, GraphViewerInputMode, LayoutExecutor, License } from '@yfiles/yfiles'
 import { loadLayoutSampleGraph } from '@yfiles/demo-utils/LoadLayoutFeaturesSampleGraph'
+
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { createFeatureLayoutConfiguration } from './OrganicEdgeLabeling'
+
 async function run() {
   License.value = await fetchLicense()
   const graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
+
   // load the graph and run the layout
   await loadLayoutSampleGraph(graphComponent.graph, './sample.json')
+
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
   LayoutExecutor.ensure()
+
   const { layout, layoutData } = createFeatureLayoutConfiguration(graphComponent.graph)
   await graphComponent.applyLayoutAnimated(layout, '0s', layoutData)
 }
+
 void run().then(finishLoading)

@@ -29,6 +29,7 @@
 import { ConstraintOrientation, OrganicLayout, OrganicLayoutData } from '@yfiles/yfiles'
 import { getWayPoint, MultiPageNodeType } from './resources/TrekkingData'
 import { SCALED_MAX_Y } from './scale-data'
+
 /**
  * Creates and configures the {@link OrganicLayout} to produce a height profile visualization.
  * In this demo, the layout will arrange only the label nodes while the positions of the
@@ -44,18 +45,21 @@ export function configureLayout(graph) {
     defaultMinimumNodeDistance: 15,
     defaultPreferredEdgeLength: 20
   })
+
   // mark the label nodes as affected so that they are arranged by the layout algorithm
   const organicLayoutData = new OrganicLayoutData({
     scope: {
       nodes: graph.nodes.filter((node) => getWayPoint(node)?.type === MultiPageNodeType.LABEL)
     }
   })
+
   // create a constraint for each waypoint-label node pair that forces the algorithm to
   // place the label nodes above their associated waypoints
   const constraints = organicLayoutData.constraints
   for (const edge of graph.edges) {
     const waypoint = edge.sourceNode
     const labelNode = edge.targetNode
+
     // create a constraint that will place each label node above its associated waypoint
     const { firstSet, secondSet } = constraints.addSeparationConstraint(
       ConstraintOrientation.VERTICAL,
@@ -63,8 +67,10 @@ export function configureLayout(graph) {
     )
     firstSet.items = [labelNode]
     secondSet.items = [waypoint]
+
     // create a constraint that will vertically align each waypoint with the associated label node
     constraints.addAlignmentConstraint(ConstraintOrientation.VERTICAL).items = [labelNode, waypoint]
+
     // create a constraint that will place the label of the first waypoint (if this coincides with
     // the y-Axis) above the y-Axis
     if (waypoint.layout.center.x === 0) {
@@ -75,5 +81,6 @@ export function configureLayout(graph) {
       )
     }
   }
+
   return { layout: organicLayout, layoutData: organicLayoutData }
 }

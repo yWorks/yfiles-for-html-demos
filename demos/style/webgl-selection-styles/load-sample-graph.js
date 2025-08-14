@@ -37,6 +37,7 @@ import {
   WebGLShapeNodeShape,
   WebGLShapeNodeStyle
 } from '@yfiles/yfiles'
+
 /**
  * Creates an initial sample graph.
  */
@@ -45,6 +46,7 @@ export function createGraph(graph) {
     stroke: '2px gray',
     targetArrow: WebGLArrowType.TRIANGLE_LARGE
   })
+
   const n1 = graph.createNode([0, 0, 100, 100])
   graph.setStyle(
     n1,
@@ -54,6 +56,7 @@ export function createGraph(graph) {
       fill: 'lightgray'
     })
   )
+
   const nl1 = graph.addLabel(
     n1,
     'node 1',
@@ -67,6 +70,7 @@ export function createGraph(graph) {
       padding: 10
     })
   )
+
   const n2 = graph.createNode([300, 0, 100, 100])
   graph.setStyle(
     n2,
@@ -76,6 +80,7 @@ export function createGraph(graph) {
       fill: 'lightgray'
     })
   )
+
   const e1 = graph.createEdge(n1, n2)
   graph.setStyle(
     e1,
@@ -85,6 +90,7 @@ export function createGraph(graph) {
       targetArrow: WebGLArrowType.TRIANGLE_LARGE
     })
   )
+
   const n3 = graph.createNode([475, 300, 150, 100])
   graph.setStyle(
     n3,
@@ -94,6 +100,7 @@ export function createGraph(graph) {
       fill: 'lightgray'
     })
   )
+
   const nl2 = graph.addLabel(
     n3,
     'node 3',
@@ -101,14 +108,12 @@ export function createGraph(graph) {
   )
   graph.setStyle(
     nl2,
-    new WebGLLabelStyle({
-      shape: WebGLLabelShape.PILL,
-      backgroundColor: 'lightgray',
-      padding: 10
-    })
+    new WebGLLabelStyle({ shape: WebGLLabelShape.PILL, backgroundColor: 'lightgray', padding: 10 })
   )
+
   const e2 = graph.createEdge(n2, n3)
   graph.setStyle(e2, polylineEdgeStyle)
+
   const el1 = graph.addLabel(e2, 'edge 2')
   graph.setStyle(
     el1,
@@ -118,6 +123,7 @@ export function createGraph(graph) {
       padding: 10
     })
   )
+
   const n4 = graph.createNode([275, 600, 150, 100])
   graph.setStyle(
     n4,
@@ -127,17 +133,16 @@ export function createGraph(graph) {
       fill: 'lightgray'
     })
   )
+
   const e3 = graph.createEdge(n3, n4)
   graph.setStyle(e3, polylineEdgeStyle)
+
   const el2 = graph.addLabel(e3, 'edge 3')
   graph.setStyle(
     el2,
-    new WebGLLabelStyle({
-      shape: WebGLLabelShape.PILL,
-      backgroundColor: 'lightgray',
-      padding: 10
-    })
+    new WebGLLabelStyle({ shape: WebGLLabelShape.PILL, backgroundColor: 'lightgray', padding: 10 })
   )
+
   const n5 = graph.createNode([0, 600, 100, 100])
   graph.setStyle(
     n5,
@@ -147,6 +152,7 @@ export function createGraph(graph) {
       fill: 'lightgray'
     })
   )
+
   const e4 = graph.createEdge(n4, n5)
   graph.setStyle(
     e4,
@@ -157,6 +163,7 @@ export function createGraph(graph) {
       targetArrow: WebGLArrowType.TRIANGLE_LARGE
     })
   )
+
   const n6 = graph.createNode([-150, 300, 100, 100])
   graph.setStyle(
     n6,
@@ -166,8 +173,10 @@ export function createGraph(graph) {
       fill: 'lightgray'
     })
   )
+
   const e5 = graph.createEdge(n5, n6)
   graph.setStyle(e5, polylineEdgeStyle)
+
   const el3 = graph.addLabel(e5, 'edge 5')
   graph.setStyle(
     el3,
@@ -177,6 +186,7 @@ export function createGraph(graph) {
       padding: 10
     })
   )
+
   const n7 = graph.createNode([150, 300, 100, 100])
   graph.setStyle(
     n7,
@@ -186,6 +196,7 @@ export function createGraph(graph) {
       fill: 'lightgray'
     })
   )
+
   const nl3 = graph.addLabel(
     n7,
     'node 7',
@@ -199,6 +210,7 @@ export function createGraph(graph) {
       padding: 10
     })
   )
+
   const e6 = graph.createEdge(n6, n7)
   graph.addBend(e6, [25, 300])
   graph.addBend(e6, [75, 400])

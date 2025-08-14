@@ -46,7 +46,9 @@ import { ActivityNodePortCandidateProvider } from './ActivityNodePortCandidatePr
 import { ActivityNodeHandleProvider } from './ActivityNodeHandleProvider'
 import { ActivityNodeSnapResultProvider } from './ActivityNodeSnapResultProvider'
 import { getActivity } from '../resources/data-model'
+
 export const patternFill = createPatternFill()
+
 /**
  * A node style for activity nodes that renders lead and follow-up time.
  * The visualization consists of a 'solid' part that shows the actual duration of the activity, and
@@ -58,6 +60,7 @@ export class ActivityNodeStyle extends NodeStyleBase {
     super()
     this.color = color
   }
+
   /**
    * Creates the visualization for the given node which contains a filled rectangle, and two
    * hatch fills for the lead/follow-up time, if any.
@@ -65,19 +68,25 @@ export class ActivityNodeStyle extends NodeStyleBase {
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
     const activity = getActivity(node)
+
     // create the container element
     const outerG = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     outerG.setAttribute('color', this.color)
     outerG.classList.add('activity-node')
+
     // create the clipped container
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
     // get the width of the lead and follow-up decorations
     const leadWidth = getLeadWidth(activity)
     const followUpWidth = getFollowUpWidth(activity)
+
     // create the background rectangle
     g.appendChild(createRect(context, 0, 0, width, height, false, 'currentColor'))
+
     // create pattern rect
     g.appendChild(createRect(context, 0, 0, width, height, false, patternFill))
+
     // create the main rectangle
     const mainWidth = width - leadWidth - followUpWidth
     const mainBackground = createRect(context, leadWidth, 0, mainWidth, height, false, 'white')
@@ -86,6 +95,7 @@ export class ActivityNodeStyle extends NodeStyleBase {
     mainRect.classList.add('activity-main')
     mainRect.setAttribute('fill-opacity', '0.8')
     g.append(mainBackground, mainRect)
+
     const clipId = context.svgDefsManager.generateUniqueDefsId()
     const rectId = context.svgDefsManager.generateUniqueDefsId()
     const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath')
@@ -93,15 +103,20 @@ export class ActivityNodeStyle extends NodeStyleBase {
     clipRect.id = rectId
     clipPath.append(clipRect)
     clipPath.id = clipId
+
     g.setAttribute('clip-path', `url(#${clipId})`)
+
     outerG.append(g, clipPath)
+
     // render outline by re-using the clip rectangle
     const use = document.createElementNS('http://www.w3.org/2000/svg', 'use')
     use.setAttribute('href', '#' + rectId)
     use.setAttribute('stroke', 'currentColor')
     outerG.append(use)
+
     // translate container to node position
     SvgVisual.setTranslate(outerG, x, y)
+
     // save node layout for later use in update
     return SvgVisual.from(outerG, {
       leadWidth: leadWidth,
@@ -110,28 +125,35 @@ export class ActivityNodeStyle extends NodeStyleBase {
       width: width
     })
   }
+
   /**
    * Updates the visual element for the node with the current data.
    */
   updateVisual(context, oldVisual, node) {
     const { x, y, width } = node.layout
     const activity = getActivity(node)
+
     // get the width of the lead and follow-up decorations
     const leadWidth = getLeadWidth(activity)
     const followUpWidth = getFollowUpWidth(activity)
+
     const cache = oldVisual.tag
     const outerG = oldVisual.svgElement
+
     SvgVisual.setTranslate(outerG, x, y)
+
     if (cache.color !== this.color) {
       outerG.setAttribute('color', this.color)
       cache.color = this.color
     }
+
     if (
       leadWidth !== cache.leadWidth ||
       followUpWidth !== cache.followUpWidth ||
       width !== cache.width
     ) {
       const mainWidth = width - leadWidth - followUpWidth
+
       for (const rect of outerG.getElementsByTagName('rect')) {
         if (rect.classList.contains('activity-main')) {
           // the main part
@@ -141,12 +163,15 @@ export class ActivityNodeStyle extends NodeStyleBase {
           rect.width.baseVal.value = width
         }
       }
+
       cache.leadWidth = leadWidth
       cache.followUpWidth = followUpWidth
       cache.width = width
     }
+
     return oldVisual
   }
+
   /**
    * Overridden to switch off the default selection decoration.
    */
@@ -171,9 +196,11 @@ export class ActivityNodeStyle extends NodeStyleBase {
     if (type === INodeSnapResultProvider) {
       return new ActivityNodeSnapResultProvider()
     }
+
     return super.lookup.call(this, node, type)
   }
 }
+
 function createRect(context, x, y, width, height, rounded, fill, stroke) {
   const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
   rect.width.baseVal.value = width
@@ -183,16 +210,20 @@ function createRect(context, x, y, width, height, rounded, fill, stroke) {
   if (rounded) {
     rect.rx.baseVal.value = rect.ry.baseVal.value = height / 2
   }
+
   if (fill instanceof Fill) {
     fill.applyTo(rect, context)
   } else {
     rect.setAttribute('fill', fill ?? 'none')
   }
+
   if (stroke !== undefined) {
     rect.setAttribute('stroke', stroke)
   }
+
   return rect
 }
+
 /**
  * Creates a white hatch fill for the lead/follow-up time that can be overlaid on
  * top of the node color to get a striped effect.
@@ -210,6 +241,7 @@ function createPatternFill() {
   path.setAttribute('stroke', 'white')
   path.setAttribute('stroke-width', '3')
   path.setAttribute('stroke-linecap', 'square')
+
   const fill = new PatternFill()
   fill.origin = Point.ORIGIN
   fill.content = new SvgVisual(path)

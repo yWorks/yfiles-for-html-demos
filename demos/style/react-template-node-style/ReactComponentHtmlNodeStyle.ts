@@ -60,10 +60,7 @@ export interface ReactComponentHtmlNodeStyleProps<TTag> {
   tag: TTag
 }
 
-type Cache<TTag> = {
-  props: ReactComponentHtmlNodeStyleProps<TTag>
-  root: Root
-}
+type Cache<TTag> = { props: ReactComponentHtmlNodeStyleProps<TTag>; root: Root }
 
 /**
  * Utility type for type-safe implementation of the Visual that stores the props

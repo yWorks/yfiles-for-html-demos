@@ -74,9 +74,7 @@ export class DiagramComponent {
    * Applies a basic hierarchical layout.
    */
   async applyLayout(layoutOrientation: LayoutOrientation = LayoutOrientation.LEFT_TO_RIGHT) {
-    const layout = new HierarchicalLayout({
-      layoutOrientation
-    })
+    const layout = new HierarchicalLayout({ layoutOrientation })
     const executor = new LayoutExecutor({
       graphComponent: this.graphComponent,
       layout,

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { Animator, delegate, Point } from '@yfiles/yfiles'
+
 /**
  * Creates the animation of the timeline.
  */
@@ -38,6 +39,7 @@ export class TimeframeAnimation {
   timeframeListener = null
   animationEndedListener = null
   animating = false
+
   /**
    * Creates a new TimeframeAnimation
    * @param timeframeRect The rectangle used in the {@link TimeframeRectangle}
@@ -47,6 +49,7 @@ export class TimeframeAnimation {
     this.timeframeRect = timeframeRect
     this.timelineComponent = timelineComponent
   }
+
   /**
    * Moves the time frame rightwards along the timeline until it reaches the right border.
    */
@@ -56,25 +59,31 @@ export class TimeframeAnimation {
         canvasComponent: this.timelineComponent,
         allowUserInteraction: true
       })
+
       // set animating flag
       this.animating = true
+
       // store start location to be able to reset animation
       this.startLocation = this.timeframeRect.topLeft
+
       // start animation
       void this.animator.animate(() => {
         const timeframe = this.timeframeRect
         const viewport = this.timelineComponent.viewport
         const maxX =
           this.timelineComponent.contentBounds.x + this.timelineComponent.contentBounds.width
+
         // stop animation when time frame reached right border or if the input mode gets deactivated
         if (timeframe.x + timeframe.width >= maxX || !this.timelineComponent.inputMode.enabled) {
           this.stopAnimation()
           this.updateAnimationEndedListeners()
           return
         }
+
         // move time frame and update timeline graph
         timeframe.x += 1
         this.updateListeners(timeframe.toRect())
+
         // move viewport when the time frame leaves
         if (viewport.x + viewport.width < timeframe.x + timeframe.width * 0.5) {
           this.timelineComponent.viewPoint = new Point(timeframe.x, viewport.y)
@@ -82,6 +91,7 @@ export class TimeframeAnimation {
       }, Number.POSITIVE_INFINITY)
     }
   }
+
   /**
    * Stops moving the time frame.
    */
@@ -92,36 +102,42 @@ export class TimeframeAnimation {
       this.animating = false
     }
   }
+
   /**
    * Adds the listener invoked when the time frame changes.
    */
   setTimeframeListener(listener) {
     this.timeframeListener = delegate.combine(this.timeframeListener, listener)
   }
+
   /**
    * Removes the listener invoked when the time frame changes.
    */
   removeTimeframeListener(listener) {
     this.timeframeListener = delegate.remove(this.timeframeListener, listener)
   }
+
   /**
    * Updates all listeners that are interested in an interval change.
    */
   updateListeners(timeframe) {
     this.timeframeListener?.(timeframe)
   }
+
   /**
    * Adds the listener invoked when the animation stops due to reaching the right end of the timeline.
    */
   setAnimationEndedListener(listener) {
     this.animationEndedListener = delegate.combine(this.animationEndedListener, listener)
   }
+
   /**
    * Removes the listener invoked when the animation stops due to reaching the right end of the timeline.
    */
   removeAnimationEndedListener(listener) {
     this.animationEndedListener = delegate.remove(this.animationEndedListener, listener)
   }
+
   /**
    * Updates all listeners that are interested in the event when the animation stops due to reaching the right
    * end of the timeline.

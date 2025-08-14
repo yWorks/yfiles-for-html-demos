@@ -29,12 +29,14 @@
 import { GraphBuilder, Point } from '@yfiles/yfiles'
 import { getDefaultWriterOptions, toJSON } from '@yfiles/demo-utils/json-writer'
 import { deserializeLabelModelParameter } from '@yfiles/demo-utils/label-model-serialization'
+
 /**
  * This file provides functions to read and write a graph to a JSON string.
  * The JSON is expected to conform to the structure outlined by {@link JSONGraph}.
  * {@link readJSON Reading} is done by a properly configured {@link GraphBuilder},
  * {@link writeJSON writing} is backed by the {@link toJSON} function.
  */
+
 /**
  * Reads a graph from the given JSON {@link text} and sets it to the given {@link graphComponent}.
  * The JSON is expected to conform to the structure outlined by {@link JSONGraph}.
@@ -44,6 +46,7 @@ import { deserializeLabelModelParameter } from '@yfiles/demo-utils/label-model-s
 export function readJSON(graphComponent, text) {
   try {
     const data = JSON.parse(text)
+
     graphComponent.graph.clear()
     const graphBuilder = new GraphBuilder(graphComponent.graph)
     const nodesSource = graphBuilder.createNodesSource({
@@ -60,6 +63,7 @@ export function readJSON(graphComponent, text) {
       labelObject.layoutParameter != null
         ? deserializeLabelModelParameter(labelObject.layoutParameter)
         : undefined
+
     const groupNodesSource = graphBuilder.createGroupNodesSource({
       data: data.nodeList.filter((item) => item.isGroup === true),
       id: (item) => item.id,
@@ -74,6 +78,7 @@ export function readJSON(graphComponent, text) {
       labelObject.layoutParameter != null
         ? deserializeLabelModelParameter(labelObject.layoutParameter)
         : undefined
+
     const { edgeCreator } = graphBuilder.createEdgesSource(
       data.edgeList,
       (item) => item.source,
@@ -88,6 +93,7 @@ export function readJSON(graphComponent, text) {
         ? deserializeLabelModelParameter(labelObject.layoutParameter)
         : undefined
     edgeCreator.bendsProvider = (item) => item.bends
+
     edgeCreator.addEventListener('edge-created', (evt) => {
       const dataItem = evt.dataItem
       if (dataItem.sourcePort) {
@@ -97,12 +103,14 @@ export function readJSON(graphComponent, text) {
         evt.graph.setPortLocation(evt.item.targetPort, Point.from(dataItem.targetPort))
       }
     })
+
     graphBuilder.buildGraph()
     void graphComponent.fitGraphBounds()
   } catch (err) {
     alert(`Error parsing JSON. Cause: ${err.message}`)
   }
 }
+
 /**
  * Writes the graph of the given {@link graphComponent} to text.
  */

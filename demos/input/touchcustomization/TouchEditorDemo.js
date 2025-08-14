@@ -66,6 +66,7 @@ import {
   StretchNodeLabelModel,
   Stroke
 } from '@yfiles/yfiles'
+
 import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
 import { NodePortCandidateProvider } from './NodePortCandidateProvider'
 import { EdgeReconnectionPortCandidateProvider } from './EdgeReconnectionPortCandidateProvider'
@@ -81,14 +82,19 @@ import {
 import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
 import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import { PortCandidateRenderer } from './PortCandidateRenderer'
+
 let graphComponent
+
 async function run() {
   License.value = await fetchLicense()
+
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
   graphComponent.graph = createConfiguredGraph()
+
   // initialize the drag and drop panel
   initializeDnDPanel()
+
   // create the input mode
   const geim = createEditorMode()
   graphComponent.inputMode = geim
@@ -104,43 +110,58 @@ async function run() {
   configureSelectionIndication(graphComponent)
   // configure edge reconnection
   configurePortInteraction(graphComponent.graph)
+
   // create the initial graph
   populateGraph(graphComponent.graph)
+
   // enable undo and redo
   graphComponent.graph.foldingView.manager.masterGraph.undoEngineEnabled = true
+
   graphComponent.fitGraphBounds()
 }
+
 /**
  * Creates the default input mode for the {@link GraphComponent},
  * a {@link GraphEditorInputMode} and configures it.
  */
 function createEditorMode() {
   const geim = new GraphEditorInputMode()
+
   geim.contextMenuItems =
     GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL | GraphItemTypes.BEND
+
   // disable direct item creation
   geim.allowCreateNode = false
   geim.allowCreateBend = false
   geim.allowCreateEdge = false
+
   // switch off default edge creation gesture
   geim.createEdgeInputMode.enabled = false
   // switch off marquee selection
   geim.marqueeSelectionInputMode.enabled = false
+
   geim.editLabelInputMode.textEditorInputMode.autoCommitOnFocusLost = true
+
   geim.handleInputMode.beginRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DOWN
   geim.moveSelectedItemsInputMode.beginRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_DOWN
+
   // enable lasso selection
   geim.lassoSelectionInputMode.enabled = true
+
   configureLassoSelection(geim)
+
   // configure drag and drop
   const nodeDropInputMode = geim.nodeDropInputMode
   nodeDropInputMode.enabled = true
   nodeDropInputMode.isGroupNodePredicate = (node) => node.style instanceof GroupNodeStyle
   nodeDropInputMode.showPreview = true
+
   initializeContextMenu(geim)
   addCancelButtonListeners(geim)
+
   return geim
 }
+
 /**
  * Customizes lasso selection start and finish gestures.
  */
@@ -155,15 +176,18 @@ function configureLassoSelection(geim) {
       lastTapTime = new Date()
     }
   })
+
   // configure touch/mouse up as finish gesture for lasso selection
   geim.lassoSelectionInputMode.finishRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_UP
   geim.lassoSelectionInputMode.finishRecognizer = EventRecognizers.MOUSE_LEFT_UP
 }
+
 /**
  * Registers the input mode listeners that show and hide the cancel button.
  */
 function addCancelButtonListeners(geim) {
   const cancelButton = document.getElementById('cancel-button')
+
   const createEdgeButtonListener = () => {
     geim.createEdgeInputMode.cancel()
   }
@@ -180,6 +204,7 @@ function addCancelButtonListeners(geim) {
     cancelButton.className = 'demo-button-invisible'
     cancelButton.removeEventListener('click', createEdgeButtonListener)
   })
+
   const resizeNodeButtonListener = () => {
     geim.handleInputMode.cancel()
   }
@@ -205,6 +230,7 @@ function addCancelButtonListeners(geim) {
         cancelButton.innerHTML = 'Cancel Move'
         break
     }
+
     cancelButton.className = 'demo-button-visible'
     cancelButton.addEventListener('click', resizeNodeButtonListener)
     // register the touchend listener because click is not fired for the secondary pointer
@@ -220,6 +246,7 @@ function addCancelButtonListeners(geim) {
     cancelButton.removeEventListener('click', resizeNodeButtonListener)
     cancelButton.removeEventListener('touchend', resizeNodeButtonListener)
   })
+
   const moveNodeButtonListener = () => {
     geim.moveSelectedItemsInputMode.cancel()
   }
@@ -241,6 +268,7 @@ function addCancelButtonListeners(geim) {
     cancelButton.removeEventListener('touchend', moveNodeButtonListener)
   })
 }
+
 /**
  * Initializes the dial context menu.
  */
@@ -249,6 +277,7 @@ function initializeContextMenu(geim) {
   // In this demo, we add item-specific menu entries for nodes, edges, and the empty canvas
   geim.addEventListener('populate-item-context-menu', (evt) => populateContextMenu(evt))
 }
+
 /**
  * Populates the context menu with items.
  */
@@ -256,8 +285,11 @@ function populateContextMenu(evt) {
   if (evt.handled) {
     return
   }
+
   const item = evt.item
+
   updateSelection(item)
+
   let actions
   if (item instanceof INode) {
     actions = getNodeActions(item)
@@ -272,6 +304,7 @@ function populateContextMenu(evt) {
   } else {
     actions = []
   }
+
   if (actions.length > 0) {
     evt.contextMenu = createDialContextMenu(
       actions,
@@ -281,6 +314,7 @@ function populateContextMenu(evt) {
     )
   }
 }
+
 /**
  * Gets actions for nodes to the given context menu.
  */
@@ -338,6 +372,7 @@ function getNodeActions(_node) {
       disabled: graphComponent.selection.size === 0,
       element: null
     },
+
     {
       callback: (location) => inputMode.pasteAtLocation(location),
       icon: 'resources/paste.svg',
@@ -347,6 +382,7 @@ function getNodeActions(_node) {
     }
   ]
 }
+
 /**
  * Gets actions for edges to the given context menu.
  */
@@ -404,6 +440,7 @@ function getEdgeActions(_edge) {
     }
   ]
 }
+
 /**
  * Gets actions for bends to the given context menu.
  */
@@ -418,6 +455,7 @@ function getBendActions(_bend) {
     }
   ]
 }
+
 /**
  * Gets actions for labels to the given context menu.
  */
@@ -456,6 +494,7 @@ function getLabelActions(_label) {
     }
   ]
 }
+
 /**
  * Get application actions to the given context menu.
  * Application actions are actions that are available when "the context" is not a graph element.
@@ -516,6 +555,7 @@ function getCanvasActions() {
     }
   ]
 }
+
 /**
  * Helper method that updates the selection state when the context menu is opened on a graph item.
  * @param item The item or `null`.
@@ -536,22 +576,26 @@ function updateSelection(item) {
     graphComponent.selection.clear()
   }
 }
+
 /**
  * Installs custom handle visualizations for resize and move handles.
  */
 function initializeCustomHandles(graphComponent) {
   graphComponent.inputMode.handleInputMode.handlesRenderer = new TouchHandlesRenderer()
+
   // use variant 2 of move handle for bends
   graphComponent.graph.decorator.bends.handle.addWrapperFactory((_bend, handle) =>
     handle != null ? new WrappingHandle(handle, HandleType.MOVE, null) : null
   )
 }
+
 /**
  * Installs custom port candidate visualizations for interactive edge creation.
  */
 function initializeCustomPortCandidates(graphComponent) {
   const geim = graphComponent.inputMode
   geim.createEdgeInputMode.portCandidateRenderer = new PortCandidateRenderer()
+
   const graph = graphComponent.graph
   graph.decorator.edges.portHandleProvider.addFactory((edge) => {
     const portRelocationHandleProvider = new PortRelocationHandleProvider(graph, edge)
@@ -559,6 +603,7 @@ function initializeCustomPortCandidates(graphComponent) {
     return portRelocationHandleProvider
   })
 }
+
 /**
  * Customizes the selection visualization.
  */
@@ -566,12 +611,9 @@ function configureSelectionIndication(graphComponent) {
   graphComponent.graph.decorator.nodes.focusRenderer.hide()
   graphComponent.graph.decorator.nodes.highlightRenderer.hide()
   graphComponent.graph.decorator.edges.highlightRenderer.addConstant(
-    new EdgeStyleIndicatorRenderer({
-      edgeStyle: new PolylineEdgeStyle({
-        stroke: '4px #2C4B52'
-      })
-    })
+    new EdgeStyleIndicatorRenderer({ edgeStyle: new PolylineEdgeStyle({ stroke: '4px #2C4B52' }) })
   )
+
   graphComponent.selection.addEventListener('item-added', (evt, selectionSender) => {
     const item = evt.item
     if (item instanceof IEdge) {
@@ -581,6 +623,7 @@ function configureSelectionIndication(graphComponent) {
     }
   })
 }
+
 /**
  * Makes it possible to reconnect edges to other nodes.
  * Also adds port candidates for each side of a node.
@@ -592,6 +635,7 @@ function configurePortInteraction(graph) {
   )
   decorator.nodes.portCandidateProvider.addFactory((node) => new NodePortCandidateProvider(node))
 }
+
 /**
  * Initializes the graph instance and set default styles.
  */
@@ -600,20 +644,20 @@ function createConfiguredGraph() {
   const foldingManager = new FoldingManager()
   const foldingView = foldingManager.createFoldingView()
   const graph = foldingView.graph
+
   graph.nodeDefaults.size = new Size(100, 60)
+
   initDemoStyles(graph)
+
   const fill = '#662b00'
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: new Stroke(fill, 4),
-    targetArrow: new Arrow({
-      fill,
-      type: ArrowType.TRIANGLE,
-      lengthScale: 2,
-      widthScale: 2
-    })
+    targetArrow: new Arrow({ fill, type: ArrowType.TRIANGLE, lengthScale: 2, widthScale: 2 })
   })
+
   return graph
 }
+
 /**
  * Deletes all selected nodes.
  */
@@ -621,6 +665,7 @@ function deleteSelectedNodes() {
   const nodesToRemove = graphComponent.selection.nodes.toArray()
   nodesToRemove.forEach((node) => graphComponent.graph.remove(node))
 }
+
 /**
  * Deletes all selected edges.
  */
@@ -628,6 +673,7 @@ function deleteSelectedEdges() {
   const edgesToRemove = graphComponent.selection.edges.toArray()
   edgesToRemove.forEach((edge) => graphComponent.graph.remove(edge))
 }
+
 /**
  * Deletes all selected labels.
  */
@@ -635,6 +681,7 @@ function deleteSelectedLabels() {
   const labelsToRemove = graphComponent.selection.labels.toArray()
   labelsToRemove.forEach((label) => graphComponent.graph.remove(label))
 }
+
 /**
  * Deletes all selected bends.
  */
@@ -642,6 +689,7 @@ function deleteSelectedBends() {
   const bendsToRemove = graphComponent.selection.bends.toArray()
   bendsToRemove.forEach((bend) => graphComponent.graph.remove(bend))
 }
+
 /**
  * Starts edge creation at the given node.
  */
@@ -653,6 +701,7 @@ function startEdgeCreation(_location, item) {
     await geim.createEdgeInputMode.startEdgeCreation(
       new PortCandidate(owner, FreeNodePortLocationModel.CENTER)
     )
+
     const listener = () => {
       geim.createEdgeInputMode.enabled = false
       geim.createEdgeInputMode.removeEventListener('gesture-finished', listener)
@@ -662,6 +711,7 @@ function startEdgeCreation(_location, item) {
     geim.createEdgeInputMode.addEventListener('gesture-canceled', listener)
   }, 0)
 }
+
 /**
  * Creates a bend at the given location for the given edge.
  */
@@ -682,6 +732,7 @@ function createBend(location, item) {
   graphComponent.selection.clear()
   graphComponent.selection.add(bend)
 }
+
 /**
  * Initializes the drag and drop panel.
  */
@@ -691,6 +742,7 @@ function initializeDnDPanel() {
   dndPanel.maxItemWidth = 160
   dndPanel.populatePanel(createDnDPanelNodes())
 }
+
 /**
  * Initializes the snap panning selection box.
  */
@@ -714,6 +766,7 @@ function initializePanSnapping(geim) {
     }
   })
 }
+
 /**
  * Configures the starting gestures for the minor input modes of the given GraphEditorInputMode
  * so that they either start with a long press (holding the finger for a short amount of time)
@@ -733,6 +786,7 @@ function configureTouchStartGestures(geim, useLongPress) {
   geim.marqueeSelectionInputMode.beginRecognizerTouch = recognizerTouch
   geim.moveUnselectedItemsInputMode.beginRecognizerTouch = recognizerTouch
 }
+
 /**
  * Initializes the snap panning selection box.
  */
@@ -746,6 +800,7 @@ function initializePanStart(geim) {
     configurePanStartGesture(geim, item.value)
   })
 }
+
 /**
  * Configures the panning behavior and edit gestures of the demo.
  */
@@ -764,20 +819,23 @@ function configurePanStartGesture(inputMode, panningMode) {
       configureTouchStartGestures(inputMode, false)
   }
 }
+
 /**
  * Creates the nodes that provide the visualizations for the drag and drop panel.
  */
 function createDnDPanelNodes() {
   // Create a new temporary graph for the nodes
   const nodeContainer = new Graph()
+
   // Create a group node
   const groupNodeStyle = createDemoGroupStyle({ foldingEnabled: true })
   groupNodeStyle.hitTransparentContentArea = false
+
   // A label model with insets for the expand/collapse button
   const groupLabelModel = new StretchNodeLabelModel({ padding: 4 })
-  const groupLabelStyle = new LabelStyle({
-    textFill: Color.WHITE
-  })
+
+  const groupLabelStyle = new LabelStyle({ textFill: Color.WHITE })
+
   const node = nodeContainer.createNode(new Rect(0, 0, 120, 120), groupNodeStyle)
   nodeContainer.addLabel(
     node,
@@ -785,8 +843,10 @@ function createDnDPanelNodes() {
     groupLabelModel.createParameter('top'),
     groupLabelStyle
   )
+
   // create a node with standard demo node styling
   nodeContainer.createNode(new Rect(0, 0, 100, 60), createDemoNodeStyle())
+
   // create a shape style node
   const shapeNodeStyle = new ShapeNodeStyle({
     shape: ShapeNodeShape.ROUND_RECTANGLE,
@@ -794,28 +854,34 @@ function createDnDPanelNodes() {
     fill: colorSets['demo-palette-14'].fill
   })
   nodeContainer.createNode(new Rect(0, 0, 100, 60), shapeNodeStyle)
+
   // create a bevel style node
   nodeContainer.createNode(
     new Rect(0, 0, 100, 60),
     new ArrowNodeStyle({ fill: colorSets['demo-palette-15'].fill })
   )
+
   // create a node that has a rectangle with cut corners as style
   const rectangleNodeStyle = new RectangleNodeStyle({
     fill: colorSets['demo-palette-11'].fill,
     cornerStyle: RectangleCornerStyle.CUT
   })
   nodeContainer.createNode(new Rect(0, 0, 100, 60), rectangleNodeStyle)
+
   return nodeContainer.nodes.toArray()
 }
+
 /**
  * Creates a sample graph.
  */
 function populateGraph(graph) {
   const node1 = graph.createNodeAt(new Point(30, 30))
   const node2 = graph.createNodeAt(new Point(30, 250))
+
   graph.createEdge(node1, node2)
   const e = graph.createEdge(node1, node2)
   graph.addBend(e, new Point(200, 30))
   graph.addBend(e, new Point(200, 250))
 }
+
 run().then(finishLoading)

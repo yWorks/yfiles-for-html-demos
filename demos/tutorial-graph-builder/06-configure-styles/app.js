@@ -36,21 +36,29 @@ import {
   configureStylesWithDefaults,
   configureStylesWithProvider
 } from './configure-styles'
+
 License.value = await fetchLicense()
+
 const graphComponent = new GraphComponent('#graphComponent')
 const graph = graphComponent.graph
-graph.nodeDefaults.style = new ShapeNodeStyle({
-  shape: 'triangle'
-})
+graph.nodeDefaults.style = new ShapeNodeStyle({ shape: 'triangle' })
+
 const data = await getData()
+
 const graphBuilder = new GraphBuilder(graph)
+
 const nodesSource = graphBuilder.createNodesSource(data.nodesSource, 'id')
 nodesSource.nodeCreator.createLabelBinding('name')
+
 configureStylesWithDefaults(nodesSource)
 configureStylesWithBinding(nodesSource)
 configureStylesWithProvider(nodesSource)
+
 const edgesSource = graphBuilder.createEdgesSource(data.edgesSource, 'sourceId', 'targetId', 'id')
 configureEdgeStylesWithProvider(edgesSource)
+
 graphBuilder.buildGraph()
+
 void runLayout(graphComponent)
+
 finishLoading()

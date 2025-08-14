@@ -35,6 +35,7 @@ import {
   Matrix,
   Point
 } from '@yfiles/yfiles'
+
 /**
  * Crops adjacent edges at the nodes rotated bounds for internal ports.
  */
@@ -48,6 +49,7 @@ export class AdjustOutlinePortInsidenessEdgePathCropper extends EdgePathCropper 
     }
     return super.isInside(location, node, nodeShapeGeometry, edge)
   }
+
   /**
    * Returns the intersection point of the segment between the outer and inner point and the node's rotated shape.
    * If there is no intersection point, the result is null.
@@ -63,6 +65,7 @@ export class AdjustOutlinePortInsidenessEdgePathCropper extends EdgePathCropper 
     return super.getIntersection(node, nodeShapeGeometry, edge, inner, outer)
   }
 }
+
 /**
  * Returns a slightly enlarged outline of the shape to ensure that ports ports that lie exactly on the shape's outline
  * are always considered inside.

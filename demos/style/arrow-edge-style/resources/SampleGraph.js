@@ -28,332 +28,54 @@
  ***************************************************************************/
 export const SampleGraph = {
   nodeList: [
-    {
-      id: 0,
-      layout: {
-        x: 315,
-        y: 450,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 1,
-      layout: {
-        x: 315,
-        y: 315,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 2,
-      layout: {
-        x: 360,
-        y: 315,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 3,
-      layout: {
-        x: 405,
-        y: 315,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 4,
-      layout: {
-        x: 450,
-        y: 315,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 5,
-      layout: {
-        x: 315,
-        y: 405,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 6,
-      layout: {
-        x: 360,
-        y: 405,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 7,
-      layout: {
-        x: 525,
-        y: 405,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 8,
-      layout: {
-        x: 525,
-        y: 450,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 9,
-      layout: {
-        x: 480,
-        y: 450,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 10,
-      layout: {
-        x: 570,
-        y: 450,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 11,
-      layout: {
-        x: 570,
-        y: 405,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 12,
-      layout: {
-        x: 360,
-        y: 360,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 13,
-      layout: {
-        x: 615,
-        y: 450,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 14,
-      layout: {
-        x: 615,
-        y: 405,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 15,
-      layout: {
-        x: 660,
-        y: 450,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 16,
-      layout: {
-        x: 270,
-        y: 405,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 17,
-      layout: {
-        x: 270,
-        y: 360,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 18,
-      layout: {
-        x: 225,
-        y: 270,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 19,
-      layout: {
-        x: 480,
-        y: 270,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 20,
-      layout: {
-        x: 705,
-        y: 270,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 21,
-      layout: {
-        x: 225,
-        y: 495,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 22,
-      layout: {
-        x: 480,
-        y: 495,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 23,
-      layout: {
-        x: 705,
-        y: 495,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 24,
-      layout: {
-        x: 795,
-        y: 382.5,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 25,
-      layout: {
-        x: 135,
-        y: 382.5,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 26,
-      layout: {
-        x: 615,
-        y: 315,
-        width: 30,
-        height: 30
-      }
-    },
-    {
-      id: 27,
-      layout: {
-        x: 705,
-        y: 405,
-        width: 30,
-        height: 30
-      }
-    }
+    { id: 0, layout: { x: 315, y: 450, width: 30, height: 30 } },
+    { id: 1, layout: { x: 315, y: 315, width: 30, height: 30 } },
+    { id: 2, layout: { x: 360, y: 315, width: 30, height: 30 } },
+    { id: 3, layout: { x: 405, y: 315, width: 30, height: 30 } },
+    { id: 4, layout: { x: 450, y: 315, width: 30, height: 30 } },
+    { id: 5, layout: { x: 315, y: 405, width: 30, height: 30 } },
+    { id: 6, layout: { x: 360, y: 405, width: 30, height: 30 } },
+    { id: 7, layout: { x: 525, y: 405, width: 30, height: 30 } },
+    { id: 8, layout: { x: 525, y: 450, width: 30, height: 30 } },
+    { id: 9, layout: { x: 480, y: 450, width: 30, height: 30 } },
+    { id: 10, layout: { x: 570, y: 450, width: 30, height: 30 } },
+    { id: 11, layout: { x: 570, y: 405, width: 30, height: 30 } },
+    { id: 12, layout: { x: 360, y: 360, width: 30, height: 30 } },
+    { id: 13, layout: { x: 615, y: 450, width: 30, height: 30 } },
+    { id: 14, layout: { x: 615, y: 405, width: 30, height: 30 } },
+    { id: 15, layout: { x: 660, y: 450, width: 30, height: 30 } },
+    { id: 16, layout: { x: 270, y: 405, width: 30, height: 30 } },
+    { id: 17, layout: { x: 270, y: 360, width: 30, height: 30 } },
+    { id: 18, layout: { x: 225, y: 270, width: 30, height: 30 } },
+    { id: 19, layout: { x: 480, y: 270, width: 30, height: 30 } },
+    { id: 20, layout: { x: 705, y: 270, width: 30, height: 30 } },
+    { id: 21, layout: { x: 225, y: 495, width: 30, height: 30 } },
+    { id: 22, layout: { x: 480, y: 495, width: 30, height: 30 } },
+    { id: 23, layout: { x: 705, y: 495, width: 30, height: 30 } },
+    { id: 24, layout: { x: 795, y: 382.5, width: 30, height: 30 } },
+    { id: 25, layout: { x: 135, y: 382.5, width: 30, height: 30 } },
+    { id: 26, layout: { x: 615, y: 315, width: 30, height: 30 } },
+    { id: 27, layout: { x: 705, y: 405, width: 30, height: 30 } }
   ],
   edgeList: [
-    {
-      source: 8,
-      target: 9
-    },
-    {
-      source: 8,
-      target: 10
-    },
-    {
-      source: 10,
-      target: 13
-    },
-    {
-      source: 13,
-      target: 15
-    },
-    {
-      source: 13,
-      target: 14
-    },
-    {
-      source: 7,
-      target: 8
-    },
-    {
-      source: 1,
-      target: 5
-    },
-    {
-      source: 5,
-      target: 6
-    },
-    {
-      source: 6,
-      target: 7
-    },
-    {
-      source: 7,
-      target: 11
-    },
-    {
-      source: 6,
-      target: 12
-    },
-    {
-      source: 9,
-      target: 0
-    },
-    {
-      source: 5,
-      target: 0
-    },
-    {
-      source: 2,
-      target: 1
-    },
-    {
-      source: 2,
-      target: 3
-    },
-    {
-      source: 3,
-      target: 4
-    },
-    {
-      source: 5,
-      target: 16
-    },
-    {
-      source: 16,
-      target: 17
-    },
+    { source: 8, target: 9 },
+    { source: 8, target: 10 },
+    { source: 10, target: 13 },
+    { source: 13, target: 15 },
+    { source: 13, target: 14 },
+    { source: 7, target: 8 },
+    { source: 1, target: 5 },
+    { source: 5, target: 6 },
+    { source: 6, target: 7 },
+    { source: 7, target: 11 },
+    { source: 6, target: 12 },
+    { source: 9, target: 0 },
+    { source: 5, target: 0 },
+    { source: 2, target: 1 },
+    { source: 2, target: 3 },
+    { source: 3, target: 4 },
+    { source: 5, target: 16 },
+    { source: 16, target: 17 },
     {
       source: 19,
       target: 18,
@@ -379,13 +101,7 @@ export const SampleGraph = {
     {
       source: 22,
       target: 21,
-      style: {
-        shape: 'trapezoid',
-        thickness: 20,
-        angle: -40,
-        shaftRatio: 1.0,
-        color: 'demo-red'
-      }
+      style: { shape: 'trapezoid', thickness: 20, angle: -40, shaftRatio: 1.0, color: 'demo-red' }
     },
     {
       source: 21,
@@ -442,13 +158,7 @@ export const SampleGraph = {
         color: 'demo-purple'
       }
     },
-    {
-      source: 14,
-      target: 26
-    },
-    {
-      source: 14,
-      target: 27
-    }
+    { source: 14, target: 26 },
+    { source: 14, target: 27 }
   ]
 }
