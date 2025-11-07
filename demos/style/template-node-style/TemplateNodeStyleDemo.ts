@@ -33,7 +33,7 @@ import {
   GraphComponent,
   GraphMLIOHandler,
   GraphViewerInputMode,
-  IGraph,
+  type IGraph,
   License,
   PolylineEdgeStyle,
   Rect,
@@ -44,8 +44,8 @@ import { StringTemplateNodeStyle } from '@yfiles/demo-utils/template-styles/Stri
 
 import SampleData from './resources/SampleData'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 import { registerTemplateStyleSerialization } from '@yfiles/demo-utils/template-styles/MarkupExtensions'
 import {
@@ -54,7 +54,7 @@ import {
   StateEffect,
   type StateEffectType,
   StateField
-} from '@yfiles/demo-resources/codemirror-editor'
+} from '@yfiles/demo-app/codemirror-editor'
 
 let templateEditor: EditorView
 let setTemplateEditorEditable: StateEffectType<boolean>
@@ -63,7 +63,7 @@ let tagEditor: EditorView
 let setTagEditorEditable: StateEffectType<boolean>
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
@@ -86,7 +86,7 @@ function initializeEditors(graphComponent: GraphComponent): void {
   const templateEditorEditable = StateField.define<boolean>({
     create: () => true,
     update: (value, transaction) => {
-      for (let e of transaction.effects) {
+      for (const e of transaction.effects) {
         if (e.is(setTemplateEditorEditable)) {
           value = e.value
         }
@@ -104,7 +104,7 @@ function initializeEditors(graphComponent: GraphComponent): void {
   const tagEditorEditable = StateField.define<boolean>({
     create: () => true,
     update: (value, transaction) => {
-      for (let e of transaction.effects) {
+      for (const e of transaction.effects) {
         if (e.is(setTagEditorEditable)) {
           value = e.value
         }

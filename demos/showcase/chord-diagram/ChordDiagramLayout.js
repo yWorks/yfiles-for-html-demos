@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  EdgeDataKey,
-  IGraph,
-  IMapper,
-  LayoutEdge,
-  LayoutGraph,
-  LayoutStageBase,
-  Point
-} from '@yfiles/yfiles'
+import { EdgeDataKey, IGraph, LayoutStageBase, Point } from '@yfiles/yfiles'
 
 /**
  * Arranges nodes in a circle.

@@ -28,6 +28,7 @@
  ***************************************************************************/
 export class PropertiesPanel {
   element
+
   /**
    * Creates a new properties panel that shows the individual properties.
    * @param element The DOM element that will be filled with the properties.

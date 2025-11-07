@@ -87,50 +87,52 @@ import {
   isRegularEdge,
   isStartEvent,
   isUndefined,
-  MultiPageEdgeType,
+  type MultiPageEdgeType,
   NODE_TYPE_DATA_KEY
 } from './flowchart-elements'
 
-export enum BranchDirection {
+export const BranchDirection = {
   /**
    * An undefined direction for edges.
    */
-  Undefined = 0,
+  Undefined: 0,
 
   /**
    * A direction in flow for edges.
    */
-  WithTheFlow = 1,
+  WithTheFlow: 1,
 
   /**
    * A direction against the flow for edges.
    */
-  AgainstTheFlow = 2,
+  AgainstTheFlow: 2,
 
   /**
    * A direction left in flow for edges.
    */
-  LeftInFlow = 4,
+  LeftInFlow: 4,
 
   /**
    * A direction right in flow for edges.
    */
-  RightInFlow = 8,
+  RightInFlow: 8,
 
   /**
    * A straight direction for edges.
    */
-  Straight = 3, // WithTheFlow | AgainstTheFlow
+  Straight: 3, // WithTheFlow | AgainstTheFlow
 
   /**
    * A direction left or right in flow for edges.
    */
-  Flatwise = 12 // LeftInFlow | RightInFlow
+  Flatwise: 12 // LeftInFlow | RightInFlow
 }
+export type BranchDirection = (typeof BranchDirection)[keyof typeof BranchDirection]
 
 /**
- * An automatic layout algorithm for flowchart diagrams. The different type of elements has to be marked with the
- * data mapper keys {@link EDGE_TYPE_DATA_KEY} and {@link NODE_TYPE_DATA_KEY}.
+ * An automatic layout algorithm for flowchart diagrams.
+ * The various types of elements have to be marked with the data mapper keys
+ * {@link EDGE_TYPE_DATA_KEY} and {@link NODE_TYPE_DATA_KEY}.
  */
 export class FlowchartLayout extends BaseClass(ILayoutAlgorithm) {
   /**
@@ -419,10 +421,8 @@ function applyLabelPlacement(graph: LayoutGraph): void {
 
 const DUMMY_NODE_SIZE = 2.0
 
-enum NodeLayerType {
-  Preceding = 1,
-  Succeeding = 2
-}
+const NodeLayerType = { Preceding: 1, Succeeding: 2 }
+type NodeLayerType = (typeof NodeLayerType)[keyof typeof NodeLayerType]
 
 /**
  * Transforms the graph for the flowchart layout algorithm and creates related port candidates and edge groupings.
@@ -774,10 +774,13 @@ function edgeIndexComparator(o1: LayoutEdge, o2: LayoutEdge): 0 | 1 | -1 {
  * Comparator, which uses the layer index of the edges' source nodes as an order.
  */
 class LayerIndexComparator {
-  constructor(
-    private enclosing: FlowchartTransformerStage,
-    private hasLayerIds: boolean
-  ) {}
+  private enclosing: FlowchartTransformerStage
+  private readonly hasLayerIds: boolean
+
+  constructor(enclosing: FlowchartTransformerStage, hasLayerIds: boolean) {
+    this.hasLayerIds = hasLayerIds
+    this.enclosing = enclosing
+  }
 
   compare(o1: LayoutEdge, o2: LayoutEdge): 0 | 1 | -1 {
     const n1 = o1.source
@@ -793,7 +796,11 @@ class LayerIndexComparator {
  * Creates the grouping dummy structure.
  */
 class InEdgeGroupingConfigurator {
-  constructor(public enclosing: FlowchartTransformerStage) {}
+  enclosing: FlowchartTransformerStage
+
+  constructor(enclosing: FlowchartTransformerStage) {
+    this.enclosing = enclosing
+  }
 
   /**
    * Creates the complete grouping dummy structure.
@@ -1295,16 +1302,9 @@ function getHierarchicalCoreLayout(stage: ILayoutStage): HierarchicalLayout | nu
   return null
 }
 
-enum LaneAlignment {
-  Left = 0,
-  Right = 1
-}
+const LaneAlignment = { Left: 0, Right: 1 }
 
-enum Priority {
-  Low = 1,
-  Basic = 3,
-  High = 5000
-}
+const Priority = { Low: 1, Basic: 3, High: 5000 }
 
 /**
  * ImplicitNumericConversion, ObjectEquality
@@ -1701,11 +1701,12 @@ class FlowchartPortCandidateSelector extends PortCandidateSelector {
  */
 class PositionEdgeComparator {
   private sameLayerNodePositionComparer: SameLayerNodePositionComparer
+  private readonly source: boolean
+  private layoutContext: HierarchicalLayoutContext
 
-  constructor(
-    private source: boolean,
-    private layoutContext: HierarchicalLayoutContext
-  ) {
+  constructor(source: boolean, layoutContext: HierarchicalLayoutContext) {
+    this.layoutContext = layoutContext
+    this.source = source
     this.sameLayerNodePositionComparer = new SameLayerNodePositionComparer(layoutContext)
   }
 
@@ -1763,7 +1764,10 @@ function singleSidePortCandidateComparator(
  * Compares nodes in the same layer according to their positions.
  */
 class SameLayerNodePositionComparer {
-  constructor(private layoutContext: HierarchicalLayoutContext) {
+  private layoutContext: HierarchicalLayoutContext
+
+  constructor(layoutContext: HierarchicalLayoutContext) {
+    this.layoutContext = layoutContext
     this.layoutContext = layoutContext
   }
 
@@ -2204,7 +2208,7 @@ class FlowchartLayerer extends BaseClass(ILayerAssigner) {
       let dummyEdge1: LayoutEdge
       let dummyNode: LayoutNode
       switch (getType(graph, edge)) {
-        case MultiPageEdgeType.MessageFlow: {
+        case 'MessageFlow': {
           dummyNode = graph.createNode()
           dummies.addLast(dummyNode)
           dummyEdge1 = graph.createEdge(edge.source, dummyNode)
@@ -2216,7 +2220,7 @@ class FlowchartLayerer extends BaseClass(ILayerAssigner) {
           hider.hide(edge)
           break
         }
-        case MultiPageEdgeType.Association: {
+        case 'Association': {
           dummyNode = graph.createNode()
           dummies.addLast(dummyNode)
           dummyEdge1 = graph.createEdge(edge.source, dummyNode)
@@ -2289,7 +2293,7 @@ function reverseCycles(graph: LayoutGraph): LayoutEdge[] {
   // we only consider edges of type sequence flow
   const hider = new LayoutGraphHider(graph)
   graph.edges.forEach((e) => {
-    if (getType(graph, e) !== MultiPageEdgeType.SequenceFlow) {
+    if (getType(graph, e) !== 'SequenceFlow') {
       hider.hide(e)
     }
   })
@@ -2339,7 +2343,7 @@ function reverseCycles(graph: LayoutGraph): LayoutEdge[] {
 /**
  * Returns the type of the given edge.
  */
-function getType(graph: LayoutGraph, edge: LayoutEdge): number {
+function getType(graph: LayoutGraph, edge: LayoutEdge): MultiPageEdgeType {
   if (!isUndefined(graph, edge)) {
     return getEdgeType(graph, edge)
   }
@@ -2356,8 +2360,8 @@ function getType(graph: LayoutGraph, edge: LayoutEdge): number {
     }
   }
   return isAnnotation(graph, edge.source) || isAnnotation(graph, edge.target)
-    ? MultiPageEdgeType.Association
-    : MultiPageEdgeType.SequenceFlow
+    ? 'Association'
+    : 'SequenceFlow'
 }
 
 /**
@@ -2762,7 +2766,11 @@ class FlowchartAlignmentCalculator {
  * Calculator for node alignments.
  */
 class NodeAlignmentCalculator {
-  constructor(private layoutOrientation: LayoutOrientation) {}
+  private readonly layoutOrientation: LayoutOrientation
+
+  constructor(layoutOrientation: LayoutOrientation) {
+    this.layoutOrientation = layoutOrientation
+  }
 
   /**
    * Checks whether the current layout orientation is horizontal (i.e. left-to-right)
@@ -2824,9 +2832,6 @@ class NodeAlignmentCalculator {
     edgePriority: Map<LayoutEdge, number>,
     node2AlignWith: IMapper<LayoutNode, LayoutNode>
   ): void {
-    let nRep: LayoutNode
-    let sRep: LayoutNode
-    let tRep: LayoutNode
     const node2LaneAlignment = this.createLaneAlignmentMap(graph, layoutContext)
     const edgeMinLength = new Mapper<LayoutEdge, number>()
     const edgeWeight = new Mapper<LayoutEdge, number>()
@@ -2834,28 +2839,33 @@ class NodeAlignmentCalculator {
     const groupNode2BeginRep = new Map<LayoutNode, LayoutNode>()
     const groupNode2EndRep = new Map<LayoutNode, LayoutNode>()
     const network = new LayoutGraph()
+
     // create network nodes
-    graph.nodes.forEach((node) => {
-      const data = layoutContext.getNodeContext(node)
-      if (data !== null && data.type === HierarchicalLayoutNodeType.GROUP_BEGIN) {
-        // all groups begin dummies of the same group node are mapped to the same network node
-        nRep = groupNode2BeginRep.get(data.groupNode!)!
-        if (nRep === null) {
+    graph.nodes
+      .filter((node) => !graph.isGroupNode(node))
+      .forEach((node) => {
+        let nRep: LayoutNode | undefined
+        const data = layoutContext.getNodeContext(node)
+        if (data !== null && data.type === HierarchicalLayoutNodeType.GROUP_BEGIN) {
+          // all groups begin dummies of the same group node are mapped to the same network node
+          nRep = groupNode2BeginRep.get(data.groupNode!)
+          if (!nRep) {
+            nRep = network.createNode()
+            groupNode2BeginRep.set(data.groupNode!, nRep)
+          }
+        } else if (data !== null && data.type === HierarchicalLayoutNodeType.GROUP_END) {
+          // all group end dummies of the same group node are mapped to the same network node
+          nRep = groupNode2EndRep.get(data.groupNode!)
+          if (!nRep) {
+            nRep = network.createNode()
+            groupNode2EndRep.set(data.groupNode!, nRep)
+          }
+        } else {
           nRep = network.createNode()
-          groupNode2BeginRep.set(data.groupNode!, nRep)
         }
-      } else if (data !== null && data.type === HierarchicalLayoutNodeType.GROUP_END) {
-        // all group end dummies of the same group node are mapped to the same network node
-        nRep = groupNode2EndRep.get(data.groupNode!)!
-        if (nRep === null) {
-          nRep = network.createNode()
-          groupNode2EndRep.set(data.groupNode!, nRep)
-        }
-      } else {
-        nRep = network.createNode()
-      }
-      node2NetworkRep.set(node, nRep)
-    })
+        node2NetworkRep.set(node, nRep)
+      })
+
     // consider edges
     const nonAlignableEdges: LayoutEdge[] = []
     graph.edges.forEach((e) => {
@@ -2871,8 +2881,9 @@ class NodeAlignmentCalculator {
       }
       const absNode = network.createNode()
       const priority = edgePriority.get(e)!
-      sRep = node2NetworkRep.get(e.source)!
-      tRep = node2NetworkRep.get(e.target)!
+      const sRep = node2NetworkRep.get(e.source)
+      const tRep = node2NetworkRep.get(e.target)
+      if (!sRep || !tRep) return
       const sConnector = network.createEdge(sRep, absNode)
       edgeMinLength.set(sConnector, 0)
       edgeWeight.set(sConnector, priority)
@@ -2887,8 +2898,9 @@ class NodeAlignmentCalculator {
         !e.selfLoop &&
         (!isGroupNodeBorder(e.source, layoutContext) || !isGroupNodeBorder(e.target, layoutContext))
       ) {
-        sRep = node2NetworkRep.get(e.source)!
-        tRep = node2NetworkRep.get(e.target)!
+        const sRep = node2NetworkRep.get(e.source)
+        const tRep = node2NetworkRep.get(e.target)
+        if (!sRep || !tRep) return
         const connector =
           layoutContext.getNodeContext(e.source)!.position <
           layoutContext.getNodeContext(e.target)!.position
@@ -2922,7 +2934,8 @@ class NodeAlignmentCalculator {
     for (let i = 0; i < nodes.length; i++) {
       const n = nodes[i]
       if (last !== null && areInSameLayer(last, n, layoutContext)) {
-        nRep = node2NetworkRep.get(n)!
+        const nRep = node2NetworkRep.get(n)
+        if (!nRep) continue
         const lastRep = node2NetworkRep.get(last)!
         if (network.getEdgesBetween(lastRep, nRep).size === 0) {
           const connector = network.createEdge(lastRep, nRep)
@@ -2942,8 +2955,9 @@ class NodeAlignmentCalculator {
       if (hasAlignableInEdge) {
         return
       }
-      sRep = node2NetworkRep.get(e.source)!
-      tRep = node2NetworkRep.get(e.target)!
+      const sRep = node2NetworkRep.get(e.source)
+      const tRep = node2NetworkRep.get(e.target)
+      if (!sRep || !tRep) return
       const edgeData = layoutContext.getEdgeContext(e)!
       let connector: LayoutEdge
       if (hasLeftPortCandidate(edgeData, true) || hasRightPortCandidate(edgeData, false)) {
@@ -2980,26 +2994,29 @@ class NodeAlignmentCalculator {
     // connect nodes to global source/sink
     const globalSource = network.createNode()
     const globalSink = network.createNode()
-    graph.nodes.forEach((n) => {
-      nRep = node2NetworkRep.get(n)!
-      const nLaneAlignment = node2LaneAlignment.get(n)
-      if (network.getEdgesBetween(nRep, globalSink).size === 0) {
-        const globalSinkConnector = network.createEdge(nRep, globalSink)
-        edgeWeight.set(
-          globalSinkConnector,
-          nLaneAlignment === LaneAlignment.Right ? Priority.Low : 0
-        )
-        edgeMinLength.set(globalSinkConnector, 0)
-      }
-      if (network.getEdgesBetween(globalSource, nRep).size === 0) {
-        const globalSourceConnector = network.createEdge(globalSource, nRep)
-        edgeWeight.set(
-          globalSourceConnector,
-          nLaneAlignment === LaneAlignment.Left ? Priority.Low : 0
-        )
-        edgeMinLength.set(globalSourceConnector, 0)
-      }
-    })
+    graph.nodes
+      .filter((node) => !graph.isGroupNode(node))
+      .forEach((n) => {
+        const nRep = node2NetworkRep.get(n)
+        if (!nRep) return
+        const nLaneAlignment = node2LaneAlignment.get(n)
+        if (network.getEdgesBetween(nRep, globalSink).size === 0) {
+          const globalSinkConnector = network.createEdge(nRep, globalSink)
+          edgeWeight.set(
+            globalSinkConnector,
+            nLaneAlignment === LaneAlignment.Right ? Priority.Low : 0
+          )
+          edgeMinLength.set(globalSinkConnector, 0)
+        }
+        if (network.getEdgesBetween(globalSource, nRep).size === 0) {
+          const globalSourceConnector = network.createEdge(globalSource, nRep)
+          edgeWeight.set(
+            globalSourceConnector,
+            nLaneAlignment === LaneAlignment.Left ? Priority.Low : 0
+          )
+          edgeMinLength.set(globalSourceConnector, 0)
+        }
+      })
     // apply simplex to each connected component of the network
     const networkNode2AlignmentLayer = new Mapper<LayoutNode, number>()
     LayoutGraphAlgorithms.simplexRankAssignment(
@@ -3011,10 +3028,13 @@ class NodeAlignmentCalculator {
     // transfer results to original nodes
     const node2AlignmentLayer = new Map<LayoutNode, number>()
 
-    graph.nodes.forEach((n) => {
-      nRep = node2NetworkRep.get(n)!
-      node2AlignmentLayer.set(n, networkNode2AlignmentLayer.get(nRep)!)
-    })
+    graph.nodes
+      .filter((node) => !graph.isGroupNode(node))
+      .forEach((n) => {
+        const nRep = node2NetworkRep.get(n)
+        if (!nRep) return
+        node2AlignmentLayer.set(n, networkNode2AlignmentLayer.get(nRep)!)
+      })
     // we do not want to align bend nodes with common nodes except if the (chain of) dummy nodes can be aligned with
     // the corresponding common node
     const seenBendMap = new Map<LayoutNode, boolean>()

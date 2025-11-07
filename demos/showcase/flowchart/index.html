@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Flowchart Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
     <link rel="stylesheet" href="./option-panel/option-panel.css" />
 
     <style>
@@ -75,13 +75,9 @@
       <button
         id="open-file-button"
         title="Open a GraphML file"
-        class="demo-icon-yIconOpen labeled"
+        class="demo-icon-yIconOpen"
       ></button>
-      <button
-        id="save-button"
-        title="Save a GraphML file"
-        class="demo-icon-yIconSave labeled"
-      ></button>
+      <button id="save-button" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
 
       <span class="demo-separator"></span>
 
@@ -106,13 +102,13 @@
         <h1>Flowchart Demo</h1>
 
         This demo provides a number of
-        <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" target="_blank">INodeStyle</a>
+        <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" class="api" target="_blank">INodeStyle</a>
         s which are shaped as common flowchart symbols. To use those different styles, drag them
         from the palette to the main graph component.
 
         <h2>Flowchart Layout</h2>
         There is an adjusted
-        <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">HierarchicalLayout</a>
+        <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a>
         which considers some flowchart specialities.
         <ul>
           <li>
@@ -151,60 +147,37 @@
 
           <h2>Layout Options</h2>
           <div class="demo-properties__settings">
-            <div class="settings-grid">
-              <label for="positive-branch-direction" class="settings-label-row1">
-                'Yes'-Branch
-              </label>
-              <select
-                class="settings-editor-row1"
-                id="positive-branch-direction"
-                title="Choose a preferred direction for edges with 'Yes'-Labels"
-              >
-                <option value="1">Same As Flow</option>
-                <option value="12">Flatwise</option>
-                <option value="4">Left In Flow</option>
-                <option value="8">Right In Flow</option>
-                <option selected="" value="0">Undefined</option>
-              </select>
-              <label for="negative-branch-direction" class="settings-label-row2">'No'-Branch</label>
-              <select
-                class="settings-editor-row2"
-                id="negative-branch-direction"
-                title="Choose a preferred direction for edges with 'No'-Labels"
-              >
-                <option value="1">Same As Flow</option>
-                <option value="12">Flatwise</option>
-                <option value="4">Left In Flow</option>
-                <option value="8">Right In Flow</option>
-                <option selected="" value="0">Undefined</option>
-              </select>
-              <label for="in-edge-grouping" class="settings-label-row3">In-Edge Grouping</label>
-              <select
-                class="settings-editor-row3"
-                id="in-edge-grouping"
-                title="Choose in which way edges are grouped"
-              >
-                <option value="none">None</option>
-                <option value="all">All</option>
-                <option selected="" value="optimized">Optimized</option>
-              </select>
-              <label for="allow-flatwise-edges" class="settings-label-row4">
-                Allow Flatwise Edges
-              </label>
-              <input
-                class="settings-editor-row4"
-                type="checkbox"
-                id="allow-flatwise-edges"
-                checked=""
-              />
-              <button
-                id="layout-button"
-                title="Run a Layout Algorithm"
-                class="settings-editor-row5 flat-button"
-              >
-                Layout
-              </button>
-            </div>
+            <label for="positive-branch-direction"> 'Yes'-Branch </label>
+            <select
+              id="positive-branch-direction"
+              title="Choose a preferred direction for edges with 'Yes'-Labels"
+            >
+              <option value="1">Same As Flow</option>
+              <option value="12">Flatwise</option>
+              <option value="4">Left In Flow</option>
+              <option value="8">Right In Flow</option>
+              <option selected="" value="0">Undefined</option>
+            </select>
+            <label for="negative-branch-direction">'No'-Branch</label>
+            <select
+              id="negative-branch-direction"
+              title="Choose a preferred direction for edges with 'No'-Labels"
+            >
+              <option value="1">Same As Flow</option>
+              <option value="12">Flatwise</option>
+              <option value="4">Left In Flow</option>
+              <option value="8">Right In Flow</option>
+              <option selected="" value="0">Undefined</option>
+            </select>
+            <label for="in-edge-grouping">In-Edge Grouping</label>
+            <select id="in-edge-grouping" title="Choose in which way edges are grouped">
+              <option value="none">None</option>
+              <option value="all">All</option>
+              <option selected="" value="optimized">Optimized</option>
+            </select>
+            <label for="allow-flatwise-edges"> Allow Flatwise Edges </label>
+            <input type="checkbox" id="allow-flatwise-edges" checked="" />
+            <button id="layout-button" title="Run a Layout Algorithm">Layout</button>
           </div>
         </div>
       </aside>

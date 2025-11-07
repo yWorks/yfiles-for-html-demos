@@ -34,4 +34,4 @@ As an example, the demo uses an implementation of the [DropInputMode](https://do
 - [Drag and Drop Demo](../../input/draganddrop/)
 - [Graph Drag and Drop Demo](../../input/graph-drag-and-drop/)
 - [Drag From Component Demo](../../input/drag-from-component/)
-- application-features-drag-and-drop
+- [Component Drag and Drop Demo](../../input/componentdraganddrop/)

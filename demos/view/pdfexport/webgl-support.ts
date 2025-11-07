@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { type ColorSetName, colorSets } from '@yfiles/demo-resources/demo-styles'
+import { type ColorSetName, colorSets } from '@yfiles/demo-app/demo-styles'
 import {
   FocusIndicatorManager,
   type GraphComponent,

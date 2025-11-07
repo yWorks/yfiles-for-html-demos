@@ -32,8 +32,6 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
-  IGraph,
-  INode,
   License,
   Point,
   Rect
@@ -42,13 +40,13 @@ import {
 import { createNewRandomUserData } from './UserDataFactory'
 import { DataTableLabelStyle } from './DataTableLabelStyle'
 import { DataTableNodeStyle } from './DataTableNodeStyle'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { DataTableRenderSupport } from './DataTableRenderSupport'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')

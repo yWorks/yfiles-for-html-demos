@@ -29,13 +29,7 @@
 import { DemoConfiguration } from './DemoConfiguration'
 import {
   Arrow,
-  IEdge,
-  IEdgeStyle,
-  IGraph,
-  INode,
-  INodeStyle,
   PolylineEdgeStyle,
-  Rect,
   Size,
   WebGLNodeStyleDecorator,
   WebGLShapeNodeShape,

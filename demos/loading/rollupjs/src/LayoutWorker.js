@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import license from '../../../../lib/license.json'
+import license from './license.json'
 import { HierarchicalLayout, LayoutExecutorAsyncWorker, License } from '@yfiles/yfiles'
 
 License.value = license

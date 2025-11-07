@@ -28,12 +28,12 @@
  ***************************************************************************/
 import {
   DelegatingNodeStyle,
-  INode,
-  INodeStyle,
+  type INode,
+  type INodeStyle,
   type IRenderContext,
   Rect,
   SimpleNode,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 /**
@@ -41,6 +41,9 @@ import {
  * Extends the functionality of the {@link DelegatingNodeStyle} by applying a scaling transformation.
  */
 export class ScalingNodeStyle extends DelegatingNodeStyle {
+    private readonly sy: number;
+    private readonly sx: number;
+    private readonly style: INodeStyle;
   private readonly scaledNode = new SimpleNode()
 
   /**
@@ -50,11 +53,14 @@ export class ScalingNodeStyle extends DelegatingNodeStyle {
    * @param sy The vertical scaling factor. Defaults to 1.
    */
   constructor(
-    private readonly style: INodeStyle,
-    private readonly sx = 1,
-    private readonly sy = 1
+    style: INodeStyle,
+    sx = 1,
+    sy = 1
   ) {
     super()
+      this.style = style;
+      this.sx = sx;
+      this.sy = sy;
   }
 
   /**

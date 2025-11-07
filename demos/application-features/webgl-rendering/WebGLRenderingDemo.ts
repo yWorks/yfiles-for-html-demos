@@ -32,8 +32,8 @@ import {
   ExteriorNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
-  IGraph,
-  INode,
+  type IGraph,
+  type INode,
   InteriorNodeLabelModel,
   LabelStyle,
   License,
@@ -47,9 +47,10 @@ import {
   Workarounds
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { checkWebGL2Support, finishLoading } from '@yfiles/demo-app/demo-page'
+import graphData from './resources/hierarchical_2000_2100.json'
 
 let graphComponent: GraphComponent
 
@@ -61,7 +62,7 @@ async function run(): Promise<void> {
     return
   }
 
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   // configures default styles for newly created graph elements
   initializeGraph(graphComponent.graph)
@@ -133,13 +134,9 @@ function initializeGraph(graph: IGraph): void {
  * @param graph The graph.
  */
 async function createGraph(graph: IGraph) {
-  // get the lists of data items for the nodes and edges
-  const response = await fetch('./resources/hierarchical_2000_2100.json')
-  const graphData = await response.json()
+  graph.clear()
 
   const getRandomInt = (upper: number) => Math.floor(Math.random() * upper)
-
-  graph.clear()
   // create a map to store the nodes for edge creation
   const nodeMap = new Map<any, INode>()
 

@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { FoldingManager, GraphComponent, GraphInputMode } from '@yfiles/yfiles'
+import { FoldingManager } from '@yfiles/yfiles'
 
 /**
  * Enable folding - change the GraphComponent's graph to a managed view

@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IGraph, IModelItem, InputHandlerBase, IParseContext, KeyType } from '@yfiles/yfiles'
+import { IGraph, IModelItem, InputHandlerBase, KeyType } from '@yfiles/yfiles'
 
 /**
  * An input handler that reads arbitrary data.

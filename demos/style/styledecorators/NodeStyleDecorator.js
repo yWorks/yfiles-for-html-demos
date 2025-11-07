@@ -27,23 +27,14 @@
  **
  ***************************************************************************/
 import {
-  ICanvasContext,
   IHitTestable,
-  IInputModeContext,
   ImageNodeStyle,
   IMarqueeTestable,
-  INode,
-  INodeStyle,
-  IRectangle,
-  IRenderContext,
   IVisibilityTestable,
   NodeStyleBase,
-  Point,
   Rect,
   SimpleNode,
-  SvgVisual,
-  SvgVisualGroup,
-  Visual
+  SvgVisualGroup
 } from '@yfiles/yfiles'
 
 /**
@@ -60,8 +51,8 @@ import {
  * {@link NodeStyleDecorator.isVisible}.
  */
 export class NodeStyleDecorator extends NodeStyleBase {
-  baseStyle
   imageUrl
+  baseStyle
   imageStyle = new ImageNodeStyle()
   // This dummy node is passed to the image node style to render the decoration image.
   // Its size is the size of the decoration. Its location is adjusted during each createVisual

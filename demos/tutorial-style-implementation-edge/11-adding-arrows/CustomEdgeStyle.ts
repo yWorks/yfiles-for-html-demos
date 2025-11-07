@@ -60,6 +60,10 @@ type Cache = {
 type CustomEdgeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 export class CustomEdgeStyle extends EdgeStyleBase<CustomEdgeStyleVisual> {
+  targetArrow: IArrow
+  sourceArrow: IArrow
+  distance: number
+
   /**
    * Creates a new instance of this style using the given distance and arrows.
    * @param distance The distance between the paths. The default value is 1.
@@ -67,11 +71,14 @@ export class CustomEdgeStyle extends EdgeStyleBase<CustomEdgeStyleVisual> {
    * @param targetArrow The arrow at the end of the edge. By default, {@link IArrow.NONE}[no arrow] will be rendered.
    */
   constructor(
-    public distance = 1,
-    public sourceArrow: IArrow = IArrow.NONE,
-    public targetArrow: IArrow = IArrow.NONE
+    distance = 1,
+    sourceArrow: IArrow = IArrow.NONE,
+    targetArrow: IArrow = IArrow.NONE
   ) {
     super()
+    this.distance = distance
+    this.sourceArrow = sourceArrow
+    this.targetArrow = targetArrow
   }
 
   protected createVisual(

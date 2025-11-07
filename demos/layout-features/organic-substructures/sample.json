@@ -1,5 +1,5 @@
 {
-  "nodeList": [
+  "nodes": [
     { "id": 0 },
     { "id": 1 },
     { "id": 2 },
@@ -38,7 +38,7 @@
     { "id": 35 },
     { "id": 36 }
   ],
-  "edgeList": [
+  "edges": [
     { "id": 0, "source": 3, "target": 4 },
     { "id": 1, "source": 4, "target": 5 },
     { "id": 2, "source": 5, "target": 6 },

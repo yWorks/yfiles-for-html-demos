@@ -29,13 +29,7 @@
 import {
   BaseClass,
   FreeNodePortLocationModel,
-  IEnumerable,
   IHandle,
-  IInputModeContext,
-  INode,
-  IPoint,
-  IPort,
-  IPortLocationModelParameter,
   IPositionHandler,
   Point
 } from '@yfiles/yfiles'
@@ -45,8 +39,8 @@ import {
  * It uses the port's {@link IHandle}s to keep the adjacent edges orthogonal.
  */
 export class RowPositionHandler extends BaseClass(IPositionHandler) {
-  node
   index
+  node
   currentIndex = -1
   originalState = []
   portHandle = new Map()

@@ -33,18 +33,12 @@ import {
   GenericLayoutData,
   HierarchicalLayoutData,
   HierarchicalLayoutEdgeDescriptor,
-  IEdge,
-  IGraph,
-  IGraphSelection,
-  ILabel,
   IMapper,
   INode,
   Insets,
   LabelAlongEdgePlacements,
   LabelAngleReferences,
   LabelEdgeSides,
-  LayerConstraintData,
-  LayoutData,
   LayoutKeys,
   Mapper,
   PortSides
@@ -54,13 +48,13 @@ import {
   ActivityNodeStyle,
   ActivityType,
   BpmnEdgeStyle,
+  BpmnEdgeType,
   ChoreographyNodeStyle,
   ConversationNodeStyle,
   EventCharacteristic,
   EventNodeStyle,
   EventPortStyle,
   GatewayNodeStyle,
-  BpmnEdgeType,
   PoolNodeStyle
 } from './bpmn-view'
 import { BpmnLabelProfitModel, BpmnLayout } from './BpmnLayout'

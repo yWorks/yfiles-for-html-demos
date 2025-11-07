@@ -34,9 +34,9 @@ import {
   License
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { downloadFile, getFileExtension, openFile } from '@yfiles/demo-utils/file-support'
 import { openInWindow } from '@yfiles/demo-utils/open-in-window'
 import { openStorageItem, saveStorageItem } from './storage-support'
@@ -47,7 +47,7 @@ import sampleData from './file-operations-sample.json?raw'
 const storageKey = 'graph-file-operations-demo.graphml'
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('graphComponent')
   /// Enable folding since users might load GraphML files with folder nodes
@@ -80,9 +80,9 @@ function initializeUI(graphComponent: GraphComponent): void {
     .querySelector<HTMLButtonElement>('#open-file-button')!
     .addEventListener('click', async () => {
       try {
-        const { content, filename } = await openFile()
-        const fileExtension = getFileExtension(filename) ?? ''
-        switch (fileExtension.toLowerCase()) {
+        const { content, filename } = await openFile('.graphml,.json')
+        const fileExtension = getFileExtension(filename)
+        switch (fileExtension?.toLowerCase()) {
           case 'graphml':
             await readGraphML(graphComponent, content)
             return
@@ -93,7 +93,9 @@ function initializeUI(graphComponent: GraphComponent): void {
             alert(`This demo cannot open files of type ${fileExtension}.`)
         }
       } catch (err) {
-        alert(err)
+        if (err !== 'canceled') {
+          alert(err)
+        }
       }
     })
 

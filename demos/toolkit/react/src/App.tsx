@@ -29,7 +29,7 @@
 import './App.css'
 import DemoDescription from './components/DemoDescription.tsx'
 import DemoDataPanel from './components/DemoDataPanel.tsx'
-import yLogo from '@yfiles/demo-resources/icons/ylogo.svg'
+import yLogo from '@yfiles/demo-app/icons/ylogo.svg'
 import { useCallback, useState } from 'react'
 import { ReactGraphComponent } from './components/ReactGraphComponent.tsx'
 

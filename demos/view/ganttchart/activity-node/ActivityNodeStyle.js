@@ -56,6 +56,7 @@ export const patternFill = createPatternFill()
  */
 export class ActivityNodeStyle extends NodeStyleBase {
   color
+
   constructor(color) {
     super()
     this.color = color

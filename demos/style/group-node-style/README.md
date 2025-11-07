@@ -24,7 +24,7 @@ The related [GroupNodeLabelModel](https://docs.yworks.com/yfileshtml/#/api/Group
 ## Things to try
 
 - Click the expansion state icons  
-  ![Minus](../../resources/icons/group-minus-16.svg 'Minus')   ![Plus](../../resources/icons/group-plus-16.svg 'Plus')   ![Chevron Down](../../resources/icons/group-chevron-down-16.svg 'Chevron Down')   ![Chevron Up](../../resources/icons/group-chevron-up-16.svg 'Chevron Up')   ![Triangle Down](../../resources/icons/group-triangle-down-16.svg 'Triangle Down')   ![Triangle Up](../../resources/icons/group-triangle-up-16.svg 'Triangle Up')  
+  ![Minus](../../demo-app/icons/group-minus-16.svg 'Minus')   ![Plus](../../demo-app/icons/group-plus-16.svg 'Plus')   ![Chevron Down](../../demo-app/icons/group-chevron-down-16.svg 'Chevron Down')   ![Chevron Up](../../demo-app/icons/group-chevron-up-16.svg 'Chevron Up')   ![Triangle Down](../../demo-app/icons/group-triangle-down-16.svg 'Triangle Down')   ![Triangle Up](../../demo-app/icons/group-triangle-up-16.svg 'Triangle Up')  
   to collapse groups or expand folders.
 - Double-click a group or a folder. This will collapse a group and expand a folder even if there is no expansion state icon.
 - When using the SVG style, move the mouse over one of the expansion state icons. The icon will slightly increase in size in response to the mouse hovering over it.  

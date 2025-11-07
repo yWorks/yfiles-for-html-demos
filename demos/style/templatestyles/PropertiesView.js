@@ -31,6 +31,7 @@
  */
 export class PropertiesView {
   element
+
   /**
    * Creates a new PropertiesView
    * @param element The DOM element that will be filled with the properties.

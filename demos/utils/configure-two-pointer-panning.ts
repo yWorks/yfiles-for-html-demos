@@ -28,7 +28,7 @@
  ***************************************************************************/
 import {
   EventRecognizers,
-  GraphComponent,
+  type GraphComponent,
   GraphEditorInputMode,
   MouseWheelBehaviors,
   MoveViewportInputMode,

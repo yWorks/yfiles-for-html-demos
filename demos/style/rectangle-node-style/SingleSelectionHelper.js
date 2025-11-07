@@ -26,74 +26,38 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  Command,
-  EventRecognizers,
-  ExecuteCommandArgs,
-  GraphComponent,
-  GraphInputMode,
-  GraphItemTypes,
-  IModelItem,
-  KeyboardInputModeBinding
-} from '@yfiles/yfiles'
+import { Command, EventRecognizers, GraphItemTypes, IModelItem } from '@yfiles/yfiles'
 
 let commandBindings = []
 
 /**
  * The previously set multi-selection recognizer
  */
-let oldMultiSelectionRecognizer = null
-
-/**
- * Restores the normal (multi-selection) behavior for the input mode and the commands of the given component.
- */
-export function disableSingleSelection(graphComponent) {
-  const mode = graphComponent.inputMode
-  // restore old settings
-  mode.marqueeSelectionInputMode.enabled = true
-  if (oldMultiSelectionRecognizer) {
-    mode.multiSelectionRecognizer = oldMultiSelectionRecognizer
-  }
-
-  // re-activate commands
-  mode.availableCommands.add(Command.TOGGLE_ITEM_SELECTION)
-  mode.availableCommands.add(Command.SELECT_ALL)
-
-  mode.navigationInputMode.availableCommands.add(Command.EXTEND_SELECTION_LEFT)
-  mode.navigationInputMode.availableCommands.add(Command.EXTEND_SELECTION_UP)
-  mode.navigationInputMode.availableCommands.add(Command.EXTEND_SELECTION_DOWN)
-  mode.navigationInputMode.availableCommands.add(Command.EXTEND_SELECTION_RIGHT)
-
-  // remove the previously registered command bindings
-  for (const binding of commandBindings) {
-    binding.remove()
-  }
-  commandBindings = []
-}
+let previousMultiSelectionRecognizer = null
 
 /**
  * Enables single selection behavior for the input mode and the commands of the given component.
  */
 export function enableSingleSelection(graphComponent) {
   const mode = graphComponent.inputMode
-  // remember old recognizer so we can restore it later
-  oldMultiSelectionRecognizer = mode.multiSelectionRecognizer
+  // Remember previous recognizer so we can restore it later
+  previousMultiSelectionRecognizer = mode.multiSelectionRecognizer
 
-  // disable marquee selection
+  // Disable marquee selection
   mode.marqueeSelectionInputMode.enabled = false
-  // disable multi selection with Ctrl-Click
+
+  // Disable multi selection with Ctrl-Click
   mode.multiSelectionRecognizer = EventRecognizers.NEVER
 
-  // deactivate commands that can lead to multi selection
+  // Deactivate commands that can lead to multi selection
   mode.availableCommands.remove(Command.TOGGLE_ITEM_SELECTION)
   mode.availableCommands.remove(Command.SELECT_ALL)
-
   mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_LEFT)
   mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_UP)
   mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_DOWN)
   mode.navigationInputMode.availableCommands.remove(Command.EXTEND_SELECTION_RIGHT)
 
-  // add dummy command bindings that do nothing in order to prevent default behavior
+  // Add dummy command bindings that do nothing in order to prevent default behavior
   commandBindings.push(
     mode.keyboardInputMode.addCommandBinding(Command.EXTEND_SELECTION_LEFT, () => {})
   )
@@ -107,7 +71,7 @@ export function enableSingleSelection(graphComponent) {
     mode.keyboardInputMode.addCommandBinding(Command.EXTEND_SELECTION_RIGHT, () => {})
   )
 
-  // add custom binding for toggle item selection
+  // Add custom binding for toggle item selection
   commandBindings.push(
     mode.keyboardInputMode.addCommandBinding(
       Command.TOGGLE_ITEM_SELECTION,
@@ -115,8 +79,7 @@ export function enableSingleSelection(graphComponent) {
       (evt) => toggleItemSelectionCanExecute(graphComponent, evt)
     )
   )
-  // Also clear the selection - even though the setup works when more than one item is selected, it looks a bit
-  // strange
+  // Also clear the selection - even though the setup works when more than one item is selected, it looks a bit strange
   graphComponent.selection.clear()
 }
 
@@ -124,7 +87,7 @@ export function enableSingleSelection(graphComponent) {
  * Checks if toggling the selection state of an item respecting the single selection policy is allowed
  */
 function toggleItemSelectionCanExecute(graphComponent, evt) {
-  // if we have an item, the command can be executed
+  // If we have an item, the command can be executed
   const parameter = evt.parameter
   const modelItem = parameter instanceof IModelItem ? parameter : graphComponent.currentItem
   evt.canExecute = modelItem != null
@@ -136,7 +99,7 @@ function toggleItemSelectionCanExecute(graphComponent, evt) {
  * respecting the single selection policy.
  */
 function toggleItemSelectionExecuted(graphComponent, evt) {
-  // get the item
+  // Get the item
   const parameter = evt.parameter
   const modelItem = parameter instanceof IModelItem ? parameter : graphComponent.currentItem
   const inputMode = graphComponent.inputMode
@@ -148,14 +111,41 @@ function toggleItemSelectionExecuted(graphComponent, evt) {
   ) {
     const isSelected = inputMode.graphSelection?.includes(modelItem)
     if (isSelected) {
-      // the item is selected and needs to be unselected - just clear the selection
+      // The item is selected and needs to be unselected - just clear the selection
       inputMode.graphSelection?.clear()
     } else {
-      // the item is unselected - unselect all other items and select the currentItem
+      // The item is unselected - unselect all other items and select the currentItem
       inputMode.graphSelection?.clear()
       inputMode.setSelected(modelItem, true)
     }
   }
 
   evt.handled = true
+}
+
+/**
+ * Restores the normal (multi-selection) behavior for the input mode and the commands of the given component.
+ */
+export function disableSingleSelection(graphComponent) {
+  const mode = graphComponent.inputMode
+  // Restore old settings
+  mode.marqueeSelectionInputMode.enabled = true
+  if (previousMultiSelectionRecognizer) {
+    mode.multiSelectionRecognizer = previousMultiSelectionRecognizer
+  }
+
+  // Re-activate commands
+  mode.availableCommands.add(Command.TOGGLE_ITEM_SELECTION)
+  mode.availableCommands.add(Command.SELECT_ALL)
+
+  mode.navigationInputMode.availableCommands.add(Command.EXTEND_SELECTION_LEFT)
+  mode.navigationInputMode.availableCommands.add(Command.EXTEND_SELECTION_UP)
+  mode.navigationInputMode.availableCommands.add(Command.EXTEND_SELECTION_DOWN)
+  mode.navigationInputMode.availableCommands.add(Command.EXTEND_SELECTION_RIGHT)
+
+  // Remove the previously registered command bindings
+  for (const binding of commandBindings) {
+    binding.remove()
+  }
+  commandBindings = []
 }

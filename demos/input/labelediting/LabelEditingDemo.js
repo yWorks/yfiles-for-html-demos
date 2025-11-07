@@ -33,7 +33,6 @@ import {
   GraphItemTypes,
   ILabel,
   ILabelOwner,
-  KeyEventArgs,
   LabelStyle,
   License,
   Point,
@@ -41,9 +40,9 @@ import {
 } from '@yfiles/yfiles'
 
 import { CustomEditLabelHelper } from './CustomEditLabelHelper'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * The default pattern for label validation.
@@ -75,7 +74,7 @@ let graphComponent
 let graphEditorInputMode
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   initDemoStyles(graphComponent.graph)
   graphComponent.graph.nodeDefaults.size = new Size(100, 100)
@@ -116,7 +115,9 @@ function createEditorMode() {
     // label must match the pattern
     evt.validatedText = validateText(evt.newText)
     // validatedText also accepts asynchronous calls e.g.:
-    //evt.validatedText = validateTextAsync(evt.newText)
+    if (false) {
+      evt.validatedText = validateTextAsync(evt.newText)
+    }
   })
 
   // register a key listener on the text editor that validates the text and applies a CSS class
@@ -280,7 +281,7 @@ function initializeUI() {
   validationPatternElement.addEventListener('input', () => {
     try {
       validationPattern = new RegExp(validationPatternElement.value)
-    } catch (ex) {
+    } catch (_) {
       // invalid or unfinished regex, ignore
     }
   })

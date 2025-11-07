@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import '@yfiles/demo-resources/style/loading-demo.css'
+import '@yfiles/demo-app/loading-demo.css'
 import {
   CanvasComponent,
   GraphComponent,

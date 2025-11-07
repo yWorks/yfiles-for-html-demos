@@ -26,30 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  ConstrainedPositionHandler,
-  IInputModeContext,
-  INode,
-  IPositionHandler,
-  IRenderContext,
-  IRenderTreeElement,
-  IVisualCreator,
-  Mapper,
-  Point,
-  Rect,
-  SvgVisual,
-  Visual
-} from '@yfiles/yfiles'
+import { BaseClass, ConstrainedPositionHandler, IVisualCreator, SvgVisual } from '@yfiles/yfiles'
 
 /**
  * Helper class that moves a node and uses the location of the mouse
  * to determine the layer where the nodes should be moved to.
  */
 export class LayerPositionHandler extends ConstrainedPositionHandler {
-  layerVisual
-  node
   newLayerMapper
+  node
+  layerVisual
   renderTreeElement = null
 
   /**

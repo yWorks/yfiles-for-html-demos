@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  IEdge,
-  IEnumerable,
-  IHandle,
-  IHandleProvider,
-  IInputModeContext
-} from '@yfiles/yfiles'
+import { BaseClass, IHandle, IHandleProvider } from '@yfiles/yfiles'
 
 /**
  * Custom implementation for bezier edges that always shows all handles for the control points

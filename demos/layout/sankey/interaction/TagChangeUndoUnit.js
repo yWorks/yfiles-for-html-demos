@@ -34,10 +34,10 @@ import { BaseClass, IUndoUnit } from '@yfiles/yfiles'
  * important to undo these changes along with the changes in style and layout.
  */
 export class TagChangeUndoUnit extends BaseClass(IUndoUnit) {
-  oldTag
-  newTag
-  item
   undoRedoCallback
+  item
+  newTag
+  oldTag
   _undoName
   _redoName
 

@@ -67,8 +67,11 @@ import { patternFill } from './ActivityNodeStyle'
  * the lead/follow-up time of the activity.
  */
 export class ActivityNodeHandleProvider extends BaseClass(IHandleProvider) {
-  constructor(private readonly node: INode) {
+  private readonly node: INode
+
+  constructor(node: INode) {
     super()
+    this.node = node
   }
 
   getHandles(_context: IInputModeContext): IEnumerable<IHandle> {
@@ -99,10 +102,12 @@ export class ActivityNodeHandleProvider extends BaseClass(IHandleProvider) {
  * start/end dates and updates the activity data associated with the given node.
  */
 class ActivityNodeReshapeHandler extends BaseClass(IReshapeHandler, IRectangle) {
+  private readonly node: INode
   private readonly wrappedHandler: IReshapeHandler
 
-  constructor(private readonly node: INode) {
+  constructor(node: INode) {
     super()
+    this.node = node
     this.wrappedHandler = node.lookup(IReshapeHandler)!
   }
 
@@ -210,20 +215,20 @@ class ActivityNodeReshapeHandler extends BaseClass(IReshapeHandler, IRectangle) 
  * A handle implementation that modifies the lead or follow-up time of an activity.
  */
 export class TimeHandle extends BaseClass(IHandle, IPoint) {
+  readonly isFollowUpTime: boolean
+  readonly node: INode
   /**
    * Stores the time when at which the drag operation was started.
    */
   private originalDuration = 0
-  private minimumWidth = 0
   private originalNodeLayout?: Rect
   private readonly activity: Activity
   private originalExtent = 0
 
-  constructor(
-    readonly node: INode,
-    readonly isFollowUpTime = false
-  ) {
+  constructor(node: INode, isFollowUpTime = false) {
     super()
+    this.node = node
+    this.isFollowUpTime = isFollowUpTime
     this.activity = getActivity(this.node)
   }
 
@@ -232,9 +237,6 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
    * gesture starts.
    */
   initializeDrag(context: IInputModeContext): void {
-    this.minimumWidth =
-      this.node.layout.width -
-      (this.isFollowUpTime ? getFollowUpWidth(this.activity) : getLeadWidth(this.activity))
     this.originalNodeLayout = this.node.layout.toRect()
     this.originalDuration = this.getDuration()
     this.originalExtent = this.isFollowUpTime

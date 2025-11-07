@@ -28,29 +28,29 @@
  ***************************************************************************/
 import {
   AdjacencyGraphBuilder,
-  AdjacencyNodesSource,
+  type AdjacencyNodesSource,
   EdgeCreator,
   FreeNodePortLocationModel,
   FreePortLabelModel,
-  IEdge,
-  IEdgeDefaults,
-  IEdgeStyle,
-  IGraph,
-  ILabelModelParameter,
-  ILabelStyle,
-  INode,
-  INodeStyle,
-  IPort,
-  LabelCreator,
+  type IEdge,
+  type IEdgeDefaults,
+  type IEdgeStyle,
+  type IGraph,
+  type ILabelModelParameter,
+  type ILabelStyle,
+  type INode,
+  type INodeStyle,
+  type IPort,
+  type LabelCreator,
   LabelStyle,
   NodeCreator,
   NodeStylePortStyleAdapter,
   Point,
   type PointConvertible,
-  Rect,
+  type Rect,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
 
 /*
  This file shows how to configure AdjacencyGraphBuilder to support ports.
@@ -383,11 +383,11 @@ class PortAwareNodeCreator extends NodeCreator<NodeData> {
  * Determines the port with that ID and connects the edge to that port.
  */
 class PortAwareEdgeCreator extends EdgeCreator<NodeData> {
-  constructor(
-    private successor: boolean,
-    defaults: IEdgeDefaults
-  ) {
+  private successor: boolean
+
+  constructor(successor: boolean, defaults: IEdgeDefaults) {
     super()
+    this.successor = successor
     this.defaults = defaults
   }
 

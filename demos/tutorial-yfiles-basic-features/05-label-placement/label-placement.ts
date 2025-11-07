@@ -55,7 +55,7 @@ export function setDefaultLabelLayoutParameters(graph: IGraph): void {
 /**
  * Changes the placement of some labels.
  */
-export function changeLabelLayoutParameters(graph: IGraph) {
+export function changeLabelLayoutParameters(graph: IGraph): void {
   const label1 = graph.nodeLabels.at(1)!
   const label2 = graph.nodeLabels.at(2)!
   const edgeLabel = graph.edgeLabels.at(0)!
@@ -67,7 +67,7 @@ export function changeLabelLayoutParameters(graph: IGraph) {
     interiorStretchModel.createParameter('top')
   )
 
-  // ExteriorLabelModel places the label on discrete positions outside the node bounds
+  // ExteriorLabelModel places the label in discrete positions outside the node bounds
   const exteriorLabelModel = new ExteriorNodeLabelModel({ margins: 10 })
 
   graph.setLabelLayoutParameter(
@@ -83,9 +83,9 @@ export function changeLabelLayoutParameters(graph: IGraph) {
 }
 
 /**
- * Resets each label layout to the graph default.
+ * Resets each label layout to the graph defaults.
  */
-export function resetLabelLayoutParameters(graph: IGraph) {
+export function resetLabelLayoutParameters(graph: IGraph): void {
   graph.nodeLabels.forEach((label) =>
     graph.setLabelLayoutParameter(
       label,

@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { GraphComponent } from '@yfiles/yfiles'
 
-export function createView() {
+export async function createView(): Promise<void> {
   // create a new graph component in the div element specified via the CSS selector
   const graphComponent = new GraphComponent('#graphComponent')
   // create a single node as an example
@@ -36,5 +36,5 @@ export function createView() {
   // and add a label
   graphComponent.graph.addLabel(node, 'y')
   // then center the graph in the component
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 }

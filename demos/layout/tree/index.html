@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Tree Layout Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
     <link rel="stylesheet" href="resources/tree-layout-demo.css" />
   </head>
   <body>
@@ -97,7 +97,7 @@
         </p>
         <p>
           With tree layout, each node can have a separate
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ISubtreePlacer" target="_blank">ISubtreePlacer</a> which is responsible for the arrangement of its children in
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ISubtreePlacer" class="api" target="_blank">ISubtreePlacer</a> which is responsible for the arrangement of its children in
           a certain style.
         </p>
 
@@ -113,10 +113,10 @@
           <li>
             Toggle the <em>Assistant</em> marking for a single node by <em>double-clicking</em> on
             it. They will show their effect when their parent node has
-            <a href="https://docs.yworks.com/yfileshtml/#/api/AssistantSubtreePlacer" target="_blank">AssistantSubtreePlacer</a> assigned.
+            <a href="https://docs.yworks.com/yfileshtml/#/api/AssistantSubtreePlacer" class="api" target="_blank">AssistantSubtreePlacer</a> assigned.
           </li>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/api/SingleLayerSubtreePlacer" target="_blank">SingleLayerSubtreePlacer</a> is used for nodes without an explicit
+            <a href="https://docs.yworks.com/yfileshtml/#/api/SingleLayerSubtreePlacer" class="api" target="_blank">SingleLayerSubtreePlacer</a> is used for nodes without an explicit
             assignment.
           </li>
         </ul>
@@ -125,24 +125,24 @@
         <ul>
           <li>
             <em>Default Tree</em> is a regular tree which is arranged using a combination of
-            <a href="https://docs.yworks.com/yfileshtml/#/api/LeftRightSubtreePlacer" target="_blank">LeftRightSubtreePlacer</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/SingleLayerSubtreePlacer" target="_blank">SingleLayerSubtreePlacer</a> for
+            <a href="https://docs.yworks.com/yfileshtml/#/api/LeftRightSubtreePlacer" class="api" target="_blank">LeftRightSubtreePlacer</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/SingleLayerSubtreePlacer" class="api" target="_blank">SingleLayerSubtreePlacer</a> for
             each subtree.
           </li>
           <li>
             <em>Wide Tree</em> has the same structure as the <em>DefaultTree</em> but is arranged
-            only using <a href="https://docs.yworks.com/yfileshtml/#/api/SingleLayerSubtreePlacer" target="_blank">SingleLayerSubtreePlacer</a>.
+            only using <a href="https://docs.yworks.com/yfileshtml/#/api/SingleLayerSubtreePlacer" class="api" target="_blank">SingleLayerSubtreePlacer</a>.
           </li>
           <li>
-            <em>Category Tree</em> uses <a href="https://docs.yworks.com/yfileshtml/#/api/SingleLayerSubtreePlacer" target="_blank">SingleLayerSubtreePlacer</a> to place the
+            <em>Category Tree</em> uses <a href="https://docs.yworks.com/yfileshtml/#/api/SingleLayerSubtreePlacer" class="api" target="_blank">SingleLayerSubtreePlacer</a> to place the
             categories in columns and arranges the nodes of each category stacked left-right.
           </li>
           <li>
-            <em>General Graph</em> is not a tree and uses the <a href="https://docs.yworks.com/yfileshtml/#/api/TreeReductionStage" target="_blank">TreeReductionStage</a> to
-            prepare the graph for <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">TreeLayout</a>. In this sample, non-tree edges are
+            <em>General Graph</em> is not a tree and uses the <a href="https://docs.yworks.com/yfileshtml/#/api/TreeReductionStage" class="api" target="_blank">TreeReductionStage</a> to
+            prepare the graph for <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" class="api" target="_blank">TreeLayout</a>. In this sample, non-tree edges are
             routed with organic style.
           </li>
           <li>
-            <em>Large Tree</em> uses <a href="https://docs.yworks.com/yfileshtml/#/api/CompactSubtreePlacer" target="_blank">CompactSubtreePlacer</a> for some subtrees to get a
+            <em>Large Tree</em> uses <a href="https://docs.yworks.com/yfileshtml/#/api/CompactSubtreePlacer" class="api" target="_blank">CompactSubtreePlacer</a> for some subtrees to get a
             compact layout.
           </li>
         </ul>
@@ -171,8 +171,8 @@
         <div class="demo-sidebar__content">
           <h2>Subtree Placer Settings</h2>
 
-          <div class="demo-properties__settings">
-            <div class="demo-form-block">
+          <div class="demo-form-block">
+            <div class="demo-properties__settings">
               <label
                 id="select-subtree-placer-label"
                 for="select-subtree-placer"
@@ -229,7 +229,7 @@
               style="display: none"
             >
               <h2>Settings</h2>
-              <div class="demo-form-block">
+              <div class="demo-properties__settings">
                 <label for="routing-style" class="option-label">Routing Style</label>
                 <select id="routing-style" class="option-element">
                   <option hidden="">Multiple Values</option>
@@ -238,8 +238,6 @@
                   <option>Straight-line</option>
                   <option>Straight-line to Child Connector</option>
                 </select>
-              </div>
-              <div class="demo-form-block">
                 <label for="root-alignment" class="option-label">Root Alignment</label>
                 <select id="root-alignment" class="option-element">
                   <option hidden="">Multiple Values</option>
@@ -252,19 +250,19 @@
                   <option>Leading on Bus</option>
                   <option>Trailing on Bus</option>
                 </select>
-              </div>
-              <div class="demo-form-block">
                 <label for="minimum-channel-segment-distance" class="option-label">
                   Minimum Channel Segment Distance
                 </label>
-                <input
-                  type="range"
-                  id="minimum-channel-segment-distance"
-                  min="0"
-                  max="200"
-                  value="40"
-                />
-                <label id="minimum-channel-segment-distance-label" class="number-label">40</label>
+                <div class="option-element">
+                  <input
+                    type="range"
+                    id="minimum-channel-segment-distance"
+                    min="0"
+                    max="200"
+                    value="40"
+                  />
+                  <span id="minimum-channel-segment-distance-label" class="number-label">40</span>
+                </div>
               </div>
             </div>
             <div
@@ -280,7 +278,7 @@
               style="display: none"
             >
               <h2>Settings</h2>
-              <div class="demo-form-block">
+              <div class="demo-properties__settings">
                 <label for="multi-layer-subtree-placer-alignment" class="option-label"
                   >Root Alignment</label
                 >
@@ -294,8 +292,6 @@
                   <option>Trailing</option>
                   <option>Bus Aligned</option>
                 </select>
-              </div>
-              <div class="demo-form-block">
                 <label for="multi-layer-subtree-placer-bus-placement" class="option-label">
                   Bus Placement
                 </label>
@@ -313,7 +309,7 @@
               style="display: none"
             >
               <h2>Settings</h2>
-              <div class="demo-form-block">
+              <div class="demo-properties__settings">
                 <label for="double-layer-root-node-alignment" class="option-label">
                   Root Alignment
                 </label>
@@ -335,14 +331,14 @@
               style="display: none"
             >
               <h2>Settings</h2>
-              <div class="demo-form-block">
+              <div class="demo-properties__settings">
                 <label for="last-on-bottom" class="option-label">Last on Bottom</label>
                 <input type="checkbox" id="last-on-bottom" class="option-element" />
-              </div>
-              <div class="demo-form-block">
                 <label for="branch-count" class="option-label">Branch Count</label>
-                <input type="range" min="1" max="5" value="1" id="branch-count" />
-                <label id="branch-count-label">1</label>
+                <div>
+                  <input type="range" min="1" max="5" value="1" id="branch-count" />
+                  <span id="branch-count-label" class="number-label">1</span>
+                </div>
               </div>
             </div>
             <div
@@ -351,12 +347,12 @@
               style="display: none"
             >
               <h2>Settings</h2>
-              <div class="demo-form-block">
+              <div class="demo-properties__settings">
                 <label for="aspect-ratio" class="option-label">Aspect Ratio</label>
-                <input type="range" id="aspect-ratio" min="0.1" max="2" value="1" step="0.1" />
-                <label id="aspect-ratio-label">1</label>
-              </div>
-              <div class="demo-form-block">
+                <div>
+                  <input type="range" id="aspect-ratio" min="0.1" max="2" value="1" step="0.1" />
+                  <span id="aspect-ratio-label" class="number-label">1</span>
+                </div>
                 <label for="child-alignment-policy" class="option-label"
                   >Child Alignment Policy</label
                 >
@@ -367,34 +363,32 @@
                   <option>Centered</option>
                   <option>Trailing</option>
                 </select>
-              </div>
-              <div class="demo-form-block">
                 <label for="aspect-ratio-horizontal-distance" class="option-label">
                   Horizontal Distance
                 </label>
-                <input
-                  type="range"
-                  min="0"
-                  max="500"
-                  value="40"
-                  id="aspect-ratio-horizontal-distance"
-                />
-                <label id="aspect-ratio-horizontal-distance-label">40</label>
-              </div>
-              <div class="demo-form-block">
+                <div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="500"
+                    value="40"
+                    id="aspect-ratio-horizontal-distance"
+                  />
+                  <span id="aspect-ratio-horizontal-distance-label" class="number-label">40</span>
+                </div>
                 <label for="aspect-ratio-vertical-distance" class="option-label">
                   Vertical Distance
                 </label>
-                <input
-                  type="range"
-                  min="0"
-                  max="500"
-                  value="40"
-                  id="aspect-ratio-vertical-distance"
-                />
-                <label id="aspect-ratio-vertical-distance-label">40</label>
-              </div>
-              <div class="demo-form-block">
+                <div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="500"
+                    value="40"
+                    id="aspect-ratio-vertical-distance"
+                  />
+                  <span id="aspect-ratio-vertical-distance-label" class="number-label">40</span>
+                </div>
                 <label for="horizontal" class="option-label">Child Arrangement</label>
                 <select id="horizontal" class="option-element">
                   <option>Vertical</option>
@@ -408,7 +402,7 @@
               style="display: none"
             >
               <h2>Settings</h2>
-              <div class="demo-form-block">
+              <div class="demo-properties__settings">
                 <label for="child-subtree-placer" class="option-label">Child Subtree Placer</label>
                 <select id="child-subtree-placer" class="option-element">
                   <option hidden="">Multiple Values</option>
@@ -426,59 +420,69 @@
               style="display: none"
             >
               <h2>Settings</h2>
-              <div class="demo-form-block">
+              <div class="demo-properties__settings">
                 <label for="compact-preferred-aspect-ratio" class="option-label">
                   Preferred Aspect Ratio
                 </label>
-                <input
-                  type="range"
-                  id="compact-preferred-aspect-ratio"
-                  min="0.1"
-                  max="4"
-                  step="0.1"
-                  value="1"
-                />
-                <label id="compact-preferred-aspect-ratio-label">1</label>
-              </div>
-              <div class="demo-form-block">
+                <div>
+                  <input
+                    type="range"
+                    id="compact-preferred-aspect-ratio"
+                    min="0.1"
+                    max="4"
+                    step="0.1"
+                    value="1"
+                  />
+                  <span id="compact-preferred-aspect-ratio-label" class="number-label">1</span>
+                </div>
                 <label for="compact-vertical-distance" class="option-label">
                   Vertical Distance
                 </label>
-                <input type="range" id="compact-vertical-distance" min="0" max="500" value="20" />
-                <label id="compact-vertical-distance-label">1</label>
-              </div>
-              <div class="demo-form-block">
+                <div>
+                  <input type="range" id="compact-vertical-distance" min="0" max="500" value="20" />
+                  <span id="compact-vertical-distance-label" class="number-label">1</span>
+                </div>
                 <label for="compact-horizontal-distance" class="option-label">
                   Horizontal Distance
                 </label>
-                <input type="range" id="compact-horizontal-distance" min="0" max="500" value="20" />
-                <label id="compact-horizontal-distance-label">1</label>
-              </div>
-              <div class="demo-form-block">
+                <div>
+                  <input
+                    type="range"
+                    id="compact-horizontal-distance"
+                    min="0"
+                    max="500"
+                    value="20"
+                  />
+                  <span id="compact-horizontal-distance-label" class="number-label">1</span>
+                </div>
                 <label for="compact-minimum-first-segment-length" class="option-label">
                   Minimum First Segment Length
                 </label>
-                <input
-                  type="range"
-                  id="compact-minimum-first-segment-length"
-                  min="0"
-                  max="500"
-                  value="20"
-                />
-                <label id="compact-minimum-first-segment-length-label">1</label>
-              </div>
-              <div class="demo-form-block">
+                <div>
+                  <input
+                    type="range"
+                    id="compact-minimum-first-segment-length"
+                    min="0"
+                    max="500"
+                    value="20"
+                  />
+                  <span id="compact-minimum-first-segment-length-label" class="number-label"
+                    >1</span
+                  >
+                </div>
                 <label for="compact-minimum-last-segment-length" class="option-label">
                   Minimum Last Segment Length
                 </label>
-                <input
-                  type="range"
-                  id="compact-minimum-last-segment-length"
-                  min="0"
-                  max="500"
-                  value="20"
-                />
-                <label id="compact-minimum-last-segment-length-label">1</label>
+                <div>
+                  <input
+                    type="range"
+                    id="compact-minimum-last-segment-length"
+                    min="0"
+                    max="500"
+                    value="20"
+                  />
+                  <span id="compact-minimum-last-segment-length-label" class="number-label">1</span>
+                </div>
               </div>
             </div>
             <div
@@ -487,13 +491,17 @@
               style="display: none"
             ></div>
             <div id="rotatable-spacing" class="demo-form-block" style="display: none">
-              <label for="spacing" class="option-label">Spacing</label>
-              <input type="range" id="spacing" min="0" max="500" value="20" />
-              <label id="spacing-label">20</label>
+              <div class="demo-properties__settings">
+                <label for="spacing" class="option-label">Spacing</label>
+                <div>
+                  <input type="range" id="spacing" min="0" max="500" value="20" />
+                  <span id="spacing-label" class="number-label">20</span>
+                </div>
+              </div>
             </div>
             <div id="subtree-placer-description"></div>
+            <div id="previewComponent" style="visibility: hidden"></div>
           </div>
-          <div id="previewComponent" style="visibility: hidden"></div>
         </div>
       </aside>
     </div>

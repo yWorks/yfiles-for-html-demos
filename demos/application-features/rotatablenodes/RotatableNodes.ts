@@ -28,43 +28,43 @@
  ***************************************************************************/
 import {
   BaseClass,
-  CanvasComponent,
-  ClickEventArgs,
+  type CanvasComponent,
+  type ClickEventArgs,
   type Constructor,
   Cursor,
   GeneralPath,
-  GraphComponent,
+  type GraphComponent,
   HandlePositions,
   HandleType,
-  ICanvasContext,
+  type ICanvasContext,
   IClipboardHelper,
-  ICompoundEdit,
+  type ICompoundEdit,
   IFocusRenderer,
-  IGraph,
-  IGraphClipboardContext,
+  type IGraph,
+  type IGraphClipboardContext,
   IHandle,
   IHandleProvider,
   IHighlightRenderer,
-  IInputMode,
+  type IInputMode,
   IInputModeContext,
-  ILookup,
+  type ILookup,
   IMarkupExtensionConverter,
-  IModelItem,
+  type IModelItem,
   IModelItemCollector,
   INode,
-  INodeStyle,
+  type INodeStyle,
   IOrientedRectangle,
   IPoint,
-  IPort,
-  IPortLocationModel,
-  IPortLocationModelParameter,
-  IRenderContext,
+  type IPort,
+  type IPortLocationModel,
+  type IPortLocationModelParameter,
+  type IRenderContext,
   IReshapeHandleProvider,
   IReshapeHandler,
   ISelectionRenderer,
-  ISize,
-  ISvgDefsCreator,
-  IWriteContext,
+  type ISize,
+  type ISvgDefsCreator,
+  type IWriteContext,
   List,
   MarkupExtension,
   Matrix,
@@ -79,7 +79,7 @@ import {
   SnapContext,
   SvgVisual,
   SvgVisualGroup,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectangleRendererBase'
 
@@ -532,6 +532,10 @@ export class RotatableNodeStyleDecorator extends BaseClass(
  * A node reshape handle that adjusts its position according to the node rotation.
  */
 class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
+  readonly symmetricResize: boolean
+  private reshapeHandler: IReshapeHandler
+  private node: INode
+  private position: HandlePositions
   private portHandles: List<IHandle> = new List()
   private initialLayout: OrientedRectangle
   private dummyLocation: Point = null!
@@ -547,12 +551,16 @@ class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
    * @param symmetricResize whether the node is symmetrically resized.
    */
   constructor(
-    private position: HandlePositions,
-    private node: INode,
-    private reshapeHandler: IReshapeHandler,
-    public readonly symmetricResize: boolean
+    position: HandlePositions,
+    node: INode,
+    reshapeHandler: IReshapeHandler,
+    symmetricResize: boolean
   ) {
     super()
+    this.position = position
+    this.node = node
+    this.reshapeHandler = reshapeHandler
+    this.symmetricResize = symmetricResize
     this.initialLayout = new OrientedRectangle(this.getNodeBasedOrientedRectangle())
   }
 
@@ -943,13 +951,15 @@ class RotatedReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
  * Provides a rotate handle for a given node.
  */
 class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
+  private readonly node: INode
   private readonly reshapeHandler: IReshapeHandler
 
   /**
    * Creates a new instance for the given node.
    */
-  constructor(private readonly node: INode) {
+  constructor(node: INode) {
     super()
+    this.node = node
     this.node = node
     this.reshapeHandler = node.lookup(IReshapeHandler)!
     this.snapStep = 90
@@ -999,6 +1009,8 @@ type SameAngleGroup = { angle: number; nodes: [INode] }
  * label.
  */
 export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
+  private reshapeHandler: IReshapeHandler
+  private node: INode
   private portHandles: List<IHandle> = new List<IHandle>()
   private rotationCenter: Point = null!
   private initialAngle = 0
@@ -1013,11 +1025,10 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
   /**
    * Creates a new instance.
    */
-  constructor(
-    private node: INode,
-    private reshapeHandler: IReshapeHandler
-  ) {
+  constructor(node: INode, reshapeHandler: IReshapeHandler) {
     super()
+    this.node = node
+    this.reshapeHandler = reshapeHandler
     this.snapDelta = 0
     this.snapStep = 0
     this.snapToSameAngleDelta = 0
@@ -1620,7 +1631,7 @@ class DelegatingContext extends BaseClass(IInputModeContext) {
   /**
    * Delegates to the wrapped context's lookup but cancels the snap context.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+
   lookup<T>(type: Constructor<any>): T | null {
     return type === SnapContext ? null : this.context.lookup(type)
   }

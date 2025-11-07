@@ -26,4 +26,148 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-export * from '@yfiles/demo-utils/LitNodeStyle'
+import {
+  type GeneralPath,
+  type GraphComponent,
+  type INode,
+  type INodeStyle,
+  type IRenderContext,
+  Matrix,
+  NodeStyleBase,
+  SvgVisual,
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
+import { nothing, render, svg } from 'lit-html'
+
+/**
+ * The interface of the props passed to the lit render function for rendering the node's SVG contents.
+ */
+export interface LitNodeStyleProps<TTag = any> {
+  layout: { width: number; height: number }
+  selected: boolean
+  zoom: number
+  tag: TTag
+}
+
+/**
+ * Caching the properties of the LitNodeStyle to decide whether a style update is necessary.
+ */
+type LitNodeStyleVisual<TTag> = TaggedSvgVisual<SVGGElement, LitNodeStyleProps<TTag>>
+
+/**
+ * The render function used for the Lit node style.
+ */
+export type LitNodeStyleRenderFunction<T> = (
+  context: LitNodeStyleProps<T>
+) => ReturnType<typeof svg>
+
+/**
+ * A node style which uses Lit render functions for displaying the contents of a node with SVG.
+ */
+export class LitNodeStyle<T = any> extends NodeStyleBase<LitNodeStyleVisual<T>> {
+  readonly renderFunction: LitNodeStyleRenderFunction<T>
+  normalizedOutline?: GeneralPath
+
+  /**
+   * Creates the style using the provided render function.
+   */
+  constructor(renderFunction: LitNodeStyleRenderFunction<T>) {
+    super()
+    this.renderFunction = renderFunction
+  }
+
+  /**
+   * Creates the properties that we pass by default to the render function.
+   * Custom variations could be passing other properties to the context, of course.
+   * @param context The renderContext to be used
+   * @param node The node to which this style instance is assigned
+   */
+  createProps(context: IRenderContext, node: INode): LitNodeStyleProps<T> {
+    return {
+      layout: { width: node.layout.width, height: node.layout.height },
+      selected:
+        (context.canvasComponent as GraphComponent).selection?.nodes.includes(node) ?? false,
+      zoom: context.zoom,
+      tag: node.tag as T
+    }
+  }
+
+  /**
+   * Creates a visual that uses a Lit rendered DOM SVG snippet to display a node.
+   * @param context The renderContext to be used
+   * @param node The node to which this style instance is assigned
+   */
+  createVisual(context: IRenderContext, node: INode): LitNodeStyleVisual<T> {
+    const props = this.createProps(context, node)
+    const result = this.renderFunction(props)
+
+    const gElement = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    SvgVisual.setTranslate(gElement, node.layout.x, node.layout.y)
+
+    const svgVisual = SvgVisual.from(gElement, props)
+
+    render(result, gElement as unknown as HTMLElement)
+
+    // return an SvgVisual that uses the g element that has been rendered into
+    return svgVisual
+  }
+
+  /**
+   * Efficient implementation of the update method that only re-renders the snippet if the
+   * props have changed.
+   * The location is always updated accordingly.
+   * @param context The renderContext to be used
+   * @param oldVisual The visual that has been created in the call to createVisual
+   * @param node The node to which this style instance is assigned
+   */
+  updateVisual(
+    context: IRenderContext,
+    oldVisual: LitNodeStyleVisual<T>,
+    node: INode
+  ): LitNodeStyleVisual<T> {
+    const gElement = oldVisual.svgElement
+
+    const props = this.createProps(context, node)
+
+    // check if some property has changed
+    const lastProps = oldVisual.tag
+    if (
+      lastProps.layout.width !== props.layout.width ||
+      lastProps.layout.height !== props.layout.height ||
+      lastProps.selected !== props.selected ||
+      lastProps.zoom !== props.zoom ||
+      lastProps.tag !== props.tag
+    ) {
+      // props have changed, re-render
+      const result = this.renderFunction(props)
+      render(result, gElement as unknown as HTMLElement)
+      oldVisual.tag = props
+    }
+
+    // update location in any case
+    SvgVisual.setTranslate(gElement, node.layout.x, node.layout.y)
+    return oldVisual
+  }
+
+  protected getOutline(node: INode): GeneralPath | null {
+    if (!this.normalizedOutline) {
+      return super.getOutline(node)
+    }
+
+    const { x, y, width, height } = node.layout
+    return this.normalizedOutline.createTransformedPath(new Matrix(width, 0, 0, height, x, y))
+  }
+}
+
+/**
+ * Parses a string (using eval) as a function to use for rendering a LitNodeStyle
+ * @param renderFunctionSource The source of the function
+ */
+export function createLitNodeStyleFromSource(renderFunctionSource: string): INodeStyle {
+  const renderFunction = new Function(
+    'const svg = arguments[0]; const nothing = arguments[1]; const renderFunction = ' +
+      renderFunctionSource +
+      '\n return renderFunction'
+  )(svg, nothing)
+  return new LitNodeStyle(renderFunction)
+}

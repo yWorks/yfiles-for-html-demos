@@ -34,19 +34,19 @@ import {
   WaitInputMode
 } from '@yfiles/yfiles'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license.js'
+import licenseData from '../../../lib/license.json'
 
 import {
   createGroupedSampleGraph,
   initializeBasicDemoStyles,
   initializeFolding
 } from '@yfiles/demo-utils/sample-graph'
-import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
 
   // initialize styles as well as graph

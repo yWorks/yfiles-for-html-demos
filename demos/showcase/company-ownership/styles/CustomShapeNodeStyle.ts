@@ -39,24 +39,26 @@ import {
   Stroke,
   type Visual
 } from '@yfiles/yfiles'
-import { NodeTypeEnum } from '../data-types'
+import type { NodeType } from '../data-types'
 
 /**
  * A node style implementation that creates shapes based on the type of a given node by delegating to GeneralPathNodeStyle.
  */
 export class CustomShapeNodeStyle extends NodeStyleBase {
+  fill?: Fill
+  stroke?: Stroke
+  type?: NodeType
   private readonly gpNodeStyle: GeneralPathNodeStyle
 
   /**
    * Creates the custom style for the given type of node.
    */
-  constructor(
-    public type?: NodeTypeEnum,
-    public stroke?: Stroke,
-    public fill?: Fill
-  ) {
+  constructor(type?: NodeType, stroke?: Stroke, fill?: Fill) {
     super()
-    this.type = type ?? NodeTypeEnum.CORPORATION
+    this.type = type
+    this.stroke = stroke
+    this.fill = fill
+    this.type = type ?? 'corporation'
     this.stroke = Stroke.from(stroke ?? 'black')
     this.fill = Fill.from(fill ?? 'white')
 
@@ -66,41 +68,41 @@ export class CustomShapeNodeStyle extends NodeStyleBase {
     this.gpNodeStyle.fill = this.fill
 
     switch (type) {
-      case NodeTypeEnum.CORPORATION:
+      case 'corporation':
         gp = createCorporationPath()
         break
-      case NodeTypeEnum.CTB:
+      case 'ctb':
         gp = createCtbPath()
         break
-      case NodeTypeEnum.PARTNERSHIP:
+      case 'partnership':
         gp = createPartnershipPath()
         break
-      case NodeTypeEnum.RCTB:
+      case 'rctb':
         gp = createRctbPath()
         break
-      case NodeTypeEnum.BRANCH:
-      case NodeTypeEnum.INDIVIDUAL:
+      case 'branch':
+      case 'individual':
         gp = createBranchPath()
         break
-      case NodeTypeEnum.DISREGARDED:
+      case 'disregarded':
         gp = createDisregardedPath()
         break
-      case NodeTypeEnum.DUAL_RESIDENT:
+      case 'dual-resident':
         gp = createDualResidentPath()
         break
-      case NodeTypeEnum.MULTIPLE:
+      case 'multiple':
         gp = createMultiplePath()
         break
-      case NodeTypeEnum.TRUST:
+      case 'trust':
         gp = createTrustPath()
         break
-      case NodeTypeEnum.THIRD_PARTY:
+      case 'third-party':
         gp = createThirdPartyPath()
         break
-      case NodeTypeEnum.TRAPEZOID:
+      case 'trapezoid':
         gp = createTrapezoidPath()
         break
-      case NodeTypeEnum.PE_RISK:
+      case 'pe-risk':
         this.gpNodeStyle.stroke = new Stroke({
           fill: this.stroke.fill ?? 'black',
           dashStyle: DashStyle.DASH,
@@ -147,13 +149,13 @@ export class CustomShapeNodeStyle extends NodeStyleBase {
    */
   getOutline(node: INode): GeneralPath | null {
     switch (this.type) {
-      case NodeTypeEnum.PARTNERSHIP:
-      case NodeTypeEnum.BRANCH:
-      case NodeTypeEnum.MULTIPLE:
-      case NodeTypeEnum.TRUST:
-      case NodeTypeEnum.INDIVIDUAL:
-      case NodeTypeEnum.THIRD_PARTY:
-      case NodeTypeEnum.PE_RISK:
+      case 'partnership':
+      case 'branch':
+      case 'multiple':
+      case 'trust':
+      case 'individual':
+      case 'third-party':
+      case 'pe-risk':
         return this.gpNodeStyle.renderer.getShapeGeometry(node, this.gpNodeStyle).getOutline()
       default:
         return null

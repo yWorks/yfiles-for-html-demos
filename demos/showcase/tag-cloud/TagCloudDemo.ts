@@ -32,9 +32,8 @@ import {
   FilteredGraphWrapper,
   GraphComponent,
   GraphViewerInputMode,
-  IGraph,
+  type IGraph,
   INodeStyle,
-  InteriorNodeLabelModel,
   LayoutExecutor,
   License,
   Size
@@ -46,8 +45,8 @@ import {
   createAssignNodeSizeStageLayoutData,
   updateTagCloud
 } from './TagCloudHelper'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 // The minimum frequency of the words to be shown in the tag cloud visualization
 let minFrequency = 80
@@ -56,7 +55,7 @@ let minFrequency = 80
  * Runs the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
   // restrict user interaction to panning (and zooming)

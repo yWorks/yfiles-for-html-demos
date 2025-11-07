@@ -30,9 +30,6 @@ import {
   Class,
   CompactDiskLayout,
   FreeNodeLabelModel,
-  GraphComponent,
-  ILayoutAlgorithm,
-  LayoutData,
   OrganicLayout,
   RadialNodeLabelPlacement,
   RecursiveGroupLayout,
@@ -42,20 +39,15 @@ import {
 import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 
-var GroupLayout
-;(function (GroupLayout) {
-  GroupLayout[(GroupLayout['NONE'] = 0)] = 'NONE'
-  GroupLayout[(GroupLayout['RECURSIVE'] = 1)] = 'RECURSIVE'
-})(GroupLayout || (GroupLayout = {}))
+const GroupLayout = { NONE: 0, RECURSIVE: 1 }
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -76,7 +68,7 @@ export const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
     ],
     descriptionText: [
       new OptionGroupAttribute('descriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     useDrawingAsSketchItem: [
@@ -94,15 +86,15 @@ export const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
       ),
       new MinMaxAttribute(0, 100),
       new OptionGroupAttribute('generalGroup', 30),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     layoutGroupsItem: [
       new LabelAttribute('Layout Groups', '#/api/RecursiveGroupLayout'),
       new OptionGroupAttribute('generalGroup', 40),
       new EnumValuesAttribute([
-        ['Ignore Groups', GroupLayout.NONE],
-        ['Layout Recursively', GroupLayout.RECURSIVE]
+        ['Ignore Groups', 'none'],
+        ['Layout Recursively', 'recursive']
       ]),
       new TypeAttribute(GroupLayout)
     ],
@@ -132,7 +124,7 @@ export const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
     this.useDrawingAsSketchItem = layout.fromSketchMode
     this.minimumNodeDistanceItem = layout.minimumNodeDistance
     this.nodeLabelingStyleItem = layout.nodeLabelPlacement
-    this.layoutGroupsItem = GroupLayout.NONE
+    this.layoutGroupsItem = 'none'
 
     this.title = 'Compact Disk Layout'
   },
@@ -144,7 +136,7 @@ export const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
    */
   createConfiguredLayout: function (graphComponent) {
     if (
-      this.layoutGroupsItem === GroupLayout.RECURSIVE &&
+      this.layoutGroupsItem === 'recursive' &&
       graphComponent.graph.nodes.some((n) => graphComponent.graph.isGroupNode(n))
     ) {
       // if the recursive group layout option is enabled, use RecursiveGroupLayout with organic for
@@ -169,7 +161,7 @@ export const CompactDiskLayoutConfig = Class('CompactDiskLayoutConfig', {
    * @returns The configured layout data.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
-    if (this.layoutGroupsItem === GroupLayout.RECURSIVE) {
+    if (this.layoutGroupsItem === 'recursive') {
       const compactDiskLayout = this.createCompactDiskLayout(graphComponent)
       return new RecursiveGroupLayoutData({ groupNodeLayouts: compactDiskLayout })
     }

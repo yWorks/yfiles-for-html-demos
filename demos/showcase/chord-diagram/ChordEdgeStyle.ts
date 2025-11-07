@@ -29,11 +29,11 @@
 import {
   EdgeStyleBase,
   GeneralPath,
-  ICanvasContext,
-  IEdge,
-  IInputModeContext,
+  type ICanvasContext,
+  type IEdge,
+  type IInputModeContext,
   type IMapper,
-  IRenderContext,
+  type IRenderContext,
   Point,
   Rect,
   SvgVisual,
@@ -58,6 +58,7 @@ type ChordEdgeStyleVisual = TaggedSvgVisual<SVGGElement, EdgeRenderDataCache>
  * A custom edge style that draws the edges of a chord diagram.
  */
 export class ChordEdgeStyle extends EdgeStyleBase<ChordEdgeStyleVisual> {
+  edgeStyleHints: IMapper<IEdge, EdgeStyleHints>
   /**
    * Specifies whether to show the information about the underlying graph
    */
@@ -66,8 +67,9 @@ export class ChordEdgeStyle extends EdgeStyleBase<ChordEdgeStyleVisual> {
   // opacity of edges if not further specified
   static defaultOpacity = 0.8
 
-  constructor(public edgeStyleHints: IMapper<IEdge, EdgeStyleHints>) {
+  constructor(edgeStyleHints: IMapper<IEdge, EdgeStyleHints>) {
     super()
+    this.edgeStyleHints = edgeStyleHints
   }
 
   /**
@@ -292,16 +294,34 @@ export class ChordEdgeStyle extends EdgeStyleBase<ChordEdgeStyleVisual> {
 }
 
 class EdgeRenderDataCache {
+  readonly showStyleHints: boolean
+  readonly opacity: number
+  readonly highlighted: boolean
+  readonly circleCenter: Point
+  readonly targetEnd: Point
+  readonly targetStart: Point
+  readonly sourceEnd: Point
+  readonly sourceStart: Point
+
   constructor(
-    public readonly sourceStart: Point,
-    public readonly sourceEnd: Point,
-    public readonly targetStart: Point,
-    public readonly targetEnd: Point,
-    public readonly circleCenter: Point,
-    public readonly highlighted: boolean,
-    public readonly opacity: number,
-    public readonly showStyleHints: boolean
-  ) {}
+    sourceStart: Point,
+    sourceEnd: Point,
+    targetStart: Point,
+    targetEnd: Point,
+    circleCenter: Point,
+    highlighted: boolean,
+    opacity: number,
+    showStyleHints: boolean
+  ) {
+    this.sourceStart = sourceStart
+    this.sourceEnd = sourceEnd
+    this.targetStart = targetStart
+    this.targetEnd = targetEnd
+    this.circleCenter = circleCenter
+    this.highlighted = highlighted
+    this.opacity = opacity
+    this.showStyleHints = showStyleHints
+  }
 
   equals(other?: EdgeRenderDataCache): boolean {
     return other == null

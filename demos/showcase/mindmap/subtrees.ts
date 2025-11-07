@@ -202,6 +202,7 @@ export async function relocateSubtree(
   // update the layout
   await layoutTree(graphComponent)
 
+  // end the compound undo operation
   compoundEdit.commit()
 }
 

@@ -32,16 +32,11 @@ import {
   FreeEdgeLabelModel,
   FreeNodeLabelModel,
   GenericLayoutData,
-  GraphComponent,
   IEdge,
-  IGraph,
-  ILabel,
-  ILayoutAlgorithm,
   INode,
   LabelAlongEdgePlacements,
   LabelAngleReferences,
   LabelEdgeSides,
-  LayoutData,
   LayoutExecutor,
   SubgraphLayoutStageData
 } from '@yfiles/yfiles'
@@ -120,7 +115,7 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
    * Creates and configures a layout.
    * @param graphComponent The {@link GraphComponent} to apply the
    *   configuration on.
-   * @returns {ILayoutAlgorithm} The configured layout algorithm.
+   * @returns The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent) {
     return null
@@ -202,7 +197,7 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
    * part of the subgraph items in the respective property of
    * {@link SubgraphLayoutStageData{TNode,TEdge,TNodeLabel,TEdgeLabel}.
    * @param graphComponent tThe graphComponent to create the data for
-   * @return A layout data instance for {@link SubgraphLayoutStage} were items that are actually
+   * @returns A layout data instance for {@link SubgraphLayoutStage} were items that are actually
    * selected in the given graph control are part of the subgraph
    */
   createSubgraphLayoutData(graphComponent) {
@@ -226,19 +221,19 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
     const descriptor = new EdgeLabelPreferredPlacement()
 
     switch (sideOfEdge) {
-      case LabelPlacementSideOfEdge.ANYWHERE:
+      case 'anywhere':
         descriptor.edgeSide = LabelEdgeSides.ANYWHERE
         break
-      case LabelPlacementSideOfEdge.ON_EDGE:
+      case 'on-edge':
         descriptor.edgeSide = LabelEdgeSides.ON_EDGE
         break
-      case LabelPlacementSideOfEdge.LEFT:
+      case 'left':
         descriptor.edgeSide = LabelEdgeSides.LEFT_OF_EDGE
         break
-      case LabelPlacementSideOfEdge.RIGHT:
+      case 'right':
         descriptor.edgeSide = LabelEdgeSides.RIGHT_OF_EDGE
         break
-      case LabelPlacementSideOfEdge.LEFT_OR_RIGHT:
+      case 'left-or-right':
         descriptor.edgeSide = LabelEdgeSides.LEFT_OF_EDGE | LabelEdgeSides.RIGHT_OF_EDGE
         break
       default:
@@ -247,22 +242,22 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
     }
 
     switch (placeAlongEdge) {
-      case LabelPlacementAlongEdge.ANYWHERE:
+      case 'anywhere':
         descriptor.placementAlongEdge = LabelAlongEdgePlacements.ANYWHERE
         break
-      case LabelPlacementAlongEdge.AT_SOURCE:
+      case 'at-source':
         descriptor.placementAlongEdge = LabelAlongEdgePlacements.AT_SOURCE
         break
-      case LabelPlacementAlongEdge.AT_SOURCE_PORT:
+      case 'at-source-port':
         descriptor.placementAlongEdge = LabelAlongEdgePlacements.AT_SOURCE_PORT
         break
-      case LabelPlacementAlongEdge.AT_TARGET:
+      case 'at-target':
         descriptor.placementAlongEdge = LabelAlongEdgePlacements.AT_TARGET
         break
-      case LabelPlacementAlongEdge.AT_TARGET_PORT:
+      case 'at-target-port':
         descriptor.placementAlongEdge = LabelAlongEdgePlacements.AT_TARGET_PORT
         break
-      case LabelPlacementAlongEdge.CENTERED:
+      case 'centered':
         descriptor.placementAlongEdge = LabelAlongEdgePlacements.AT_CENTER
         break
       default:
@@ -271,19 +266,19 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
     }
 
     switch (orientation) {
-      case LabelPlacementOrientation.PARALLEL:
+      case 'parallel':
         descriptor.angle = 0.0
         descriptor.angleReference = LabelAngleReferences.RELATIVE_TO_EDGE_FLOW
         break
-      case LabelPlacementOrientation.ORTHOGONAL:
+      case 'orthogonal':
         descriptor.angle = Math.PI / 2
         descriptor.angleReference = LabelAngleReferences.RELATIVE_TO_EDGE_FLOW
         break
-      case LabelPlacementOrientation.HORIZONTAL:
+      case 'horizontal':
         descriptor.angle = 0.0
         descriptor.angleReference = LabelAngleReferences.ABSOLUTE
         break
-      case LabelPlacementOrientation.VERTICAL:
+      case 'vertical':
         descriptor.angle = Math.PI / 2
         descriptor.angleReference = LabelAngleReferences.ABSOLUTE
         break
@@ -301,51 +296,41 @@ export const LayoutConfiguration = Class('LayoutConfiguration', {
 /**
  * Specifies constants for the preferred placement along an edge used by layout configurations.
  */
-export var LabelPlacementAlongEdge
-;(function (LabelPlacementAlongEdge) {
-  LabelPlacementAlongEdge[(LabelPlacementAlongEdge['ANYWHERE'] = 0)] = 'ANYWHERE'
-  LabelPlacementAlongEdge[(LabelPlacementAlongEdge['AT_SOURCE'] = 1)] = 'AT_SOURCE'
-  LabelPlacementAlongEdge[(LabelPlacementAlongEdge['AT_TARGET'] = 2)] = 'AT_TARGET'
-  LabelPlacementAlongEdge[(LabelPlacementAlongEdge['CENTERED'] = 3)] = 'CENTERED'
-  LabelPlacementAlongEdge[(LabelPlacementAlongEdge['AT_SOURCE_PORT'] = 4)] = 'AT_SOURCE_PORT'
-  LabelPlacementAlongEdge[(LabelPlacementAlongEdge['AT_TARGET_PORT'] = 5)] = 'AT_TARGET_PORT'
-})(LabelPlacementAlongEdge || (LabelPlacementAlongEdge = {}))
+export const LabelPlacementAlongEdge = {
+  ANYWHERE: 0,
+  AT_SOURCE: 1,
+  AT_TARGET: 2,
+  CENTERED: 3,
+  AT_SOURCE_PORT: 4,
+  AT_TARGET_PORT: 5
+}
 
 /**
  * Specifies constants for the preferred placement at a side of an edge used by layout configurations.
  */
-export var LabelPlacementSideOfEdge
-;(function (LabelPlacementSideOfEdge) {
-  LabelPlacementSideOfEdge[(LabelPlacementSideOfEdge['ANYWHERE'] = 0)] = 'ANYWHERE'
-  LabelPlacementSideOfEdge[(LabelPlacementSideOfEdge['ON_EDGE'] = 1)] = 'ON_EDGE'
-  LabelPlacementSideOfEdge[(LabelPlacementSideOfEdge['LEFT'] = 2)] = 'LEFT'
-  LabelPlacementSideOfEdge[(LabelPlacementSideOfEdge['RIGHT'] = 3)] = 'RIGHT'
-  LabelPlacementSideOfEdge[(LabelPlacementSideOfEdge['LEFT_OR_RIGHT'] = 4)] = 'LEFT_OR_RIGHT'
-})(LabelPlacementSideOfEdge || (LabelPlacementSideOfEdge = {}))
+export const LabelPlacementSideOfEdge = {
+  ANYWHERE: 0,
+  ON_EDGE: 1,
+  LEFT: 2,
+  RIGHT: 3,
+  LEFT_OR_RIGHT: 4
+}
 
 /**
  * Specifies constants for the orientation of an edge label used by layout configurations.
  */
-export var LabelPlacementOrientation
-;(function (LabelPlacementOrientation) {
-  LabelPlacementOrientation[(LabelPlacementOrientation['PARALLEL'] = 0)] = 'PARALLEL'
-  LabelPlacementOrientation[(LabelPlacementOrientation['ORTHOGONAL'] = 1)] = 'ORTHOGONAL'
-  LabelPlacementOrientation[(LabelPlacementOrientation['HORIZONTAL'] = 2)] = 'HORIZONTAL'
-  LabelPlacementOrientation[(LabelPlacementOrientation['VERTICAL'] = 3)] = 'VERTICAL'
-})(LabelPlacementOrientation || (LabelPlacementOrientation = {}))
+export const LabelPlacementOrientation = { PARALLEL: 0, ORTHOGONAL: 1, HORIZONTAL: 2, VERTICAL: 3 }
 
-export var Scope
-;(function (Scope) {
-  Scope[(Scope['ROUTE_ALL_EDGES'] = 0)] = 'ROUTE_ALL_EDGES'
-  Scope[(Scope['ROUTE_AFFECTED_EDGES'] = 1)] = 'ROUTE_AFFECTED_EDGES'
-  Scope[(Scope['ROUTE_EDGES_AT_AFFECTED_NODES'] = 2)] = 'ROUTE_EDGES_AT_AFFECTED_NODES'
-})(Scope || (Scope = {}))
+export const Scope = {
+  ROUTE_ALL_EDGES: 0,
+  ROUTE_AFFECTED_EDGES: 1,
+  ROUTE_EDGES_AT_AFFECTED_NODES: 2
+}
 
-export var OperationType
-;(function (OperationType) {
-  OperationType[(OperationType['MIRROR_X_AXIS'] = 0)] = 'MIRROR_X_AXIS'
-  OperationType[(OperationType['MIRROR_Y_AXIS'] = 1)] = 'MIRROR_Y_AXIS'
-  OperationType[(OperationType['ROTATE'] = 2)] = 'ROTATE'
-  OperationType[(OperationType['SCALE'] = 3)] = 'SCALE'
-  OperationType[(OperationType['TRANSLATE'] = 4)] = 'TRANSLATE'
-})(OperationType || (OperationType = {}))
+export const OperationType = {
+  MIRROR_X_AXIS: 0,
+  MIRROR_Y_AXIS: 1,
+  ROTATE: 2,
+  SCALE: 3,
+  TRANSLATE: 4
+}

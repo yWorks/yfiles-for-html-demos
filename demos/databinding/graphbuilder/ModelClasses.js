@@ -30,18 +30,9 @@
  * Non-UI model classes for the graph builder demo
  */
 
-import {
-  Arrow,
-  EdgesSource,
-  GraphBuilder,
-  NodesSource,
-  PolylineEdgeStyle,
-  Stroke
-} from '@yfiles/yfiles'
+import { Arrow, PolylineEdgeStyle } from '@yfiles/yfiles'
 
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
-// @ts-ignore Import via URL
-// eslint-disable-next-line import/no-unresolved
 import { nothing, svg } from 'lit-html'
 
 /**
@@ -206,15 +197,14 @@ function createBinding(bindingString) {
   if (bindingString.indexOf('function') >= 0 || bindingString.indexOf('=>') >= 0) {
     try {
       // eval the string to get the function object
-      // eslint-disable-next-line no-new-func,@typescript-eslint/no-implied-eval
+
       const func = new Function(`return (${bindingString})`)()
 
       // wrap the binding function with a function that catches and reports errors
       // that occur in the binding functions
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       return (dataItem) => {
         try {
-          // eslint-disable-next-line no-useless-call
           const result = func.apply(null, [dataItem])
           return result === null ? undefined : result
         } catch (e) {
@@ -226,11 +216,10 @@ function createBinding(bindingString) {
         }
       }
     } catch (ignored) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (dataItem) => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
     }
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   return (dataItem) => (bindingString.length > 0 ? dataItem[bindingString] : undefined)
 }
 
@@ -242,14 +231,14 @@ function createBinding(bindingString) {
 function parseData(data) {
   try {
     const nodesSourceValue = (data || '').trim()
-    // eslint-disable-next-line no-new-func
+
     if (!nodesSourceValue) {
       return []
     }
     const functionString = /^\sreturn/m.test(nodesSourceValue)
       ? nodesSourceValue
       : `return ${nodesSourceValue}`
-    // eslint-disable-next-line no-new-func,@typescript-eslint/no-implied-eval
+
     return new Function(functionString)()
   } catch (e) {
     throw new Error(`Evaluation of the source data failed: ${e}`)

@@ -26,17 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  Color,
-  ICanvasContext,
-  INode,
-  INodeStyle,
-  IRenderContext,
-  NodeStyleBase,
-  Rect,
-  SvgVisual,
-  SvgVisualGroup
-} from '@yfiles/yfiles'
+import { Color, NodeStyleBase, Rect, SvgVisual, SvgVisualGroup } from '@yfiles/yfiles'
 
 /**
  * Returns the color associated with the given intensity value from green (low) to red (high).

@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BaseClass,
-  INode,
   INodeSizeConstraintProvider,
   InteriorNodeLabelModel,
   Rect,
@@ -41,6 +40,7 @@ import {
  */
 export class GreenSizeConstraintProvider extends BaseClass(INodeSizeConstraintProvider) {
   node
+
   constructor(node) {
     super()
     this.node = node

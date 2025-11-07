@@ -28,9 +28,9 @@
  ***************************************************************************/
 import {
   IEnumerable,
-  IInputModeContext,
-  INode,
-  IPortCandidate,
+  type IInputModeContext,
+  type INode,
+  type IPortCandidate,
   IPortCandidateProvider,
   List,
   PortCandidate,

@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IRenderContext, IVisualCreator, SvgVisual, Visual } from '@yfiles/yfiles'
+import { BaseClass, type IRenderContext, IVisualCreator, SvgVisual, type Visual } from '@yfiles/yfiles'
 
 /**
  * This class renders the map used as background in this demo.

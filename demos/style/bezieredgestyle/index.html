@@ -34,10 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Bezier Edge Style Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
-    <link rel="stylesheet" href="./resources/settings-panel.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -96,7 +95,7 @@
         <h1>Bezier Edge Style Demo</h1>
 
         <p>
-          <a href="https://docs.yworks.com/yfileshtml/#/api/BezierEdgeStyle" target="_blank">BezierEdgeStyle</a> allows for smooth curved edge routes. This demo shows how
+          <a href="https://docs.yworks.com/yfileshtml/#/api/BezierEdgeStyle" class="api" target="_blank">BezierEdgeStyle</a> allows for smooth curved edge routes. This demo shows how
           to use this style and interactively edit the bezier curves.
         </p>
 
@@ -138,30 +137,22 @@
       </div>
       <aside class="demo-main__sidebar">
         <div class="demo-sidebar__content">
+          <h2>Options</h2>
+          <h3>Bezier Editing</h3>
           <div class="demo-properties__settings">
-            <h2>Options</h2>
-            <div class="settings-grid">
-              <p class="settings-legend1">Bezier Editing</p>
-              <label for="bezier-editing" class="settings-label-row1">Enable Editing</label>
-              <input class="settings-editor-row1" type="checkbox" id="bezier-editing" checked="" />
-              <label for="smooth-editing" class="settings-label-row2">Smooth Editing</label>
-              <input class="settings-editor-row2" type="checkbox" id="smooth-editing" checked="" />
-              <p class="settings-legend2">Label Handling</p>
-              <label for="auto-rotation" class="settings-label-row3">Auto Rotation</label>
-              <input class="settings-editor-row3" type="checkbox" id="auto-rotation" checked="" />
-              <label for="auto-snapping" class="settings-label-row4">Auto Snapping</label>
-              <input class="settings-editor-row4" type="checkbox" id="auto-snapping" checked="" />
-
-              <label for="angle-range" class="settings-label-row5">Angle</label>
-              <input
-                class="settings-editor-row5"
-                type="range"
-                id="angle-range"
-                min="0"
-                max="360"
-                value="0"
-              />
-              <label class="settings-label-value5" id="angle-label">0</label>
+            <label for="bezier-editing">Enable Editing</label>
+            <input type="checkbox" id="bezier-editing" checked="" />
+            <label for="smooth-editing">Smooth Editing</label>
+            <input type="checkbox" id="smooth-editing" checked="" />
+            <h3>Label Handling</h3>
+            <label for="auto-rotation">Auto Rotation</label>
+            <input type="checkbox" id="auto-rotation" checked="" />
+            <label for="auto-snapping">Auto Snapping</label>
+            <input type="checkbox" id="auto-snapping" checked="" />
+            <label for="angle-range">Angle</label>
+            <div>
+              <input type="range" id="angle-range" min="0" max="360" value="0" />
+              <span id="angle-label" class="number-label">0</span>
             </div>
           </div>
         </div>

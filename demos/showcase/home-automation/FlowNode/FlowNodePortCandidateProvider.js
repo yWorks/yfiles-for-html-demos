@@ -27,10 +27,6 @@
  **
  ***************************************************************************/
 import {
-  IEnumerable,
-  IInputModeContext,
-  INode,
-  IPortCandidate,
   List,
   PortCandidate,
   PortCandidateProviderBase,
@@ -40,6 +36,7 @@ import { assertPortTag } from './FlowNodePort'
 
 export class FlowNodePortCandidateProvider extends PortCandidateProviderBase {
   owner
+
   constructor(owner) {
     super()
     this.owner = owner

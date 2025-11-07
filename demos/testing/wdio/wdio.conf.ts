@@ -167,7 +167,7 @@ export const config: WebdriverIO.Config = {
   /**
    * Gets executed once before all workers get launched.
    * @param {object} config wdio configuration object
-   * @param {Array.<Object>} capabilities list of capabilities details
+   * @param {Array.<object>} capabilities list of capabilities details
    */
   // onPrepare: function (config, capabilities) {
   // },
@@ -195,8 +195,8 @@ export const config: WebdriverIO.Config = {
    * Gets executed just before initialising the webdriver session and test framework. It allows you
    * to manipulate configurations depending on the capability or spec.
    * @param {object} config wdio configuration object
-   * @param {Array.<Object>} capabilities list of capabilities details
-   * @param {Array.<String>} specs List of spec file paths that are to be run
+   * @param {Array.<object>} capabilities list of capabilities details
+   * @param {Array.<string>} specs List of spec file paths that are to be run
    * @param {string} cid worker id (e.g. 0-0)
    */
   // beforeSession: function (config, capabilities, specs, cid) {
@@ -204,11 +204,11 @@ export const config: WebdriverIO.Config = {
   /**
    * Gets executed before test execution begins. At this point you can access to all global
    * variables like `browser`. It is the perfect place to define custom commands.
-   * @param {Array.<Object>} capabilities list of capabilities details
-   * @param {Array.<String>} specs        List of spec file paths that are to be run
-   * @param {object}         browser      instance of created browser/device session
+   * @param capabilities list of capabilities details
+   * @param specs        List of spec file paths that are to be run
+   * @param browser      instance of created browser/device session
    */
-  before: async function (capabilities, specs) {
+  before: async function (capabilities: any, specs: string[], browser: any) {
     await browser.setWindowSize(1920, 1080)
   }
   /**
@@ -273,16 +273,16 @@ export const config: WebdriverIO.Config = {
    * Gets executed after all tests are done. You still have access to all global variables from
    * the test.
    * @param {number} result 0 - test pass, 1 - test fail
-   * @param {Array.<Object>} capabilities list of capabilities details
-   * @param {Array.<String>} specs List of spec file paths that ran
+   * @param {Array.<object>} capabilities list of capabilities details
+   * @param {Array.<string>} specs List of spec file paths that ran
    */
   // after: function (result, capabilities, specs) {
   // },
   /**
    * Gets executed right after terminating the webdriver session.
    * @param {object} config wdio configuration object
-   * @param {Array.<Object>} capabilities list of capabilities details
-   * @param {Array.<String>} specs List of spec file paths that ran
+   * @param {Array.<object>} capabilities list of capabilities details
+   * @param {Array.<string>} specs List of spec file paths that ran
    */
   // afterSession: function (config, capabilities, specs) {
   // },
@@ -291,8 +291,8 @@ export const config: WebdriverIO.Config = {
    * thrown in the onComplete hook will result in the test run failing.
    * @param {object} exitCode 0 - success, 1 - fail
    * @param {object} config wdio configuration object
-   * @param {Array.<Object>} capabilities list of capabilities details
-   * @param {<Object>} results object containing test results
+   * @param {Array.<object>} capabilities list of capabilities details
+   * @param {object} results object containing test results
    */
   // onComplete: function(exitCode, config, capabilities, results) {
   // },

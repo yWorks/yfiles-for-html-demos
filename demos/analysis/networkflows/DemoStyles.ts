@@ -33,12 +33,12 @@ import {
   GeneralPath,
   GradientSpreadMethod,
   GradientStop,
-  GraphComponent,
-  IEdge,
-  IInputModeContext,
-  INode,
-  IRectangle,
-  IRenderContext,
+  type GraphComponent,
+  type IEdge,
+  type IInputModeContext,
+  type INode,
+  type IRectangle,
+  type IRenderContext,
   IVisualCreator,
   LinearGradient,
   Matrix,
@@ -47,7 +47,7 @@ import {
   Rect,
   SvgVisual,
   type TaggedSvgVisual,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 /**
@@ -352,16 +352,33 @@ export class NetworkFlowNodeStyle extends NodeStyleBase<NetworkFlowNodeStyleVisu
  * The equals method detects if the cache has changed.
  */
 class NodeRenderDataCache {
+    private outDegree: number;
+    private inDegree: number;
+    private sink: boolean;
+    private source: boolean;
+    private bounds: Rect;
+    private adjustableSupply: number;
+    private flow: number;
+    private supply: number;
+
   constructor(
-    private supply: number,
-    private flow: number,
-    private adjustableSupply: number,
-    private bounds: Rect,
-    private source: boolean,
-    private sink: boolean,
-    private inDegree: number,
-    private outDegree: number
-  ) {}
+    supply: number,
+    flow: number,
+    adjustableSupply: number,
+    bounds: Rect,
+    source: boolean,
+    sink: boolean,
+    inDegree: number,
+    outDegree: number
+  ) {
+      this.supply = supply;
+      this.flow = flow;
+      this.adjustableSupply = adjustableSupply;
+      this.bounds = bounds;
+      this.source = source;
+      this.sink = sink;
+      this.inDegree = inDegree;
+      this.outDegree = outDegree;}
 
   /**
    * Checks if the data stored in the given cache is equal to data in this cache.
@@ -656,6 +673,13 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase<NetworkFlowEdgeStyleVisu
  * The equals method detects if the cache has changed.
  */
 class EdgeRenderDataCache {
+    public readonly selected: boolean;
+    public readonly color: Color | null;
+    public readonly path: GeneralPath;
+    public readonly edgeFlow: number;
+    public readonly capacity: number;
+    public id: string;
+
   /**
    * Creates a new RenderDataCache object.
    * @param id The unique identifier of the gradient used for the edge
@@ -666,13 +690,19 @@ class EdgeRenderDataCache {
    * @param selected True if the edge is selected, false otherwise
    */
   constructor(
-    public id: string,
-    public readonly capacity: number,
-    public readonly edgeFlow: number,
-    public readonly path: GeneralPath,
-    public readonly color: Color | null,
-    public readonly selected: boolean
-  ) {}
+    id: string,
+    capacity: number,
+    edgeFlow: number,
+    path: GeneralPath,
+    color: Color | null,
+    selected: boolean
+  ) {
+      this.id = id;
+      this.capacity = capacity;
+      this.edgeFlow = edgeFlow;
+      this.path = path;
+      this.color = color;
+      this.selected = selected;}
 
   /**
    * Checks if the data stored in the given cache is equal to data in this cache.
@@ -883,10 +913,15 @@ export class MinCutLine extends BaseClass(IVisualCreator) {
  * The equals method detects if the cache has changed.
  */
 class MclRenderDataCache {
+    private visible: boolean;
+    private bounds: Rect;
+
   constructor(
-    private bounds: Rect,
-    private visible: boolean
-  ) {}
+    bounds: Rect,
+    visible: boolean
+  ) {
+      this.bounds = bounds;
+      this.visible = visible;}
 
   /**
    * Checks if the data stored in the given cache is equal to data in this cache.

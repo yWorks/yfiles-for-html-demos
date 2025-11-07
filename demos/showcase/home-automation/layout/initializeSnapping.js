@@ -26,12 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphComponent,
-  GraphEditorInputMode,
-  GraphSnapContext,
-  SnappableItems
-} from '@yfiles/yfiles'
+import { GraphSnapContext, SnappableItems } from '@yfiles/yfiles'
 
 export function initializeSnapping(graphComponent) {
   const gcInputMode = graphComponent.inputMode

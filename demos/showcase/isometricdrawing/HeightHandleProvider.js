@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  IEnumerable,
-  IHandle,
-  IHandleProvider,
-  IInputModeContext,
-  INode,
-  List
-} from '@yfiles/yfiles'
+import { BaseClass, IHandleProvider, List } from '@yfiles/yfiles'
 import { HeightHandle } from './HeightHandle'
 
 /**

@@ -47,6 +47,7 @@ const MAX_ZOOM_CHANGE_THRESHOLD = 3
  */
 export class DeepZoomGroupNodeStyle extends NodeStyleBase {
   backgroundStyle
+
   /**
    * Creates a new group node style with the given backgroundStyle.
    */

@@ -27,10 +27,8 @@
  **
  ***************************************************************************/
 import {
-  CollectSnapReferencesEventArgs,
   GraphComponent,
   GraphItemTypes,
-  GraphSnapContext,
   INode,
   List,
   NodeSnapReferenceProvider,

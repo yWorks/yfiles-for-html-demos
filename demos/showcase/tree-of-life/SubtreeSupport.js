@@ -26,16 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphComponent,
-  IEdge,
-  IGraph,
-  IModelItem,
-  INode,
-  Subtree,
-  TreeAnalysis,
-  TreeAnalysisResult
-} from '@yfiles/yfiles'
+import { IEdge, INode, TreeAnalysis } from '@yfiles/yfiles'
 
 let globalRoot
 

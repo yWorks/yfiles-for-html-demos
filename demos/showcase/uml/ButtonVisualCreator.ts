@@ -29,16 +29,16 @@
 import {
   Animator,
   BaseClass,
-  CanvasComponent,
+  type CanvasComponent,
   Font,
   GraphComponent,
   HierarchicalNestingPolicy,
   IAnimation,
-  IEdgeStyle,
-  INode,
+  type IEdgeStyle,
+  type INode,
   INodeStyle,
-  IPoint,
-  IRenderContext,
+  type IPoint,
+  type IRenderContext,
   IVisualCreator,
   Point,
   Rect,
@@ -48,7 +48,7 @@ import {
   SvgVisual,
   TextRenderSupport,
   TimeSpan,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 import {
@@ -65,6 +65,7 @@ import type { UMLNodeStyle } from './UMLNodeStyle'
  * Provides the visuals of the edge creation buttons.
  */
 export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
+  private node: INode
   private static buttons: SVGElement[]
 
   private renderer: ButtonIconRenderer
@@ -89,11 +90,9 @@ export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
    * @param node The node for which the buttons should be created.
    * @param graphComponent The graph component in which the node resides.
    */
-  constructor(
-    private node: INode,
-    graphComponent: GraphComponent
-  ) {
+  constructor(node: INode, graphComponent: GraphComponent) {
     super()
+    this.node = node
     this.renderer = new ButtonIconRenderer()
     this.animator = new Animator(graphComponent)
     this.animator.autoInvalidation = false
@@ -284,12 +283,15 @@ export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
  * Executes the button fan out animation.
  */
 class ButtonAnimation extends BaseClass(IAnimation) {
-  constructor(
-    private rotationElement: SVGElement,
-    private finishAngle: number,
-    private translationElement: SVGElement
-  ) {
+  private translationElement: SVGElement
+  private finishAngle: number
+  private rotationElement: SVGElement
+
+  constructor(rotationElement: SVGElement, finishAngle: number, translationElement: SVGElement) {
     super()
+    this.rotationElement = rotationElement
+    this.finishAngle = finishAngle
+    this.translationElement = translationElement
   }
 
   get preferredDuration(): TimeSpan {

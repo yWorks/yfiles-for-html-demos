@@ -48,7 +48,7 @@ export class CustomNodeStyle extends NodeStyleBase {
 /**
  * A second basic node style that uses the baseVal attribute instead of setAttribute.
  */
-class CustomNodeStyle2 extends NodeStyleBase {
+export class CustomNodeStyle2 extends NodeStyleBase {
   createVisual(context, node) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     const { x, y, width, height } = node.layout

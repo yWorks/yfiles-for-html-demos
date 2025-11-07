@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode } from '@yfiles/yfiles'
+import { type GraphComponent, GraphEditorInputMode } from '@yfiles/yfiles'
 
 export function configureInteraction(graphComponent: GraphComponent): void {
   // Create a new GraphEditorInputMode instance and register it as the main

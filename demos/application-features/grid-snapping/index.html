@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Grid Snapping - Application Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       .selected-color {
@@ -48,6 +48,10 @@
 
       #grid-color-picker {
         height: 30px;
+      }
+
+      #thickness-label {
+        vertical-align: top;
       }
     </style>
   </head>
@@ -107,7 +111,7 @@
 
         <p>
           This demo shows the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-grid_snapping" target="_blank">grid snapping</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-grid_snapping" class="dguide" target="_blank">grid snapping</a>
           feature which enables snapping graph items to grid points. Grid snapping not only works
           for moving or resizing nodes, but also for creating edges and adding and moving bends.
         </p>

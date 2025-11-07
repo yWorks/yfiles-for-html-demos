@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   EdgeStyleIndicatorRenderer,
   GraphBuilder,
@@ -34,8 +33,6 @@ import {
   GraphItemTypes,
   GraphViewerInputMode,
   IEdge,
-  IGraph,
-  IModelItem,
   INode,
   License,
   NodeStyleIndicatorRenderer,
@@ -45,9 +42,9 @@ import {
 } from '@yfiles/yfiles'
 
 import GraphBuilderData from './resources/graph'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 const graphChooserBox = document.querySelector('#graph-chooser-box')
 
@@ -57,7 +54,7 @@ let graphComponent
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
@@ -78,7 +75,7 @@ async function run() {
   // Enable the undo engine. This prevents undoing of the graph creation
   graphComponent.graph.undoEngineEnabled = true
 
-  // Zoom to a node that has "Sport" label
+  // Zoom to a node that has the "Sport" label
   await graphComponent.zoomToAnimated(1, new Point(1637.468, 1828))
 }
 
@@ -107,7 +104,7 @@ function initHighlightingStyle(graphComponent) {
       stroke: '3px #621B00',
       fill: 'transparent'
     }),
-    // With a padding for the decoration
+    // With padding for the decoration
     margins: 7
   })
 
@@ -123,13 +120,15 @@ function initHighlightingStyle(graphComponent) {
  * Initializes the input mode for this component.
  */
 function initializeInputMode() {
-  const inputMode = new GraphViewerInputMode()
+  const inputMode = new GraphViewerInputMode({
+    clickableItems: GraphItemTypes.NODE || GraphItemTypes.EDGE
+  })
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE || GraphItemTypes.EDGE
   // Implements the smart click navigation
   inputMode.addEventListener('item-left-clicked', async (evt) => {
     // Zooms to the suitable point
     await zoomToLocation(evt.item, evt.location)
-    // Highlights the concerned objects(node or edge with target and source node)
+    // Highlights the concerned objects (node or edge with target and source node)
     updateHighlight(evt.item)
   })
   graphComponent.inputMode = inputMode
@@ -141,8 +140,9 @@ function initializeInputMode() {
  * @param currentMouseClickLocation The argument that is used by the event.
  */
 async function zoomToLocation(item, currentMouseClickLocation) {
-  // Get the point where we should zoom in
+  // Get the point to where we should zoom in
   const location = getFocusPoint(item)
+
   // Check the type of zooming
   const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
   if (selectedItem === 'Zoom to Mouse Location') {
@@ -186,7 +186,9 @@ function getFocusPoint(item) {
   } else if (item instanceof INode) {
     return item.layout.center
   }
-  return null
+
+  // Since the clickable items are only nodes and edges, we should never reach this point
+  return Point.ORIGIN
 }
 
 /**

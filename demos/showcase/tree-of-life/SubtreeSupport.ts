@@ -28,14 +28,14 @@
  ***************************************************************************/
 import type { FilteredGraphWrapper, ILabel } from '@yfiles/yfiles'
 import {
-  GraphComponent,
+  type GraphComponent,
   IEdge,
-  IGraph,
-  IModelItem,
+  type IGraph,
+  type IModelItem,
   INode,
-  Subtree,
+  type Subtree,
   TreeAnalysis,
-  TreeAnalysisResult
+  type TreeAnalysisResult
 } from '@yfiles/yfiles'
 
 let globalRoot: INode

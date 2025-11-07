@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { createDemoGroupStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { createDemoGroupStyle, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
 import { DragAndDropPanel, type DragAndDropPanelItem } from '@yfiles/demo-utils/DragAndDropPanel'
 import {
   ArrowNodeStyle,

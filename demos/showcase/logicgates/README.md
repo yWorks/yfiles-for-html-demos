@@ -15,13 +15,13 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/logicgates/).
 
-This demo showcases yFiles for HTML to visualize a digital system with logic gates.
+This demo shows how to use yFiles for HTML to visualize a digital system with logic gates.
 
-Each node has specific ports: incoming edges connect only to the left side of the target node, while outgoing edges go to the right side of the source node. [LayoutPortCandidate](https://docs.yworks.com/yfileshtml/#/api/LayoutPortCandidate) is used for this purpose.
+Each node has specific ports: incoming edges connect only to the left side of the target node, while outgoing edges originate only from the right side of the source node.
 
 ## Graph Creation
 
-A [Port-aware Graph Builder Demo](../../databinding/port-aware-graph-builder/) is used to create the graph, connecting the edges with specific ports defined in the business data.
+A specialized [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) from the [Port-aware Graph Builder Demo](../../databinding/port-aware-graph-builder/) is used to create the graph, connecting the edges with specific ports defined in the business data.
 
 ## Things to Try
 

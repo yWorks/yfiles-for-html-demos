@@ -28,18 +28,18 @@
  ***************************************************************************/
 import {
   type Constructor,
-  GeneralPath,
+  type GeneralPath,
   type ICanvasContext,
   type IInputModeContext,
   type ILabel,
   type IRenderContext,
   LabelStyleBase,
-  MarkupLabelStyle,
+  type MarkupLabelStyle,
   type Point,
-  Rect,
+  type Rect,
   SimpleLabel,
-  Size,
-  Visual
+  type Size,
+  type Visual
 } from '@yfiles/yfiles'
 import MarkdownIt from 'markdown-it'
 
@@ -47,14 +47,16 @@ import MarkdownIt from 'markdown-it'
  * A wrapper for {@link MarkupLabelStyle} that converts Markdown to markup on the fly.
  */
 export class MarkdownLabelStyle extends LabelStyleBase {
+  readonly markupLabelStyle: MarkupLabelStyle
   // the Markdown parser/renderer
   private static markdownIt: MarkdownIt = new MarkdownIt()
 
   private readonly simpleLabel = new SimpleLabel()
   private readonly markupCache = new WeakMap<ILabel, { markdown: string; markup: string }>()
 
-  constructor(public readonly markupLabelStyle: MarkupLabelStyle) {
+  constructor(markupLabelStyle: MarkupLabelStyle) {
     super()
+    this.markupLabelStyle = markupLabelStyle
   }
 
   protected createVisual(context: IRenderContext, label: ILabel): Visual | null {

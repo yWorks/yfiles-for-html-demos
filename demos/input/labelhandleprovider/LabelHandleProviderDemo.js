@@ -35,7 +35,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  ILabel,
   LabelStyleIndicatorRenderer,
   License,
   Size,
@@ -43,16 +42,16 @@ import {
 } from '@yfiles/yfiles'
 
 import { LabelHandleProvider } from './LabelHandleProvider'
-import { createDemoNodeLabelStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoNodeLabelStyle, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { InteriorNodeLabelModel } from '@yfiles/yfiles/yfiles'
 import { RotatableLabelSelectionStyle } from './RotatableLabelSelectionStyle'
 
 let graphComponent
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   initializeGraph()
   initializeInputMode()

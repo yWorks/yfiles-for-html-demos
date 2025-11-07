@@ -28,20 +28,25 @@
  ***************************************************************************/
 import {
   BaseClass,
-  ClickEventArgs,
+  type ClickEventArgs,
   Cursor,
   HandlePositions,
   HandleType,
   IHandle,
-  IInputModeContext,
-  IPoint,
-  IPort,
+  type IInputModeContext,
+  type IPoint,
+  type IPort,
   Point,
-  ShapePortStyle,
+  type ShapePortStyle,
   Size
 } from '@yfiles/yfiles'
 
 export class PortReshapeHandle extends BaseClass(IHandle) {
+    private readonly minimumSize: Size;
+    private readonly position: HandlePositions;
+    private readonly portStyle: ShapePortStyle;
+    private readonly port: IPort;
+    private readonly context: IInputModeContext;
   /**
    * The margins the handle is placed form the port visualization bounds.
    * The margins are applied in view coordinates. Default is `4`.
@@ -62,13 +67,18 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
    * @param minimumSize The minimum render size for the given port.
    */
   public constructor(
-    private readonly context: IInputModeContext,
-    private readonly port: IPort,
-    private readonly portStyle: ShapePortStyle,
-    private readonly position: HandlePositions,
-    private readonly minimumSize: Size
+    context: IInputModeContext,
+    port: IPort,
+    portStyle: ShapePortStyle,
+    position: HandlePositions,
+    minimumSize: Size
   ) {
     super()
+      this.context = context;
+      this.port = port;
+      this.portStyle = portStyle;
+      this.position = position;
+      this.minimumSize = minimumSize;
     this.margins = 4
   }
 

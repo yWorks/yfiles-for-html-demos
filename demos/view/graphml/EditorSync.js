@@ -26,15 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HashMap, IGraph, ILabelOwner, IModelItem, ParseEventArgs } from '@yfiles/yfiles'
-import {
-  createGraphMLEditor,
-  EditorView,
-  StateEffect,
-  StateEffectType,
-  StateField,
-  ViewUpdate
-} from '@yfiles/demo-resources/codemirror-editor'
+import { HashMap } from '@yfiles/yfiles'
+import { createGraphMLEditor, EditorView } from '@yfiles/demo-app/codemirror-editor'
 
 /**
  * This class handles synchronization of the GraphML editor with the view graph.
@@ -284,8 +277,10 @@ export class EditorSync {
     let labelOwnerTextWithoutNesting = labelOwnerText
     if (nestedGraphMatch) {
       nestedGraphStartIndex = labelOwnerText.indexOf(nestedGraphMatch[0], 0)
-      labelOwnerTextWithoutNesting = labelOwnerText.replace(nestedGraphMatch[0], '')
-      nestedGraphMatchLength = nestedGraphMatch[0].length
+      if (nestedGraphStartIndex >= 0) {
+        labelOwnerTextWithoutNesting = labelOwnerText.replace(nestedGraphMatch[0], '')
+        nestedGraphMatchLength = nestedGraphMatch[0].length
+      }
     }
     // Find the whole label data section (so we don't match other nested <y:Label> elements (e.g. inside of a
     // TableNodeStyle)
@@ -293,9 +288,9 @@ export class EditorSync {
       '<data.*>(?:\\s|\\n)*?<x:List>(?:\\s|\\n)*(<y:Label.*>(?:\\n|.)*?<\\/y:Label>)*(?:\\s|\\n)*<\\/x:List>(?:\\s|\\n)*<\\/data>',
       'gi'
     )
-    const labelDataMatch = labelOwnerTextWithoutNesting.match(labelDataRegExp)
+    const labelDataMatch = labelOwnerTextWithoutNesting?.match(labelDataRegExp)
 
-    if (labelDataMatch !== null) {
+    if (labelDataMatch) {
       const labelData = labelDataMatch[0]
 
       // Finally, find the individual <y:Label> elements

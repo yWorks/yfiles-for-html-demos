@@ -66,9 +66,9 @@ export class CreateActivityInputMode extends MoveInputMode {
 class CreateActivityHandler extends BaseClass(IPositionHandler) {
   locationPoint = new MutablePoint()
   temporaryNode = null
-  /** Canvas object for the node visualization during the gesture */
+  /** Render tree element for the node visualization during the gesture */
   nodeRenderTreeElement = null
-  /** Canvas object for the label visualization during the gesture */
+  /** Render tree element for the label visualization during the gesture */
   labelRenderTreeElement = null
 
   initializeDrag(context) {}

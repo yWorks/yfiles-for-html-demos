@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ICanvasContext, IPort, Point, PortStyleBase, Rect } from '@yfiles/yfiles'
+import { Point, PortStyleBase, Rect } from '@yfiles/yfiles'
 
 export class FlowNodePortStyle extends PortStyleBase {
   static size = 12

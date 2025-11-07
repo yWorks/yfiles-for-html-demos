@@ -26,16 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { DelegatingNodeStyle, INode, INodeStyle, Rect, SimpleNode, Visual } from '@yfiles/yfiles'
+import { DelegatingNodeStyle, Rect, SimpleNode } from '@yfiles/yfiles'
 
 /**
  * A custom node style that scales the visual representation of a node.
  * Extends the functionality of the {@link DelegatingNodeStyle} by applying a scaling transformation.
  */
 export class ScalingNodeStyle extends DelegatingNodeStyle {
-  style
-  sx
   sy
+  sx
+  style
   scaledNode = new SimpleNode()
 
   /**

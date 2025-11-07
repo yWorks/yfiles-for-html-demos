@@ -28,7 +28,7 @@
  ***************************************************************************/
 import {
   GraphComponent,
-  GraphEditorInputMode,
+  type GraphEditorInputMode,
   LayoutExecutor,
   License,
   PolylineEdgeStyle,
@@ -48,8 +48,8 @@ import {
 } from './TreeLayoutConfigurations'
 import * as TreeData from './resources/TreeData'
 import { LayerColors, SubtreePlacerPanel } from './SubtreePlacerPanel'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 import { initializesInputMode } from './initialize-input-mode'
 
 /**
@@ -71,7 +71,7 @@ let busy = false
  * Launches the TreeLayoutDemo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the graph component
   graphComponent = new GraphComponent('graphComponent')
@@ -229,7 +229,7 @@ function setBusy(isBusy: boolean): void {
   ;(graphComponent.inputMode as GraphEditorInputMode).enabled = !isBusy
   // disable UI elements during the layout
   document
-    .querySelector('.demo-properties__settings')!
+    .querySelector('.demo-sidebar__content')!
     .querySelectorAll('input, select, button')
     .forEach((element: any) => {
       element.disabled = isBusy

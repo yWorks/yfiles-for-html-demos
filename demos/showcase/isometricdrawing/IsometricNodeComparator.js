@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { CanvasComponent, INode, Matrix, Point } from '@yfiles/yfiles'
+import { Matrix, Point } from '@yfiles/yfiles'
 import { IsometricNodeStyle } from './IsometricNodeStyle'
 
 /**

@@ -37,16 +37,11 @@ import {
   GraphMLIOHandler,
   HierarchicalLayout,
   HierarchicalLayoutData,
-  IEdge,
-  IGraph,
   IHitTestable,
-  IInputModeContext,
   INode,
   INodeStyle,
-  IPortCandidate,
   LayoutExecutor,
   License,
-  Point,
   PolylineEdgeStyle,
   PortCandidate,
   Rect,
@@ -62,18 +57,18 @@ import {
 import * as umlModel from './UMLClassModel'
 import { UMLClassModelExtension } from './UMLClassModel'
 import UMLStyle, { UMLNodeStyle, UMLNodeStyleSerializationListener } from './UMLNodeStyle'
-import { ButtonInputMode, ButtonTrigger } from '../../input/button-input-mode/ButtonInputMode'
+import { ButtonInputMode } from '../../input/button-input-mode/ButtonInputMode'
 import { createEdgeCreationButtons, createExtensibilityButtons } from './UMLContextButtonFactory'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   // configure the input mode
   graphComponent.inputMode = createInputMode()
@@ -200,7 +195,7 @@ function createInputMode() {
   // umlContextButtonsInputMode.priority = mode.clickInputMode.priority - 1
   // mode.add(umlContextButtonsInputMode)
   const bim = new ButtonInputMode()
-  bim.buttonTrigger = ButtonTrigger.CURRENT_ITEM
+  bim.buttonTrigger = 'current-item'
   bim.setQueryButtonsListener((queryEvent, buttonInput) => {
     if (queryEvent.owner instanceof INode) {
       const node = queryEvent.owner

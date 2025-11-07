@@ -31,11 +31,7 @@ import {
   FreeNodePortLocationModel,
   GeneralPath,
   GeometryUtilities,
-  ICanvasContext,
-  IInputModeContext,
-  INode,
   INodeStyle,
-  IRenderContext,
   ISvgDefsCreator,
   ITagOwner,
   MutablePoint,
@@ -45,7 +41,6 @@ import {
   SimpleEdge,
   SimpleNode,
   SimplePort,
-  Size,
   SvgVisual
 } from '@yfiles/yfiles'
 
@@ -408,9 +403,10 @@ export class Sample1NodeStyle extends NodeStyleBase {
 }
 
 class NodeRenderDataCache {
-  color
-  size
   labelLocations
+  size
+  color
+
   constructor(color, size, labelLocations) {
     this.color = color
     this.size = size

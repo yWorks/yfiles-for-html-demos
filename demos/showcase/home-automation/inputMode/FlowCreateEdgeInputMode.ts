@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { CreateEdgeInputMode, InputModeEventArgs, Point } from '@yfiles/yfiles'
+import { CreateEdgeInputMode, type InputModeEventArgs, Point } from '@yfiles/yfiles'
 import { getSmoothEdgeControlPoints } from '../FlowEdge/FlowEdge'
 import { validatePortTag } from '../FlowNode/FlowNodePort'
 

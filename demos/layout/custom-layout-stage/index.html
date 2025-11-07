@@ -34,13 +34,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Custom Layout Stage Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       span.icon {
-        background: url('../../resources/icons/play2-16.svg') no-repeat center;
+        background: url('../../demo-app/icons/play2-16.svg') no-repeat center;
         height: 16px;
         width: 16px;
         border-radius: 50%;
@@ -116,9 +116,8 @@
       <div class="demo-description__content">
         <h1>Custom Layout Stage Demo</h1>
 
-        <h2>Custom Layout Stage Demo</h2>
         <p>
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout-layout_stages" target="_blank">Layout Stages</a> provide a way of separating a
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout-layout_stages" class="dguide" target="_blank">Layout Stages</a> provide a way of separating a
           complete layout into different parts. This often involves changing the graph in certain
           ways before another stage acts on it, post-processing the graph after another stage, or
           even both. Layout stages are designed to be chained, in that they each have a so-called
@@ -126,10 +125,10 @@
         </p>
         <p>
           yFiles for HTML ships with a large variety of layout stages, all sharing the interface
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ILayoutStage" target="_blank">ILayoutStage</a>. If a specific use case is not covered by existing stages, it
-          is easy to write own custom stages by extending class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutStageBase" target="_blank">LayoutStageBase</a>.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ILayoutStage" class="api" target="_blank">ILayoutStage</a>. If a specific use case is not covered by existing stages, it
+          is easy to write own custom stages by extending class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutStageBase" class="api" target="_blank">LayoutStageBase</a>.
           When writing custom stages it is necessary to work with the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout_graph_model" target="_blank">Layout Graph Model</a>.
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout_graph_model" class="dguide" target="_blank">Layout Graph Model</a>.
         </p>
         <p>
           This demo application shows three simple custom layout stages, which demonstrate different
@@ -147,8 +146,8 @@
         </button>
         <p class="button-description">
           Inserts temporary edges, along with certain constraints to help the core
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">HierarchicalLayout</a> align the green nodes. The nodes are selected via a
-          <a href="https://docs.yworks.com/yfileshtml/#/api/IDataProvider" target="_blank">IDataProvider</a> registered with the graph under a certain key.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> align the green nodes. The nodes are selected via an
+          <a href="https://docs.yworks.com/yfileshtml/#/api/IMapper" class="api" target="_blank">IMapper</a> registered with the graph under a certain key.
         </p>
         <button data-action="RunStage3" class="run-stage">
           <span class="icon"></span> <code>ZigZagEdgesStage</code>

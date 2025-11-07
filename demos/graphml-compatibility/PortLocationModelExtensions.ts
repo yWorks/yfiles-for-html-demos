@@ -85,6 +85,7 @@ function createMetadata<T>(
   callback: <T>(type: Constructor<T>, metadata: TypeMetadata<T>) => void,
   ns: string = YfilesCommon_3_0_XamlNS
 ): void {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   metadata.name = (type as Function).name
   metadata.xmlNamespace = ns
   callback(type, metadata)
@@ -114,7 +115,7 @@ class GenericPortLocationParameterExtension extends MarkupExtension {
   }
 
   provideValue(): any {
-    return (<CompositePortLocationModel>this._Model).locationParameters.at(this._Index)
+    return (this._Model as CompositePortLocationModel).locationParameters.at(this._Index)
   }
 }
 
@@ -136,6 +137,7 @@ class GenericPortLocationModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for SegmentRatioPortLocationModel
 
@@ -180,3 +182,4 @@ class SegmentRatioParameterExtension extends MarkupExtension {
   }
 }
 
+// endregion

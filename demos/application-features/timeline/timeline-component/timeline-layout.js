@@ -119,8 +119,9 @@ export function applyTimelineLayout(graphComponent, styling, zoom, minZoom, maxZ
  * components bounds.
  */
 class BarScalingStage extends LayoutStageBase {
-  maxHeight
   zoom
+  maxHeight
+
   constructor(maxHeight, zoom) {
     super()
     this.maxHeight = maxHeight

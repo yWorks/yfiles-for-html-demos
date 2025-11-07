@@ -28,22 +28,13 @@
  ***************************************************************************/
 import {
   BaseClass,
-  CanvasComponent,
-  ClickEventArgs,
   Cursor,
   HandleType,
   IHandle,
-  IInputModeContext,
-  ILabel,
   ILabelModelParameterFinder,
-  IOrientedRectangle,
   IPoint,
-  IRenderContext,
-  IRenderTreeElement,
-  ISize,
   OrientedRectangle,
-  Point,
-  Size
+  Point
 } from '@yfiles/yfiles'
 import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectangleRendererBase'
 
@@ -211,6 +202,7 @@ export class LabelRotateHandle extends BaseClass(IHandle) {
  */
 class LabelRotateHandleLivePoint extends BaseClass(IPoint) {
   handle
+
   /**
    * Creates a new point for the given handle.
    * @param handle The given handle

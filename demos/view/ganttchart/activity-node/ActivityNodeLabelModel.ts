@@ -80,8 +80,11 @@ export class ActivityNodeLabelModel extends BaseClass(ILabelModel) {
  * A custom label model parameter used for placing the labels of the activity nodes.
  */
 class ActivityNodeStyleLabelModelParameter extends BaseClass(ILabelModelParameter) {
-  constructor(private readonly _model: ILabelModel) {
+  private readonly _model: ILabelModel
+
+  constructor(_model: ILabelModel) {
     super()
+    this._model = _model
   }
 
   clone(): this {

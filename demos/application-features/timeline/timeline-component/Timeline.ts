@@ -88,6 +88,10 @@ const UNDEFINED_TIMEFRAME = [new Date(0), new Date(0)] as TimeInterval
  * Zooming in-/out of the timeline collapses and expands group nodes to show the nested data.
  */
 export class Timeline<TDataItem> {
+  showPlayButton: boolean
+  private showTimeframeRectangle: boolean
+  getTimeEntry: (item: TDataItem) => TimeEntry | undefined
+  private selector: string
   private readonly graphComponent: GraphComponent
   private _items: TDataItem[] = []
 
@@ -128,12 +132,16 @@ export class Timeline<TDataItem> {
    * @param showPlayButton Whether to display a button to start/stop the timeframe animation
    */
   constructor(
-    private selector: string,
-    public getTimeEntry: (item: TDataItem) => TimeEntry | undefined,
-    private style: TimelineStyle = {},
-    private showTimeframeRectangle = true,
-    public showPlayButton = true
+    selector: string,
+    getTimeEntry: (item: TDataItem) => TimeEntry | undefined,
+    style: TimelineStyle = {},
+    showTimeframeRectangle = true,
+    showPlayButton = true
   ) {
+    this.selector = selector
+    this.getTimeEntry = getTimeEntry
+    this.showTimeframeRectangle = showTimeframeRectangle
+    this.showPlayButton = showPlayButton
     this.graphComponent = new GraphComponent(selector)
     this.initializeUserInteraction()
     this.initializeFolding()
@@ -161,6 +169,8 @@ export class Timeline<TDataItem> {
         }, 500)
       }
     })
+
+    this.addZoomButtons()
 
     if (showPlayButton && showTimeframeRectangle) {
       this.addPlayButton()
@@ -283,11 +293,16 @@ export class Timeline<TDataItem> {
     // this component overwrites the mouse-wheel handling entirely by collapsing / expanding the folded timeline graph
     graphComponent.mouseWheelBehavior = MouseWheelBehaviors.NONE
     graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.VISIBLE
+    // use a smaller hit-test radius to make the hit-testing with touch input more precise
+    graphComponent.hitTestRadius = 1
 
     // wire up a custom mousewheel behavior
     graphComponent.addEventListener('wheel', (evt) => {
       evt.originalEvent?.preventDefault()
-      this.updateZoom(evt)
+      if (evt.wheelDeltaY !== 0) {
+        const direction = evt.wheelDeltaY < 0 ? 'zoom-in' : 'zoom-out'
+        this.updateZoom(direction, evt.location)
+      }
     })
 
     // install a tooltip on the timeline items that reports the content of the possibly aggregated entry
@@ -379,14 +394,16 @@ export class Timeline<TDataItem> {
       tooltipContainer.appendChild(entriesElement)
     } else if (data.layer === 2) {
       // tooltip for "week"
-      const containingMonth = data.parent!
-      const containingYear = containingMonth.parent!
-      const dateElement = document.createElement('h3')
-      dateElement.innerText = `${containingMonth.label} ${containingYear.label}, Week: #${data.label}`
-      const entriesElement = document.createElement('div')
-      entriesElement.innerText = `Entries: ${data.aggregatedValue}`
-      tooltipContainer.appendChild(dateElement)
-      tooltipContainer.appendChild(entriesElement)
+      const containingMonth = data.parent
+      const containingYear = containingMonth?.parent
+      if (containingMonth && containingYear) {
+        const dateElement = document.createElement('h3')
+        dateElement.innerText = `${containingMonth.label} ${containingYear.label}, Week: #${data.label}`
+        const entriesElement = document.createElement('div')
+        entriesElement.innerText = `Entries: ${data.aggregatedValue}`
+        tooltipContainer.appendChild(dateElement)
+        tooltipContainer.appendChild(entriesElement)
+      }
     } else {
       const labelElement = document.createElement('h3')
       labelElement.innerText = data.label ?? ''
@@ -401,41 +418,33 @@ export class Timeline<TDataItem> {
    * this custom behavior that triggers a collapse/expand on the graph that represents the bar chart
    * of the timeline.
    */
-  private updateZoom(evt: PointerEventArgs): void {
-    if (evt.wheelDeltaY !== 0) {
-      const mouseLocation = evt.location
-      let closestNode: INode | undefined
-      let zoomChanged
-      if (evt.wheelDeltaY < 0) {
-        closestNode = this.getClosestNode(mouseLocation)
-        zoomChanged = this.zoomIn()
+  private updateZoom(direction: 'zoom-in' | 'zoom-out', zoomLocation?: Point): void {
+    const location = zoomLocation || this.graphComponent.viewport.center
+    let zoomChanged
+    let closestNode: INode | undefined
+    if (direction === 'zoom-in') {
+      closestNode = this.getClosestNode(location)
+      zoomChanged = this.zoomIn()
+    } else {
+      zoomChanged = this.zoomOut()
+      closestNode = this.getClosestNode(location)
+    }
+
+    if (zoomChanged) {
+      applyTimelineLayout(this.graphComponent, this.styling, this.zoom, this.minZoom, this.maxZoom)
+
+      // update the viewport such that the closest node is fixed in position
+      if (closestNode) {
+        const viewPoint = this.calculateViewPoint(location, closestNode)
+        this.updateViewPort(viewPoint.x)
       } else {
-        zoomChanged = this.zoomOut()
-        closestNode = this.getClosestNode(mouseLocation)
+        this.updateViewPort()
       }
 
-      if (zoomChanged) {
-        applyTimelineLayout(
-          this.graphComponent,
-          this.styling,
-          this.zoom,
-          this.minZoom,
-          this.maxZoom
-        )
+      // the bounds are now bigger but not due to a changed timeframe, thus keep silent about it
+      this.updateTimeframeRectFromTimeframe(true)
 
-        // update the viewport such that the closest node is fixed in position
-        if (closestNode) {
-          const viewPoint = this.calculateViewPoint(mouseLocation, closestNode)
-          this.updateViewPort(viewPoint.x)
-        } else {
-          this.updateViewPort()
-        }
-
-        // the bounds are now bigger but not due to a changed timeframe, thus keep silent about it
-        this.updateTimeframeRectFromTimeframe(true)
-
-        this.updateStyling()
-      }
+      this.updateStyling()
     }
   }
 
@@ -902,6 +911,7 @@ export class Timeline<TDataItem> {
     animation.playAnimation()
 
     const playButton = document.querySelector<HTMLButtonElement>(`#${this.selector}-video-button`)!
+    playButton.title = 'Stop Animation'
     playButton.classList.add('stop')
     playButton.classList.remove('play')
   }
@@ -913,6 +923,7 @@ export class Timeline<TDataItem> {
     this.getTimeframeAnimation().stopAnimation()
 
     const playButton = document.querySelector<HTMLButtonElement>(`#${this.selector}-video-button`)!
+    playButton.title = 'Start Animation'
     playButton.classList.remove('stop')
     playButton.classList.add('play')
   }
@@ -922,25 +933,43 @@ export class Timeline<TDataItem> {
    * The button has the CSS class 'video-button' and is styled in timeline.css.
    */
   private addPlayButton(): void {
-    const playButton = document.createElement('button')
-    playButton.classList.add('video-button', 'play')
-    playButton.id = `${this.selector}-video-button`
-    playButton.addEventListener(
-      'click',
-      () => {
-        const animation = this.getTimeframeAnimation()
-        if (!animation.animating) {
-          this.play()
-        } else {
-          this.stop()
-        }
-      },
-      true
-    )
-    playButton.addEventListener('mousedown', (evt) => {
+    this.addTimelineButton('video-button', 'Start Animation', () => {
+      const animation = this.getTimeframeAnimation()
+      if (!animation.animating) {
+        this.play()
+      } else {
+        this.stop()
+      }
+    })
+  }
+
+  /**
+   * Adds buttons to zoom in and zoom out.
+   * The buttons have the CSS classes 'zoom-in-button' and 'zoom-out-button' and are styled in timeline.css.
+   */
+  private addZoomButtons(): void {
+    this.addTimelineButton('zoom-in-button', 'Zoom In', () => {
+      this.updateZoom('zoom-in')
+    })
+    this.addTimelineButton('zoom-out-button', 'Zoom Out', () => {
+      this.updateZoom('zoom-out')
+    })
+  }
+
+  /**
+   * Creates a timeline control button.
+   * The button has the CSS class 'timeline-button' and is styled in timeline.css.
+   */
+  private addTimelineButton(buttonId: string, title: string, onClick: () => void): void {
+    const button = document.createElement('button')
+    button.id = `${this.selector}-${buttonId}`
+    button.title = title
+    button.classList.add('timeline-button', buttonId)
+    button.addEventListener('mousedown', (evt) => {
       // prevent events to trigger a selection in the timeline
       evt.stopPropagation()
     })
-    this.graphComponent.htmlElement.appendChild(playButton)
+    button.addEventListener('click', onClick, true)
+    this.graphComponent.htmlElement.appendChild(button)
   }
 }

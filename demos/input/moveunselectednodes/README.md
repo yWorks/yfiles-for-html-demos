@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/moveunselectednodes/).
 
-This demo shows how the [GraphEditorInputMode#moveUnselectedItemsInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode#moveUnselectedItemsInputMode) can be constrained, e.g. with keys or custom hit testing.
+This demo shows how the [GraphEditorInputMode.moveUnselectedItemsInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode#moveUnselectedItemsInputMode) can be constrained, e.g. with keys or custom hit testing.
 
 ## Things to Try
 

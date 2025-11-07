@@ -26,21 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  EdgeStyleBase,
-  HtmlCanvasVisual,
-  IBend,
-  IEdge,
-  IInputModeContext,
-  IListEnumerable,
-  INode,
-  IPoint,
-  IRectangle,
-  IRenderContext,
-  NodeStyleBase,
-  Point,
-  Visual
-} from '@yfiles/yfiles'
+import { EdgeStyleBase, HtmlCanvasVisual, NodeStyleBase } from '@yfiles/yfiles'
 
 /**
  * A very basic high-performance node style implementation that uses HTML Canvas rendering.
@@ -60,6 +46,7 @@ export class InteractiveOrganicFastNodeStyle extends NodeStyleBase {
  */
 class NodeRenderVisual extends HtmlCanvasVisual {
   layout
+
   /**
    * Creates a new instance of NodeRenderVisual.
    * @param layout A live view of the layout of a node.
@@ -117,9 +104,10 @@ export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeRenderVisual extends HtmlCanvasVisual {
-  bends
-  sourcePortLocation
   targetPortLocation
+  sourcePortLocation
+  bends
+
   constructor(bends, sourcePortLocation, targetPortLocation) {
     super()
     this.bends = bends

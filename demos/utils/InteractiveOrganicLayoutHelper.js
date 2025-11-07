@@ -30,15 +30,14 @@ import {
   Animator,
   InteractiveOrganicLayout,
   InteractiveOrganicLayoutData,
-  IPortOwner,
   LayoutExecutor,
   LayoutGraphAdapter,
   TimeSpan
 } from '@yfiles/yfiles'
 
 export class InteractiveOrganicLayoutHelper {
-  graph
   config
+  graph
   needsStructureUpdate = true
   layout
   layoutData

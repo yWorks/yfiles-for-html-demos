@@ -26,13 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Insets, IRenderContext, ObjectRendererBase, Rect, SvgVisual } from '@yfiles/yfiles'
+import { Insets, ObjectRendererBase, Rect, SvgVisual } from '@yfiles/yfiles'
 
 export class RectangleRenderer extends ObjectRendererBase {
-  stroke
-  fill
-  useViewCoordinates
   margins
+  useViewCoordinates
+  fill
+  stroke
+
   constructor(
     stroke = 'rgba(0,0,0,1)',
     fill = 'rgba(0,0,0,0.0)',

@@ -27,11 +27,11 @@
  **
  ***************************************************************************/
 import {
-  GraphComponent,
+  type GraphComponent,
   IEdge,
-  ILabelModelParameter,
-  ILabelOwner,
-  INode,
+  type ILabelModelParameter,
+  type ILabelOwner,
+  type INode,
   Point,
   SimpleLabel,
   Size
@@ -46,6 +46,9 @@ import {
  * position of the pop-up.
  */
 export class HTMLPopupSupport<TItem extends INode | IEdge> {
+    private labelModelParameter: ILabelModelParameter;
+    div: HTMLElement;
+    private graphComponent: GraphComponent;
   private _currentItem: TItem | null = null
   private dirty = false
 
@@ -58,10 +61,13 @@ export class HTMLPopupSupport<TItem extends INode | IEdge> {
    * @param labelModelParameter The placement parameter that determines the pop-up location.
    */
   constructor(
-    private graphComponent: GraphComponent,
-    public div: HTMLElement,
-    private labelModelParameter: ILabelModelParameter
+    graphComponent: GraphComponent,
+    div: HTMLElement,
+    labelModelParameter: ILabelModelParameter
   ) {
+      this.graphComponent = graphComponent;
+      this.div = div;
+      this.labelModelParameter = labelModelParameter;
     // make the popup invisible
     div.style.opacity = '0'
     div.style.display = 'none'

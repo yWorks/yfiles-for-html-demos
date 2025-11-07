@@ -27,9 +27,9 @@
  **
  ***************************************************************************/
 import {
-  ICanvasContext,
-  IPort,
-  IRenderContext,
+  type ICanvasContext,
+  type IPort,
+  type IRenderContext,
   PortStyleBase,
   Rect,
   Size,

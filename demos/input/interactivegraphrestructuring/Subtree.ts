@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEdge, IGraph, INode, Rect } from '@yfiles/yfiles'
+import { type IEdge, type IGraph, type INode, Rect } from '@yfiles/yfiles'
 
 /**
  * This class holds the nodes and edges of a subtree rooted at a specific node.

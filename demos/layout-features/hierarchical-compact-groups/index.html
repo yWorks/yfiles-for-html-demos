@@ -32,10 +32,11 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Compact Group Nodes with HierarchicalLayout - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <title>Hierarchical Layout with Compact Groups [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -49,7 +50,7 @@
         <a href="https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html">yFiles for HTML</a>
         <a href="../../README.html">Demos</a>
 
-        <span>Compact Groups in Hierarchical Layout</span>
+        <span>Hierarchical Layout with Compact Groups</span>
         <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
       <div class="demo-header__right">
@@ -60,19 +61,8 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
-      <span class="demo-separator"></span>
-
-      <input
-        type="checkbox"
-        id="toggle-feature"
-        class="demo-toggle-button labeled"
-        title="Compact Groups"
-        checked=""
-      />
-      <label for="toggle-feature">Compact Groups</label>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -87,72 +77,59 @@
       <div class="demo-description__play-button">Start here</div>
 
       <div class="demo-description__content">
-        <h1>Compact Group Nodes with HierarchicalLayout</h1>
-
+        <h1>Hierarchical Layout with Compact Groups</h1>
         <p>
-          This demo shows how to configure the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">Hierarchical Layout</a> and the related
-          <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultCoordinateAssigner" target="_blank">Coordinate Assigner</a> such that group nodes are
-          drawn in a more compact way compared to the algorithm's default settings.
+          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> and the
+          corresponding <a href="https://docs.yworks.com/yfileshtml/#/api/CoordinateAssigner" class="api" target="_blank">CoordinateAssigner</a> to draw compacter group nodes than
+          default.
+        </p>
+        <h2>Layer Compaction</h2>
+        <p>
+          The width of group nodes (for left-to-right layouts) can be reduced by enabling
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GroupLayeringPolicy#RECURSIVE_COMPACT" class="api" target="_blank">recursive group layering with compaction</a>. This minimizes the number of layers a group spans.
         </p>
         <p>
-          It is a common requirement that the dimension of group nodes should be kept as compact as
-          possible. With default settings, the hierarchical layout algorithm does not focus on that,
-          but, for example, rather tries to avoid bends and to align nodes, which produces less
-          compact arrangements.
+          In this demo, you can observe the effect on &#39;Group 3&#39;, which shares its first
+          layer with &#39;Group 2&#39; when compaction is enabled.
         </p>
-
-        <h3>Compaction of the layers</h3>
+        <h2>Vertical (Orthogonal) Compaction</h2>
         <p>
-          Recursive group layering has an optional <em>compaction</em> feature which tries to keep
-          the layer span of group nodes low. It is accessed via the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#compactGroups" target="_blank">compactGroups</a>
-          property. In this example, layers are from left to right, thus this property affects group
-          width. In the sample, the effect of compaction can be seen with 'Group 3'. That group
-          shares its first layer with 'Group 2', whereas without compaction the layers would be
-          disjoint.
-        </p>
-
-        <h3>Compaction orthogonal to the flow</h3>
-        <p>
-          To keep group nodes compact with respect to the dimension which is orthogonal to the main
-          direction, there are two properties which can be configured. In this example with
-          left-to-right layout direction those properties affect the group height (group width in
-          default top-to-bottom layout).
+          To further compact groups in the direction orthogonal to the main layout flow (i.e.,
+          height for left-to-right layouts), adjust these properties:
         </p>
         <ul>
+          <li>Enable <a href="https://docs.yworks.com/yfileshtml/#/api/CoordinateAssigner#groupCompaction" class="api" target="_blank">groupCompaction</a>.</li>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultCoordinateAssignment#groupCompactionStrategy" target="_blank">groupCompactionStrategy</a>
-            must be set to <a href="https://docs.yworks.com/yfileshtml/#/api/GroupCompactionPolicy#MAXIMAL" target="_blank">MAXIMAL</a>.
-          </li>
-          <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultCoordinateAssignment#bendReduction" target="_blank">bendReduction</a> should be
-            disabled to prioritize compaction over the reduction of bends.
+            Disable <a href="https://docs.yworks.com/yfileshtml/#/api/CoordinateAssigner#bendReduction" class="api" target="_blank">bendReduction</a> to prioritize
+            compaction over reducing bends.
           </li>
         </ul>
-
-        <h3>See the difference</h3>
+        <h2>Things to Try</h2>
         <p>
-          Use the toggle-button in the toolbar to see the effect the settings have on the layout
-          result.
+          Click the button in the toolbar to toggle between hierarchical layout with and without
+          compact groups.
         </p>
-
-        <h3>Code Snippet</h3>
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-compact-groups/HierarchicalCompactGroups.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout" class="dguide" target="_blank">Hierarchical Layout</a></li>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#hierarchical_layout-grouping" class="dguide" target="_blank">Hierarchical Layout with Groups</a>
+          </li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a></li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="./HierarchicalCompactGroupsDemo.ts"
+      async
+    ></script>
   </body>
 </html>

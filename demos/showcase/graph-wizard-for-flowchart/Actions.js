@@ -28,21 +28,15 @@
  ***************************************************************************/
 import {
   CssFill,
-  Fill,
   FreeNodePortLocationModel,
   GivenCoordinatesLayout,
   GivenCoordinatesLayoutData,
   IEdge,
-  ILabelOwner,
-  ILayoutAlgorithm,
   INode,
-  INodeStyle,
   KeyEventArgs,
-  LabelStyle,
   LayoutAnchoringPolicy,
   LayoutAnchoringStage,
   LayoutAnchoringStageData,
-  LayoutData,
   LayoutExecutor,
   Mapper,
   ModifierKeys,
@@ -62,7 +56,7 @@ import {
   checkOr
 } from './Preconditions'
 
-import { GraphWizardInputMode, WizardEventArgs } from './GraphWizardInputMode'
+import { WizardEventArgs } from './GraphWizardInputMode'
 
 /**
  * Creates a {@link WizardAction} that navigates to the next {@INode node} in the direction of

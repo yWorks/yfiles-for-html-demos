@@ -19,7 +19,7 @@
 
 This step shows how to control label placement with the help of [layout parameters](https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-placing_labels).
 
-The default label layout parameters can be configured in the graph’s [nodeDefaults](https://docs.yworks.com/yfileshtml/#/api/IGraph#IGraph-property-nodeDefaults) and [edgeDefaults](https://docs.yworks.com/yfileshtml/#/api/IGraph#IGraph-property-edgeDefaults).
+The default label layout parameters can be configured in the graph’s [nodeDefaults](https://docs.yworks.com/yfileshtml/#/api/IGraph#nodeDefaults) and [edgeDefaults](https://docs.yworks.com/yfileshtml/#/api/IGraph#edgeDefaults).
 
 ```
 // Place node labels in the node center
@@ -47,7 +47,7 @@ graph.setLabelLayoutParameter(
   interiorStretchModel.createParameter('top')
 )
 
-// ExteriorLabelModel places the label on discrete positions outside the node bounds
+// ExteriorLabelModel places the label in discrete positions outside the node bounds
 const exteriorLabelModel = new ExteriorNodeLabelModel({ margins: 10 })
 
 graph.setLabelLayoutParameter(
@@ -62,6 +62,6 @@ graph.setLabelLayoutParameter(
 )
 ```
 
-You can also take a look at the node-label-placement and the [Edge Label Placement Demo](../../layout/edgelabelplacement/) that show how to configure node and edge labels.
+You can also take a look at the [Layout Styles: Labeling Demo](../../showcase/layoutstyles/index.html?layout=labeling), [Automatic Node Labeling Demo](../../layout/node-labeling/) and the [Edge Label Placement Demo](../../layout/edgelabelplacement/) that show how to configure node and edge labels.
 
 [06 Basic Interaction](../../tutorial-yfiles-basic-features/06-basic-interaction/)

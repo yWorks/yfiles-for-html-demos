@@ -41,8 +41,11 @@ import {
  * A port candidate provider for defining two ports on the left and right side of the activity nodes.
  */
 export class ActivityNodePortCandidateProvider extends BaseClass(IPortCandidateProvider) {
-  constructor(private node: INode) {
+    private node: INode;
+
+  constructor(node: INode) {
     super()
+      this.node = node;
   }
 
   /**

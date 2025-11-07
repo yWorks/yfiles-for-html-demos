@@ -39,7 +39,7 @@ import {
   SpanningTree,
   ViewportLimitingPolicy
 } from '@yfiles/yfiles'
-import { EdgeTypeEnum, getCompany, getRelationship } from './data-types'
+import { getCompany, getRelationship } from './data-types'
 import { enableBridgeRendering } from './bridge-rendering'
 import { enableTooltips } from './enable-tooltips'
 import { enableHoverHighlights } from './configure-highlight'
@@ -59,7 +59,7 @@ import { modifyGraph } from './prepare-smooth-animation'
  * Returns whether the edge is a hierarchy edge.
  * @param edge The edge to be checked
  */
-const isHierarchyEdge = (edge) => getRelationship(edge).type === EdgeTypeEnum.Hierarchy
+const isHierarchyEdge = (edge) => getRelationship(edge).type === 'Hierarchy'
 
 /**
  * Returns the ownership percentage for the given edge.
@@ -67,7 +67,7 @@ const isHierarchyEdge = (edge) => getRelationship(edge).type === EdgeTypeEnum.Hi
  */
 const ownershipPercentage = (edge) => {
   const relationship = getRelationship(edge)
-  if (relationship.type === EdgeTypeEnum.Hierarchy) {
+  if (relationship.type === 'Hierarchy') {
     return relationship.ownership
   } else {
     return 0
@@ -138,7 +138,7 @@ export class CompanyStructureView {
   /**
    * Returns the edge types.
    */
-  currentEdgeTypes = new Set([EdgeTypeEnum.Hierarchy, EdgeTypeEnum.Relation])
+  currentEdgeTypes = new Set(['Hierarchy', 'Relation'])
 
   toggleButtonSupport = new TogglePortButtonSupport()
 
@@ -418,8 +418,7 @@ export class CompanyStructureView {
     })
 
     const edgeLabel = edgeSource.edgeCreator.createLabelBinding({
-      text: (dataItem) =>
-        dataItem.type === EdgeTypeEnum.Hierarchy ? `${dataItem.ownership}` : null,
+      text: (dataItem) => (dataItem.type === 'Hierarchy' ? `${dataItem.ownership}` : null),
       defaults: edgeLabelDefaults
     })
     edgeSource.edgeCreator.addEventListener('edge-updated', (evt) => {

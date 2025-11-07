@@ -29,9 +29,6 @@
 import {
   Font,
   IEdge,
-  ILabel,
-  IOrientedRectangle,
-  IRenderContext,
   LabelStyleBase,
   Matrix,
   Size,
@@ -39,7 +36,7 @@ import {
   TextRenderSupport,
   TextWrapping
 } from '@yfiles/yfiles'
-import { colorSets } from '@yfiles/demo-resources/demo-styles'
+import { colorSets } from '@yfiles/demo-app/demo-styles'
 
 const HORIZONTAL_INSET = 3
 const VERTICAL_INSET = 2
@@ -113,22 +110,22 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
   getDirection(label) {
     if (!(label.owner instanceof IEdge)) {
       // fallback if the label has been removed or is not at an edge
-      return ArrowDirection.UP
+      return 'up'
     }
     const center = label.layout.center
     const target = this.toSource ? label.owner.sourcePort.location : label.owner.targetPort.location
     if (!target) {
       // fallback if the edge has been removed
-      return ArrowDirection.UP
+      return 'up'
     }
     const dx = center.x - target.x
     const dy = center.y - target.y
     // the preferred direction (vertical or horizontal)
     const topDown = Math.abs(dx) < Math.abs(dy)
     if (topDown) {
-      return dy > 0 ? ArrowDirection.UP : ArrowDirection.DOWN
+      return dy > 0 ? 'up' : 'down'
     } else {
-      return dx > 0 ? ArrowDirection.LEFT : ArrowDirection.RIGHT
+      return dx > 0 ? 'left' : 'right'
     }
   }
 
@@ -273,16 +270,16 @@ export class DirectedEdgeLabelStyle extends LabelStyleBase {
 function createArrow(direction, arrowStroke, arrowFill) {
   const path = document.createElementNS(SVG_NAMESPACE, 'path')
   switch (direction) {
-    case ArrowDirection.DOWN:
+    case 'down':
       path.setAttribute('d', 'M 6,0 L 6,8 L 0,8 L 8,16 L 16,8 L 10,8 L 10,0  Z')
       break
-    case ArrowDirection.UP:
+    case 'up':
       path.setAttribute('d', 'M 6,16 L 6,8 L 0,8 L 8,0 L 16,8 L 10,8 L 10,16  Z')
       break
-    case ArrowDirection.LEFT:
+    case 'left':
       path.setAttribute('d', 'M 16,6 L 8,6 L 8,0 L 0,8 L 8,16 L 8,10 L 16,10  Z')
       break
-    case ArrowDirection.RIGHT:
+    case 'right':
       path.setAttribute('d', 'M 0,6 L 8,6 L 8,0 L 16,8 L 8,16 L 8,10 L 0,10  Z')
       break
   }
@@ -292,23 +289,16 @@ function createArrow(direction, arrowStroke, arrowFill) {
   return path
 }
 
-var ArrowDirection
-;(function (ArrowDirection) {
-  ArrowDirection[(ArrowDirection['UP'] = 0)] = 'UP'
-  ArrowDirection[(ArrowDirection['RIGHT'] = 1)] = 'RIGHT'
-  ArrowDirection[(ArrowDirection['DOWN'] = 2)] = 'DOWN'
-  ArrowDirection[(ArrowDirection['LEFT'] = 3)] = 'LEFT'
-})(ArrowDirection || (ArrowDirection = {}))
-
 class LabelRenderDataCache {
-  text
-  toSource
-  direction
-  font
-  textFill
-  backgroundFill
-  arrowStroke
   arrowFill
+  arrowStroke
+  backgroundFill
+  textFill
+  font
+  direction
+  toSource
+  text
+
   constructor(text, toSource, direction, font, textFill, backgroundFill, arrowStroke, arrowFill) {
     this.text = text
     this.toSource = toSource

@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CanvasComponent,
   ClearAreaStrategy,
@@ -37,12 +36,7 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   IHitTester,
-  IInputModeContext,
-  INode,
-  IRenderContext,
   License,
-  MarqueeRenderTag,
-  MarqueeSelectionEventArgs,
   MarqueeSelectionInputMode,
   ObjectRendererBase,
   Point,
@@ -55,9 +49,9 @@ import {
 
 import SampleData from './resources/SampleData'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
-import { createDemoGroupStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoGroupStyle, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent = null
 
@@ -68,7 +62,7 @@ let componentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
 let clearAreaStrategy = ClearAreaStrategy.PRESERVE_SHAPES
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   initializeInputModes()
   initDemoStyles(graphComponent.graph)
@@ -224,7 +218,7 @@ function loadGraph(sampleName) {
   graph.groupNodeDefaults.style = groupStyle
 
   if (data.groups) {
-    const nodesSource = builder.createGroupNodesSource({
+    builder.createGroupNodesSource({
       data: data.groups,
       id: 'id',
       parentId: 'parentId',

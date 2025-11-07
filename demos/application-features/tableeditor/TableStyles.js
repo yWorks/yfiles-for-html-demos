@@ -32,17 +32,11 @@ import {
   DelegatingNodeStyle,
   ICloneable,
   IColumn,
-  IInputModeContext,
-  INode,
-  INodeStyle,
   Insets,
-  IRenderContext,
-  IRow,
   IStripe,
   ITable,
   MoveInputMode,
   NodeStyleBase,
-  Point,
   SvgVisual,
   Table,
   TableNodeStyle,
@@ -139,7 +133,6 @@ export class DemoTableStyle extends DelegatingNodeStyle {
   }
 
   copyTable(table) {
-    // noinspection SuspiciousTypeOfGuard
     return table instanceof ICloneable ? table.clone() : table
   }
 }

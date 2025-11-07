@@ -26,9 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  CssFill,
   EdgePathLabelModel,
   EdgeSides,
   GraphClipboard,
@@ -36,9 +34,6 @@ import {
   GraphEditorInputMode,
   HashMap,
   HierarchicalLayout,
-  IEdge,
-  IGraph,
-  IModelItem,
   INode,
   InteriorNodeLabelModel,
   IStripeStyle,
@@ -49,19 +44,17 @@ import {
   NodeStyleStripeStyleAdapter,
   ParentNodeDetectionModes,
   Rect,
-  RectangleNodeStyle,
   ReparentStripeHandler,
   ShapeNodeStyle,
   Size,
   Table,
   TableEditorInputMode,
-  TableNodeStyle,
-  TimeSpan
+  TableNodeStyle
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { downloadFile } from '@yfiles/demo-utils/file-support'
 import graphData from './graph-data.json'
 
@@ -71,7 +64,7 @@ let graphComponent
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode({ allowGroupSelection: false })
 

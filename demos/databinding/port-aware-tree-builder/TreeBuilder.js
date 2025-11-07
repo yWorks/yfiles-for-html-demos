@@ -30,25 +30,14 @@ import {
   EdgeCreator,
   FreeNodePortLocationModel,
   FreePortLabelModel,
-  IEdge,
-  IEdgeStyle,
-  IGraph,
-  ILabelModelParameter,
-  ILabelStyle,
-  INode,
-  INodeStyle,
-  IPort,
-  LabelCreator,
   LabelStyle,
   NodeCreator,
   NodeStylePortStyleAdapter,
   Point,
-  Rect,
   ShapeNodeStyle,
-  TreeBuilder,
-  TreeNodesSource
+  TreeBuilder
 } from '@yfiles/yfiles'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
 
 let treeBuilder
 let nodesSource

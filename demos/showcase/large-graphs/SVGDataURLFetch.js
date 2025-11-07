@@ -65,6 +65,5 @@ function escapeUnicodeSurrogatePair(text) {
  * @param text the text to escape
  */
 function escapeNonLatin1(text) {
-  // eslint-disable-next-line no-control-regex
   return text.replace(new RegExp('[^\x00-\x7F]', 'g'), (txt) => `&#${txt.charCodeAt(0)};`)
 }

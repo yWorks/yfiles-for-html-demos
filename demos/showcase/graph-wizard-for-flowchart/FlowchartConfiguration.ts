@@ -28,19 +28,20 @@
  ***************************************************************************/
 import {
   Arrow,
+  Command,
   EdgePathLabelModel,
   EdgeSides,
   EdgeStyleIndicatorRenderer,
   EventRecognizers,
   Fill,
-  GraphComponent,
+  type GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  HierarchicalLayout,
+  type HierarchicalLayout,
   IEdge,
-  IInputMode,
-  ILabel,
-  IModelItem,
+  type IInputMode,
+  type ILabel,
+  type IModelItem,
   INode,
   INodeStyle,
   Insets,
@@ -48,7 +49,7 @@ import {
   KeyEventArgs,
   KeyEventType,
   LabelStyle,
-  LayoutData,
+  type LayoutData,
   LayoutExecutor,
   LayoutOrientation,
   ModifierKeys,
@@ -63,9 +64,9 @@ import {
 
 import type { ColorSet } from './ColorThemes'
 import { ColorThemes } from './ColorThemes'
-import { FlowchartNodeStyle, FlowchartNodeType } from '../flowchart/style/FlowchartStyle'
+import { FlowchartNodeStyle, type FlowchartNodeType } from '../flowchart/style/FlowchartStyle'
 import type { ActionStep, ButtonOptions, Handler, PreCondition } from './WizardAction'
-import { handleMultipleSteps, PickerLayout, WizardAction } from './WizardAction'
+import { handleMultipleSteps, WizardAction } from './WizardAction'
 import { FlowchartLayout } from '../flowchart/layout/FlowchartLayout'
 import { FlowchartLayoutData } from '../flowchart/layout/FlowchartLayoutData'
 import { GraphWizardInputMode } from './GraphWizardInputMode'
@@ -103,34 +104,34 @@ import {
  */
 export class FlowchartConfiguration {
   private readonly flowchartTypes = [
-    FlowchartNodeType.Process,
-    FlowchartNodeType.Decision,
-    FlowchartNodeType.Start1,
-    FlowchartNodeType.Start2,
-    FlowchartNodeType.Terminator,
-    FlowchartNodeType.Cloud,
-    FlowchartNodeType.Data,
-    FlowchartNodeType.DirectData,
-    FlowchartNodeType.Database,
-    FlowchartNodeType.Document,
-    FlowchartNodeType.PredefinedProcess,
-    FlowchartNodeType.StoredData,
-    FlowchartNodeType.InternalStorage,
-    FlowchartNodeType.SequentialData,
-    FlowchartNodeType.ManualInput,
-    FlowchartNodeType.Card,
-    FlowchartNodeType.PaperType,
-    FlowchartNodeType.Delay,
-    FlowchartNodeType.Display,
-    FlowchartNodeType.ManualOperation,
-    FlowchartNodeType.Preparation,
-    FlowchartNodeType.LoopLimit,
-    FlowchartNodeType.LoopLimitEnd,
-    FlowchartNodeType.OnPageReference,
-    FlowchartNodeType.OffPageReference,
-    FlowchartNodeType.Annotation,
-    FlowchartNodeType.UserMessage,
-    FlowchartNodeType.NetworkMessage
+    'Process',
+    'Decision',
+    'Start1',
+    'Start2',
+    'Terminator',
+    'Cloud',
+    'Data',
+    'DirectData',
+    'Database',
+    'Document',
+    'PredefinedProcess',
+    'StoredData',
+    'InternalStorage',
+    'SequentialData',
+    'ManualInput',
+    'Card',
+    'PaperType',
+    'Delay',
+    'Display',
+    'ManualOperation',
+    'Preparation',
+    'LoopLimit',
+    'LoopLimitEnd',
+    'OnPageReference',
+    'OffPageReference',
+    'Annotation',
+    'UserMessage',
+    'NetworkMessage'
   ]
 
   private readonly colorTheme: ColorSet[]
@@ -186,7 +187,7 @@ export class FlowchartConfiguration {
 
     // initialize node/edge/label defaults
     graph.nodeDefaults.style = new FlowchartNodeStyle(
-      FlowchartNodeType.Process,
+      'Process',
       Fill.from(colorSet.fill),
       new Stroke({ fill: colorSet.outline, thickness: 1.5 })
     )
@@ -236,7 +237,7 @@ export class FlowchartConfiguration {
     graph.clear()
     const startNode = graph.createNode({
       style: new FlowchartNodeStyle(
-        FlowchartNodeType.Start1,
+        'Start1',
         Fill.from(colorSet.fill),
         new Stroke({ fill: colorSet.outline, thickness: 1.5 })
       )
@@ -273,8 +274,8 @@ export class FlowchartConfiguration {
   /**
    * Creates an editor input mode that disables many of the default actions and adds a
    * {@link GraphWizardInputMode} with custom actions to create flow charts.
-   * @param legendDiv The HTML element containing the legend of the active actions.
    * @param graphComponent The given graphComponent
+   * @param legendDiv The element containing the legend of the active actions.
    */
   createInputMode(graphComponent: GraphComponent, legendDiv?: HTMLDivElement): IInputMode {
     // use a GraphEditorInputMode but disable many of the default actions to use WizardActions instead
@@ -313,6 +314,12 @@ export class FlowchartConfiguration {
 
     this.addActions(wizardMode)
     mode.add(wizardMode)
+
+    // disable the default move-actions in favor of the custom smart navigation
+    mode.navigationInputMode.availableCommands.remove(Command.MOVE_DOWN)
+    mode.navigationInputMode.availableCommands.remove(Command.MOVE_UP)
+    mode.navigationInputMode.availableCommands.remove(Command.MOVE_LEFT)
+    mode.navigationInputMode.availableCommands.remove(Command.MOVE_RIGHT)
 
     mode.keyboardInputMode.addKeyBinding('l', ModifierKeys.NONE, async () => {
       await this.runFromScratchLayout(graphComponent)
@@ -390,9 +397,10 @@ export class FlowchartConfiguration {
       {
         typeFactory: (item) => this.getFlowchartType(item as INode),
         styleFactory: (item) => {
+          const type = this.getFlowchartType(item as INode)
           return {
             type: 'icon',
-            iconPath: 'resources/icons/flowchart-' + this.getFlowchartType(item as INode) + '.svg'
+            iconPath: `resources/icons/flowchart-${type[0].toLowerCase() + type.slice(1)}.svg`
           }
         },
         tooltip: 'Change the node type',
@@ -418,6 +426,9 @@ export class FlowchartConfiguration {
       mode.graph.setStyle(node, newStyle)
 
       if (refresh) {
+        const neighbors = new Set(mode.graph.neighbors(node))
+        const fixedNodes = mode.graph.nodes.filter((n) => !neighbors.has(n)).toArray()
+        void runLayout(mode, this.createLayout(true), this.layoutData!, fixedNodes)
         this.refreshFocusHighlights(mode, item!)
       }
     }
@@ -435,7 +446,10 @@ export class FlowchartConfiguration {
       const type = this.flowchartTypes[i]
       pickerButtons.push({
         type: type,
-        style: { type: 'icon', iconPath: 'resources/icons/flowchart-' + type + '.svg' },
+        style: {
+          type: 'icon',
+          iconPath: `resources/icons/flowchart-${type[0].toLowerCase() + type.slice(1)}.svg`
+        },
         tooltip: typeToTooltip(type)
       })
     }
@@ -459,7 +473,7 @@ export class FlowchartConfiguration {
   createCreateTwoChildren(): WizardAction {
     return new WizardAction(
       'createTwoChildren',
-      checkAnd([checkNotCreatingEdge, this.isNodeType(FlowchartNodeType.Decision)]),
+      checkAnd([checkNotCreatingEdge, this.isNodeType('Decision')]),
       (mode, source, args) => {
         return this.addTwoChildNodes(mode)
       },
@@ -482,8 +496,8 @@ export class FlowchartConfiguration {
       checkAnd([
         checkNotCreatingEdge,
         checkForNode,
-        checkNot(this.isNodeType(FlowchartNodeType.Terminator)),
-        checkNot(this.isNodeType(FlowchartNodeType.Annotation))
+        checkNot(this.isNodeType('Terminator')),
+        checkNot(this.isNodeType('Annotation'))
       ]),
       (mode, item, type, args) => {
         const parent = item as INode
@@ -691,7 +705,7 @@ export class FlowchartConfiguration {
 
     const parentInputMode = mode.graphEditorInputMode
     const parentType = this.getFlowchartType(parent)
-    if (FlowchartNodeType.Decision == parentType) {
+    if ('Decision' == parentType) {
       // only add an edge label when parent was a decision node
       const step2: ActionStep = {
         action: async (inData) => {
@@ -720,7 +734,6 @@ export class FlowchartConfiguration {
           // child has still a void node style so set the default FlowchartNodeStyle instead
           mode.graph.setStyle(child, mode.graph.nodeDefaults.getStyleInstance())
         }
-        const oldType = (child.style as FlowchartNodeStyle).type
         const success = await mode.showPickerSelection(
           this.createSelectInitialFlowchartType(),
           child
@@ -794,7 +807,7 @@ export class FlowchartConfiguration {
       '',
       {
         type: 'text',
-        pickerLayout: PickerLayout.Column,
+        pickerLayout: 'Column',
         layout: new EdgePathLabelModel({
           distance: 10,
           autoRotation: false,

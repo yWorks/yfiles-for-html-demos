@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HashMap, IGraph, INode } from '@yfiles/yfiles'
+import { HashMap } from '@yfiles/yfiles'
 
 /**
  * A class that creates random graphs. The size of the graph and other options  may be specified.

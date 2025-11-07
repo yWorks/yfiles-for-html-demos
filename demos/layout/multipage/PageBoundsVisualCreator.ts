@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IRenderContext, IVisualCreator, Point, SvgVisual, Visual } from '@yfiles/yfiles'
+import { BaseClass, type IRenderContext, IVisualCreator, Point, SvgVisual, type Visual } from '@yfiles/yfiles'
 
 /**
  * A constant margin for the page so the graph does not touch the frame.

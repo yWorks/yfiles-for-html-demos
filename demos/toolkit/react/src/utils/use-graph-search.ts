@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { GraphSearch } from '@yfiles/demo-utils/GraphSearch.ts'
-import { GraphComponent, INode } from '@yfiles/yfiles'
+import { type GraphComponent, type INode } from '@yfiles/yfiles'
 import { useCallback, useEffect, useMemo } from 'react'
 
 class NodeTagSearch extends GraphSearch {

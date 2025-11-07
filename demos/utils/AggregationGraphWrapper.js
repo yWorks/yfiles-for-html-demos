@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/restrict-template-expressions */
 import {
   AdjacencyTypes,
   BaseClass,
@@ -39,29 +38,21 @@ import {
   GraphWrapperBase,
   HashMap,
   IBend,
-  IContextLookup,
   IContextLookupChainLink,
   IEdge,
-  IEdgeDefaults,
   IEdgeStyle,
-  IEnumerable,
   IGraph,
   ILabel,
   ILabelModelParameter,
   ILabelOwner,
   ILabelStyle,
-  IList,
   IListEnumerable,
   ILookup,
   ILookupDecorator,
-  IMap,
-  IModelItem,
   IMutablePoint,
   IMutableRectangle,
   INode,
-  INodeDefaults,
   INodeStyle,
-  IOrientedRectangle,
   IPoint,
   IPort,
   IPortLocationModelParameter,
@@ -81,7 +72,6 @@ import {
   OrientedRectangle,
   Point,
   PortEventArgs,
-  Rect,
   Size
 } from '@yfiles/yfiles'
 
@@ -129,6 +119,8 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
 
   aggregationNodes
   $aggregationEdges
+  $sourcePortToAggregationEdge
+  $targetPortToAggregationEdge
 
   // live views of the currently visible items
   $nodes
@@ -163,6 +155,8 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     this.$filteredAggregationItems = new Set()
     this.aggregationNodes = new List()
     this.$aggregationEdges = new List()
+    this.$sourcePortToAggregationEdge = new Map()
+    this.$targetPortToAggregationEdge = new Map()
 
     this.$nodes = new ListEnumerable(
       this.$filteredGraph.nodes.concat(
@@ -294,11 +288,9 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
 
     // hide adjacent aggregation edges (which are not hidden by filtered graph)
-    this.edgesAt(portOwner, AdjacencyTypes.ALL)
-      .filter((edge) => edge instanceof AggregationEdge)
-      .forEach((edge) => {
-        this.$hide(edge)
-      })
+    this.aggregationEdgesAt(portOwner, AdjacencyTypes.ALL).forEach((edge) => {
+      this.$hide(edge)
+    })
     this.$filteredOriginalNodes.add(portOwner)
     this.$predicateChanged(portOwner)
   }
@@ -564,16 +556,13 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
   }
 
-  $showOrRemoveAggregatedEdges(aggregationEdge) {
-    for (const aggregatedEdge of aggregationEdge.aggregatedEdges) {
-      if (aggregatedEdge instanceof AggregationEdge) {
-        const replacedEdge = aggregationEdge
-        // manually show aggregated AggregationEdges, other edges are handled by filtered graph
-        if (this.contains(replacedEdge.sourcePort) && this.contains(replacedEdge.targetPort)) {
-          this.$show(aggregatedEdge)
-        } else {
-          this.$removeAggregationEdge(replacedEdge)
-        }
+  $showOrRemoveAggregatedEdges(replacedEdge) {
+    for (const aggregatedEdge of replacedEdge.aggregatedEdges) {
+      // manually show aggregated AggregationEdges, other edges are handled by filtered graph
+      if (this.contains(replacedEdge.sourcePort) && this.contains(replacedEdge.targetPort)) {
+        this.$show(aggregatedEdge)
+      } else {
+        this.$removeAggregationEdge(replacedEdge)
       }
     }
   }
@@ -829,6 +818,8 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       this.$removeAggregationBend(bend)
     }
     this.$aggregationEdges.remove(aggregationEdge)
+    this.$sourcePortToAggregationEdge.delete(aggregationEdge.sourcePort)
+    this.$targetPortToAggregationEdge.delete(aggregationEdge.targetPort)
     this.$filteredAggregationItems.delete(aggregationEdge)
     aggregationEdge.graph = null
     this.onEdgeRemoved(new EdgeEventArgs(aggregationEdge))
@@ -901,6 +892,36 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
           )
       }
     }
+  }
+
+  aggregationEdgesAt(owner, type) {
+    if (!this.contains(owner)) {
+      throw Error('ArgumentError: Affected parameter owner: Owner is not in this graph')
+    }
+
+    let aggregationEdges
+
+    switch (type) {
+      case AdjacencyTypes.NONE:
+        return IListEnumerable.EMPTY
+      case AdjacencyTypes.INCOMING:
+        aggregationEdges = owner.ports.map((port) => this.$targetPortToAggregationEdge.get(port))
+        break
+      case AdjacencyTypes.OUTGOING:
+        aggregationEdges = owner.ports.map((port) => this.$sourcePortToAggregationEdge.get(port))
+        break
+      default:
+      case AdjacencyTypes.ALL:
+        aggregationEdges = owner.ports.map(
+          (port) =>
+            this.$targetPortToAggregationEdge.get(port) ??
+            this.$sourcePortToAggregationEdge.get(port)
+        )
+        break
+    }
+    return new ListEnumerable(
+      aggregationEdges.filter((edge) => !!edge && this.$aggregationItemPredicate(edge))
+    )
   }
 
   setEdgePorts(edge, sourcePort, targetPort) {
@@ -1455,6 +1476,8 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         const aggregationEdge = new AggregationEdge(this, sourcePort, targetPort, edgeStyle)
         aggregationEdge.tag = tag
         this.$aggregationEdges.add(aggregationEdge)
+        this.$sourcePortToAggregationEdge.set(sourcePort, aggregationEdge)
+        this.$targetPortToAggregationEdge.set(targetPort, aggregationEdge)
         this.onEdgeCreated(new ItemEventArgs(aggregationEdge))
         return aggregationEdge
       }
@@ -1470,10 +1493,11 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     const aggregationEdge = new AggregationEdge(this, sourcePort, targetPort, edgeStyle)
     aggregationEdge.tag = tag || null
     this.$aggregationEdges.add(aggregationEdge)
+    this.$sourcePortToAggregationEdge.set(sourcePort, aggregationEdge)
+    this.$targetPortToAggregationEdge.set(targetPort, aggregationEdge)
     return aggregationEdge
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return this.$lookupDecorator.lookup(type)
   }
@@ -1591,7 +1615,6 @@ class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     if (type === ILookupDecorator) {
       this.$wrappedDecorator = this.$graph.baseLookup(type)
@@ -1761,7 +1784,6 @@ class AggregationNode extends BaseClass(INode) {
     this.$parent = null
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   innerLookup(type) {
     if (type === INodeStyle) {
       return this.style
@@ -1775,7 +1797,6 @@ class AggregationNode extends BaseClass(INode) {
     return null
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return this.graph ? this.graph.delegateLookup(this, type) : null
   }
@@ -1898,12 +1919,10 @@ class AggregationEdge extends BaseClass(IEdge) {
     return port === this.sourceNode ? this.targetNode : this.sourceNode
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return this.graph ? this.graph.delegateLookup(this, type) : null
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   innerLookup(type) {
     if (type === IEdgeStyle) {
       return this.style
@@ -1977,12 +1996,10 @@ class AggregationBend extends BaseClass(IBend) {
     this.$graph = graph
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return this.graph ? this.graph.delegateLookup(this, type) : null
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   innerLookup(type) {
     if (type === IMutablePoint) {
       return this.location
@@ -2066,12 +2083,10 @@ class AggregationPort extends BaseClass(IPort) {
     this.$graph = graph
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return this.graph ? this.graph.delegateLookup(this, type) : null
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   innerLookup(type) {
     if (type === IPortStyle) {
       return this.style
@@ -2188,12 +2203,10 @@ class AggregationLabel extends BaseClass(ILabel) {
     this.$layout = new OrientedRectangle()
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return this.graph ? this.graph.delegateLookup(this, type) : null
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   innerLookup(type) {
     if (type === ILabelStyle) {
       return this.style

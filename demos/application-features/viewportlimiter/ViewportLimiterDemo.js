@@ -35,7 +35,6 @@ import {
   GraphComponent,
   GraphViewerInputMode,
   HierarchicalLayout,
-  IGraph,
   Insets,
   LayoutExecutor,
   License,
@@ -44,9 +43,9 @@ import {
   ViewportLimitingPolicy
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 import graphData from './graph-data.json'
 import { RectangleVisualCreator } from './RectangleVisualCreator'
 import { ProjectionAnimation } from './ProjectionAnimation'
@@ -77,7 +76,7 @@ let isometricView
  * Runs this demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('#graphComponent')
 
@@ -333,7 +332,7 @@ function initializeUI(graphComponent) {
   icometricViewButton.addEventListener('click', () => {
     toggleProjection()
   })
-  addNavigationButtons(policySelect, true, false, 'navigation-button')
+  addNavigationButtons(policySelect, true, true)
   policySelect.addEventListener('change', () => {
     updateViewportLimiterSettings(graphComponent)
     updateDescriptionText()

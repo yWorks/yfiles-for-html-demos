@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { createCodemirrorEditor, EditorView } from '@yfiles/demo-resources/codemirror-editor'
+import { createCodemirrorEditor } from '@yfiles/demo-app/codemirror-editor'
 
 /**
  * Abstract base class for a node-/edge-source editing dialog

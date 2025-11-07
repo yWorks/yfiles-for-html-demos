@@ -33,8 +33,6 @@ import {
   HierarchicalLayout,
   HierarchicalLayoutData,
   HierarchicalLayoutLayeringStrategy,
-  IList,
-  INode,
   LabelEdgeSides,
   LabelSideReferences,
   LayoutExecutor,
@@ -44,8 +42,8 @@ import {
 import { SchemaComponent } from './SchemaComponent'
 import samples from './samples'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 const samplesComboBox = document.querySelector('#samples')
 
@@ -68,13 +66,12 @@ let existingNodes
  * node template can also be changed interactively in order to display arbitrary data
  * of the business data associated with the node.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
   schemaComponent = new SchemaComponent('schemaGraphComponent', graphComponent.graph, () => {
-    // noinspection JSIgnoredPromiseFromCall
     buildGraphFromData(true)
   })
 
@@ -87,7 +84,6 @@ async function run() {
   initializeSamplesComboBox()
 
   // load the initial data from samples
-  // noinspection JSIgnoredPromiseFromCall
   loadSample(samples[0])
 
   // register toolbar and other GUI element actions

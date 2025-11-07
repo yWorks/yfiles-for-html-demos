@@ -17,7 +17,7 @@
 
 The Interactive Edge Routing demo showcases [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter) 's ability to find and re-layout edge paths which are not yet ‘good’.
 
-After each user interaction the edge router is applied with [RoutingPolicy](https://docs.yworks.com/yfileshtml/#/api/RoutingPolicy) set to either re-route entire edges or only necessary segments of edges. The edge router itself determines automatically which edges need a re-routing based on various criteria like intersections with other elements or routing style violations.
+After each user interaction the edge router is applied with [EdgeRouterScope](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterScope) set to either re-route entire edges or only necessary segments of edges. The edge router itself determines automatically which edges need a re-routing based on various criteria like intersections with other elements or routing style violations.
 
 ## Things to Try
 
@@ -25,4 +25,4 @@ After each user interaction the edge router is applied with [RoutingPolicy](http
 - Open/close group nodes with incident edges.
 - Move nodes or create nodes in a way that they overlap existing edges.
 - Create new edges and see how they are routed to match the other edges.
-- Choose different routing policies with the Routing Policy combo box.
+- Choose different routing scopes with the Routing Scope combo box.

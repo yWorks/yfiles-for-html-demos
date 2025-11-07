@@ -7,10 +7,11 @@
   "private": true,
   "main": "server.mjs",
   "scripts": {
+    "postinstall": "node -e \"require('fs').copyFileSync('../../../../lib/license.json','license.json')\"",
     "start": "node ./server.mjs"
   },
   "dependencies": {
-    "express": "4.21.1",
-    "@yfiles/yfiles": "../../../../lib/yfiles-30.0.3+dev.tgz"
+    "express": "^5.1.0",
+    "@yfiles/yfiles": "../../../../lib-dev/yfiles-30.0.4+dev.tgz"
   }
 }

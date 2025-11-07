@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HashMap, IEdge, IModelItem, INode, IPort, KeyScope, KeyType, List } from '@yfiles/yfiles'
+import { HashMap, IEdge, INode, IPort, KeyScope, KeyType, List } from '@yfiles/yfiles'
 import { GraphMLProperty } from './GraphMLProperty'
 import { PropertiesPanelUI } from './PropertiesPanelUI'
 

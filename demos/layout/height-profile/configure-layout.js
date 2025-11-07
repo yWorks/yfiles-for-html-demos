@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { ConstraintOrientation, OrganicLayout, OrganicLayoutData } from '@yfiles/yfiles'
-import { getWayPoint, MultiPageNodeType } from './resources/TrekkingData'
+import { getWayPoint } from './resources/TrekkingData'
 import { SCALED_MAX_Y } from './scale-data'
 
 /**
@@ -37,7 +37,7 @@ import { SCALED_MAX_Y } from './scale-data'
  * To get the desired visualization, we will put some constraints on the {@link OrganicLayout}.
  */
 export function configureLayout(graph) {
-  // creates the organic layout with the desired distance between nodes,
+  // creates the organic layout with the desired distance between nodes
   // and sets the scope to subset so that only the label nodes are placed by the
   // layout algorithm
   const organicLayout = new OrganicLayout({
@@ -48,9 +48,7 @@ export function configureLayout(graph) {
 
   // mark the label nodes as affected so that they are arranged by the layout algorithm
   const organicLayoutData = new OrganicLayoutData({
-    scope: {
-      nodes: graph.nodes.filter((node) => getWayPoint(node)?.type === MultiPageNodeType.LABEL)
-    }
+    scope: { nodes: graph.nodes.filter((node) => getWayPoint(node)?.type === 'label') }
   })
 
   // create a constraint for each waypoint-label node pair that forces the algorithm to

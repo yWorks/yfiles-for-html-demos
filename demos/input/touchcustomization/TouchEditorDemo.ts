@@ -44,17 +44,16 @@ import {
   IBend,
   IBendCreator,
   IEdge,
-  IGraph,
+  type IGraph,
   ILabel,
-  IModelItem,
+  type IModelItem,
   INode,
   type IPortOwner,
   LabelStyle,
   License,
   Point,
-  PointerType,
   PolylineEdgeStyle,
-  PopulateItemContextMenuEventArgs,
+  type PopulateItemContextMenuEventArgs,
   PortCandidate,
   PortRelocationHandleProvider,
   Rect,
@@ -79,15 +78,15 @@ import {
   createDemoGroupStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+} from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { PortCandidateRenderer } from './PortCandidateRenderer'
 
 let graphComponent: GraphComponent
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
@@ -167,17 +166,6 @@ function createEditorMode(): GraphEditorInputMode {
  * Customizes lasso selection start and finish gestures.
  */
 function configureLassoSelection(geim: GraphEditorInputMode): void {
-  // configure tap-down start gesture for lasso selection
-  let lastTapLocation = Point.ORIGIN
-  let lastTapTime = new Date()
-  geim.clickInputMode.addEventListener('clicked', (evt) => {
-    if (evt.pointerType === PointerType.TOUCH) {
-      // remember the location and time of the last tap
-      lastTapLocation = evt.location
-      lastTapTime = new Date()
-    }
-  })
-
   // configure touch/mouse up as finish gesture for lasso selection
   geim.lassoSelectionInputMode.finishRecognizerTouch = EventRecognizers.TOUCH_PRIMARY_UP
   geim.lassoSelectionInputMode.finishRecognizer = EventRecognizers.MOUSE_LEFT_UP

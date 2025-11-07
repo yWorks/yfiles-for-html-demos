@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent } from '@yfiles/yfiles'
+import { type GraphComponent } from '@yfiles/yfiles'
 
 describe('yfiles spec', () => {
   it('should increase edge count by 1', () => {

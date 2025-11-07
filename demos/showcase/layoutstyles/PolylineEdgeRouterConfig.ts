@@ -39,9 +39,9 @@ import {
   EdgeRouterNodeLabelPlacement,
   EdgeRouterRoutingStyle,
   EdgeRouterScope,
-  GraphComponent,
-  ILayoutAlgorithm,
-  LayoutData,
+  type GraphComponent,
+  type ILayoutAlgorithm,
+  type LayoutData,
   List,
   MonotonicPathRestrictions,
   Point,
@@ -59,27 +59,19 @@ import {
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 
-export enum BusMembership {
-  NONE,
-  SINGLE,
-  LABEL,
-  TAG
-}
+export const BusMembership = { NONE: 0, SINGLE: 1, LABEL: 2, TAG: 3 }
+export type BusMembership = (typeof BusMembership)[keyof typeof BusMembership]
 
-export enum PortSide {
-  ANY,
-  LEFT_RIGHT,
-  TOP_BOTTOM
-}
+export const PortSide = { ANY: 0, LEFT_RIGHT: 1, TOP_BOTTOM: 2 }
+export type PortSide = (typeof PortSide)[keyof typeof PortSide]
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -135,16 +127,16 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
     ],
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     scopeItem: [
       new LabelAttribute('Scope', '#/api/EdgeRouterData#EdgeRouterData-property-scope'),
       new OptionGroupAttribute('LayoutGroup', 10),
       new EnumValuesAttribute([
-        ['All Edges', Scope.ROUTE_ALL_EDGES],
-        ['Selected Edges', Scope.ROUTE_AFFECTED_EDGES],
-        ['Edges at Selected Nodes', Scope.ROUTE_EDGES_AT_AFFECTED_NODES]
+        ['All Edges', 'route-all-edges'],
+        ['Selected Edges', 'route-affected-edges'],
+        ['Edges at Selected Nodes', 'route-edges-at-affected-nodes']
       ]),
       new TypeAttribute(Number)
     ],
@@ -200,7 +192,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('LayoutGroup', 70),
       new MinMaxAttribute(0, 150),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     routingPolicyItem: [
@@ -221,9 +213,9 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('LayoutGroup', 90),
       new EnumValuesAttribute([
-        ['Any', PortSide.ANY],
-        ['Left or Right', PortSide.LEFT_RIGHT],
-        ['Top or Bottom', PortSide.TOP_BOTTOM]
+        ['Any', 'any'],
+        ['Left or Right', 'left-right'],
+        ['Top or Bottom', 'top-bottom']
       ]),
       new TypeAttribute(PortSide)
     ],
@@ -234,7 +226,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('DistancesGroup', 10),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumNodeToEdgeDistanceItem: [
@@ -244,7 +236,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('DistancesGroup', 20),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumNodeCornerDistanceItem: [
@@ -254,7 +246,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('DistancesGroup', 30),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumFirstSegmentLengthItem: [
@@ -264,7 +256,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('DistancesGroup', 40),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumLastSegmentLengthItem: [
@@ -274,7 +266,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('DistancesGroup', 50),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     gridEnabledItem: [
@@ -286,7 +278,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       new LabelAttribute('Grid Spacing', '#/api/Grid#Grid-property-gridSpacing'),
       new OptionGroupAttribute('GridGroup', 20),
       new MinMaxAttribute(2, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     routingStyleItem: [
@@ -309,7 +301,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('PolylineGroup', 20),
       new MinMaxAttribute(5, 500),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     maximumOctilinearSegmentRatioItem: [
@@ -319,7 +311,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('PolylineGroup', 30),
       new MinMaxAttribute(0, 0.5, 0.01),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     sourceCurveConnectionStyleItem: [
@@ -353,7 +345,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('PolylineGroup', 60),
       new MinMaxAttribute(0, 1, 0.1),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     curveShortcutsItem: [
@@ -368,10 +360,10 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       new LabelAttribute('Bus Membership', '#/api/EdgeRouterData#EdgeRouterData-property-buses'),
       new OptionGroupAttribute('BusGroup', 10),
       new EnumValuesAttribute([
-        ['No Buses', BusMembership.NONE],
-        ['Single Bus', BusMembership.SINGLE],
-        ['By First Label', BusMembership.LABEL],
-        ['By User Tag', BusMembership.TAG]
+        ['No Buses', 'none'],
+        ['Single Bus', 'single'],
+        ['By First Label', 'label'],
+        ['By User Tag', 'tag']
       ]),
       new TypeAttribute(BusMembership)
     ],
@@ -390,7 +382,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('BusGroup', 30),
       new MinMaxAttribute(1, 1000),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     allowMultipleBackboneSegmentsItem: [
@@ -444,10 +436,10 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 10),
       new EnumValuesAttribute([
-        ['Parallel', LabelPlacementOrientation.PARALLEL],
-        ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
-        ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
-        ['Vertical', LabelPlacementOrientation.VERTICAL]
+        ['Parallel', 'parallel'],
+        ['Orthogonal', 'orthogonal'],
+        ['Horizontal', 'horizontal'],
+        ['Vertical', 'vertical']
       ]),
       new TypeAttribute(LabelPlacementOrientation)
     ],
@@ -458,12 +450,12 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 20),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
-        ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
-        ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
-        ['At Target', LabelPlacementAlongEdge.AT_TARGET],
-        ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
-        ['Centered', LabelPlacementAlongEdge.CENTERED]
+        ['Anywhere', 'anywhere'],
+        ['At Source', 'at-source'],
+        ['At Source Port', 'at-source-port'],
+        ['At Target', 'at-target'],
+        ['At Target Port', 'at-target-port'],
+        ['Centered', 'centered']
       ]),
       new TypeAttribute(LabelPlacementAlongEdge)
     ],
@@ -474,11 +466,11 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 30),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
-        ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
-        ['Left', LabelPlacementSideOfEdge.LEFT],
-        ['Right', LabelPlacementSideOfEdge.RIGHT],
-        ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+        ['Anywhere', 'anywhere'],
+        ['On Edge', 'on-edge'],
+        ['Left', 'left'],
+        ['Right', 'right'],
+        ['Left or Right', 'left-or-right']
       ]),
       new TypeAttribute(LabelPlacementSideOfEdge)
     ],
@@ -489,7 +481,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 40),
       new MinMaxAttribute(0.0, 40.0),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ]
   },
@@ -502,7 +494,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
     LayoutConfiguration.call(this)
     const router = new EdgeRouter()
 
-    this.scopeItem = Scope.ROUTE_ALL_EDGES
+    this.scopeItem = 'route-all-edges'
     this.optimizationStrategyItem = EdgeRouterCosts.BALANCED_OPTIMIZATION
     this.monotonicRestrictionItem = MonotonicPathRestrictions.NONE
     this.enableReroutingItem = router.rerouting
@@ -529,15 +521,15 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
     this.targetCurveConnectionStyleItem = descriptor.targetCurveConnectionStyle
     this.curveUTurnSymmetryItem = descriptor.curveUTurnSymmetry
     this.curveShortcutsItem = descriptor.curveShortcuts
-    this.portSidesItem = PortSide.ANY
+    this.portSidesItem = 'any'
 
-    this.busMembershipItem = BusMembership.NONE
+    this.busMembershipItem = 'none'
 
     this.nodeLabelingItem = router.nodeLabelPlacement
     this.edgeLabelingItem = router.edgeLabelPlacement
-    this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
-    this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
-    this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
+    this.labelPlacementAlongEdgeItem = 'centered'
+    this.labelPlacementSideOfEdgeItem = 'on-edge'
+    this.labelPlacementOrientationItem = 'horizontal'
     this.labelPlacementDistanceItem = 10
     this.title = 'Edge Router'
   },
@@ -628,19 +620,19 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
     })
 
     const selection = graphComponent.selection
-    if (this.scopeItem === Scope.ROUTE_EDGES_AT_AFFECTED_NODES) {
+    if (this.scopeItem === 'route-edges-at-affected-nodes') {
       layoutData.scope.incidentNodeMapping = (node) =>
         selection.includes(node) ? this.routingPolicyItem : EdgeRouterScope.IGNORE
-    } else if (this.scopeItem === Scope.ROUTE_AFFECTED_EDGES) {
+    } else if (this.scopeItem === 'route-affected-edges') {
       layoutData.scope.edgeMapping = (edge) =>
         selection.includes(edge) ? this.routingPolicyItem : EdgeRouterScope.IGNORE
     } else {
       layoutData.scope.edgeMapping = this.routingPolicyItem
     }
 
-    if (this.portSidesItem !== PortSide.ANY) {
+    if (this.portSidesItem !== 'any') {
       let candidates
-      if (this.portSidesItem === PortSide.LEFT_RIGHT) {
+      if (this.portSidesItem === 'left-right') {
         candidates = new EdgePortCandidates()
           .addFreeCandidate(PortSides.RIGHT)
           .addFreeCandidate(PortSides.LEFT)
@@ -654,12 +646,12 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
     }
 
     switch (this.busMembershipItem) {
-      case BusMembership.SINGLE: {
+      case 'single': {
         const busDescriptor = this.createBusDescriptor()
         layoutData.buses.add(busDescriptor).source = graphComponent.graph.edges
         break
       }
-      case BusMembership.LABEL: {
+      case 'label': {
         const visitedLabels = new Set()
         graphComponent.graph.edgeLabels.forEach((label) => {
           if (!visitedLabels.has(label.text)) {
@@ -671,7 +663,7 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
         })
         break
       }
-      case BusMembership.TAG: {
+      case 'tag': {
         const visitedTags = new Set()
         graphComponent.graph.edges.forEach((edge) => {
           const tag = edge.tag
@@ -765,11 +757,11 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
   useIntermediatePointsItem: false,
 
   /** @type {boolean} */
-  shouldDisableUseIntermediatePointsItem: <any>{
+  shouldDisableUseIntermediatePointsItem: {
     get: function (): boolean {
-      return this.busMembershipItem !== BusMembership.NONE
+      return this.busMembershipItem !== 'none'
     }
-  },
+  } as any,
 
   /** @type {number} */
   stopDurationItem: 5,
@@ -802,11 +794,11 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
   gridSpacingItem: 2,
 
   /** @type {boolean} */
-  shouldDisableGridSpacingItem: <any>{
+  shouldDisableGridSpacingItem: {
     get: function (): boolean {
       return this.gridEnabledItem === false
     }
-  },
+  } as any,
 
   /** @type {EdgeRouterRoutingStyle} */
   routingStyleItem: null,
@@ -815,61 +807,61 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
   preferredOctilinearSegmentLengthItem: 5,
 
   /** @type {boolean} */
-  shouldDisablePreferredOctilinearSegmentLengthItem: <any>{
+  shouldDisablePreferredOctilinearSegmentLengthItem: {
     get: function (): boolean {
       return this.routingStyleItem !== EdgeRouterRoutingStyle.OCTILINEAR
     }
-  },
+  } as any,
 
   /** @type {number} */
   maximumOctilinearSegmentRatioItem: 0.3,
 
   /** @type {boolean} */
-  shouldDisableMaximumOctilinearSegmentRatioItem: <any>{
+  shouldDisableMaximumOctilinearSegmentRatioItem: {
     get: function (): boolean {
       return this.routingStyleItem !== EdgeRouterRoutingStyle.OCTILINEAR
     }
-  },
+  } as any,
 
   /** @type {CurveConnectionStyle} */
   sourceCurveConnectionStyleItem: null,
 
   /** @type {boolean} */
-  shouldDisableSourceCurveConnectionStyleItem: <any>{
+  shouldDisableSourceCurveConnectionStyleItem: {
     get: function (): boolean {
       return this.routingStyleItem !== EdgeRouterRoutingStyle.CURVED
     }
-  },
+  } as any,
 
   /** @type {CurveConnectionStyle} */
   targetCurveConnectionStyleItem: null,
 
   /** @type {boolean} */
-  shouldDisableTargetCurveConnectionStyleItem: <any>{
+  shouldDisableTargetCurveConnectionStyleItem: {
     get: function (): boolean {
       return this.routingStyleItem !== EdgeRouterRoutingStyle.CURVED
     }
-  },
+  } as any,
 
   /** @type {number} */
   curveUTurnSymmetryItem: 0,
 
   /** @type {boolean} */
-  shouldDisableCurveUTurnSymmetryItem: <any>{
+  shouldDisableCurveUTurnSymmetryItem: {
     get: function (): boolean {
       return this.routingStyleItem !== EdgeRouterRoutingStyle.CURVED
     }
-  },
+  } as any,
 
   /** @type {number} */
   curveShortcutsItem: 0,
 
   /** @type {boolean} */
-  shouldDisableCurveShortcutsItem: <any>{
+  shouldDisableCurveShortcutsItem: {
     get: function (): boolean {
       return this.routingStyleItem !== EdgeRouterRoutingStyle.CURVED
     }
-  },
+  } as any,
 
   /** @type {BusMembership} */
   busMembershipItem: null,
@@ -878,31 +870,31 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
   automaticEdgeGroupingItem: true,
 
   /** @type {boolean} */
-  shouldDisableAutomaticEdgeGroupingItem: <any>{
+  shouldDisableAutomaticEdgeGroupingItem: {
     get: function (): boolean {
-      return this.busMembershipItem === BusMembership.NONE
+      return this.busMembershipItem === 'none'
     }
-  },
+  } as any,
 
   /** @type {number} */
   minimumBackboneSegmentLengthItem: 100,
 
   /** @type {boolean} */
-  shouldDisableMinimumBackboneSegmentLengthItem: <any>{
+  shouldDisableMinimumBackboneSegmentLengthItem: {
     get: function (): boolean {
-      return this.busMembershipItem === BusMembership.NONE
+      return this.busMembershipItem === 'none'
     }
-  },
+  } as any,
 
   /** @type {boolean} */
   allowMultipleBackboneSegmentsItem: true,
 
   /** @type {boolean} */
-  shouldDisableAllowMultipleBackboneSegmentsItem: <any>{
+  shouldDisableAllowMultipleBackboneSegmentsItem: {
     get: function (): boolean {
-      return this.busMembershipItem === BusMembership.NONE
+      return this.busMembershipItem === 'none'
     }
-  },
+  } as any,
 
   /** @type {EdgeRouterNodeLabelPlacement} */
   nodeLabelingItem: null,
@@ -914,52 +906,52 @@ export const PolylineEdgeRouterConfig = (Class as any)('PolylineEdgeRouterConfig
   reduceAmbiguityItem: false,
 
   /** @type {boolean} */
-  shouldDisableReduceAmbiguityItem: <any>{
+  shouldDisableReduceAmbiguityItem: {
     get: function (): boolean {
       return this.edgeLabelingItem !== EdgeRouterEdgeLabelPlacement.GENERIC
     }
-  },
+  } as any,
 
   /** @type {LabelPlacementOrientation} */
   labelPlacementOrientationItem: null,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementOrientationItem: <any>{
+  shouldDisableLabelPlacementOrientationItem: {
     get: function (): boolean {
       return this.edgeLabelingItem === EdgeRouterEdgeLabelPlacement.IGNORE
     }
-  },
+  } as any,
 
   /** @type {LabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: null,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementAlongEdgeItem: <any>{
+  shouldDisableLabelPlacementAlongEdgeItem: {
     get: function (): boolean {
       return this.edgeLabelingItem === EdgeRouterEdgeLabelPlacement.IGNORE
     }
-  },
+  } as any,
 
   /** @type {LabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: null,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementSideOfEdgeItem: <any>{
+  shouldDisableLabelPlacementSideOfEdgeItem: {
     get: function (): boolean {
       return this.edgeLabelingItem === EdgeRouterEdgeLabelPlacement.IGNORE
     }
-  },
+  } as any,
 
   /** @type {number} */
   labelPlacementDistanceItem: 0,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementDistanceItem: <any>{
+  shouldDisableLabelPlacementDistanceItem: {
     get: function (): boolean {
       return (
         this.edgeLabelingItem === EdgeRouterEdgeLabelPlacement.IGNORE ||
-        this.labelPlacementSideOfEdgeItem === LabelPlacementSideOfEdge.ON_EDGE
+        this.labelPlacementSideOfEdgeItem === 'on-edge'
       )
     }
-  }
+  } as any
 })

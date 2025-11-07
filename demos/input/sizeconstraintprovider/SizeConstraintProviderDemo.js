@@ -30,7 +30,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  IGraph,
   INodeSizeConstraintProvider,
   License,
   MutableRectangle,
@@ -42,9 +41,9 @@ import {
 import { LimitingRectangleRenderer } from './LimitingRectangleRenderer'
 import { GreenSizeConstraintProvider } from './GreenSizeConstraintProvider'
 import { BlueSizeConstraintProvider } from './BlueSizeConstraintProvider'
-import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Registers a callback function as decorator that provides a custom
@@ -74,7 +73,7 @@ function registerSizeConstraintProvider(graph, boundaryRectangle) {
 }
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   // create a default editor input mode

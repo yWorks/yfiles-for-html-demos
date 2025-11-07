@@ -29,27 +29,26 @@
 import {
   Arrow,
   Font,
-  SmartEdgeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   HierarchicalLayout,
   HierarchicalLayoutEdgeDescriptor,
   HorizontalTextAlignment,
-  IGraph,
   LayoutExecutor,
   License,
   MarkupLabelStyle,
   PolylineEdgeStyle,
   Size,
+  SmartEdgeLabelModel,
   StretchNodeLabelModel,
   TextWrapping
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import { RichTextEditorInputMode } from './RichTextEditorInputMode'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import graphData from './graph-data.json'
 
 let graphComponent
@@ -63,7 +62,7 @@ let graphComponent
  * and the label text will be wrapped at word boundaries.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize graph component
   graphComponent = new GraphComponent('graphComponent')

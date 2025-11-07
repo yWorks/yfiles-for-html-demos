@@ -29,46 +29,44 @@
 import {
   BaseClass,
   type Constructor,
-  HandleDeserializationEventArgs,
-  HandleSerializationEventArgs,
+  type HandleDeserializationEventArgs,
+  type HandleSerializationEventArgs,
   ILookup,
   INode,
-  IPort,
+  type IPort,
   IPortLocationModel,
   IPortLocationModelParameter,
-  IPortOwner,
+  type IPortOwner,
   Point
 } from '@yfiles/yfiles'
 
 /**
  * Symbolic constants for the five supported port locations.
  */
-export enum PortLocation {
-  CENTER,
-  TOP,
-  BOTTOM,
-  RIGHT,
-  LEFT
-}
+export const PortLocation = { CENTER: 0, TOP: 1, BOTTOM: 2, RIGHT: 3, LEFT: 4 }
+export type PortLocation = (typeof PortLocation)[keyof typeof PortLocation]
 
 /**
  * Custom implementation of {@link IPortLocationModel} that provides
  * five discrete port locations, one at the node center and one at each side.
  */
 export class CustomNodePortLocationModel extends BaseClass(IPortLocationModel) {
+  inset: number
+
   /**
    * Creates a new instance of {@link CustomNodePortLocationModel}.
    * @param inset The inset for port locations TOP, LEFT, BOTTOM, and RIGHT.
    */
-  constructor(public inset: number = 0) {
+  constructor(inset: number = 0) {
     super()
+    this.inset = inset
   }
 
   /**
    * Returns an instance that implements the given type or null.
    * @param type The type for which an instance shall be returned
    */
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+
   lookup<T>(type: Constructor<T>): T | null {
     return null
   }
@@ -109,7 +107,7 @@ export class CustomNodePortLocationModel extends BaseClass(IPortLocationModel) {
           throw new Error('Unknown PortLocation')
       }
     } else {
-      // no owner node (e.g. an edge port), or parameter mismatch - return (0,0)
+      // no owner node (e.g., an edge port), or parameter mismatch - return (0,0)
       return Point.ORIGIN
     }
   }
@@ -124,7 +122,7 @@ export class CustomNodePortLocationModel extends BaseClass(IPortLocationModel) {
    * some discretization of the coordinate space. This means that retrieving the actual location with
    * {@link getLocation} for the returned parameter does not necessarily have to provide the original coordinates
    * location; still, the actual location should probably be included in the coordinate subset that is mapped to the
-   * return value (otherwise behaviour will be very confusing).
+   * return value (otherwise behavior will be very confusing).
    *
    * @param owner The port owner that will own the port for which the parameter shall be
    * created
@@ -176,14 +174,16 @@ export class CustomNodePortLocationModel extends BaseClass(IPortLocationModel) {
  * This implementation just stores one of the symbolic {@link PortLocation} instances.
  */
 export class CustomNodePortLocationModelParameter extends BaseClass(IPortLocationModelParameter) {
+  readonly location: PortLocation
+  private readonly owner: CustomNodePortLocationModel
+
   /**
    * Creates an instance of CustomNodePortLocationModelParameter.
    */
-  constructor(
-    private readonly owner: CustomNodePortLocationModel,
-    public readonly location: PortLocation
-  ) {
+  constructor(owner: CustomNodePortLocationModel, location: PortLocation) {
     super()
+    this.owner = owner
+    this.location = location
   }
 
   /**
@@ -240,7 +240,7 @@ export class CustomNodePortLocationModelParameter extends BaseClass(IPortLocatio
         const model = new CustomNodePortLocationModel(parseFloat(element.getAttribute('inset')!))
         args.result = new CustomNodePortLocationModelParameter(
           model,
-          parseInt(element.getAttribute('portLocation')!)
+          parseInt(element.getAttribute('portLocation')!) as PortLocation
         )
       }
     }

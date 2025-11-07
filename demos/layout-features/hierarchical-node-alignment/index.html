@@ -33,10 +33,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-    <title>Hierarchical Layout with Node Alignment - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <title>Hierarchical Layout with Node Alignment [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -61,7 +61,6 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
     </div>
@@ -79,71 +78,60 @@
 
       <div class="demo-description__content">
         <h1>Hierarchical Layout with Node Alignment</h1>
-
         <p>
-          This demo shows how to configure the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">Hierarchical Layout</a> so that nodes on different layers
-          that are connected by a critical (important) edge are aligned.
+          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> to align nodes
+          connected by critical paths.
         </p>
-
         <p>
-          To achieve this, the user has to specify a priority value for each edge that should be
-          considered as important. This value has to be a number greater than zero.
+          The priorities are passed to the layout algorithm through the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#criticalEdgePriorities" class="api" target="_blank">criticalEdgePriorities</a>
+          property, causing the connected nodes to be aligned.
         </p>
-
         <p>
-          The critical edge priorities can be passed to the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">Hierarchical Layout</a> algorithm through the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#criticalEdgePriorities" target="_blank">criticalEdgePriorities</a>
-          property.
+          In this demo, edges belonging to the longest path in the graph are designated as critical
+          (see <strong><span style="color: #e011a4">pink edges</span></strong
+          >). Of course, any other criterion may be used to define the set of critical edges.
         </p>
-
-        <p>
-          In this demo, we consider as critical the edges that belong to the longest path of the
-          graph (refer to the <span style="color: #e011a4; font-weight: bold">pink edges</span>).
-          After the execution of the algorithm, the nodes that are connected with the critical edges
-          are vertically aligned. Of course any other criterion may be used to define the set of
-          critical edges and, thus, the aligned nodes.
-        </p>
-
-        <p>
-          <em>Note</em>: The nodes are horizontally aligned when using a horizontal layout
-          orientation (i.e. left-to-right).
-        </p>
-
-        <h3>Code Snippet</h3>
-
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-node-alignment/HierarchicalNodeAlignment.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Demos</h3>
-
-        <p>
-          You can also take a look at the more involved <a href="../../layout/criticalpaths/" target="_blank">Critical Paths Demo</a> which shows
-          how important paths can be emphasised by the hierarchical layout.
-        </p>
-
-        <h3>Documentation</h3>
-
-        <p>
-          The Developer's Guide provides more information about the concepts of the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout" target="_blank">hierarchical layout</a> in general and especially
-          about
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#hierarchical_layout-emphasizing_critical_paths" target="_blank">how to align a set of given nodes</a>.
-        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>
+            Observe how nodes connected by
+            <strong><span style="color: #e011a4">critical edges</span></strong> are vertically
+            aligned.
+          </li>
+          <li>
+            Notice that the critical edges in this demo are determined by finding the longest path.
+          </li>
+          <li>
+            Consider how this technique could be used to highlight key relationships or workflows in
+            your own hierarchical layouts.
+          </li>
+        </ul>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../layout/criticalpaths/" class="demo" target="_blank">Critical Paths Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#hierarchical_layout-emphasizing_critical_paths" class="dguide" target="_blank">Emphasizing critical paths</a>
+          </li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData" class="api" target="_blank">HierarchicalLayoutData</a></li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="./HierarchicalNodeAlignmentDemo.ts"
+      async
+    ></script>
   </body>
 </html>

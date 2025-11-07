@@ -27,10 +27,10 @@
  **
  ***************************************************************************/
 import {
-  AfterViewInit,
+  type AfterViewInit,
   ApplicationRef,
   Component,
-  ElementRef,
+  type ElementRef,
   EnvironmentInjector,
   NgZone,
   ViewChild
@@ -53,7 +53,7 @@ export class GraphComponentComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    // Create the GraphComponent outside angular zone, so no change detection
+    // Create the GraphComponent outside the angular zone, so no change detection
     // is initiated for listeners registered during the creation.
     this.zone.runOutsideAngular(() => {
       this.graphComponent = new GraphComponent()

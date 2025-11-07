@@ -29,17 +29,17 @@
 import {
   EdgeStyleBase,
   HtmlCanvasVisual,
-  IBend,
-  IEdge,
-  IInputModeContext,
-  IListEnumerable,
-  INode,
-  IPoint,
-  IRectangle,
-  IRenderContext,
+  type IBend,
+  type IEdge,
+  type IInputModeContext,
+  type IListEnumerable,
+  type INode,
+  type IPoint,
+  type IRectangle,
+  type IRenderContext,
   NodeStyleBase,
-  Point,
-  Visual
+  type Point,
+  type Visual
 } from '@yfiles/yfiles'
 
 /**
@@ -59,12 +59,15 @@ export class InteractiveOrganicFastNodeStyle extends NodeStyleBase {
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class NodeRenderVisual extends HtmlCanvasVisual {
+    private readonly layout: IRectangle;
+
   /**
    * Creates a new instance of NodeRenderVisual.
    * @param layout A live view of the layout of a node.
    */
-  constructor(private readonly layout: IRectangle) {
+  constructor(layout: IRectangle) {
     super()
+      this.layout = layout;
   }
 
   /**
@@ -115,12 +118,19 @@ export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeRenderVisual extends HtmlCanvasVisual {
+    private readonly targetPortLocation: IPoint;
+    private readonly sourcePortLocation: IPoint;
+    private readonly bends: IListEnumerable<IBend>;
+
   constructor(
-    private readonly bends: IListEnumerable<IBend>,
-    private readonly sourcePortLocation: IPoint,
-    private readonly targetPortLocation: IPoint
+    bends: IListEnumerable<IBend>,
+    sourcePortLocation: IPoint,
+    targetPortLocation: IPoint
   ) {
     super()
+      this.bends = bends;
+      this.sourcePortLocation = sourcePortLocation;
+      this.targetPortLocation = targetPortLocation;
   }
 
   render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {

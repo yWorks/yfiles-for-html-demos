@@ -41,17 +41,16 @@ import {
   Size,
   TextWrapping
 } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { ImageVisualCreator } from './ImageVisualCreator'
 import { configureLayout } from './configure-layout'
-import { MultiPageNodeType } from './data-types'
 import { pointsData } from './resources/points-data'
 
 const imageRect = new Rect(0, 0, 350, 477)
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
   // configure user interaction, disable selection and focus
@@ -87,14 +86,14 @@ function initializeGraph(graph) {
         graph.nodeDefaults.size.width,
         graph.nodeDefaults.size.height
       ),
-      tag: { ...data, type: MultiPageNodeType.POINT }
+      tag: { ...data, type: 'point' }
     })
 
     // create the label node and define its tag based on the tag of the associated point
     const labelNode = graph.createNode({
       layout: point.layout,
       style: INodeStyle.VOID_NODE_STYLE,
-      tag: { type: MultiPageNodeType.LABEL }
+      tag: { type: 'label' }
     })
 
     // add the label to the new label node and use a MarkupLabelStyle to support HTML tags

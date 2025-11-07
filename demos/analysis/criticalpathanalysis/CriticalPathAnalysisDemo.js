@@ -36,17 +36,17 @@ import {
   License,
   PolylineEdgeStyle
 } from '@yfiles/yfiles'
-import GraphData from './resources/GraphData'
+import graphData from './graph-data'
 import { calculateCriticalPathEdges, runLayout } from './CriticalPathHelper'
-import { createDemoNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoNodeStyle, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Runs this demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   const graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
 
@@ -156,7 +156,7 @@ function loadSampleGraph(graphComponent) {
   const graph = graphComponent.graph
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
-    data: GraphData.nodes,
+    data: graphData.nodes,
     id: 'id',
     tag: 'tag',
     layout: 'layout',
@@ -164,7 +164,7 @@ function loadSampleGraph(graphComponent) {
   })
 
   builder.createEdgesSource({
-    data: GraphData.edges,
+    data: graphData.edges,
     id: 'id',
     sourceId: 'source',
     targetId: 'target',

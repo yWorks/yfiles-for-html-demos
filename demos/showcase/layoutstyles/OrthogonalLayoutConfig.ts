@@ -31,20 +31,20 @@ import {
   EdgeLabelPlacement,
   EdgeRouter,
   GenericLabeling,
-  GraphComponent,
+  type GraphComponent,
   GroupHidingStage,
-  ILayoutAlgorithm,
-  LayoutData,
+  type ILayoutAlgorithm,
+  type LayoutData,
+  NodeLabelPlacement,
   OrthogonalLayout,
   OrthogonalLayoutChainSubstructureStyle,
   OrthogonalLayoutCycleSubstructureStyle,
   OrthogonalLayoutData,
   OrthogonalLayoutMode,
+  OrthogonalLayoutTreeSubstructureStyle,
   RecursiveGroupLayout,
   RecursiveGroupLayoutData,
-  SubstructureOrientation,
-  OrthogonalLayoutTreeSubstructureStyle,
-  NodeLabelPlacement
+  SubstructureOrientation
 } from '@yfiles/yfiles'
 
 import {
@@ -55,20 +55,15 @@ import {
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 
-enum GroupPolicy {
-  LAYOUT_GROUPS,
-  FIX_GROUPS,
-  IGNORE_GROUPS
-}
+const GroupPolicy = { LAYOUT_GROUPS: 0, FIX_GROUPS: 1, IGNORE_GROUPS: 2 }
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -119,7 +114,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
     ],
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     strategyItem: [
@@ -142,7 +137,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
       ),
       new OptionGroupAttribute('LayoutGroup', 20),
       new MinMaxAttribute(1, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     qualityTimeRatioItem: [
@@ -152,7 +147,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
       ),
       new OptionGroupAttribute('LayoutGroup', 30),
       new MinMaxAttribute(0, 1, 0.01),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     useExistingDrawingAsSketchItem: [
@@ -212,10 +207,10 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 10),
       new EnumValuesAttribute([
-        ['Parallel', LabelPlacementOrientation.PARALLEL],
-        ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
-        ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
-        ['Vertical', LabelPlacementOrientation.VERTICAL]
+        ['Parallel', 'parallel'],
+        ['Orthogonal', 'orthogonal'],
+        ['Horizontal', 'horizontal'],
+        ['Vertical', 'vertical']
       ]),
       new TypeAttribute(LabelPlacementOrientation)
     ],
@@ -226,12 +221,12 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 20),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
-        ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
-        ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
-        ['At Target', LabelPlacementAlongEdge.AT_TARGET],
-        ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
-        ['Centered', LabelPlacementAlongEdge.CENTERED]
+        ['Anywhere', 'anywhere'],
+        ['At Source', 'at-source'],
+        ['At Source Port', 'at-source-port'],
+        ['At Target', 'at-target'],
+        ['At Target Port', 'at-target-port'],
+        ['Centered', 'centered']
       ]),
       new TypeAttribute(LabelPlacementAlongEdge)
     ],
@@ -242,11 +237,11 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 30),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
-        ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
-        ['Left', LabelPlacementSideOfEdge.LEFT],
-        ['Right', LabelPlacementSideOfEdge.RIGHT],
-        ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+        ['Anywhere', 'anywhere'],
+        ['On Edge', 'on-edge'],
+        ['Left', 'left'],
+        ['Right', 'right'],
+        ['Left or Right', 'left-or-right']
       ]),
       new TypeAttribute(LabelPlacementSideOfEdge)
     ],
@@ -257,7 +252,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 40),
       new MinMaxAttribute(0.0, 40.0),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumFirstSegmentLengthItem: [
@@ -267,7 +262,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
       ),
       new OptionGroupAttribute('EdgesGroup', 10),
       new MinMaxAttribute(1, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumSegmentLengthItem: [
@@ -277,7 +272,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
       ),
       new OptionGroupAttribute('EdgesGroup', 20),
       new MinMaxAttribute(1, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumLastSegmentLengthItem: [
@@ -287,7 +282,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
       ),
       new OptionGroupAttribute('EdgesGroup', 30),
       new MinMaxAttribute(1, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     considerEdgeDirectionItem: [
@@ -305,9 +300,9 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
       ),
       new OptionGroupAttribute('GroupingGroup', 10),
       new EnumValuesAttribute([
-        ['Layout Groups', GroupPolicy.LAYOUT_GROUPS],
-        ['Fix Contents of Groups', GroupPolicy.FIX_GROUPS],
-        ['Ignore Groups', GroupPolicy.IGNORE_GROUPS]
+        ['Layout Groups', 'layout-groups'],
+        ['Fix Contents of Groups', 'fix-groups'],
+        ['Ignore Groups', 'ignore-groups']
       ]),
       new TypeAttribute(GroupPolicy)
     ],
@@ -337,7 +332,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
       ),
       new OptionGroupAttribute('SubstructureLayoutGroup', 20),
       new MinMaxAttribute(4, 20),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     chainSubstructureStyleItem: [
@@ -367,7 +362,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
       ),
       new OptionGroupAttribute('SubstructureLayoutGroup', 40),
       new MinMaxAttribute(2, 20),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     treeSubstructureStyleItem: [
@@ -392,7 +387,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
       ),
       new OptionGroupAttribute('SubstructureLayoutGroup', 60),
       new MinMaxAttribute(3, 20),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     treeSubstructureOrientationItem: [
@@ -427,9 +422,9 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
 
     this.nodeLabelingItem = NodeLabelPlacement.CONSIDER
     this.edgeLabelingItem = EdgeLabelPlacement.INTEGRATED
-    this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
-    this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
-    this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
+    this.labelPlacementAlongEdgeItem = 'centered'
+    this.labelPlacementSideOfEdgeItem = 'on-edge'
+    this.labelPlacementOrientationItem = 'horizontal'
     this.labelPlacementDistanceItem = 10.0
 
     this.minimumFirstSegmentLengthItem = 15.0
@@ -445,7 +440,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
     this.treeSubstructureSizeItem = 3
     this.treeSubstructureOrientationItem = SubstructureOrientation.AUTO_DETECT
 
-    this.groupLayoutPolicyItem = GroupPolicy.LAYOUT_GROUPS
+    this.groupLayoutPolicyItem = 'layout-groups'
     this.title = 'Orthogonal Layout'
   },
 
@@ -457,10 +452,10 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
    */
   createConfiguredLayout: function (graphComponent: GraphComponent): ILayoutAlgorithm {
     const layout = new OrthogonalLayout()
-    if (this.groupLayoutPolicyItem === GroupPolicy.FIX_GROUPS) {
+    if (this.groupLayoutPolicyItem === 'fix-groups') {
       const rgl = new RecursiveGroupLayout({ interEdgeRouter: this.createInterEdgeRouter() })
       layout.layoutStages.prepend(rgl)
-    } else if (this.groupLayoutPolicyItem === GroupPolicy.IGNORE_GROUPS) {
+    } else if (this.groupLayoutPolicyItem === 'ignore-groups') {
       ;(layout.layoutStages.get(GroupHidingStage) as GroupHidingStage).enabled = true
     }
 
@@ -513,7 +508,7 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
     graphComponent: GraphComponent,
     layout: OrthogonalLayout
   ): LayoutData {
-    let orthogonalLayoutData = new OrthogonalLayoutData()
+    const orthogonalLayoutData = new OrthogonalLayoutData()
     if (this.considerEdgeDirectionItem) {
       orthogonalLayoutData.edgeOrientation = (edge) =>
         graphComponent.selection.includes(edge) ? 1 : 0
@@ -576,11 +571,11 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
   strategyItem: null,
 
   /** @type {boolean} */
-  shouldDisableStrategyItem: <any>{
+  shouldDisableStrategyItem: {
     get: function (): boolean {
       return this.useExistingDrawingAsSketchItem === true
     }
-  },
+  } as any,
 
   /** @type {number} */
   gridSpacingItem: 1,
@@ -604,54 +599,54 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
   reduceAmbiguityItem: false,
 
   /** @type {boolean} */
-  shouldDisableReduceAmbiguityItem: <any>{
+  shouldDisableReduceAmbiguityItem: {
     get: function (): boolean {
       return this.edgeLabelingItem !== EdgeLabelPlacement.GENERIC
     }
-  },
+  } as any,
 
   /** @type {LabelPlacementOrientation} */
   labelPlacementOrientationItem: null,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementOrientationItem: <any>{
+  shouldDisableLabelPlacementOrientationItem: {
     get: function (): boolean {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
-  },
+  } as any,
 
   /** @type {LabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: null,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementAlongEdgeItem: <any>{
+  shouldDisableLabelPlacementAlongEdgeItem: {
     get: function (): boolean {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
-  },
+  } as any,
 
   /** @type {LabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: null,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementSideOfEdgeItem: <any>{
+  shouldDisableLabelPlacementSideOfEdgeItem: {
     get: function (): boolean {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
-  },
+  } as any,
 
   /** @type {number} */
   labelPlacementDistanceItem: 0,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementDistanceItem: <any>{
+  shouldDisableLabelPlacementDistanceItem: {
     get: function (): boolean {
       return (
         this.edgeLabelingItem === EdgeLabelPlacement.IGNORE ||
-        this.labelPlacementSideOfEdgeItem === LabelPlacementSideOfEdge.ON_EDGE
+        this.labelPlacementSideOfEdgeItem === 'on-edge'
       )
     }
-  },
+  } as any,
 
   /** @type {number} */
   minimumFirstSegmentLengthItem: 1,
@@ -675,11 +670,11 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
   cycleSubstructureSizeItem: 4,
 
   /** @type {boolean} */
-  shouldDisableCycleSubstructureSizeItem: <any>{
+  shouldDisableCycleSubstructureSizeItem: {
     get: function (): boolean {
       return this.cycleSubstructureStyleItem === OrthogonalLayoutCycleSubstructureStyle.NONE
     }
-  },
+  } as any,
 
   /** @type {OrthogonalLayoutChainSubstructureStyle} */
   chainSubstructureStyleItem: null,
@@ -688,32 +683,32 @@ export const OrthogonalLayoutConfig = (Class as any)('OrthogonalLayoutConfig', {
   chainSubstructureSizeItem: 3,
 
   /** @type {boolean} */
-  shouldDisableChainSubstructureSizeItem: <any>{
+  shouldDisableChainSubstructureSizeItem: {
     get: function (): boolean {
       return this.chainSubstructureStyleItem === OrthogonalLayoutChainSubstructureStyle.NONE
     }
-  },
+  } as any,
 
-  /** @type {TreeSubstructureStyle} */
+  /** @type {OrthogonalLayoutTreeSubstructureStyle} */
   treeSubstructureStyleItem: null,
 
   /** @type {number} */
   treeSubstructureSizeItem: 3,
 
   /** @type {boolean} */
-  shouldDisableTreeSubstructureSizeItem: <any>{
+  shouldDisableTreeSubstructureSizeItem: {
     get: function (): boolean {
       return this.treeSubstructureStyleItem === OrthogonalLayoutTreeSubstructureStyle.NONE
     }
-  },
+  } as any,
 
   /** @type {SubstructureOrientation} */
   treeSubstructureOrientationItem: null,
 
   /** @type {boolean} */
-  shouldDisableTreeSubstructureOrientationItem: <any>{
+  shouldDisableTreeSubstructureOrientationItem: {
     get: function (): boolean {
       return this.treeSubstructureStyleItem === OrthogonalLayoutTreeSubstructureStyle.NONE
     }
-  }
+  } as any
 })

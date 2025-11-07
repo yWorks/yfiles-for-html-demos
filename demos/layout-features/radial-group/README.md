@@ -9,25 +9,31 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Radial Group Layout - Layout Features
+# Radial Group Layout
 
 <img src="../../../doc/demo-thumbnails/layout-radial-group-layout.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/radial-group/).
 
-This demo shows how to create a beautiful layout of a grouped graph using the [RadialGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout).
+This demo demonstrates the [RadialGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout) algorithm for arranging grouped graphs.
 
-It arranges a hierarchically grouped graph so that children of a group are placed adjacent to the group along its circular border (thus, resembling the structure of a cactus). This way, the positions of the nodes implicitly represent the group hierarchy.
+Child nodes are positioned around their parent group's border, visually representing group hierarchy.
 
-- To get good results using the radial group layout, the style of the nodes and group nodes should be round. In this demo, both use an elliptical [ShapeNodeStyle](https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle) where group nodes are gray and leaf nodes are colored.
-- Green leaf nodes have the [parent overlap ratio](https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayoutData#parentOverlapRatio) set to 0.5, whereas red leaf nodes have it set to 0, meaning that they do not overlap with their parent group.
-- The radial group algorithm supports [ray-like node labeling](https://docs.yworks.com/yfileshtml/#/api/NodeLabelingPolicy#RAY_LIKE_LEAVES), which is shown with an example label at each leaf node.
-- The edges are drawn as bezier curves and using bundling in this demo. This can be configured via the [edge bundling property](https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout#edgeBundling).
+It highlights the configuration of various aspects:
 
-### Code Snippet
+- [Node Styles](https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle): Both group and leaf nodes are [ellipse](https://docs.yworks.com/yfileshtml/#/api/ShapeNodeShape#ELLIPSE) for optimal radial group layout results. Groups are gray while leaf nodes are colored.
+- [Parent Overlap Ratio](https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayoutData#parentOverlapRatios): Blue nodes have a ratio of 0.5, overlapping slightly with their parent. Orange nodes have a ratio of 0, with no overlap.
+- [Label Placement](https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout#nodeLabelPlacement): The algorithm supports [RAY_LIKE_LEAVES](https://docs.yworks.com/yfileshtml/#/api/RadialNodeLabelPlacement#RAY_LIKE_LEAVES) ray-like label placement.
+- [Edge Bundling](https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout#edgeBundling): Edges are drawn as bundled Bezier curves.
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/radial-group/RadialGroup.ts).
+## Demos
 
-### Documentation
+- [Layout Styles: Radial Demo](../../showcase/layoutstyles/index.html?layout=radial&sample=radial)
+- [Large Graph Aggregation Demo](../../showcase/largegraphaggregation/)
 
-The Developer's Guide provides in-depth information about the [Cactus Group Layout](https://docs.yworks.com/yfileshtml/#/dguide/cactus_group_layout) and its features.
+## Documentation
+
+- [Radial Group Layout](https://docs.yworks.com/yfileshtml/#/dguide/cactus_group_layout)
+- [RadialGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout)
+- [RadialGroupLayoutData](https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayoutData)
+- [RadialNodeLabelPlacement](https://docs.yworks.com/yfileshtml/#/api/RadialNodeLabelPlacement)

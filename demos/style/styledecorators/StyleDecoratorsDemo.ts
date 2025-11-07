@@ -30,15 +30,15 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  IGraph,
-  IInputMode,
+  type IGraph,
+  type IInputMode,
   InteriorNodeLabelModel,
   LabelStyle,
   LayoutExecutor,
   License,
-  ShapePortStyle,
   OrganicLayout,
   ShapeNodeStyle,
+  ShapePortStyle,
   Size,
   SmartEdgeLabelModel
 } from '@yfiles/yfiles'
@@ -46,14 +46,16 @@ import {
 import { LabelStyleDecorator } from './LabelStyleDecorator'
 import { EdgeStyleDecorator } from './EdgeStyleDecorator'
 import { NodeStyleDecorator } from './NodeStyleDecorator'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
+const baseStyle = new ShapeNodeStyle({ fill: '#46A8D5', stroke: null, shape: 'rectangle' })
+
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = createInputMode()
@@ -95,10 +97,7 @@ function buildGraph(graph: IGraph, graphData: JSONGraph): void {
   })
   nodesSource.nodeCreator.styleProvider = (item) =>
     item.tag
-      ? new NodeStyleDecorator(
-          graph.nodeDefaults.getStyleInstance(),
-          `resources/${item.tag.toLowerCase()}.svg`
-        )
+      ? new NodeStyleDecorator(baseStyle, `resources/${item.tag.toLowerCase()}.svg`)
       : undefined
   nodesSource.nodeCreator.createLabelBinding((item) => item.label)
 
@@ -149,10 +148,7 @@ function createInputMode(): IInputMode {
 function configureGraph(graph: IGraph): void {
   initDemoStyles(graph)
 
-  graph.nodeDefaults.style = new NodeStyleDecorator(
-    new ShapeNodeStyle({ fill: '#46A8D5', stroke: null, shape: 'rectangle' }),
-    'resources/workstation.svg'
-  )
+  graph.nodeDefaults.style = new NodeStyleDecorator(baseStyle, 'resources/workstation.svg')
   graph.nodeDefaults.size = new Size(80, 40)
   graph.nodeDefaults.shareStyleInstance = false
   graph.edgeDefaults.style = new EdgeStyleDecorator(

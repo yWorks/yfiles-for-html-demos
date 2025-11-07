@@ -28,13 +28,6 @@
  ***************************************************************************/
 import {
   BezierEdgeStyle,
-  IEdge,
-  IGraph,
-  IHandle,
-  IInputModeContext,
-  IPort,
-  IPortCandidate,
-  Point,
   PortRelocationHandle,
   PortRelocationHandleProvider,
   Visualization

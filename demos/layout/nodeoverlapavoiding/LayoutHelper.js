@@ -39,16 +39,10 @@ import {
   FilteredGraphWrapper,
   GivenCoordinatesLayout,
   GivenCoordinatesLayoutData,
-  GraphComponent,
   IAnimation,
   IEdge,
-  IGraph,
-  ILayoutAlgorithm,
-  INode,
-  LayoutData,
   LayoutExecutor,
   SequentialLayout,
-  Size,
   TimeSpan
 } from '@yfiles/yfiles'
 

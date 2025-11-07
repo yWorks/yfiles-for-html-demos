@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { LayoutGraph, LayoutStageBase, Point } from '@yfiles/yfiles'
+import { LayoutStageBase, Point } from '@yfiles/yfiles'
 
 const ZIG_SIZE = 5
 

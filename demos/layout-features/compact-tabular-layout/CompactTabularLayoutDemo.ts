@@ -26,40 +26,81 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphViewerInputMode, LayoutExecutor, License } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import { loadLayoutSampleGraph } from '@yfiles/demo-utils/LoadLayoutFeaturesSampleGraph'
-import { createFeatureLayoutConfiguration } from './CompactTabularLayout'
+import { demoApp, graphComponent } from '@yfiles/demo-app/init'
+import {
+  EdgeRouter,
+  LayoutGrid,
+  TabularLayout,
+  TabularLayoutData,
+  TabularLayoutMode
+} from '@yfiles/yfiles'
+import graphData from './sample.json'
 
-async function run(): Promise<void> {
-  License.value = await fetchLicense()
+/**
+ * Configures and applies the {@link TabularLayout} algorithm to for compact graph drawings.
+ */
+async function applyCompactTabularLayout(tabularLayoutMode: TabularLayoutMode): Promise<void> {
+  // Initialize tabular layout with specified mode
+  const tabularLayout = new TabularLayout({
+    considerEdges: true, // Minimize overall edge lengths
+    layoutMode: tabularLayoutMode
+  })
 
-  const graphComponent = new GraphComponent('graphComponent')
-  graphComponent.inputMode = new GraphViewerInputMode()
+  // Post-process with EdgeRouter for orthogonal paths (tabular layout supports straight lines only)
+  const layout = new EdgeRouter({ coreLayout: tabularLayout })
 
-  // load the graph and run the layout
-  await loadLayoutSampleGraph(graphComponent.graph, './sample.json')
-  await runLayout(graphComponent)
+  // Calculate layout grid based on the mode for compact node arrangement
+  const layoutGrid = calculateGrid(tabularLayoutMode)
 
-  initializeUI(graphComponent)
-}
+  // Set up layout data for data-driven features like the layout grid
+  const layoutData = new TabularLayoutData({
+    layoutGridData: { layoutGridCellDescriptors: () => layoutGrid.createDynamicCellDescriptor() }
+  })
 
-async function runLayout(graphComponent: GraphComponent): Promise<void> {
-  // Ensure that the LayoutExecutor class is not removed by build optimizers
-  // It is needed for the 'applyLayoutAnimated' method in this demo.
-  LayoutExecutor.ensure()
-
-  const { layout, layoutData } = createFeatureLayoutConfiguration(graphComponent.graph)
   await graphComponent.applyLayoutAnimated(layout, '0.5s', layoutData)
 }
 
-function initializeUI(graphComponent: GraphComponent): void {
-  document
-    .querySelector('#use-aspect-ratio')!
-    .addEventListener('click', async (): Promise<void> => {
-      await runLayout(graphComponent)
-    })
+/**
+ * Computes the layout grid based on whether to preserve the aspect ratio of the graphComponent's width/height.
+ */
+function calculateGrid(tabularLayoutMode: TabularLayoutMode): LayoutGrid {
+  let layoutGrid: LayoutGrid
+  if (tabularLayoutMode === TabularLayoutMode.FIXED_SIZE) {
+    // Get the aspect ratio of the graphComponent's width/height
+    const aspectRatio = graphComponent.innerSize.width / graphComponent.innerSize.height
+    // Preserve aspect ratio by calculating rows and columns needed for all nodes
+    const nodeCount = graphComponent.graph.nodes.size
+    const rowCount = Math.ceil(Math.sqrt(nodeCount / aspectRatio))
+    const columnCount = Math.ceil(nodeCount / rowCount)
+    layoutGrid = new LayoutGrid(rowCount, columnCount)
+  } else {
+    // Automatically assign table size without a specific grid
+    layoutGrid = new LayoutGrid(1, 1)
+  }
+
+  // Determine max node dimensions for uniform grid sizing
+  const maxWidth = Math.max(...Array.from(graphComponent.graph.nodes, (node) => node.layout.width))
+  const maxHeight = Math.max(
+    ...Array.from(graphComponent.graph.nodes, (node) => node.layout.height)
+  )
+  layoutGrid.rows.forEach((row) => (row.minimumHeight = maxHeight + 20))
+  layoutGrid.columns.forEach((column) => (column.minimumWidth = maxWidth + 20))
+
+  return layoutGrid
 }
 
-await run().then(finishLoading)
+// Build the graph from JSON data
+demoApp.buildGraphFromJson(graphData)
+
+// Run an initial layout without aspect ratio preservation
+await applyCompactTabularLayout(TabularLayoutMode.AUTO_SIZE)
+
+// Add a toggle button to switch aspect ratio preservation on/off
+demoApp.toolbar.addToggleButton(
+  'Preserve Aspect Ratio',
+  async (pressed) => {
+    const tabularLayoutMode = pressed ? TabularLayoutMode.FIXED_SIZE : TabularLayoutMode.AUTO_SIZE
+    await applyCompactTabularLayout(tabularLayoutMode)
+  },
+  false
+)

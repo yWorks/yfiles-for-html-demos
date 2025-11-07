@@ -29,12 +29,10 @@
 import {
   BaseClass,
   CompositeLabelModel,
-  CompositeLabelModelParameter,
   EdgePathLabelModel,
   EdgeSegmentLabelModel,
   EdgeSides,
   ExteriorNodeLabelModel,
-  ExteriorNodeLabelModelParameter,
   ExteriorNodeLabelModelPosition,
   FreeLabelModel,
   GraphMLMemberVisibility,
@@ -54,9 +52,14 @@ import {
   StretchStripeLabelModel,
   StripeLabelModel,
   XmlName,
-  yfiles
+  yfiles as yfilesUnknown
 } from '@yfiles/yfiles'
 import { YfilesCommon_3_0_XamlNS, YfilesCommonXamlNS } from './GraphMLCompatibility'
+
+/**
+ * The usage of yfiles here is only for GraphML compatibility and shouldn't be needed elsewhere.
+ */
+const yfiles = yfilesUnknown
 
 /**
  * The usage of yfiles.lang.Enum here is only for GraphML compatibility, and shouldn't be needed
@@ -283,6 +286,7 @@ export function configureExtensions(callback) {
 }
 
 function createMetadata(type, metadata, callback, ns = YfilesCommon_3_0_XamlNS) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   metadata.name = type.name
   metadata.xmlNamespace = ns
   callback(type, metadata)
@@ -411,6 +415,7 @@ class ExteriorLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for InteriorLabelModel
 
@@ -545,6 +550,7 @@ class InteriorLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for InteriorStretchLabelModel
 
@@ -665,17 +671,14 @@ class InteriorStretchLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for StripeLabelModel
 
 const StripeLabelModelPosition = Enum('StripeLabelModelPosition', {
-  //@ts-ignore
   North: yfiles.graph.StripeLabelModelPosition.TOP,
-  //@ts-ignore
   East: yfiles.graph.StripeLabelModelPosition.RIGHT,
-  //@ts-ignore
   South: yfiles.graph.StripeLabelModelPosition.BOTTOM,
-  //@ts-ignore
   West: yfiles.graph.StripeLabelModelPosition.LEFT
 })
 
@@ -751,17 +754,14 @@ class StripeLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for StretchStripeLabelModel
 
 const StretchStripeLabelModelPosition = Enum('StretchStripeLabelModelPosition', {
-  //@ts-ignore
   North: yfiles.graph.StretchStripeLabelModelPosition.TOP,
-  //@ts-ignore
   East: yfiles.graph.StretchStripeLabelModelPosition.RIGHT,
-  //@ts-ignore
   South: yfiles.graph.StretchStripeLabelModelPosition.BOTTOM,
-  //@ts-ignore
   West: yfiles.graph.StretchStripeLabelModelPosition.LEFT
 })
 
@@ -840,6 +840,7 @@ class StretchStripeLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for CompositeLabelModel
 
@@ -865,7 +866,6 @@ class CompositeLabelModelParameterExtension extends MarkupExtension {
   }
 
   provideValue(serviceProvider) {
-    //@ts-ignore
     const ext = new yfiles.graphml.CompositeLabelModelParameterExtension()
     ext.parameter = this._Parameter
     ext.model = this._Model
@@ -887,6 +887,7 @@ class CompositeLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for GenericLabelModel
 
@@ -1044,6 +1045,7 @@ class GenericLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for SandwichLabelModel
 
@@ -1119,6 +1121,7 @@ class SandwichLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for DescriptorWrapperModel
 
@@ -1174,6 +1177,7 @@ class DescriptorWrapperLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for GroupNodeLabelModel
 
@@ -1193,6 +1197,7 @@ class GroupNodeLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility class for rotating edge label models
 
@@ -1345,3 +1350,4 @@ class NinePositionsEdgeLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion

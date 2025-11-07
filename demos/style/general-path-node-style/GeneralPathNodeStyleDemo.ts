@@ -34,14 +34,14 @@ import {
   GraphViewerInputMode,
   HorizontalTextAlignment,
   type IGraph,
-  LabelStyle,
+  type LabelStyle,
   License,
   Point,
   Rect
 } from '@yfiles/yfiles'
-import { colorSets, createDemoNodeLabelStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { colorSets, createDemoNodeLabelStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Augment the GeneralPathNodeStyle type with the data used to create labels.
@@ -52,7 +52,7 @@ type CustomNodeStyle = { style: GeneralPathNodeStyle; label: string }
  * Bootstraps the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the graph
   const graphComponent = new GraphComponent('graphComponent')

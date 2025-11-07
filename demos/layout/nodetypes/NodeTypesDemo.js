@@ -66,13 +66,9 @@ import {
   TreeSampleData
 } from './resources/SampleData'
 import { NodeTypePanel } from '@yfiles/demo-utils/NodeTypePanel'
-import {
-  colorSets,
-  createDemoEdgeStyle,
-  createDemoNodeStyle
-} from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { colorSets, createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Initialization of the seven samples.
@@ -102,7 +98,7 @@ let graphComponent
  * Runs this demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   configureGraphComponent()
   initializeUI()

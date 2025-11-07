@@ -26,149 +26,36 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import { demoApp, graphComponent } from '@yfiles/demo-app/init'
 import {
-  EdgePathLabelModel,
-  EdgeSides,
-  ExteriorNodeLabelModel,
   FoldingManager,
-  Graph,
-  GraphBuilder,
-  GraphComponent,
   GraphEditorInputMode,
-  GroupNodeLabelModel,
   GroupNodeStyle,
-  HierarchicalLayout,
-  IFoldingView,
-  IGraph,
-  LabelStyle,
-  LayoutExecutor,
-  License,
-  Size
+  HierarchicalLayout
 } from '@yfiles/yfiles'
-
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
-let graphComponent: GraphComponent
+// Set up the default style for group nodes
+graphComponent.graph.groupNodeDefaults.style = new GroupNodeStyle({
+  groupIcon: 'chevron-down',
+  folderIcon: 'chevron-up',
+  iconBackgroundShape: 'circle',
+  cssClass: `group-node`
+})
 
-/**
- * Bootstraps the demo.
- */
-async function run(): Promise<void> {
-  License.value = await fetchLicense()
+// Build demo graph from JSON data
+demoApp.buildGraphFromJson(graphData)
 
-  graphComponent = new GraphComponent('#graphComponent')
-  graphComponent.inputMode = new GraphEditorInputMode()
+// Enable folding with the original graph as "masterGraph"
+const foldingManager = new FoldingManager(graphComponent.graph)
+graphComponent.graph = foldingManager.createFoldingView().graph
 
-  // enable folding for the graph
-  const foldingView = enableFolding()
+// Do an initial layout
+await graphComponent.applyLayoutAnimated(new HierarchicalLayout({ minimumLayerDistance: 35 }), 0)
 
-  // assign the folded graph to the graph component
-  graphComponent.graph = foldingView.graph
+// Enable graph editing
+graphComponent.inputMode = new GraphEditorInputMode()
 
-  // configures default styles for newly created graph elements
-  initializeGraph(foldingView.manager.masterGraph)
-
-  // build the graph from the given data set
-  buildGraph(graphComponent.graph, graphData as unknown as JSONGraph)
-
-  // layout and center the graph
-  LayoutExecutor.ensure()
-  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
-  await graphComponent.fitGraphBounds()
-
-  // enable undo after the initial graph was populated since we don't want to allow undoing that
-  foldingView.manager.masterGraph.undoEngineEnabled = true
-}
-
-/**
- * Iterates through the given data set and creates nodes and edges according to the given data.
- */
-function buildGraph(graph: IGraph, graphData: JSONGraph): void {
-  const graphBuilder = new GraphBuilder(graph)
-
-  graphBuilder.createNodesSource({
-    data: graphData.nodeList.filter((item) => !item.isGroup),
-    id: (item) => item.id,
-    parentId: (item) => item.parentId
-  })
-
-  graphBuilder
-    .createGroupNodesSource({
-      data: graphData.nodeList.filter((item) => item.isGroup),
-      id: (item) => item.id
-    })
-    .nodeCreator.createLabelBinding((item) => item.label)
-
-  graphBuilder.createEdgesSource({
-    data: graphData.edgeList,
-    sourceId: (item) => item.source,
-    targetId: (item) => item.target
-  })
-
-  graphBuilder.buildGraph()
-}
-
-/**
- * Enables folding.
- *
- * @returns The folding view that manages the folded graph.
- */
-function enableFolding(): IFoldingView {
-  const masterGraph = new Graph()
-
-  // set default styles for newly created graph elements
-  initializeGraph(masterGraph)
-
-  // Creates the folding manager
-  const manager = new FoldingManager(masterGraph)
-
-  // Creates a folding view that manages the folded graph
-  return manager.createFoldingView()
-}
-
-/**
- * Initializes the defaults for the styling in this demo.
- *
- * @param graph The graph.
- */
-function initializeGraph(graph: IGraph): void {
-  // set styles for this demo
-  initDemoStyles(graph, { foldingEnabled: true })
-
-  graph.groupNodeDefaults.style = new GroupNodeStyle({
-    groupIcon: 'chevron-down',
-    folderIcon: 'chevron-up',
-    iconSize: 14,
-    iconBackgroundShape: 'circle',
-    iconForegroundFill: '#fff',
-    tabFill: '#242265',
-    tabPosition: 'top-trailing',
-    stroke: '2px solid #242265',
-    cornerRadius: 8,
-    tabWidth: 70,
-    contentAreaPadding: 8,
-    hitTransparentContentArea: true
-  })
-  graph.groupNodeDefaults.labels.style = new LabelStyle({
-    horizontalTextAlignment: 'right',
-    textFill: '#fff'
-  })
-  graph.groupNodeDefaults.labels.layoutParameter = new GroupNodeLabelModel().createTabParameter()
-
-  // set sizes and locations specific for this demo
-  graph.nodeDefaults.size = new Size(40, 40)
-
-  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
-    margins: 5
-  }).createParameter('bottom')
-  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
-    distance: 5,
-    autoRotation: true
-  }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
-}
-
-run().then(finishLoading)
+// Enable undo only after the initial graph was created and laid out
+// since we don't want to allow undoing that
+foldingManager.masterGraph.undoEngineEnabled = true

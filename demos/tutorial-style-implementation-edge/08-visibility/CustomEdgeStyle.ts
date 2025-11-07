@@ -52,12 +52,15 @@ const circleRadius = 20
 type CustomEdgeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 export class CustomEdgeStyle extends EdgeStyleBase<CustomEdgeStyleVisual> {
+    distance: number;
+
   /**
    * Creates a new instance of this style using the given distance.
    * @param distance The distance between the paths. The default value is 1.
    */
-  constructor(public distance = 1) {
+  constructor(distance = 1) {
     super()
+      this.distance = distance;
   }
 
   protected createVisual(

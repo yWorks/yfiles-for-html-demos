@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IRenderContext, IVisualCreator, SvgVisual, Visual } from '@yfiles/yfiles'
+import { BaseClass, IVisualCreator, SvgVisual } from '@yfiles/yfiles'
 
 export class ImageVisualCreator extends BaseClass(IVisualCreator) {
   /**

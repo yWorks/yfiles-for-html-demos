@@ -12,7 +12,9 @@
     <span class="demo-separator"></span>
     <button class="demo-icon-yIconLayout labeled" @click="$emit('layout')">Layout</button>
     <span class="demo-separator"></span>
-    <button class="labeled" @click="$emit('export-svg')">Export SVG</button>
+    <button class="demo-icon-yIconExportImage labeled" @click="$emit('export-svg')">
+      Export SVG
+    </button>
     <span class="demo-separator"></span>
     <input
       v-model.trim="searchString"
@@ -134,6 +136,10 @@ export default defineComponent({
 
 .demo-icon-yIconLayout {
   background-image: url('../assets/play2-16.svg');
+}
+
+.demo-icon-yIconExportImage {
+  background-image: url('@yfiles/demo-app/icons/export-image-16.svg');
 }
 
 .search {

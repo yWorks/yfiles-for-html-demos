@@ -42,13 +42,13 @@ import {
 } from '@yfiles/yfiles'
 import './ReactGraphComponent.css'
 import DemoToolbar from './DemoToolbar.jsx'
-import yFilesLicense from '../license.json'
+import licenseData from '../license.json'
 
 export default class ReactGraphComponent extends Component {
   constructor(props) {
     super(props)
     // include the yFiles License
-    License.value = yFilesLicense
+    License.value = licenseData
 
     // Initialize the GraphComponent
     this.graphComponent = new GraphComponent()

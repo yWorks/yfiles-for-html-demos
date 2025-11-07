@@ -46,19 +46,15 @@ import {
   getProcessStepData,
   getProcessTransitionData
 } from './process-graph-extraction'
-import {
-  installProcessItemVisual,
-  ProcessItemVisual,
-  updateTime
-} from './process-visualization/ProcessItemVisual'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { checkWebGLSupport, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { installProcessItemVisual, updateTime } from './process-visualization/ProcessItemVisual'
+import licenseData from '../../../lib/license.json'
+import { checkWebGLSupport, finishLoading } from '@yfiles/demo-app/demo-page'
 import { prepareProcessVisualization } from './process-visualization/process-visualization'
 import { showItemOverlay } from './item-overlay'
+import eventLog from './data/events.json'
+import caseData from './data/cases.json'
 
 let processItemVisual
-
-let caseData = []
 
 let infiniteLoopEnabled = false
 
@@ -72,7 +68,7 @@ async function run() {
     // only a warning is shown in the demo
     return
   }
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // stores the current time value in the animation
   let time = 0
@@ -94,11 +90,6 @@ async function run() {
 
   const graph = graphComponent.graph
   initializeDemoStyles(graph, getHeat)
-
-  const eventLogRes = await fetch('./data/events.json')
-  const eventLog = await eventLogRes.json()
-  const caseDataRes = await fetch('./data/cases.json')
-  caseData = await caseDataRes.json()
 
   extractGraph(eventLog, graphComponent)
 

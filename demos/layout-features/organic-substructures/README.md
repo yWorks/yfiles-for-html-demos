@@ -9,28 +9,35 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Organic Layout with Substructures - Layout Features
+# Organic Layout with Substructures
 
 <img src="../../../doc/demo-thumbnails/layout-organic-substructures.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/organic-substructures/).
 
-This demo shows the ability of [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) to consider substructures in the graph.
+This demo shows the ability of [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) to consider substructures in the graph.
 
-The graph contains three substructures: a circle, a star and a chain. For each substructure type a special layout configuration is used:
+## Substructure Configuration
 
-- The circle is configured with the [RADIAL](https://docs.yworks.com/yfileshtml/#/api/StarSubstructureStyle#RADIAL) style.
-- The star is configured with the [CIRCULAR](https://docs.yworks.com/yfileshtml/#/api/CycleSubstructureStyle#CIRCULAR) style.
-- The chain is configured with [RECTANGULAR](https://docs.yworks.com/yfileshtml/#/api/ChainSubstructureStyle#RECTANGULAR) style.
+The graph contains three substructures: a cycle, a star and a chain, each substructure type is configured with a special style:
 
-### Code Snippet
+- The cycle with [CIRCULAR](https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutCycleSubstructureStyle#CIRCULAR) style.
+- The star with [RADIAL](https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutStarSubstructureStyle#RADIAL) style.
+- The chain with [RECTANGULAR](https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutChainSubstructureStyle#RECTANGULAR) style.
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/organic-substructures/OrganicSubstructures.ts).
+## Things to Try
 
-### Demos
+- Observe how the organic layout algorithm recognizes and arranges the different substructures according to its specific style configuration.
+- Try modifying the substructure style settings to see how they affect the layout.
 
-See the [Organic Substructures Demo](../../layout/organic-substructures/) for an extensive presentation of the substructures functionality.
+## Demos
 
-### Documentation
+- [Organic Substructures Demo](../../layout/organic-substructures/)
 
-See the [Layout of Regular Substructures](https://docs.yworks.com/yfileshtml/#/dguide/organic_layout-substructures) section in the Developer's Guide for an in-depth discussion of the relevant concepts.
+## Documentation
+
+- [Layout of Regular Substructures](https://docs.yworks.com/yfileshtml/#/dguide/organic_layout-substructures)
+- [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout)
+- [OrganicLayoutCycleSubstructureStyle](https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutCycleSubstructureStyle)
+- [OrganicLayoutStarSubstructureStyle](https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutStarSubstructureStyle)
+- [OrganicLayoutChainSubstructureStyle](https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutChainSubstructureStyle)

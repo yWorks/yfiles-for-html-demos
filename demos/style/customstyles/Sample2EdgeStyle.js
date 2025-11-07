@@ -34,20 +34,14 @@ import {
   EdgeStyleBase,
   GeneralPath,
   IArrow,
-  ICanvasContext,
-  IEdge,
-  IInputModeContext,
-  ILookup,
   INode,
   IObstacleProvider,
-  IRenderContext,
   ISvgDefsCreator,
   MarkupExtension,
   Point,
-  Rect,
   SvgVisual
 } from '@yfiles/yfiles'
-import { isColorSetName } from '@yfiles/demo-resources/demo-styles'
+import { isColorSetName } from '@yfiles/demo-app/demo-styles'
 import { Sample2Arrow } from './Sample2Arrow'
 import { SVGNS } from './Namespaces'
 
@@ -113,11 +107,12 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     }
 
     if (this.useMarkerArrows) {
-      this.showTargetArrows &&
+      if (this.showTargetArrows) {
         path.setAttribute(
           'marker-end',
           'url(#' + renderContext.getDefsId(this.createMarker()) + ')'
         )
+      }
 
       return SvgVisual.from(path, {
         path: renderPath,
@@ -128,9 +123,9 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
     // use yFiles arrows instead of markers
     const container = document.createElementNS(SVGNS, 'g')
     container.appendChild(path)
-    this.showTargetArrows &&
+    if (this.showTargetArrows) {
       super.addArrows(renderContext, container, edge, gp, IArrow.NONE, this.fallbackArrow)
-
+    }
     return SvgVisual.from(container, {
       path: renderPath,
       obstacleHash: this.getObstacleHash(renderContext)
@@ -175,8 +170,9 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
         while (container.childElementCount > 1) {
           container.removeChild(container.lastChild)
         }
-        this.showTargetArrows &&
+        if (this.showTargetArrows) {
           super.addArrows(renderContext, container, edge, gp, IArrow.NONE, this.fallbackArrow)
+        }
       }
     }
     return oldVisual
@@ -374,6 +370,7 @@ export class Sample2EdgeStyle extends EdgeStyleBase {
  */
 export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
   cssClass
+
   constructor(cssClass) {
     super()
     this.cssClass = cssClass
@@ -428,6 +425,7 @@ export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
  */
 class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
   edge
+
   constructor(edge) {
     super()
     this.edge = edge

@@ -26,25 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  EdgeStyleBase,
-  GeneralPath,
-  GraphComponent,
-  IEdge,
-  IEdgeStyle,
-  IGraph,
-  ILabel,
-  ILabelStyle,
-  IModelItem,
-  INode,
-  INodeStyle,
-  IRenderContext,
-  LabelStyleBase,
-  NodeStyleBase,
-  Size,
-  SvgVisual,
-  Visual
-} from '@yfiles/yfiles'
+import { EdgeStyleBase, LabelStyleBase, NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 import { DeferredCutClipboard } from './DeferredCutClipboard'
 
 /**

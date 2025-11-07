@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CanvasComponent,
   DragDropEffects,
@@ -35,14 +34,8 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   IEdge,
-  IEnumerable,
-  IGraph,
-  IModelItem,
   INode,
-  InputModeEventArgs,
-  ItemEventArgs,
   License,
-  MoveInputMode,
   PolylineEdgeStyle,
   Rect,
   ShapeNodeShape,
@@ -52,8 +45,10 @@ import {
 } from '@yfiles/yfiles'
 import { GraphDropInputMode } from './GraphDropInputMode'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
+import sampleComponents from './resources/PaletteComponents.json'
+import graphData from './resources/SampleGraph.json'
 
 let graphComponent = null
 
@@ -73,7 +68,7 @@ let keepComponents = false
 let componentCount = 0
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('#graphComponent')
   initializeInputModes()
@@ -305,12 +300,6 @@ async function initializePalette() {
   // retrieve the panel element
   const panel = document.querySelector('#palette')
 
-  let sampleComponents = []
-  const response = await fetch('./resources/PaletteComponents.json')
-  if (response.ok) {
-    sampleComponents = await response.json()
-  }
-
   // add a visual for each node style to the palette
   sampleComponents.forEach((component) => {
     addComponentVisual(component, panel)
@@ -414,27 +403,22 @@ function createComponentVisual(componentGraph) {
  * @yjs:keep = nodeData,edgeData
  */
 async function loadSampleGraph() {
-  const response = await fetch('./resources/SampleGraph.json')
-  if (response.ok) {
-    const sample = await response.json()
+  const defaultNodeSize = graphComponent.graph.nodeDefaults.size
+  const builder = new GraphBuilder(graphComponent.graph)
+  builder.createNodesSource({
+    data: graphData.nodeData,
+    id: 'id',
+    layout: (data) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
+  })
+  builder.createEdgesSource(graphData.edgeData, 'source', 'target', 'id')
+  builder.buildGraph()
 
-    const defaultNodeSize = graphComponent.graph.nodeDefaults.size
-    const builder = new GraphBuilder(graphComponent.graph)
-    builder.createNodesSource({
-      data: sample.nodeData,
-      id: 'id',
-      layout: (data) => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
-    })
-    builder.createEdgesSource(sample.edgeData, 'source', 'target', 'id')
-    builder.buildGraph()
+  void graphComponent.fitGraphBounds()
 
-    void graphComponent.fitGraphBounds()
-
-    graphComponent.graph.nodes.forEach((node) => {
-      node.tag.component = componentCount
-    })
-    componentCount++
-  }
+  graphComponent.graph.nodes.forEach((node) => {
+    node.tag.component = componentCount
+  })
+  componentCount++
 }
 
 /**

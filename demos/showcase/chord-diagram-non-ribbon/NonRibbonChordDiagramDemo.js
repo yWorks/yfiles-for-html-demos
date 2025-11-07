@@ -37,7 +37,6 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
-  IModelItem,
   INode,
   LabelStyle,
   LayoutExecutor,
@@ -48,10 +47,11 @@ import {
   TimeSpan
 } from '@yfiles/yfiles'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
+import graphData from './resources/GraphData.json'
 import { NonRibbonEdgeStyle } from './NonRibbonEdgeStyle'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { configureHighlight } from './configure-highlight'
 
 const predefinedColorSets = new Map([
@@ -69,7 +69,7 @@ const predefinedColorSets = new Map([
 async function run() {
   LayoutExecutor.ensure()
 
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
   // configure the input mode to enable hovered tooltips
@@ -149,8 +149,6 @@ async function initializeGraph(graphComponent) {
   graph.decorator.edges.selectionRenderer.hide()
   graph.decorator.nodes.focusRenderer.hide()
   graph.decorator.edges.focusRenderer.hide()
-
-  const graphData = await fetch('resources/GraphData.json').then((response) => response.json())
 
   const builder = new GraphBuilder(graph)
   const nodesSource = builder.createNodesSource({

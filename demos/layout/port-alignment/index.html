@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Port Alignment Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -102,15 +102,15 @@
         <h1>Port Alignment Demo</h1>
 
         <p>
-          This demo shows how to implement port alignment in <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">HierarchicalLayout</a>.
+          This demo shows how to implement port alignment in <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a>.
         </p>
         <p>
           The sample data contains edges that belong to different path groups, indicated by the
           different edge color. The demo code aligns all source and target ports with the edge paths
           by configuring the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/PortData#sourcePortAlignmentIds" target="_blank">sourcePortAlignmentIds</a> and
-          <a href="https://docs.yworks.com/yfileshtml/#/api/PortData#targetPortAlignmentIds" target="_blank">targetPortAlignmentIds</a> properties of the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#ports" target="_blank">PortData</a>.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/PortData#sourcePortAlignmentIds" class="api" target="_blank">sourcePortAlignmentIds</a> and
+          <a href="https://docs.yworks.com/yfileshtml/#/api/PortData#targetPortAlignmentIds" class="api" target="_blank">targetPortAlignmentIds</a> properties of the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#ports" class="api" target="_blank">PortData</a>.
         </p>
         <p>
           As a result, the aligned source and target ports at every node have the same y-coordinate,

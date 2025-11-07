@@ -28,12 +28,8 @@
  ***************************************************************************/
 import {
   EdgeLabelPreferredPlacement,
-  GraphComponent,
   HierarchicalLayout,
   HierarchicalLayoutData,
-  IEdge,
-  IGraph,
-  INode,
   LabelAlongEdgePlacements,
   LabelEdgeSides,
   PortAdjustmentPolicy,

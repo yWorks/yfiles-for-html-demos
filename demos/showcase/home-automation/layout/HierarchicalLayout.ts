@@ -30,8 +30,8 @@ import {
   EdgePortCandidates,
   HierarchicalLayout,
   HierarchicalLayoutData,
-  ILayoutAlgorithm,
-  LayoutData,
+  type ILayoutAlgorithm,
+  type LayoutData,
   PortSides
 } from '@yfiles/yfiles'
 

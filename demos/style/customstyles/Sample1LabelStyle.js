@@ -27,11 +27,8 @@
  **
  ***************************************************************************/
 import {
-  CanvasComponent,
   Font,
   GraphEditorInputMode,
-  ILabel,
-  IRenderContext,
   LabelStyleBase,
   Matrix,
   Size,
@@ -202,9 +199,10 @@ export class Sample1LabelStyle extends LabelStyleBase {
 }
 
 class LabelRenderDataCache {
-  text
-  buttonVisibility
   font
+  buttonVisibility
+  text
+
   constructor(text, buttonVisibility, font) {
     this.text = text
     this.buttonVisibility = buttonVisibility

@@ -30,27 +30,23 @@ import {
   Arrow,
   ArrowType,
   Color,
+  EdgeLabelPreferredPlacement,
   EdgePathLabelModel,
   EdgeStyleIndicatorRenderer,
   ExteriorNodeLabelModel,
-  GraphBuilder,
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
   IEdge,
   ILabelStyle,
-  IModelItem,
   INode,
+  Insets,
   LabelStyle,
   LayoutExecutor,
   License,
   NodeStyleIndicatorRenderer,
   OrganicLayout,
-  OrganicLayoutChainSubstructureStyle,
-  OrganicLayoutCycleSubstructureStyle,
-  OrganicLayoutParallelSubstructureStyle,
-  OrganicLayoutStarSubstructureStyle,
-  ParallelEdgeRouter,
+  OrganicLayoutData,
   PolylineEdgeStyle,
   ShapeNodeShape,
   ShapeNodeStyle,
@@ -58,12 +54,12 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 
-import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
 import { createGraphBuilder } from './Neo4jGraphBuilder'
 import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading, showLoadingIndicator } from '@yfiles/demo-resources/demo-page'
-import { createCodemirrorEditor, EditorView } from '@yfiles/demo-resources/codemirror-editor'
+import licenseData from '../../../lib/license.json'
+import { finishLoading, showLoadingIndicator } from '@yfiles/demo-app/demo-page'
+import { createCodemirrorEditor } from '@yfiles/demo-app/codemirror-editor'
 
 let editor
 
@@ -80,7 +76,7 @@ let edges = []
 // get hold of some UI elements
 const labelsContainer = document.querySelector('#labels')
 const selectedNodeContainer = document.querySelector('#selected-node-container')
-const propertyTable = document.querySelector('#propertyTable')
+const propertyTable = document.querySelector('.property-table')
 const propertyTableHeader = propertyTable.firstElementChild
 const numNodesInput = document.querySelector('#numNodes')
 const numLabelsInput = document.querySelector('#numLabels')
@@ -91,7 +87,7 @@ const queryErrorContainer = document.querySelector('#queryError')
  * Runs the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   if (!('WebSocket' in window)) {
     // early exit the application if WebSockets are not supported
     document.querySelector('#login').hidden = true
@@ -232,9 +228,15 @@ function onCurrentItemChanged() {
       for (const propertyName of Object.keys(properties)) {
         const tr = document.createElement('tr')
         const nameTd = document.createElement('td')
-        nameTd.textContent = propertyName
+        const clippedNameDiv = document.createElement('div')
+        clippedNameDiv.classList.add('clipped')
+        clippedNameDiv.textContent = propertyName
+        nameTd.appendChild(clippedNameDiv)
         const valueTd = document.createElement('td')
-        valueTd.textContent = properties[propertyName].toString()
+        const clippedValueDiv = document.createElement('div')
+        clippedValueDiv.classList.add('clipped')
+        clippedValueDiv.textContent = properties[propertyName].toString()
+        valueTd.appendChild(clippedValueDiv)
         tr.appendChild(nameTd)
         tr.appendChild(valueTd)
         propertyTable.appendChild(tr)
@@ -339,21 +341,32 @@ function onHoveredItemChanged(hoveredItem) {
  */
 async function doLayout() {
   setUIDisabled(true)
-  const organicLayout = new OrganicLayout()
-  organicLayout.chainSubstructureStyle = OrganicLayoutChainSubstructureStyle.STRAIGHT_LINE
-  organicLayout.cycleSubstructureStyle = OrganicLayoutCycleSubstructureStyle.CIRCULAR
-  organicLayout.parallelSubstructureStyle = OrganicLayoutParallelSubstructureStyle.STRAIGHT_LINE
-  organicLayout.starSubstructureStyle = OrganicLayoutStarSubstructureStyle.CIRCULAR
-  organicLayout.defaultMinimumNodeDistance = 60
-  organicLayout.deterministic = true
-  organicLayout.avoidNodeEdgeOverlap = true
-  organicLayout.qualityTimeRatio = 0.8
-  organicLayout.parallelEdgeRouter.joinEnds = true
-  organicLayout.parallelEdgeRouter.edgeDistance = 15
+  const organicLayout = new OrganicLayout({
+    chainSubstructureStyle: 'straight-line',
+    chainSubstructureSize: 3,
+    cycleSubstructureStyle: 'circular',
+    starSubstructureStyle: 'radial',
+    starSubstructureSize: 4,
+    edgeLabelPlacement: 'generic',
+    nodeLabelPlacement: 'consider'
+  })
+
+  const organicLayoutData = new OrganicLayoutData({
+    edgeLabelPreferredPlacements: new EdgeLabelPreferredPlacement({
+      angleReference: 'relative-to-edge-flow'
+    }),
+    preferredEdgeLengths: (edge) =>
+      edge.labels.reduce((width, label) => {
+        return Math.max(label.layout.width + 50, width)
+      }, 150),
+    nodeMargins: () => new Insets(30)
+  })
+
   try {
     await new LayoutExecutor({
       graphComponent,
       layout: organicLayout,
+      layoutData: organicLayoutData,
       animationDuration: '1s',
       animateViewport: true
     }).start()
@@ -408,9 +421,8 @@ function initializeUI() {
       runCypherQuery = await connectToDB(url, database, user, pass)
 
       // hide the login form and show the graph component
-      document.querySelector('#loginPane').setAttribute('style', 'display: none;')
-      document.querySelector('#graphPane').style.visibility = 'visible'
-      document.querySelector('#queryPane').style.visibility = 'visible'
+      document.querySelector('#login-pane').hidden = true
+      document.querySelector('#graph-pane').hidden = false
       await loadGraph()
     } catch (e) {
       document.querySelector('#connectionError').innerHTML = `An error occurred: ${e}`

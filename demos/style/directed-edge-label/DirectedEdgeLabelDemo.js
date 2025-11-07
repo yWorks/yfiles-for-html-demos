@@ -31,20 +31,17 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  IEdge,
-  IGraph,
-  LabelStyle,
   License,
   Point,
   Size
 } from '@yfiles/yfiles'
 import { DirectedEdgeLabelStyle } from './DirectedEdgeLabelStyle'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('graphComponent')
   initDemoStyles(graphComponent.graph, { theme: 'demo-palette-31', orthogonalEditing: true })

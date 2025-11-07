@@ -68,11 +68,11 @@ export function createUrlIcon(
  * @param iconSize The size of the created ImageData. If not specified, the size will be the one of
  *   the context's canvas.
  */
-export function createFontAwesomeIcon(
+export async function createFontAwesomeIcon(
   ctx: CanvasRenderingContext2D,
   fontAwesomeCssClass: string,
   iconSize: Size | null = null
-): ImageData {
+): Promise<ImageData> {
   const faHelperElement = getHelperElement()
   // assign the Font Awesome class
   faHelperElement.setAttribute('class', fontAwesomeCssClass)
@@ -83,6 +83,10 @@ export function createFontAwesomeIcon(
   const fontFamily = computedStyle.getPropertyValue('font-family')
   const fontWeight = computedStyle.getPropertyValue('font-weight')
   const propertyValue = beforeComputedStyle.getPropertyValue('content')
+
+  // force loading of the required font
+  await document.fonts.load(`normal ${fontWeight} 16px ${fontFamily}`)
+
   // in some browsers, the character is enclosed by quotes
   const text = propertyValue[1] ?? propertyValue[0]
 

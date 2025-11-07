@@ -47,6 +47,7 @@ import {
  */
 export class CustomPortStyle extends PortStyleBase {
   size
+
   constructor(size = 6) {
     super()
     this.size = size

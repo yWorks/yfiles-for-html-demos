@@ -26,55 +26,32 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/unbound-method */
 import {
   BaseClass,
-  ClickEventArgs,
-  CollectSnapResultsEventArgs,
-  ConcurrencyController,
-  Cursor,
   delegate,
-  EventArgs,
-  GraphComponent,
-  GraphEditorInputMode,
   GraphSnapContext,
   HandleInputMode,
   HandlePositions,
-  HandleType,
-  ICompoundEdit,
   IDragHandler,
-  IEnumerable,
-  IGraph,
-  IGraphSelection,
   IHandle,
   IInputMode,
-  IInputModeContext,
-  IList,
-  IModelItem,
-  INode,
   INodeReshapeSnapResultProvider,
   INodeSizeConstraintProvider,
   InputModeBase,
-  InputModeEventArgs,
   Insets,
   IPoint,
   IRectangle,
-  IRenderTreeElement,
   IReshapeHandler,
-  ISize,
-  ItemEventArgs,
   List,
   MutableRectangle,
   MutableSize,
   ObservableCollection,
-  OrthogonalEdgeDragHandler,
   OrthogonalEdgeEditingContext,
   Point,
   Rect,
   ReshapeHandlerHandle,
   ReshapePolicy,
   ReshapeRectangleContext,
-  SelectionEventArgs,
   Size
 } from '@yfiles/yfiles'
 import { RectangleRenderer } from '@yfiles/demo-utils/RectangleRenderer'
@@ -1170,12 +1147,10 @@ class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
     this.reshapeHandlerHandle.minimumSize = value
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   centerReshapeRecognizer(evt, eventSource) {
     return this.reshapeHandlerHandle.centerReshapeRecognizer(evt, eventSource)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ratioReshapeRecognizer(evt, eventSource) {
     return this.reshapeHandlerHandle.ratioReshapeRecognizer(evt, eventSource)
   }

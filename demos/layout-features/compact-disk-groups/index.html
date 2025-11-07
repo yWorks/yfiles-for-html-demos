@@ -33,10 +33,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-    <title>Compact Disk Groups - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <title>Compact Disk Groups [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -61,7 +61,6 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
     </div>
@@ -79,50 +78,45 @@
 
       <div class="demo-description__content">
         <h1>Compact Disk Layout for Group Content</h1>
-
         <p>
-          This demo shows how to use the <a href="https://docs.yworks.com/yfileshtml/#/api/CompactDiskLayout" target="_blank">CompactDiskLayout</a> to
-          arrange the content of (circular) group nodes.
-        </p>
-
-        <p>
-          This arrangement is suitable if the group content should be placed in a compact way and if
-          there are no or only few edges between child nodes.
-        </p>
-
-        <p>
-          The content of each group is arranged in a compact, circular way by
-          <a href="https://docs.yworks.com/yfileshtml/#/api/CompactDiskLayout" target="_blank">CompactDiskLayout</a>. The children are furthermore ordered by
-          <a href="https://docs.yworks.com/yfileshtml/#/api/CompactDiskLayoutData#nodeTypes" target="_blank">node type</a> (reflected by label text and
-          color in this example).
+          This demo shows how to use the <a href="https://docs.yworks.com/yfileshtml/#/api/CompactDiskLayout" class="api" target="_blank">CompactDiskLayout</a> to arrange the content
+          of (circular) group nodes.
         </p>
         <p>
-          <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" target="_blank">RecursiveGroupLayout</a> handles the group nodes recursively. An
-          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">OrganicLayout</a> is applied to the nodes of the top-level hierarchy.
+          This layout is suitable when the group content should be arranged in a compact way and the
+          child nodes have few or no edges between them.
         </p>
-
-        <h3>Code Snippet</h3>
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/compact-disk-groups/CompactDiskGroups.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Documentation</h3>
-        <p>
-          The Developer's Guide provides in-depth information about the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/compact_disk_layout" target="_blank">Compact Disk Layout</a>.
-        </p>
+        <p>It highlights the configuration of various aspects:</p>
+        <ul>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/api/CompactDiskLayout" class="api" target="_blank">CompactDiskLayout</a> packs child nodes within each group in compact,
+            circular way.
+          </li>
+          <li>
+            Child nodes are ordered by <a href="https://docs.yworks.com/yfileshtml/#/api/CompactDiskLayoutData#nodeTypes" class="api" target="_blank">nodeTypes</a>,
+            as indicated by their labels and colors.
+          </li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" class="api" target="_blank">RecursiveGroupLayout</a> handles the group nodes recursively.</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a> arranges the top-level groups.</li>
+        </ul>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../showcase/layoutstyles/index.html?layout=compact-disk&sample=compact-disk-with-edges" class="demo" target="_blank">Layout Styles: Compact Disk Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/compact_disk_layout" class="dguide" target="_blank">Compact Disk Layout</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/CompactDiskLayout" class="api" target="_blank">CompactDiskLayout</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" class="api" target="_blank">RecursiveGroupLayout</a></li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script type="module" crossorigin="anonymous" src="./CompactDiskGroupsDemo.ts" async></script>
   </body>
 </html>

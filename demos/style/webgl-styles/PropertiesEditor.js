@@ -37,20 +37,16 @@ import {
   WebGLBridgeEdgeStyle,
   WebGLDashStyle,
   WebGLEffect,
-  WebGLGroupNodeStyle,
-  WebGLIconLabelStyle,
   WebGLLabelShape,
   WebGLLabelStyle,
   WebGLLineCap,
-  WebGLPolylineEdgeStyle,
   WebGLShapeNodeShape,
-  WebGLShapeNodeStyle,
   WebGLStroke,
   WebGLTextureRendering
 } from '@yfiles/yfiles'
 
-import plusIcon from '@yfiles/demo-resources/icons/plus2-16.svg'
-import minusIcon from '@yfiles/demo-resources/icons/minus2-16.svg'
+import plusIcon from '@yfiles/demo-app/icons/plus2-16.svg'
+import minusIcon from '@yfiles/demo-app/icons/minus2-16.svg'
 
 /*
  * ############################################################################

@@ -40,13 +40,9 @@ import {
   GraphViewerInputMode,
   IArrow,
   IEdge,
-  IEdgeStyle,
   IEnumerable,
-  IGraph,
   ILabel,
-  ILabelStyle,
   INode,
-  INodeStyle,
   LabelShape,
   LabelStyle,
   LabelStyleIndicatorRenderer,
@@ -66,13 +62,14 @@ import {
 import { SectorVisual } from './SectorVisual'
 import { getGlobalRoot, getSubtree, highlightSubtree } from './SubtreeSupport'
 import { initializeGraphSearch, resetGraphSearch } from './TreeOfLifeSearch'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   addNavigationButtons,
   BrowserDetection,
   finishLoading,
   showLoadingIndicator
-} from '@yfiles/demo-resources/demo-page'
+} from '@yfiles/demo-app/demo-page'
+import graphData from './resources/TreeOfLifeData.json'
 
 const palettes = [
   {
@@ -117,7 +114,7 @@ let subtreeUpdateRunning = false
 let graphComponent
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('#graphComponent')
   if (BrowserDetection.webGL2) {
@@ -333,13 +330,8 @@ function isVisible(node) {
 async function loadGraph() {
   const graph = mainGraph()
   const builder = new GraphBuilder(graph)
-  const response = await fetch('./resources/TreeOfLifeData.json')
-  const data = await response.json()
-
-  builder.createNodesSource({ data: data.nodes, id: 'id', labels: ['tag.name'], tag: 'tag' })
-
-  builder.createEdgesSource({ data: data.links, sourceId: 'source', targetId: 'target' })
-
+  builder.createNodesSource({ data: graphData.nodes, id: 'id', labels: ['tag.name'], tag: 'tag' })
+  builder.createEdgesSource({ data: graphData.links, sourceId: 'source', targetId: 'target' })
   return builder.buildGraph()
 }
 

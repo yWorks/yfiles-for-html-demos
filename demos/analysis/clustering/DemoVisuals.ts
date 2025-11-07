@@ -32,20 +32,20 @@ import {
   Font,
   GeneralPath,
   GeometryUtilities,
-  IRectangle,
-  IRenderContext,
+  type IRectangle,
+  type IRenderContext,
   IVisualCreator,
   Point,
-  Rect,
-  ResultItemCollection,
+  type Rect,
+  type ResultItemCollection,
   SvgVisual,
   TextRenderSupport,
-  Visual,
+  type Visual,
   YList
 } from '@yfiles/yfiles'
 
 import type { VoronoiDiagram } from './VoronoiDiagram'
-import { colorSets } from '@yfiles/demo-resources/demo-styles'
+import { colorSets } from '@yfiles/demo-app/demo-styles'
 
 const GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
 const GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
@@ -64,14 +64,19 @@ function setAttribute(e: Element, name: string, value: number | string): void {
  * This visual draws a Voronoi diagram.
  */
 export class VoronoiVisual extends BaseClass(IVisualCreator) {
+  private clusters: { centroids: ResultItemCollection<Point> }
+  private voronoiDiagram: VoronoiDiagram
+
   /**
    * Creates a new VoronoiVisual that draws the faces of the given voronoi diagram.
    */
   constructor(
-    private voronoiDiagram: VoronoiDiagram,
-    private clusters: { centroids: ResultItemCollection<Point> }
+    voronoiDiagram: VoronoiDiagram,
+    clusters: { centroids: ResultItemCollection<Point> }
   ) {
     super()
+    this.voronoiDiagram = voronoiDiagram
+    this.clusters = clusters
   }
 
   /**
@@ -136,6 +141,12 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
  * This visual creates a polygon around the nodes that belong to the same cluster.
  */
 export class PolygonVisual extends BaseClass(IVisualCreator) {
+  private clusters: {
+    number: number
+    clustering: Map<number, IRectangle[]>
+    centroids: Iterable<Point>
+  }
+  private drawCenter: boolean
   startColor: Color
   endColor: Color
 
@@ -148,14 +159,12 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
    * @param clusters.centroids The center of the clusters.
    */
   constructor(
-    private drawCenter: boolean,
-    private clusters: {
-      number: number
-      clustering: Map<number, IRectangle[]>
-      centroids: Iterable<Point>
-    }
+    drawCenter: boolean,
+    clusters: { number: number; clustering: Map<number, IRectangle[]>; centroids: Iterable<Point> }
   ) {
     super()
+    this.drawCenter = drawCenter
+    this.clusters = clusters
     this.startColor = GRADIENT_START
     this.endColor = GRADIENT_END
   }
@@ -242,8 +251,11 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
  * This is only used for Hierarchical Clustering.
  */
 export class AxisVisual extends BaseClass(IVisualCreator) {
-  constructor(private rect: Rect) {
+  private rect: Rect
+
+  constructor(rect: Rect) {
     super()
+    this.rect = rect
   }
 
   /**
@@ -317,13 +329,14 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
  * This is only used for Hierarchical Clustering.
  */
 export class CutoffVisual extends BaseClass(IVisualCreator) {
+  private readonly maxY: number
+  public rectangle: IRectangle
   public cutOffValue: number
 
-  constructor(
-    public rectangle: IRectangle,
-    private readonly maxY: number
-  ) {
+  constructor(rectangle: IRectangle, maxY: number) {
     super()
+    this.rectangle = rectangle
+    this.maxY = maxY
     this.rectangle = rectangle
     this.maxY = maxY
     this.cutOffValue = Math.ceil(this.maxY - this.rectangle.center.y + 1)

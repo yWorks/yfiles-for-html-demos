@@ -26,17 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  EventArgs,
-  GraphClipboard,
-  HashMap,
-  IFoldingView,
-  IModelItem,
-  INode,
-  IRenderTreeGroup,
-  ItemCopiedEventArgs,
-  List
-} from '@yfiles/yfiles'
+import { GraphClipboard, HashMap, INode, List } from '@yfiles/yfiles'
 
 /**
  *  A {@link GraphClipboard} that tries to store the z-order of cut, copied or duplicated nodes and to apply
@@ -135,7 +125,7 @@ export class ZOrderGraphClipboard extends GraphClipboard {
     )
     const gmm = this.graphComponent.graphModelManager
 
-    // group new nodes by common parent canvas object groups of their main canvas objects
+    // group new nodes by common parent render tree groups of their main render tree element
     const itemsNotInView = new List()
     const groupToItems = new HashMap()
     for (const masterItem of newMasterItems) {

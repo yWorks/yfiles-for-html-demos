@@ -32,10 +32,11 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Orthogonal Layout - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <title>Orthogonal Layout [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -60,7 +61,6 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
     </div>
@@ -78,66 +78,48 @@
 
       <div class="demo-description__content">
         <h1>Orthogonal Layout</h1>
-
         <p>
           This demo shows basic configuration options for the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout" target="_blank">Orthogonal Layout</a>.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout" class="api" target="_blank">OrthogonalLayout</a> algorithm.
         </p>
-
-        See the
-        <a
-          href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/orthogonal/Orthogonal.ts"
-          target="_blank"
-          >sources</a
-        >
-        on how the layout is configured.
+        <p>It highlights the configuration of various aspects, including:</p>
         <ul>
           <li>
-            The <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout#gridSpacing" target="_blank">grid spacing</a> is decreased, which
-            leads to an overall more compact graph.
+            Decreased <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout#gridSpacing" class="api" target="_blank">grid spacing</a> for a more compact
+            graph
           </li>
           <li>
-            The sources also show how to use the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutData" target="_blank">LayoutData</a> to set
-            options for specific edges and nodes in the graph, for example, reserving space around a
-            node (node with 'Insets' text in the sample).
+            <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayoutData#nodeMargins" class="api" target="_blank">node margins</a> to reserve space around
+            specific node (with the &quot;Insets&quot; label)
           </li>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayoutData#directedEdges" target="_blank">Directed edges</a> are defined with a
-            flow in a top-to-bottom orientation (<span style="color: #01baff; font-weight: bold"
-              >blue edges</span
-            >).
+            <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayoutData#edgeDirectedness" class="api" target="_blank">Directed edges</a> (orange edges)
+            with top-to-bottom orientation
           </li>
           <li>
-            For <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout#treeStyle" target="_blank">tree substructures</a>, a compact
-            arrangement style with left-to-right orientation is specified. In this example, nodes
-            with text 'Tree' form a subtree. Other supported substructures, not shown in this
-            example, are <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout#chainStyle" target="_blank">chains</a> and
-            <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout#cycleStyle" target="_blank">cycles</a>.
+            <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout#treeSubstructureStyle" class="api" target="_blank">Tree substructures</a> configured
+            with a compact arrangement style and left-to-right orientation
           </li>
         </ul>
-
-        <h3>Code Snippet</h3>
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/orthogonal/Orthogonal.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Documentation</h3>
-        <p>
-          See the <a href="https://docs.yworks.com/yfileshtml/#/dguide/orthogonal_layout" target="_blank">Orthogonal Layout</a> section in the
-          Developer's Guide for an in-depth discussion of the relevant concepts.
-        </p>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../layout/tree/" class="demo" target="_blank">Tree Layout Demo</a></li>
+          <li><a href="../../showcase/layoutstyles/index.html?layout=tree&sample=tree" class="demo" target="_blank">Layout Styles: Tree Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/orthogonal_layout" class="dguide" target="_blank">Orthogonal layout algorithm</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout" class="api" target="_blank">OrthogonalLayout</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayoutData" class="api" target="_blank">OrthogonalLayoutData</a></li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script type="module" crossorigin="anonymous" src="./OrthogonalDemo.ts" async></script>
   </body>
 </html>

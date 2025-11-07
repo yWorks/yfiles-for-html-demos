@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 import {
-  INode,
-  IRenderContext,
+  type INode,
+  type IRenderContext,
   NodeStyleBase,
   SvgVisual,
   type TaggedSvgVisual
@@ -164,11 +164,15 @@ export class D3ChartNodeStyle extends NodeStyleBase<D3ChartNodeStyleVisual> {
 }
 
 class RenderDataCache {
-  constructor(
-    public width: number,
-    public height: number,
-    public data: number[]
-  ) {}
+  data: number[]
+  height: number
+  width: number
+
+  constructor(width: number, height: number, data: number[]) {
+    this.width = width
+    this.height = height
+    this.data = data
+  }
   equals(other: RenderDataCache) {
     return (
       other &&

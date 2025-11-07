@@ -32,10 +32,11 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Hierarchical Layout with Edge Labeling - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <title>Hierarchical Layout with Edge Labeling [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -60,7 +61,6 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
     </div>
@@ -78,70 +78,65 @@
 
       <div class="demo-description__content">
         <h1>Hierarchical Layout with Edge Labeling</h1>
-
         <p>
-          This demo shows how to configure the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">Hierarchical Layout</a>
-          for automatic edge label placement.
+          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> for automatic
+          edge label placements.
         </p>
-        <h3>Configuring label placement</h3>
+        <h2>Label Placement</h2>
         <p>
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModel" target="_blank">Label models</a> and their
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModelParameter" target="_blank">parameters</a> determine the position of a label. For
-          many interactive use cases, it makes sense to choose a model that restricts the available
-          positions in some way. However, for automatic label placement the opposite is true: Models
-          that do not impose restrictions on a label's position work best. For example,
-          <a href="https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel" target="_blank">FreeEdgeLabelModel</a> would be a good choice for integrated label placement.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModel" class="api" target="_blank">Label models</a> and their
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModelParameter" class="api" target="_blank">parameters</a> control where labels appear. For manual
+          placement, it&#39;s common to use models that limit possible positions. However, for
+          automatic layout, it&#39;s best to use unrestricted models like
+          <a href="https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel" class="api" target="_blank">FreeEdgeLabelModel</a> for maximum flexibility.
         </p>
         <p>
-          <a href="https://docs.yworks.com/yfileshtml/#/api/PreferredPlacementDescriptor" target="_blank">PreferredPlacementDescriptor</a>s may be associated with labels to control
-          automatic placement. Such a descriptor determines if the algorithm will place a label
-          close to its owner edge's source or target node, next to or on the edge, or even rotate
-          the label.
+          You can further guide label placement using
+          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeLabelPreferredPlacement" class="api" target="_blank">EdgeLabelPreferredPlacement</a>, which specifies preferences such as
+          placing labels near the edge&#39;s source or target, on a particular side, or with a
+          specific rotation.
         </p>
         <p>
-          The demo configures several descriptors for placing each label in a way that matches its
-          text - with two notable exceptions: For the labels <em>Upside down</em> and
-          <em>Upwards</em> , the actual rotation does not match the implied rotation. This is
-          because, by default, <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">Hierarchical Layout</a>'s labeling
-          algorithm ensures that a rotated label's up vector does not point downwards. Uncommenting
-          the corresponding line in the demo's source code will turn this feature off and enable
-          upside down labels.
+          In this demo, each label is placed according to its text. Note that the default
+          <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyle#autoFlip" class="api" target="_blank">prevention of upside-down labels</a> is turned off to
+          enable rotation of <em>Upside down</em> and <em>Upwards</em> labels.
         </p>
-
-        <h3>Code Snippet</h3>
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-edge-labeling/HierarchicalEdgeLabeling.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Demos</h3>
-        <p>
-          See the <a href="../../layout/edgelabelplacement/" target="_blank">Edge Label Placement Demo</a> for a more elaborate example regarding
-          automatic edge label placement.
-        </p>
-
-        <h3>Documentation</h3>
-        <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#_labeling" target="_blank">Labeling</a> and
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/label_placement" target="_blank">Automatic Label Placement</a> sections in the Developer's
-          Guide contain in-depth discussions of the relevant concepts.
-        </p>
-        <p>
-          See the <a href="https://docs.yworks.com/yfileshtml/#/api/PreferredPlacementDescriptor" target="_blank">PreferredPlacementDescriptor</a> API documentation for detailed
-          information on all available placement options.
-        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Observe how &quot;Close to Source&quot; label appear near the edge’s source node.</li>
+          <li>Observe &quot;Close to Target&quot; label near the target node.</li>
+          <li>Notice &quot;Parallel&quot; labels aligned with the edge direction.</li>
+          <li>Check the &quot;Rotated&quot; label, rotated by a fixed angle.</li>
+          <li>
+            Examine &quot;Upside down&quot; and &quot;Upwards&quot; labels which showcase special
+            rotation configurations.
+          </li>
+        </ul>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../layout/edgelabelplacement/" class="demo" target="_blank">Edge Label Placement Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#_labeling_2" class="dguide" target="_blank">Labeling</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/label_placement" class="dguide" target="_blank">Automatic Label Placement</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeLabelPreferredPlacement" class="api" target="_blank">EdgeLabelPreferredPlacement</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel" class="api" target="_blank">FreeEdgeLabelModel</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyle#autoFlip" class="api" target="_blank">LabelStyle.autoFlip</a> property</li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="./HierarchicalEdgeLabelingDemo.ts"
+      async
+    ></script>
   </body>
 </html>

@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEdge, IModelItem, INode, Intersection, Point } from '@yfiles/yfiles'
+import { IEdge, type IModelItem, INode, type Intersection, type Point } from '@yfiles/yfiles'
 
 /**
  * The tool tip may either be a plain string or it can also be a rich HTML element. In this case, we

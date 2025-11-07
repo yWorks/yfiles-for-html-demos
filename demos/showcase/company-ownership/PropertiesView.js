@@ -26,13 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EdgeTypeEnum } from './data-types'
-
 /**
  * Creates the properties view panel to display the properties of the clicked elements.
  */
 export class PropertiesView {
   element
+
   /**
    * Creates the PropertiesView.
    * @param element The DOM element that will be filled with the properties.
@@ -114,7 +113,7 @@ export class PropertiesView {
     tr.appendChild(createElement('td', 'Type'))
     tr.appendChild(createElement('td', item.type))
 
-    if (item.type === EdgeTypeEnum.Hierarchy) {
+    if (item.type === 'Hierarchy') {
       tr = document.createElement('tr')
       table.appendChild(tr)
       tr.appendChild(createElement('td', 'Ownership'))

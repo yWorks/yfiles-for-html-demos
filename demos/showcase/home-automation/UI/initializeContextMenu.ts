@@ -27,25 +27,25 @@
  **
  ***************************************************************************/
 import {
-  ContextMenuInputMode,
-  GraphComponent,
-  GraphEditorInputMode,
-  GraphInputMode,
+  type ContextMenuInputMode,
+  type GraphComponent,
+  type GraphEditorInputMode,
+  type GraphInputMode,
   GraphItemTypes,
-  IModelItem,
+  type IModelItem,
   INode,
-  Point,
-  PopulateItemContextMenuEventArgs
+  type Point,
+  type PopulateItemContextMenuEventArgs
 } from '@yfiles/yfiles'
-import DeleteIcon from '../../../resources/icons/delete3-16.svg'
-import CopyIcon from '../../../resources/icons/copy-16.svg'
-import PasteIcon from '../../../resources/icons/paste-16.svg'
-import CutIcon from '../../../resources/icons/cut2-16.svg'
-import UndoIcon from '../../../resources/icons/undo-16.svg'
-import RedoIcon from '../../../resources/icons/redo-16.svg'
-import FitContentIcon from '../../../resources/icons/fit-16.svg'
+import DeleteIcon from '../../../demo-app/icons/delete3-16.svg'
+import CopyIcon from '../../../demo-app/icons/copy-16.svg'
+import PasteIcon from '../../../demo-app/icons/paste-16.svg'
+import CutIcon from '../../../demo-app/icons/cut2-16.svg'
+import UndoIcon from '../../../demo-app/icons/undo-16.svg'
+import RedoIcon from '../../../demo-app/icons/redo-16.svg'
+import FitContentIcon from '../../../demo-app/icons/fit-16.svg'
 import { runAutoLayout } from '../utils/customTriggers'
-import LayoutIcon from '../../../resources/icons/play2-16.svg'
+import LayoutIcon from '../../../demo-app/icons/play2-16.svg'
 
 export function initializeContextMenu(graphComponent: GraphComponent): void {
   const graphEditorInputMode = graphComponent.inputMode as GraphEditorInputMode
@@ -200,7 +200,7 @@ function createMenuItem(
   const iconItem = document.createElement('div')
   iconItem.classList.add('flow-context-menu__item-icon')
   if (icon) {
-    iconItem.style.backgroundImage = `url(${icon})`
+    iconItem.style.backgroundImage = `url("${icon}")`
   }
   menuButton.appendChild(iconItem)
 

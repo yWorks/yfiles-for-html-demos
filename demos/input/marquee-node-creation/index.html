@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Marquee Rectangle Node Creation Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -82,7 +82,7 @@
         <h1>Marquee Rectangle Node Creation Demo</h1>
 
         <p>
-          This demo shows how to use <a href="https://docs.yworks.com/yfileshtml/#/api/MarqueeSelectionInputMode" target="_blank">MarqueeSelectionInputMode</a> to create new nodes.
+          This demo shows how to use <a href="https://docs.yworks.com/yfileshtml/#/api/MarqueeSelectionInputMode" class="api" target="_blank">MarqueeSelectionInputMode</a> to create new nodes.
         </p>
 
         <p>
@@ -91,10 +91,10 @@
         </p>
         <p>
           Also note that the marquee rectangle snaps to other nodes. This is achieved by using a
-          custom <a href="https://docs.yworks.com/yfileshtml/#/api/MarqueeSelectionInputMode" target="_blank">MarqueeSelectionInputMode</a> and relaying the size and location of the
-          marquee rectangle to a <a href="https://docs.yworks.com/yfileshtml/#/api/SnapContext" target="_blank">SnapContext</a>, which provides a visualisation as well
-          as a <a href="https://docs.yworks.com/yfileshtml/#/api/SnapResult" target="_blank">SnapResult</a> to which the marquee rectangle can be snapped to. The
-          <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyle" target="_blank">NodeStyle</a> used for default node creation is reused in the marquee's
+          custom <a href="https://docs.yworks.com/yfileshtml/#/api/MarqueeSelectionInputMode" class="api" target="_blank">MarqueeSelectionInputMode</a> and relaying the size and location of the
+          marquee rectangle to a <a href="https://docs.yworks.com/yfileshtml/#/api/SnapContext" class="api" target="_blank">SnapContext</a>, which provides a visualization as well
+          as a <a href="https://docs.yworks.com/yfileshtml/#/api/SnapResult" class="api" target="_blank">SnapResult</a> to which the marquee rectangle can be snapped to. The
+          <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" class="api" target="_blank">INodeStyle</a> used for default node creation is reused in the marquee's
           template to style the selection rectangle.
         </p>
 

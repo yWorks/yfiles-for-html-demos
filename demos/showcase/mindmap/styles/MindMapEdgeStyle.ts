@@ -27,12 +27,17 @@
  **
  ***************************************************************************/
 import {
+  BaseClass,
   EdgeStyleBase,
   GeneralPath,
   HtmlCanvasVisual,
   type IEdge,
   type IInputModeContext,
+  type ILookup,
+  IMarkupExtensionConverter,
   type IRenderContext,
+  type IWriteContext,
+  MarkupExtension,
   type Point
 } from '@yfiles/yfiles'
 import { getNodeData } from '../data-types'
@@ -41,23 +46,28 @@ import { getNodeData } from '../data-types'
  * An edge style that draws a smooth Bézier curve with color and thickness interpolation
  * between the source and the target nodes.
  */
-export class MindMapEdgeStyle extends EdgeStyleBase<MindMapCanvasVisual> {
+export class MindMapEdgeStyle extends BaseClass(
+  EdgeStyleBase<MindMapCanvasVisual>,
+  IMarkupExtensionConverter
+) {
+  thicknessEnd: number
+  thicknessStart: number
+
   /**
    * Creates the edge style as a Bézier curve using the given thicknesses.
    * @param thicknessStart The thickness of the edge at its start.
    * @param thicknessEnd The thickness of the edge at its end.
    */
-  constructor(
-    public thicknessStart: number,
-    public thicknessEnd: number
-  ) {
+  constructor(thicknessStart: number, thicknessEnd: number) {
     super()
+    this.thicknessStart = thicknessStart
+    this.thicknessEnd = thicknessEnd
   }
 
   /**
    * Creates the visual for the edge using an HTML canvas visual.
    */
-  createVisual(context: IRenderContext, edge: IEdge): MindMapCanvasVisual {
+  createVisual(_context: IRenderContext, edge: IEdge): MindMapCanvasVisual {
     return new MindMapCanvasVisual(edge, this.thicknessStart, this.thicknessEnd)
   }
 
@@ -86,16 +96,73 @@ export class MindMapEdgeStyle extends EdgeStyleBase<MindMapCanvasVisual> {
    * Mind map edges should not be clicked, selected or hovered.
    * Thus, the hit-test should always return false.
    */
-  isHit(canvasContext: IInputModeContext, p: Point, edge: IEdge): boolean {
+  isHit(_canvasContext: IInputModeContext, _p: Point, _edge: IEdge): boolean {
     return false
+  }
+
+  /**
+   * Returns that this style can be converted.
+   */
+  canConvert(_context: IWriteContext, _value: MindMapEdgeStyle): boolean {
+    return true
+  }
+
+  /**
+   * Converts this style using {@link MindMapEdgeStyleExtension}.
+   */
+  convert(_context: IWriteContext, value: MindMapEdgeStyle): MarkupExtension {
+    const mindMapEdgeStyleExtension = new MindMapEdgeStyleExtension()
+    mindMapEdgeStyleExtension.thicknessStart = value.thicknessStart
+    mindMapEdgeStyleExtension.thicknessEnd = value.thicknessEnd
+    return mindMapEdgeStyleExtension
   }
 }
 
+/**
+ * A markup extension that creates a {@link MindMapEdgeStyle} instance configured with start and end thickness values.
+ */
+class MindMapEdgeStyleExtension extends MarkupExtension {
+  private _thicknessStart!: number
+  private _thicknessEnd!: number
+
+  /**
+   * Gets or sets the thickness of the edge stroke at the start point.
+   */
+  get thicknessStart(): number {
+    return this._thicknessStart
+  }
+
+  set thicknessStart(value: number) {
+    this._thicknessStart = value
+  }
+
+  /**
+   * Gets or sets the thickness of the edge stroke at the end point.
+   */
+  get thicknessEnd(): number {
+    return this._thicknessEnd
+  }
+
+  set thicknessEnd(value: number) {
+    this._thicknessEnd = value
+  }
+
+  /**
+   * Provides a {@link MindMapEdgeStyle} instance using the configured start and end thickness values.
+   * @returns A new `MindMapEdgeStyle` initialized with the specified thickness at start and end points.
+   */
+  provideValue(_serviceProvider: ILookup): MindMapEdgeStyle {
+    return new MindMapEdgeStyle(this.thicknessStart, this.thicknessEnd)
+  }
+}
 /**
  * Contains the actual rendering logic of the edge.
  * This class uses HTML canvas rendering to visualize the edge.
  */
 class MindMapCanvasVisual extends HtmlCanvasVisual {
+  thicknessEnd: number
+  thicknessStart: number
+  edge: IEdge
   // The cached path to use during updates
   private cachedPath: GeneralPath | null = null
   // The cached start thickness to use during updates
@@ -114,12 +181,11 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
    * @param thicknessStart The thickness of the edge at its start.
    * @param thicknessEnd The thickness of the edge at its end.
    */
-  constructor(
-    public edge: IEdge,
-    public thicknessStart: number,
-    public thicknessEnd: number
-  ) {
+  constructor(edge: IEdge, thicknessStart: number, thicknessEnd: number) {
     super()
+    this.edge = edge
+    this.thicknessStart = thicknessStart
+    this.thicknessEnd = thicknessEnd
     this.edge = edge
     this.thicknessStart = thicknessStart
     this.thicknessEnd = thicknessEnd
@@ -128,7 +194,7 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
   /**
    * Renders the edge as a flattened Bézier path.
    */
-  render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
+  render(_renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
     ctx.save()
     ctx.beginPath()
     // create the new path for the edge
@@ -257,3 +323,6 @@ class MindMapCanvasVisual extends HtmlCanvasVisual {
 }
 
 type RGB = { r: number; g: number; b: number }
+
+// export a default object to be able to map a namespace to this module for serialization
+export default { MindMapEdgeStyle, MindMapEdgeStyleExtension }

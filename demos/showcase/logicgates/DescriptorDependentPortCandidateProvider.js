@@ -38,19 +38,13 @@ import {
   SimpleNode,
   SimplePort
 } from '@yfiles/yfiles'
-import { LogicGateType } from './LogicGateType'
-
-var EdgeDirection
-;(function (EdgeDirection) {
-  EdgeDirection[(EdgeDirection['IN'] = 0)] = 'IN'
-  EdgeDirection[(EdgeDirection['OUT'] = 1)] = 'OUT'
-})(EdgeDirection || (EdgeDirection = {}))
 
 /**
  * Provides all available ports of the given graph with the specified edge direction.
  */
 export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCandidateProvider) {
   node
+
   /**
    * Creates a new instance of DescriptorDependentPortCandidateProvider.
    */
@@ -65,7 +59,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
    * @param target The opposite port candidate
    */
   getSourcePortCandidates(context, target) {
-    return this.getPortCandidatesForDirection(EdgeDirection.OUT)
+    return this.getPortCandidatesForDirection('out')
   }
 
   /**
@@ -74,7 +68,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
    * @param source The opposite port candidate
    */
   getTargetPortCandidates(context, source) {
-    return this.getPortCandidatesForDirection(EdgeDirection.IN)
+    return this.getPortCandidatesForDirection('in')
   }
 
   /**
@@ -82,7 +76,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
    * @param context The context for which the candidates should be provided
    */
   getAllSourcePortCandidates(context) {
-    return this.getPortCandidatesForDirection(EdgeDirection.OUT)
+    return this.getPortCandidatesForDirection('out')
   }
 
   /**
@@ -90,7 +84,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
    * @param context The context for which the candidates should be provided
    */
   getAllTargetPortCandidates(context) {
-    return this.getPortCandidatesForDirection(EdgeDirection.IN)
+    return this.getPortCandidatesForDirection('in')
   }
 
   /**
@@ -165,20 +159,20 @@ function createPortDescriptorsForNode(node) {
   const style = node.style
   switch (style.gateType) {
     default:
-    case LogicGateType.AND:
-    case LogicGateType.NAND:
-    case LogicGateType.OR:
-    case LogicGateType.NOR:
-    case LogicGateType.XOR:
-    case LogicGateType.XNOR: {
-      ports.add({ x: width, y: height * 0.5, direction: EdgeDirection.OUT })
-      ports.add({ x: 0, y: height * 0.25, direction: EdgeDirection.IN })
-      ports.add({ x: 0, y: height * 0.75, direction: EdgeDirection.IN })
+    case 'and':
+    case 'nand':
+    case 'or':
+    case 'nor':
+    case 'xor':
+    case 'xnor': {
+      ports.add({ x: width, y: height * 0.5, direction: 'out' })
+      ports.add({ x: 0, y: height * 0.25, direction: 'in' })
+      ports.add({ x: 0, y: height * 0.75, direction: 'in' })
       return ports
     }
-    case LogicGateType.NOT: {
-      ports.add({ x: width, y: height * 0.5, direction: EdgeDirection.OUT })
-      ports.add({ x: 0, y: height * 0.5, direction: EdgeDirection.IN })
+    case 'not': {
+      ports.add({ x: width, y: height * 0.5, direction: 'out' })
+      ports.add({ x: 0, y: height * 0.5, direction: 'in' })
       return ports
     }
   }

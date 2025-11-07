@@ -52,7 +52,7 @@ const node = graphComponent.graph.createNode()
 // and add a label
 graphComponent.graph.addLabel(node, 'y')
 // then center the graph in the component
-graphComponent.fitGraphBounds()
+await graphComponent.fitGraphBounds()
 ```
 
 Note

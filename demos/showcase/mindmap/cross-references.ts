@@ -190,8 +190,11 @@ export function createCrossReferenceEdge(
  * All other handle types (move, ...) are not provided and thus disabled.
  */
 class CrossReferenceEdgeHandleProvider extends BaseClass(IHandleProvider) {
-  constructor(private edge: IEdge) {
+  private edge: IEdge
+
+  constructor(edge: IEdge) {
     super()
+    this.edge = edge
   }
 
   getHandles(inputModeContext: IInputModeContext): IEnumerable<IHandle> {
@@ -205,8 +208,11 @@ class CrossReferenceEdgeHandleProvider extends BaseClass(IHandleProvider) {
  * An arc edge style used for the edge selection.
  */
 class ArcEdgeSelectionStyle extends DelegatingEdgeStyle {
-  constructor(private delegatingEdgeStyle: IEdgeStyle) {
+  private delegatingEdgeStyle: IEdgeStyle
+
+  constructor(delegatingEdgeStyle: IEdgeStyle) {
     super()
+    this.delegatingEdgeStyle = delegatingEdgeStyle
   }
 
   getStyle(edge: IEdge): IEdgeStyle {

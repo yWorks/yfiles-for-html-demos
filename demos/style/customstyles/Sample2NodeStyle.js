@@ -26,21 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  ILookup,
-  INode,
-  IRenderContext,
-  MarkupExtension,
-  NodeStyleBase,
-  SvgVisual
-} from '@yfiles/yfiles'
-import { isColorSetName } from '@yfiles/demo-resources/demo-styles'
+import { MarkupExtension, NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
+import { isColorSetName } from '@yfiles/demo-app/demo-styles'
 
 /**
  * A custom demo node style whose colors match the given well-known CSS rule.
  */
 export class Sample2NodeStyle extends NodeStyleBase {
   cssClass
+
   constructor(cssClass) {
     super()
     this.cssClass = cssClass

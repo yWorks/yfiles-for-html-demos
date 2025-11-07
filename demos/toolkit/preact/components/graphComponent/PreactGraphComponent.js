@@ -29,19 +29,17 @@
 // @ts-ignore - We have no proper types for preact, here
 import { html, useEffect, useRef } from '../../preact-loader'
 import {
-  EdgesSource,
   Graph,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
   HierarchicalLayout,
   LayoutExecutor,
-  NodesSource,
   PolylineEdgeStyle
 } from '@yfiles/yfiles'
 import { PreactComponentNodeStyle } from './PreactComponentNodeStyle'
 import NodeTemplate from './NodeTemplate'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 LayoutExecutor.ensure()
 

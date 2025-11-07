@@ -34,16 +34,16 @@ import {
   FilteredGraphWrapper,
   GivenCoordinatesLayout,
   GivenCoordinatesLayoutData,
-  GraphComponent,
-  IEdge,
-  IEnumerable,
-  IGraph,
+  type GraphComponent,
+  type IEdge,
+  type IEnumerable,
+  type IGraph,
   ILayoutAlgorithm,
-  INode,
+  type INode,
   LayoutExecutor,
   LayoutGraphAdapter,
   List,
-  Point,
+  type Point,
   Rect
 } from '@yfiles/yfiles'
 

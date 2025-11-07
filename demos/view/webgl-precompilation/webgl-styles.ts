@@ -38,7 +38,7 @@ import {
   WebGLShapeNodeStyle
 } from '@yfiles/yfiles'
 import type { WebGLEdgeStyle, WebGLNodeStyle, WebGLTextStyle } from './webgl-styles-util'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
 
 export const webGLNodeStyles: WebGLNodeStyle[] = [
   new WebGLShapeNodeStyle({ fill: colorSets['demo-palette-21'].fill, shape: 'ellipse' }),

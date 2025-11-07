@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 import { GraphComponent, License } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import {
   addButtonListener,
   createSampleGraph,
@@ -41,7 +41,7 @@ import {
   setStyles
 } from './setting-styles'
 
-License.value = await fetchLicense()
+License.value = licenseData
 
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
@@ -49,7 +49,7 @@ initializeTutorialDefaults(graphComponent)
 setDefaultStyles(graphComponent.graph)
 createSampleGraph(graphComponent.graph)
 
-fitGraphBounds(graphComponent)
+await fitGraphBounds(graphComponent)
 finishLoading()
 
 addButtonListener('#createGraphItemsWithStylesButton', () =>

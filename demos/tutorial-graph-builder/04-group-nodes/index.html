@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>04 Group Nodes - Tutorial: Graph Builder [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -145,7 +145,7 @@
                 <td class="content">
                   <div class="paragraph">
                     <p>
-                      This step is optional when building a graph with <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>.
+                      This step is optional when building a graph with <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>.
                       If you do not have hierarchy information in your data, you can proceed with
                       the next step.
                     </p>
@@ -156,7 +156,7 @@
           </div>
           <div class="paragraph">
             <p>
-              To have the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> build the hierarchy, we need to add
+              To have the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> build the hierarchy, we need to add
               information about which item belongs to which group.
             </p>
           </div>
@@ -167,14 +167,14 @@
               values point to a group item. Group items are the same as node items, and they can
               also have a parent. So it is possible to create nested hierarchies. You can store them
               in separate data collections or separate them when creating the
-              <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" target="_blank">NodesSource</a>.
+              <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a>.
             </p>
           </div>
           <div class="listingblock">
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodeData = [
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> nodeData = [
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;item0&#x27;</span> },
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;item1&#x27;</span>, <span class="hljs-attr">parentId</span>: <span class="hljs-string">&#x27;group0&#x27;</span> },
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;item2&#x27;</span>, <span class="hljs-attr">parentId</span>: <span class="hljs-string">&#x27;group1&#x27;</span> },
@@ -188,7 +188,7 @@
               As an alternative to having the type encoded in the <code>id</code>, you can also add
               another property which identifies the group items. In both cases, it is not necessary
               to mark the group items unless you want to treat them differently from other items,
-              e.g. visualize them differently.
+              e.g., visualize them differently.
             </p>
           </div>
           <div class="paragraph">
@@ -201,13 +201,13 @@
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodesSource = graphBuilder.<span class="hljs-title function_">createNodesSource</span>({
+              ><code class="language-typescript" data-lang="typescript">graphBuilder.<span class="hljs-title function_">createNodesSource</span>({
   <span class="hljs-attr">data</span>: nodeData.<span class="hljs-title function_">filter</span>(<span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.<span class="hljs-property">id</span>.<span class="hljs-title function_">startsWith</span>(<span class="hljs-string">&#x27;item&#x27;</span>)),
   <span class="hljs-attr">id</span>: <span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.<span class="hljs-property">id</span>,
   <span class="hljs-attr">parentId</span>: <span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.<span class="hljs-property">parentId</span>
 })
 
-<span class="hljs-keyword">const</span> groupNodesSource = graphBuilder.<span class="hljs-title function_">createGroupNodesSource</span>({
+graphBuilder.<span class="hljs-title function_">createGroupNodesSource</span>({
   <span class="hljs-attr">data</span>: nodeData.<span class="hljs-title function_">filter</span>(<span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.<span class="hljs-property">id</span>.<span class="hljs-title function_">startsWith</span>(<span class="hljs-string">&#x27;group&#x27;</span>)),
   <span class="hljs-attr">id</span>: <span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.<span class="hljs-property">id</span>,
   <span class="hljs-attr">parentId</span>: <span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.<span class="hljs-property">parentId</span>
@@ -224,7 +224,7 @@
             <p>
               Edges work the same way for group nodes as for other nodes. They can connect to the
               group node if its <code>id</code> is referenced in the source or target
-              <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-property-idProvider" target="_blank">id provider</a>.
+              <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider" class="api" target="_blank">id provider</a>.
             </p>
           </div>
           <div class="admonitionblock note">
@@ -259,7 +259,7 @@
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

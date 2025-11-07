@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode } from '@yfiles/yfiles'
+import {} from '@yfiles/yfiles'
 
 export function configureDragAndDrop(graphComponent) {
   const nodeDropInputMode = graphComponent.inputMode.nodeDropInputMode

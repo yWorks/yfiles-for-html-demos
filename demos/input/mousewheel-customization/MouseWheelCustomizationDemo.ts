@@ -33,15 +33,15 @@ import {
   type IGraph,
   License,
   MouseWheelBehaviors,
-  PointerEventArgs,
+  type PointerEventArgs,
   Rect
 } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the graph component
   const graphComponent = new GraphComponent('graphComponent')

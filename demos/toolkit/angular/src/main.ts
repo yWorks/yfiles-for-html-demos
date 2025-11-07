@@ -33,7 +33,7 @@ import { AppComponent } from './app/app.component'
 
 import { environment } from './environments/environment'
 import { License } from '@yfiles/yfiles'
-import licenseData from '../../../../lib/license.json'
+import licenseData from './license.json'
 
 License.value = licenseData
 

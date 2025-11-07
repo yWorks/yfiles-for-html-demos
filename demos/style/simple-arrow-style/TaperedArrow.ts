@@ -32,18 +32,18 @@ import {
   Fill,
   IArrow,
   IBoundsProvider,
-  ICanvasContext,
-  IEdge,
+  type ICanvasContext,
+  type IEdge,
   IEdgeStyle,
-  ILookup,
-  IRenderContext,
+  type ILookup,
+  type IRenderContext,
   IVisualCreator,
   MarkupExtension,
   Matrix,
   Point,
   Rect,
   SvgVisual,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 /**

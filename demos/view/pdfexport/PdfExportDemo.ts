@@ -27,13 +27,12 @@
  **
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode, License } from '@yfiles/yfiles'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { createSampleGraph } from './samples'
 import { initializeExportRectangle } from './export-rectangle/export-rectangle'
 import { initializeToggleWebGlRenderingButton } from './webgl-support'
-import './option-panel/option-panel.css'
 import { initializeOptionPanel } from './option-panel/option-panel'
 import { initializeExportDialog, showExportDialog } from './export-dialog/export-dialog'
 import { initializeServerSideExport } from './server-side-export'
@@ -45,7 +44,7 @@ import { loadExternalFonts } from './load-external-fonts'
 import { DelayedNodeStyle } from './node-styles/delayed-node-style'
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   if (window.location.protocol === 'file:') {
     alert(

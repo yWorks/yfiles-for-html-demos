@@ -29,14 +29,14 @@
 /**
  * The type of network device.
  */
-export enum DeviceKind {
-  WORKSTATION = 1,
-  LAPTOP = 2,
-  SMARTPHONE = 3,
-  SWITCH = 4,
-  WLAN = 5,
-  SERVER = 6,
-  DATABASE = 7
+export const DeviceKind = {
+  WORKSTATION: 1,
+  LAPTOP: 2,
+  SMARTPHONE: 3,
+  SWITCH: 4,
+  WLAN: 5,
+  SERVER: 6,
+  DATABASE: 7
 }
 
 /**

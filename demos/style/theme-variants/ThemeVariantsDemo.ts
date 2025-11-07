@@ -33,7 +33,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphSnapContext,
-  IGraph,
+  type IGraph,
   type INode,
   LabelStyle,
   License,
@@ -43,9 +43,9 @@ import {
   PolylineEdgeStyle,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 const graphComponents: GraphComponent[] = []
 
@@ -85,7 +85,7 @@ const colorPalettes: Record<
 let sharedGraph: IGraph
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   sharedGraph = createSampleGraph()
 
@@ -290,7 +290,7 @@ function initializeUI(): void {
     graphComponents[0].executeCommand(Command.ZOOM)
   })
 
-  const { defaultScale, defaultHandleOffset, defaultIndicatorOffset } = getThemeDefaults()
+  const { defaultHandleOffset, defaultIndicatorOffset } = getThemeDefaults()
   const sliders = [
     {
       slider: '#scale-slider',
@@ -332,7 +332,7 @@ function getThemeDefaults(): {
 } {
   const tempGC = new GraphComponent()
   document.body.appendChild(tempGC.htmlElement)
-  let computedStyle = window.getComputedStyle(tempGC.htmlElement)
+  const computedStyle = window.getComputedStyle(tempGC.htmlElement)
   const defaultScale = computedStyle.getPropertyValue('--yfiles-theme-scale')
   const defaultHandleOffset = computedStyle.getPropertyValue('--yfiles-theme-handle-offset')
   const defaultIndicatorOffset = computedStyle.getPropertyValue('--yfiles-theme-indicator-offset')

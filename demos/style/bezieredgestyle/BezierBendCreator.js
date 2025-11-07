@@ -26,19 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  GeneralPath,
-  IBend,
-  IBendCreator,
-  IEdge,
-  IGraph,
-  IInputModeContext,
-  IListEnumerable,
-  IPoint,
-  IUndoUnit,
-  Point
-} from '@yfiles/yfiles'
+import { BaseClass, GeneralPath, IBendCreator, IEdge, IUndoUnit } from '@yfiles/yfiles'
 
 /**
  * Custom bend creator for bezier edges
@@ -46,8 +34,9 @@ import {
  * In addition, the new bends and the neighboring bends are positioned so that the curve shape stays constant.
  */
 export class BezierBendCreator extends BaseClass(IBendCreator) {
-  edge
   originalBendCreator
+  edge
+
   constructor(edge, originalBendCreator) {
     super()
     this.edge = edge

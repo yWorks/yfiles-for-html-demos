@@ -27,10 +27,10 @@
  **
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode, License } from '@yfiles/yfiles'
+import licenseData from '../../../lib/license.json'
 
 // Register the license
-const response = await fetch('./license.json')
-License.value = await response.json()
+License.value = licenseData
 
 // Initialize a graph component and enable interactive editing
 const graphComponent = new GraphComponent('#graphComponent')

@@ -17,13 +17,14 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-edge/05-making-the-style-configurable/).
 
-Frequently, the visualized edges differ in visual properties like color, dash-style, or thickness, while looking generally the same. In this case, the style can define properties that let you configure certain details of the visualization, while using the same edge style class.
+Frequently, the visualized edges differ in visual properties like color, dash-style, or thickness, while looking generally the same. In this case, the style can define properties that let you configure certain details of the visualization while using the same edge style class.
 
 In this example, we add a `distance` property to the style, that defines the gap between the parallel paths. For this purpose, we add a constructor-defined property without an explicit getter or setter.
 
 ```
-constructor(public distance = 1) {
+constructor(distance = 1) {
   super()
+  this.distance = distance
 }
 ```
 
@@ -35,7 +36,7 @@ widePath.setAttribute('stroke-width', String(distance + 2))
 thinPath.setAttribute('stroke-width', String(distance))
 ```
 
-Now, we can create edges with different distances. The distance can either be passed into the constructor, or specified later using the `distance` property. The distance can also be changed dynamically during runtime.
+Now, we can create edges with different distances. The distance can either be passed into the constructor or specified later using the `distance` property. The distance can also be changed dynamically during runtime.
 
 ```
 // the distance can be specified in the constructor

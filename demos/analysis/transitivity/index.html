@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Transitivity Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
     <link rel="stylesheet" href="./transitivity.css" />
 
     <style>
@@ -107,9 +107,9 @@
 
       <label for="algorithms">Algorithms</label>
       <select title="Select an algorithm" id="algorithms">
-        <option>Original Graph</option>
-        <option>Transitive Closure</option>
-        <option>Transitive Reduction</option>
+        <option value="original-graph">Original Graph</option>
+        <option value="transitive-closure">Transitive Closure</option>
+        <option value="transitive-reduction">Transitive Reduction</option>
       </select>
 
       <input type="checkbox" id="show-transitive-edges" class="demo-toggle-button" checked="" />
@@ -160,18 +160,18 @@
 
         <h3>Transitive Closure</h3>
         <p>
-          Transitivity Closure is applied in order to answer the question whether there exists a
+          Transitive Closure is applied in order to answer the question whether there exists a
           directed path between two nodes. The algorithm adds an edge to the graph for each pair of
           nodes, that are not direct neighbors, but connected by a path in the graph. The transitive
           edges are visualized in red color.
         </p>
         <h3>Transitive Reduction</h3>
         <p>
-          Transitivity Reduction is the reverse operation to transitive closure which removes edges
+          Transitive Reduction is the reverse operation to transitive closure which removes edges
           between any two nodes if there exists another path that connects them. This means that in
           the end, the graph remains with as few edges as possible but has the same reachability
           relation as before. The user can choose to show or hide transitive edges using the
-          <img src="../../resources/icons/star-16.svg" style="vertical-align: text-top" />-Button of
+          <img src="../../demo-app/icons/star-16.svg" style="vertical-align: text-top" />-Button of
           the toolbar.
         </p>
 

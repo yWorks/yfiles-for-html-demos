@@ -28,25 +28,20 @@
  ***************************************************************************/
 import {
   BaseClass,
-  ClickEventArgs,
   Cursor,
   HandlePositions,
   HandleType,
   IHandle,
-  IInputModeContext,
-  IPoint,
-  IPort,
   Point,
-  ShapePortStyle,
   Size
 } from '@yfiles/yfiles'
 
 export class PortReshapeHandle extends BaseClass(IHandle) {
-  context
-  port
-  portStyle
-  position
   minimumSize
+  position
+  portStyle
+  port
+  context
   /**
    * The margins the handle is placed form the port visualization bounds.
    * The margins are applied in view coordinates. Default is `4`.

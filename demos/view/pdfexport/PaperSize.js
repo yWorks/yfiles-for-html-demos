@@ -26,15 +26,4 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * This demo supports specific PDF output sizes.
- */
-export var PaperSize
-;(function (PaperSize) {
-  PaperSize['A3'] = 'A3'
-  PaperSize['A4'] = 'A4'
-  PaperSize['A5'] = 'A5'
-  PaperSize['A6'] = 'A6'
-  PaperSize['LETTER'] = 'Letter'
-  PaperSize['AUTO'] = 'Auto'
-})(PaperSize || (PaperSize = {}))
+export {}

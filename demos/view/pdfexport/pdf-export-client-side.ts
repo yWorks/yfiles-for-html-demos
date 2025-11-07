@@ -36,10 +36,10 @@ import {
   SvgExport,
   WebGLGraphModelManager
 } from '@yfiles/yfiles'
-import { PaperSize } from './PaperSize'
+import type { PaperSize } from './PaperSize'
 import { useWebGLRendering } from './webgl-support'
 
-// The demo uses the open-source library for PDF export https://github.com/MrRio/jsPDF alongside with
+// The demo uses the open-source library for PDF export https://github.com/parallax/jsPDF alongside with
 // https://github.com/yWorks/svg2pdf.js/ to convert a given SVG element to PDF
 import { jsPDF } from 'jspdf'
 import 'svg2pdf.js'
@@ -89,7 +89,7 @@ export async function exportPdf(
   graphComponent: GraphComponent,
   scale = 1,
   margins = Insets.from(5),
-  paperSize = PaperSize.AUTO,
+  paperSize: PaperSize = 'auto',
   exportRect?: Rect,
   customFonts: CustomFontDescriptor[] = [],
   renderCompletionCallback?: () => Promise<void | void[]>
@@ -175,17 +175,17 @@ function createPdfIFrame(raw: string, pdfUrl: string): HTMLIFrameElement {
  */
 function getExportSize(paperSize: PaperSize, exporter: SvgExport): Size {
   switch (paperSize) {
-    case PaperSize.A3:
+    case 'a3':
       return new Size(842, 1191)
-    case PaperSize.A4:
+    case 'a4':
       return new Size(595, 842)
-    case PaperSize.A5:
+    case 'a5':
       return new Size(420, 595)
-    case PaperSize.A6:
+    case 'a6':
       return new Size(298, 420)
-    case PaperSize.LETTER:
+    case 'letter':
       return new Size(612, 792)
-    case PaperSize.AUTO:
+    case 'auto':
       return new Size(exporter.viewWidth, exporter.viewHeight)
   }
 }

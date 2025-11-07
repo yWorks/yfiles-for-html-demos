@@ -30,14 +30,14 @@ import {
   type Constructor,
   ExteriorNodeLabelModel,
   FreeNodeLabelModel,
-  GraphComponent,
-  GraphEditorInputMode,
+  type GraphComponent,
+  type GraphEditorInputMode,
   HashMap,
   IEdge,
   ILabel,
-  ILabelModelParameter,
+  type ILabelModelParameter,
   ILabelOwner,
-  IModelItem,
+  type IModelItem,
   INode,
   IPort,
   NinePositionsEdgeLabelModel,
@@ -70,6 +70,8 @@ import {
   SubState,
   TaskType
 } from './bpmn-view'
+
+/* eslint @typescript-eslint/no-unsafe-function-type: "off" */
 
 class BpmnPopup {
   graphComponent: GraphComponent

@@ -26,26 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  ClickEventArgs,
-  Cursor,
-  HandleType,
-  IDragHandler,
-  IHandle,
-  IInputModeContext,
-  IPoint,
-  Point
-} from '@yfiles/yfiles'
+import { BaseClass, IDragHandler, IHandle } from '@yfiles/yfiles'
 
 /**
  * A handle implementation that wraps another handle and overrides the handle type and cursor with
  * the ones given in the constructor. This makes it possible to use a different handle template.
  */
 export class WrappingHandle extends BaseClass(IHandle) {
-  wrappedHandle
-  handleType
   handleCursor
+  handleType
+  wrappedHandle
+
   /**
    * Initializes a new WrappingHandle instance.
    * @param wrappedHandle The inner handle implementation.

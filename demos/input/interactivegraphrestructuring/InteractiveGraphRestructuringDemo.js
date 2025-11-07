@@ -32,10 +32,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  IEdge,
-  INode,
-  IPoint,
-  IPositionHandler,
   License,
   NodeStyleIndicatorRenderer,
   Rect,
@@ -46,16 +42,16 @@ import {
 import GraphData from './resources/GraphData'
 import { SubtreePositionHandler } from './SubtreePositionHandler'
 import { Subtree } from './Subtree'
-import { createDemoNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoNodeStyle, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent = null
 
 let subTree = null
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   initDemoStyles(graphComponent.graph, { orthogonalEditing: true })
   graphComponent.graph.nodeDefaults.shareStyleInstance = false

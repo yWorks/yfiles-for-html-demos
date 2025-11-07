@@ -30,16 +30,16 @@ import {
   BaseClass,
   Color,
   IAnimation,
-  IMutableRectangle,
-  IRectangle,
-  IRenderContext,
+  type IMutableRectangle,
+  type IRectangle,
+  type IRenderContext,
   IVisualCreator,
-  LayoutGrid,
+  type LayoutGrid,
   MutableRectangle,
   Rect,
   SvgVisual,
   TimeSpan,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 export type CellId = { rowIndex: number; columnIndex: number }
@@ -51,6 +51,8 @@ export type CellId = { rowIndex: number; columnIndex: number }
  * two layout calculations.
  */
 export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimation) {
+    private readonly columnCount: number;
+    private readonly rowCount: number;
   private rows: IMutableRectangle[] = []
   private rowStarts: IRectangle[] = []
   private rowEnds: IRectangle[] = []
@@ -73,10 +75,12 @@ export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimatio
    * @param columnCount The number of columns of the grid
    */
   constructor(
-    private readonly rowCount: number,
-    private readonly columnCount: number
+    rowCount: number,
+    columnCount: number
   ) {
     super()
+      this.rowCount = rowCount;
+      this.columnCount = columnCount;
     this.rowCount = rowCount
     this.columnCount = columnCount
     for (let i = 0; i < rowCount; i++) {

@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, License } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   enableGraphEditing,
   fitGraphBounds,
@@ -36,10 +36,10 @@ import {
 } from '../common'
 import { CustomLabelStyle } from './CustomLabelStyle'
 
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { createLabels } from './create-labels'
 
-License.value = await fetchLicense()
+License.value = licenseData
 
 const graphComponent = new GraphComponent('#graphComponent')
 

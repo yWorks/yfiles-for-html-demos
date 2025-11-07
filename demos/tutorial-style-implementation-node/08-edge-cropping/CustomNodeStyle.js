@@ -123,7 +123,6 @@ export class CustomNodeStyle extends NodeStyleBase {
     return oldVisual
   }
 
-
   getOutline(node) {
     // Use the node's layout, and enlarge it with
     // half the stroke width to ensure that the
@@ -139,8 +138,6 @@ export class CustomNodeStyle extends NodeStyleBase {
     path.close()
     return path
   }
-
-
 
   isInside(node, location) {
     // Check for bounding box
@@ -158,8 +155,6 @@ export class CustomNodeStyle extends NodeStyleBase {
     // or the rest of the node
     return true
   }
-
-
 
   getIntersection(node, inner, outer) {
     const layout = node.layout.toRect()
@@ -185,7 +180,6 @@ export class CustomNodeStyle extends NodeStyleBase {
 
     return layout.findLineIntersection(inner, outer)
   }
-
 
   isHit(context, location, node) {
     // Check for bounding box

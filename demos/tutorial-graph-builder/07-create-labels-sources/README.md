@@ -42,7 +42,7 @@ const nodesSource = graphBuilder.createNodesSource(nodeData, 'id')
 nodesSource.nodeCreator.createLabelBinding((data) => data.name)
 ```
 
-The label binding can also be set explicitly using the [text provider](https://docs.yworks.com/yfileshtml/#/api/LabelCreator#LabelCreator-property-textProvider) property. In this example, the label text is converted to upper-case to show that text can be augmented.
+The label binding can also be set explicitly using the [text provider](https://docs.yworks.com/yfileshtml/#/api/LabelCreator#textProvider) property. In this example, the label text is converted to upper-case to show that text can be augmented.
 
 ```
 const nodeData = [{ id: '2', name: 'Monster Inc' }]
@@ -64,7 +64,7 @@ const nodeData = [
 ]
 ```
 
-In this case, the provider which is given as parameter is expected to return an enumerable of data items where each item represents one label.
+In this case, the provider which is given as a parameter is expected to return an enumerable of data items where each item represents one label.
 
 ```
 // create the label sources based on the `owners` property
@@ -75,7 +75,7 @@ const labelsSource = nodesSource.nodeCreator.createLabelsSource(
 
 ### Loading edge label information
 
-Following a similar approach, we can also create labels for the edges. In this example, we bind the edge label text to the `ownership` property of the dataset and we add some more text information.
+Following a similar approach, we can also create labels for the edges. In this example, we bind the edge label text to the `ownership` property of the dataset, and we add some more text information.
 
 ```
 const edgeData = [

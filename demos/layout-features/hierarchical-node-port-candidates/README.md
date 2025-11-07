@@ -9,24 +9,24 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Hierarchical Layout with Node Port Candidates - Layout Features
+# Hierarchical Layout with Node Port Candidates
 
 <img src="../../../doc/demo-thumbnails/layout-hierarchical-node-port-candidates.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-node-port-candidates/).
 
-This demo shows how to use a set of [node port candidates](https://docs.yworks.com/yfileshtml/#/api/NodePortCandidates) for the [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) to define the port locations for a node as well as control how many edges can be connected to each port.
+This demo shows how to use [NodePortCandidates](https://docs.yworks.com/yfileshtml/#/api/NodePortCandidates) to define the port locations and limit the number of edges per port in [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
 
-For the turquoise node, a set of [node port candidates](https://docs.yworks.com/yfileshtml/#/api/NodePortCandidates) is used that contains four port candidates, one for each side of the node.
+**Node 5** uses four port candidates, one for each side of the node.
 
 Each [LayoutPortCandidate](https://docs.yworks.com/yfileshtml/#/api/LayoutPortCandidate) only allows for one connecting edge, hence the four incoming edges are distributed to the four port candidates.
 
-Click the button in the toolbar to toggle between [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) with and without a configured port candidate set.
+## Things to Try
 
-### Code Snippet
-
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-node-port-candidates/HierarchicalNodePortCandidates.ts).
+Click the button in the toolbar to toggle between hierarchical layout with and without a configured port candidate set.
 
 ### Documentation
 
-See the [Restricting Port Locations](https://docs.yworks.com/yfileshtml/#/dguide/layout-port_locations) section in the Developer's Guide for an in-depth discussion of the relevant concepts.
+- [Restricting Port Locations](https://docs.yworks.com/yfileshtml/#/dguide/layout-port_locations)
+- [NodePortCandidates](https://docs.yworks.com/yfileshtml/#/api/NodePortCandidates)
+- [HierarchicalLayoutData](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData)

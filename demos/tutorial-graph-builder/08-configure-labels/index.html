@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>08 Configure Labels - Tutorial: Graph Builder [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -133,7 +133,7 @@
               <div class="paragraph">
                 <p>
                   In this tutorial step, you will learn how to configure
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> to place the labels of the graph elements at a
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> to place the labels of the graph elements at a
                   desired position and configure their style.
                 </p>
               </div>
@@ -147,7 +147,7 @@
                       <div class="paragraph">
                         <p>
                           This step is optional when building a graph with
-                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>. If you do not want to add labels to your
+                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. If you do not want to add labels to your
                           graph, you can proceed with the next step.
                         </p>
                       </div>
@@ -162,7 +162,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> data = {
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> data = {
   <span class="hljs-attr">nodeData</span>: [
     { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Investment Capital&#x27;</span>, <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Corporation&#x27;</span> },
     { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;1&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Melissa Barner&#x27;</span>, <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Trust&#x27;</span> },
@@ -187,13 +187,13 @@
                 <div class="paragraph">
                   <p>
                     The label placement can be defined either using a <em>default</em> configuration
-                    or using a <em>layout provider</em> on the <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator" target="_blank">LabelCreator</a>.
+                    or using a <em>layout provider</em> on the <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator" class="api" target="_blank">LabelCreator</a>.
                   </p>
                 </div>
                 <div class="paragraph">
                   <p>
                     A default placement will apply to all labels of the
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelsSource" target="_blank">LabelsSource</a> for which no other placement is specified. In this
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelsSource" class="api" target="_blank">LabelsSource</a> for which no other placement is specified. In this
                     example, as a default, we place the labels at the center of the node as follows:
                   </p>
                 </div>
@@ -201,14 +201,14 @@
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript">typeLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">layoutParameter</span> = <span class="hljs-title class_">InteriorNodeLabelModel</span>.<span class="hljs-property">CENTER</span></code></pre>
+                    ><code class="language-typescript" data-lang="typescript">typeLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">layoutParameter</span> = <span class="hljs-title class_">InteriorNodeLabelModel</span>.<span class="hljs-property">CENTER</span></code></pre>
                   </div>
                 </div>
                 <div class="paragraph">
                   <p>
                     In the case where you want to determine the label position based on specific
                     properties of the data, you can use a
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#LabelCreator-property-layoutParameterProvider" target="_blank">layout parameter provider</a>
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#layoutParameterProvider" class="api" target="_blank">layout parameter provider</a>
                     which will provide the information about the desired label placement.
                   </p>
                 </div>
@@ -226,7 +226,7 @@
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// position the label on the top of the node</span>
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// position the label on the top of the node</span>
 nameLabelCreator.<span class="hljs-property">layoutParameterProvider</span> = (): <span class="hljs-function"><span class="hljs-params">ILabelModelParameter</span> =&gt;</span>
   <span class="hljs-title class_">StretchNodeLabelModel</span>.<span class="hljs-property">TOP</span></code></pre>
                   </div>
@@ -239,14 +239,14 @@ nameLabelCreator.<span class="hljs-property">layoutParameterProvider</span> = ()
                     Similar to node/edge styling, there exist three ways to style labels.
                     Specifically, you can set <em>defaults</em>, <em>style</em>
                     <em>bindings</em> and <em>style</em> <em>providers</em> on the
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator" target="_blank">LabelCreator</a>.
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator" class="api" target="_blank">LabelCreator</a>.
                   </p>
                 </div>
                 <div class="paragraph">
                   <p>
                     In our example, we will first create a default style for all labels for which we
                     will not set a specific style. More precisely, we use the
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyle" target="_blank">LabelStyle</a> and align the text to the <code>center</code> of the
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyle" class="api" target="_blank">LabelStyle</a> and align the text to the <code>center</code> of the
                     node.
                   </p>
                 </div>
@@ -254,7 +254,7 @@ nameLabelCreator.<span class="hljs-property">layoutParameterProvider</span> = ()
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript">nameLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">style</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LabelStyle</span>({
+                    ><code class="language-typescript" data-lang="typescript">nameLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">style</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LabelStyle</span>({
   <span class="hljs-attr">horizontalTextAlignment</span>: <span class="hljs-string">&#x27;center&#x27;</span>
 })</code></pre>
                   </div>
@@ -270,7 +270,7 @@ nameLabelCreator.<span class="hljs-property">layoutParameterProvider</span> = ()
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// disable the sharing of the label style</span>
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// disable the sharing of the label style</span>
 typeLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">shareStyleInstance</span> = <span class="hljs-literal">false</span>
 <span class="hljs-comment">// create a new binding to assign a new font</span>
 typeLabelCreator.<span class="hljs-property">styleBindings</span>.<span class="hljs-title function_">addBinding</span>(<span class="hljs-string">&#x27;font&#x27;</span>, <span class="hljs-function">() =&gt;</span> <span class="hljs-string">&#x27;bold 12px Roboto&#x27;</span>)</code></pre>
@@ -281,14 +281,14 @@ typeLabelCreator.<span class="hljs-property">styleBindings</span>.<span class="h
                     For the labels bound to the <code>name</code> property, we want to use a
                     different background color based on the <code>type</code> of the associated
                     node. For these of type <code>Trust</code>, we will also add an icon using the
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/IconLabelStyle" target="_blank">IconLabelStyle</a>.
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/IconLabelStyle" class="api" target="_blank">IconLabelStyle</a>.
                   </p>
                 </div>
                 <div class="listingblock">
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// disable the sharing of the label style</span>
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// disable the sharing of the label style</span>
 nameLabelCreator.<span class="hljs-property">defaults</span>.<span class="hljs-property">shareStyleInstance</span> = <span class="hljs-literal">false</span>
 <span class="hljs-comment">// create a provider that will assign a new style, based on the type property</span>
 nameLabelCreator.<span class="hljs-property">styleProvider</span> = (data): <span class="hljs-function"><span class="hljs-params">ILabelStyle</span> =&gt;</span> {
@@ -317,9 +317,9 @@ nameLabelCreator.<span class="hljs-property">styleProvider</span> = (data): <spa
                 <div class="paragraph">
                   <p>
                     Using the same approach, the label size can be configured either using
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#LabelCreator-property-preferredSizeBindings" target="_blank">size bindings</a>
-                    or using a
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#LabelCreator-property-preferredSizeProvider" target="_blank">size provider</a>. The following code shows how to set a different size to the labels of type
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#preferredSizeBindings" class="api" target="_blank">size bindings</a> or using a
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#preferredSizeProvider" class="api" target="_blank">size provider</a>. The
+                    following code shows how to set a different size to the labels of type
                     <code>Trust</code>.
                   </p>
                 </div>
@@ -327,7 +327,7 @@ nameLabelCreator.<span class="hljs-property">styleProvider</span> = (data): <spa
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// set a new size for the labels with type &#x27;Trust&#x27;</span>
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// set a new size for the labels with type &#x27;Trust&#x27;</span>
 typeLabelCreator.<span class="hljs-property">preferredSizeProvider</span> = (data): <span class="hljs-function"><span class="hljs-params">Size</span> =&gt;</span>
   data.<span class="hljs-property">type</span> === <span class="hljs-string">&#x27;Trust&#x27;</span> ? <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(<span class="hljs-number">70</span>, <span class="hljs-number">15</span>) : <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(<span class="hljs-number">100</span>, <span class="hljs-number">15</span>)
 
@@ -356,7 +356,7 @@ typeLabelCreator.<span class="hljs-property">preferredSizeBindings</span>.<span 
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// configure the position of the label</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// configure the position of the label</span>
 edgeLabelCreator.<span class="hljs-property">layoutParameterProvider</span> = (): <span class="hljs-function"><span class="hljs-params">ILabelModelParameter</span> =&gt;</span>
   <span class="hljs-keyword">new</span> <span class="hljs-title class_">EdgePathLabelModel</span>({ <span class="hljs-attr">autoRotation</span>: <span class="hljs-literal">false</span> }).<span class="hljs-title function_">createRatioParameter</span>()
 
@@ -401,7 +401,7 @@ edgeLabelCreator.<span class="hljs-property">styleBindings</span>.<span class="h
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

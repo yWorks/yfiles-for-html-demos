@@ -55,7 +55,7 @@ private createPathWithBridges(
 }
 ```
 
-The BridgeManager provides a [hash code](https://docs.yworks.com/yfileshtml/#/api/BridgeManager#BridgeManager-method-getObstacleHash) that describes the current obstacle locations.
+The BridgeManager provides a [hash code](https://docs.yworks.com/yfileshtml/#/api/BridgeManager#getObstacleHash) that describes the current obstacle locations.
 
 ```
 private getObstacleHash(context: IRenderContext): number {

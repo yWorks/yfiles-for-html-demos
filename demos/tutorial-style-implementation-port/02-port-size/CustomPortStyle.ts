@@ -40,8 +40,10 @@ import {
  * A basic port style that renders a circle.
  */
 export class CustomPortStyle extends PortStyleBase {
-  constructor(public size: number = 6) {
+  size: number
+  constructor(size: number = 6) {
     super()
+    this.size = size
   }
 
   protected createVisual(context: IRenderContext, port: IPort): Visual | null {

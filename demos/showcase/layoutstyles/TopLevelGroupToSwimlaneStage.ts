@@ -28,7 +28,7 @@
  ***************************************************************************/
 import {
   Exception,
-  LayoutGraph,
+  type LayoutGraph,
   LayoutGraphGrouping,
   LayoutGraphHider,
   LayoutGrid,
@@ -387,6 +387,8 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
 }
 
 class TopLevelColumn {
+    private index?: number;
+    topLevelGroup?: LayoutNode | null;
   public group: LayoutNode | null
   public actualGridLayoutGridColumn: LayoutGridColumn | null = null
   public originalLeftInset: number = 0
@@ -397,9 +399,11 @@ class TopLevelColumn {
   public indexFixed: boolean = false
 
   constructor(
-    public topLevelGroup?: LayoutNode | null,
-    private index?: number
+    topLevelGroup?: LayoutNode | null,
+    index?: number
   ) {
+      this.topLevelGroup = topLevelGroup;
+      this.index = index;
     this.group = topLevelGroup ?? null
     this.index = index ?? -1
   }

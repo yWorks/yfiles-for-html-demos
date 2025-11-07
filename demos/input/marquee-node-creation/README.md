@@ -19,7 +19,7 @@ This demo shows how to use [MarqueeSelectionInputMode](https://docs.yworks.com/y
 
 This is done by adding a listener that creates a node the size of the marquee rectangle when a selection is finished.
 
-Also note that the marquee rectangle snaps to other nodes. This is achieved by using a custom [MarqueeSelectionInputMode](https://docs.yworks.com/yfileshtml/#/api/MarqueeSelectionInputMode) and relaying the size and location of the marquee rectangle to a [SnapContext](https://docs.yworks.com/yfileshtml/#/api/SnapContext), which provides a visualisation as well as a [SnapResult](https://docs.yworks.com/yfileshtml/#/api/SnapResult) to which the marquee rectangle can be snapped to. The [NodeStyle](https://docs.yworks.com/yfileshtml/#/api/NodeStyle) used for default node creation is reused in the marquee's template to style the selection rectangle.
+Also note that the marquee rectangle snaps to other nodes. This is achieved by using a custom [MarqueeSelectionInputMode](https://docs.yworks.com/yfileshtml/#/api/MarqueeSelectionInputMode) and relaying the size and location of the marquee rectangle to a [SnapContext](https://docs.yworks.com/yfileshtml/#/api/SnapContext), which provides a visualization as well as a [SnapResult](https://docs.yworks.com/yfileshtml/#/api/SnapResult) to which the marquee rectangle can be snapped to. The [INodeStyle](https://docs.yworks.com/yfileshtml/#/api/INodeStyle) used for default node creation is reused in the marquee's template to style the selection rectangle.
 
 ## Things to Try
 

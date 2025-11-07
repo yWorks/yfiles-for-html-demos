@@ -34,8 +34,8 @@ import {
   WebGLSelectionIndicatorManager
 } from '@yfiles/yfiles'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { checkWebGL2Support, finishLoading } from '@yfiles/demo-app/demo-page'
 import { initStyleDefaults, updateSelectionStyles } from './graph-styles'
 import { createGraph } from './load-sample-graph'
 import { createTransition, selectNodes, wireUpUI } from './ui-interaction'
@@ -64,7 +64,7 @@ async function run() {
     return
   }
 
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('#graphComponent')
 

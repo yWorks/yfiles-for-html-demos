@@ -28,7 +28,7 @@
  ***************************************************************************/
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ['@yfiles/demo-resources'],
+  transpilePackages: ['@yfiles/demo-app'],
   webpack: (config) => {
     config.resolve.symlinks = false
     return config

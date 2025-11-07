@@ -29,15 +29,15 @@
 import { onMounted, reactive, toRef, watch } from 'vue'
 import {
   Command,
-  GraphComponent,
-  GraphEditorInputMode,
+  type GraphComponent,
+  type GraphEditorInputMode,
   type GraphInputMode,
-  GraphViewerInputMode,
+  type GraphViewerInputMode,
   IEdge,
-  IModelItem,
+  type IModelItem,
   INode,
-  Point,
-  PopulateItemContextMenuEventArgs,
+  type Point,
+  type PopulateItemContextMenuEventArgs,
   Rect
 } from '@yfiles/yfiles'
 

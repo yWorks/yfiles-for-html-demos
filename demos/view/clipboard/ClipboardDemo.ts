@@ -31,9 +31,9 @@ import {
   ExteriorNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
-  IGraph,
-  IInputMode,
-  IModelItem,
+  type IGraph,
+  type IInputMode,
+  type IModelItem,
   INode,
   License,
   NinePositionsEdgeLabelModel,
@@ -45,16 +45,16 @@ import { svg } from 'lit-html'
 
 import { createNodeBusinessData, getCommonName } from './BusinessDataHandling'
 import { TaggedNodeClipboardHelper } from './ClipboardHelper'
-import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { bindYFilesCommand, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoEdgeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { bindYFilesCommand, finishLoading } from '@yfiles/demo-app/demo-page'
 import { LitNodeStyle, type LitNodeStyleProps } from '@yfiles/demo-utils/LitNodeStyle'
 
 let graphComponent: GraphComponent
 let graphComponent2: GraphComponent
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the GraphComponents
   graphComponent = new GraphComponent('graphComponent')

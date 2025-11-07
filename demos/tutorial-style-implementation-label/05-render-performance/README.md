@@ -15,13 +15,13 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-label/05-render-performance/).
 
-Until now, we have only implemented [createVisual](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#LabelStyleBase-method-createVisual), which creates a new DOM element for each render frame. This is not an efficient approach and will result in performance issues for large graphs.
+Until now, we have only implemented [createVisual](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#createVisual), which creates a new DOM element for each render frame. This is not an efficient approach and will result in performance issues for large graphs.
 
-By overriding [updateVisual](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#LabelStyleBase-method-updateVisual), we can optimize the rendering performance in case no visualization-relevant data of the node has changed. If the label text or size changes, we have to update the text and the background path data. This approach will greatly improve the rendering performance for gestures such as panning and zooming the viewport as well as moving nodes.
+By overriding [updateVisual](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#updateVisual), we can optimize the rendering performance in case no visualization-relevant data of the node has changed. If the label text or size changes, we have to update the text and the background path data. This approach will greatly improve the rendering performance for gestures such as panning and zooming the viewport as well as moving nodes.
 
 ## Adjusting createVisual
 
-To be able to update the visualization in [updateVisual](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#LabelStyleBase-method-updateVisual), we have to store the the values with which the initial visualization was created. In this case, this is the label text and size. To get proper type-checking, we first declare the type of the data cache. This is where the yFiles' utility type [TaggedSvgVisual](https://docs.yworks.com/yfileshtml/#/api/TaggedSvgVisual) comes in handy:
+To be able to update the visualization in [updateVisual](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#updateVisual), we have to store the values with which the initial visualization was created. In this case, this is the label text and size. To get proper type-checking, we first declare the type of the data cache. This is where the yFiles' utility type [TaggedSvgVisual](https://docs.yworks.com/yfileshtml/#/api/TaggedSvgVisual) comes in handy:
 
 ```
 // the values we use to render the graphics
@@ -89,7 +89,7 @@ protected createVisual(
 
 ## Implementing updateVisual
 
-Now, we are ready to add the [updateVisual](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#LabelStyleBase-method-updateVisual) implementation. Thanks to type parameter, we can let our IDE create the matching signature for the `updateVisual` method. In case the label text or size has changed, we update the text content and the background path data and the cache data. Finally, we update the label transform to move the label to the correct location.
+Now, we are ready to add the [updateVisual](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#updateVisual) implementation. Thanks to type parameter, we can let our IDE create the matching signature for the `updateVisual` method. In case the label text or size has changed, we update the text content and the background path data and the cache data. Finally, we update the label transform to move the label to the correct location.
 
 ```
 protected updateVisual(
@@ -141,10 +141,10 @@ protected updateVisual(
 
 This code re-uses the initial SVG elements and only updates the necessary attributes.
 
-When the style gets more complex, there may be a point where some updates are difficult to implement, or are not worth the effort. It is perfectly valid to give up at some point and call `createVisual` again if there are too many changes or the update code gets too complex.
+When the style gets more complex, there may be a point where some updates are difficult to implement or are not worth the effort. It is perfectly valid to give up at some point and call `createVisual` again if there are too many changes or the update code gets too complex.
 
 Note
 
-Although implementing [updateVisual](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#LabelStyleBase-method-updateVisual) is technically optional, it is highly recommended for larger graphs. Refraining from an efficient implementation may result in low frame-rates during animations and interactive gestures.
+Although implementing [updateVisual](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#updateVisual) is technically optional, it is highly recommended for larger graphs. Refraining from an efficient implementation may result in low frame-rates during animations and interactive gestures.
 
 [06 Text Alignment](../../tutorial-style-implementation-label/06-text-alignment/)

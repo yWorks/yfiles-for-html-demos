@@ -56,11 +56,11 @@ import { getTag } from '../demo-types'
 export class ComponentSwitchingInputMode extends InputModeBase {
   /** The {@link GraphModelManager} that shows an overlay for potentially every node. */
   modelManager
-  /** The canvas object group into which the overlays are rendered. */
+  /** The render tree group into which the overlays are rendered. */
   renderTreeGroup
   /** The node currently hovered over, showing an extended popup for selecting the displayed component. */
   hoveredNode
-  /** The canvas object for the popup on a hovered node */
+  /** The render tree element for the popup on a hovered node */
   popupRenderTreeElement
 
   // Input event listeners; we need to bind them once, so we can remove them later again.
@@ -514,6 +514,7 @@ function sortToBeginning(component, components) {
  */
 class ComponentSelectionPopup extends BaseClass(IObjectRenderer, IHitTestable) {
   node
+
   constructor(node) {
     super()
     this.node = node

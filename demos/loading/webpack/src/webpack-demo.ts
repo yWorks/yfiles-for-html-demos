@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import '@yfiles/demo-resources/style/loading-demo.css'
+import '@yfiles/demo-app/loading-demo.css'
 
 import {
   Command,
@@ -34,6 +34,7 @@ import {
   GraphEditorInputMode,
   HierarchicalLayout,
   LayoutExecutor,
+  LayoutOrientation,
   License
 } from '@yfiles/yfiles'
 
@@ -66,8 +67,8 @@ layout().then(() => {
 // It is needed for the 'applyLayoutAnimated' method in this demo.
 LayoutExecutor.ensure()
 
-function layout() {
-  const layoutAlgorithm = new HierarchicalLayout({ layoutOrientation: 'top-to-bottom' })
+function layout(layoutOrientation = LayoutOrientation.TOP_TO_BOTTOM) {
+  const layoutAlgorithm = new HierarchicalLayout({ layoutOrientation })
   return graphComponent.applyLayoutAnimated(layoutAlgorithm, '2s')
 }
 
@@ -88,6 +89,6 @@ function registerCommands() {
     await graphComponent.fitGraphBounds()
   })
   document.getElementById('apply-layout-btn')!.addEventListener('click', async () => {
-    await layout()
+    await layout(LayoutOrientation.LEFT_TO_RIGHT)
   })
 }

@@ -32,10 +32,11 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Hierarchical Layout - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <title>Hierarchical Layout [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -60,7 +61,6 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
     </div>
@@ -78,50 +78,68 @@
 
       <div class="demo-description__content">
         <h1>Hierarchical Layout</h1>
-
-        <p>This demo shows common configuration options for <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">HierarchicalLayout</a>.</p>
         <p>
-          For example, the demo code sets
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#layoutOrientation" target="_blank">layout orientation</a>,
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#edgeDescriptor" target="_blank">default (orthogonal)</a> and
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#edgeDescriptors" target="_blank">individual (octilinear) edge routing styles</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#ports#sourcePortCandidates" target="_blank">source</a> and
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#ports#targetPortCandidates" target="_blank">target port candidates</a>
-          (<span style="color: #e011a4; font-weight: bold">pink edges</span>),
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#criticalEdgePriorities" target="_blank">critical paths</a>
-          (<span style="color: #f26419; font-weight: bold">orange edges</span>),
-          <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultCoordinateAssignment#straightenEdges" target="_blank">straightened edges (<span style="color: #01baff; font-weight: bold">blue edges</span
-            >)</a>
-          and various distances between graph items.
+          This demo showcases common configuration options for the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> algorithm.
         </p>
-
-        <h3>Code Snippet</h3>
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical/Hierarchical.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Demos</h3>
-        <p>
-          The <a href="../../showcase/layoutstyles/index.html?layout=hierarchical&sample=hierarchical" target="_blank">Layout Styles: Hierarchical Demo</a> showcases more configuration options for
-          the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">hierarchical layout algorithm</a>.
-        </p>
-
-        <h3>Documentation</h3>
-        <p>
-          The Developer's Guide provides in-depth information about
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout" target="_blank">Hierarchical Layout</a> and its features.
-        </p>
+        <p>It highlights the configuration of various aspects, including:</p>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#layoutOrientation" class="api" target="_blank">Layout orientation</a></li>
+          <li>
+            Edge routing: both default
+            <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutRoutingStyle#ORTHOGONAL" class="api" target="_blank">orthogonal</a> routing and
+            custom <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutRoutingStyle#OCTILINEAR" class="api" target="_blank">octilinear</a> routing
+            for specific edges
+          </li>
+          <li>Source and target <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#ports" class="api" target="_blank">port candidates</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#criticalEdgePriorities" class="api" target="_blank">Critical paths</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/CoordinateAssigner#straightenEdges" class="api" target="_blank">Edge straightening</a></li>
+          <li>
+            Spacing controls: such as
+            <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#minimumLayerDistance" class="api" target="_blank">minimum layer distance</a>,
+            <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#nodeDistance" class="api" target="_blank">node distance</a>, and
+            <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#nodeToEdgeDistance" class="api" target="_blank">node-to-edge distance</a>.
+          </li>
+        </ul>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Observe the bottom-to-top layout orientation.</li>
+          <li>
+            Identify the <strong><span style="color: #f26419">critical edges</span></strong> routed
+            with minimal bends.
+          </li>
+          <li>
+            Compare the default orthogonal routing with the custom
+            <strong><span style="color: #76b041">octilinear routed edges</span></strong
+            >.
+          </li>
+          <li>
+            Check the <strong><span style="color: #01baff">straightened edges</span></strong
+            >.
+          </li>
+          <li>
+            Examine how <strong><span style="color: #e01a4f">port candidates</span></strong> dictate
+            specific connection points on nodes.
+          </li>
+        </ul>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../showcase/layoutstyles/index.html?layout=hierarchical&sample=hierarchical" class="demo" target="_blank">Layout Styles: Hierarchical Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout" class="dguide" target="_blank">Hierarchical layout algorithm</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData" class="api" target="_blank">HierarchicalLayoutData</a> class</li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script type="module" crossorigin="anonymous" src="./HierarchicalDemo.ts" async></script>
   </body>
 </html>

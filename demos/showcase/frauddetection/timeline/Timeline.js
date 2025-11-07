@@ -69,11 +69,10 @@ const UNDEFINED_TIMEFRAME = [new Date(0), new Date(0)]
  * Zooming in-/out of the timeline collapses and expands group nodes to show the nested data.
  */
 export class Timeline {
-  selector
-  getTimeEntry
-  style
-  showTimeframeRectangle
   showPlayButton
+  showTimeframeRectangle
+  getTimeEntry
+  selector
   graphComponent
   _items = []
 
@@ -122,7 +121,6 @@ export class Timeline {
   ) {
     this.selector = selector
     this.getTimeEntry = getTimeEntry
-    this.style = style
     this.showTimeframeRectangle = showTimeframeRectangle
     this.showPlayButton = showPlayButton
     this.graphComponent = new GraphComponent(selector)
@@ -152,6 +150,8 @@ export class Timeline {
         }, 500)
       }
     })
+
+    this.addZoomButtons()
 
     if (showPlayButton && showTimeframeRectangle) {
       this.addPlayButton()
@@ -274,11 +274,16 @@ export class Timeline {
     // this component overwrites the mouse-wheel handling entirely by collapsing / expanding the folded timeline graph
     graphComponent.mouseWheelBehavior = MouseWheelBehaviors.NONE
     graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.VISIBLE
+    // use a smaller hit-test radius to make the hit-testing with touch input more precise
+    graphComponent.hitTestRadius = 1
 
     // wire up a custom mousewheel behavior
     graphComponent.addEventListener('wheel', (evt) => {
       evt.originalEvent?.preventDefault()
-      this.updateZoom(evt)
+      if (evt.wheelDeltaY !== 0) {
+        const direction = evt.wheelDeltaY < 0 ? 'zoom-in' : 'zoom-out'
+        this.updateZoom(direction, evt.location)
+      }
     })
 
     // install a tooltip on the timeline items that reports the content of the possibly aggregated entry
@@ -371,13 +376,15 @@ export class Timeline {
     } else if (data.layer === 2) {
       // tooltip for "week"
       const containingMonth = data.parent
-      const containingYear = containingMonth.parent
-      const dateElement = document.createElement('h3')
-      dateElement.innerText = `${containingMonth.label} ${containingYear.label}, Week: #${data.label}`
-      const entriesElement = document.createElement('div')
-      entriesElement.innerText = `Entries: ${data.aggregatedValue}`
-      tooltipContainer.appendChild(dateElement)
-      tooltipContainer.appendChild(entriesElement)
+      const containingYear = containingMonth?.parent
+      if (containingMonth && containingYear) {
+        const dateElement = document.createElement('h3')
+        dateElement.innerText = `${containingMonth.label} ${containingYear.label}, Week: #${data.label}`
+        const entriesElement = document.createElement('div')
+        entriesElement.innerText = `Entries: ${data.aggregatedValue}`
+        tooltipContainer.appendChild(dateElement)
+        tooltipContainer.appendChild(entriesElement)
+      }
     } else {
       const labelElement = document.createElement('h3')
       labelElement.innerText = data.label ?? ''
@@ -392,41 +399,33 @@ export class Timeline {
    * this custom behavior that triggers a collapse/expand on the graph that represents the bar chart
    * of the timeline.
    */
-  updateZoom(evt) {
-    if (evt.wheelDeltaY !== 0) {
-      const mouseLocation = evt.location
-      let closestNode
-      let zoomChanged
-      if (evt.wheelDeltaY < 0) {
-        closestNode = this.getClosestNode(mouseLocation)
-        zoomChanged = this.zoomIn()
+  updateZoom(direction, zoomLocation) {
+    const location = zoomLocation || this.graphComponent.viewport.center
+    let zoomChanged
+    let closestNode
+    if (direction === 'zoom-in') {
+      closestNode = this.getClosestNode(location)
+      zoomChanged = this.zoomIn()
+    } else {
+      zoomChanged = this.zoomOut()
+      closestNode = this.getClosestNode(location)
+    }
+
+    if (zoomChanged) {
+      applyTimelineLayout(this.graphComponent, this.styling, this.zoom, this.minZoom, this.maxZoom)
+
+      // update the viewport such that the closest node is fixed in position
+      if (closestNode) {
+        const viewPoint = this.calculateViewPoint(location, closestNode)
+        this.updateViewPort(viewPoint.x)
       } else {
-        zoomChanged = this.zoomOut()
-        closestNode = this.getClosestNode(mouseLocation)
+        this.updateViewPort()
       }
 
-      if (zoomChanged) {
-        applyTimelineLayout(
-          this.graphComponent,
-          this.styling,
-          this.zoom,
-          this.minZoom,
-          this.maxZoom
-        )
+      // the bounds are now bigger but not due to a changed timeframe, thus keep silent about it
+      this.updateTimeframeRectFromTimeframe(true)
 
-        // update the viewport such that the closest node is fixed in position
-        if (closestNode) {
-          const viewPoint = this.calculateViewPoint(mouseLocation, closestNode)
-          this.updateViewPort(viewPoint.x)
-        } else {
-          this.updateViewPort()
-        }
-
-        // the bounds are now bigger but not due to a changed timeframe, thus keep silent about it
-        this.updateTimeframeRectFromTimeframe(true)
-
-        this.updateStyling()
-      }
+      this.updateStyling()
     }
   }
 
@@ -889,6 +888,7 @@ export class Timeline {
     animation.playAnimation()
 
     const playButton = document.querySelector(`#${this.selector}-video-button`)
+    playButton.title = 'Stop Animation'
     playButton.classList.add('stop')
     playButton.classList.remove('play')
   }
@@ -900,6 +900,7 @@ export class Timeline {
     this.getTimeframeAnimation().stopAnimation()
 
     const playButton = document.querySelector(`#${this.selector}-video-button`)
+    playButton.title = 'Start Animation'
     playButton.classList.remove('stop')
     playButton.classList.add('play')
   }
@@ -909,25 +910,43 @@ export class Timeline {
    * The button has the CSS class 'video-button' and is styled in timeline.css.
    */
   addPlayButton() {
-    const playButton = document.createElement('button')
-    playButton.classList.add('video-button', 'play')
-    playButton.id = `${this.selector}-video-button`
-    playButton.addEventListener(
-      'click',
-      () => {
-        const animation = this.getTimeframeAnimation()
-        if (!animation.animating) {
-          this.play()
-        } else {
-          this.stop()
-        }
-      },
-      true
-    )
-    playButton.addEventListener('mousedown', (evt) => {
+    this.addTimelineButton('video-button', 'Start Animation', () => {
+      const animation = this.getTimeframeAnimation()
+      if (!animation.animating) {
+        this.play()
+      } else {
+        this.stop()
+      }
+    })
+  }
+
+  /**
+   * Adds buttons to zoom in and zoom out.
+   * The buttons have the CSS classes 'zoom-in-button' and 'zoom-out-button' and are styled in timeline.css.
+   */
+  addZoomButtons() {
+    this.addTimelineButton('zoom-in-button', 'Zoom In', () => {
+      this.updateZoom('zoom-in')
+    })
+    this.addTimelineButton('zoom-out-button', 'Zoom Out', () => {
+      this.updateZoom('zoom-out')
+    })
+  }
+
+  /**
+   * Creates a timeline control button.
+   * The button has the CSS class 'timeline-button' and is styled in timeline.css.
+   */
+  addTimelineButton(buttonId, title, onClick) {
+    const button = document.createElement('button')
+    button.id = `${this.selector}-${buttonId}`
+    button.title = title
+    button.classList.add('timeline-button', buttonId)
+    button.addEventListener('mousedown', (evt) => {
       // prevent events to trigger a selection in the timeline
       evt.stopPropagation()
     })
-    this.graphComponent.htmlElement.appendChild(playButton)
+    button.addEventListener('click', onClick, true)
+    this.graphComponent.htmlElement.appendChild(button)
   }
 }

@@ -1,19 +1,27 @@
 {
   "compilerOptions": {
+    "target": "es2023",
+    "useDefineForClassFields": true,
     "lib": [
-      "ES2022",
+      "es2023",
       "dom",
       "dom.iterable"
     ],
-    "module": "es2022",
-    "target": "es2022",
-    "strict": true,
-    "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
+    "types": [],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
     "verbatimModuleSyntax": true,
-    "resolveJsonModule": true
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "sourceMap": false,
+    "noEmit": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "erasableSyntaxOnly": true
   },
   "include": [
     "**/*.ts"
@@ -26,6 +34,7 @@
     "node_modules",
     "style/angular-component-node-style",
     "style/react-component-node-style",
+    "style/react-template-node-style",
     "style/vue-component-node-style",
     "style/vue-template-node-style",
     "testing/cypress",

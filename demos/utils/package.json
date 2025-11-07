@@ -1,14 +1,18 @@
 {
-  "name": "@yfiles/demo-utils-ts",
-  "version": "30.0.3",
+  "name": "@yfiles/demo-utils",
+  "version": "30.0.4",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "exports": {
-    "./*": "./*"
+    "./*": "./*.ts",
+    "./*.ts": "./*.ts",
+    "./json-model": "./json-model.d.ts",
+    "./template-styles/*": "./template-styles/*.ts",
+    "./template-styles/*.ts": "./template-styles/*.ts"
   },
   "dependencies": {
-    "@yfiles/yfiles": "^30.0.3+dev",
+    "@yfiles/yfiles": "^30.0.4+dev",
     "lit-html": "~3.3.0"
   }
 }

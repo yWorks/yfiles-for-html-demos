@@ -31,3 +31,7 @@ The event log is created by a simulator and can be replaced with custom data in 
 - Select one of the moving entities to open a details popup.
 - Restart the animation.
 - Enable the infinite loop to restart the animation automatically after every finish.
+
+## Known Issue in Safari
+
+The heat map is currently not visible in Safari. It uses the [filter property of the Canvas 2D API](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/filter), which is still an experimental feature in Safari and must be explicitly enabled in the settings.

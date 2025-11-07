@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphMLIOHandler, ILookup, MarkupExtension } from '@yfiles/yfiles'
+import { type GraphMLIOHandler, type ILookup, MarkupExtension } from '@yfiles/yfiles'
 
 import { createLitNodeStyleFromSource, LitNodeStyle } from './LitNodeStyle'
 

@@ -34,11 +34,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Viewport Limiter - Application Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
-    <link rel="stylesheet" href="./resources/settings-panel.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
     <link rel="stylesheet" href="./resources/policy-description.css" />
+    <style>
+      .navigate-select {
+        grid-column: 1 / -1;
+      }
+    </style>
   </head>
   <body>
     <header class="demo-header">
@@ -86,14 +90,14 @@
         <h1>Viewport Limiter</h1>
 
         <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter" target="_blank">ViewportLimiter</a> limits the interactive movement of the viewport. This
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter" class="api" target="_blank">ViewportLimiter</a> limits the interactive movement of the viewport. This
           helps to navigate the canvas without losing the content.
         </p>
 
         <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter#bounds" target="_blank">ViewportLimiter#bounds</a> (or effective viewport limiter area) are
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter#bounds" class="api" target="_blank">ViewportLimiter.bounds</a> (or effective viewport limiter area) are
           calculated as the union of two rectangles: The
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter#viewportContentMargins" target="_blank">ViewportLimiter#viewportContentMargins</a>, which act like insets on the graph
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter#viewportContentMargins" class="api" target="_blank">ViewportLimiter.viewportContentMargins</a>, which act like insets on the graph
           component, and the ViewportLimiter.minimumViewportContentRatio, which defines which
           percentage of the viewport is used for limiting.
         </p>
@@ -136,102 +140,56 @@
       </div>
       <aside class="demo-main__sidebar">
         <div class="demo-sidebar__content">
+          <h2>Viewport Limiter Settings</h2>
+
+          <h3>Limiting Policy</h3>
+
           <div class="demo-properties__settings">
-            <h2>Viewport Limiter Settings</h2>
+            <select id="policy-select">
+              <option value="WITHIN_MARGINS">Within Margins</option>
+              <option value="TOWARDS_LIMIT">Towards Limit</option>
+              <option value="STRICT">Strict</option>
+              <option value="UNRESTRICTED">Unrestricted</option>
+            </select>
 
-            <div class="demo-form-block">
-              <div class="settings-grid">
-                <p class="settings-legend1">Limiting Policy</p>
-                <div class="select-container settings-editor-row2">
-                  <select id="policy-select">
-                    <option value="WITHIN_MARGINS">Within Margins</option>
-                    <option value="TOWARDS_LIMIT">Towards Limit</option>
-                    <option value="STRICT">Strict</option>
-                    <option value="UNRESTRICTED">Unrestricted</option>
-                  </select>
-                </div>
+            <label for="strict-bounds-containment-checkbox" id="strict-bounds-containment-label"
+              >Strict Bounds Containment</label
+            >
+            <input type="checkbox" id="strict-bounds-containment-checkbox" />
+          </div>
 
-                <label
-                  for="strict-bounds-containment-checkbox"
-                  class="settings-label-row3"
-                  id="strict-bounds-containment-label"
-                  >Strict Bounds Containment</label
-                >
-                <input
-                  class="settings-editor-row3"
-                  type="checkbox"
-                  id="strict-bounds-containment-checkbox"
-                />
+          <h3>Viewport Content Margins</h3>
+          <div>
+            Configures the margins of the viewport in the view coordinate system around the content
+            bounds.
+          </div>
 
-                <p class="settings-legend2">Viewport Content Margins</p>
-                <div class="settings-info2">
-                  Configures the margins of the viewport in the view coordinate system around the
-                  content bounds.
-                </div>
+          <div class="demo-properties__settings">
+            <label for="margins-left-input">Left</label>
+            <input type="number" min="0" id="margins-left-input" value="600" />
 
-                <label for="margins-left-input" class="settings-label-row5">Left</label>
-                <input
-                  class="settings-editor-row5"
-                  type="number"
-                  min="0"
-                  id="margins-left-input"
-                  value="600"
-                />
+            <label for="margins-top-input">Top</label>
+            <input type="number" min="0" id="margins-top-input" value="120" />
 
-                <label for="margins-top-input" class="settings-label-row6">Top</label>
-                <input
-                  class="settings-editor-row6"
-                  type="number"
-                  min="0"
-                  id="margins-top-input"
-                  value="120"
-                />
+            <label for="margins-right-input">Right</label>
+            <input type="number" min="0" id="margins-right-input" value="600" />
 
-                <label for="margins-right-input" class="settings-label-row7">Right</label>
-                <input
-                  class="settings-editor-row7"
-                  type="number"
-                  min="0"
-                  id="margins-right-input"
-                  value="600"
-                />
+            <label for="margins-bottom-input">Bottom</label>
+            <input type="number" min="0" id="margins-bottom-input" value="120" />
+          </div>
 
-                <label for="margins-bottom-input" class="settings-label-row8">Bottom</label>
-                <input
-                  class="settings-editor-row8"
-                  type="number"
-                  min="0"
-                  id="margins-bottom-input"
-                  value="120"
-                />
+          <h3>Minimum Viewport Content Ratio</h3>
+          <div>
+            Configures the percentage of the width and height of the viewport that should be
+            reserved <em>at least</em> when Viewport Content Margins are defined.
+          </div>
 
-                <p class="settings-legend3">Minimum Viewport Content Ratio</p>
-                <div class="settings-info3">
-                  Configures the percentage of the width and height of the viewport that should be
-                  reserved <em>at least</em> when Viewport Content Margins are defined.
-                </div>
+          <div class="demo-properties__settings">
+            <label for="ratio-width-input">Width</label>
+            <input type="number" min="0.1" step="0.1" id="ratio-width-input" value="0.8" />
 
-                <label for="ratio-width-input" class="settings-label-row9">Width</label>
-                <input
-                  class="settings-editor-row9"
-                  type="number"
-                  min="0.1"
-                  step="0.1"
-                  id="ratio-width-input"
-                  value="0.8"
-                />
-
-                <label for="ratio-height-input" class="settings-label-row10">Height</label>
-                <input
-                  class="settings-editor-row10"
-                  type="number"
-                  min="0.1"
-                  step="0.1"
-                  id="ratio-height-input"
-                  value="0.4"
-                />
-              </div>
-            </div>
+            <label for="ratio-height-input">Height</label>
+            <input type="number" min="0.1" step="0.1" id="ratio-height-input" value="0.4" />
           </div>
         </div>
       </aside>

@@ -29,15 +29,15 @@
 import {
   BaseClass,
   GeneralPath,
-  IBend,
+  type IBend,
   IBendCreator,
   IEdge,
-  IGraph,
-  IInputModeContext,
-  IListEnumerable,
-  IPoint,
+  type IGraph,
+  type IInputModeContext,
+  type IListEnumerable,
+  type IPoint,
   IUndoUnit,
-  Point
+  type Point
 } from '@yfiles/yfiles'
 
 /**
@@ -46,11 +46,13 @@ import {
  * In addition, the new bends and the neighboring bends are positioned so that the curve shape stays constant.
  */
 export class BezierBendCreator extends BaseClass(IBendCreator) {
-  constructor(
-    private readonly edge: IEdge,
-    private readonly originalBendCreator: IBendCreator
-  ) {
+  private readonly originalBendCreator: IBendCreator
+  private readonly edge: IEdge
+
+  constructor(edge: IEdge, originalBendCreator: IBendCreator) {
     super()
+    this.edge = edge
+    this.originalBendCreator = originalBendCreator
   }
 
   /**

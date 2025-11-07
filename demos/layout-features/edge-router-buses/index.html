@@ -33,10 +33,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-    <title>EdgeRouter with Bus-style Routing - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <title>Bus-Style Edge Routing [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -50,7 +50,7 @@
         <a href="https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html">yFiles for HTML</a>
         <a href="../../README.html">Demos</a>
 
-        <span>Edge Router with Buses</span>
+        <span>Bus-Style Edge Routing</span>
         <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
       </div>
       <div class="demo-header__right">
@@ -61,7 +61,6 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
     </div>
@@ -78,75 +77,47 @@
       <div class="demo-description__play-button">Start here</div>
 
       <div class="demo-description__content">
-        <h1>EdgeRouter with Bus-style Routing</h1>
-
+        <h1>Bus-Style Edge Routing</h1>
         <p>
-          This demo shows how to configure the EdgeRouter to generate orthogonal bus-style routes. A
-          bus is a segment shared by multiple edges. The actual nodes are attached to the bus with
-          shorter segments.
+          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a> to generate orthogonal
+          bus-style routes. A bus is a shared segment among multiple edges, with nodes connecting to
+          it via shorter segments.
         </p>
-
         <p>
-          A bus is defined via the <em>add</em> method of the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#buses" target="_blank">buses</a> property. The method yields an object on
-          which the set of edges can conveniently be defined, e.g., via a delegate.
+          Buses are defined using the <code>add</code> method of the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#buses" class="api" target="_blank">buses</a> property, which returns a
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ItemCollection" class="api" target="_blank">configurable object</a> for edge assignment.
         </p>
-
         <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterBusDescriptor" target="_blank">EdgeRouterBusDescriptor</a> class provided to the <em>add</em> method
-          offers settings related to a bus.
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterBusDescriptor" class="api" target="_blank">EdgeRouterBusDescriptor</a> used in the <code>add</code> method offers
+          customizable bus parameters.
         </p>
-
-        <p>This example showcases two buses which are defined differently.</p>
-
-        <h3>First Bus - Automatic Backbone</h3>
+        <h2>Automatic Backbone Computation</h2>
         <p>
-          The first bus (<span style="color: #ff6c00; font-weight: bold">orange graph</span>) is
-          defined using a default descriptor and with no further settings. This means that the
-          algorithm automatically chooses backbone segments.
+          In this demo, a default bus descriptor automatically determines the backbone segments for
+          optimal route efficiency.
         </p>
-
-        <h3>Second Bus - Given Points</h3>
-        <p>
-          The second bus (<span style="color: #242265; font-weight: bold">blue graph</span>) is
-          defined by <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterBusDescriptor#busPoints" target="_blank">manually providing</a> the
-          location of the backbone segments. The manually defined backbone consists of a vertical
-          segment to the left of the nodes and two horizontal segments in-between the node rows.
-        </p>
-
-        <h3>Code Snippet</h3>
-
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/edge-router-buses/EdgeRouterBuses.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Demos</h3>
-
-        <p>
-          The <a href="" target="_blank">busrouting</a> is a more complex demo that shows the bus-style routing
-          feature. More features offered by the EdgeRouter algorithm are shown by the
-          <a href="../../showcase/layoutstyles/" target="_blank">Layout Styles Demo</a>.
-        </p>
-
-        <h3>Documentation</h3>
-
-        <p>
-          The Developer's Guide provides more information about the concepts of the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router_bus_routing" target="_blank">Bus-style routing</a> feature of the
-          EdgeRouter.
-        </p>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../layout/busrouting/" class="demo" target="_blank">Bus Routing Demo</a></li>
+          <li><a href="../../layout-features/edge-router-buses-custom/" class="demo" target="_blank">Bus-Style Edge Routing (Custom) Demo</a></li>
+          <li><a href="../../showcase/layoutstyles/index.html?layout=edge-router&sample=edge-router" class="demo" target="_blank">Layout Styles: Edge Router Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router_bus_routing" class="dguide" target="_blank">Bus-style routing</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData" class="api" target="_blank">EdgeRouterData</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterBusDescriptor" class="api" target="_blank">EdgeRouterBusDescriptor</a></li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script type="module" crossorigin="anonymous" src="./EdgeRouterBusesDemo.ts" async></script>
   </body>
 </html>

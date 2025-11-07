@@ -26,13 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  type INode,
-  type IRenderContext,
-  NodeStyleBase,
-  SvgVisual,
-  type Visual
-} from '@yfiles/yfiles'
+import { type INode, type IRenderContext, NodeStyleBase, SvgVisual, type Visual } from '@yfiles/yfiles'
 
 /**
  * A node style that renders a simple card shape with a tab.

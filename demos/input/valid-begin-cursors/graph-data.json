@@ -1,25 +1,25 @@
 {
-  "nodeList": [
+  "nodes": [
     { "id": 0 },
     { "id": 1 },
     { "id": 2 },
     { "id": 3 },
-    { "id": 4, "parentId": 16 },
-    { "id": 5, "parentId": 16 },
-    { "id": 6, "parentId": 16 },
-    { "id": 7, "parentId": 16 },
+    { "id": 4, "parent": 16 },
+    { "id": 5, "parent": 16 },
+    { "id": 6, "parent": 16 },
+    { "id": 7, "parent": 16 },
     { "id": 8 },
     { "id": 9 },
-    { "id": 10, "parentId": 17 },
-    { "id": 11, "parentId": 17 },
-    { "id": 12, "parentId": 17 },
-    { "id": 13, "parentId": 17 },
-    { "id": 14, "parentId": 17 },
+    { "id": 10, "parent": 17 },
+    { "id": 11, "parent": 17 },
+    { "id": 12, "parent": 17 },
+    { "id": 13, "parent": 17 },
+    { "id": 14, "parent": 17 },
     { "id": 15 },
-    { "id": 16, "label": "Group 1", "isGroup": true },
-    { "id": 17, "label": "Group 2", "isGroup": true }
+    { "id": 16, "labels": "Group 1", "isGroup": true },
+    { "id": 17, "labels": "Group 2", "isGroup": true }
   ],
-  "edgeList": [
+  "edges": [
     { "id": 0, "source": 0, "target": 1 },
     { "id": 1, "source": 1, "target": 2 },
     { "id": 2, "source": 1, "target": 3 },

@@ -45,27 +45,19 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   IEdge,
-  IGraph,
-  ILayoutAlgorithm,
-  IModelItem,
   INode,
-  LayoutData,
   LayoutExecutor,
   License,
   Mapper,
   NodeStyleIndicatorRenderer,
   OrganicEdgeRouter,
   Point,
-  PopulateItemContextMenuEventArgs,
   RadialLayout,
   RadialLayoutData,
   RadialTreeLayout,
   Rect,
-  ResultItemMapping,
-  SingleLayerSubtreePlacer,
   StraightLineEdgeRouter,
   TreeLayout,
-  TreeReductionStage,
   TreeReductionStageData
 } from '@yfiles/yfiles'
 
@@ -76,12 +68,12 @@ import CircularSampleData from './resources/circular'
 import RadialSampleData from './resources/radial'
 import TreeSampleData from './resources/tree'
 import RoutingSampleData from './resources/routing'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   addNavigationButtons,
   finishLoading,
   showLoadingIndicator
-} from '@yfiles/demo-resources/demo-page'
+} from '@yfiles/demo-app/demo-page'
 
 /**
  * The GraphComponent
@@ -111,7 +103,7 @@ const bundlingStrengthSlider = document.querySelector('#bundling-strength-slider
 const bundlingStrengthLabel = document.querySelector('#bundling-strength-label')
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
   // create the input mode
@@ -335,24 +327,24 @@ function initializeGraph() {
  */
 async function onSampleChanged() {
   let sampleData
-  switch (samplesComboBox.selectedIndex) {
+  switch (samplesComboBox.value) {
     default:
-    case LayoutAlgorithm.SINGLE_CYCLE:
+    case 'single-cycle-layout':
       sampleData = CircularSampleData
       break
-    case LayoutAlgorithm.CIRCULAR:
+    case 'circular-layout':
       sampleData = BccCircularSampleData
       break
-    case LayoutAlgorithm.RADIAL:
+    case 'radial-layout':
       sampleData = RadialSampleData
       break
-    case LayoutAlgorithm.RADIAL_TREE:
+    case 'radial-tree-layout':
       sampleData = RadialTreeSampleData
       break
-    case LayoutAlgorithm.TREE:
+    case 'tree-layout':
       sampleData = TreeSampleData
       break
-    case LayoutAlgorithm.ROUTER:
+    case 'bundled-routing':
       sampleData = RoutingSampleData
   }
   // clear the current graph
@@ -409,31 +401,33 @@ async function loadGraph(graph, graphData) {
  * Runs the layout.
  */
 async function runLayout() {
-  const selectedIndex = samplesComboBox.selectedIndex
+  const samplesValue = samplesComboBox.value
   let layoutAlgorithm
   let layoutData
-  switch (selectedIndex) {
+  switch (samplesValue) {
     default:
-    case 0:
-    case 1: {
-      layoutAlgorithm = createCircularLayout(selectedIndex === 0)
+    case 'single-cycle-layout':
+    case 'circular-layout': {
+      layoutAlgorithm = createCircularLayout(samplesValue === 'single-cycle-layout')
       layoutData = new CircularLayoutData({ edgeBundleDescriptors: bundleDescriptorMap })
       break
     }
-    case 2: {
+    case 'radial-layout': {
       layoutAlgorithm = createRadialLayout()
       layoutData = new RadialLayoutData({ edgeBundleDescriptors: bundleDescriptorMap })
       break
     }
-    case 3:
-    case 4: {
-      layoutAlgorithm = selectedIndex === 3 ? createRadialTreeLayout() : createTreeLayout()
+    case 'radial-tree-layout':
+    case 'tree-layout': {
+      layoutAlgorithm =
+        samplesValue === 'radial-tree-layout' ? createRadialTreeLayout() : createTreeLayout()
       layoutData = new TreeReductionStageData({ edgeBundleDescriptors: bundleDescriptorMap })
       break
     }
-    case 5: {
+    case 'bundled-routing': {
       layoutAlgorithm = createBundleEdgeRouter()
       layoutData = new BundledEdgeRouterData({ edgeBundleDescriptors: bundleDescriptorMap })
+      break
     }
   }
 
@@ -450,10 +444,7 @@ async function runLayout() {
   await graphComponent.applyLayoutAnimated(layoutAlgorithm, '0.0s', layoutData)
   await setBusy(false)
   // if the selected algorithm is circular, change the node style to circular sectors
-  if (
-    selectedIndex === LayoutAlgorithm.SINGLE_CYCLE ||
-    selectedIndex === LayoutAlgorithm.CIRCULAR
-  ) {
+  if (samplesValue === 'single-cycle-layout' || samplesValue === 'circular-layout') {
     updateNodeInformation(layoutData)
   }
 }
@@ -609,11 +600,8 @@ function calculateCircleCenter(circleNodes) {
  */
 function calculateConnectedComponents() {
   const graph = graphComponent.graph
-  const selectedIndex = samplesComboBox.selectedIndex
-  if (
-    selectedIndex === LayoutAlgorithm.SINGLE_CYCLE ||
-    selectedIndex === LayoutAlgorithm.CIRCULAR
-  ) {
+  const selectedIndex = samplesComboBox.value
+  if (selectedIndex === 'single-cycle-layout' || selectedIndex === 'circular-layout') {
     const result = new ConnectedComponents().run(graph)
     componentsMap = result.nodeComponentIds
   }
@@ -671,15 +659,5 @@ function setUIDisabled(disabled) {
   bundlingStrengthSlider.disabled = disabled
   bundlingStrengthLabel.disabled = disabled
 }
-
-var LayoutAlgorithm
-;(function (LayoutAlgorithm) {
-  LayoutAlgorithm[(LayoutAlgorithm['SINGLE_CYCLE'] = 0)] = 'SINGLE_CYCLE'
-  LayoutAlgorithm[(LayoutAlgorithm['CIRCULAR'] = 1)] = 'CIRCULAR'
-  LayoutAlgorithm[(LayoutAlgorithm['RADIAL'] = 2)] = 'RADIAL'
-  LayoutAlgorithm[(LayoutAlgorithm['RADIAL_TREE'] = 3)] = 'RADIAL_TREE'
-  LayoutAlgorithm[(LayoutAlgorithm['TREE'] = 4)] = 'TREE'
-  LayoutAlgorithm[(LayoutAlgorithm['ROUTER'] = 5)] = 'ROUTER'
-})(LayoutAlgorithm || (LayoutAlgorithm = {}))
 
 run().then(finishLoading)

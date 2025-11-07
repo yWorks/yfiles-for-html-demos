@@ -33,7 +33,7 @@ import {
   ShapeNodeStyle,
   StyleIndicatorZoomPolicy
 } from '@yfiles/yfiles'
-import { getWayPoint, MultiPageNodeType } from './resources/TrekkingData'
+import { getWayPoint } from './resources/TrekkingData'
 import { addIconDescription, removeIconDescription } from './draw-icon-description'
 
 /**
@@ -48,14 +48,14 @@ export function configureHighlight(graphComponent) {
         nodeStyle: new ShapeNodeStyle({
           fill: 'transparent',
           stroke: '1px solid #662b00',
-          shape: getWayPoint(node)?.type === MultiPageNodeType.LABEL ? 'round-rectangle' : 'ellipse'
+          shape: getWayPoint(node)?.type === 'label' ? 'round-rectangle' : 'ellipse'
         }),
         margins: 2,
         zoomPolicy: StyleIndicatorZoomPolicy.MIXED
       })
   )
 
-  // configures hover input mode to highlight hovered nodes and to show the icon associated to
+  // configures hover input mode to highlight hovered nodes and to show the icon associated with
   // the hovered node
   const inputMode = graphComponent.inputMode
   inputMode.itemHoverInputMode.enabled = true

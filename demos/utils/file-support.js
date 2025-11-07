@@ -30,38 +30,54 @@
  * Opens the file the user selected in a file input element.
  * @returns - A Promise that resolves with the file content and filename.
  */
-export function openFile(encoding = 'utf-8') {
-  const fileInputElement = document.createElement('input')
-  fileInputElement.type = 'file'
-  fileInputElement.multiple = false
-  fileInputElement.style.display = 'none'
-  document.querySelector('body').appendChild(fileInputElement)
-
+export function openFile(filter, encoding = 'utf-8') {
   return new Promise((resolve, reject) => {
-    fileInputElement.addEventListener(
-      'change',
-      () => {
-        const file = fileInputElement.files?.item(0)
-        if (!file) {
-          reject(new Error('There is no file to open'))
-          return
-        }
+    const fileInputElement = document.createElement('input')
+    fileInputElement.type = 'file'
+    fileInputElement.multiple = false
+    fileInputElement.style.display = 'none'
+    if (filter) {
+      fileInputElement.accept = filter
+    }
+    document.querySelector('body').appendChild(fileInputElement)
 
-        const reader = new FileReader()
-        reader.addEventListener('loadend', (evt) => {
-          const fileReader = evt.target
-          if (fileReader.error == null) {
-            resolve({ filename: file.name, content: fileReader.result })
-          } else {
-            reject(fileReader.error)
-          }
-        })
-        reader.readAsText(file, encoding)
-      },
-      false
-    )
+    const cleanup = () => {
+      fileInputElement.removeEventListener('change', handleFileSelection)
+      document.querySelector('body').removeChild(fileInputElement)
+    }
+
+    const handleFileSelection = () => {
+      const file = fileInputElement.files?.item(0)
+      if (!file) {
+        reject(new Error('No file selected.'))
+        cleanup()
+        return
+      }
+
+      const reader = new FileReader()
+      reader.addEventListener('loadend', (evt) => {
+        cleanup()
+        const fileReader = evt.target
+        if (fileReader.error == null) {
+          resolve({ filename: file.name, content: fileReader.result })
+        } else {
+          reject(fileReader.error)
+        }
+      })
+      reader.readAsText(file, encoding)
+    }
+
+    const handleCancel = () => {
+      if (!fileInputElement.files?.length) {
+        reject('canceled')
+        cleanup()
+      }
+    }
+
+    fileInputElement.addEventListener('change', handleFileSelection, false)
+    fileInputElement.addEventListener('cancel', handleCancel, false)
+
     fileInputElement.click()
-    document.querySelector('body').removeChild(fileInputElement)
   })
 }
 

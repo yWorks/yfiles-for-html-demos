@@ -29,16 +29,9 @@
 import {
   AdjacencyTypes,
   FreeNodeLabelModel,
-  IEdge,
-  IEdgeStyle,
   IEnumerable,
-  ILabelStyle,
-  INode,
-  INodeStyle,
   LabelStyle,
   List,
-  NodeAggregate,
-  NodeAggregationResult,
   Point,
   PolylineEdgeStyle,
   Rect,
@@ -255,7 +248,6 @@ export class AggregationHelper {
    * Gets the descendant {@link NodeAggregate} with the highest {@link NodeAggregate.descendantWeightSum}.
    */
   static getMostImportantDescendant(aggregate) {
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       const maxChild = aggregate.children.reduce((max, child) =>
         child.descendantWeightSum > max.descendantWeightSum ? child : max

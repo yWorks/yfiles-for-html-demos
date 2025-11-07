@@ -44,8 +44,8 @@ import {
   addVueTemplateNodeStyleInformation,
   VueTemplateNodeStyle
 } from './style/VueTemplateNodeStyle'
-import licenseData from '../../../lib/license.json'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from './license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 import {
   createCodemirrorEditor,
@@ -53,7 +53,7 @@ import {
   StateEffect,
   type StateEffectType,
   StateField
-} from '@yfiles/demo-resources/codemirror-editor'
+} from '@yfiles/demo-app/codemirror-editor'
 
 let graphComponent: GraphComponent
 let templateEditor: EditorView

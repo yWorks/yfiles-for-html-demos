@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>10 Bridge Support - Tutorial: Edge Style Implementation [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -153,11 +153,11 @@
           </div>
           <div class="paragraph">
             <p>
-              Bridge rendering is handled by the <a href="https://docs.yworks.com/yfileshtml/#/api/BridgeManager" target="_blank">BridgeManager</a> class. It can be
+              Bridge rendering is handled by the <a href="https://docs.yworks.com/yfileshtml/#/api/BridgeManager" class="api" target="_blank">BridgeManager</a> class. It can be
               enabled by assigning the GraphComponent to BridgeManager’s canvasComponent property.
               To determine obstacles, the BridgeManager instance uses an implementation of the
-              <a href="https://docs.yworks.com/yfileshtml/#/api/IObstacleProvider" target="_blank">IObstacleProvider</a> interface. We use the
-              <a href="https://docs.yworks.com/yfileshtml/#/api/GraphObstacleProvider" target="_blank">GraphObstacleProvider</a> that by default incorporates the obstacle
+              <a href="https://docs.yworks.com/yfileshtml/#/api/IObstacleProvider" class="api" target="_blank">IObstacleProvider</a> interface. We use the
+              <a href="https://docs.yworks.com/yfileshtml/#/api/GraphObstacleProvider" class="api" target="_blank">GraphObstacleProvider</a> that by default incorporates the obstacle
               definitions returned by all edges from the current graph.
             </p>
           </div>
@@ -218,8 +218,8 @@ bridgeManager.<span class="hljs-title function_">addObstacleProvider</span>(<spa
           <div class="paragraph">
             <p>
               The BridgeManager provides a
-              <a href="https://docs.yworks.com/yfileshtml/#/api/BridgeManager#BridgeManager-method-getObstacleHash" target="_blank">hash code</a> that
-              describes the current obstacle locations.
+              <a href="https://docs.yworks.com/yfileshtml/#/api/BridgeManager#getObstacleHash" class="api" target="_blank">hash code</a> that describes the current
+              obstacle locations.
             </p>
           </div>
           <div class="listingblock">
@@ -282,7 +282,8 @@ bridgeManager.<span class="hljs-title function_">addObstacleProvider</span>(<spa
         <div id="graphComponent"></div>
       </div>
     </div>
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

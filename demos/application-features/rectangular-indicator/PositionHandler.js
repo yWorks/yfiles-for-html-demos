@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  IInputModeContext,
-  IPositionHandler,
-  MutablePoint,
-  MutableRectangle,
-  Point
-} from '@yfiles/yfiles'
+import { BaseClass, IPositionHandler, MutablePoint, Point } from '@yfiles/yfiles'
 
 /**
  * A position handler that moves a given rectangle.

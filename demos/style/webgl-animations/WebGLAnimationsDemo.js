@@ -34,14 +34,11 @@ import {
   GraphMLIOHandler,
   GraphViewerInputMode,
   IEdge,
-  IGraph,
   ILabel,
-  IModelItem,
   INode,
   InteriorNodeLabelModel,
   LabelStyle,
   License,
-  WebGLAnimation,
   WebGLAnimationDirection,
   WebGLAnimationEasing,
   WebGLAnimationTiming,
@@ -64,9 +61,9 @@ import {
   WebGLStroke
 } from '@yfiles/yfiles'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { enableSingleSelection } from './SingleSelectionHelper'
-import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { checkWebGL2Support, finishLoading } from '@yfiles/demo-app/demo-page'
 
 let connectedComponents
 let currentSelectedItem
@@ -79,7 +76,7 @@ async function run() {
     return
   }
 
-  License.value = await fetchLicense()
+  License.value = licenseData
   const graphComponent = new GraphComponent('#graphComponent')
 
   graphComponent.graphModelManager = new WebGLGraphModelManager()

@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>01 Rendering the Port - Tutorial: Port Style Implementation [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -117,10 +117,10 @@
                 <p>
                   yFiles for HTML comes with a lot of predefined item visualizations and lots of different
                   shapes for nodes, which can also be used to visualize ports using
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStylePortStyleAdapter" target="_blank">NodeStylePortStyleAdapter</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/ShapePortStyle" target="_blank">ShapePortStyle</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStylePortStyleAdapter" class="api" target="_blank">NodeStylePortStyleAdapter</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/ShapePortStyle" class="api" target="_blank">ShapePortStyle</a>.
                   However, in some cases, it is required to create fully custom visualizations based
                   on SVG. This might be the case if you need shapes that are not available
-                  out-of-the-box, because they are domain-specific. Also, the rendering of custom
+                  out-of-the-box because they are domain-specific. Also, the rendering of custom
                   visualizations can be optimized for performance-critical applications.
                 </p>
               </div>
@@ -138,10 +138,10 @@
                     </td>
                     <td class="content">
                       Implementing a custom port style from scratch is an advanced concept. In a lot
-                      of cases, other approaches like template styles, or decorating built-in styles
-                      with custom elements are sufficient. For more information on the topic of
-                      styling graph items, please have a look at
-                      <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-port_styles" target="_blank">Port Styles</a>.
+                      of cases, other approaches like template styles or decorating built-in styles
+                      with custom elements are enough. For more information on the topic of styling
+                      graph items, please have a look at
+                      <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-port_styles" class="dguide" target="_blank">Port Styles</a>.
                     </td>
                   </tr>
                 </table>
@@ -155,19 +155,19 @@
                 <p>
                   yFiles for HTML comes with an abstract base class which provides the basic functionality
                   to create a custom port style. We start with a custom subclass of
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/PortStyleBase" target="_blank">PortStyleBase</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/PortStyleBase" class="api" target="_blank">PortStyleBase</a>.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomPortStyle</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">PortStyleBase</span> {
-  protected <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomPortStyle</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">PortStyleBase</span> {
+  <span class="hljs-keyword">protected</span> <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
     <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span> <span class="hljs-comment">// TODO - create the SVG element</span>
   }
 
-  protected <span class="hljs-title function_">getBounds</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">ICanvasContext</span>, <span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>): <span class="hljs-title class_">Rect</span> {
+  <span class="hljs-keyword">protected</span> <span class="hljs-title function_">getBounds</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">ICanvasContext</span>, <span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>): <span class="hljs-title class_">Rect</span> {
     <span class="hljs-keyword">return</span> <span class="hljs-title class_">Rect</span>.<span class="hljs-property">EMPTY</span> <span class="hljs-comment">// TODO - calculate the port bounds</span>
   }
 }</code></pre>
@@ -177,7 +177,7 @@
                 <p>
                   This code will not produce anything visible, yet. We first have to implement the
                   <code>createVisual</code> method. This method returns an SVG element, wrapped into
-                  an <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" target="_blank">SvgVisual</a>. Let&#8217;s render a circle with radius 3 to keep
+                  an <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" class="api" target="_blank">SvgVisual</a>. Let&#8217;s render a circle with radius 3 to keep
                   things simple. In your own implementation, you can create more complex SVG
                   elements, of course.
                 </p>
@@ -186,7 +186,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">protected <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
   <span class="hljs-keyword">const</span> ellipseElement = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(
     <span class="hljs-string">&#x27;http://www.w3.org/2000/svg&#x27;</span>,
     <span class="hljs-string">&#x27;ellipse&#x27;</span>
@@ -217,18 +217,12 @@
                   </tr>
                 </table>
               </div>
-              <div class="admonitionblock note">
-                <table>
-                  <tr>
-                    <td class="icon">
-                      <div class="title">Note</div>
-                    </td>
-                    <td class="content">
-                      It&#8217;s important that SvgVisual contains an SVG element in the
-                      'http://www.w3.org/2000/svg' namespace. HTML elements are not supported.
-                    </td>
-                  </tr>
-                </table>
+              <div class="paragraph">
+                <p>
+                  Besides <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" class="api" target="_blank">SvgVisual</a>, which can contain only an SVG element, there
+                  are other visuals as well, for example <a href="https://docs.yworks.com/yfileshtml/#/api/HtmlVisual" class="api" target="_blank">HtmlVisual</a> for HTML
+                  elements.
+                </p>
               </div>
               <div class="paragraph">
                 <p>
@@ -242,7 +236,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">protected <span class="hljs-title function_">getBounds</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">ICanvasContext</span>, <span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>): <span class="hljs-title class_">Rect</span> {
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">getBounds</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">ICanvasContext</span>, <span class="hljs-attr">port</span>: <span class="hljs-title class_">IPort</span>): <span class="hljs-title class_">Rect</span> {
   <span class="hljs-keyword">const</span> { x, y } = port.<span class="hljs-property">location</span>
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rect</span>(x - <span class="hljs-number">3</span>, y - <span class="hljs-number">3</span>, <span class="hljs-number">6</span>, <span class="hljs-number">6</span>)
 }</code></pre>
@@ -264,7 +258,7 @@
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

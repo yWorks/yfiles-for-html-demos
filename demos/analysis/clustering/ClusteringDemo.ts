@@ -28,9 +28,9 @@
  ***************************************************************************/
 import {
   BiconnectedComponentClustering,
-  BiconnectedComponentClusteringResult,
+  type BiconnectedComponentClusteringResult,
   EdgeBetweennessClustering,
-  EdgeBetweennessClusteringResult,
+  type EdgeBetweennessClusteringResult,
   EdgePathLabelModel,
   EdgeSides,
   GraphBuilder,
@@ -40,38 +40,37 @@ import {
   HierarchicalClustering,
   HierarchicalClusteringLinkage,
   HierarchicalClusteringResult,
-  IEdge,
-  IGraph,
-  INode,
-  IRectangle,
-  IRenderTreeElement,
-  IVisualCreator,
+  type IEdge,
+  type INode,
+  type IRectangle,
+  type IRenderTreeElement,
+  type IVisualCreator,
   KMeansClustering,
-  KMeansClusteringResult,
+  type KMeansClusteringResult,
   KMeansDistanceMetric,
   LabelPropagationClustering,
-  LabelPropagationClusteringResult,
+  type LabelPropagationClusteringResult,
   LabelStyle,
   License,
   LouvainModularityClustering,
-  LouvainModularityClusteringResult,
+  type LouvainModularityClusteringResult,
   NodeStyleIndicatorRenderer,
-  PolylineEdgeStyle,
+  type PolylineEdgeStyle,
   Rect,
   ShapeNodeShape
 } from '@yfiles/yfiles'
 
-import * as ClusteringData from './resources/ClusteringData'
 import { VoronoiDiagram } from './VoronoiDiagram'
 import { PolygonVisual, VoronoiVisual } from './DemoVisuals'
 import { DendrogramComponent } from './DendrogramSupport'
-import { createDemoEdgeStyle, createDemoShapeNodeStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoEdgeStyle, createDemoShapeNodeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
+import { edgeBetweennessData } from './data/edge-betweenness-data'
+import { biconnectedComponentsData } from './data/biconnected-components-data'
+import { kMeansData } from './data/k-means-data'
+import { hierarchicalData } from './data/hierarchical-data'
 
-/**
- * The {@link GraphComponent} which contains the {@link IGraph}.
- */
 let graphComponent: GraphComponent
 
 /**
@@ -80,14 +79,14 @@ let graphComponent: GraphComponent
 let dendrogramComponent: DendrogramComponent
 
 /**
- * The canvas object for the cluster visual
+ * The render tree element for the cluster visual
  */
-let clusterVisualObject: IRenderTreeElement | null
+let clusterVisualElement: IRenderTreeElement | null
 
 /**
- * The canvas object for the k-means centroids visual
+ * The render tree element for the k-means centroids visual
  */
-let kMeansCentroidObject: IRenderTreeElement | null
+let kMeansCentroidElement: IRenderTreeElement | null
 
 /**
  * The style for the directed edges
@@ -116,7 +115,7 @@ let busy = false
 let selectedAlgorithm: ClusteringAlgorithm
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
   // initialize the default styles
@@ -191,15 +190,12 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
   // because these two are independent of the edges of the graph
   mode.createEdgeInputMode.addEventListener('edge-created', async (evt) => {
     if (
-      selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS &&
+      selectedAlgorithm === 'edge-betweenness' &&
       document.querySelector<HTMLInputElement>(`#directed`)!.checked
     ) {
       graphComponent.graph.setStyle(evt.item, directedEdgeStyle)
     }
-    if (
-      selectedAlgorithm != ClusteringAlgorithm.kMEANS &&
-      selectedAlgorithm != ClusteringAlgorithm.HIERARCHICAL
-    ) {
+    if (selectedAlgorithm != 'k-means' && selectedAlgorithm != 'hierarchical') {
       await runAlgorithm()
     }
   })
@@ -214,10 +210,7 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
 
   // when a node is dragged, run the algorithm if this is HIERARCHICAL clustering or kMEANS
   const onDragFinished = async () => {
-    if (
-      selectedAlgorithm === ClusteringAlgorithm.HIERARCHICAL ||
-      selectedAlgorithm === ClusteringAlgorithm.kMEANS
-    ) {
+    if (selectedAlgorithm === 'hierarchical' || selectedAlgorithm === 'k-means') {
       await runAlgorithm()
     }
   }
@@ -228,15 +221,13 @@ function configureUserInteraction(graphComponent: GraphComponent): void {
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
   mode.itemHoverInputMode.addEventListener('hovered-item-changed', (evt) => {
     // if a node is hovered and the algorithm is HIERARCHICAL clustering, hover the corresponding dendrogram node
-    if (selectedAlgorithm === ClusteringAlgorithm.HIERARCHICAL) {
+    if (selectedAlgorithm === 'hierarchical') {
       const node = evt.item
       const highlights = graphComponent.highlights
       highlights.clear()
-      if (node && result) {
+      if (node && result instanceof HierarchicalClusteringResult) {
         highlights.add(node)
-        dendrogramComponent.updateHighlight(
-          (result as HierarchicalClusteringResult).getDendrogramNode(node as INode)!
-        )
+        dendrogramComponent.updateHighlight(result.getDendrogramNode(node as INode)!)
       } else {
         dendrogramComponent.updateHighlight()
       }
@@ -277,27 +268,27 @@ async function runAlgorithm(): Promise<void> {
     if (graphComponent.graph.nodes.size > 0) {
       switch (selectedAlgorithm) {
         default:
-        case ClusteringAlgorithm.EDGE_BETWEENNESS:
+        case 'edge-betweenness':
           runEdgeBetweennessClustering()
           break
-        case ClusteringAlgorithm.kMEANS:
+        case 'k-means':
           runKMeansClustering()
           break
-        case ClusteringAlgorithm.HIERARCHICAL:
+        case 'hierarchical':
           await runHierarchicalClustering()
           break
-        case ClusteringAlgorithm.BICONNECTED_COMPONENTS:
+        case 'biconnected-components':
           runBiconnectedComponentsClustering()
           break
-        case ClusteringAlgorithm.LOUVAIN_MODULARITY:
+        case 'louvain-modularity':
           runLouvainModularityClustering()
           break
-        case ClusteringAlgorithm.LABEL_PROPAGATION:
+        case 'label-propagation':
           runLabelPropagationClustering()
           break
       }
     } else {
-      if (selectedAlgorithm === ClusteringAlgorithm.HIERARCHICAL) {
+      if (selectedAlgorithm === 'hierarchical') {
         dendrogramComponent.clearDendrogram()
       }
     }
@@ -467,7 +458,7 @@ function visualizeClusteringResult(): void {
     // biconnected components returns -1 as cluster id when only one node is present.
     // We change the clusterId manually here, as otherwise we'll get an exception in
     // DemoVisuals.PolygonVisual#createVisual
-    if (clusterId === -1 && selectedAlgorithm === ClusteringAlgorithm.BICONNECTED_COMPONENTS) {
+    if (clusterId === -1 && selectedAlgorithm === 'biconnected-components') {
       clusterId = 0
     }
     let clusterNodesCoordinates: IRectangle[] | undefined = clustering.get(clusterId)
@@ -478,19 +469,19 @@ function visualizeClusteringResult(): void {
     clusterNodesCoordinates.push(node.layout)
   })
 
-  if (!clusterVisualObject) {
+  if (!clusterVisualElement) {
     let clusterVisual: IVisualCreator
 
     switch (selectedAlgorithm) {
       default:
-      case ClusteringAlgorithm.EDGE_BETWEENNESS:
-      case ClusteringAlgorithm.BICONNECTED_COMPONENTS: {
+      case 'edge-betweenness':
+      case 'biconnected-components': {
         // create a polygonal visual that encloses the nodes that belong to the same cluster
         const clusters = { number: clustering.size, clustering, centroids: [] }
         clusterVisual = new PolygonVisual(false, clusters)
         break
       }
-      case ClusteringAlgorithm.kMEANS: {
+      case 'k-means': {
         const centroids = (result as KMeansClusteringResult).centroids
         if (clustering.size >= 3 && graphComponent.contentBounds) {
           // create a voronoi diagram
@@ -509,11 +500,11 @@ function visualizeClusteringResult(): void {
     }
 
     // add the visual to the graphComponent's background group
-    clusterVisualObject = graphComponent.renderTree.createElement(
+    clusterVisualElement = graphComponent.renderTree.createElement(
       graphComponent.renderTree.backgroundGroup,
       clusterVisual
     )
-    clusterVisualObject.toBack()
+    clusterVisualElement.toBack()
   }
 
   // invalidate the graphComponent
@@ -525,34 +516,45 @@ function visualizeClusteringResult(): void {
  */
 async function onAlgorithmChanged() {
   const algorithmsComboBox = document.querySelector<HTMLSelectElement>(`#algorithms`)!
-  selectedAlgorithm = algorithmsComboBox.selectedIndex
-
-  // determine the file name that will be used for loading the graph
-  const fileName = algorithmsComboBox.value
+  selectedAlgorithm = algorithmsComboBox.value as ClusteringAlgorithm
 
   // Adjusts the window appearance. This method is required since when the selected clustering algorithm is
   // HIERARCHICAL, the window has to be split to visualize the dendrogram.
-  const showDendrogram = selectedAlgorithm === ClusteringAlgorithm.HIERARCHICAL
+  const showDendrogram = selectedAlgorithm === 'hierarchical'
   dendrogramComponent.toggleVisibility(showDendrogram)
   await graphComponent.fitGraphBounds(10)
 
   // load the graph and run the algorithm
-  await loadGraph((ClusteringData as any)[fileName])
+  await loadGraph(selectedAlgorithm)
   await runAlgorithm()
+}
+
+function getData(name: ClusteringAlgorithm) {
+  switch (name) {
+    case 'biconnected-components':
+    case 'label-propagation':
+    case 'louvain-modularity':
+      return biconnectedComponentsData
+    case 'edge-betweenness':
+      return edgeBetweennessData
+    case 'hierarchical':
+      return hierarchicalData
+    case 'k-means':
+      return kMeansData
+  }
 }
 
 /**
  * Loads the sample graphs from a JSON file.
- * @param sampleData The data samples
  */
-async function loadGraph(sampleData: any): Promise<void> {
+async function loadGraph(name: ClusteringAlgorithm): Promise<void> {
   // remove all previous visuals
   removeClusterVisuals()
 
   const graph = graphComponent.graph
   graph.clear()
 
-  const isEdgeBetweenness = selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS
+  const isEdgeBetweenness = selectedAlgorithm === 'edge-betweenness'
   const styleFactory =
     isEdgeBetweenness && document.querySelector<HTMLInputElement>(`#directed`)!.checked
       ? () => directedEdgeStyle
@@ -564,11 +566,12 @@ async function loadGraph(sampleData: any): Promise<void> {
       : () => undefined // tell GraphBuilder not to create any labels
 
   // initialize a graph builder to parse the graph from the JSON file
+  const data = getData(name)
   const builder = new GraphBuilder({
     graph: graph,
     nodes: [
       {
-        data: sampleData.nodes,
+        data: data.nodes,
         id: 'id',
         layout: (data: any): Rect => new Rect(data.x, data.y, data.w, data.h),
         labels: ['label']
@@ -576,7 +579,7 @@ async function loadGraph(sampleData: any): Promise<void> {
     ],
     edges: [
       {
-        data: sampleData.edges,
+        data: data.edges,
         sourceId: 'source',
         targetId: 'target',
         style: styleFactory,
@@ -705,14 +708,14 @@ function initializeUI(): void {
  * Remove all present cluster visuals.
  */
 function removeClusterVisuals(): void {
-  if (clusterVisualObject) {
-    graphComponent.renderTree.remove(clusterVisualObject)
-    clusterVisualObject = null
+  if (clusterVisualElement) {
+    graphComponent.renderTree.remove(clusterVisualElement)
+    clusterVisualElement = null
   }
 
-  if (kMeansCentroidObject) {
-    graphComponent.renderTree.remove(kMeansCentroidObject)
-    kMeansCentroidObject = null
+  if (kMeansCentroidElement) {
+    graphComponent.renderTree.remove(kMeansCentroidElement)
+    kMeansCentroidElement = null
   }
 }
 
@@ -762,13 +765,12 @@ function updateInformationPanel(panelId: string): void {
   document.querySelector<HTMLDivElement>(`#${panelId}`)!.style.display = 'inline-block'
 }
 
-enum ClusteringAlgorithm {
-  EDGE_BETWEENNESS = 0,
-  kMEANS = 1,
-  HIERARCHICAL = 2,
-  BICONNECTED_COMPONENTS = 3,
-  LOUVAIN_MODULARITY = 4,
-  LABEL_PROPAGATION = 5
-}
+type ClusteringAlgorithm =
+  | 'edge-betweenness'
+  | 'k-means'
+  | 'hierarchical'
+  | 'biconnected-components'
+  | 'louvain-modularity'
+  | 'label-propagation'
 
 run().then(finishLoading)

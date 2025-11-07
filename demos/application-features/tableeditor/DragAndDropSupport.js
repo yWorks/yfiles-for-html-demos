@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   DashStyle,
-  IGraph,
   INodeStyle,
   Insets,
   ITable,
@@ -47,7 +46,7 @@ import {
 import { DemoStripeStyle, DemoTableStyle } from './TableStyles'
 
 import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
-import { createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
 
 /**
  * Configures drag and drop interaction that considers dropping nodes on table nodes.

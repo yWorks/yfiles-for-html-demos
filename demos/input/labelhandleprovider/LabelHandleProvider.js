@@ -31,11 +31,7 @@ import {
   FreeEdgeLabelModel,
   FreeLabelModel,
   FreeNodeLabelModel,
-  IEnumerable,
-  IHandle,
   IHandleProvider,
-  IInputModeContext,
-  ILabel,
   List,
   StretchNodeLabelModel
 } from '@yfiles/yfiles'
@@ -49,6 +45,7 @@ import { LabelResizeHandle } from './LabelResizeHandle'
  */
 export class LabelHandleProvider extends BaseClass(IHandleProvider) {
   label
+
   /**
    * Creates a new instance of {@link LabelHandleProvider}.
    * @param label The given label

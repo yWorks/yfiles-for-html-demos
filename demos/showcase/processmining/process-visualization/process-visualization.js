@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEnumerable, IGraph } from '@yfiles/yfiles'
+import { IEnumerable } from '@yfiles/yfiles'
 import { addItem } from './ProcessItemVisual'
 import { getProcessStepData, getProcessTransitionData } from '../process-graph-extraction'
 

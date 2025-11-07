@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>06 Edge Cropping - Tutorial: Port Style Implementation [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -121,17 +121,17 @@
           <div id="old-state" class="inline-graph-component"></div>
           <div class="paragraph">
             <p>
-              To define the port shape, we first define an <a href="https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry" target="_blank">IShapeGeometry</a> for the
-              style. This interface is later used by the <a href="https://docs.yworks.com/yfileshtml/#/api/IEdgePathCropper" target="_blank">IEdgePathCropper</a> to crop
+              To define the port shape, we first define an <a href="https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry" class="api" target="_blank">IShapeGeometry</a> for the
+              style. This interface is later used by the <a href="https://docs.yworks.com/yfileshtml/#/api/IEdgePathCropper" class="api" target="_blank">IEdgePathCropper</a> to crop
               the edge at the port outline.
             </p>
           </div>
           <div class="paragraph">
             <p>
-              We override the <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_concepts_lookup" target="_blank">lookup</a> method to
-              return the <a href="https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry" target="_blank">IShapeGeometry</a> to the port style. The
-              <a href="https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry" target="_blank">IShapeGeometry</a> gets the port&#8217;s bounds and uses the convenience
-              class <a href="https://docs.yworks.com/yfileshtml/#/api/GeometryUtilities" target="_blank">GeometryUtilities</a> to consider the elliptic port shape.
+              We override the <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_concepts_lookup" class="dguide" target="_blank">lookup</a> method to
+              return the <a href="https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry" class="api" target="_blank">IShapeGeometry</a> to the port style. The
+              <a href="https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry" class="api" target="_blank">IShapeGeometry</a> gets the port&#8217;s bounds and uses the convenience
+              class <a href="https://docs.yworks.com/yfileshtml/#/api/GeometryUtilities" class="api" target="_blank">GeometryUtilities</a> to consider the elliptic port shape.
             </p>
           </div>
           <div class="listingblock">
@@ -168,13 +168,13 @@
           </div>
           <div class="paragraph">
             <p>
-              Now, we have to provide an <a href="https://docs.yworks.com/yfileshtml/#/api/IEdgePathCropper" target="_blank">IEdgePathCropper</a> instance in the
+              Now, we have to provide an <a href="https://docs.yworks.com/yfileshtml/#/api/IEdgePathCropper" class="api" target="_blank">IEdgePathCropper</a> instance in the
               <code>lookup</code> method that yFiles for HTML can use it for edge cropping. We subclass
-              <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultEdgePathCropper" target="_blank">DefaultEdgePathCropper</a> and override
-              <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultEdgePathCropper#DefaultEdgePathCropper-method-getPortGeometry" target="_blank">getPortGeometry</a>. In this method, we use the port&#8217;s <code>lookup</code> to get the
-              <a href="https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry" target="_blank">IShapeGeometry</a> we defined above. We enable
-              <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultEdgePathCropper#DefaultEdgePathCropper-property-cropAtPort" target="_blank">cropAtPort</a>
-              in the constructor.
+              <a href="https://docs.yworks.com/yfileshtml/#/api/EdgePathCropper" class="api" target="_blank">EdgePathCropper</a> and override
+              <a href="https://docs.yworks.com/yfileshtml/#/api/EdgePathCropper#getPortGeometry" class="api" target="_blank">getPortGeometry</a>. In this method, we
+              use the port&#8217;s <code>lookup</code> to get the <a href="https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry" class="api" target="_blank">IShapeGeometry</a> we
+              defined above. We enable <a href="https://docs.yworks.com/yfileshtml/#/api/EdgePathCropper#cropAtPort" class="api" target="_blank">cropAtPort</a> in
+              the constructor.
             </p>
           </div>
           <div class="listingblock">
@@ -205,7 +205,7 @@
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

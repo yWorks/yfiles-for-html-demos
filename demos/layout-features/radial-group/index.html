@@ -33,10 +33,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-    <title>Radial Group Layout - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <title>Radial Group Layout [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -61,7 +61,6 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
     </div>
@@ -79,71 +78,58 @@
 
       <div class="demo-description__content">
         <h1>Radial Group Layout</h1>
-
         <p>
-          This demo shows how to create a beautiful layout of a grouped graph using the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout" target="_blank">RadialGroupLayout</a>.
+          This demo demonstrates the <a href="https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout" class="api" target="_blank">RadialGroupLayout</a> algorithm for arranging
+          grouped graphs.
         </p>
-
         <p>
-          It arranges a hierarchically grouped graph so that children of a group are placed adjacent
-          to the group along its circular border (thus, resembling the structure of a cactus). This
-          way, the positions of the nodes implicitly represent the group hierarchy.
+          Child nodes are positioned around their parent group&#39;s border, visually representing
+          group hierarchy.
         </p>
-
+        <p>It highlights the configuration of various aspects:</p>
         <ul>
           <li>
-            To get good results using the radial group layout, the style of the nodes and group
-            nodes should be round. In this demo, both use an elliptical
-            <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" target="_blank">ShapeNodeStyle</a>
-            where group nodes are gray and leaf nodes are colored.
+            <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" class="api" target="_blank">Node Styles</a>: Both group and leaf nodes are
+            <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeShape#ELLIPSE" class="api" target="_blank">ellipse</a> for optimal radial group layout
+            results. Groups are gray while leaf nodes are colored.
           </li>
-
           <li>
-            <span style="color: #177e89; font-weight: bold">Green leaf nodes</span>
-            have the
-            <a href="https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayoutData#parentOverlapRatio" target="_blank">parent overlap ratio</a>
-            set to 0.5, whereas
-            <span style="color: #aa4586; font-weight: bold">red leaf nodes</span>
-            have it set to 0, meaning that they do not overlap with their parent group.
+            <a href="https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayoutData#parentOverlapRatios" class="api" target="_blank">Parent Overlap Ratio</a>:
+            <span style="color: #0b7189">Blue nodes</span> have a ratio of 0.5, overlapping slightly
+            with their parent. <span style="color: #ff6c00">Orange nodes</span> have a ratio of 0,
+            with no overlap.
           </li>
-
           <li>
-            The radial group algorithm supports
-            <a href="https://docs.yworks.com/yfileshtml/#/api/NodeLabelingPolicy#RAY_LIKE_LEAVES" target="_blank">ray-like node labeling</a>, which is
-            shown with an example label at each leaf node.
+            <a href="https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout#nodeLabelPlacement" class="api" target="_blank">Label Placement</a>: The algorithm
+            supports
+            <a href="https://docs.yworks.com/yfileshtml/#/api/RadialNodeLabelPlacement#RAY_LIKE_LEAVES" class="api" target="_blank">RAY_LIKE_LEAVES</a> ray-like
+            label placement.
           </li>
-
           <li>
-            The edges are drawn as bezier curves and using bundling in this demo. This can be
-            configured via the
-            <a href="https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout#edgeBundling" target="_blank">edge bundling property</a>.
+            <a href="https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout#edgeBundling" class="api" target="_blank">Edge Bundling</a>: Edges are drawn as
+            bundled Bezier curves.
           </li>
         </ul>
-
-        <h3>Code Snippet</h3>
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/radial-group/RadialGroup.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Documentation</h3>
-        <p>
-          The Developer's Guide provides in-depth information about the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/cactus_group_layout" target="_blank">Cactus Group Layout</a>
-          and its features.
-        </p>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../showcase/layoutstyles/index.html?layout=radial&sample=radial" class="demo" target="_blank">Layout Styles: Radial Demo</a></li>
+          <li><a href="../../showcase/largegraphaggregation/" class="demo" target="_blank">Large Graph Aggregation Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/cactus_group_layout" class="dguide" target="_blank">Radial Group Layout</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout" class="api" target="_blank">RadialGroupLayout</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayoutData" class="api" target="_blank">RadialGroupLayoutData</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/RadialNodeLabelPlacement" class="api" target="_blank">RadialNodeLabelPlacement</a></li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script type="module" crossorigin="anonymous" src="./RadialGroupDemo.ts" async></script>
   </body>
 </html>

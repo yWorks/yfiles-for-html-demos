@@ -99,9 +99,11 @@ export class DataTableRenderSupport {
  * Saves the data to speed up node/label style rendering.
  */
 export class RenderDataCache {
+  readonly data: UserData
   public readonly propertyNames: string[]
 
-  constructor(public readonly data: UserData) {
+  constructor(data: UserData) {
+    this.data = data
     this.propertyNames = this.data ? Object.keys(data) : []
   }
 

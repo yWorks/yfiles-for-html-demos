@@ -28,18 +28,13 @@
  ***************************************************************************/
 import {
   BaseClass,
-  ClickEventArgs,
   Cursor,
   HandleType,
   IEnumerable,
   IHandle,
   IHandleProvider,
-  IInputModeContext,
-  INode,
   IPoint,
-  IRenderContext,
   IVisualCreator,
-  Point,
   RectangleCorners,
   RectangleNodeStyle,
   SvgVisual,
@@ -52,8 +47,9 @@ import {
  * {@link RectangleNodeStyle.cornerSize} of the node style interactively.
  */
 export class CornerSizeHandleProvider extends BaseClass(IHandleProvider) {
-  node
   delegateProvider
+  node
+
   /**
    * Initializes a new instance of the provider with an optional `delegateProvider`
    * whose handles are also returned.

@@ -29,9 +29,9 @@
 import {
   BaseClass,
   type CollectSnapReferencesEventArgs,
-  GraphSnapContext,
+  type GraphSnapContext,
   ILabelOwner,
-  IModelItem,
+  type IModelItem,
   ISnapReferenceProvider,
   OrthogonalSnapLine,
   Point,
@@ -46,16 +46,21 @@ import {
  * {@link OrthogonalSnapLine}s added for its top, bottom, left, and right side.
  */
 export class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapReferenceProvider) {
+    private wrapped: ISnapReferenceProvider;
+    private item: IModelItem;
+
   /**
    * Creates a new instance that wraps the given snap line provider.
    * @param item The owner of the label
    * @param wrapped The snap line provider that will be wrapped.
    */
   constructor(
-    private item: IModelItem,
-    private wrapped: ISnapReferenceProvider
+    item: IModelItem,
+    wrapped: ISnapReferenceProvider
   ) {
     super()
+      this.item = item;
+      this.wrapped = wrapped;
   }
 
   /**

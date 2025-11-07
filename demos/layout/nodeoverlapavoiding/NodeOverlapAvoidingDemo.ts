@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CanvasComponent,
   Graph,
@@ -34,8 +33,8 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GroupingNodePositionHandler,
-  INode,
-  INodeSizeConstraintProvider,
+  type INode,
+  type INodeSizeConstraintProvider,
   IPositionHandler,
   IReshapeHandler,
   License,
@@ -46,19 +45,19 @@ import {
   Size
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import SampleData from './resources/SampleData'
 import { NonOverlapPositionHandler } from './NonOverlapPositionHandler'
 import { NonOverlapReshapeHandler } from './NonOverlapReshapeHandler'
 import { LayoutHelper } from './LayoutHelper'
 import { enableSingleSelection } from './SingleSelectionHelper'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent: GraphComponent
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   initializeInputModes()
   initializeGraph()

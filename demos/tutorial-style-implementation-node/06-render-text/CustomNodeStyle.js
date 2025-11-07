@@ -83,7 +83,6 @@ export class CustomNodeStyle extends NodeStyleBase {
       g.append(text)
     }
 
-
     return SvgVisual.from(g, { width, height, fillColor, showBadge, title })
   }
 

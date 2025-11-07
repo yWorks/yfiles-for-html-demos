@@ -29,7 +29,7 @@
 import type { Activity, Task } from './resources/data-model'
 import { getActivity } from './resources/data-model'
 import type { INode } from '@yfiles/yfiles'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
 import { getTask } from './sweepline-layout'
 import type { ActivityNodeStyle } from './activity-node/ActivityNodeStyle'
 import { ganttChartData as dataModel } from './resources/gantt-chart-data'

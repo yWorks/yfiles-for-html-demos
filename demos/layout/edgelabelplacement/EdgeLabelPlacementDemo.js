@@ -55,9 +55,9 @@ import {
   TreeLayout
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 import graphData from './graph-data.json'
 import { toDegrees, toRadians } from '@yfiles/demo-utils/LegacyGeometryUtilities'
 
@@ -95,7 +95,7 @@ const add180CheckBox = document.querySelector('#add-180-checkbox')
  * with a generic labeling algorithm or a layout algorithm that supports integrated edge labeling.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   graph = graphComponent.graph
 

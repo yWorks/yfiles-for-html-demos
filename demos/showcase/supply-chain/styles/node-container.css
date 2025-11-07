@@ -1,0 +1,228 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.node-container.demo-blue {
+  border: 2px solid var(--demo-blue);
+  color: var(--demo-blue-dark);
+  box-shadow: 2px 2px 10px 0 rgb(from var(--demo-blue-dark) r g b / 0.3);
+}
+.node-container.ultra-violet {
+  border: 2px solid var(--ultra-violet);
+  color: var(--ultra-violet-dark);
+  box-shadow: 2px 2px 10px 0 rgb(from var(--ultra-violet-dark) r g b / 0.3);
+}
+.node-container.vista-blue {
+  border: 2px solid var(--vista-blue);
+  color: var(--vista-blue-dark);
+  box-shadow: 2px 2px 10px 0 rgb(from var(--vista-blue-dark) r g b / 0.3);
+}
+.node-container.baby-blue {
+  border: 2px solid var(--baby-blue);
+  color: var(--baby-blue-dark);
+  box-shadow: 2px 2px 10px 0 rgb(from var(--baby-blue-dark) r g b / 0.3);
+}
+.node-container.ash-blue {
+  border: 2px solid var(--ash-blue);
+  color: var(--ash-blue-dark);
+  box-shadow: 2px 2px 10px 0 rgb(from var(--ash-blue-dark) r g b / 0.3);
+}
+.node-container.sage-green {
+  border: 2px solid var(--sage-green);
+  color: var(--sage-green-dark);
+  box-shadow: 2px 2px 10px 0 rgb(from var(--sage-green-dark) r g b / 0.3);
+}
+
+.node-container {
+  box-sizing: border-box;
+  border-radius: 7px;
+}
+.node-container .node-content {
+  box-sizing: border-box;
+  padding-bottom: 2px;
+  width: 100%;
+}
+.node-container .node-header {
+  border-radius: 5px 5px 0 0;
+  margin: -1px;
+  display: flex;
+  align-items: flex-start;
+}
+.node-container .node-header.demo-blue {
+  background-color: var(--demo-blue);
+}
+.node-container .node-header.ultra-violet {
+  background-color: var(--ultra-violet);
+}
+.node-container .node-header.vista-blue {
+  background-color: var(--vista-blue);
+}
+.node-container .node-header.baby-blue {
+  background-color: var(--baby-blue);
+}
+.node-container .node-header.ash-blue {
+  background-color: var(--ash-blue);
+}
+.node-container .node-header.sage-green {
+  background-color: var(--sage-green);
+}
+.node-container .node-icon {
+  font-family: 'Material Icons Outlined', sans-serif;
+  height: 50px;
+  width: 55px;
+  padding: 15px 0 0 15px;
+  color: white;
+  font-size: 40px;
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+}
+.node-container .node-content .node-header-details {
+  width: 100%;
+  margin: 10px 1px 10px 10px;
+  border-radius: 4px 0 0 4px;
+}
+.node-container .node-header-details .node-headline {
+  margin: 0;
+  padding: 8px 8px 0 8px;
+  font-size: 16px;
+  line-height: 1.1;
+}
+.node-container .node-header-details .node-location {
+  padding: 8px;
+  font-size: 12px;
+  margin: 0;
+}
+.node-container .node-header-details.demo-blue {
+  background-color: var(--demo-blue-light);
+}
+.node-container .node-header-details.ultra-violet {
+  background-color: var(--ultra-violet-light);
+}
+.node-container .node-header-details.vista-blue {
+  background-color: var(--vista-blue-light);
+}
+.node-container .node-header-details.baby-blue {
+  background-color: var(--baby-blue-light);
+}
+.node-container .node-header-details.ash-blue {
+  background-color: var(--ash-blue-light);
+}
+.node-container .node-header-details.sage-green {
+  background-color: var(--sage-green-light);
+}
+.node-container .node-properties {
+  margin: 10px 0;
+}
+.node-container .node-properties .node-property-container {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  margin: 5px 0;
+  padding: 0 10px;
+  overflow: hidden;
+}
+.node-container .node-properties .node-property-container:hover {
+  background-color: var(--saffron-yellow);
+}
+.node-container .node-properties .node-property-container:hover .node-button {
+  opacity: 1;
+}
+.node-container .node-properties .node-property-container .node-property {
+  font-size: 14px;
+  line-height: normal;
+  margin: 0 3px 0 0;
+}
+.node-container .node-properties .node-property-container .node-stock-container {
+  display: flex;
+  align-items: center;
+}
+.node-container .node-properties .node-property-container .node-stock-container .node-stock {
+  margin-left: 7px;
+  font-weight: bold;
+}
+.node-container .node-button {
+  opacity: 0;
+  font-family: 'Material Icons Outlined', sans-serif;
+  margin-right: 3px;
+  padding: 1px;
+  border-radius: 50%;
+  line-height: 1;
+  cursor: pointer;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.node-container .node-button > span {
+  display: inline-block;
+  pointer-events: none;
+  font-size: 18px;
+}
+.node-container .node-button.demo-blue {
+  color: var(--demo-blue-dark);
+  background-color: var(--demo-blue-light);
+  border: 1px solid var(--demo-blue-dark);
+}
+.node-container .node-button.ultra-violet {
+  color: var(--ultra-violet-dark);
+  background-color: var(--ultra-violet-light);
+  border: 1px solid var(--ultra-violet-dark);
+}
+.node-container .node-button.vista-blue {
+  color: var(--vista-blue-dark);
+  background-color: var(--vista-blue-light);
+  border: 1px solid var(--vista-blue-dark);
+}
+.node-container .node-button.baby-blue {
+  color: var(--baby-blue-dark);
+  background-color: var(--baby-blue-light);
+  border: 1px solid var(--baby-blue-dark);
+}
+.node-container .node-button.ash-blue {
+  color: var(--ash-blue-dark);
+  background-color: var(--ash-blue-light);
+  border: 1px solid var(--ash-blue-dark);
+}
+.node-container .node-button.sage-green {
+  color: var(--sage-green-dark);
+  background-color: var(--sage-green-light);
+  border: 1px solid var(--sage-green-dark);
+}
+.node-container .node-button:hover {
+  background-color: var(--saffron-yellow-dark);
+  color: var(--white);
+  border: 1px solid var(--saffron-yellow-dark);
+  box-shadow: 0 0 8px 0 rgb(from var(--demo-blue-dark) r g b / 0.6);
+}

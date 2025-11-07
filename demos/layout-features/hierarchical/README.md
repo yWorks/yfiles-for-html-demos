@@ -9,24 +9,37 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Hierarchical Layout - Layout Features
+# Hierarchical Layout
 
 <img src="../../../doc/demo-thumbnails/layout-hierarchical.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical/).
 
-This demo shows common configuration options for [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
+This demo showcases common configuration options for the [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) algorithm.
 
-For example, the demo code sets [layout orientation](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#layoutOrientation), [default (orthogonal)](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#edgeDescriptor) and [individual (octilinear) edge routing styles](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#edgeDescriptors), [source](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#ports#sourcePortCandidates) and [target port candidates](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#ports#targetPortCandidates) (pink edges), [critical paths](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#criticalEdgePriorities) (orange edges), [straightened edges (blue edges)](https://docs.yworks.com/yfileshtml/#/api/DefaultCoordinateAssignment#straightenEdges) and various distances between graph items.
+It highlights the configuration of various aspects, including:
 
-### Code Snippet
+- [Layout orientation](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#layoutOrientation)
+- Edge routing: both default [orthogonal](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutRoutingStyle#ORTHOGONAL) routing and custom [octilinear](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutRoutingStyle#OCTILINEAR) routing for specific edges
+- Source and target [port candidates](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#ports)
+- [Critical paths](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#criticalEdgePriorities)
+- [Edge straightening](https://docs.yworks.com/yfileshtml/#/api/CoordinateAssigner#straightenEdges)
+- Spacing controls: such as [minimum layer distance](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#minimumLayerDistance), [node distance](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#nodeDistance), and [node-to-edge distance](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#nodeToEdgeDistance).
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical/Hierarchical.ts).
+## Things to Try
 
-### Demos
+- Observe the bottom-to-top layout orientation.
+- Identify the **critical edges** routed with minimal bends.
+- Compare the default orthogonal routing with the custom **octilinear routed edges**.
+- Check the **straightened edges**.
+- Examine how **port candidates** dictate specific connection points on nodes.
 
-The [Layout Styles: Hierarchical Demo](../../showcase/layoutstyles/index.html?layout=hierarchical&sample=hierarchical) showcases more configuration options for the [hierarchical layout algorithm](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
+## Demos
 
-### Documentation
+- [Layout Styles: Hierarchical Demo](../../showcase/layoutstyles/index.html?layout=hierarchical&sample=hierarchical)
 
-The Developer's Guide provides in-depth information about [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout) and its features.
+## Documentation
+
+- [Hierarchical layout algorithm](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout)
+- [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) class
+- [HierarchicalLayoutData](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData) class

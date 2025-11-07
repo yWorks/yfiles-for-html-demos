@@ -32,10 +32,11 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Organic Layout - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <title>Organic Layout [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -60,7 +61,6 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
     </div>
@@ -78,73 +78,55 @@
 
       <div class="demo-description__content">
         <h1>Organic Layout</h1>
-
         <p>
-          This demo shows basic configuration options for the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">Organic Layout</a>. The default behavior is modified in
-          various ways, some of which are described below:
+          This demo shows basic configuration options for the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a>. The
+          default behavior is modified in various ways, some of which are described below:
         </p>
         <ul>
           <li>
-            The layout is
-            <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#deterministic" target="_blank">configured to be deterministic</a>, which
-            causes the layout algorithm to produce identical results for identical input graphs and
-            identical settings.
+            The layout is configured to be
+            <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout#deterministic" class="api" target="_blank">deterministic</a>, which causes the layout
+            algorithm to produce identical results for identical input graph and settings.
           </li>
           <li>
-            The <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout#preferredEdgeLength" target="_blank">preferred edge length</a> is
+            The <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#preferredEdgeLengths" class="api" target="_blank">preferred edge length</a> is
             increased.
           </li>
           <li>
-            The <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#compactnessFactor" target="_blank">compactness factor</a> has been
+            The <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout#compactnessFactor" class="api" target="_blank">compactness factor</a> has been
             increased to yield a more compact layout. For small values, the resulting layout will
             use a lot of space and nodes tend to be far away from each other. Whereas values near
             1.0 produce highly compact layouts.
           </li>
           <li>
-            To prevent labels from overlapping, the
-            <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#considerNodeLabels" target="_blank">node label awareness</a> is enabled.
-          </li>
-          <li>
-            The <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#nodeOverlapsAllowed" target="_blank">automatic overlap avoidance</a>
-            is disabled, so a manually chosen
-            <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#minimumNodeDistance" target="_blank">minimum distances between nodes</a>
+            The <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout#allowNodeOverlaps" class="api" target="_blank">automatic overlap avoidance</a> is
+            disabled, so a manually chosen
+            <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#minimumNodeDistances" class="api" target="_blank">minimum distances between nodes</a>
             is applied.
           </li>
           <li>
-            An <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#outPutRestriction" target="_blank">output restriction</a> is applied
-            to create a result that is wider than tall.
+            A <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout#shapeConstraint" class="api" target="_blank">shape restriction</a> is applied to
+            constrain the result to be wider than tall.
           </li>
         </ul>
-
-        <h3>Code Snippet</h3>
-        <p>
-          A quick glance at the source for the configuration can be taken at
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/organic/Organic.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Demos</h3>
-        <p>
-          The <a href="../../showcase/layoutstyles/index.html?layout=organic&sample=organic" target="_blank">Layout Styles: Organic Demo</a> showcases even more configuration options for
-          the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">organic layout algorithm</a>.
-        </p>
-
-        <h3>Documentation</h3>
-        <p>
-          The Developer's Guide provides in-depth information about
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout" target="_blank">Organic Layout</a> and its features.
-        </p>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../showcase/layoutstyles/index.html?layout=organic&sample=organic" class="demo" target="_blank">Layout Styles: Organic Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout" class="dguide" target="_blank">Organic Layout Algorithm</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData" class="api" target="_blank">OrganicLayoutData</a> class</li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script type="module" crossorigin="anonymous" src="./OrganicDemo.ts" async></script>
   </body>
 </html>

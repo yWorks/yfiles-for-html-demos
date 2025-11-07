@@ -33,6 +33,7 @@ import { GeometryUtilities, PortStyleBase, Rect, SvgVisual } from '@yfiles/yfile
  */
 export class CustomPortStyle extends PortStyleBase {
   size
+
   constructor(size = 6) {
     super()
     this.size = size

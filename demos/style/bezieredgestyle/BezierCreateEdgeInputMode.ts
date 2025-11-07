@@ -29,18 +29,18 @@
 import {
   BezierEdgeStyle,
   CreateEdgeInputMode,
-  IBend,
+  type IBend,
   IBendCreator,
-  IEdge,
-  IGraph,
+  type IEdge,
+  type IGraph,
   IHitTestable,
-  IInputModeContext,
-  InputModeEventArgs,
-  IPortCandidate,
-  IRenderTreeElement,
-  ItemEventArgs,
+  type IInputModeContext,
+  type InputModeEventArgs,
+  type IPortCandidate,
+  type IRenderTreeElement,
+  type ItemEventArgs,
   OrthogonalEdgeEditingPolicy,
-  Point,
+  type Point,
   SimpleEdge
 } from '@yfiles/yfiles'
 
@@ -60,7 +60,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
   private augmenting: boolean
 
   /**
-   * Additional canvas object that highlights the control point sequence.
+   * Additional render tree element that highlights the control point sequence.
    */
   private controlPointHighlight: IRenderTreeElement | null
 

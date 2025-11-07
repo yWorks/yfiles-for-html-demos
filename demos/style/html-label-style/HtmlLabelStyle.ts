@@ -37,6 +37,7 @@ type CachingHtmlElement = HTMLElement & { cache?: Cache }
  * A label style which displays HTML markup as label text.
  */
 export class HtmlLabelStyle extends LabelStyleBase<TypedHtmlVisual<CachingHtmlElement>> {
+  font: Font
   /**
    * A (shared) event listener that just stops event propagation.
    */
@@ -48,8 +49,9 @@ export class HtmlLabelStyle extends LabelStyleBase<TypedHtmlVisual<CachingHtmlEl
    * Creates a new instance of the HTMLLabelStyle class.
    * @param font The font used for rendering the label text.
    */
-  constructor(public font: Font) {
+  constructor(font: Font) {
     super()
+    this.font = font
   }
 
   /**

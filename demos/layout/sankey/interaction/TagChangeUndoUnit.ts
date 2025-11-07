@@ -34,6 +34,10 @@ import { BaseClass, type IModelItem, IUndoUnit } from '@yfiles/yfiles'
  * important to undo these changes along with the changes in style and layout.
  */
 export class TagChangeUndoUnit extends BaseClass(IUndoUnit) {
+    private readonly undoRedoCallback?: () => void | null;
+    private readonly item: IModelItem;
+    private readonly newTag: object;
+    private readonly oldTag: object;
   private readonly _undoName: string
   private readonly _redoName: string
 
@@ -49,12 +53,16 @@ export class TagChangeUndoUnit extends BaseClass(IUndoUnit) {
   constructor(
     undoName: string,
     redoName: string,
-    private readonly oldTag: object,
-    private readonly newTag: object,
-    private readonly item: IModelItem,
-    private readonly undoRedoCallback?: () => void | null
+    oldTag: object,
+    newTag: object,
+    item: IModelItem,
+    undoRedoCallback?: () => void | null
   ) {
     super()
+      this.oldTag = oldTag;
+      this.newTag = newTag;
+      this.item = item;
+      this.undoRedoCallback = undoRedoCallback;
     this._undoName = undoName
     this._redoName = redoName
   }

@@ -30,27 +30,12 @@ import {
   CreateEdgeInputMode,
   EdgePortCandidates,
   EdgeRouter,
-  InputModeEventArgs,
-  IRectangle,
-  LayoutEdge,
   LayoutGraphAdapter,
   LayoutKeys,
-  LayoutNode,
   OrthogonalEdgeEditingPolicy,
   Point,
   PortSides
 } from '@yfiles/yfiles'
-
-/**
- * The different edge routing strategies that the custom {@link RoutingCreateEdgeInputMode}
- * supports.
- */
-export var RoutingStrategy
-;(function (RoutingStrategy) {
-  RoutingStrategy[(RoutingStrategy['NONE'] = 0)] = 'NONE'
-  RoutingStrategy[(RoutingStrategy['EDGE_ROUTER'] = 1)] = 'EDGE_ROUTER'
-  RoutingStrategy[(RoutingStrategy['PERFORMANCE_EDGE_ROUTER'] = 2)] = 'PERFORMANCE_EDGE_ROUTER'
-})(RoutingStrategy || (RoutingStrategy = {}))
 
 /**
  * A custom {@link CreateEdgeInputMode} that uses a
@@ -82,17 +67,17 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
   set routingStrategy(strategy) {
     this._routingStrategy = strategy
     switch (strategy) {
-      case RoutingStrategy.NONE:
+      case 'none':
         this.edgeRouter = null
         // use orthogonal edge editing base on the parent mode's setting
         this.orthogonalEdgeCreation = OrthogonalEdgeEditingPolicy.AUTO
         break
-      case RoutingStrategy.EDGE_ROUTER:
+      case 'edge-router':
         this.edgeRouter = new EdgeRouter()
         // disable orthogonal edge creation, since the edge will be routed by the layout algorithm
         this.orthogonalEdgeCreation = OrthogonalEdgeEditingPolicy.NEVER
         break
-      case RoutingStrategy.PERFORMANCE_EDGE_ROUTER:
+      case 'performance-edge-router':
         this.edgeRouter = new EdgeRouter({
           stopDuration: 0 // maximize performance over quality
         })
@@ -108,7 +93,7 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
    */
   constructor() {
     super()
-    this._routingStrategy = RoutingStrategy.NONE
+    this._routingStrategy = 'none'
   }
 
   /**
@@ -116,7 +101,7 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
    * specified {@link RoutingStrategy}.
    */
   onGestureStarted(evt) {
-    if (this.routingStrategy === RoutingStrategy.NONE) {
+    if (this.routingStrategy === 'none') {
       // just execute the default behavior
       super.onGestureStarted(evt)
       return
@@ -172,7 +157,7 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
    * specified, a new edge routing is calculated for the edge of this gesture.
    */
   onMoved(evt) {
-    if (this.routingStrategy === RoutingStrategy.NONE) {
+    if (this.routingStrategy === 'none') {
       // just execute the default behavior
       super.onMoved(evt)
       return

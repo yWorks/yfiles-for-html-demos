@@ -26,24 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  Arrow,
-  ArrowType,
-  GraphComponent,
-  GraphEditorInputMode,
-  IBend,
-  IEdge,
-  IModelItem,
-  INode,
-  IPort,
-  Point,
-  PolylineEdgeStyle,
-  PopulateItemContextMenuEventArgs
-} from '@yfiles/yfiles'
+import { Arrow, ArrowType, IEdge, INode, PolylineEdgeStyle } from '@yfiles/yfiles'
 
 export class ContextMenuSupport {
-  graphComponent
   runLayout
+  graphComponent
+
   constructor(graphComponent, runLayout) {
     this.graphComponent = graphComponent
     this.runLayout = runLayout

@@ -30,11 +30,15 @@ import type { INode } from '@yfiles/yfiles'
 import type { Person } from './Person'
 
 export class PropertiesPanel {
+  private element: HTMLElement
+
   /**
    * Creates a new properties panel that shows the individual properties.
    * @param element The DOM element that will be filled with the properties.
    */
-  constructor(private element: HTMLElement) {}
+  constructor(element: HTMLElement) {
+    this.element = element
+  }
 
   showProperties(node: INode): void {
     this.clear()

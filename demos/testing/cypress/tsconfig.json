@@ -1,9 +1,24 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["es5", "dom"],
+    "target": "es2023",
+    "lib": ["ES2023", "DOM", "DOM.Iterable", "WebWorker"],
+    "skipLibCheck": true,
     "types": ["cypress", "node"],
-    "baseUrl": "."
+
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+
+    "baseUrl": ".",
+
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "noUnusedLocals": true
   },
   "include": ["**/*.ts"]
 }

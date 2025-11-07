@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Graph, GraphComponent, IGraph, IInputMode } from '@yfiles/yfiles'
+import { Graph, GraphComponent } from '@yfiles/yfiles'
 
 if (window.customElements) {
   const template = document.createElement('template')

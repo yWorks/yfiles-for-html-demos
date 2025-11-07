@@ -30,10 +30,7 @@ import {
   CircularLayout,
   Class,
   ComponentAssignmentStrategy,
-  GraphComponent,
   HierarchicalLayout,
-  ILayoutAlgorithm,
-  LayoutData,
   OrganicLayout,
   OrthogonalLayout,
   PartialLayout,
@@ -46,23 +43,15 @@ import {
 import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 
-export var SubgraphLayouts
-;(function (SubgraphLayouts) {
-  SubgraphLayouts[(SubgraphLayouts['HIERARCHICAL'] = 0)] = 'HIERARCHICAL'
-  SubgraphLayouts[(SubgraphLayouts['ORGANIC'] = 1)] = 'ORGANIC'
-  SubgraphLayouts[(SubgraphLayouts['CIRCULAR'] = 2)] = 'CIRCULAR'
-  SubgraphLayouts[(SubgraphLayouts['ORTHOGONAL'] = 3)] = 'ORTHOGONAL'
-  SubgraphLayouts[(SubgraphLayouts['AS_IS'] = 4)] = 'AS_IS'
-})(SubgraphLayouts || (SubgraphLayouts = {}))
+export const SubgraphLayouts = { HIERARCHICAL: 0, ORGANIC: 1, CIRCULAR: 2, ORTHOGONAL: 3, AS_IS: 4 }
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -78,7 +67,7 @@ export const PartialLayoutConfig = Class('PartialLayoutConfig', {
     ],
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     routingToSubgraphItem: [
@@ -117,11 +106,11 @@ export const PartialLayoutConfig = Class('PartialLayoutConfig', {
       ),
       new OptionGroupAttribute('LayoutGroup', 30),
       new EnumValuesAttribute([
-        ['Hierarchical', SubgraphLayouts.HIERARCHICAL],
-        ['Organic', SubgraphLayouts.ORGANIC],
-        ['Circular', SubgraphLayouts.CIRCULAR],
-        ['Orthogonal', SubgraphLayouts.ORTHOGONAL],
-        ['As Is', SubgraphLayouts.AS_IS]
+        ['Hierarchical', 'hierarchical'],
+        ['Organic', 'organic'],
+        ['Circular', 'circular'],
+        ['Orthogonal', 'orthogonal'],
+        ['As Is', 'as-is']
       ]),
       new TypeAttribute(SubgraphLayouts)
     ],
@@ -144,7 +133,7 @@ export const PartialLayoutConfig = Class('PartialLayoutConfig', {
       ),
       new OptionGroupAttribute('LayoutGroup', 50),
       new MinMaxAttribute(1, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     orientationItem: [
@@ -189,7 +178,7 @@ export const PartialLayoutConfig = Class('PartialLayoutConfig', {
     LayoutConfiguration.call(this)
     this.routingToSubgraphItem = PartialLayoutRoutingStyle.AUTOMATIC
     this.componentAssignmentStrategyItem = ComponentAssignmentStrategy.CONNECTED
-    this.subgraphLayoutItem = SubgraphLayouts.HIERARCHICAL
+    this.subgraphLayoutItem = 'hierarchical'
     this.subgraphPlacementItem = SubgraphPlacement.FROM_SKETCH
     this.minNodeDistItem = 30
     this.orientationItem = PartialLayoutOrientation.AUTO_DETECT
@@ -216,16 +205,16 @@ export const PartialLayoutConfig = Class('PartialLayoutConfig', {
     let subgraphLayout = null
     if (this.componentAssignmentStrategyItem !== ComponentAssignmentStrategy.SINGLE) {
       switch (this.subgraphLayoutItem) {
-        case SubgraphLayouts.HIERARCHICAL:
+        case 'hierarchical':
           subgraphLayout = new HierarchicalLayout()
           break
-        case SubgraphLayouts.ORGANIC:
+        case 'organic':
           subgraphLayout = new OrganicLayout()
           break
-        case SubgraphLayouts.CIRCULAR:
+        case 'circular':
           subgraphLayout = new CircularLayout()
           break
-        case SubgraphLayouts.ORTHOGONAL:
+        case 'orthogonal':
           subgraphLayout = new OrthogonalLayout()
           break
         default:

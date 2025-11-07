@@ -28,32 +28,22 @@
  ***************************************************************************/
 import type { IEdge, INode } from '@yfiles/yfiles'
 
-/**
- * The types of the edges.
- */
-export enum EdgeTypeEnum {
-  Hierarchy = 'Hierarchy',
-  Relation = 'Relation'
-}
+export type EdgeType = 'Hierarchy' | 'Relation'
 
-/**
- * The types of the nodes.
- */
-export enum NodeTypeEnum {
-  CORPORATION = 'Corporation',
-  CTB = 'CTB',
-  PARTNERSHIP = 'Partnership',
-  RCTB = 'RCTB',
-  BRANCH = 'Branch',
-  DISREGARDED = 'Disregarded',
-  DUAL_RESIDENT = 'Dual Resident',
-  MULTIPLE = 'Multiple',
-  TRUST = 'Trust',
-  INDIVIDUAL = 'Individual',
-  THIRD_PARTY = 'Third Party',
-  PE_RISK = 'PE_Risk',
-  TRAPEZOID = 'Trapezoid'
-}
+export type NodeType =
+  | 'corporation'
+  | 'ctb'
+  | 'partnership'
+  | 'rctb'
+  | 'branch'
+  | 'disregarded'
+  | 'dual-resident'
+  | 'multiple'
+  | 'trust'
+  | 'individual'
+  | 'third-party'
+  | 'pe-risk'
+  | 'trapezoid'
 
 /**
  * Data format that is used to build the company ownership chart.
@@ -67,7 +57,7 @@ export type GraphData = { nodes: Company[]; edges: (OwnershipEdge | Relationship
 export type Company = {
   id: number
   name: string
-  nodeType: NodeTypeEnum
+  nodeType: NodeType
   units?: number
   jurisdiction?: string
   taxStatus?: string
@@ -81,21 +71,18 @@ export type CompanyRelationshipEdge = {
   id: number
   sourceId: number
   targetId: number
-  type: EdgeTypeEnum
+  type: EdgeType
 }
 
 /**
  * Type that describes the hierarchy edges in this company ownership demo.
  */
-export type OwnershipEdge = CompanyRelationshipEdge & {
-  type: typeof EdgeTypeEnum.Hierarchy
-  ownership: number
-}
+export type OwnershipEdge = CompanyRelationshipEdge & { type: 'Hierarchy'; ownership: number }
 
 /**
  * Type that describes the relationship edges in this company ownership demo.
  */
-export type RelationshipEdge = CompanyRelationshipEdge & { type: typeof EdgeTypeEnum.Relation }
+export type RelationshipEdge = CompanyRelationshipEdge & { type: 'Relation' }
 
 /**
  * Type of data associated with a node.

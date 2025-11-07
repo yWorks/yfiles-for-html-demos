@@ -33,10 +33,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-    <title>Incremental Edge Router - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <title>Incremental Edge Router [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -61,13 +61,8 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
-      <span class="demo-separator"></span>
-      <button id="route-edges" title="Route Edges" class="demo-toggle-button labeled">
-        Route Edges
-      </button>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -83,62 +78,44 @@
 
       <div class="demo-description__content">
         <h1>Incremental Edge Router</h1>
-
         <p>
           This demo shows how to run the edge router algorithm on a predefined subset of edges in a
           graph.
         </p>
-
-        <p>To achieve this, two setup steps are necessary:</p>
+        <h2>Setup</h2>
         <p>
-          First, the algorithm has to be told to work on a subset only. To do so,
-          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">Edge Router</a>'s
-          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#scope" target="_blank">scope</a> property has to be set to
-          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterScope#ROUTE_AFFECTED_EDGES" target="_blank">ROUTE_AFFECTED_EDGES</a>.
+          To achieve this, the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData" class="api" target="_blank">EdgeRouterData</a>&#39;s
+          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#scope" class="api" target="_blank">scope</a> property has to be set to the subset of
+          edges.
         </p>
-        <p>
-          And second, the algorithm has to be told which set of edges to route. The class
-          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData" target="_blank">EdgeRouterData</a> offers the property
-          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#affectedEdges" target="_blank">affectedEdges</a> for this purpose.
-        </p>
-
-        <p>
-          In this demo, the algorithm works on the subset of
-          <span style="color: #01baff; font-weight: bold">blue edges</span> only.
-        </p>
+        <p>In this demo, the algorithm works on the subset of orange edges only.</p>
+        <h2>Things to Try</h2>
         <p>Click the button in the toolbar to run the routing algorithm.</p>
-
-        <h3>Code Snippet</h3>
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/edge-router-incremental/EdgeRouterIncremental.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Demos</h3>
-
-        <p>
-          You can also take a look at the <a href="../../layout/mazerouting/" target="_blank">Maze Routing Demo</a> for a more elaborate
-          application of edge routing.
-        </p>
-
-        <h3>Documentation</h3>
-        <p>
-          The Developer's Guide has detailed information about the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router" target="_blank">edge router algorithm</a> in general and about
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router#polyline_router_incremental" target="_blank">how to run the algorithm on a subset of edges</a>
-          specifically.
-        </p>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../layout/mazerouting/" class="demo" target="_blank">Maze Routing Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router" class="dguide" target="_blank">Edge Router Algorithm</a></li>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router#polyline_router_incremental" class="dguide" target="_blank">Running the Algorithm on a Subset of Edges</a>
+          </li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData" class="api" target="_blank">EdgeRouterData</a></li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="./EdgeRouterIncrementalDemo.ts"
+      async
+    ></script>
   </body>
 </html>

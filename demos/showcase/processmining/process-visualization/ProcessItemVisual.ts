@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BaseClass,
-  WebGLVisual,
   type CanvasComponent,
   Color,
   type GeneralPath,
@@ -44,7 +43,8 @@ import {
   type Point,
   PolylineEdgeStyle,
   SimpleEdge,
-  type Visual
+  type Visual,
+  WebGLVisual
 } from '@yfiles/yfiles'
 import { type WebGLBufferData, WebGLProgramInfo } from './webgl-utils'
 
@@ -290,24 +290,19 @@ void main() {
  * A render visual that draws process items in a canvas using WebGL.
  */
 export class ProcessItemVisual extends WebGLVisual {
-  private entryCount: number
   private readonly entries: ItemEntry[]
   dirty: boolean
   private $time: number
-  private timeDirty: boolean
 
   constructor() {
     super()
-    this.timeDirty = true
     this.$time = 0
     this.entries = []
-    this.entryCount = 0
     this.dirty = false
   }
 
   set time(value: number) {
     this.$time = value
-    this.timeDirty = true
   }
 
   get time(): number {
@@ -442,7 +437,7 @@ export class ProcessItemVisual extends WebGLVisual {
       fragmentShader
     ) as ProcessItemWebGLProgram
     if (!program.info || this.dirty) {
-      const entryCount = (this.entryCount = this.entries.length)
+      const entryCount = this.entries.length
       const vertexCount = entryCount * 6
       if (program.info) {
         program.info.dispose(gl, program)
@@ -483,7 +478,6 @@ export class ProcessItemVisual extends WebGLVisual {
       }
     })
     this.dirty = false
-    this.timeDirty = false
   }
 }
 

@@ -62,6 +62,7 @@ export function removeIconDescription(graphComponent) {
  */
 export class IconDescriptionVisual extends BaseClass(IVisualCreator) {
   node
+
   constructor(node) {
     super()
     this.node = node

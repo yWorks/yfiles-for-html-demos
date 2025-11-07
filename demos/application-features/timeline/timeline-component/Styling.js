@@ -56,8 +56,8 @@ export const defaultStyling = {
  * Manages the styling of the timeline component.
  */
 export class Styling {
-  graphComponent
   style
+  graphComponent
   defaultStyle
   inTimeframeStyle
 

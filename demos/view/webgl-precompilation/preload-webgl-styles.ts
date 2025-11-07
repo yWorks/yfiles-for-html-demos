@@ -28,10 +28,10 @@
  ***************************************************************************/
 import {
   GraphComponent,
-  IEdge,
-  IGraph,
-  ILabel,
-  INode,
+  type IEdge,
+  type IGraph,
+  type ILabel,
+  type INode,
   Point,
   WebGLEdgeIndicatorStyle,
   WebGLFocusIndicatorManager,

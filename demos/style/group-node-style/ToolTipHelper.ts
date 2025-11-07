@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 import {
-  Fill,
-  GraphEditorInputMode,
+  type Fill,
+  type GraphEditorInputMode,
   GroupNodeStyle,
   GroupNodeStyleIconPosition,
   GroupNodeStyleIconType,

@@ -26,13 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphComponent,
-  GraphEditorInputMode,
-  GraphItemTypes,
-  Point,
-  TimeSpan
-} from '@yfiles/yfiles'
+import { GraphItemTypes, Point, TimeSpan } from '@yfiles/yfiles'
 import { isFlowNode } from '../FlowNode/FlowNode'
 
 export function initializeTooltips(graphComponent) {

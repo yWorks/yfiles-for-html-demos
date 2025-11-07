@@ -33,19 +33,19 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  GraphMLIOHandler,
-  IEdge,
-  IFoldingView,
-  IGraph,
-  IInputMode,
-  IModelItem,
-  INode,
+  type GraphMLIOHandler,
+  type IEdge,
+  type IFoldingView,
+  type IGraph,
+  type IInputMode,
+  type IModelItem,
+  type INode,
   KeyScope,
   KeyType,
   License,
-  MoveInputMode,
-  QueryInputHandlersEventArgs,
-  QueryOutputHandlersEventArgs,
+  type MoveInputMode,
+  type QueryInputHandlersEventArgs,
+  type QueryOutputHandlersEventArgs,
   SerializationProperties,
   SmartEdgeLabelModel,
   Table,
@@ -55,12 +55,12 @@ import {
 import { SimpleOutputHandler } from './SimpleOutputHandler'
 import { SimpleInputHandler } from './SimpleInputHandler'
 import { PropertiesPanel } from './PropertiesPanel'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import { EditorSync } from './EditorSync'
 import type { GraphMLProperty } from './GraphMLProperty'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { createConfiguredGraphMLIOHandler } from '@yfiles/demo-utils/FaultTolerantGraphMLIOHandler'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent: GraphComponent
@@ -92,7 +92,7 @@ let graphMLIOHandler: GraphMLIOHandler
 let graphModifiedListener: (args: { graphml: string; selectedItem: IModelItem | null }) => void
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
   editorSync = new EditorSync()
@@ -534,7 +534,7 @@ function initializeUI(): void {
   document
     .querySelector<HTMLButtonElement>('button[data-command="NEW"]')!
     .addEventListener('click', () => clearGraph())
-  const openButton = document.querySelector<HTMLInputElement>('#open-file-button')!!
+  const openButton = document.querySelector<HTMLInputElement>('#open-file-button')!
   openButton.addEventListener('click', () => onOpenCommandExecuted())
   // prevent auto-registering the OPEN command by finishLoading
   openButton.setAttribute('data-command-registered', 'true')

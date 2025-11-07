@@ -26,15 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ComponentLayout, HierarchicalLayout, INode } from '@yfiles/yfiles'
-import { NeighborhoodType } from './NeighborhoodType'
+import { ComponentLayout, HierarchicalLayout } from '@yfiles/yfiles'
+import {} from './NeighborhoodType'
 
 /**
  * Returns the layout callback suitable for neighborhood graphs of the given type.
  * @param neighborhoodType the type of neighborhood graph to be arranged by the returned callback.
  */
 export function getApplyLayoutCallback(neighborhoodType) {
-  return neighborhoodType === NeighborhoodType.FOLDER_CONTENTS
+  return neighborhoodType === 'folder-contents'
     ? (view, nodes) => applyComponentLayout(view, nodes)
     : (view) => applyHierarchicalLayout(view)
 }

@@ -28,17 +28,7 @@
  ***************************************************************************/
 import type { INode, LayoutNode } from '@yfiles/yfiles'
 
-/**
- * Represents the type of nodes in the demo's pathway samples.
- */
-export enum NodeTypes {
-  ENZYME,
-  REACTION,
-  REACTANT,
-  CO_REACTANT,
-  PRODUCT,
-  OTHER
-}
+export type NodeTypes = 'enzyme' | 'reaction' | 'reactant' | 'co-reactant' | 'product' | 'other'
 
 /**
  * Represents the data-set for this demo for creating the nodes and the edges.
@@ -122,10 +112,10 @@ export function isOnCircle(node: INode | LayoutNode): boolean {
  * A mapping between the string values of the node types in the data-set and the NodeTypes enum.
  */
 export const nodeTypesMap = new Map<string, NodeTypes>([
-  ['ENZYME', NodeTypes.ENZYME],
-  ['REACTION', NodeTypes.REACTION],
-  ['CO_REACTANT', NodeTypes.CO_REACTANT],
-  ['PRODUCT', NodeTypes.PRODUCT],
-  ['REACTANT', NodeTypes.REACTANT],
-  ['OTHER', NodeTypes.OTHER]
+  ['ENZYME', 'enzyme'],
+  ['REACTION', 'reaction'],
+  ['CO_REACTANT', 'co-reactant'],
+  ['PRODUCT', 'product'],
+  ['REACTANT', 'reactant'],
+  ['OTHER', 'other']
 ])

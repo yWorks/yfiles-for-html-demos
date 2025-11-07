@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BezierEdgeStyle,
-  CreateEdgeInputMode,
-  GraphComponent,
-  IGraph,
-  INode,
-  Point
-} from '@yfiles/yfiles'
+import { BezierEdgeStyle, Point } from '@yfiles/yfiles'
 import './flowEdge.css'
 import { FlowPortRelocationHandleProvider } from './FlowPortRelocationHandleProvider'
 import { validatePortTag } from '../FlowNode/FlowNodePort'

@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HandleSerializationEventArgs, ILookup, MarkupExtension } from '@yfiles/yfiles'
+import { type HandleSerializationEventArgs, type ILookup, MarkupExtension } from '@yfiles/yfiles'
 
 /**
  * The data model of the UML node style.

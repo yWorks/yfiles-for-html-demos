@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  IEdgeStyle,
-  IGraph,
-  ILabelStyle,
-  INode,
-  INodeStyle,
-  IPortStyle,
-  Mapper
-} from '@yfiles/yfiles'
+import { IEdgeStyle, ILabelStyle, INodeStyle, IPortStyle, Mapper } from '@yfiles/yfiles'
 
 const itemToStyle = new Mapper()
 

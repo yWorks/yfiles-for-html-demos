@@ -32,9 +32,7 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
-  IGraph,
   IGroupPaddingProvider,
-  INode,
   Insets,
   LayoutExecutor,
   License,
@@ -56,9 +54,9 @@ import {
   createDemoNodeStyle,
   createDemoShapeNodeStyle,
   initDemoStyles
-} from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-resources/demo-page'
+} from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * The color sets for the eight different node types.
@@ -84,7 +82,7 @@ let allowNodeTypeChange = true
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   // enable interactive editing
   graphComponent.inputMode = new GraphEditorInputMode({

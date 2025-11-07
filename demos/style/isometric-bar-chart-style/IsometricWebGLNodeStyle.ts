@@ -26,7 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { WebGLVisual, INode, IRenderContext, NodeStyleBase, Visual } from '@yfiles/yfiles'
+import {
+  type INode,
+  type IRenderContext,
+  NodeStyleBase,
+  type Visual,
+  WebGLVisual
+} from '@yfiles/yfiles'
 
 export class IsometricWebGLNodeStyle extends NodeStyleBase {
   createVisual(context: IRenderContext, node: INode): Visual {

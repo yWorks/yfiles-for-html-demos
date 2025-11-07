@@ -1,37 +1,36 @@
 {
-  "nodeList": [
-    { "id": 0, "tag": 0, "labels": [{ "text": "0" }] },
-    { "id": 1, "tag": 1, "labels": [{ "text": "1" }] },
-    { "id": 2, "tag": 2, "labels": [{ "text": "2" }] },
-    { "id": 3, "tag": 3, "labels": [{ "text": "3" }] },
-    { "id": 4, "tag": 4, "labels": [{ "text": "4" }] },
+  "nodes": [
+    { "id": 0, "tag": 0, "labels": "0" },
+    { "id": 1, "tag": 1, "labels": "1" },
+    { "id": 2, "tag": 2, "labels": "2" },
+    { "id": 3, "tag": 3, "labels": "3" },
+    { "id": 4, "tag": 4, "labels": "4" },
     {
       "id": 5,
       "tag": 5,
-      "labels": [{ "text": "5", "fill": "#A1E5E3", "fillColor": "#114D4C" }],
-      "fill": "#17BEBB",
-      "stroke": "1.25px #407271"
+      "labels": [{ "text": "5", "cssClass": "highlight" }],
+      "cssClass": "highlight"
     },
-    { "id": 6, "tag": 6, "labels": [{ "text": "6" }] },
-    { "id": 7, "tag": 7, "labels": [{ "text": "7" }] },
-    { "id": 8, "tag": 8, "labels": [{ "text": "8" }] },
-    { "id": 9, "tag": 9, "labels": [{ "text": "9" }] },
-    { "id": 10, "tag": 10, "labels": [{ "text": "10" }] },
-    { "id": 11, "tag": null, "labels": [{ "text": "11" }] }
+    { "id": 6, "tag": 6, "labels": "6" },
+    { "id": 7, "tag": 7, "labels": "7" },
+    { "id": 8, "tag": 8, "labels": "8" },
+    { "id": 9, "tag": 9, "labels": "9" },
+    { "id": 10, "tag": 10, "labels": "10" },
+    { "id": 11, "tag": null, "labels": "11" }
   ],
-  "edgeList": [
-    { "id": 0, "source": 0, "target": 1, "targetArrow": "stealth" },
-    { "id": 1, "source": 0, "target": 2, "targetArrow": "stealth" },
-    { "id": 2, "source": 0, "target": 3, "targetArrow": "stealth" },
-    { "id": 3, "source": 1, "target": 4, "targetArrow": "stealth" },
-    { "id": 4, "source": 1, "target": 6, "targetArrow": "stealth" },
-    { "id": 5, "source": 0, "target": 4, "targetArrow": "stealth" },
-    { "id": 6, "source": 4, "target": 5, "targetArrow": "stealth" },
-    { "id": 7, "source": 2, "target": 7, "targetArrow": "stealth" },
-    { "id": 8, "source": 2, "target": 8, "targetArrow": "stealth" },
-    { "id": 9, "source": 3, "target": 9, "targetArrow": "stealth" },
-    { "id": 10, "source": 8, "target": 10, "targetArrow": "stealth" },
-    { "id": 11, "source": 4, "target": 11, "targetArrow": "stealth" },
-    { "id": 12, "source": 6, "target": 10, "targetArrow": "stealth" }
+  "edges": [
+    { "id": 0, "source": 0, "target": 1 },
+    { "id": 1, "source": 0, "target": 2 },
+    { "id": 2, "source": 0, "target": 3 },
+    { "id": 3, "source": 1, "target": 4 },
+    { "id": 4, "source": 1, "target": 6 },
+    { "id": 5, "source": 0, "target": 4 },
+    { "id": 6, "source": 4, "target": 5 },
+    { "id": 7, "source": 2, "target": 7 },
+    { "id": 8, "source": 2, "target": 8 },
+    { "id": 9, "source": 3, "target": 9 },
+    { "id": 10, "source": 8, "target": 10 },
+    { "id": 11, "source": 4, "target": 11 },
+    { "id": 12, "source": 6, "target": 10 }
   ]
 }

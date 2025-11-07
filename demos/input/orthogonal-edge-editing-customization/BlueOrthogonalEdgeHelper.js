@@ -26,13 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  IEdge,
-  IInputModeContext,
-  IOrthogonalEdgeHelper,
-  OrthogonalEdgeHelper,
-  SegmentOrientation
-} from '@yfiles/yfiles'
+import { IOrthogonalEdgeHelper, OrthogonalEdgeHelper, SegmentOrientation } from '@yfiles/yfiles'
 
 /**
  * The {@link OrthogonalEdgeHelper} for blue edges. Orthogonal edge

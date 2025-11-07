@@ -1,26 +1,25 @@
 {
-  "nodeList": [
-    { "id": 0, "tag": 0, "labels": [{ "text": "0" }] },
-    { "id": 1, "tag": 1, "labels": [{ "text": "1" }] },
-    { "id": 2, "tag": 2, "labels": [{ "text": "2" }] },
-    { "id": 3, "tag": 3, "labels": [{ "text": "3" }] },
-    { "id": 4, "tag": 4, "labels": [{ "text": "4" }] },
+  "nodes": [
+    { "id": 0, "labels": [{ "text": "0" }] },
+    { "id": 1, "labels": [{ "text": "1" }] },
+    { "id": 2, "labels": [{ "text": "2" }] },
+    { "id": 3, "labels": [{ "text": "3" }] },
+    { "id": 4, "labels": [{ "text": "4" }] },
     {
       "id": 5,
-      "tag": 5,
-      "labels": [{ "text": "5", "fill": "#A1E5E3", "fillColor": "#114D4C" }],
-      "fill": "#17BEBB",
-      "stroke": "1.25px #407271"
+      "labels": [{ "text": "5", "cssClass": "highlight" }],
+      "tag": "terminal",
+      "cssClass": "highlight"
     }
   ],
-  "edgeList": [
+  "edges": [
     { "id": 0, "source": 0, "target": 1 },
     { "id": 1, "source": 0, "target": 2 },
     { "id": 2, "source": 0, "target": 3 },
     { "id": 3, "source": 0, "target": 4 },
-    { "id": 4, "source": 1, "target": 5, "tag": 4 },
-    { "id": 5, "source": 2, "target": 5, "tag": 5 },
-    { "id": 6, "source": 3, "target": 5, "tag": 6 },
-    { "id": 7, "source": 4, "target": 5, "tag": 7 }
+    { "id": 4, "source": 1, "target": 5 },
+    { "id": 5, "source": 2, "target": 5 },
+    { "id": 6, "source": 3, "target": 5 },
+    { "id": 7, "source": 4, "target": 5 }
   ]
 }

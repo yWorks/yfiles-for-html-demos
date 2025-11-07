@@ -43,8 +43,9 @@ type AnimationEndedListener = () => void
  * Creates the animation of the timeline.
  */
 export class TimeframeAnimation {
+    readonly timelineComponent: GraphComponent;
+    readonly timeframeRect: MutableRectangle;
   private animator: Animator | null = null
-  private startLocation: Point | null = null
   private timeframeListener: TimeframeListener | null = null
   private animationEndedListener: AnimationEndedListener | null = null
   animating = false
@@ -55,9 +56,11 @@ export class TimeframeAnimation {
    * @param timelineComponent The graph component presenting the timeline
    */
   constructor(
-    readonly timeframeRect: MutableRectangle,
-    readonly timelineComponent: GraphComponent
-  ) {}
+    timeframeRect: MutableRectangle,
+    timelineComponent: GraphComponent
+  ) {
+      this.timeframeRect = timeframeRect;
+      this.timelineComponent = timelineComponent;}
 
   /**
    * Moves the time frame rightwards along the timeline until it reaches the right border.
@@ -71,9 +74,6 @@ export class TimeframeAnimation {
 
       // set animating flag
       this.animating = true
-
-      // store start location to be able to reset animation
-      this.startLocation = this.timeframeRect.topLeft
 
       // start animation
       void this.animator.animate(() => {

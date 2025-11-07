@@ -29,17 +29,17 @@
 import {
   BaseClass,
   FreeNodePortLocationModel,
-  ILookup,
+  type ILookup,
   IMarkupExtensionConverter,
   INode,
-  IPort,
+  type IPort,
   IPortLocationModel,
   IPortLocationModelParameter,
-  IPortOwner,
-  IWriteContext,
+  type IPortOwner,
+  type IWriteContext,
   MarkupExtension,
   Matrix,
-  Point
+  type Point
 } from '@yfiles/yfiles'
 
 import { RotatableNodeStyleDecorator } from './RotatableNodes'

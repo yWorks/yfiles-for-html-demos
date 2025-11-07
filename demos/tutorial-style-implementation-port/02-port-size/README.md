@@ -20,8 +20,9 @@ Unlike nodes, ports do not possess an intrinsic size. A port is defined merely b
 First, we add a constructor that defines a size property with a default value of 6.
 
 ```
-constructor(public size: number = 6) {
+constructor(size: number = 6) {
   super()
+  this.size = size
 }
 ```
 

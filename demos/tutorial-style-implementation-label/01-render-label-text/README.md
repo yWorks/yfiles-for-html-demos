@@ -23,16 +23,23 @@ This tutorial will guide you through creating your own label visualizations for 
 
 Note
 
-Implementing a custom label style from scratch is an advanced concept. In a lot of cases, other approaches like template styles or decorating built-in styles with custom elements are sufficient. For more information on the topic of styling graph items, please have a look at [Label Styles](https://docs.yworks.com/yfileshtml/#/dguide/styles-label_styles).
+Implementing a custom label style from scratch is an advanced concept. In a lot of cases, other approaches like template styles or decorating built-in styles with custom elements are enough. For more information on the topic of styling graph items, please have a look at [Label Styles](https://docs.yworks.com/yfileshtml/#/dguide/styles-label_styles).
 
 ## Subclassing LabelStyleBase
 
 yFiles for HTML provides an abstract base class which provides the basic functionality to create a custom label style. We start with a custom subclass of [LabelStyleBase](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase).
 
 ```
-class CustomLabelStyle extends LabelStyleBase {
-  protected createVisual(context: IRenderContext, label: ILabel): Visual | null {
+export class CustomLabelStyle extends LabelStyleBase {
+  protected createVisual(
+    context: IRenderContext,
+    label: ILabel
+  ): Visual | null {
     return null // TODO - create the SVG element
+  }
+
+  protected getPreferredSize(label: ILabel): Size {
+    return new Size(50, 20) // TODO - calculate the size
   }
 }
 ```

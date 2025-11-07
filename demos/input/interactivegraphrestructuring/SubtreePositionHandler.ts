@@ -28,16 +28,15 @@
  ***************************************************************************/
 import {
   BaseClass,
-  GraphComponent,
-  IEdge,
-  IGraph,
-  IInputModeContext,
-  INode,
-  INodeStyle,
-  IPoint,
+  type GraphComponent,
+  type IEdge,
+  type IGraph,
+  type IInputModeContext,
+  type INode,
+  type INodeStyle,
+  type IPoint,
   IPositionHandler,
-  List,
-  Point
+  type Point
 } from '@yfiles/yfiles'
 import { Subtree } from './Subtree'
 import { RelocateSubtreeLayoutHelper } from './RelocateSubtreeLayoutHelper'
@@ -47,6 +46,9 @@ import { EdgePositionHandler } from './EdgePositionHandler'
  * An {@link IPositionHandler} that moves a node and its subtree.
  */
 export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
+  private readonly movingNodeStyle: INodeStyle
+  private readonly nodePositionHandler: IPositionHandler | null
+  private readonly node: INode | null
   private layoutHelper!: RelocateSubtreeLayoutHelper
   private compositeHandler!: IPositionHandler
   private subtree!: Subtree
@@ -59,11 +61,14 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
    * @param movingNodeStyle The node style that is set while the node is moving
    */
   constructor(
-    private readonly node: INode | null,
-    private readonly nodePositionHandler: IPositionHandler | null,
-    private readonly movingNodeStyle: INodeStyle
+    node: INode | null,
+    nodePositionHandler: IPositionHandler | null,
+    movingNodeStyle: INodeStyle
   ) {
     super()
+    this.node = node
+    this.nodePositionHandler = nodePositionHandler
+    this.movingNodeStyle = movingNodeStyle
   }
 
   /**

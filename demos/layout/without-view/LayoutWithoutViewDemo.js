@@ -28,19 +28,17 @@
  ***************************************************************************/
 import {
   HierarchicalLayout,
-  LayoutEdge,
   LayoutGraph,
   LayoutGraphAlgorithms,
   LayoutGrid,
-  LayoutNode,
   License,
   OrientedRectangle,
   Point
 } from '@yfiles/yfiles'
+import licenseData from '../../../lib/license.json'
 
 async function run() {
-  const response = await fetch('./license.json')
-  License.value = await response.json()
+  License.value = licenseData
 
   // create the graph in memory
   const layoutGraph = new LayoutGraph()

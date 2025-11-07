@@ -28,19 +28,19 @@
  ***************************************************************************/
 import {
   BaseClass,
-  CanvasComponent,
-  ClickEventArgs,
+  type CanvasComponent,
+  type ClickEventArgs,
   Cursor,
   HandleType,
   IHandle,
-  IInputModeContext,
-  ILabel,
+  type IInputModeContext,
+  type ILabel,
   ILabelModelParameterFinder,
-  IOrientedRectangle,
+  type IOrientedRectangle,
   IPoint,
-  IRenderContext,
-  IRenderTreeElement,
-  ISize,
+  type IRenderContext,
+  type IRenderTreeElement,
+  type ISize,
   OrientedRectangle,
   Point,
   Size
@@ -51,6 +51,8 @@ import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectan
  * A custom {@link IHandle} implementation that allows resizing a label.
  */
 export class LabelResizeHandle extends BaseClass(IHandle) {
+  private readonly symmetricResize: boolean
+  readonly label: ILabel
   private sizeIndicator: IRenderTreeElement | null = null
   private handleLocation: IPoint = new LabelResizeHandleLivePoint(this)
   emulate = false
@@ -62,11 +64,10 @@ export class LabelResizeHandle extends BaseClass(IHandle) {
    * @param label The label this handle is for
    * @param symmetricResize A value indicating whether resizing should be symmetric
    */
-  constructor(
-    readonly label: ILabel,
-    private readonly symmetricResize: boolean
-  ) {
+  constructor(label: ILabel, symmetricResize: boolean) {
     super()
+    this.label = label
+    this.symmetricResize = symmetricResize
   }
 
   /**
@@ -225,12 +226,15 @@ export class LabelResizeHandle extends BaseClass(IHandle) {
  * Represents the new resize point for the given handler.
  */
 class LabelResizeHandleLivePoint extends BaseClass(IPoint) {
+  private readonly handle: LabelResizeHandle
+
   /**
    * Creates a new point for the given handler.
    * @param handle The given handler
    */
-  constructor(private readonly handle: LabelResizeHandle) {
+  constructor(handle: LabelResizeHandle) {
     super()
+    this.handle = handle
   }
 
   /**

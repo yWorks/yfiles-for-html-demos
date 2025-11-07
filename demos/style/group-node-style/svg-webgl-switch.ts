@@ -31,11 +31,11 @@ import {
   type GraphComponent,
   SelectionIndicatorManager,
   WebGLFocusIndicatorManager,
-  WebGLGraphModelManager,
+  type WebGLGraphModelManager,
   WebGLGraphModelManagerRenderMode,
   WebGLSelectionIndicatorManager
 } from '@yfiles/yfiles'
-import { addNavigationButtons, BrowserDetection } from '@yfiles/demo-resources/demo-page'
+import { addNavigationButtons, BrowserDetection } from '@yfiles/demo-app/demo-page'
 
 let changeListener: EventListener
 

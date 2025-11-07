@@ -202,7 +202,3 @@ function preventPropagation(element: HTMLElement): void {
     element.addEventListener(eventName, stopPropagation)
   }
 }
-
-function extractName(path: string): string {
-  return path.substring(path.lastIndexOf('_') + 1, path.lastIndexOf('.'))
-}

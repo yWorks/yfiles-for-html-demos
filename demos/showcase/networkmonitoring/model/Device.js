@@ -29,16 +29,15 @@
 /**
  * The type of network device.
  */
-export var DeviceKind
-;(function (DeviceKind) {
-  DeviceKind[(DeviceKind['WORKSTATION'] = 1)] = 'WORKSTATION'
-  DeviceKind[(DeviceKind['LAPTOP'] = 2)] = 'LAPTOP'
-  DeviceKind[(DeviceKind['SMARTPHONE'] = 3)] = 'SMARTPHONE'
-  DeviceKind[(DeviceKind['SWITCH'] = 4)] = 'SWITCH'
-  DeviceKind[(DeviceKind['WLAN'] = 5)] = 'WLAN'
-  DeviceKind[(DeviceKind['SERVER'] = 6)] = 'SERVER'
-  DeviceKind[(DeviceKind['DATABASE'] = 7)] = 'DATABASE'
-})(DeviceKind || (DeviceKind = {}))
+export const DeviceKind = {
+  WORKSTATION: 1,
+  LAPTOP: 2,
+  SMARTPHONE: 3,
+  SWITCH: 4,
+  WLAN: 5,
+  SERVER: 6,
+  DATABASE: 7
+}
 
 /**
  * Class representing a device in the network.

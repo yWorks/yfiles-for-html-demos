@@ -26,26 +26,18 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  Class,
-  ComponentArrangementStyle,
-  ComponentLayout,
-  GraphComponent,
-  ILayoutAlgorithm,
-  Size
-} from '@yfiles/yfiles'
+import { Class, ComponentArrangementStyle, ComponentLayout, Size } from '@yfiles/yfiles'
 
 import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -61,7 +53,7 @@ export const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
     ],
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     styleItem: [
@@ -116,7 +108,7 @@ export const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
       ),
       new OptionGroupAttribute('LayoutGroup', 50),
       new MinMaxAttribute(0.2, 5.0, 0.01),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     componentSpacingItem: [
@@ -126,7 +118,7 @@ export const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
       ),
       new OptionGroupAttribute('LayoutGroup', 60),
       new MinMaxAttribute(0.0, 400.0),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     gridEnabledItem: [
@@ -144,7 +136,7 @@ export const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
       ),
       new OptionGroupAttribute('LayoutGroup', 80),
       new MinMaxAttribute(2, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ]
   },

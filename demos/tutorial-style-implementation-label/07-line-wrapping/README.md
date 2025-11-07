@@ -21,10 +21,12 @@ First, we define parameters for the line wrapping policy and the maximum size in
 
 ```
 constructor(
-  private wrapping: TextWrapping = TextWrapping.NONE,
-  private maxSize: Size = Size.INFINITE
+  wrapping: TextWrapping = TextWrapping.NONE,
+  maxSize: Size = Size.INFINITE
 ) {
   super()
+  this.wrapping = wrapping
+  this.maxSize = maxSize
 }
 ```
 
@@ -47,7 +49,7 @@ const { width, height } = TextRenderSupport.measureText(
 return new Size(width + padding + padding, height + padding + padding)
 ```
 
-Finally, we can use the maximum size and line wrapping policy in [TextRenderSupport.addText](https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport#TextRenderSupport-method-addText).
+Finally, we can use the maximum size and line wrapping policy in [TextRenderSupport.addText](https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport#addText).
 
 ```
 // subtract the padding from the maximum size for text measuring

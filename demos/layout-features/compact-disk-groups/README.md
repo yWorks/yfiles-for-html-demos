@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Compact Disk Groups - Layout Features
+# Compact Disk Groups
 
 <img src="../../../doc/demo-thumbnails/layout-compact-disk-groups.webp" alt="demo-thumbnail" height="320"/>
 
@@ -17,16 +17,21 @@
 
 This demo shows how to use the [CompactDiskLayout](https://docs.yworks.com/yfileshtml/#/api/CompactDiskLayout) to arrange the content of (circular) group nodes.
 
-This arrangement is suitable if the group content should be placed in a compact way and if there are no or only few edges between child nodes.
+This layout is suitable when the group content should be arranged in a compact way and the child nodes have few or no edges between them.
 
-The content of each group is arranged in a compact, circular way by [CompactDiskLayout](https://docs.yworks.com/yfileshtml/#/api/CompactDiskLayout). The children are furthermore ordered by [node type](https://docs.yworks.com/yfileshtml/#/api/CompactDiskLayoutData#nodeTypes) (reflected by label text and color in this example).
+It highlights the configuration of various aspects:
 
-[RecursiveGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout) handles the group nodes recursively. An [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) is applied to the nodes of the top-level hierarchy.
+- [CompactDiskLayout](https://docs.yworks.com/yfileshtml/#/api/CompactDiskLayout) packs child nodes within each group in compact, circular way.
+- Child nodes are ordered by [nodeTypes](https://docs.yworks.com/yfileshtml/#/api/CompactDiskLayoutData#nodeTypes), as indicated by their labels and colors.
+- [RecursiveGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout) handles the group nodes recursively.
+- [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) arranges the top-level groups.
 
-### Code Snippet
+## Demos
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/compact-disk-groups/CompactDiskGroups.ts).
+- [Layout Styles: Compact Disk Demo](../../showcase/layoutstyles/index.html?layout=compact-disk&sample=compact-disk-with-edges)
 
-### Documentation
+## Documentation
 
-The Developer's Guide provides in-depth information about the [Compact Disk Layout](https://docs.yworks.com/yfileshtml/#/dguide/compact_disk_layout).
+- [Compact Disk Layout](https://docs.yworks.com/yfileshtml/#/dguide/compact_disk_layout)
+- [CompactDiskLayout](https://docs.yworks.com/yfileshtml/#/api/CompactDiskLayout)
+- [RecursiveGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout)

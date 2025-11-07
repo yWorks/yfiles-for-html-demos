@@ -21,7 +21,7 @@ This is usually necessary after the app received or queried new data from a data
 
 ## Assigning new data and updating the graph structure
 
-After the business data has changed, you can assign the new data to one or more nodes and/or edges sources. Then, it’s only a matter of calling [updateGraph](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder#GraphBuilder-method-updateGraph) to update the graph structure to the new data.
+After the business data has changed, you can assign the new data to one or more nodes and/or edges sources. Then, it’s only a matter of calling [updateGraph](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder#updateGraph) to update the graph structure to the new data.
 
 ```
 // assign the new data to the nodesSource
@@ -32,7 +32,7 @@ graphBuilder.updateGraph()
 
 Note
 
-When a new data item has the same `id` as an existing item as defined by the [id provider](https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-property-idProvider), it is interpreted as being the same and the node or edge in the graph is re-used. Only the visualization and the data in the [tag](https://docs.yworks.com/yfileshtml/#/api/IModelItem#ITagOwner-property-tag) are updated.
+When a new data item has the same `id` as an existing item as defined by the [id provider](https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider), it is interpreted as being the same and the node or edge in the graph is re-used. Only the visualization and the data in the [tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag) are updated.
 
 ## Updating the graph with dynamic data
 

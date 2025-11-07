@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>01 Create Graph - Tutorial: Graph Builder [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -133,14 +133,14 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  This tutorial will guide you through configuring <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> to
+                  This tutorial will guide you through configuring <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> to
                   conveniently transfer business data into a graph that you can display, manage and
                   explore.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> is a class which supports loading data from
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> is a class which supports loading data from
                   different&#8201;&#8212;&#8201;and even multiple&#8201;&#8212;&#8201;sources. It
                   uses the data to construct the graph structure and provides multiple options to
                   assign visualizations to the graph elements and add labels.
@@ -148,7 +148,7 @@
               </div>
               <div class="paragraph">
                 <p>
-                  Another feature of <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> is the possibility to update the
+                  Another feature of <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> is the possibility to update the
                   graph when the business data changes. It allows for specific changes without
                   rebuilding the graph from scratch.
                 </p>
@@ -160,7 +160,7 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  Before starting with <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>, let&#8217;s have a look at some
+                  Before starting with <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>, let&#8217;s have a look at some
                   sample data. It describes two entities representing two persons and a connection
                   between them.
                 </p>
@@ -169,7 +169,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> data = {
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> data = {
   <span class="hljs-attr">persons</span>: [
     { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Erik Joplin&#x27;</span> },
     { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;1&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Melissa Barner&#x27;</span> }
@@ -187,20 +187,20 @@
               </div>
               <div class="paragraph">
                 <p>
-                  Now, we are using <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> to create a graph containing two
+                  Now, we are using <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> to create a graph containing two
                   nodes that are connected. First, we create an instance of
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> and associate it with an
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" target="_blank">IGraph</a> instance. Most often the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-property-graph" target="_blank">GraphComponent&#8217;s graph</a>
-                  property is used for this purpose. Then, data sources are added for nodes and for
-                  edges. Finally, <code>buildGraph()</code> creates the graph.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> and associate it with an
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" class="api" target="_blank">IGraph</a> instance. Most often the
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#graph" class="api" target="_blank">GraphComponent&#8217;s graph</a> property is
+                  used for this purpose. Then, data sources are added for nodes and for edges.
+                  Finally, <code>buildGraph()</code> creates the graph.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// use the graph from the graph component, for example</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// use the graph from the graph component, for example</span>
 <span class="hljs-keyword">const</span> graph = graphComponent.<span class="hljs-property">graph</span>
 
 <span class="hljs-comment">// instantiate the graph builder</span>
@@ -247,22 +247,22 @@ graphBuilder.<span class="hljs-title function_">buildGraph</span>()</code></pre>
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  This tutorial focuses on the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> class which is used when
+                  This tutorial focuses on the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> class which is used when
                   the data describes a general graph with information about nodes and edges.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   There are two other graph builder classes that are better suited for specific
-                  scenarios: <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a>.
-                  In principle, they work the same as <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>. They only differ
+                  scenarios: <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" class="api" target="_blank">TreeBuilder</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" class="api" target="_blank">AdjacencyGraphBuilder</a>.
+                  In principle, they work the same as <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. They only differ
                   in the way the node and edge sources are configured.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a> is designed to create a graph from data that has a
-                  tree structure and <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a> applies when the
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" class="api" target="_blank">TreeBuilder</a> is designed to create a graph from data that has a
+                  tree structure and <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" class="api" target="_blank">AdjacencyGraphBuilder</a> applies when the
                   connections between the elements are not separately specified in the data.
                 </p>
               </div>
@@ -290,7 +290,7 @@ graphBuilder.<span class="hljs-title function_">buildGraph</span>()</code></pre>
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

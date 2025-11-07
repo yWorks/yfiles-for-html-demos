@@ -38,13 +38,13 @@ import {
 } from '@yfiles/yfiles'
 import SampleData from './D3ChartNodesData'
 import { D3ChartNodeStyle } from './D3ChartNodeStyle'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // create a new graph component
   graphComponent = new GraphComponent('graphComponent')

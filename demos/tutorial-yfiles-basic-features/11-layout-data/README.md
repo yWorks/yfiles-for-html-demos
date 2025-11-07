@@ -47,7 +47,7 @@ The layer alignment can take values between _0_ and _1_, where _0_ corresponds t
 
 ```
 function getAlignment(node: INode): number {
-  const text = node.labels.at(0)?.text?.toLowerCase() ?? 'center'
+  const text = node.labels.at(0)?.text.toLowerCase() ?? 'center'
   switch (text) {
     default:
     case 'center':
@@ -60,7 +60,7 @@ function getAlignment(node: INode): number {
 }
 ```
 
-The layout data is used as a parameter for [applyLayoutAnimated](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-defaultmethod-applyLayoutAnimated) to pass the information to the layout algorithm.
+The layout data is used as a parameter for [applyLayoutAnimated](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#applyLayoutAnimated) to pass the information to the layout algorithm.
 
 ```
 await graphComponent.applyLayoutAnimated({

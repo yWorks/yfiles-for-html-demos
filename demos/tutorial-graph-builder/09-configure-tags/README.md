@@ -15,9 +15,9 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/09-configure-tags/).
 
-By default, [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) stores each business data item in the corresponding graph element’s [tag](https://docs.yworks.com/yfileshtml/#/api/IModelItem#ITagOwner-property-tag).
+By default, [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) stores each business data item in the corresponding graph element’s [tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag).
 
-In this tutorial step, you will learn how to use a [tag provider](https://docs.yworks.com/yfileshtml/#/api/NodeCreator#NodeCreator-property-tagProvider) to customize the data available on the [tag](https://docs.yworks.com/yfileshtml/#/api/IModelItem#ITagOwner-property-tag). This can come in handy, when you want to augment your data with additional information or when you want to strip parts of the original business data, to lower the memory load of the built graph for instance.
+In this tutorial step, you will learn how to use a [tag provider](https://docs.yworks.com/yfileshtml/#/api/NodeCreator#tagProvider) to customize the data available on the [tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag). This can come in handy when you want to augment your data with additional information or when you want to strip parts of the original business data to lower the memory load of the built graph, for instance.
 
 Note
 
@@ -41,7 +41,7 @@ type EntityData = {
 
 Assume now that for each node, we need to store only the information about the name and the type of each business entity and for each edge only the ownership.
 
-The desired [tag](https://docs.yworks.com/yfileshtml/#/api/IModelItem#ITagOwner-property-tag) types should then look like this:
+The desired [tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag) types should then look like this:
 
 ```
 type OwnerData = { name: string; type: string }
@@ -49,7 +49,7 @@ type OwnerData = { name: string; type: string }
 
 ## Configuring the tag provider
 
-For the custom [tag](https://docs.yworks.com/yfileshtml/#/api/IModelItem#ITagOwner-property-tag) creation, a [tag provider](https://docs.yworks.com/yfileshtml/#/api/NodeCreator#NodeCreator-property-tagProvider) is required that will return an object with the values of the `name` and `type` property of the nodes created by the specific [NodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource).
+For the custom [tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag) creation, a [tag provider](https://docs.yworks.com/yfileshtml/#/api/NodeCreator#tagProvider) is required that will return an object with the values of the `name` and `type` property of the nodes created by the specific [NodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource).
 
 ```
 // configure the provider that returns an object with the name and the type property of the nodes
@@ -58,7 +58,7 @@ nodesSource.nodeCreator.tagProvider = (data): OwnerData => {
 }
 ```
 
-Custom creation of edge and label tags works the same way as for node tags. Simply define a tag provider on EdgeCreator or LabelCreator.
+Custom creation of edge and label tags works the same way as for node tags: Define a tag provider on EdgeCreator or LabelCreator.
 
 Note
 

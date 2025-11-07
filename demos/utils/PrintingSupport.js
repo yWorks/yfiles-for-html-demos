@@ -26,17 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  Graph,
-  GraphComponent,
-  IEnumerable,
-  IGraph,
-  Matrix,
-  Point,
-  Rect,
-  Size,
-  SvgExport
-} from '@yfiles/yfiles'
+import { Graph, GraphComponent, IEnumerable, Matrix, Rect, Size, SvgExport } from '@yfiles/yfiles'
 import { openInWindow } from './open-in-window'
 
 /**
@@ -87,7 +77,7 @@ export class PrintingSupport {
   projection = Matrix.IDENTITY
   /**
    * The styles set to the {@link SvgExport.cssStyleSheet} property.
-   * */
+   */
   cssStyleSheet = ''
 
   /**

@@ -33,11 +33,9 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  GraphInputMode,
   GraphItemTypes,
   GroupNodeStyle,
   HierarchicalLayout,
-  IGraph,
   LabelStyle,
   LayoutExecutor,
   License,
@@ -47,9 +45,9 @@ import {
   Size
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import graphData from './graph-data.json'
 
 // Ensure that the LayoutExecutor class is not removed by build optimizers
@@ -60,7 +58,7 @@ LayoutExecutor.ensure()
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // create graph component
   const graphComponent = new GraphComponent('#graphComponent')

@@ -46,9 +46,9 @@ import {
 
 import { PriorityPanel } from './PriorityPanel'
 import * as SampleData from './resources/SampleData'
-import { createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * The graph component in which the graph is displayed.
@@ -71,7 +71,7 @@ let layoutRunning = false
 let layoutStyle = 'hierarchical'
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   initializeInputMode()
   initializePriorityPanel()
@@ -144,6 +144,7 @@ async function runLayout() {
     return
   }
   layoutRunning = true
+  setUIDisabled(true)
 
   // Ensure that the LayoutExecutor class is not removed by build optimizers
   // It is needed for the 'applyLayoutAnimated' method in this demo.
@@ -154,6 +155,7 @@ async function runLayout() {
 
   await graphComponent.applyLayoutAnimated(layout, '700ms', layoutData)
   layoutRunning = false
+  setUIDisabled(false)
 }
 
 /**
@@ -310,6 +312,15 @@ function initializeUI() {
       await runLayout()
     }
   )
+}
+
+function setUIDisabled(disabled) {
+  document.querySelector('#random-predecessors-paths').disabled = disabled
+  document.querySelector('#clear-priorities').disabled = disabled
+
+  const samplesComboBox = document.querySelector(`#change-sample`)
+  samplesComboBox.disabled = disabled
+  graphComponent.inputMode.waiting = disabled
 }
 
 run().then(finishLoading)

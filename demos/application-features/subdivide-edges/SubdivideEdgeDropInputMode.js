@@ -27,18 +27,11 @@
  **
  ***************************************************************************/
 import {
-  GraphInputMode,
   GraphItemTypes,
   IEdge,
-  IGraph,
-  IInputModeContext,
   IListEnumerable,
-  IModelItem,
   INode,
-  InputModeItemEventArgs,
   NodeDropInputMode,
-  Point,
-  Rect,
   SimpleBend,
   SimpleEdge
 } from '@yfiles/yfiles'

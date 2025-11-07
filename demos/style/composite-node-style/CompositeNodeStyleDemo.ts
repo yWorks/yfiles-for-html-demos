@@ -32,9 +32,9 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  IGraph,
+  type IGraph,
   ImageNodeStyle,
-  INodeStyle,
+  type INodeStyle,
   License,
   PolylineEdgeStyle,
   ShapeNodeStyle,
@@ -42,8 +42,8 @@ import {
 } from '@yfiles/yfiles'
 
 import SampleData from './resources/SampleData'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { ScalingNodeStyle } from './ScalingNodeStyle'
 
 /**
@@ -64,7 +64,7 @@ type StyleDefinitions = {
  * Bootstraps the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize graph component
   const graphComponent = new GraphComponent('#graphComponent')

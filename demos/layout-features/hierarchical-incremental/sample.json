@@ -1,5 +1,5 @@
 {
-  "nodeList": [
+  "nodes": [
     { "id": 0, "layout": { "x": 100, "y": 0, "width": 30, "height": 30 } },
     { "id": 1, "layout": { "x": 40, "y": 75, "width": 30, "height": 30 } },
     { "id": 2, "layout": { "x": 100, "y": 75, "width": 30, "height": 30 } },
@@ -9,38 +9,33 @@
     {
       "id": 6,
       "layout": { "x": 207, "y": 68.5, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "1.25px #407271",
-      "tag": { "includeInLayout": true }
+      "tag": "includeInLayout",
+      "cssClass": "highlight"
     },
     {
       "id": 7,
       "layout": { "x": 245, "y": 156.5, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "1.25px #407271",
-      "tag": { "includeInLayout": true }
+      "tag": "includeInLayout",
+      "cssClass": "highlight"
     },
     {
       "id": 8,
       "layout": { "x": 289, "y": 126.5, "width": 30, "height": 30 },
-      "stroke": "1.25px #407271",
-      "fill": "#17BEBB",
-      "tag": { "includeInLayout": true }
+      "tag": "includeInLayout",
+      "cssClass": "highlight"
     },
     {
       "id": 9,
       "layout": { "x": 278, "y": 61.5, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "1.25px #407271",
-      "tag": { "includeInLayout": true }
+      "tag": "includeInLayout",
+      "cssClass": "highlight"
     }
   ],
-  "edgeList": [
+  "edges": [
     {
       "id": 0,
       "source": 0,
       "target": 1,
-      "targetArrow": "stealth",
       "bends": [
         { "x": 105, "y": 40 },
         { "x": 55, "y": 60 }
@@ -51,7 +46,6 @@
       "id": 2,
       "source": 1,
       "target": 4,
-      "targetArrow": "stealth",
       "bends": [
         { "x": 47.5, "y": 115 },
         { "x": 25, "y": 135 }
@@ -61,7 +55,6 @@
       "id": 3,
       "source": 1,
       "target": 3,
-      "targetArrow": "stealth",
       "bends": [
         { "x": 62.5, "y": 115 },
         { "x": 85, "y": 135 }
@@ -72,7 +65,6 @@
       "id": 5,
       "source": 0,
       "target": 5,
-      "targetArrow": "stealth",
       "bends": [
         { "x": 125, "y": 40 },
         { "x": 145, "y": 75 },
@@ -84,18 +76,17 @@
       "id": 6,
       "source": 3,
       "target": 5,
-      "targetArrow": "stealth",
       "bends": [
         { "x": 85, "y": 190 },
         { "x": 105, "y": 210 }
       ]
     },
-    { "id": 7, "source": 8, "target": 6, "targetArrow": "stealth" },
-    { "id": 8, "source": 7, "target": 9, "targetArrow": "stealth" },
-    { "id": 9, "source": 6, "target": 3, "targetArrow": "stealth" },
-    { "id": 10, "source": 6, "target": 5, "targetArrow": "stealth" },
-    { "id": 11, "source": 2, "target": 7, "targetArrow": "stealth" },
-    { "id": 12, "source": 2, "target": 8, "targetArrow": "stealth" },
-    { "id": 13, "source": 9, "target": 5, "targetArrow": "stealth" }
+    { "id": 7, "source": 8, "target": 6 },
+    { "id": 8, "source": 7, "target": 9 },
+    { "id": 9, "source": 6, "target": 3 },
+    { "id": 10, "source": 6, "target": 5 },
+    { "id": 11, "source": 2, "target": 7 },
+    { "id": 12, "source": 2, "target": 8 },
+    { "id": 13, "source": 9, "target": 5 }
   ]
 }

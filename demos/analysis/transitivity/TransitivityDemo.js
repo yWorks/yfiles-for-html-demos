@@ -40,15 +40,9 @@ import {
   GraphViewerInputMode,
   HierarchicalLayout,
   HierarchicalLayoutData,
-  ICompoundEdit,
   IconLabelStyle,
-  IEdge,
-  IEdgeStyle,
-  IGraph,
-  ILabelModelParameter,
   ILabelOwner,
   IMementoSupport,
-  IModelItem,
   INode,
   InteriorNodeLabelModel,
   IUndoUnit,
@@ -62,20 +56,18 @@ import {
   PolylineEdgeStyle,
   PortAdjustmentPolicy,
   Rect,
-  RectangleNodeStyle,
   RoutingStyleDescriptor,
   Size,
   StyleIndicatorZoomPolicy,
   TransitiveClosure,
   TransitiveReduction,
-  UndoEngine,
   VerticalTextAlignment
 } from '@yfiles/yfiles'
 
 import GraphData from './resources/yfiles-modules-data'
-import { createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 import packageIconUrl from './resources/package.svg?url'
 
@@ -199,7 +191,7 @@ let dependenciesNo = 0
  * Starts a demo that shows how to use the yFiles transitivity algorithms.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   algorithmComboBox = document.querySelector('#algorithms')
   addNavigationButtons(algorithmComboBox)
@@ -515,11 +507,11 @@ async function onAlgorithmChanged() {
 function applyAlgorithm() {
   const graph = filteredGraph
   if (graph.nodes.size > 0) {
-    switch (algorithmComboBox.selectedIndex) {
+    switch (algorithmComboBox.value) {
       default:
-      case AlgorithmName.ORIGINAL_GRAPH:
+      case 'original-graph':
         break
-      case AlgorithmName.TRANSITIVITY_CLOSURE: {
+      case 'transitive-closure': {
         const transitivityClosure = new TransitiveClosure()
         const transitivityClosureResult = transitivityClosure.run(graph)
 
@@ -537,7 +529,7 @@ function applyAlgorithm() {
         })
         break
       }
-      case AlgorithmName.TRANSITIVITY_REDUCTION: {
+      case 'transitive-reduction': {
         const transitivityReduction = new TransitiveReduction()
         const transitivityReductionResult = transitivityReduction.run(graph)
 
@@ -617,12 +609,12 @@ async function filterGraph(clickedNode) {
     const oppositeNode = edge.opposite(clickedNode)
     // we have to check if the node is already taken into consideration in the calculation of dependents
     if (!filteredNodes.has(oppositeNode)) {
-      !filteredNodes.add(oppositeNode)
+      filteredNodes.add(oppositeNode)
       dependentsNo++
     }
   })
 
-  !filteredNodes.add(clickedNode)
+  filteredNodes.add(clickedNode)
   collectConnectedNodes(clickedNode, fullGraph, true)
   collectConnectedNodes(clickedNode, fullGraph, false)
 
@@ -638,7 +630,7 @@ async function filterGraph(clickedNode) {
     })
   }
 
-  if (algorithmComboBox.selectedIndex !== AlgorithmName.ORIGINAL_GRAPH) {
+  if (algorithmComboBox.value !== 'original-graph') {
     applyAlgorithm()
   }
   return applyLayout(true)
@@ -800,16 +792,6 @@ function updateGraphInformation(packageNode) {
 }
 
 /**
- * Enum definition for accessing different transitivity algorithms.
- */
-var AlgorithmName
-;(function (AlgorithmName) {
-  AlgorithmName[(AlgorithmName['ORIGINAL_GRAPH'] = 0)] = 'ORIGINAL_GRAPH'
-  AlgorithmName[(AlgorithmName['TRANSITIVITY_CLOSURE'] = 1)] = 'TRANSITIVITY_CLOSURE'
-  AlgorithmName[(AlgorithmName['TRANSITIVITY_REDUCTION'] = 2)] = 'TRANSITIVITY_REDUCTION'
-})(AlgorithmName || (AlgorithmName = {}))
-
-/**
  * Begins an undo edit to encapsulate several changes in one undo/redo steps.
  * @param undoName The undo name.
  * @param redoName The redo name.
@@ -840,11 +822,11 @@ function commitUndoEdit(edit) {
  * a node or edge is currently visible (part of the filtered graph).
  */
 function createChangedSetUndoUnit() {
-  let oldFilteredNodes = filteredNodes ? new Set(filteredNodes) : null
-  let oldFilteredEdges = filteredEdges ? new Set(filteredEdges) : null
-  let oldRemovedEdges = removedEdgesSet ? new Set(removedEdgesSet) : null
-  let oldCurrentItem = graphComponent.currentItem
-  let oldStartNode = startNode
+  const oldFilteredNodes = filteredNodes ? new Set(filteredNodes) : null
+  const oldFilteredEdges = filteredEdges ? new Set(filteredEdges) : null
+  const oldRemovedEdges = removedEdgesSet ? new Set(removedEdgesSet) : null
+  const oldCurrentItem = graphComponent.currentItem
+  const oldStartNode = startNode
   let newFilteredNodes = new Set()
   let newFilteredEdges = new Set()
   let newRemovedEdges = new Set()

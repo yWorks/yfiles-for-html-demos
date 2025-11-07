@@ -34,10 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Rectangle Node Style Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
-    <link rel="stylesheet" href="./resources/settings-panel.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -82,7 +81,7 @@
         <h1>Rectangle Node Style Demo</h1>
 
         <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle" target="_blank">RectangleNodeStyle</a> class can display a variety of shapes including
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle" class="api" target="_blank">RectangleNodeStyle</a> class can display a variety of shapes including
           rectangles with rounded and cut corners, hexagons, octagons, pills, half-circles, and
           more.
         </p>
@@ -101,11 +100,11 @@
           </li>
           <li>
             Resize a selected node via its round handles and see how the shape changes based on the
-            value of <a href="https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle#scaleCornerSize" target="_blank">Scale Corner Size</a>.
+            value of <a href="https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle#scaleCornerSize" class="api" target="_blank">Scale Corner Size</a>.
           </li>
           <li>
             Drag the rectangular handle of a selected node to change its
-            <a href="https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle#cornerSize" target="_blank">Corner Size</a> interactively. A blue
+            <a href="https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle#cornerSize" class="api" target="_blank">Corner Size</a> interactively. A blue
             rectangle will be displayed during the drag that visualizes the top-left corner using
             the current corner size.
           </li>
@@ -114,16 +113,16 @@
         <h2>Related Demos</h2>
         <ul>
           <li>
-            <a href="../../style/shape-node-style/" target="_blank">Shape Node Style Demo</a>
+            <a href="../../style/shape-node-style/" class="demo" target="_blank">Shape Node Style Demo</a>
           </li>
           <li>
-            <a href="../../style/group-node-style/" target="_blank">Group Node Style Demo</a>
+            <a href="../../style/group-node-style/" class="demo" target="_blank">Group Node Style Demo</a>
           </li>
           <li>
-            <a href="../../style/arrow-node-style/" target="_blank">Arrow Node Style Demo</a>
+            <a href="../../style/arrow-node-style/" class="demo" target="_blank">Arrow Node Style Demo</a>
           </li>
           <li>
-            <a href="../../tutorial-style-implementation-node/01-create-a-rectangle/" target="_blank">Step 01 Create A Rectangle</a>
+            <a href="../../tutorial-style-implementation-node/01-create-a-rectangle/" class="demo" target="_blank">Step 01 Create A Rectangle</a>
           </li>
         </ul>
       </div>
@@ -135,62 +134,34 @@
       <aside class="demo-main__sidebar">
         <div class="demo-sidebar__content">
           <h2>Style Properties</h2>
-          <div class="demo-properties__settings">
-            <div class="info-message">Please select a node to modify its settings.</div>
-            <div class="demo-form-block" style="display: none">
-              <div class="settings-grid">
-                <label for="corner-style" class="settings-label-row1">Corner Style</label>
-                <select id="corner-style" class="settings-editor-row1 option-element" disabled="">
-                  <option value="rounded">Rounded</option>
-                  <option value="cut">Cut</option>
-                </select>
+          <div class="info-message">Please select a node to modify its settings.</div>
+          <div class="demo-form-block" style="display: none">
+            <div class="demo-properties__settings">
+              <label for="corner-style">Corner Style</label>
+              <select id="corner-style" class="option-element" disabled="">
+                <option value="rounded">Rounded</option>
+                <option value="cut">Cut</option>
+              </select>
 
-                <label for="corner-size-scaling" class="settings-label-row2">
-                  Corner Size Scaling
-                </label>
-                <select
-                  id="corner-size-scaling"
-                  class="settings-editor-row2 option-element"
-                  disabled=""
-                >
-                  <option value="absolute">Absolute</option>
-                  <option value="relative">Relative</option>
-                </select>
+              <label for="corner-size-scaling">Corner Size Scaling</label>
+              <select id="corner-size-scaling" class="option-element" disabled="">
+                <option value="absolute">Absolute</option>
+                <option value="relative">Relative</option>
+              </select>
 
-                <p class="settings-legend1">Affected Corners</p>
+              <h3>Affected Corners</h3>
 
-                <label for="corner-top-left" class="settings-label-row3">Top-left</label>
-                <input
-                  type="checkbox"
-                  id="corner-top-left"
-                  class="settings-editor-row3 option-element"
-                  disabled=""
-                />
+              <label for="corner-top-left">Top-left</label>
+              <input type="checkbox" id="corner-top-left" class="option-element" disabled="" />
 
-                <label for="corner-top-right" class="settings-label-row4">Top-right</label>
-                <input
-                  type="checkbox"
-                  id="corner-top-right"
-                  class="settings-editor-row4 option-element"
-                  disabled=""
-                />
+              <label for="corner-top-right">Top-right</label>
+              <input type="checkbox" id="corner-top-right" class="option-element" disabled="" />
 
-                <label for="corner-bottom-left" class="settings-label-row5">Bottom-left</label>
-                <input
-                  type="checkbox"
-                  id="corner-bottom-left"
-                  class="settings-editor-row5 option-element"
-                  disabled=""
-                />
+              <label for="corner-bottom-left">Bottom-left</label>
+              <input type="checkbox" id="corner-bottom-left" class="option-element" disabled="" />
 
-                <label for="corner-bottom-right" class="settings-label-row6">Bottom-right</label>
-                <input
-                  type="checkbox"
-                  id="corner-bottom-right"
-                  class="settings-editor-row6 option-element"
-                  disabled=""
-                />
-              </div>
+              <label for="corner-bottom-right">Bottom-right</label>
+              <input type="checkbox" id="corner-bottom-right" class="option-element" disabled="" />
             </div>
           </div>
         </div>

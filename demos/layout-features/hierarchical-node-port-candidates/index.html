@@ -32,10 +32,11 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Hierarchical Layout with Node Port Candidates - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <title>Hierarchical Layout with Node Port Candidates [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -60,20 +61,8 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
-
-      <span class="demo-separator"></span>
-
-      <input
-        type="checkbox"
-        id="toggle-feature"
-        class="demo-toggle-button labeled"
-        title="Use NodePortCandidates"
-        checked=""
-      />
-      <label for="toggle-feature">Use Node Port Candidates</label>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -89,51 +78,39 @@
 
       <div class="demo-description__content">
         <h1>Hierarchical Layout with Node Port Candidates</h1>
-
         <p>
-          This demo shows how to use a set of
-          <a href="https://docs.yworks.com/yfileshtml/#/api/NodePortCandidates" target="_blank"> node port candidates</a> for the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">Hierarchical Layout</a> to define the port locations for
-          a node as well as control how many edges can be connected to each port.
+          This demo shows how to use <a href="https://docs.yworks.com/yfileshtml/#/api/NodePortCandidates" class="api" target="_blank">NodePortCandidates</a> to define the port
+          locations and limit the number of edges per port in <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a>.
         </p>
+        <p><strong>Node 5</strong> uses four port candidates, one for each side of the node.</p>
         <p>
-          For the <span style="color: #17bebb; font-weight: bold">turquoise node</span>, a set of
-          <a href="https://docs.yworks.com/yfileshtml/#/api/NodePortCandidates" target="_blank"> node port candidates</a> is used that contains four port
-          candidates, one for each side of the node.
-        </p>
-        <p>
-          Each <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutPortCandidate" target="_blank">LayoutPortCandidate</a> only allows for one connecting edge, hence the
+          Each <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutPortCandidate" class="api" target="_blank">LayoutPortCandidate</a> only allows for one connecting edge, hence the
           four incoming edges are distributed to the four port candidates.
         </p>
+        <h2>Things to Try</h2>
         <p>
-          Click the button in the toolbar to toggle between
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">Hierarchical Layout</a> with and without a configured
-          port candidate set.
+          Click the button in the toolbar to toggle between hierarchical layout with and without a
+          configured port candidate set.
         </p>
-
-        <h3>Code Snippet</h3>
-
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-node-port-candidates/HierarchicalNodePortCandidates.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
         <h3>Documentation</h3>
-        <p>
-          See the <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout-port_locations" target="_blank">Restricting Port Locations</a> section in
-          the Developer's Guide for an in-depth discussion of the relevant concepts.
-        </p>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/layout-port_locations" class="dguide" target="_blank">Restricting Port Locations</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/NodePortCandidates" class="api" target="_blank">NodePortCandidates</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData" class="api" target="_blank">HierarchicalLayoutData</a></li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="./HierarchicalNodePortCandidatesDemo.ts"
+      async
+    ></script>
   </body>
 </html>

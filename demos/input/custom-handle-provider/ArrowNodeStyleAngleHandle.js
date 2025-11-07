@@ -28,18 +28,12 @@
  ***************************************************************************/
 import {
   ArrowNodeDirection,
-  ArrowNodeStyle,
   ArrowStyleShape,
   BaseClass,
-  ClickEventArgs,
   Cursor,
   HandleType,
   IHandle,
-  IInputModeContext,
-  INode,
   IPoint,
-  IRectangle,
-  IRenderContext,
   IVisualCreator,
   Point,
   SvgVisual,
@@ -51,8 +45,8 @@ import {
  * {@link ArrowNodeStyle.angle} interactively.
  */
 export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
-  node
   angleChanged
+  node
   handleOffset = 15.0
   style
 

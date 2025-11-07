@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, Point } from '@yfiles/yfiles'
+import { Point } from '@yfiles/yfiles'
 
 /**
  * Updates the content rectangle to encompass all existing graph elements.
@@ -38,9 +38,9 @@ export function fitGraphBounds(graphComponent) {
 /**
  * Updates the content rectangle to encompass all existing graph elements.
  */
-export function updateViewport(graphComponent) {
+export async function updateViewport(graphComponent) {
   graphComponent.updateContentBounds()
-  graphComponent.fitContent()
+  await graphComponent.fitContent()
 }
 
 /**

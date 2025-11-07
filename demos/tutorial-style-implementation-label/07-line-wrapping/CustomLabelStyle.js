@@ -39,8 +39,8 @@ const font = new Font({ fontFamily: 'Arial', fontSize: 12 })
 const padding = 3
 
 export class CustomLabelStyle extends LabelStyleBase {
-  wrapping
   maxSize
+  wrapping
   constructor(wrapping = TextWrapping.NONE, maxSize = Size.INFINITE) {
     super()
     this.wrapping = wrapping

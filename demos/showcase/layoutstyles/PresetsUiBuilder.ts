@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { OptionEditor } from '@yfiles/demo-resources/demo-option-editor'
+import type { OptionEditor } from '@yfiles/demo-app/demo-option-editor'
 import { Tooltip } from './Tooltip'
 import type { Preset } from './resources/LayoutSamples'
 

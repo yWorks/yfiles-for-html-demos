@@ -36,12 +36,7 @@ import {
 } from '@yfiles/yfiles'
 
 import { FlowchartNodeStyle, FlowchartNodeType } from '../style/FlowchartStyle'
-import {
-  EDGE_TYPE_DATA_KEY,
-  MultiPageEdgeType,
-  MultiPageNodeType,
-  NODE_TYPE_DATA_KEY
-} from './flowchart-elements'
+import { EDGE_TYPE_DATA_KEY, NODE_TYPE_DATA_KEY } from './flowchart-elements'
 
 import { BranchDirection, FlowchartLayout } from './FlowchartLayout'
 
@@ -268,39 +263,39 @@ export class FlowchartLayoutData {
     if (item instanceof INode) {
       const style = item.style
       if (style instanceof TableNodeStyle) {
-        return MultiPageNodeType.Pool
+        return 'Pool'
       } else if (style instanceof GroupNodeStyle) {
-        return MultiPageNodeType.Group
+        return 'Group'
       } else if (style instanceof FlowchartNodeStyle) {
         const type = style.type
         if (nodeActivityElements.has(type)) {
-          return MultiPageNodeType.Process
+          return 'Process'
         } else if (nodeDataElements.has(type)) {
-          return MultiPageNodeType.Data
+          return 'Data'
         } else if (nodeAnnotationElements.has(type)) {
-          return MultiPageNodeType.Annotation
+          return 'Annotation'
         } else if (nodeGatewayElements.has(type)) {
-          return MultiPageNodeType.Decision
+          return 'Decision'
         } else if (nodeEndElements.has(type)) {
-          return MultiPageNodeType.EndEvent
+          return 'EndEvent'
         } else if (nodeEventElements.has(type)) {
-          return MultiPageNodeType.Event
+          return 'Event'
         } else if (nodeReferenceElements.has(type)) {
-          return MultiPageNodeType.Process
+          return 'Process'
         } else if (nodeStartElements.has(type)) {
-          return MultiPageNodeType.StartEvent
+          return 'StartEvent'
         }
       }
     } else if (item instanceof IEdge) {
       if (
-        this.getType(item.sourceNode) === MultiPageNodeType.Annotation ||
-        this.getType(item.targetNode) === MultiPageNodeType.Annotation
+        this.getType(item.sourceNode) === 'Annotation' ||
+        this.getType(item.targetNode) === 'Annotation'
       ) {
-        return MultiPageEdgeType.MessageFlow
+        return 'MessageFlow'
       }
-      return MultiPageEdgeType.SequenceFlow
+      return 'SequenceFlow'
     }
-    return MultiPageNodeType.Invalid
+    return 'Invalid'
   }
 
   /**
@@ -324,7 +319,7 @@ export class FlowchartLayoutData {
    */
   isPositiveBranch(edge) {
     return (
-      this.getType(edge.sourceNode) === MultiPageNodeType.Decision &&
+      this.getType(edge.sourceNode) === 'Decision' &&
       edge.labels.size > 0 &&
       FlowchartLayoutData.isMatchingLabelText(edge.labels.first(), this.positiveBranchLabel)
     )
@@ -338,7 +333,7 @@ export class FlowchartLayoutData {
    */
   isNegativeBranch(edge) {
     return (
-      this.getType(edge.sourceNode) === MultiPageNodeType.Decision &&
+      this.getType(edge.sourceNode) === 'Decision' &&
       edge.labels.size > 0 &&
       FlowchartLayoutData.isMatchingLabelText(edge.labels.first(), this.negativeBranchLabel)
     )

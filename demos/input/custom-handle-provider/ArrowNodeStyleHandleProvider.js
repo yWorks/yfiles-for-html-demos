@@ -31,10 +31,7 @@ import {
   ArrowStyleShape,
   BaseClass,
   IEnumerable,
-  IHandle,
-  IHandleProvider,
-  IInputModeContext,
-  INode
+  IHandleProvider
 } from '@yfiles/yfiles'
 import { ArrowNodeStyleAngleHandle } from './ArrowNodeStyleAngleHandle'
 import { ArrowNodeStyleShaftRatioHandle } from './ArrowNodeStyleShaftRatioHandle'
@@ -48,9 +45,10 @@ import { ArrowNodeStyleShaftRatioHandle } from './ArrowNodeStyleShaftRatioHandle
  * {@link ArrowStyleShape.DOUBLE_ARROW}, and {@link ArrowStyleShape.NOTCHED_ARROW}.
  */
 export class ArrowNodeStyleHandleProvider extends BaseClass(IHandleProvider) {
-  node
-  stylePropertyChanged
   delegateProvider
+  stylePropertyChanged
+  node
+
   /**
    * Creates a new instance of {@link ArrowNodeStyleHandleProvider} with the given
    * {@link stylePropertyChanged} action and an optional {@link delegateProvider} whose handles are

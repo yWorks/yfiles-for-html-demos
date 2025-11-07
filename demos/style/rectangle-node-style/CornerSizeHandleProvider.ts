@@ -28,19 +28,19 @@
  ***************************************************************************/
 import {
   BaseClass,
-  ClickEventArgs,
+  type ClickEventArgs,
   Cursor,
   HandleType,
   IEnumerable,
   IHandle,
   IHandleProvider,
-  IInputModeContext,
-  INode,
+  type IInputModeContext,
+  type INode,
   IPoint,
-  IRenderContext,
+  type IRenderContext,
   type IRenderTreeElement,
   IVisualCreator,
-  Point,
+  type Point,
   RectangleCorners,
   RectangleNodeStyle,
   SvgVisual,
@@ -53,6 +53,9 @@ import {
  * {@link RectangleNodeStyle.cornerSize} of the node style interactively.
  */
 export class CornerSizeHandleProvider extends BaseClass(IHandleProvider) {
+    private readonly delegateProvider: IHandleProvider | null;
+    private readonly node: INode;
+
   /**
    * Initializes a new instance of the provider with an optional `delegateProvider`
    * whose handles are also returned.
@@ -61,10 +64,12 @@ export class CornerSizeHandleProvider extends BaseClass(IHandleProvider) {
    * @param delegateProvider The wrapped {@link IHandleProvider} implementation
    */
   constructor(
-    private readonly node: INode,
-    private readonly delegateProvider: IHandleProvider | null = null
+    node: INode,
+    delegateProvider: IHandleProvider | null = null
   ) {
     super()
+      this.node = node;
+      this.delegateProvider = delegateProvider;
   }
 
   /**
@@ -88,6 +93,7 @@ export class CornerSizeHandleProvider extends BaseClass(IHandleProvider) {
  * {@link RectangleNodeStyle.cornerSize} interactively.
  */
 class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
+    private readonly node: INode;
   private readonly style: RectangleNodeStyle
   private initialCornerSize = 0
   private currentCornerSize = 0
@@ -98,8 +104,9 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
    *
    * @param node The node whose style is changed.
    */
-  constructor(private readonly node: INode) {
+  constructor(node: INode) {
     super()
+      this.node = node;
     this.style = node.style as RectangleNodeStyle
   }
 

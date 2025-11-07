@@ -45,6 +45,7 @@ import { convertLoadToColor } from './model/Device'
  */
 export class ConnectionEdgeStyle extends EdgeStyleBase {
   packetAnimator
+
   /**
    * Initializes the EdgeStyle using the given Animator.
    * @param packetAnimator The animator for the animation of the packages.
@@ -268,9 +269,9 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
  * An animation that moves a packet visualization along the edge path.
  */
 class PacketAnimation extends BaseClass(IAnimation) {
-  packet
-  edge
   forward
+  edge
+  packet
   sourceLocation = null
   targetLocation = null
 

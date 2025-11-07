@@ -31,8 +31,8 @@ import {
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  IGraph,
-  IModelItem,
+  type IGraph,
+  type IModelItem,
   INode,
   LabelStyle,
   LayoutExecutor,
@@ -50,8 +50,8 @@ import { SocialNetworkNodeStyle } from './SocialNetworkNodeStyle'
 import { PropertiesPanel } from './PropertiesPanel'
 import type { Person } from './Person'
 import { copyWithFriends } from './Person'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 LayoutExecutor.ensure()
 
@@ -106,7 +106,7 @@ const queryFriends = `query loadFriends ($id: ID!) {
  * Runs the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
   configureGraph(graphComponent.graph)

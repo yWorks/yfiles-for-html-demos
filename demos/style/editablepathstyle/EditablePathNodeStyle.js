@@ -26,35 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable no-dupe-else-if */
 import {
   BaseClass,
-  ClickEventArgs,
   Cursor,
-  Fill,
   GeneralPath,
   GeneralPathNodeStyle,
-  HandleInputMode,
   HandleType,
-  ICanvasContext,
-  ICompoundEdit,
   IEnumerable,
-  IGraph,
   IHandle,
-  IInputModeContext,
   IMementoSupport,
   INode,
-  INodeStyle,
-  InputModeEventArgs,
   IPoint,
-  IRenderContext,
   Matrix,
   NodeStyleBase,
   PathType,
-  Point,
-  Rect,
-  Stroke,
-  Visual
+  Point
 } from '@yfiles/yfiles'
 
 /**
@@ -652,7 +638,6 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   cancelDrag(context, originalLocation) {
     this.$style.$path.clear()
     this.$x = this.$origX

@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEnumerable, IGraph, INode, Rect } from '@yfiles/yfiles'
+import { type IEnumerable, type IGraph, type INode, Rect } from '@yfiles/yfiles'
 
 /*
  * Provides utility functions for aligning nodes, i.e.

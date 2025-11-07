@@ -36,7 +36,7 @@ import {
   TextRenderSupport,
   TextWrapping
 } from '@yfiles/yfiles'
-import { ComponentClass, createElement, FunctionComponent } from 'react'
+import { type ComponentClass, createElement, type FunctionComponent } from 'react'
 import { createRoot, type Root } from 'react-dom/client'
 
 /**

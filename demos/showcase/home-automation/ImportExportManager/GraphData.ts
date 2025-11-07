@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IGraph } from '@yfiles/yfiles'
+import { type IGraph } from '@yfiles/yfiles'
 import { NodeData, type SerializableNodeData } from './NodeData'
 import { EdgeData, type SerializableEdgeData } from './EdgeData'
 

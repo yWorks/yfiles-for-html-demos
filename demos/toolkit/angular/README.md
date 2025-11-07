@@ -9,9 +9,9 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-<img src="../../../doc/demo-thumbnails/angular-cli.webp" alt="demo-thumbnail" height="320"/>
+<img src="../../../doc/demo-thumbnails/angular.webp" alt="demo-thumbnail" height="320"/>
 
-The Angular CLI Demo shows the integration of yFiles for HTML with [Angular CLI](https://angular.dev/tools/cli/).
+The Angular Demo shows the integration of yFiles for HTML with [Angular](https://angular.dev/).
 
 To start the demo
 

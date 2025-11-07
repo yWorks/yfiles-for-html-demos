@@ -26,19 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  GraphComponent,
-  IEdge,
-  IGraph,
-  IInputModeContext,
-  INode,
-  INodeStyle,
-  IPoint,
-  IPositionHandler,
-  List,
-  Point
-} from '@yfiles/yfiles'
+import { BaseClass, IPositionHandler } from '@yfiles/yfiles'
 import { Subtree } from './Subtree'
 import { RelocateSubtreeLayoutHelper } from './RelocateSubtreeLayoutHelper'
 import { EdgePositionHandler } from './EdgePositionHandler'
@@ -47,9 +35,9 @@ import { EdgePositionHandler } from './EdgePositionHandler'
  * An {@link IPositionHandler} that moves a node and its subtree.
  */
 export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
-  node
-  nodePositionHandler
   movingNodeStyle
+  nodePositionHandler
+  node
   layoutHelper
   compositeHandler
   subtree

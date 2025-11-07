@@ -9,29 +9,29 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Edge Router - Layout Features
+# Edge Router
 
 <img src="../../../doc/demo-thumbnails/layout-edgerouter.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/edge-router/).
 
-This demo shows common configuration options for the (polyline) [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter).
+This demo shows common configuration options for the [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter) algorithm.
 
-- Basic distance settings like the [minimum node-edge distance](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#inimumNodeToEdgeDistance) and the [minimum edge-edge distance](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeDescriptor#minimumEdgeDistance).
-- [Scope](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#scope): the orange edges are _not_ routed by the algorithm, they are so-called _fixed_ edges. All other edges are routed, thus, called _affected_ edges.
-- [Routing Style](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeDescriptor#routingStyle): the default style in this example is orthogonal, but the blue edges are routed using the octilinear style.
-- Grouping of edges: the pink edges are grouped at their target side.
-- Restricting ports via [Port Candidates](https://docs.yworks.com/yfileshtml/#/api/PortCandidate): at node '5' and node '7', ports are restricted to be on the left or right side. For other nodes the port sides are not restricted.
-- [Grid routing](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#grid). Edges are routed on a 10x10 grid.
+It highlights the configuration of various aspects, including:
 
-### Code Snippet
+- Minimum distance settings like the [edge distance](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeDescriptor#minimumEdgeDistance) and the [node-to-edge distance](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#minimumNodeToEdgeDistance).
+- [Scope](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#scope): the **orange edges** (fixed edges) are _not_ routed by the algorithm. All other edges (affected edges) are routed.
+- [Routing style](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeDescriptor#routingStyle): the **blue edges** are routed using the octilinear style, the others routed orthogonally.
+- Grouping: the **pink edges** are grouped at their [target side](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#targetGroupIds).
+- Restricting ports via [port candidates](https://docs.yworks.com/yfileshtml/#/api/PortCandidate): at nodes '5' and '7', ports are restricted to be on their left or right side.
+- [Grid routing](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#gridSpacing): edges are routed on a 10x10 grid.
 
-To experiment with the settings, you can copy the code snippet to configure the router from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/edge-router/EdgeRouter.ts).
+## Demos
 
-### Demos
+- [Layout Styles: Edge Router Demo](../../showcase/layoutstyles/index.html?layout=edge-router&sample=edge-router)
 
-More features offered by the EdgeRouter algorithm are shown by the [Layout Styles Demo](../../showcase/layoutstyles/index.html?layout=edge-router&sample=edge-router).
+## Documentation
 
-### Documentation
-
-The Developer's Guide provides more in-depth information about the available [Polyline Edge Routing](https://docs.yworks.com/yfileshtml/#/dguide/polyline_router_bus_routing) features.
+- [Polyline Edge Routing](https://docs.yworks.com/yfileshtml/#/dguide/polyline_router#polyline_router_edge_grouping)
+- [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter)
+- [EdgeRouterData](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData)

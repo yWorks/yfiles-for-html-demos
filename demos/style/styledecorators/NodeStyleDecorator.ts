@@ -27,23 +27,23 @@
  **
  ***************************************************************************/
 import {
-  ICanvasContext,
+  type ICanvasContext,
   IHitTestable,
-  IInputModeContext,
+  type IInputModeContext,
   ImageNodeStyle,
   IMarqueeTestable,
-  INode,
-  INodeStyle,
-  IRectangle,
-  IRenderContext,
+  type INode,
+  type INodeStyle,
+  type IRectangle,
+  type IRenderContext,
   IVisibilityTestable,
   NodeStyleBase,
-  Point,
+  type Point,
   Rect,
   SimpleNode,
-  SvgVisual,
+  type SvgVisual,
   SvgVisualGroup,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 /**
@@ -60,6 +60,8 @@ import {
  * {@link NodeStyleDecorator.isVisible}.
  */
 export class NodeStyleDecorator extends NodeStyleBase {
+    private readonly imageUrl: string;
+    private readonly baseStyle: INodeStyle;
   private readonly imageStyle = new ImageNodeStyle()
   // This dummy node is passed to the image node style to render the decoration image.
   // Its size is the size of the decoration. Its location is adjusted during each createVisual
@@ -72,10 +74,12 @@ export class NodeStyleDecorator extends NodeStyleBase {
    * @param imageUrl The URL of the image to use for the decoration.
    */
   constructor(
-    private readonly baseStyle: INodeStyle,
-    private readonly imageUrl: string
+    baseStyle: INodeStyle,
+    imageUrl: string
   ) {
     super()
+      this.baseStyle = baseStyle;
+      this.imageUrl = imageUrl;
     this.dummyDecorationNode.layout = new Rect(0, 0, 32, 32)
   }
 

@@ -28,11 +28,11 @@
  ***************************************************************************/
 import {
   BaseClass,
-  IEnumerable,
-  IHandle,
+  type IEnumerable,
+  type IHandle,
   IHandleProvider,
-  IInputModeContext,
-  INode,
+  type IInputModeContext,
+  type INode,
   List
 } from '@yfiles/yfiles'
 import { HeightHandle } from './HeightHandle'

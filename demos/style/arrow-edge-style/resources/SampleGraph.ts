@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
+import type { ColorSetName } from '@yfiles/demo-app/demo-styles'
 
 type GraphData = {
   nodeList: { id: number; layout: { x: number; y: number; width: number; height: number } }[]

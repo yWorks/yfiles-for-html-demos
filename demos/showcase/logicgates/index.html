@@ -34,9 +34,9 @@
     <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport" />
 
     <title>Logic Gates Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link href="../../resources/style/demo.css" rel="stylesheet" />
+    <link href="../../demo-app/style/demo.css" rel="stylesheet" />
 
     <style>
       .yfiles-cursor-dragdrop-copy {
@@ -130,16 +130,18 @@
       <div class="demo-description__content">
         <h1>Logic Gates Demo</h1>
 
-        <p>This demo showcases yFiles for HTML to visualize a digital system with logic gates.</p>
+        <p>
+          This demo shows how to use yFiles for HTML to visualize a digital system with logic gates.
+        </p>
         <p>
           Each node has specific ports: incoming edges connect only to the left side of the target
-          node, while outgoing edges go to the right side of the source node.
-          <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutPortCandidate" target="_blank">LayoutPortCandidate</a> is used for this purpose.
+          node, while outgoing edges originate only from the right side of the source node.
         </p>
 
         <h2>Graph Creation</h2>
         <p>
-          A <a href="../../databinding/port-aware-graph-builder/" target="_blank">Port-aware Graph Builder Demo</a> is used to create the graph, connecting the
+          A specialized <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> from the
+          <a href="../../databinding/port-aware-graph-builder/" class="demo" target="_blank">Port-aware Graph Builder Demo</a> is used to create the graph, connecting the
           edges with specific ports defined in the business data.
         </p>
 

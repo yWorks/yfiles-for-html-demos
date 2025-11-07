@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { createCodemirrorEditor } from '@yfiles/demo-resources/codemirror-editor'
+import { createCodemirrorEditor } from '@yfiles/demo-app/codemirror-editor'
 
 let editor
 

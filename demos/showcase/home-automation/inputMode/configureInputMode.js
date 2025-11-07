@@ -26,13 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphComponent,
-  GraphEditorInputMode,
-  GraphItemTypes,
-  INode,
-  ItemHoverInputMode
-} from '@yfiles/yfiles'
+import { GraphEditorInputMode, GraphItemTypes, INode, ItemHoverInputMode } from '@yfiles/yfiles'
 import { FlowMoveInputMode } from './FlowMoveInputMode'
 import { FlowCreateEdgeInputMode } from './FlowCreateEdgeInputMode'
 import { configureCreateEdgeInputMode } from '../FlowEdge/FlowEdge'

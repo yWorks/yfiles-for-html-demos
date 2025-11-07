@@ -51,8 +51,11 @@ type CustomPortStyleVisual = TaggedSvgVisual<SVGEllipseElement, Cache>
  * A basic port style that renders a circle.
  */
 export class CustomPortStyle extends PortStyleBase<CustomPortStyleVisual> {
-  constructor(public size: number = 6) {
+  size: number
+
+  constructor(size: number = 6) {
     super()
+    this.size = size
   }
 
   protected createVisual(

@@ -29,9 +29,9 @@
 import {
   EdgePathCropper,
   GeneralPath,
-  IEdge,
-  INode,
-  IShapeGeometry,
+  type IEdge,
+  type INode,
+  type IShapeGeometry,
   Matrix,
   Point
 } from '@yfiles/yfiles'

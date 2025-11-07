@@ -26,23 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  IRenderContext,
-  IVisualCreator,
-  Rect,
-  SvgVisual,
-  SvgVisualGroup
-} from '@yfiles/yfiles'
+import { BaseClass, IVisualCreator, SvgVisual, SvgVisualGroup } from '@yfiles/yfiles'
 
 export class RectangleVisualCreator extends BaseClass(IVisualCreator) {
-  title
-  titlePosition
-  dashed
-  fill
-  stroke
-  boundsProvider
   renderInViewCoordinates
+  boundsProvider
+  stroke
+  fill
+  dashed
+  titlePosition
+  title
+
   constructor(
     title,
     titlePosition,

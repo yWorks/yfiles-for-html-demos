@@ -30,13 +30,13 @@ import {
   GraphComponent,
   GraphViewerInputMode,
   IAnimation,
-  IGraph,
-  ILayoutAlgorithm,
-  INode,
+  type IGraph,
+  type ILayoutAlgorithm,
+  type INode,
   LayoutAnchoringPolicy,
   LayoutAnchoringStage,
   LayoutAnchoringStageData,
-  LayoutData,
+  type LayoutData,
   LayoutExecutor,
   License,
   PlaceNodesAtBarycenterStage,
@@ -47,19 +47,15 @@ import {
   SequentialLayout,
   SubgraphLayoutStage,
   SubgraphLayoutStageData,
-  WebGLAnimation,
+  type WebGLAnimation,
   WebGLGraphModelManager,
   WebGLPolylineEdgeStyle,
   WebGLSelectionIndicatorManager,
   WebGLShapeNodeStyle
 } from '@yfiles/yfiles'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import {
-  checkWebGL2Support,
-  finishLoading,
-  showLoadingIndicator
-} from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { checkWebGL2Support, finishLoading, showLoadingIndicator } from '@yfiles/demo-app/demo-page'
 
 /**
  * The current number of tree layers. Also, the starting value for the demo.
@@ -79,7 +75,7 @@ async function run(): Promise<void> {
     return
   }
 
-  License.value = await fetchLicense()
+  License.value = licenseData
   const graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
 

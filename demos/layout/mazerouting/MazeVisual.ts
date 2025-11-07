@@ -39,11 +39,14 @@ import {
  * This class implements the maze visualization based on the nodes that form the maze.
  */
 export class MazeVisual extends BaseClass(IVisualCreator) {
+    private readonly nodes: Iterable<INode>;
+
   /**
    * Creates a new instance of MazeVisual.
    */
-  constructor(private readonly nodes: Iterable<INode>) {
+  constructor(nodes: Iterable<INode>) {
     super()
+      this.nodes = nodes;
   }
 
   /**

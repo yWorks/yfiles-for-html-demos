@@ -37,8 +37,6 @@ import {
   DoubleLayerSubtreePlacer,
   Fill,
   GraphComponent,
-  IGraph,
-  INode,
   LayoutExecutor,
   LeftRightSubtreePlacer,
   Mapper,
@@ -53,12 +51,10 @@ import {
   SubtreeRootAlignment,
   SubtreeTransform,
   TreeLayout,
-  TreeLayoutData,
-  ViewportLimitingMode,
-  ViewportLimitingPolicy
+  TreeLayoutData
 } from '@yfiles/yfiles'
 
-import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
+import { createDemoEdgeStyle } from '@yfiles/demo-app/demo-styles'
 
 // a list of colors that are assigned to the layers
 export const LayerColors = [
@@ -224,26 +220,29 @@ export class SubtreePlacerPanel {
       this.currentSubtreePlacerConfiguration.visible = false
     }
     this.currentSubtreePlacerConfiguration = configuration
-    this.currentSubtreePlacerConfiguration.visible = true
 
-    if (configuration.rotatable) {
-      rotationElement.style.display = 'block'
-      spacingElement.style.display = 'block'
-    } else {
-      rotationElement.style.display = 'none'
-      spacingElement.style.display = 'none'
-    }
+    if (this.currentSubtreePlacerConfiguration) {
+      this.currentSubtreePlacerConfiguration.visible = true
 
-    previewElement.style.visibility = configuration.hasPreview ? 'visible' : 'hidden'
+      if (configuration.rotatable) {
+        rotationElement.style.display = 'block'
+        spacingElement.style.display = 'block'
+      } else {
+        rotationElement.style.display = 'none'
+        spacingElement.style.display = 'none'
+      }
 
-    this.currentSubtreePlacerConfiguration.updatePanel()
+      previewElement.style.visibility = configuration.hasPreview ? 'visible' : 'hidden'
 
-    // request some time to make sure that the panel has the correct size before starting the
-    requestAnimationFrame(() =>
-      requestAnimationFrame(
-        async () => await runPreviewLayout(referencePlacer, this.previewComponent)
+      this.currentSubtreePlacerConfiguration.updatePanel()
+
+      // request some time to make sure that the panel has the correct size before starting the
+      requestAnimationFrame(() =>
+        requestAnimationFrame(
+          async () => await runPreviewLayout(referencePlacer, this.previewComponent)
+        )
       )
-    )
+    }
   }
 
   /**
@@ -306,25 +305,27 @@ function bindActions(panel) {
     if (panel.currentSubtreePlacerConfiguration) {
       panel.currentSubtreePlacerConfiguration.visible = false
     }
-    panel.currentSubtreePlacerConfiguration = panel.subtreePlacerConfigurations.get(
-      selectSubtreePlacer.value
-    )
-    panel.currentSubtreePlacerConfiguration.visible = true
-    const defaultPlacer = panel.currentSubtreePlacerConfiguration.getDefaultSubtreePlacer()
-    if (defaultPlacer) {
-      panel.currentSubtreePlacerConfiguration.adoptSettings([defaultPlacer])
-    }
+    panel.currentSubtreePlacerConfiguration =
+      panel.subtreePlacerConfigurations.get(selectSubtreePlacer.value) ?? null
 
-    const rotationElement = document.querySelector('#rotation')
-    const spacingElement = document.querySelector('#rotatable-spacing')
-    if (panel.currentSubtreePlacerConfiguration.rotatable) {
-      rotationElement.style.display = 'block'
-      spacingElement.style.display = 'block'
-    } else {
-      rotationElement.style.display = 'none'
-      spacingElement.style.display = 'none'
+    if (panel.currentSubtreePlacerConfiguration) {
+      panel.currentSubtreePlacerConfiguration.visible = true
+      const defaultPlacer = panel.currentSubtreePlacerConfiguration.getDefaultSubtreePlacer()
+      if (defaultPlacer) {
+        panel.currentSubtreePlacerConfiguration.adoptSettings([defaultPlacer])
+      }
+
+      const rotationElement = document.querySelector('#rotation')
+      const spacingElement = document.querySelector('#rotatable-spacing')
+      if (panel.currentSubtreePlacerConfiguration.rotatable) {
+        rotationElement.style.display = 'block'
+        spacingElement.style.display = 'block'
+      } else {
+        rotationElement.style.display = 'none'
+        spacingElement.style.display = 'none'
+      }
+      await panel.panelChanged()
     }
-    await panel.panelChanged()
   })
 
   const rotationLeft = document.querySelector('#rotation-left')
@@ -364,7 +365,7 @@ function bindActions(panel) {
  * Updates the transformation for subtree placers that support rotation.
  */
 function updateTransformation(node, transform, panel) {
-  let rotatedSubtreePlacer = panel.subtreePlacers.get(node)
+  const rotatedSubtreePlacer = panel.subtreePlacers.get(node)
   if (
     rotatedSubtreePlacer instanceof SingleLayerSubtreePlacer ||
     rotatedSubtreePlacer instanceof AssistantSubtreePlacer ||

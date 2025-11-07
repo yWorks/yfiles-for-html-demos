@@ -28,12 +28,12 @@
  ***************************************************************************/
 import {
   BaseClass,
-  IInputModeContext,
+  type IInputModeContext,
   IMutablePoint,
-  IPoint,
+  type IPoint,
   IPositionHandler,
-  MutableRectangle,
-  Point
+  type MutableRectangle,
+  type Point
 } from '@yfiles/yfiles'
 
 /**
@@ -97,7 +97,6 @@ export class RectanglePositionHandler extends BaseClass(IPositionHandler) {
     originalLocation: Point,
     newLocation: Point
   ): void {
-    // eslint-disable-next-line no-useless-return
     return
   }
 }

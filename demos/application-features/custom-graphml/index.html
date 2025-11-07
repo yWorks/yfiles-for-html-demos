@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Export custom data in GraphML - Application Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -63,13 +63,9 @@
       <button
         id="open-file-button"
         title="Open a GraphML file"
-        class="demo-icon-yIconOpen labeled"
+        class="demo-icon-yIconOpen"
       ></button>
-      <button
-        id="save-button"
-        title="Save a GraphML file"
-        class="demo-icon-yIconSave labeled"
-      ></button>
+      <button id="save-button" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
       <span class="demo-separator"></span>
       <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
@@ -101,13 +97,13 @@
 
         <p>
           This step shows how to
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_io_serialization-basics" target="_blank">read and write data</a> that is bound
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_io_serialization-basics" class="dguide" target="_blank">read and write data</a> that is bound
           to graph elements to and from a GraphML file.
         </p>
 
         <p>
           This is demonstrated with Date objects that are bound to the node by an
-          <a href="https://docs.yworks.com/yfileshtml/#/api/IMapper" target="_blank">IMapper</a>. Place the cursor over a node to view the bound object in a
+          <a href="https://docs.yworks.com/yfileshtml/#/api/IMapper" class="api" target="_blank">IMapper</a>. Place the cursor over a node to view the bound object in a
           tooltip.
         </p>
 

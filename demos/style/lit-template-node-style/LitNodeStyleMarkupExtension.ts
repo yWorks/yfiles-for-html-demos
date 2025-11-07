@@ -26,4 +26,59 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-export * from '@yfiles/demo-utils/LitNodeStyleMarkupExtension'
+import { type GraphMLIOHandler, type ILookup, MarkupExtension } from '@yfiles/yfiles'
+
+import { createLitNodeStyleFromSource, LitNodeStyle } from './LitNodeStyle'
+
+/**
+ * A markup extension class used for (de-)serializing a Lit node style.
+ */
+export class LitNodeStyleMarkupExtension extends MarkupExtension {
+  private _renderFunction = ''
+
+  get renderFunction(): string {
+    return this._renderFunction
+  }
+
+  set renderFunction(value: string) {
+    this._renderFunction = value
+  }
+
+  provideValue(serviceProvider: ILookup) {
+    return createLitNodeStyleFromSource(this._renderFunction)
+  }
+
+  static create(item: LitNodeStyle): LitNodeStyleMarkupExtension {
+    const litNodeStyleMarkupExtension = new LitNodeStyleMarkupExtension()
+    litNodeStyleMarkupExtension.renderFunction = item.renderFunction.toString()
+    return litNodeStyleMarkupExtension
+  }
+}
+
+/**
+ * Enable serialization of the LitNodeStyle - without a namespace mapping, serialization will fail
+ */
+export function registerLitNodeStyleSerialization(graphmlHandler: GraphMLIOHandler) {
+  // enable serialization of the style - this is done with a markup extension
+  graphmlHandler.addTypeInformation(LitNodeStyle, {
+    extension: (item: LitNodeStyle) => {
+      return LitNodeStyleMarkupExtension.create(item)
+    }
+  })
+  graphmlHandler.addTypeInformation(LitNodeStyleMarkupExtension, {
+    name: 'LitNodeStyle',
+    xmlNamespace: 'http://www.yworks.com/demos/yfiles-lit-node-style/1.0',
+    properties: { renderFunction: { default: '', type: String } }
+  })
+  graphmlHandler.addNamespace('http://www.yworks.com/demos/yfiles-lit-node-style/1.0', 'lit')
+  graphmlHandler.addEventListener('handle-serialization', (evt) => {
+    const item = evt.item
+    const context = evt.context
+    if (item instanceof LitNodeStyle) {
+      const litNodeStyleMarkupExtension = new LitNodeStyleMarkupExtension()
+      litNodeStyleMarkupExtension.renderFunction = item.renderFunction.toString()
+      context.serializeReplacement(LitNodeStyleMarkupExtension, item, litNodeStyleMarkupExtension)
+      evt.handled = true
+    }
+  })
+}

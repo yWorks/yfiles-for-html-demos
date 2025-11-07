@@ -32,4 +32,4 @@ If a component is dragged from the palette onto the canvas, the _ClearAreaLayout
 - [Drag and Drop Demo](../../input/draganddrop/)
 - [Graph Drag and Drop Demo](../../input/graph-drag-and-drop/)
 - [Custom Drag and Drop Demo](../../input/custom-drag-and-drop/)
-- application-features-drag-and-drop
+- [Component Drag and Drop Demo](../../input/componentdraganddrop/)

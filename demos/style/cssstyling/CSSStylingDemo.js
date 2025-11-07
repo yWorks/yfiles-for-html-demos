@@ -41,24 +41,29 @@ import {
   IPort,
   LabelStyle,
   LayoutExecutor,
-  License
+  License,
+  Size
 } from '@yfiles/yfiles'
-import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import { CSS3NodeStyleWrapper } from './CSS3NodeStyleWrapper'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
+import { CssNodeStyleWrapper } from './CssNodeStyleWrapper'
 import graphData from './graph-data.json'
 import { GraphOverviewRenderer } from './GraphOverviewRenderer'
+import { getColor } from './getColor'
 
 let graphComponent
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
   const overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
   // add a custom visualization for the elements in the overview
   overviewComponent.graphOverviewRenderer = new GraphOverviewRenderer()
+
+  // create the color grid for demo description
+  createColorGrid()
 
   configureInputMode()
   initializeGraph(graphComponent.graph)
@@ -85,6 +90,8 @@ async function run() {
  */
 function buildGraph(graph, graphData) {
   const graphBuilder = new GraphBuilder(graph)
+
+  graph.nodeDefaults.size = new Size(60, 60)
 
   graphBuilder
     .createNodesSource({ data: graphData.nodeList, id: (item) => item.id })
@@ -169,24 +176,53 @@ function createTooltipContent(item) {
  * Initializes the defaults for the styling in this demo.
  */
 function initializeGraph(graph) {
-  const demoNodeStyle = createDemoNodeStyle()
-  demoNodeStyle.stroke = '1.5px #3c4253'
-  demoNodeStyle.fill = 'white'
-
+  const demoNodeStyle = createDemoNodeStyle('demo-palette-58')
   const demoEdgeStyle = createDemoEdgeStyle({ showTargetArrow: false })
-  demoEdgeStyle.stroke = '1.5px white'
-
+  demoEdgeStyle.stroke = `1.5px ${getColor('--neutral-gray')}`
   const demoLabelStyle = new LabelStyle({
     textFill: 'white',
     padding: [3, 5, 3, 5],
-    backgroundFill: 'rgba(60, 66, 83, 0.5)'
+    backgroundFill: getColor('--neutral-gray'),
+    shape: 'round-rectangle'
   })
 
-  graph.nodeDefaults.style = new CSS3NodeStyleWrapper(demoNodeStyle)
+  graph.nodeDefaults.style = new CssNodeStyleWrapper(demoNodeStyle)
   graph.edgeDefaults.style = demoEdgeStyle
   graph.nodeDefaults.labels.style = demoLabelStyle
   graph.edgeDefaults.labels.style = demoLabelStyle
-  graph.nodeDefaults.labels.layoutParameter = ExteriorNodeLabelModel.BOTTOM
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 8
+  }).createParameter('bottom')
+}
+
+/**
+ * Creates a color grid with 5 columns and 4 rows using the 20 color variables defined in template-styles.css.
+ * Each column contains all variations of a single color family.
+ */
+function createColorGrid() {
+  const colorGrid = document.getElementById('color-grid')
+  if (!colorGrid) {
+    return
+  }
+
+  // Define color families - each array represents a column
+  const colorFamilies = [
+    ['--blue-dark', '--blue', '--blue-60', '--blue-20'],
+    ['--cyan-dark', '--cyan', '--cyan-60', '--cyan-20'],
+    ['--green-dark', '--green', '--green-60', '--green-20'],
+    ['--purple-dark', '--purple', '--purple-60', '--purple-20'],
+    ['--orange-dark', '--orange', '--orange-60', '--orange-20']
+  ]
+
+  const colorIndices = [0, 1, 2, 3]
+  colorIndices.forEach((index) => {
+    colorFamilies.forEach((family) => {
+      const colorCube = document.createElement('div')
+      colorCube.className = 'color-cube'
+      colorCube.style.backgroundColor = getColor(family[index])
+      colorGrid.appendChild(colorCube)
+    })
+  })
 }
 
 void run().then(finishLoading)

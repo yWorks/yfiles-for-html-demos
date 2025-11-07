@@ -33,19 +33,9 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  GraphMLIOHandler,
-  IEdge,
-  IFoldingView,
-  IGraph,
-  IInputMode,
-  IModelItem,
-  INode,
   KeyScope,
   KeyType,
   License,
-  MoveInputMode,
-  QueryInputHandlersEventArgs,
-  QueryOutputHandlersEventArgs,
   SerializationProperties,
   SmartEdgeLabelModel,
   Table,
@@ -55,11 +45,11 @@ import {
 import { SimpleOutputHandler } from './SimpleOutputHandler'
 import { SimpleInputHandler } from './SimpleInputHandler'
 import { PropertiesPanel } from './PropertiesPanel'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import { EditorSync } from './EditorSync'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { createConfiguredGraphMLIOHandler } from '@yfiles/demo-utils/FaultTolerantGraphMLIOHandler'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent
@@ -91,7 +81,7 @@ let graphMLIOHandler
 let graphModifiedListener
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
   editorSync = new EditorSync()

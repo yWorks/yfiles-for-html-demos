@@ -9,31 +9,33 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Compact Group Nodes with HierarchicalLayout - Layout Features
+# Hierarchical Layout with Compact Groups
 
 <img src="../../../doc/demo-thumbnails/layout-hierarchical-compact-groups.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-compact-groups/).
 
-This demo shows how to configure the [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) and the related [Coordinate Assigner](https://docs.yworks.com/yfileshtml/#/api/DefaultCoordinateAssigner) such that group nodes are drawn in a more compact way compared to the algorithm's default settings.
+This demo shows how to configure the [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) and the corresponding [CoordinateAssigner](https://docs.yworks.com/yfileshtml/#/api/CoordinateAssigner) to draw compacter group nodes than default.
 
-It is a common requirement that the dimension of group nodes should be kept as compact as possible. With default settings, the hierarchical layout algorithm does not focus on that, but, for example, rather tries to avoid bends and to align nodes, which produces less compact arrangements.
+## Layer Compaction
 
-### Compaction of the layers
+The width of group nodes (for left-to-right layouts) can be reduced by enabling [recursive group layering with compaction](https://docs.yworks.com/yfileshtml/#/api/GroupLayeringPolicy#RECURSIVE_COMPACT). This minimizes the number of layers a group spans.
 
-Recursive group layering has an optional _compaction_ feature which tries to keep the layer span of group nodes low. It is accessed via the [compactGroups](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#compactGroups) property. In this example, layers are from left to right, thus this property affects group width. In the sample, the effect of compaction can be seen with 'Group 3'. That group shares its first layer with 'Group 2', whereas without compaction the layers would be disjoint.
+In this demo, you can observe the effect on 'Group 3', which shares its first layer with 'Group 2' when compaction is enabled.
 
-### Compaction orthogonal to the flow
+## Vertical (Orthogonal) Compaction
 
-To keep group nodes compact with respect to the dimension which is orthogonal to the main direction, there are two properties which can be configured. In this example with left-to-right layout direction those properties affect the group height (group width in default top-to-bottom layout).
+To further compact groups in the direction orthogonal to the main layout flow (i.e., height for left-to-right layouts), adjust these properties:
 
-- [groupCompactionStrategy](https://docs.yworks.com/yfileshtml/#/api/DefaultCoordinateAssignment#groupCompactionStrategy) must be set to [MAXIMAL](https://docs.yworks.com/yfileshtml/#/api/GroupCompactionPolicy#MAXIMAL).
-- [bendReduction](https://docs.yworks.com/yfileshtml/#/api/DefaultCoordinateAssignment#bendReduction) should be disabled to prioritize compaction over the reduction of bends.
+- Enable [groupCompaction](https://docs.yworks.com/yfileshtml/#/api/CoordinateAssigner#groupCompaction).
+- Disable [bendReduction](https://docs.yworks.com/yfileshtml/#/api/CoordinateAssigner#bendReduction) to prioritize compaction over reducing bends.
 
-### See the difference
+## Things to Try
 
-Use the toggle-button in the toolbar to see the effect the settings have on the layout result.
+Click the button in the toolbar to toggle between hierarchical layout with and without compact groups.
 
-### Code Snippet
+## Documentation
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-compact-groups/HierarchicalCompactGroups.ts).
+- [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout)
+- [Hierarchical Layout with Groups](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#hierarchical_layout-grouping)
+- [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout)

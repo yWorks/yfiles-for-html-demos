@@ -83,7 +83,7 @@ export const edgeData = [
   { from: 'child16', to: 'child6' },
   { from: 'item3', to: 'child5' },
   { from: 'item3', to: 'child3' },
-  //It's also perfectly valid to have edges between any of the parent or child entitities
+  //It's also perfectly valid to have edges between any of the parent or child entities
   { from: '/root/dir1', to: '/root/dir2' }
 ]
 

@@ -29,17 +29,17 @@
 import {
   type Constructor,
   Fill,
-  IEnumerable,
-  IInputModeContext,
-  INode,
+  type IEnumerable,
+  type IInputModeContext,
+  type INode,
   INodeSizeConstraintProvider,
-  IPortCandidate,
+  type IPortCandidate,
   IPortCandidateProvider,
-  IRenderContext,
+  type IRenderContext,
   List,
   NodeSizeConstraintProvider,
   NodeStyleBase,
-  Point,
+  type Point,
   PortCandidate,
   PortCandidateProviderBase,
   PortCandidateValidity,
@@ -269,12 +269,15 @@ export class ListNodeStyle extends NodeStyleBase<ListNodeStyleVisual> {
  * An {@link IPortCandidateProvider} which returns candidates for all existing and free ports.
  */
 class ExistingAndFreePortCandidateProvider extends PortCandidateProviderBase {
+  private readonly node: INode
+
   /**
    * Creates a new instance.
    * @param node The given node.
    */
-  constructor(private readonly node: INode) {
+  constructor(node: INode) {
     super()
+    this.node = node
   }
 
   /**

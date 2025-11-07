@@ -30,7 +30,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import { License } from '@yfiles/yfiles'
-import licenseData from '../../../../lib/license.json'
+import licenseData from './license.json'
 import './index.css'
 
 License.value = licenseData

@@ -26,180 +26,84 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import { demoApp, graphComponent } from '@yfiles/demo-app/init'
 import {
-  BaseClass,
   Cursor,
   EventRecognizers,
-  GraphBuilder,
-  GraphComponent,
   GraphEditorInputMode,
   HierarchicalLayout,
   IEdge,
-  IGraph,
-  IHitTestable,
-  IInputModeContext,
-  LayoutExecutor,
-  License,
-  Point
+  IHitTestable
 } from '@yfiles/yfiles'
-
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
+import { EdgeHitTestable } from './EdgeHitTestable'
+import { CustomCursorIcons } from './CustomCursorIcons'
 
-let graphComponent: GraphComponent
-const lassoCursor: Cursor = new Cursor('resources/lasso.svg', 17, 15, Cursor.CROSSHAIR)
-const lassoCursorPlus: Cursor = new Cursor('resources/lasso_plus.svg', 17, 15, Cursor.CROSSHAIR)
-const lassoCursorMinus: Cursor = new Cursor('resources/lasso_minus.svg', 17, 15, Cursor.CROSSHAIR)
-const createEdgeCursor: Cursor = new Cursor('resources/createedge.svg', 16, 16, Cursor.DEFAULT)
-const crosshairCursorPlus: Cursor = new Cursor(
-  'resources/crosshair_plus.svg',
-  16,
-  16,
-  Cursor.DEFAULT
-)
-const crosshairCursorMinus: Cursor = new Cursor(
-  'resources/crosshair_minus.svg',
-  16,
-  16,
-  Cursor.DEFAULT
-)
+// Initialize the editor input mode
+const editorInputMode = new GraphEditorInputMode()
 
-/**
- * Runs the demo.
- */
-async function run(): Promise<void> {
-  License.value = await fetchLicense()
+// --- Lasso Selection Configuration ---
+// Enable lasso selection and configure it to start when the 'Alt' key is pressed
+editorInputMode.lassoSelectionInputMode.enabled = true
+editorInputMode.lassoSelectionInputMode.validBeginRecognizer = EventRecognizers.ALT_IS_DOWN
+// Configures custom cursors for different lasso selection states
+editorInputMode.lassoSelectionInputMode.validBeginCursor = CustomCursorIcons.lasso
+editorInputMode.lassoSelectionInputMode.lassoCursor = CustomCursorIcons.lasso
+editorInputMode.lassoSelectionInputMode.extendSelectionCursor = CustomCursorIcons.lasso_plus
+editorInputMode.lassoSelectionInputMode.subtractSelectionCursor = CustomCursorIcons.lasso_minus
+// Set the cursor and radius to indicate where the lasso gesture can be completed
+editorInputMode.lassoSelectionInputMode.validEndCursor = Cursor.CROSSHAIR
+editorInputMode.lassoSelectionInputMode.finishRadius = 10
 
-  // Initialize the GraphComponent
-  graphComponent = new GraphComponent('graphComponent')
-  // Assign the default demo styles
-  initDemoStyles(graphComponent.graph)
+// --- Marquee Selection Configuration ---
+// Configure cursors for different marquee selection states
+editorInputMode.marqueeSelectionInputMode.validBeginCursor = Cursor.CROSSHAIR
+editorInputMode.marqueeSelectionInputMode.marqueeCursor = Cursor.CROSSHAIR
+editorInputMode.marqueeSelectionInputMode.extendSelectionCursor = CustomCursorIcons.crosshair_plus
+editorInputMode.marqueeSelectionInputMode.subtractSelectionCursor =
+  CustomCursorIcons.crosshair_minus
 
-  // build the graph from the given data set
-  buildGraph(graphComponent.graph, graphData)
+// --- Viewport Movement Configuration ---
+// Configure viewport panning to start with the 'Ctrl' key and use grab/grabbing cursors
+editorInputMode.moveViewportInputMode.validBeginRecognizer = EventRecognizers.CTRL_IS_DOWN
+editorInputMode.moveViewportInputMode.validBeginCursor = Cursor.GRAB
+editorInputMode.moveViewportInputMode.dragCursor = Cursor.GRABBING
 
-  // layout and center the graph
-  LayoutExecutor.ensure()
-  graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
-  void graphComponent.fitGraphBounds()
-
-  // enable undo after the initial graph was populated since we don't want to allow undoing that
-  graphComponent.graph.undoEngineEnabled = true
-
-  // specify an input mode configured to use customized cursors and interaction gestures
-  graphComponent.inputMode = createEditorMode()
-}
-
-/**
- * Creates nodes and edges according to the given data.
- */
-function buildGraph(graph: IGraph, graphData: JSONGraph): void {
-  const graphBuilder = new GraphBuilder(graph)
-
-  graphBuilder.createNodesSource({
-    data: graphData.nodeList.filter((item) => !item.isGroup),
-    id: (item) => item.id,
-    parentId: (item) => item.parentId
-  })
-
-  graphBuilder
-    .createGroupNodesSource({
-      data: graphData.nodeList.filter((item) => item.isGroup),
-      id: (item) => item.id
-    })
-    .nodeCreator.createLabelBinding((item) => item.label)
-
-  graphBuilder.createEdgesSource({
-    data: graphData.edgeList,
-    sourceId: (item) => item.source,
-    targetId: (item) => item.target
-  })
-
-  graphBuilder.buildGraph()
-}
-
-/**
- * Creates and configures the editor input mode for this demo.
- */
-function createEditorMode(): GraphEditorInputMode {
-  const mode = new GraphEditorInputMode()
-
-  // Lasso selection is disabled per default and has to be enabled first.
-  mode.lassoSelectionInputMode.enabled = true
-
-  // 'Alt' has to be pressed to start lasso selection which is indicated by a lasso cursor.
-  mode.lassoSelectionInputMode.validBeginRecognizer = EventRecognizers.ALT_IS_DOWN
-  mode.lassoSelectionInputMode.validBeginCursor = lassoCursor
-  mode.lassoSelectionInputMode.lassoCursor = lassoCursor
-  mode.lassoSelectionInputMode.extendSelectionCursor = lassoCursorPlus
-  mode.lassoSelectionInputMode.subtractSelectionCursor = lassoCursorMinus
-
-  // A finish radius is set and the cross-hair cursor is used to indicate that the gesture may end there.
-  mode.lassoSelectionInputMode.validEndCursor = Cursor.CROSSHAIR
-  mode.lassoSelectionInputMode.finishRadius = 10
-
-  mode.marqueeSelectionInputMode.validBeginCursor = Cursor.CROSSHAIR
-  mode.marqueeSelectionInputMode.marqueeCursor = Cursor.CROSSHAIR
-  mode.marqueeSelectionInputMode.extendSelectionCursor = crosshairCursorPlus
-  mode.marqueeSelectionInputMode.subtractSelectionCursor = crosshairCursorMinus
-
-  // 'Ctrl' has to be pressed to start moving the viewport which is indicated by a grab cursor
-  mode.moveViewportInputMode.validBeginRecognizer = EventRecognizers.CTRL_IS_DOWN
-  mode.moveViewportInputMode.validBeginCursor = Cursor.GRAB
-  mode.moveViewportInputMode.dragCursor = Cursor.GRABBING
-
-  // Only hovering over an edge is a valid tool tip location and is indicated by the help cursor
-  mode.toolTipInputMode.validHoverLocationHitTestable = new EdgeHitTestable()
-  mode.toolTipInputMode.validHoverLocationCursor = Cursor.HELP
-  // The hover input mode should have a lower priority then the createEdgeInputMode so its cursor
-  // is displayed when hovering over an edge.
-  mode.toolTipInputMode.priority = mode.createEdgeInputMode.priority - 3
-  // For edges a simple tooltip containing information about the source and target node is used.
-  mode.addEventListener('query-item-tool-tip', (evt) => {
-    if (evt.item instanceof IEdge && !evt.handled) {
-      evt.toolTip = `${evt.item.sourceNode} -> ${evt.item.targetNode}`
-      evt.handled = true
-    }
-  })
-
-  // Edge creation shall only start when 'Ctrl' is pressed and the mouse is hovering over an unselected node.
-  // The check for hovering  over an unselected node is already done by the default beginHitTestable,
-  // so we only have to combine this with a check, whether the 'Ctrl' key was pressed in the last input event.
-  const defaultBeginHitTestable = mode.createEdgeInputMode.beginHitTestable
-  mode.createEdgeInputMode.beginHitTestable = IHitTestable.create(
-    (context, location) =>
-      defaultBeginHitTestable.isHit(context, location) && graphComponent.lastInputEvent.ctrlKey
-  )
-  // Use a custom create-edge cursor to indicate that edge creation is valid to begin and while
-  // still dragging over the source node.
-  mode.createEdgeInputMode.validBeginCursor = createEdgeCursor
-  mode.createEdgeInputMode.startPortOwnerDraggingCursor = createEdgeCursor
-  // disable enforced bend creation, so we can end edge creation with 'Ctrl' held down
-  mode.createEdgeInputMode.enforceBendCreationRecognizer = EventRecognizers.NEVER
-  // As both CreateEdgeInputMode and MoveViewportInputMode now use the 'Ctrl' modifier, we have
-  // to assign the CreateEdgeInputMode a lower priority as otherwise MoveViewportInputMode would
-  // always win.
-  mode.createEdgeInputMode.priority = mode.moveViewportInputMode.priority - 2
-
-  // Node should be movable whether selected or not, so we enabled the moveUnselectedItemsInputMode
-  mode.moveUnselectedItemsInputMode.enabled = true
-  mode.moveUnselectedItemsInputMode.priority = mode.moveViewportInputMode.priority - 1
-  return mode
-}
-
-/**
- * This hit testable returns true when any edge is at the given location.
- */
-class EdgeHitTestable extends BaseClass(IHitTestable) {
-  public isHit(_context: IInputModeContext, location: Point): boolean {
-    return graphComponent.graphModelManager
-      .hitElementsAt(location)
-      .filter((e) => e instanceof IEdge)
-      .some()
+// --- Tooltip Configuration ---
+// Configure tooltips to appear when hovering over an edge, indicated by a help cursor
+editorInputMode.toolTipInputMode.validHoverLocationHitTestable = new EdgeHitTestable()
+editorInputMode.toolTipInputMode.validHoverLocationCursor = Cursor.HELP
+// Assign a higher priority to the tooltip mode to ensure its cursor is displayed when hovering over an edge
+editorInputMode.toolTipInputMode.priority = editorInputMode.createEdgeInputMode.priority - 3
+// Display a simple tooltip containing information about the source and target node
+editorInputMode.addEventListener('query-item-tool-tip', (evt) => {
+  if (evt.item instanceof IEdge && !evt.handled) {
+    evt.toolTip = `${evt.item.sourceNode} -> ${evt.item.targetNode}`
+    evt.handled = true
   }
-}
+})
 
-run().then(finishLoading)
+// --- Edge Creation Configuration ---
+// Modifies edge creation to require both the 'Ctrl' key to be pressed and hovering over a node to begin.
+// This is achieved by combining the default beginHintTestable (node hover check) with a Ctrl key down check.
+const defaultBeginHitTestable = editorInputMode.createEdgeInputMode.beginHitTestable
+editorInputMode.createEdgeInputMode.beginHitTestable = IHitTestable.create(
+  (context, location) =>
+    defaultBeginHitTestable.isHit(context, location) && graphComponent.lastInputEvent.ctrlKey
+)
+// Set custom cursors to indicate when edge creation is valid to begin and during port dragging.
+editorInputMode.createEdgeInputMode.validBeginCursor = CustomCursorIcons.create_edge
+editorInputMode.createEdgeInputMode.startPortOwnerDraggingCursor = CustomCursorIcons.create_edge
+// Disable enforced bend creation, allowing edge creation to be completed even with 'Ctrl' held down
+editorInputMode.createEdgeInputMode.enforceBendCreationRecognizer = EventRecognizers.NEVER
+// Assign a higher priority to the edge creation mode to resolve conflicts with MoveViewportInputMode,
+// as both modes use the 'Ctrl' modifier.
+editorInputMode.createEdgeInputMode.priority = editorInputMode.moveViewportInputMode.priority - 2
+
+graphComponent.inputMode = editorInputMode
+
+// Build and lay out the graph
+demoApp.buildGraphFromJson(graphData)
+graphComponent.graph.applyLayout(new HierarchicalLayout({ minimumLayerDistance: 35 }))
+void graphComponent.fitGraphBounds()
+graphComponent.graph.undoEngineEnabled = true

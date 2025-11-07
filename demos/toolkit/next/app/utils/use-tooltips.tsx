@@ -33,8 +33,8 @@ import {
   IEdge,
   IModelItem,
   INode,
-  QueryItemToolTipEventArgs,
   Point,
+  QueryItemToolTipEventArgs,
   TimeSpan
 } from '@yfiles/yfiles'
 import React, { useEffect } from 'react'

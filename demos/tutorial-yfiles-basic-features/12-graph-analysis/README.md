@@ -51,7 +51,7 @@ Run Shortest Path
 const shortestPath = new ShortestPath({
   source: sourceNode,
   sink: sinkNode,
-  directed: false, // don't consider edge direction
+  directed: false, // don't consider the edge direction
   // calculate the cost per edge as the distance between source and target node
   costs: (edge: IEdge): number =>
     edge.sourceNode.layout.center.subtract(edge.targetNode.layout.center)

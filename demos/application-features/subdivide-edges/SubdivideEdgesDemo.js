@@ -35,8 +35,6 @@ import {
   GraphEditorInputMode,
   GroupNodeLabelModel,
   GroupNodeStyle,
-  IGraph,
-  INodeStyle,
   LabelStyle,
   License,
   NodeDropInputMode,
@@ -49,9 +47,9 @@ import {
   SvgExport
 } from '@yfiles/yfiles'
 
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import { createDemoShapeNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
+import { createDemoShapeNodeStyle, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
 import { SubdivideEdgeDropInputMode } from './SubdivideEdgeDropInputMode'
 
 let graphComponent
@@ -60,7 +58,7 @@ let graphComponent
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.graph.undoEngineEnabled = true
 
@@ -251,5 +249,4 @@ function createGraph() {
   graph.undoEngine.clear()
 }
 
-// noinspection JSIgnoredPromiseFromCall
 run().then(finishLoading)

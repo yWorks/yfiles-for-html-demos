@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>09 Configure Tags - Tutorial: Graph Builder [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -134,20 +134,18 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  By default, <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> stores each business data item in the
-                  corresponding graph element&#8217;s
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IModelItem#ITagOwner-property-tag" target="_blank">tag</a>.
+                  By default, <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> stores each business data item in the
+                  corresponding graph element&#8217;s <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" class="api" target="_blank">tag</a>.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   In this tutorial step, you will learn how to use a
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator#NodeCreator-property-tagProvider" target="_blank">tag provider</a> to
-                  customize the data available on the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IModelItem#ITagOwner-property-tag" target="_blank">tag</a>. This can come in handy,
-                  when you want to augment your data with additional information or when you want to
-                  strip parts of the original business data, to lower the memory load of the built
-                  graph for instance.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator#tagProvider" class="api" target="_blank">tag provider</a> to customize the data
+                  available on the <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" class="api" target="_blank">tag</a>. This can come in handy when
+                  you want to augment your data with additional information or when you want to
+                  strip parts of the original business data to lower the memory load of the built
+                  graph, for instance.
                 </p>
               </div>
               <div class="admonitionblock note">
@@ -160,7 +158,7 @@
                       <div class="paragraph">
                         <p>
                           This step is optional when building a graph with
-                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>. If you do not want to augment the data in
+                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. If you do not want to augment the data in
                           the node&#8217;s tag, you can proceed with the next step.
                         </p>
                       </div>
@@ -184,12 +182,12 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">type <span class="hljs-title class_">EntityData</span> = {
-  <span class="hljs-attr">id</span>: string
-  <span class="hljs-attr">name</span>: string
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">EntityData</span> = {
+  <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>
   <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Trust&#x27;</span> | <span class="hljs-string">&#x27;Corporation&#x27;</span> | <span class="hljs-string">&#x27;Branch&#x27;</span> | <span class="hljs-string">&#x27;PE_Risk&#x27;</span>
-  currency?: string
-  jurisdiction?: string[]
+  <span class="hljs-attr">currency</span>?: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">jurisdiction</span>?: <span class="hljs-built_in">string</span>[]
 }</code></pre>
                 </div>
               </div>
@@ -206,15 +204,14 @@
               </div>
               <div class="paragraph">
                 <p>
-                  The desired <a href="https://docs.yworks.com/yfileshtml/#/api/IModelItem#ITagOwner-property-tag" target="_blank">tag</a> types should
-                  then look like this:
+                  The desired <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" class="api" target="_blank">tag</a> types should then look like this:
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">type <span class="hljs-title class_">OwnerData</span> = { <span class="hljs-attr">name</span>: string; <span class="hljs-attr">type</span>: string }</code></pre>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">OwnerData</span> = { <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">type</span>: <span class="hljs-built_in">string</span> }</code></pre>
                 </div>
               </div>
             </div>
@@ -224,18 +221,18 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  For the custom <a href="https://docs.yworks.com/yfileshtml/#/api/IModelItem#ITagOwner-property-tag" target="_blank">tag</a> creation, a
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator#NodeCreator-property-tagProvider" target="_blank">tag provider</a> is
-                  required that will return an object with the values of the <code>name</code> and
+                  For the custom <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" class="api" target="_blank">tag</a> creation, a
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator#tagProvider" class="api" target="_blank">tag provider</a> is required that will
+                  return an object with the values of the <code>name</code> and
                   <code>type</code> property of the nodes created by the specific
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" target="_blank">NodesSource</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a>.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// configure the provider that returns an object with the name and the type property of the nodes</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// configure the provider that returns an object with the name and the type property of the nodes</span>
 nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">tagProvider</span> = (data): <span class="hljs-function"><span class="hljs-params">OwnerData</span> =&gt;</span> {
   <span class="hljs-keyword">return</span> { <span class="hljs-attr">name</span>: data.<span class="hljs-property">name</span>, <span class="hljs-attr">type</span>: data.<span class="hljs-property">type</span> }
 }</code></pre>
@@ -243,8 +240,8 @@ nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
               </div>
               <div class="paragraph">
                 <p>
-                  Custom creation of edge and label tags works the same way as for node tags. Simply
-                  define a tag provider on EdgeCreator or LabelCreator.
+                  Custom creation of edge and label tags works the same way as for node tags: Define
+                  a tag provider on EdgeCreator or LabelCreator.
                 </p>
               </div>
               <div class="admonitionblock note">
@@ -281,7 +278,7 @@ nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

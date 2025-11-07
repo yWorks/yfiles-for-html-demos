@@ -45,19 +45,14 @@ import {
   GraphItemTypes,
   GraphOverviewComponent,
   GraphViewerInputMode,
-  HoveredItemChangedEventArgs,
-  IAnimation,
   IEdge,
   IEdgeStyle,
   IEnumerable,
-  IGraph,
   ILabelOwner,
-  ILayoutAlgorithm,
   INode,
   Insets,
   LabelStyle,
   LayoutExecutor,
-  LayoutGraph,
   LayoutGraphGrouping,
   LayoutGraphHider,
   LayoutStageBase,
@@ -85,15 +80,15 @@ import {
   ViewportAnimation
 } from '@yfiles/yfiles'
 
-import { AggregationHelper, AggregationNodeInfo } from './AggregationHelper'
+import { AggregationHelper } from './AggregationHelper'
 import {
   AggregationGraphWrapper,
   EdgeReplacementPolicy
 } from '@yfiles/demo-utils/AggregationGraphWrapper'
 import SampleGraph from './resources/SampleGraph'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
 
 // @ts-ignore Import via URL
@@ -120,9 +115,9 @@ let descendantLabelStyle = null
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
-  const overviewComponent = new GraphOverviewComponent('#overviewComponent', graphComponent)
+  new GraphOverviewComponent('#overviewComponent', graphComponent)
 
   // initialize node click listener that toggles the aggregation status
   initializeToggleAggregation()
@@ -646,6 +641,7 @@ class CustomRadialGroupLayoutStage extends LayoutStageBase {
  */
 class TemporaryGroupCustomizationStage extends LayoutStageBase {
   radialGroupLayout
+
   constructor(radialGroupLayout) {
     super(radialGroupLayout)
     this.radialGroupLayout = radialGroupLayout

@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-label/09-hit-testing/).
 
-Styles not only provide a visual representation for graph items. They also offer crucial parts for interacting with said items. Hit-testing determines whether a particular item is at a given point in the canvas. It happens all the time during interaction, e.g. when selecting items, moving nodes, or creating edges.
+Styles not only provide a visual representation for graph items. They also offer crucial parts for interacting with said items. Hit-testing determines whether a particular item is at a given point in the canvas. It happens all the time during interaction, e.g., when selecting items, moving nodes, or creating edges.
 
 The default implementation in the `LabelStyleBase` class only considers the label layout when hit-testing. When labels have shapes that deviate from the rectangular label layout, hit-testing has to be adjusted by providing a different implementation for the `isHit` method.
 
@@ -69,6 +69,6 @@ protected isHit(
 
 Note
 
-Try this implementation by hovering both labels. Notice that the red labels, which uses the default hit-test, does not detect hits on the tail. The yellow labels use the adjusted hit-test code.
+Try this implementation by hovering both labels. Notice that the red labels, which use the default hit-test, do not detect hits on the tail. The yellow labels use the adjusted hit-test code.
 
 [10 Visibility](../../tutorial-style-implementation-label/10-visibility/)

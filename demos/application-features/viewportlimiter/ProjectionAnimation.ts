@@ -26,20 +26,31 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, GraphComponent, IAnimation, Matrix, TimeSpan } from '@yfiles/yfiles'
+import { BaseClass, type GraphComponent, IAnimation, Matrix, TimeSpan } from '@yfiles/yfiles'
 
 /**
  * Animates the projection between two alpha and scale values.
  */
 export class ProjectionAnimation extends BaseClass(IAnimation) {
+    private toScale: number;
+    private fromScale: number;
+    private toAlpha: number;
+    private fromAlpha: number;
+    private graphComponent: GraphComponent;
+
   constructor(
-    private graphComponent: GraphComponent,
-    private fromAlpha: number,
-    private toAlpha: number,
-    private fromScale: number,
-    private toScale: number
+    graphComponent: GraphComponent,
+    fromAlpha: number,
+    toAlpha: number,
+    fromScale: number,
+    toScale: number
   ) {
     super()
+      this.graphComponent = graphComponent;
+      this.fromAlpha = fromAlpha;
+      this.toAlpha = toAlpha;
+      this.fromScale = fromScale;
+      this.toScale = toScale;
   }
 
   cleanUp(): void {

@@ -28,42 +28,24 @@
  ***************************************************************************/
 import {
   BaseClass,
-  CanvasComponent,
-  ClickEventArgs,
   Cursor,
   GeneralPath,
-  GraphComponent,
   HandlePositions,
   HandleType,
-  ICanvasContext,
   IClipboardHelper,
-  ICompoundEdit,
   IFocusRenderer,
-  IGraph,
-  IGraphClipboardContext,
   IHandle,
   IHandleProvider,
   IHighlightRenderer,
-  IInputMode,
   IInputModeContext,
-  ILookup,
   IMarkupExtensionConverter,
-  IModelItem,
   IModelItemCollector,
   INode,
-  INodeStyle,
   IOrientedRectangle,
   IPoint,
-  IPort,
-  IPortLocationModel,
-  IPortLocationModelParameter,
-  IRenderContext,
   IReshapeHandleProvider,
   IReshapeHandler,
   ISelectionRenderer,
-  ISize,
-  ISvgDefsCreator,
-  IWriteContext,
   List,
   MarkupExtension,
   Matrix,
@@ -77,8 +59,7 @@ import {
   Size,
   SnapContext,
   SvgVisual,
-  SvgVisualGroup,
-  Visual
+  SvgVisualGroup
 } from '@yfiles/yfiles'
 import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectangleRendererBase'
 
@@ -512,10 +493,10 @@ export class RotatableNodeStyleDecorator extends BaseClass(
  * A node reshape handle that adjusts its position according to the node rotation.
  */
 class RotatedNodeResizeHandle extends BaseClass(IHandle, IPoint) {
-  position
-  node
-  reshapeHandler
   symmetricResize
+  reshapeHandler
+  node
+  position
   portHandles = new List()
   initialLayout
   dummyLocation = null
@@ -970,8 +951,8 @@ class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
  * label.
  */
 export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
-  node
   reshapeHandler
+  node
   portHandles = new List()
   rotationCenter = null
   initialAngle = 0
@@ -1581,7 +1562,7 @@ class DelegatingContext extends BaseClass(IInputModeContext) {
   /**
    * Delegates to the wrapped context's lookup but cancels the snap context.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+
   lookup(type) {
     return type === SnapContext ? null : this.context.lookup(type)
   }

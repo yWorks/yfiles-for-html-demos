@@ -26,16 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/unbound-method */
 import {
   EditLabelHelper,
-  IInputModeContext,
-  ILabel,
-  ILabelModelParameter,
-  ILabelOwner,
-  ILabelStyle,
-  LabelEditingEventArgs,
-  TextEditorInputMode
+  type IInputModeContext,
+  type ILabel,
+  type ILabelModelParameter,
+  type ILabelOwner,
+  type ILabelStyle,
+  type LabelEditingEventArgs,
+  type TextEditorInputMode
 } from '@yfiles/yfiles'
 
 /**
@@ -50,16 +49,25 @@ import {
  * For convenience, this implementation inherits from the predefined {@link EditLabelHelper} class.
  */
 export class CustomEditLabelHelper extends EditLabelHelper {
+    private readonly firstLabelStyle: ILabelStyle;
+    private readonly firstLabelParam: ILabelModelParameter;
+    private readonly label: ILabel | null;
+    private readonly owner: ILabelOwner | null;
+
   /**
    * Creates an instance of CustomEditLabelHelper.
    */
   constructor(
-    private readonly owner: ILabelOwner | null,
-    private readonly label: ILabel | null,
-    private readonly firstLabelParam: ILabelModelParameter,
-    private readonly firstLabelStyle: ILabelStyle
+    owner: ILabelOwner | null,
+    label: ILabel | null,
+    firstLabelParam: ILabelModelParameter,
+    firstLabelStyle: ILabelStyle
   ) {
     super()
+      this.owner = owner;
+      this.label = label;
+      this.firstLabelParam = firstLabelParam;
+      this.firstLabelStyle = firstLabelStyle;
   }
 
   /**

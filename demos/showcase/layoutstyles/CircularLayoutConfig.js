@@ -38,9 +38,6 @@ import {
   Class,
   EdgeBundleDescriptor,
   GenericLabeling,
-  GraphComponent,
-  ILayoutAlgorithm,
-  LayoutData,
   RadialEdgeLabelPlacement,
   RadialNodeLabelPlacement,
   SubgraphLayoutStage
@@ -54,31 +51,13 @@ import {
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
-
-export var CircularPartitioningPolicy
-;(function (CircularPartitioningPolicy) {
-  CircularPartitioningPolicy[(CircularPartitioningPolicy['BCC_COMPACT'] = 0)] = 'BCC_COMPACT'
-  CircularPartitioningPolicy[(CircularPartitioningPolicy['BCC_ISOLATED'] = 1)] = 'BCC_ISOLATED'
-  CircularPartitioningPolicy[(CircularPartitioningPolicy['SINGLE_CYCLE'] = 2)] = 'SINGLE_CYCLE'
-  CircularPartitioningPolicy[(CircularPartitioningPolicy['CUSTOM_PARTITIONS'] = 3)] =
-    'CUSTOM_PARTITIONS'
-})(CircularPartitioningPolicy || (CircularPartitioningPolicy = {}))
-
-var EdgeRoutingPolicy
-;(function (EdgeRoutingPolicy) {
-  EdgeRoutingPolicy[(EdgeRoutingPolicy['INTERIOR'] = 0)] = 'INTERIOR'
-  EdgeRoutingPolicy[(EdgeRoutingPolicy['AUTOMATIC'] = 1)] = 'AUTOMATIC'
-  EdgeRoutingPolicy[(EdgeRoutingPolicy['EXTERIOR'] = 2)] = 'EXTERIOR'
-  EdgeRoutingPolicy[(EdgeRoutingPolicy['MARKED_EXTERIOR'] = 3)] = 'MARKED_EXTERIOR'
-})(EdgeRoutingPolicy || (EdgeRoutingPolicy = {}))
+} from '@yfiles/demo-app/demo-option-editor'
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -144,7 +123,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
     ],
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     partitioningPolicyItem: [
@@ -154,10 +133,10 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('GeneralGroup', 10),
       new EnumValuesAttribute([
-        ['BCC Compact', CircularPartitioningPolicy.BCC_COMPACT],
-        ['BCC Isolated', CircularPartitioningPolicy.BCC_ISOLATED],
-        ['Custom Groups', CircularPartitioningPolicy.CUSTOM_PARTITIONS],
-        ['Single Cycle', CircularPartitioningPolicy.SINGLE_CYCLE]
+        ['BCC Compact', 'bcc-compact'],
+        ['BCC Isolated', 'bcc-isolated'],
+        ['Custom Groups', 'custom-partitions'],
+        ['Single Cycle', 'single-cycle']
       ]),
       new TypeAttribute(Number)
     ],
@@ -198,7 +177,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('CycleGroup', 20),
       new MinMaxAttribute(0, 999),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     chooseRadiusAutomaticallyItem: [
@@ -216,7 +195,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('CycleGroup', 40),
       new MinMaxAttribute(1, 800),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     edgeBundlingItem: [
@@ -234,10 +213,10 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('EdgesGroup', 30),
       new EnumValuesAttribute([
-        ['Inside', EdgeRoutingPolicy.INTERIOR],
-        ['Outside', EdgeRoutingPolicy.EXTERIOR],
-        ['Automatic', EdgeRoutingPolicy.AUTOMATIC],
-        ['Selected Edge Outside', EdgeRoutingPolicy.MARKED_EXTERIOR]
+        ['Inside', 'interior'],
+        ['Outside', 'exterior'],
+        ['Automatic', 'automatic'],
+        ['Selected Edge Outside', 'marked-exterior']
       ]),
       new TypeAttribute(CircularLayoutEdgeRoutingPolicy)
     ],
@@ -285,7 +264,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('ExteriorEdgesGroup', 10),
       new MinMaxAttribute(10, 100, 1),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     exteriorEdgeToEdgeDistanceItem: [
@@ -295,7 +274,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('ExteriorEdgesGroup', 20),
       new MinMaxAttribute(5, 50, 1),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     exteriorEdgeCornerRadiusItem: [
@@ -305,7 +284,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('ExteriorEdgesGroup', 30),
       new MinMaxAttribute(0, 100, 1),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     exteriorEdgeAngleItem: [
@@ -315,7 +294,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('ExteriorEdgesGroup', 40),
       new MinMaxAttribute(0, 45, 1),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     exteriorEdgeSmoothnessItem: [
@@ -325,7 +304,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('ExteriorEdgesGroup', 50),
       new MinMaxAttribute(0, 1, 0.01),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     edgeBundlingStrengthItem: [
@@ -335,7 +314,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('EdgesGroup', 20),
       new MinMaxAttribute(0, 1.0, 0.01),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     preferredChildSectorAngleItem: [
@@ -345,7 +324,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('TreeGroup', 10),
       new MinMaxAttribute(1, 359),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumEdgeLengthItem: [
@@ -355,7 +334,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('TreeGroup', 20),
       new MinMaxAttribute(5, 400),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     maximumDeviationAngleItem: [
@@ -365,7 +344,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('TreeGroup', 30),
       new MinMaxAttribute(1, 360),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     compactnessFactorItem: [
@@ -375,7 +354,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('TreeGroup', 40),
       new MinMaxAttribute(0.1, 0.9, 0.01),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumTreeNodeDistanceItem: [
@@ -385,7 +364,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('TreeGroup', 50),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     allowOverlapsItem: [
@@ -465,10 +444,10 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 10),
       new EnumValuesAttribute([
-        ['Parallel', LabelPlacementOrientation.PARALLEL],
-        ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
-        ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
-        ['Vertical', LabelPlacementOrientation.VERTICAL]
+        ['Parallel', 'parallel'],
+        ['Orthogonal', 'orthogonal'],
+        ['Horizontal', 'horizontal'],
+        ['Vertical', 'vertical']
       ]),
       new TypeAttribute(LabelPlacementOrientation)
     ],
@@ -479,12 +458,12 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 20),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
-        ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
-        ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
-        ['At Target', LabelPlacementAlongEdge.AT_TARGET],
-        ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
-        ['Centered', LabelPlacementAlongEdge.CENTERED]
+        ['Anywhere', 'anywhere'],
+        ['At Source', 'at-source'],
+        ['At Source Port', 'at-source-port'],
+        ['At Target', 'at-target'],
+        ['At Target Port', 'at-target-port'],
+        ['Centered', 'centered']
       ]),
       new TypeAttribute(LabelPlacementAlongEdge)
     ],
@@ -495,11 +474,11 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 30),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
-        ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
-        ['Left', LabelPlacementSideOfEdge.LEFT],
-        ['Right', LabelPlacementSideOfEdge.RIGHT],
-        ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+        ['Anywhere', 'anywhere'],
+        ['On Edge', 'on-edge'],
+        ['Left', 'left'],
+        ['Right', 'right'],
+        ['Left or Right', 'left-or-right']
       ]),
       new TypeAttribute(LabelPlacementSideOfEdge)
     ],
@@ -510,7 +489,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 40),
       new MinMaxAttribute(0.0, 40.0),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ]
   },
@@ -524,7 +503,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
     const layout = new CircularLayout()
     const treeLayout = layout.backboneLayout
 
-    this.partitioningPolicyItem = CircularPartitioningPolicy.BCC_COMPACT
+    this.partitioningPolicyItem = 'bcc-compact'
     this.actOnSelectionOnlyItem = false
     this.fromSketchItem = false
 
@@ -537,7 +516,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
     this.defaultInCircleRoutingStyleItem = CircularLayoutRoutingStyle.STRAIGHT_LINE
     this.defaultOnCircleRoutingStyleItem = CircularLayoutOnCircleRoutingStyle.STRAIGHT_LINE
 
-    this.edgeRoutingItem = CircularLayoutEdgeRoutingPolicy.INTERIOR
+    this.edgeRoutingItem = 'interior'
     this.exteriorEdgeToCircleDistanceItem = 20
     this.exteriorEdgeToEdgeDistanceItem = 10
     this.exteriorEdgeCornerRadiusItem = 20
@@ -559,9 +538,9 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
     this.starSubstructureSizeItem = layout.starSubstructureSize
 
     this.edgeLabelingItem = layout.edgeLabelPlacement !== RadialEdgeLabelPlacement.IGNORE
-    this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
-    this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
-    this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
+    this.labelPlacementAlongEdgeItem = 'centered'
+    this.labelPlacementSideOfEdgeItem = 'on-edge'
+    this.labelPlacementOrientationItem = 'horizontal'
     this.labelPlacementDistanceItem = 10.0
     this.title = 'Circular Layout'
 
@@ -636,11 +615,11 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
   createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new CircularLayoutData()
 
-    if (this.partitioningPolicyItem === CircularPartitioningPolicy.CUSTOM_PARTITIONS) {
+    if (this.partitioningPolicyItem === 'custom-partitions') {
       layoutData.partitions = (node) => graphComponent.graph.getParent(node)
     }
 
-    if (this.edgeRoutingItem === EdgeRoutingPolicy.MARKED_EXTERIOR) {
+    if (this.edgeRoutingItem === 'marked-exterior') {
       layoutData.exteriorEdges = graphComponent.selection.edges.toList()
     }
 
@@ -662,12 +641,12 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
   getPartitioningPolicy(style) {
     switch (style) {
       default:
-      case CircularPartitioningPolicy.CUSTOM_PARTITIONS:
-      case CircularPartitioningPolicy.BCC_COMPACT:
+      case 'custom-partitions':
+      case 'bcc-compact':
         return CircularLayoutPartitioningPolicy.BCC_COMPACT
-      case CircularPartitioningPolicy.BCC_ISOLATED:
+      case 'bcc-isolated':
         return CircularLayoutPartitioningPolicy.BCC_ISOLATED
-      case CircularPartitioningPolicy.SINGLE_CYCLE:
+      case 'single-cycle':
         return CircularLayoutPartitioningPolicy.SINGLE_CYCLE
     }
   },
@@ -675,12 +654,12 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
   getEdgeRoutingPolicy(policy) {
     switch (policy) {
       default:
-      case EdgeRoutingPolicy.MARKED_EXTERIOR:
-      case EdgeRoutingPolicy.INTERIOR:
+      case 'marked-exterior':
+      case 'interior':
         return CircularLayoutEdgeRoutingPolicy.INTERIOR
-      case EdgeRoutingPolicy.AUTOMATIC:
+      case 'automatic':
         return CircularLayoutEdgeRoutingPolicy.AUTOMATIC
-      case EdgeRoutingPolicy.EXTERIOR:
+      case 'exterior':
         return CircularLayoutEdgeRoutingPolicy.EXTERIOR
     }
   },
@@ -768,13 +747,13 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
     get: function () {
       return (
         this.partitionStyleItem !== CircularLayoutPartitionStyle.CYCLE ||
-        this.partitioningPolicyItem === CircularPartitioningPolicy.BCC_ISOLATED
+        this.partitioningPolicyItem === 'bcc-isolated'
       )
     }
   },
 
   /** @type {EdgeRoutingPolicy} */
-  edgeRoutingItem: CircularLayoutEdgeRoutingPolicy.INTERIOR,
+  edgeRoutingItem: 'interior',
 
   /** @type {CircularLayoutRoutingStyle} */
   defaultBetweenCirclesRoutingItem: CircularLayoutRoutingStyle.STRAIGHT_LINE,
@@ -782,7 +761,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
   /** @type {boolean} */
   shouldDisableDefaultBetweenCirclesRoutingItem: {
     get: function () {
-      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.EXTERIOR
+      return this.edgeRoutingItem === 'exterior'
     }
   },
 
@@ -792,7 +771,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
   /** @type {boolean} */
   shouldDisableDefaultInCircleRoutingStyleItem: {
     get: function () {
-      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.EXTERIOR
+      return this.edgeRoutingItem === 'exterior'
     }
   },
 
@@ -802,7 +781,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
   /** @type {boolean} */
   shouldDisableDefaultOnCircleRoutingStyleItem: {
     get: function () {
-      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.EXTERIOR
+      return this.edgeRoutingItem === 'exterior'
     }
   },
 
@@ -812,7 +791,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
   /** @type {boolean} */
   shouldDisableExteriorEdgeToCircleDistanceItem: {
     get: function () {
-      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
+      return this.edgeRoutingItem === 'interior'
     }
   },
 
@@ -822,7 +801,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
   /** @type {boolean} */
   shouldDisableExteriorEdgeToEdgeDistanceItem: {
     get: function () {
-      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
+      return this.edgeRoutingItem === 'interior'
     }
   },
 
@@ -832,7 +811,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
   /** @type {boolean} */
   shouldDisableExteriorEdgeCornerRadiusItem: {
     get: function () {
-      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
+      return this.edgeRoutingItem === 'interior'
     }
   },
 
@@ -842,7 +821,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
   /** @type {boolean} */
   shouldDisableExteriorEdgeAngleItem: {
     get: function () {
-      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
+      return this.edgeRoutingItem === 'interior'
     }
   },
 
@@ -852,7 +831,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
   /** @type {boolean} */
   shouldDisableExteriorEdgeSmoothnessItem: {
     get: function () {
-      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
+      return this.edgeRoutingItem === 'interior'
     }
   },
 
@@ -962,10 +941,7 @@ export const CircularLayoutConfig = Class('CircularLayoutConfig', {
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
     get: function () {
-      return (
-        !this.edgeLabelingItem ||
-        this.labelPlacementSideOfEdgeItem === LabelPlacementSideOfEdge.ON_EDGE
-      )
+      return !this.edgeLabelingItem || this.labelPlacementSideOfEdgeItem === 'on-edge'
     }
   }
 })

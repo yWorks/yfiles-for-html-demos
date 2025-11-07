@@ -17,11 +17,13 @@
 
 This demo interactively builds and modifies a graph from **JSON** business data using class [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder).
 
-See the the Developer's Guide section on the [GraphBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-GraphBuilder) for an in-depth explanation of the relevant concepts.
+See the Developer's Guide section on the [GraphBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-GraphBuilder) for an in-depth explanation of the relevant concepts.
+
+See also the [Step Tutorial: Graph Builder](../../tutorial-graph-builder/01-create-graph/) for a step-by-step guide on configuring the [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) class, loading data, and customizing graph visualizations.
 
 The demo allows to define multiple nodes and edges sources from different data and with different data bindings and styles.
 
-Per default, [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) stores the business data object of each node in the node's [ITagOwner#tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag) property. Using the LitNodeStyle, the properties can be bound and visualized.
+Per default, [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) stores the business data object of each node in the node's [ITagOwner.tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag) property. Using the LitNodeStyle, the properties can be bound and visualized.
 
 ## Things to Try
 

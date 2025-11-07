@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { colorSets, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { colorSets, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
 import {
   Arrow,
   ArrowType,

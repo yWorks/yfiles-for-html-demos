@@ -29,9 +29,7 @@
 import {
   ExteriorNodeLabelModel,
   ExteriorNodeLabelModelPosition,
-  GraphComponent,
   ILabelModelParameter,
-  INode,
   Point,
   SimpleLabel,
   Size
@@ -44,9 +42,9 @@ import {
  * an {@link ILabelModelParameter} to determine the position of the pop-up.
  */
 export class NodeTypePanel {
-  graphComponent
-  typeColors
   colorSets
+  typeColors
+  graphComponent
   div
   dirty = false
   _currentItems = null

@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EdgeTypeEnum } from '../data-types'
 import {
   Arrow,
   EdgePathLabelModel,
@@ -38,12 +37,12 @@ import {
 // configures the style of the edges based on their type
 const smoothingLength = 5
 const typeMap = {
-  [EdgeTypeEnum.Hierarchy]: new PolylineEdgeStyle({
+  ['Hierarchy']: new PolylineEdgeStyle({
     stroke: '2px #1a3442',
     targetArrow: new Arrow({ fill: '#1a3442', stroke: '2px #1a3442', type: 'triangle' }),
     smoothingLength
   }),
-  [EdgeTypeEnum.Relation]: new PolylineEdgeStyle({
+  ['Relation']: new PolylineEdgeStyle({
     stroke: '2px dashed #f26419',
     targetArrow: new Arrow({ fill: '#f26419', stroke: '1px #f26419', type: 'triangle' }),
     smoothingLength: 100

@@ -28,17 +28,12 @@
  ***************************************************************************/
 import {
   ArrowNodeDirection,
-  ArrowNodeStyle,
   ArrowStyleShape,
   BaseClass,
-  ClickEventArgs,
   Cursor,
   HandleType,
   IHandle,
-  IInputModeContext,
-  INode,
-  IPoint,
-  Point
+  IPoint
 } from '@yfiles/yfiles'
 import { ArrowNodeStyleAngleHandle } from './ArrowNodeStyleAngleHandle'
 
@@ -47,8 +42,8 @@ import { ArrowNodeStyleAngleHandle } from './ArrowNodeStyleAngleHandle'
  * {@link ArrowNodeStyle.shaftRatio} interactively.
  */
 export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
-  node
   shaftRatioChanged
+  node
   style
   xFactor = 0
   yFactor = 0

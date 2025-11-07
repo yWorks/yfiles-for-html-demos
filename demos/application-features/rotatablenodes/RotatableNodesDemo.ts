@@ -38,9 +38,9 @@ import {
   GraphSnapContext,
   type IModelItem,
   INode,
-  INodeStyle,
+  type INodeStyle,
   InteriorNodeLabelModel,
-  IOrientedRectangle,
+  type IOrientedRectangle,
   IPortCandidateProvider,
   type LayoutDescriptor,
   LayoutExecutorAsync,
@@ -84,9 +84,9 @@ import {
   createDemoGroupStyle,
   createDemoNodeLabelStyle,
   createDemoNodeStyle
-} from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+} from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent: GraphComponent
@@ -97,7 +97,7 @@ const selectSample = document.querySelector<HTMLSelectElement>('#select-sample')
 const worker = new Worker(new URL('./WorkerLayout', import.meta.url), { type: 'module' })
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   initializeInputMode()
   initializeGraph()
@@ -109,7 +109,7 @@ async function run(): Promise<void> {
  * Initializes the interaction with the graph.
  */
 function initializeInputMode(): void {
-  let graphEditorInputMode = new GraphEditorInputMode({
+  const graphEditorInputMode = new GraphEditorInputMode({
     snapContext: new GraphSnapContext({
       enabled: true,
       snappableItems: SnappableItems.NONE,

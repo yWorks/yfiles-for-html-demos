@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   GraphBuilder,
   GraphComponent,
@@ -35,22 +34,21 @@ import {
   Insets,
   License,
   NodeSizeConstraintProvider,
-  Point,
   Rect,
   Size
 } from '@yfiles/yfiles'
 import { NodeSelectionResizingInputMode } from './NodeSelectionResizingInputMode'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import SampleData from './resources/SampleData'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent = null
 
 let nodeSelectionResizingInputMode = null
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
   // enable undo engine
@@ -107,10 +105,12 @@ function loadSampleGraph() {
 
   builder.buildGraph()
   graphComponent.graph.edges.forEach((edge) => {
-    edge.tag.bends &&
-      edge.tag.bends.forEach((bend) => {
-        graphComponent.graph.addBend(edge, bend)
-      })
+    if (edge.tag?.bends == null) {
+      return
+    }
+    for (const bend of edge.tag.bends) {
+      graphComponent.graph.addBend(edge, bend)
+    }
   })
   graphComponent.fitContent()
   graphComponent.graph.undoEngine.clear()

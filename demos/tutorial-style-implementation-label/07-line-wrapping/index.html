@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>07 Line Wrapping - Tutorial: Label Style Implementation [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -137,8 +137,8 @@
               So far, the label text was placed in a single line unless it contained manual line
               breaks. In this step, we&#8217;ll introduce automatic line wrapping to our label
               style. Since SVG <code>&lt;text&gt;</code> does not support line wrapping
-              out-of-the-box, <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport" target="_blank">TextRenderSupport</a> provides functionality for this
-              purpose. The enum <a href="https://docs.yworks.com/yfileshtml/#/api/TextWrapping" target="_blank">TextWrapping</a> can be used to specify different
+              out-of-the-box, <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport" class="api" target="_blank">TextRenderSupport</a> provides functionality for this
+              purpose. The enum <a href="https://docs.yworks.com/yfileshtml/#/api/TextWrapping" class="api" target="_blank">TextWrapping</a> can be used to specify different
               wrapping policies like wrapping at character, or at word boundaries.
             </p>
           </div>
@@ -153,10 +153,12 @@
               <pre
                 class="highlight"
               ><code class="language-typescript" data-lang="typescript"><span class="hljs-title function_">constructor</span>(<span class="hljs-params">
-  <span class="hljs-keyword">private</span> <span class="hljs-attr">wrapping</span>: <span class="hljs-title class_">TextWrapping</span> = <span class="hljs-title class_">TextWrapping</span>.NONE,
-  <span class="hljs-keyword">private</span> <span class="hljs-attr">maxSize</span>: <span class="hljs-title class_">Size</span> = <span class="hljs-title class_">Size</span>.INFINITE
+  <span class="hljs-attr">wrapping</span>: <span class="hljs-title class_">TextWrapping</span> = <span class="hljs-title class_">TextWrapping</span>.NONE,
+  <span class="hljs-attr">maxSize</span>: <span class="hljs-title class_">Size</span> = <span class="hljs-title class_">Size</span>.INFINITE
 </span>) {
   <span class="hljs-variable language_">super</span>()
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">wrapping</span> = wrapping
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">maxSize</span> = maxSize
 }</code></pre>
             </div>
           </div>
@@ -189,7 +191,7 @@
           <div class="paragraph">
             <p>
               Finally, we can use the maximum size and line wrapping policy in
-              <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport#TextRenderSupport-method-addText" target="_blank">TextRenderSupport.addText</a>.
+              <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport#addText" class="api" target="_blank">TextRenderSupport.addText</a>.
             </p>
           </div>
           <div class="listingblock">
@@ -230,7 +232,7 @@
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

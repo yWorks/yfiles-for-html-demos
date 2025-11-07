@@ -30,26 +30,12 @@ import {
   EdgeDefaults,
   FreeLabelModel,
   Graph,
-  IEdge,
-  IEdgeDefaults,
-  IGraph,
-  ILabel,
-  ILabelDefaults,
   ILabelModelParameterFinder,
-  INode,
-  INodeDefaults,
-  IPort,
   LabelStyle,
-  LayoutEdge,
-  LayoutEdgeLabel,
-  LayoutGraph,
   LayoutGraphAdapter,
-  LayoutNode,
-  LayoutNodeLabel,
   Mapper,
   MultiPageEdgeType,
   MultiPageLayout,
-  MultiPageLayoutResult,
   MultiPageNodeType,
   NodeDefaults,
   Point,
@@ -308,8 +294,6 @@ export class MultiPageIGraphBuilder {
           ? modelLabel.style.clone()
           : pageView.nodeDefaults.labels.style
 
-    const text = modelLabel !== null ? modelLabel.text : ''
-    const tag = modelLabel !== null ? modelLabel.tag : null
     const viewLabel = pageView.addLabel({
       owner: viewNode,
       text: modelLabel.text,

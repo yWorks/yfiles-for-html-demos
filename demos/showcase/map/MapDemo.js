@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 import { FilteredGraphWrapper, GraphBuilder, INode, License, Point } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { flightData } from './resources/flight-data'
 import { initializeDefaultMapStyles } from './map-styles'
 import { createMap } from './leaflet-graph-layer'
@@ -36,7 +36,7 @@ import { initializeShortestPaths } from './shortest-paths'
 import { getAirportData } from './data-types'
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // create a Leaflet map that will contain the graphComponent
   const mapData = createMap('graphComponent', coordinateMapping, zoomChanged)

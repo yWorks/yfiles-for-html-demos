@@ -30,16 +30,11 @@ import {
   BaseClass,
   Color,
   IAnimation,
-  IMutableRectangle,
-  IRectangle,
-  IRenderContext,
   IVisualCreator,
-  LayoutGrid,
   MutableRectangle,
   Rect,
   SvgVisual,
-  TimeSpan,
-  Visual
+  TimeSpan
 } from '@yfiles/yfiles'
 
 /**
@@ -49,8 +44,8 @@ import {
  * two layout calculations.
  */
 export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimation) {
-  rowCount
   columnCount
+  rowCount
   rows = []
   rowStarts = []
   rowEnds = []

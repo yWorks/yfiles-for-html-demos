@@ -112,8 +112,11 @@ const AXIS_FONT = new Font({ fontFamily: 'Roboto,sans-serif', fontSize: 14 })
  * Creates the visualization for the axes, draws the corresponding ticks, and their labels.
  */
 class AxisVisual extends BaseClass(IVisualCreator, IBoundsProvider) {
-  constructor(private trail: Waypoint[]) {
+  private trail: Waypoint[]
+
+  constructor(trail: Waypoint[]) {
     super()
+    this.trail = trail
   }
 
   /**

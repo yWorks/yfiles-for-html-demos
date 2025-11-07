@@ -32,8 +32,6 @@ import {
   Fill,
   FreeNodeLabelModel,
   FreeNodePortLocationModel,
-  GraphEditorInputMode,
-  INode,
   Point,
   PortCandidate
 } from '@yfiles/yfiles'

@@ -34,8 +34,9 @@ import { convertLoadToColor, DeviceKind } from './model/Device'
  * It renders the icon according to the device kind and adds the 'failed' icon if necessary.
  */
 export class DeviceNodeStyle extends NodeStyleBase {
-  dataProvider
   imageProvider
+  dataProvider
+
   /**
    * Creates a new instance of NetworkMonitoringNodeStyle.
    */

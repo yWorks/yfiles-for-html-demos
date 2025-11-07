@@ -29,23 +29,61 @@
 /* import the yFiles stylesheet in a layer to make overriding styles easier */
 @import '@yfiles/yfiles/yfiles.css' layer(yfiles);
 
-/* Graph Components */
-.demo-main__graph-component #graphComponent {
-  background-color: #3c4253;
+/* yWorks color theme */
+:root {
+  --orange: #ff6c00;
+  --orange-60: #f89743;
+  --orange-20: #fcdabe;
+  --orange-dark: #510518;
+
+  --blue: #242265;
+  --blue-60: #666495;
+  --blue-20: #c8c8d9;
+  --blue-dark: #0c0c23;
+
+  --cyan: #4ad8ff;
+  --cyan-60: #85ebff;
+  --cyan-20: #e8fcff;
+  --cyan-dark: #1c4355;
+
+  --green: #c5fb00;
+  --green-60: #dffd79;
+  --green-20: #faffe8;
+  --green-dark: #27401b;
+
+  --purple: #b786ff;
+  --purple-60: #d8bcff;
+  --purple-20: #f8f3ff;
+  --purple-dark: #413148;
+
+  --neutral-gray: #4e4e4e;
 }
-#graphOverviewComponent {
-  background-color: #53596b;
+
+/* Color Grid Styles */
+#color-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.color-cube {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Viewport Rectangle in Overview */
 .yfiles-overview-viewport-template {
-  fill: #e8cb8a;
-  stroke: #e8cb8a;
+  fill: var(--purple-60);
+  stroke: var(--purple);
   stroke-width: 2px;
 }
 #overviewComponent .yfiles-handle-resize-template {
-  fill: #e8cb8a;
-  stroke: #e8cb8a;
+  fill: var(--purple-60);
+  stroke: var(--purple);
 }
 
 /* Resize Handles */
@@ -54,24 +92,24 @@
   stroke: currentColor; /* Use SVG currentColor to allow different colors for individual handles*/
 }
 .yfiles-handle {
-  color: #e8cb87;
+  color: var(--cyan-60);
 }
 .yfiles-handle-top.yfiles-handle-right,
 .yfiles-handle-top.yfiles-handle-left,
 .yfiles-handle-bottom.yfiles-handle-right,
 .yfiles-handle-bottom.yfiles-handle-left {
-  color: #b96069;
+  color: var(--purple);
 }
 
 /* Port Handle */
 .yfiles-handle-move-template {
-  fill: #b96069;
+  fill: var(--orange);
 }
 
 /* Marquee Selection Rectangle */
 .yfiles-marquee-rect-template {
-  fill: #a5be8a;
-  stroke: #a5be8a;
+  fill: var(--cyan-20);
+  stroke: var(--cyan-60);
   stroke-width: 2px;
 }
 
@@ -80,7 +118,7 @@
 .yfiles-edge-selection-template,
 .yfiles-label-selection-template,
 .yfiles-port-selection-template {
-  stroke: #b96069;
+  stroke: var(--cyan-60);
   stroke-width: 4px;
   stroke-linejoin: round;
 }
@@ -90,36 +128,36 @@
 .yfiles-edge-focus-template,
 .yfiles-label-focus-template,
 .yfiles-port-focus-template {
-  stroke: #e8cb87;
+  stroke: var(--purple);
   stroke-width: 2px;
   stroke-linejoin: round;
 }
 
 /* Highlights */
-.yfiles-node-highlight-template,
 .yfiles-edge-highlight-template,
+.yfiles-node-highlight-template,
 .yfiles-label-highlight-template,
 .yfiles-port-highlight-template {
-  stroke: #85be8a;
+  stroke: var(--cyan);
   stroke-linejoin: round;
 }
 
 /* Label Candidates */
 .yfiles-label-position-highlight-template {
-  stroke: #8fc0d1;
+  stroke: var(--orange-60);
 }
 .yfiles-label-position-candidate-template {
-  stroke: #85a1c2;
+  stroke: var(--orange-60);
 }
 
 /* Port Candidates */
 .yfiles-port-candidate-template.yfiles-valid {
-  fill: #85be8a;
+  fill: var(--green);
 }
 
 /* Snap References */
 .yfiles-snap-reference {
-  stroke: #e8cb87;
+  stroke: var(--purple-60);
   stroke-width: 2px;
 }
 
@@ -136,7 +174,7 @@
   height: 8px;
 }
 .yfiles-scrollbar .yfiles-scrollbar-slider {
-  background-color: #282e40;
+  background-color: var(--blue);
 }
 .yfiles-scrollbar .yfiles-button {
   flex-basis: 10px;
@@ -158,9 +196,9 @@
 
 /* Tooltips */
 .yfiles-tooltip {
-  background-color: #85a1c2;
-  color: white;
-  border-color: #85a1c2;
+  background-color: var(--orange-20);
+  color: var(--orange-dark);
+  border-color: var(--orange-dark);
   border-radius: 5px;
   border-width: 2px;
   padding: 5px;
@@ -197,19 +235,21 @@
   }
 }
 .yfiles-labeleditbox-container {
-  background-color: #282e40;
-  border-color: #85a1c2;
+  background-color: var(--purple-20);
+  border-color: var(--purple-dark);
+  border-radius: 5px;
+  padding: 3px 5px;
 }
 
 .yfiles-labeleditbox {
   font-family: sans-serif;
   font-size: 12pt;
-  color: lightgrey;
+  color: var(--purple-dark);
 }
 
 .yfiles-labeleditbox::selection {
-  background: #85a1c2;
-  color: #fff;
+  background: var(--cyan);
+  color: var(--purple-dark);
 }
 
 .yfiles-labeleditbox-container-entering {
@@ -221,10 +261,8 @@
 
 .node-flash {
   opacity: 0;
-  fill: #85be8a;
-  pointer-events: none;
-  rx: 3.5;
-  ry: 3.5;
+  stroke: none;
+  fill: black;
 }
 
 .node-created.node-flash {
@@ -236,7 +274,7 @@
     opacity: 0;
   }
   50% {
-    opacity: 100%;
+    opacity: 70%;
   }
   100% {
     opacity: 0;

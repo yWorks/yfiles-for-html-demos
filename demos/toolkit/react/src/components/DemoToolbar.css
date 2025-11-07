@@ -95,22 +95,22 @@
   margin: 0 2px;
 }
 .demo-icon-yIconReload {
-  background-image: url('@yfiles/demo-resources/icons/reload-16.svg');
+  background-image: url('@yfiles/demo-app/icons/reload-16.svg');
 }
 .demo-icon-yIconZoomOriginal {
-  background-image: url('@yfiles/demo-resources/icons/zoom-original3-16.svg');
+  background-image: url('@yfiles/demo-app/icons/zoom-original3-16.svg');
 }
 .demo-icon-yIconZoomIn {
-  background-image: url('@yfiles/demo-resources/icons/magnify-16.svg');
+  background-image: url('@yfiles/demo-app/icons/magnify-16.svg');
 }
 .demo-icon-yIconZoomOut {
-  background-image: url('@yfiles/demo-resources/icons/demagnify-16.svg');
+  background-image: url('@yfiles/demo-app/icons/demagnify-16.svg');
 }
 .demo-icon-yIconZoomFit {
-  background-image: url('@yfiles/demo-resources/icons/fit-16.svg');
+  background-image: url('@yfiles/demo-app/icons/fit-16.svg');
 }
 .demo-icon-yIconExportImage {
-  background-image: url('@yfiles/demo-resources/icons/export-image-16.svg');
+  background-image: url('@yfiles/demo-app/icons/export-image-16.svg');
 }
 .search {
   margin-left: auto;

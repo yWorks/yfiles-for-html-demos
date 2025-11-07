@@ -121,7 +121,6 @@ export class CustomNodeStyle extends NodeStyleBase {
     return oldVisual
   }
 
-
   getBounds(context, node) {
     const { tag } = node
     // Do we even have a badge?
@@ -131,7 +130,6 @@ export class CustomNodeStyle extends NodeStyleBase {
     }
     return node.layout.toRect()
   }
-
 
   isVisible(context, rectangle, node) {
     const bounds = this.getBounds(context, node)

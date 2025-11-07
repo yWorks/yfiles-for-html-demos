@@ -27,28 +27,16 @@
  **
  ***************************************************************************/
 import {
-  CanvasComponent,
   Color,
-  ConcurrencyController,
   CreateEdgeInputMode,
   EdgePathLabelModel,
   EventArgs,
   EventRecognizers,
   ExteriorNodeLabelModel,
-  GraphComponent,
   GraphEditorInputMode,
-  ICompoundEdit,
   IEdge,
-  IGraph,
   IInputMode,
-  IInputModeContext,
-  ILabelModelParameter,
-  IModelItem,
   InputModeBase,
-  IPort,
-  IPortCandidate,
-  IRenderContext,
-  KeyboardInputMode,
   KeyEventArgs,
   KeyEventType,
   LabelStyle,
@@ -60,19 +48,11 @@ import {
   PointerEventArgs,
   PointerEventType,
   PortCandidate,
-  PropertyChangedEventArgs,
   ShowPortCandidates,
-  Size,
-  SvgVisual,
-  Visual
+  Size
 } from '@yfiles/yfiles'
-import { PickerLayout, WizardAction } from './WizardAction'
-import {
-  Button,
-  ButtonInputMode,
-  ButtonTrigger,
-  QueryButtonsEvent
-} from '../../input/button-input-mode/ButtonInputMode'
+import { WizardAction } from './WizardAction'
+import { ButtonInputMode } from '../../input/button-input-mode/ButtonInputMode'
 import { OffsetLabelModelWrapper } from '../../input/button-input-mode/OffsetLabelModelWrapper'
 
 const PICKER_BUTTON_BACKGROUND_MARGIN = 8
@@ -194,7 +174,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     // initialize child input modes
     this._buttonMode = new ButtonInputMode()
     // the button mode is used to show buttons for active actions
-    this.buttonMode.buttonTrigger = ButtonTrigger.NONE
+    this.buttonMode.buttonTrigger = 'none'
     this.buttonMode.buttonSize = new Size(30, 30)
     this.buttonMode.setQueryButtonsListener(this.queryButtons.bind(this))
     this.add(this.buttonMode)
@@ -384,8 +364,6 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
 
   /**
    * Handle pointer, keyboard and custom {@link WizardEventArgs wizard} events.
-   * @param source The source that dispatched the event.
-   * @param evt The arguments of the event.
    */
   handleEvent(evt, source) {
     const controller = this.controller
@@ -588,7 +566,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     // place all auto-placed buttons in a row
     this.addAutoPlacedButtons(
       autoPlacedActions.map((action) => action.buttonOptions),
-      PickerLayout.Row,
+      'Row',
       GraphWizardInputMode.getBaseLayout(this.currentItem),
       (index) => this.createWizardActionHandler(autoPlacedActions[index]),
       (button, index) => {
@@ -616,7 +594,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
       const defaultActionHandler = this.createDefaultButtonHandler(this.activePickersAction)
       this.addAutoPlacedButtons(
         options.pickerButtons,
-        options.pickerLayout ?? PickerLayout.Grid,
+        options.pickerLayout ?? 'Grid',
         backgroundLayout,
         () => defaultActionHandler,
         this.setPickerButton.bind(this),
@@ -648,7 +626,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     this.pickerButtons = []
     this.addAutoPlacedButtons(
       parentOptions.pickerButtons,
-      parentOptions.pickerLayout ?? PickerLayout.Grid,
+      parentOptions.pickerLayout ?? 'Grid',
       WizardAction.getButtonLayout(parentOptions, evt.owner),
       () => handler.bind(this),
       this.setPickerButton.bind(this),
@@ -755,7 +733,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     // - size of the background
     let bgSize
     const marginBothSides = 2 * PICKER_BUTTON_BACKGROUND_MARGIN
-    if (pickerLayout === PickerLayout.Grid) {
+    if (pickerLayout === 'Grid') {
       // grid currently only supports buttons using defaultButtonSize
       colCount = Math.floor(Math.sqrt(buttonCount))
       const rowCount = Math.ceil(buttonCount / colCount)
@@ -767,7 +745,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
           (rowCount - 1) * PICKER_BUTTON_SPACING +
           marginBothSides
       )
-    } else if (pickerLayout === PickerLayout.Row) {
+    } else if (pickerLayout === 'Row') {
       colCount = buttonCount
       let maxHeight = 0
       options.forEach((value, index) => {
@@ -865,7 +843,7 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
     let dx = PICKER_BUTTON_BACKGROUND_MARGIN
     let dy = PICKER_BUTTON_BACKGROUND_MARGIN
     switch (pickerLayout) {
-      case PickerLayout.Grid: {
+      case 'Grid': {
         // grid currently only supports buttons using the default button size
         const defaultButtonSize = this.buttonMode.buttonSize
         const row = Math.floor(index / cols)
@@ -874,12 +852,12 @@ export class GraphWizardInputMode extends MultiplexingInputMode {
         dy += row * (defaultButtonSize.height + PICKER_BUTTON_SPACING)
         break
       }
-      case PickerLayout.Row: {
+      case 'Row': {
         dx += index > 0 ? sizes[index - 1] : 0
         dy += 0
         break
       }
-      case PickerLayout.Column: {
+      case 'Column': {
         dx += 0
         dy += index > 0 ? sizes[index - 1] : 0
       }

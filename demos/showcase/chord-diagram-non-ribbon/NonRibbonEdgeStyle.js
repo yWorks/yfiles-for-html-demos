@@ -31,9 +31,6 @@ import {
   CssFill,
   EdgeStyleBase,
   GeneralPath,
-  IEdge,
-  INode,
-  IRenderContext,
   Point,
   ShapeNodeStyle,
   SvgVisual

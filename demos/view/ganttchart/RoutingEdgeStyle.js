@@ -41,9 +41,9 @@ import {
  * All existing bends of the edge are ignored.
  */
 export class RoutingEdgeStyle extends PathEdgeStyleBase {
-  outSegmentLength
-  inSegmentLength
   stroke
+  inSegmentLength
+  outSegmentLength
   /**
    * The distance on the y-axis between the source port and the horizontal middle segment.
    * This only has an effect when the source location is right of the target location.

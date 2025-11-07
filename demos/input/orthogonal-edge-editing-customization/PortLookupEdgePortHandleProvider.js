@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  IEdge,
-  IEdgePortHandleProvider,
-  IHandle,
-  IInputModeContext,
-  INode
-} from '@yfiles/yfiles'
+import { BaseClass, IEdgePortHandleProvider, IHandle, INode } from '@yfiles/yfiles'
 import { NodeLayoutPortLocationHandle } from './NodeLayoutPortLocationHandle'
 
 /**
@@ -42,6 +35,7 @@ import { NodeLayoutPortLocationHandle } from './NodeLayoutPortLocationHandle'
  */
 export class PortLookupEdgePortHandleProvider extends BaseClass(IEdgePortHandleProvider) {
   edge
+
   constructor(edge) {
     super()
     this.edge = edge

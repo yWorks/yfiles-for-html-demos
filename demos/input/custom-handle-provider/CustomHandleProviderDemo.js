@@ -33,8 +33,6 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   HandlePositions,
-  IGraph,
-  INode,
   IReshapeHandler,
   License,
   NodeReshapeHandleProvider,
@@ -42,16 +40,16 @@ import {
   Rect,
   Size
 } from '@yfiles/yfiles'
-import { colorSets, createDemoNodeLabelStyle } from '@yfiles/demo-resources/demo-styles'
+import { colorSets, createDemoNodeLabelStyle } from '@yfiles/demo-app/demo-styles'
 import { ArrowNodeStyleHandleProvider } from './ArrowNodeStyleHandleProvider'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Runs this demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
   initializeGraph(graphComponent.graph)

@@ -26,17 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  EdgeStyleBase,
-  GeneralPath,
-  ICanvasContext,
-  IEdge,
-  IInputModeContext,
-  IRenderContext,
-  Point,
-  Rect,
-  SvgVisual
-} from '@yfiles/yfiles'
+import { EdgeStyleBase, GeneralPath, Point, Rect, SvgVisual } from '@yfiles/yfiles'
 import { ChordDiagramLayout } from './ChordDiagramLayout'
 
 const SVG_NS = 'http://www.w3.org/2000/svg'
@@ -278,14 +268,15 @@ export class ChordEdgeStyle extends EdgeStyleBase {
 }
 
 class EdgeRenderDataCache {
-  sourceStart
-  sourceEnd
-  targetStart
-  targetEnd
-  circleCenter
-  highlighted
-  opacity
   showStyleHints
+  opacity
+  highlighted
+  circleCenter
+  targetEnd
+  targetStart
+  sourceEnd
+  sourceStart
+
   constructor(
     sourceStart,
     sourceEnd,

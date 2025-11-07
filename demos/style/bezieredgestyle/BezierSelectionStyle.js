@@ -32,24 +32,16 @@ import {
   EdgeStyleIndicatorRenderer,
   GeneralPath,
   IBoundsProvider,
-  ICanvasContext,
   IEdge,
   IHitTestable,
-  IInputModeContext,
-  IObjectRenderer,
-  IRenderContext,
   ISelectionRenderer,
   IVisibilityTestable,
   IVisualCreator,
   MutableRectangle,
-  Point,
   PolylineEdgeStyle,
-  Rect,
   Stroke,
   StyleIndicatorZoomPolicy,
-  SvgVisual,
-  SvgVisualGroup,
-  Visual
+  SvgVisualGroup
 } from '@yfiles/yfiles'
 
 /**
@@ -57,6 +49,7 @@ import {
  */
 class SelectionEdgeStyle extends DelegatingEdgeStyle {
   delegatingStyle
+
   constructor(delegatingStyle) {
     super()
     this.delegatingStyle = delegatingStyle
@@ -145,8 +138,8 @@ class CompositeRenderer extends BaseClass(
   IVisibilityTestable,
   IHitTestable
 ) {
-  first
   second
+  first
   renderTag = null
 
   constructor(first, second) {

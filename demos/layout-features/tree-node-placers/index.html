@@ -32,10 +32,11 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Tree Layout with Subtree Placers - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <title>Tree Layout with Subtree Placers [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -60,7 +61,6 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
     </div>
@@ -78,11 +78,10 @@
 
       <div class="demo-description__content">
         <h1>Tree Layout with Subtree Placers</h1>
-
         <p>
-          This demo shows how to use <a href="https://docs.yworks.com/yfileshtml/#/api/ISubtreePlacer" target="_blank">subtree placers</a> with the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">Tree Layout</a>. A subtree placer is responsible for the
-          arrangement of a local root node and all of its subtrees.
+          This demo shows how to use <a href="https://docs.yworks.com/yfileshtml/#/api/ISubtreePlacer" class="api" target="_blank">subtree placers</a> with the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" class="api" target="_blank">TreeLayout</a>. A subtree placer is responsible for the arrangement of a
+          local root node and all of its subtrees.
         </p>
         <p>
           yFiles comes with predefined subtree placers that provide a variety of subtree arrangement
@@ -90,44 +89,37 @@
         </p>
         <ul>
           <li>
-            Node 1 uses a <a href="https://docs.yworks.com/yfileshtml/#/api/LayeredSubtreePlacer" target="_blank">LayeredSubtreePlacer</a>, that places child nodes with the
-            same depth in the tree in the same horizontal layer.
+            Node 1 uses a <a href="https://docs.yworks.com/yfileshtml/#/api/LevelAlignedSubtreePlacer" class="api" target="_blank">LevelAlignedSubtreePlacer</a>, that places child nodes with
+            the same depth in the tree in the same horizontal layer.
           </li>
           <li>
-            Node 2 uses a <a href="https://docs.yworks.com/yfileshtml/#/api/LeftRightSubtreePlacer" target="_blank">LeftRightSubtreePlacer</a>, that places child nodes left and
-            right of a single vertical bus.
+            Node 2 uses a <a href="https://docs.yworks.com/yfileshtml/#/api/LeftRightSubtreePlacer" class="api" target="_blank">LeftRightSubtreePlacer</a>, that places child nodes left
+            and right of a single vertical bus.
           </li>
           <li>
-            Node 6 uses a <a href="https://docs.yworks.com/yfileshtml/#/api/DoubleLineSubtreePlacer" target="_blank">DoubleLineSubtreePlacer</a>, that places child nodes in two
-            horizontal lines.
+            Node 6 uses a <a href="https://docs.yworks.com/yfileshtml/#/api/DoubleLayerSubtreePlacer" class="api" target="_blank">DoubleLayerSubtreePlacer</a>, that places child nodes in
+            two horizontal lines.
           </li>
         </ul>
-
-        <h3>Code Snippet</h3>
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/tree-node-placers/SubtreePlacers.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Demos</h3>
-        <p>See the <a href="../../layout/tree/" target="_blank">Tree Layout Demo</a> for mode extensive examples of subtree placers.</p>
-
-        <h3>Documentation</h3>
-        <p>
-          See the <a href="https://docs.yworks.com/yfileshtml/#/dguide/tree_layout" target="_blank">Tree Layout</a> section in the Developer's Guide for
-          an in-depth discussion of the relevant concepts.
-        </p>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../layout/tree/" class="demo" target="_blank">Tree Layout Demo</a></li>
+          <li><a href="../../showcase/layoutstyles/index.html?layout=tree&sample=tree" class="demo" target="_blank">Layout Styles: Tree Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/tree_layout" class="dguide" target="_blank">Tree layout algorithm</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayoutData" class="api" target="_blank">TreeLayoutData</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/ISubtreePlacer" class="api" target="_blank">ISubtreePlacer</a></li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script type="module" crossorigin="anonymous" src="./TreeNodePlacersDemo.ts" async></script>
   </body>
 </html>

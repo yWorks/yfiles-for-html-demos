@@ -30,10 +30,10 @@ import {
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  IEdge,
-  IGraph,
-  ILabel,
-  INode,
+  type IEdge,
+  type IGraph,
+  type ILabel,
+  type INode,
   License,
   Point,
   Size,
@@ -43,8 +43,8 @@ import {
   WebGLSelectionIndicatorManager
 } from '@yfiles/yfiles'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { checkWebGL2Support, finishLoading } from '@yfiles/demo-app/demo-page'
 import { preloadWebglStyles } from './preload-webgl-styles'
 import {
   edgeFocusStyle,
@@ -60,7 +60,7 @@ import {
   webGLLabelStyles,
   webGLNodeStyles
 } from './webgl-styles'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import type { WebGLEdgeStyle, WebGLNodeStyle, WebGLTextStyle } from './webgl-styles-util'
 
 const webGLLoadingOverlay = document.querySelector('.webgl-loading')!
@@ -69,12 +69,19 @@ const webGLLoadingOverlay = document.querySelector('.webgl-loading')!
  * A WebGLGraphModelManager that uses callbacks for graph items to determine their WebGL styles.
  */
 export class MyWebGLGraphModelManager extends WebGLGraphModelManager {
+  private labelStyle: (label: ILabel) => WebGLTextStyle
+  private edgeStyle: (edge: IEdge) => WebGLEdgeStyle
+  private nodeStyle: (node: INode) => WebGLNodeStyle
+
   constructor(
-    private nodeStyle: (node: INode) => WebGLNodeStyle,
-    private edgeStyle: (edge: IEdge) => WebGLEdgeStyle,
-    private labelStyle: (label: ILabel) => WebGLTextStyle
+    nodeStyle: (node: INode) => WebGLNodeStyle,
+    edgeStyle: (edge: IEdge) => WebGLEdgeStyle,
+    labelStyle: (label: ILabel) => WebGLTextStyle
   ) {
     super()
+    this.nodeStyle = nodeStyle
+    this.edgeStyle = edgeStyle
+    this.labelStyle = labelStyle
   }
   protected getWebGLNodeStyle(node: INode) {
     return this.nodeStyle(node)
@@ -97,7 +104,7 @@ async function run(): Promise<void> {
     return
   }
 
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponentWithoutPreload = new GraphComponent('#graphComponent')
   const graphComponentWithPreload = new GraphComponent('#graphComponentWithPreload')

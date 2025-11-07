@@ -36,7 +36,7 @@ export class CustomNodeStyle extends NodeStyleBase {
     const { x, y, width, height } = node.layout
 
     const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-    // we render the path at 0,0 and translate the visual to it's final location
+    // we render the path at 0,0 and translate the visual to its final location
     pathElement.setAttribute('d', createPathData(0, 0, width, height))
     SvgVisual.setTranslate(pathElement, x, y)
 

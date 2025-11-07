@@ -42,8 +42,8 @@ import {
 import { FlowchartNodeStyle, FlowchartNodeType } from '../style/FlowchartStyle'
 import {
   EDGE_TYPE_DATA_KEY,
-  MultiPageEdgeType,
-  MultiPageNodeType,
+  type MultiPageEdgeType,
+  type MultiPageNodeType,
   NODE_TYPE_DATA_KEY
 } from './flowchart-elements'
 
@@ -241,12 +241,10 @@ export class FlowchartLayoutData {
       edge
     ): BranchDirection => this.getBranchType(edge)
 
-    data.addItemMapping(NODE_TYPE_DATA_KEY).mapperFunction = (
-      node
-    ): MultiPageNodeType | MultiPageEdgeType => this.getType(node)
-    data.addItemMapping(EDGE_TYPE_DATA_KEY).mapperFunction = (
-      edge
-    ): MultiPageNodeType | MultiPageEdgeType => this.getType(edge)
+    data.addItemMapping(NODE_TYPE_DATA_KEY).mapperFunction = (node): MultiPageNodeType =>
+      this.getType(node) as MultiPageNodeType
+    data.addItemMapping(EDGE_TYPE_DATA_KEY).mapperFunction = (edge): MultiPageEdgeType =>
+      this.getType(edge) as MultiPageEdgeType
 
     if (this.inEdgeGrouping !== 'none') {
       let inDegreeThreshold: number
@@ -277,43 +275,43 @@ export class FlowchartLayoutData {
    * Returns the flowchart element type of the given model item.
    * @returns one of the node type constants in the FlowchartElements file.
    */
-  getType(item: IModelItem): number {
+  getType(item: IModelItem): MultiPageNodeType | MultiPageEdgeType {
     if (item instanceof INode) {
       const style = item.style
       if (style instanceof TableNodeStyle) {
-        return MultiPageNodeType.Pool
+        return 'Pool'
       } else if (style instanceof GroupNodeStyle) {
-        return MultiPageNodeType.Group
+        return 'Group'
       } else if (style instanceof FlowchartNodeStyle) {
         const type = style.type
         if (nodeActivityElements.has(type)) {
-          return MultiPageNodeType.Process
+          return 'Process'
         } else if (nodeDataElements.has(type)) {
-          return MultiPageNodeType.Data
+          return 'Data'
         } else if (nodeAnnotationElements.has(type)) {
-          return MultiPageNodeType.Annotation
+          return 'Annotation'
         } else if (nodeGatewayElements.has(type)) {
-          return MultiPageNodeType.Decision
+          return 'Decision'
         } else if (nodeEndElements.has(type)) {
-          return MultiPageNodeType.EndEvent
+          return 'EndEvent'
         } else if (nodeEventElements.has(type)) {
-          return MultiPageNodeType.Event
+          return 'Event'
         } else if (nodeReferenceElements.has(type)) {
-          return MultiPageNodeType.Process
+          return 'Process'
         } else if (nodeStartElements.has(type)) {
-          return MultiPageNodeType.StartEvent
+          return 'StartEvent'
         }
       }
     } else if (item instanceof IEdge) {
       if (
-        this.getType(item.sourceNode) === MultiPageNodeType.Annotation ||
-        this.getType(item.targetNode) === MultiPageNodeType.Annotation
+        this.getType(item.sourceNode) === 'Annotation' ||
+        this.getType(item.targetNode) === 'Annotation'
       ) {
-        return MultiPageEdgeType.MessageFlow
+        return 'MessageFlow'
       }
-      return MultiPageEdgeType.SequenceFlow
+      return 'SequenceFlow'
     }
-    return MultiPageNodeType.Invalid
+    return 'Invalid'
   }
 
   /**
@@ -337,7 +335,7 @@ export class FlowchartLayoutData {
    */
   isPositiveBranch(edge: IEdge): boolean {
     return (
-      this.getType(edge.sourceNode) === MultiPageNodeType.Decision &&
+      this.getType(edge.sourceNode) === 'Decision' &&
       edge.labels.size > 0 &&
       FlowchartLayoutData.isMatchingLabelText(edge.labels.first()!, this.positiveBranchLabel)
     )
@@ -351,7 +349,7 @@ export class FlowchartLayoutData {
    */
   isNegativeBranch(edge: IEdge): boolean {
     return (
-      this.getType(edge.sourceNode) === MultiPageNodeType.Decision &&
+      this.getType(edge.sourceNode) === 'Decision' &&
       edge.labels.size > 0 &&
       FlowchartLayoutData.isMatchingLabelText(edge.labels.first()!, this.negativeBranchLabel)
     )

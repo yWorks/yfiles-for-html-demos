@@ -36,7 +36,7 @@ protected createVisual(context: IRenderContext, node: INode): Visual | null {
 
 Note
 
-The [createVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-createVisual) method can return anything SVG supports. You are not limited to `<rect>` or `<path>` here. This tutorial focuses on how yFiles for HTML works, so we try to keep it simple. For more information about the capabilities of SVG, take a look at [the SVG specification](https://www.w3.org/TR/SVG2/).
+The [createVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#createVisual) method can return anything SVG supports. You are not limited to `<rect>` or `<path>` here. This tutorial focuses on how yFiles for HTML works, so we try to keep it simple. For more information about the capabilities of SVG, take a look at [the SVG specification](https://www.w3.org/TR/SVG2/).
 
 The path data is created by a separate function that takes the node’s location and size into account:
 

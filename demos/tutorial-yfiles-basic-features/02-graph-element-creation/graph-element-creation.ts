@@ -26,18 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  FreeNodePortLocationModel,
-  type IGraph,
-  Point,
-  Rect
-} from '@yfiles/yfiles'
+import { FreeNodePortLocationModel, type IGraph, Point, Rect } from '@yfiles/yfiles'
 
 /**
  * Creates a sample graph and introduces all important graph elements present in
  * yFiles for HTML.
  */
-export function graphElementCreation(graph: IGraph) {
+export function graphElementCreation(graph: IGraph): void {
   // Create two nodes with the default node size
   // The location specifies the node center
   const node1 = graph.createNode()

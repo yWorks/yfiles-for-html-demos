@@ -44,14 +44,16 @@ import { convertLoadToColor, type Device, DeviceKind } from './model/Device'
  * It renders the icon according to the device kind and adds the 'failed' icon if necessary.
  */
 export class DeviceNodeStyle extends NodeStyleBase<DeviceNodeStyleVisual> {
+  private readonly imageProvider: (device: Device) => string
+  private readonly dataProvider: (node: INode) => Device
+
   /**
    * Creates a new instance of NetworkMonitoringNodeStyle.
    */
-  constructor(
-    private readonly dataProvider: (node: INode) => Device,
-    private readonly imageProvider: (device: Device) => string
-  ) {
+  constructor(dataProvider: (node: INode) => Device, imageProvider: (device: Device) => string) {
     super()
+    this.dataProvider = dataProvider
+    this.imageProvider = imageProvider
   }
 
   createVisual(context: IRenderContext, node: INode): DeviceNodeStyleVisual {

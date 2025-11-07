@@ -30,21 +30,12 @@ import {
   BendAnchoredPortLocationModel,
   Color,
   EdgeStyleBase,
-  ICanvasContext,
-  IEdge,
-  IInputModeContext,
-  IPortStyle,
-  IRenderContext,
-  ShapePortStyle,
-  Point,
   PolylineEdgeStyle,
-  Rect,
+  ShapePortStyle,
   SimplePort,
   Size,
   Stroke,
-  SvgVisual,
-  SvgVisualGroup,
-  Visual
+  SvgVisualGroup
 } from '@yfiles/yfiles'
 
 /**
@@ -151,7 +142,7 @@ export class EdgeStyleDecorator extends EdgeStyleBase {
     const portLocationModel = BendAnchoredPortLocationModel.INSTANCE
     for (let i = 0; i < group.children.size; i++) {
       // place the dummy port at the bend's location
-      dummyPort.locationParameter = portLocationModel.createParameterFromSource(i - 1)
+      dummyPort.locationParameter = portLocationModel.createParameterFromSource(i)
 
       // update the dummy port visual
       const visual = bendStyle.renderer

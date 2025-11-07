@@ -34,10 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Arrow Node Style Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
-    <link rel="stylesheet" href="./resources/settings-panel.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -82,19 +81,19 @@
         <h1>Arrow Node Style Demo</h1>
 
         <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle" target="_blank">ArrowNodeStyle</a> provides several properties to customize its shape.
-          There are five basic <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#shape" target="_blank">shapes</a> provided that can be
-          rotated in four <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#direction" target="_blank">directions</a>.
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle" class="api" target="_blank">ArrowNodeStyle</a> provides several properties to customize its shape.
+          There are five basic <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#shape" class="api" target="_blank">shapes</a> provided that can be
+          rotated in four <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#direction" class="api" target="_blank">directions</a>.
         </p>
         <p>
-          For the <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowStyleShape#ARROW" target="_blank">Arrow</a>,
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowStyleShape#DOUBLE_ARROW" target="_blank">Double Arrow</a> and
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowStyleShape#NOTCHED_ARROW" target="_blank">Notched Arrow</a> shapes, the thickness of the
-          arrow shaft can be defined as a <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#shaftRatio" target="_blank">shaft ratio</a> of
+          For the <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowStyleShape#ARROW" class="api" target="_blank">Arrow</a>,
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowStyleShape#DOUBLE_ARROW" class="api" target="_blank">Double Arrow</a> and
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowStyleShape#NOTCHED_ARROW" class="api" target="_blank">Notched Arrow</a> shapes, the thickness of the
+          arrow shaft can be defined as a <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#shaftRatio" class="api" target="_blank">shaft ratio</a> of
           the node size.
         </p>
         <p>
-          For all shapes, the <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#angle" target="_blank">angle</a> of the arrow tip can be
+          For all shapes, the <a href="https://docs.yworks.com/yfileshtml/#/api/ArrowNodeStyle#angle" class="api" target="_blank">angle</a> of the arrow tip can be
           defined. The angle is between an arrow blade and the perpendicular to which the arrow is
           pointing.
         </p>
@@ -121,22 +120,22 @@
 
         <p>
           To learn how to customize the handles of the arrow node style, please see the
-          <a href="../../input/custom-handle-provider/" target="_blank">Custom Handle Provider Demo</a>.
+          <a href="../../input/custom-handle-provider/" class="demo" target="_blank">Custom Handle Provider Demo</a>.
         </p>
 
         <h2>Related Demos</h2>
         <ul>
           <li>
-            <a href="../../style/shape-node-style/" target="_blank">Shape Node Style Demo</a>
+            <a href="../../style/shape-node-style/" class="demo" target="_blank">Shape Node Style Demo</a>
           </li>
           <li>
-            <a href="../../style/rectangle-node-style/" target="_blank">Rectangle Node Style Demo</a>
+            <a href="../../style/rectangle-node-style/" class="demo" target="_blank">Rectangle Node Style Demo</a>
           </li>
           <li>
-            <a href="../../style/group-node-style/" target="_blank">Group Node Style Demo</a>
+            <a href="../../style/group-node-style/" class="demo" target="_blank">Group Node Style Demo</a>
           </li>
           <li>
-            <a href="../../tutorial-style-implementation-node/01-create-a-rectangle/" target="_blank">Step 01 Create A Rectangle</a>
+            <a href="../../tutorial-style-implementation-node/01-create-a-rectangle/" class="demo" target="_blank">Step 01 Create A Rectangle</a>
           </li>
         </ul>
       </div>
@@ -147,43 +146,35 @@
       </div>
       <aside class="demo-main__sidebar">
         <div class="demo-sidebar__content">
-          <div class="demo-properties__settings">
-            <h2>Style Properties</h2>
-            <div class="info-message">Please select a node to modify its settings.</div>
-            <div class="demo-form-block" style="display: none">
-              <div class="settings-grid">
-                <label for="basic-shape" class="settings-label-row1">Basic Shape</label>
-                <select id="basic-shape" class="settings-editor-row1" disabled="">
-                  <option value="ARROW">Arrow</option>
-                  <option value="DOUBLE_ARROW">Double Arrow</option>
-                  <option value="NOTCHED_ARROW">Notched Arrow</option>
-                  <option value="TRAPEZOID">Trapezoid</option>
-                  <option value="PARALLELOGRAM">Parallelogram</option>
-                </select>
+          <h2>Style Properties</h2>
+          <div class="info-message">Please select a node to modify its settings.</div>
+          <div class="demo-form-block" style="display: none">
+            <div class="demo-properties__settings">
+              <label for="basic-shape" class="option-label">Basic Shape</label>
+              <select id="basic-shape" class="option-element" disabled="">
+                <option value="ARROW">Arrow</option>
+                <option value="DOUBLE_ARROW">Double Arrow</option>
+                <option value="NOTCHED_ARROW">Notched Arrow</option>
+                <option value="TRAPEZOID">Trapezoid</option>
+                <option value="PARALLELOGRAM">Parallelogram</option>
+              </select>
+              <label for="shape-direction" class="option-label">Shape Direction</label>
+              <select id="shape-direction" class="option-element" disabled="">
+                <option value="RIGHT">Right</option>
+                <option value="DOWN">Down</option>
+                <option value="LEFT">Left</option>
+                <option value="UP">Up</option>
+              </select>
 
-                <label for="shape-direction" class="settings-label-row2">Shape Direction</label>
-                <select id="shape-direction" class="settings-editor-row2" disabled="">
-                  <option value="RIGHT">Right</option>
-                  <option value="DOWN">Down</option>
-                  <option value="LEFT">Left</option>
-                  <option value="UP">Up</option>
-                </select>
+              <label for="angle-range" class="option-label">Angle</label>
+              <div>
+                <input type="range" id="angle-range" min="-180" max="180" value="90" disabled="" />
+                <span id="angle-label" class="number-label">90</span>
+              </div>
 
-                <label for="angle-range" class="settings-label-row3">Angle</label>
+              <label for="shaft-ratio" class="option-label">Shaft Ratio</label>
+              <div>
                 <input
-                  class="settings-editor-row3"
-                  type="range"
-                  id="angle-range"
-                  min="-180"
-                  max="180"
-                  value="90"
-                  disabled=""
-                />
-                <label class="settings-label-value3" id="angle-label">90</label>
-
-                <label for="shaft-ratio" class="settings-label-row4">Shaft Ratio</label>
-                <input
-                  class="settings-editor-row4"
                   type="range"
                   id="shaft-ratio"
                   min="0"
@@ -192,7 +183,7 @@
                   value="0.3"
                   disabled=""
                 />
-                <label class="settings-label-value4" id="shaft-ratio-label">0.3</label>
+                <span id="shaft-ratio-label" class="number-label">0.3</span>
               </div>
             </div>
           </div>

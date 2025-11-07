@@ -71,14 +71,10 @@ import {
   TreeSampleData
 } from './resources/SampleData'
 import { NodeTypePanel } from '@yfiles/demo-utils/NodeTypePanel'
-import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
-import {
-  colorSets,
-  createDemoEdgeStyle,
-  createDemoNodeStyle
-} from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { ColorSetName } from '@yfiles/demo-app/demo-styles'
+import { colorSets, createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Type describing a sample graph and the according layout algorithm to run on it.
@@ -119,7 +115,7 @@ let graphComponent: GraphComponent
  * Runs this demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   configureGraphComponent()
   initializeUI()

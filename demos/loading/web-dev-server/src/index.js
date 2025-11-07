@@ -29,9 +29,9 @@
 import { GraphComponent, GraphEditorInputMode, License } from '@yfiles/yfiles'
 import { createSampleGraph } from './create-sample-graph'
 
-const licenseJson = await fetch('./license.json')
+const licenseData = await fetch('./license.json')
 
-const licenseValue = await licenseJson.json()
+const licenseValue = await licenseData.json()
 
 License.value = licenseValue
 

@@ -15,15 +15,14 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/customportmodel/).
 
-This demo shows how to create and use a custom [IPortLocationModel](https://docs.yworks.com/yfileshtml/#/api/IPortLocationModel).
+This demo demonstrates how to create and use a custom [IPortLocationModel](https://docs.yworks.com/yfileshtml/#/api/IPortLocationModel).
 
-## Thing to Try
+## Things to Try
 
-- Create new nodes in the canvas and connect them with new edges.  
-  Note that a specialized set of possible port candidates is shown. The candidates use a custom port location model that offers five possible locations on each node.
-- Click on one of the nodes and then drag the handle that depicts a port. Note that you can only drag the handle to the locations that are supported by the model.
-- Try saving and loading the graph.
+- Create a new node by clicking on the canvas and connect it to another node with a new edge. The green dots visualize the possible port candidates, which have been customized in this demo. The port location model defines five discreet locations for each node.
+- Select one of the nodes and drag one of the port handles. You will only be able to move the handle to one of the other custom port locations supported by the port location model.
+- Save and load the graph.
 
 ## Related Demo
 
-- See the [Custom Label Model Demo](../../input/customlabelmodel/) to learn how to customize the models for label locations. Note that the code is very similar as the same concepts are being applied.
+- See the [Border-Aligned Label Model Demo](../../input/border-aligned-label-model/) or the [Offset Wrapper Label Model Demo](../../input/offset-wrapper-label-model/) to learn how to customize the models for label locations. Note that the code is very similar as the same concepts are being applied.

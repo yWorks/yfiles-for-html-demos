@@ -30,7 +30,7 @@ import {
   BaseClass,
   Color,
   Cursor,
-  DendrogramNode,
+  type DendrogramNode,
   EdgePortCandidates,
   ExteriorNodeLabelModel,
   GenericLayoutData,
@@ -38,24 +38,24 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  HierarchicalClusteringResult,
+  type HierarchicalClusteringResult,
   HierarchicalLayout,
   HierarchicalLayoutEdgeDescriptor,
   HierarchicalLayoutLayeringStrategy,
-  IEdge,
-  IGraph,
+  type IEdge,
+  type IGraph,
   IHitTestable,
-  IInputModeContext,
+  type IInputModeContext,
   ILayoutAlgorithm,
   type IMapper,
-  IModelItem,
-  IMutableRectangle,
+  type IModelItem,
+  type IMutableRectangle,
   INode,
   IPositionHandler,
-  IRenderTreeElement,
+  type IRenderTreeElement,
   LabelStyle,
-  LayoutGraph,
-  LayoutNode,
+  type LayoutGraph,
+  type LayoutNode,
   Mapper,
   MutablePoint,
   MutableRectangle,
@@ -64,15 +64,14 @@ import {
   Point,
   PolylineEdgeStyle,
   PortSides,
-  Rect,
+  type Rect,
   ShapeNodeStyle,
   Size,
-  Stroke,
-  StyleIndicatorZoomPolicy
+  Stroke
 } from '@yfiles/yfiles'
 
 import { AxisVisual, CutoffVisual, generateColors } from './DemoVisuals'
-import { colorSets } from '@yfiles/demo-resources/demo-styles'
+import { colorSets } from '@yfiles/demo-app/demo-styles'
 
 const DENDROGRAM_GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
 const DENDROGRAM_GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
@@ -83,6 +82,7 @@ const DENDROGRAM_GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
  * This also requires the graph that will be clustered (the original graph).
  */
 export class DendrogramComponent {
+  private graphComponent: GraphComponent
   private dendrogramComponent: GraphComponent = new GraphComponent('dendrogram-graph-component')
   private defaultNodeStyle: ShapeNodeStyle = new ShapeNodeStyle()
   private defaultEdgeStyle: PolylineEdgeStyle = new PolylineEdgeStyle()
@@ -103,7 +103,8 @@ export class DendrogramComponent {
    * Creates a new instance of a dendrogram component.
    * @param graphComponent The {@link GraphComponent} which renders the original graph.
    */
-  constructor(private graphComponent: GraphComponent) {
+  constructor(graphComponent: GraphComponent) {
+    this.graphComponent = graphComponent
     this.configureUserInteraction()
 
     this.configureGraph(this.dendrogramComponent.graph)
@@ -351,7 +352,10 @@ export class DendrogramComponent {
           while (parent && !this.visited.has(parent)) {
             // get the node in the hierarchical cluster graph and update its style
             if (parent.dissimilarityValue < cutoff && !this.visited.has(parent)) {
-              const hierarchicalParent = this.dendro2hierarchical.get(parent)!
+              const hierarchicalParent = this.dendro2hierarchical.get(parent)
+              if (!hierarchicalParent) {
+                break
+              }
               this.updateNodeStyle(hierarchicalParent, color)
 
               // update the style of the out-edges

@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphEditorInputMode, IEdge, INode, Reachability, ShortestPath } from '@yfiles/yfiles'
+import { Reachability, ShortestPath } from '@yfiles/yfiles'
 
 /**
  * Demonstrates how to quickly configure and run the Reachability algorithm
@@ -39,7 +39,7 @@ export function runReachabilityAlgorithm(graphComponent) {
   // first reset the highlights
   graphComponent.highlights.clear()
 
-  if (graphComponent.selection.nodes.size == 0) {
+  if (graphComponent.selection.nodes.size === 0) {
     graphComponent.selection.clear()
     graphComponent.selection.add(nodes.first())
   }
@@ -63,7 +63,7 @@ export function runReachabilityAlgorithm(graphComponent) {
 /**
  * Demonstrates how to configure and run the ShortestPath algorithm.
  */
-export function runShortestPathAlgorithm(graphComponent) {
+export async function runShortestPathAlgorithm(graphComponent) {
   // first reset the highlights
   graphComponent.highlights.clear()
 
@@ -74,7 +74,7 @@ export function runShortestPathAlgorithm(graphComponent) {
     return
   }
 
-  // select source and sink node for the path finding algorithm
+  // select source and sink node for the path-finding algorithm
   // use the first two selected nodes if possible
   const graphSelection = graphComponent.selection
   const nodeSelection = graphSelection.nodes
@@ -87,7 +87,7 @@ export function runShortestPathAlgorithm(graphComponent) {
   const shortestPath = new ShortestPath({
     source: sourceNode,
     sink: sinkNode,
-    directed: false, // don't consider edge direction
+    directed: false, // don't consider the edge direction
     // calculate the cost per edge as the distance between source and target node
     costs: (edge) =>
       edge.sourceNode.layout.center.subtract(edge.targetNode.layout.center).vectorLength
@@ -112,9 +112,11 @@ export function runShortestPathAlgorithm(graphComponent) {
 
   // finally, we use the explicit "path.end" field to show the distance as a tooltip above
   // the sink node
-  endNode &&
-    graphComponent.inputMode.toolTipInputMode.show(
+  if (endNode) {
+    const graphEditorInputMode = graphComponent.inputMode
+    await graphEditorInputMode.toolTipInputMode.show(
       endNode.layout.center,
       `Distance: ${pathDistance}`
     )
+  }
 }

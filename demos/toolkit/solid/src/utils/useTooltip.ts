@@ -27,15 +27,15 @@
  **
  ***************************************************************************/
 import {
-  GraphComponent,
-  GraphEditorInputMode,
+  type GraphComponent,
+  type GraphEditorInputMode,
   GraphItemTypes,
-  GraphViewerInputMode,
+  type GraphViewerInputMode,
   IEdge,
-  IModelItem,
+  type IModelItem,
   INode,
-  QueryItemToolTipEventArgs,
   Point,
+  type QueryItemToolTipEventArgs,
   TimeSpan
 } from '@yfiles/yfiles'
 import { render } from 'solid-js/web'

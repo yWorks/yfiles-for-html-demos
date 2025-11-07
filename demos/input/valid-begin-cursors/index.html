@@ -33,10 +33,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-    <title>Valid Begin Cursors Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <title>Valid Begin Cursors [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -61,7 +61,6 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
     </div>
@@ -79,52 +78,54 @@
 
       <div class="demo-description__content">
         <h1>Valid Begin Cursor Demo</h1>
-
         <p>
-          The demo exhibits a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> where graph editing is configured to
-          show different cursors depending on which gesture is valid to begin at the current
-          location considering the currently pressed modifiers.
+          This demo illustrates how the mouse cursor dynamically changes within a
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a> to signal which interactive action (e.g., move, select,
+          create) can be initiated at the current pointer location.
         </p>
-        <p>
-          Some input modes were configured to only begin when a specific modifier is pressed to
-          distinguish which gesture should start.
-        </p>
-
-        <h2>Things to try</h2>
+        <h2>Things to Try</h2>
         <ul>
           <li>
-            <b>Move the viewport</b> by pressing <kbd>Ctrl</kbd> while hovering on an empty location
-            on the canvas. Its valid beginning is indicated by
-            <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#GRAB" target="_blank">Cursor.GRAB</a>
+            <p>
+              <strong>Move the Viewport:</strong> Press <kbd>Ctrl</kbd> while hovering over an empty
+              canvas area. The cursor changes to <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#GRAB" class="api" target="_blank">Cursor.GRAB</a>.
+            </p>
           </li>
           <li>
-            <b>Start lasso selection</b> by pressing <kbd>Alt</kbd> while hovering on an empty
-            location on the canvas. Its valid beginning is indicated by a custom lasso cursor.
-            Pressing <kbd>Shift</kbd> or <kbd>Ctrl</kbd> during the lasso gesture will switch
-            between subtract- and extend-selection mode respectively, indicated by a '-' or '+'
-            symbol on the cursor.
+            <p>
+              <strong>Lasso Select:</strong> Begin a lasso selection by holding <kbd>Alt</kbd> over
+              an empty area. The cursor becomes a custom lasso icon. During selection,
+              <kbd>Shift</kbd> or <kbd>Ctrl</kbd> modifies the cursor to include <kbd>+</kbd> (add
+              to selection) or <kbd>-</kbd> (subtract from selection), respectively.
+            </p>
           </li>
           <li>
-            <b>Start marquee selection</b> when neither <kbd>Shift</kbd> nor <kbd>Ctrl</kbd> is
-            pressed while hovering on an empty location on the canvas. Its valid beginning is
-            indicated by <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#CROSSHAIR" target="_blank">Cursor.CROSSHAIR</a>. Pressing
-            <kbd>Shift</kbd> or <kbd>Ctrl</kbd> during the marquee gesture will switch between
-            subtract- and extend-selection mode respectively, indicated by a '-' or '+' symbol on
-            the cursor.
+            <p>
+              <strong>Marquee Select:</strong> Perform a rectangular selection by dragging over an
+              empty area <em>without</em> <kbd>Ctrl</kbd> or <kbd>Alt</kbd> held. The cursor
+              displays as <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#CROSSHAIR" class="api" target="_blank">Cursor.CROSSHAIR</a>. Similar to lasso,
+              <kbd>Shift</kbd> and <kbd>Ctrl</kbd> modify the cursor for <kbd>+</kbd> (add) or
+              <kbd>-</kbd> (subtract) selection.
+            </p>
           </li>
           <li>
-            <b>Create a new edge</b> by pressing <kbd>Ctrl</kbd> while hovering on an unselected
-            node. Its valid beginning is indicated by a custom create-edge cursor.
+            <p>
+              <strong>Create Edge:</strong> Hold <kbd>Ctrl</kbd> and hover over an unselected node.
+              The cursor indicates valid edge creation with a custom icon.
+            </p>
           </li>
           <li>
-            <b>Move a node</b> when <kbd>Ctrl</kbd> is <b>not</b> pressed while hovering on a
-            selected or unselected node. Its valid beginning is indicated by
-            <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#MOVE" target="_blank">Cursor.MOVE</a>.
+            <p>
+              <strong>Move Node:</strong> Hover over any node <em>without</em>
+              <kbd>Ctrl</kbd> pressed. The cursor changes to <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#MOVE" class="api" target="_blank">Cursor.MOVE</a>,
+              indicating you can drag the node.
+            </p>
           </li>
           <li>
-            <b>Show tooltips</b> when hovering on an edge for a second. Hovering over a location
-            where a tooltip may be displayed is indicated by
-            <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#HELP" target="_blank">Cursor.HELP</a>.
+            <p>
+              <strong>Show Tooltip:</strong> Hover over an edge for a second. The cursor changes to
+              <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#HELP" class="api" target="_blank">Cursor.HELP</a> to indicate that a tooltip can be displayed.
+            </p>
           </li>
         </ul>
       </div>
@@ -133,7 +134,8 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="ValidBeginCursorsDemo.ts" async></script>
+    <script type="module" crossorigin="anonymous" src="./ValidBeginCursorsDemo.ts" async></script>
   </body>
 </html>

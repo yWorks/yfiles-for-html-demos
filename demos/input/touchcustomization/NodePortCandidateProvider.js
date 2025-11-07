@@ -28,11 +28,6 @@
  ***************************************************************************/
 import {
   FreeNodePortLocationModel,
-  IEnumerable,
-  IInputModeContext,
-  INode,
-  IPortCandidate,
-  IPortLocationModelParameter,
   List,
   PortCandidate,
   PortCandidateProviderBase
@@ -43,6 +38,7 @@ import {
  */
 export class NodePortCandidateProvider extends PortCandidateProviderBase {
   node
+
   /**
    * Creates a new instance of {@link NodePortCandidateProvider}.
    * @param node The given node.

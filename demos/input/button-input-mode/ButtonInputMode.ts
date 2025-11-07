@@ -29,58 +29,58 @@
 /* eslint-disable jsdoc/check-param-names */
 import {
   BaseClass,
-  BendEventArgs,
-  CanvasComponent,
+  type BendEventArgs,
+  type CanvasComponent,
   CollectionModelManager,
-  ConcurrencyController,
+  type ConcurrencyController,
   type Constructor,
   Cursor,
   delegate,
-  EdgeEventArgs,
+  type EdgeEventArgs,
   FreeLabelModel,
   FreeNodePortLocationModel,
-  GraphComponent,
+  type GraphComponent,
   GraphItemTypes,
   IBend,
   IBoundsProvider,
-  ICanvasContext,
+  type ICanvasContext,
   IconLabelStyle,
   IEdge,
-  IGraph,
+  type IGraph,
   IHitTestable,
   IHitTester,
   IInputMode,
-  IInputModeContext,
+  type IInputModeContext,
   ILabel,
-  ILabelModelParameter,
+  type ILabelModelParameter,
   ILabelOwner,
-  ILabelStyle,
+  type ILabelStyle,
   IListEnumerable,
-  IModelItem,
+  type IModelItem,
   INode,
   InputModeBase,
   IObjectRenderer,
-  IObservableCollection,
-  IOrientedRectangle,
+  type IObservableCollection,
+  type IOrientedRectangle,
   IPort,
   IRenderContext,
-  ISvgDefsCreator,
+  type ISvgDefsCreator,
   IVisibilityTestable,
   IVisualCreator,
-  KeyEventArgs,
-  LabelEventArgs,
+  type KeyEventArgs,
+  type LabelEventArgs,
   LabelStyle,
   LabelStyleBase,
   Matrix,
   MatrixOrder,
-  NodeEventArgs,
+  type NodeEventArgs,
   ObservableCollection,
   OrientedRectangle,
   Point,
   PointerButtons,
-  PointerEventArgs,
+  type PointerEventArgs,
   PointerType,
-  PortEventArgs,
+  type PortEventArgs,
   PropertyChangedEventArgs,
   Rect,
   SimpleBend,
@@ -96,45 +96,15 @@ import {
   type TaggedSvgVisual,
   TimeSpan,
   ToolTipInputMode,
-  Visual,
-  WebGLSupport
+  type Visual,
+  type WebGLSupport
 } from '@yfiles/yfiles'
 
 export type QueryButtonsListener = (evt: QueryButtonsEvent, _: ButtonInputMode) => void
 export type ButtonHoverListener = (button: Button) => void
 export type ButtonActionListener = (button: Button) => void
 
-/**
- * The gesture or state {@link ButtonInputMode} uses to decide for which {@link IModelItem}
- * {@link Button}s should be displayed.
- */
-export enum ButtonTrigger {
-  /**
-   * There is no implicit trigger to show {@link Button}s.
-   * Instead the {@link ButtonInputMode.showButtons showButtons} and
-   * {@link ButtonInputMode.hideButtons hideButtons} have to be called programmatically.
-   */
-  NONE = 0,
-
-  /**
-   * {@link Button}s are displayed for an {@link IModelItem} when hovering over it for at least
-   * {@link ButtonInputMode.hoverTime hoverTime}.
-   * When hovering over another item long enough or when {@link ButtonInputMode.hideTime hideTime}
-   * has passed, the buttons are removed again.
-   */
-  HOVER = 1,
-
-  /**
-   * {@link Button}s are displayed for the {@link GraphComponent.currentItem currentItem}.
-   */
-  CURRENT_ITEM = 2,
-
-  /**
-   * {@link Button}s are displayed for an {@link IModelItem} when right-clicking the item and
-   * are removed on the next right-click.
-   */
-  RIGHT_CLICK = 3
-}
+export type ButtonTrigger = 'none' | 'hover' | 'current-item' | 'right-click'
 
 /**
  * An {@link IInputMode} that can be used to display several {@link Button buttons} at an owning
@@ -173,7 +143,7 @@ export class ButtonInputMode extends InputModeBase {
   private _hoverTime = 750
   private _hideTime = 2000
   private _hoverTooltipTime = 100
-  private _buttonTrigger: ButtonTrigger = ButtonTrigger.HOVER
+  private _buttonTrigger: ButtonTrigger = 'hover'
   private _validOwnerTypes: GraphItemTypes = GraphItemTypes.ALL
   private _lastTimeout: any = undefined
   private buttonOwner: IModelItem | null = null
@@ -272,14 +242,14 @@ export class ButtonInputMode extends InputModeBase {
     this.hideButtons()
     this._buttonTrigger = value
     switch (value) {
-      case ButtonTrigger.HOVER:
+      case 'hover':
         if (this.graphComponent) {
           this.updateHoveredItem(
             this.graphComponent.canvasContext.canvasComponent.lastEventLocation
           )
         }
         break
-      case ButtonTrigger.CURRENT_ITEM:
+      case 'current-item':
         if (this.graphComponent) {
           this.onCurrentItemChanged(new PropertyChangedEventArgs(''), this.graphComponent)
         }
@@ -515,7 +485,7 @@ export class ButtonInputMode extends InputModeBase {
   private onPointerMove(evt: PointerEventArgs) {
     const newButton = this.getFirstHitButton(evt.location)
     this.updateHoveredButton(newButton)
-    if (!newButton && this.buttonTrigger === ButtonTrigger.HOVER) {
+    if (!newButton && this.buttonTrigger === 'hover') {
       this.updateHoveredItem(evt.location)
     }
   }
@@ -695,7 +665,7 @@ export class ButtonInputMode extends InputModeBase {
         evt.preventDefault()
         this.triggerAction(hitButton)
       }
-    } else if (rightClick && this.buttonTrigger === ButtonTrigger.RIGHT_CLICK) {
+    } else if (rightClick && this.buttonTrigger === 'right-click') {
       const hitItem = this.getHitItem(evt.location)
       if (hitItem && hitItem != this.buttonOwner) {
         this.showButtons(hitItem)
@@ -765,7 +735,7 @@ export class ButtonInputMode extends InputModeBase {
   }
 
   private onCurrentItemChanged(evt: PropertyChangedEventArgs, component: GraphComponent) {
-    if (this.buttonTrigger === ButtonTrigger.CURRENT_ITEM) {
+    if (this.buttonTrigger === 'current-item') {
       if (component.currentItem === null || !this.isValidItem(component.currentItem)) {
         this.hideButtons()
       } else {
@@ -1536,8 +1506,11 @@ type FocusLabelStyleVisual = TaggedSvgVisual<SVGRectElement, Cache>
  * A style implementation that draws nothing but a border for its associated label.
  */
 class FocusLabelStyle extends LabelStyleBase<FocusLabelStyleVisual> {
-  constructor(private stroke: Stroke) {
+    private stroke: Stroke;
+
+  constructor(stroke: Stroke) {
     super()
+      this.stroke = stroke;
   }
 
   protected createVisual(context: IRenderContext, label: ILabel): FocusLabelStyleVisual {

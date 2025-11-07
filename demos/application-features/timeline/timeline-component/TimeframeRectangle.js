@@ -52,7 +52,6 @@ import { defaultStyling } from './Styling'
  */
 export class TimeframeRectangle {
   graphComponent
-  style
   rect = new MutableRectangle(0, 0, 0, 0)
 
   visual
@@ -66,7 +65,6 @@ export class TimeframeRectangle {
 
   constructor(graphComponent, style) {
     this.graphComponent = graphComponent
-    this.style = style
     // the actual visualization of the timeframe
     this.visual = new RectangleVisual(this.rect, style)
 
@@ -160,8 +158,9 @@ export class TimeframeRectangle {
 }
 
 class RectangleVisual extends BaseClass(IVisualCreator) {
-  rectangle
   style
+  rectangle
+
   /**
    * Creates a new instance of RectangleVisual.
    *
@@ -232,8 +231,8 @@ class RectangleVisual extends BaseClass(IVisualCreator) {
 }
 
 class RectanglePositionHandler extends BaseClass(IPositionHandler) {
-  rectangle
   limits
+  rectangle
   initialPosition = new Point(0, 0)
 
   constructor(rectangle, limits = Rect.INFINITE) {

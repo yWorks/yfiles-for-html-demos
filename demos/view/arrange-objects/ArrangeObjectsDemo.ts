@@ -26,7 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, GraphComponent, GraphEditorInputMode, IGraph, License } from '@yfiles/yfiles'
+import {
+  GraphBuilder,
+  GraphComponent,
+  GraphEditorInputMode,
+  type IGraph,
+  License
+} from '@yfiles/yfiles'
 import {
   alignBottom,
   alignHorizontally,
@@ -38,15 +44,15 @@ import {
   distributeVertically
 } from './AlignmentUtils'
 import SampleData from './resources/SampleData'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Bootstraps this demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // create the demo's graph component
   const graphComponent = new GraphComponent('#graphComponent')

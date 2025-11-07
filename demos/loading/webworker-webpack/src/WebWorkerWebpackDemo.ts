@@ -26,14 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import '@yfiles/demo-resources/style/loading-demo.css'
+import '@yfiles/demo-app/loading-demo.css'
 
 import {
   Command,
   GraphComponent,
   GraphEditorInputMode,
   HierarchicalLayoutData,
-  IEdge,
+  type IEdge,
   Insets,
   type LayoutDescriptor,
   LayoutExecutorAsync,
@@ -52,7 +52,7 @@ License.value = licenseData
 
 let graphComponent: GraphComponent
 let executor: LayoutExecutorAsync | null
-let worker = new Worker(new URL('./WorkerLayout.ts', import.meta.url))
+const worker = new Worker(new URL('./WorkerLayout.ts', import.meta.url))
 
 const layoutButton = document.querySelector<HTMLButtonElement>('#layoutBtn')!
 

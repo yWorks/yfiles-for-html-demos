@@ -29,12 +29,12 @@
 import {
   GraphCopier,
   IEdge,
-  IModelItem,
+  type IModelItem,
   INode,
   Neighborhood,
   TraversalDirection
 } from '@yfiles/yfiles'
-import { NeighborhoodType } from './NeighborhoodType'
+import { type NeighborhoodType } from './NeighborhoodType'
 import type { BuildGraphCallback, NeighborhoodView } from './NeighborhoodView'
 
 /**
@@ -47,7 +47,7 @@ export function getBuildGraphCallback(
   type: NeighborhoodType,
   distance: number
 ): BuildGraphCallback {
-  return NeighborhoodType.FOLDER_CONTENTS === type
+  return 'folder-contents' === type
     ? getBuildFolderContentsCallback()
     : getBuildNeighborhoodCallback(getTraversalDirection(type), distance)
 }
@@ -161,17 +161,17 @@ function buildNeighborhood(
  */
 function getTraversalDirection(type: NeighborhoodType): TraversalDirection {
   switch (type) {
-    case NeighborhoodType.PREDECESSORS:
+    case 'predecessors':
       // Get predecessors of root node
       return TraversalDirection.PREDECESSOR
-    case NeighborhoodType.SUCCESSORS:
+    case 'successors':
       // Get successors of root node
       return TraversalDirection.SUCCESSOR
-    case NeighborhoodType.BOTH:
+    case 'both':
       // Get predecessors and successors of root node
       return TraversalDirection.BOTH
     default:
-    case NeighborhoodType.NEIGHBORHOOD:
+    case 'neighborhood':
       // Get direct and indirect neighbors of root node
       return TraversalDirection.UNDIRECTED
   }

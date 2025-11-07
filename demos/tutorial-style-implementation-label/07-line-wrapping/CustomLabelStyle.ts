@@ -49,11 +49,15 @@ type Cache = { width: number; height: number; text: string }
 type CustomLabelStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 export class CustomLabelStyle extends LabelStyleBase<CustomLabelStyleVisual> {
+  private maxSize: Size
+  private wrapping: TextWrapping
   constructor(
-    private wrapping: TextWrapping = TextWrapping.NONE,
-    private maxSize: Size = Size.INFINITE
+    wrapping: TextWrapping = TextWrapping.NONE,
+    maxSize: Size = Size.INFINITE
   ) {
     super()
+    this.wrapping = wrapping
+    this.maxSize = maxSize
   }
 
   protected createVisual(

@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, IModelItem, Point } from '@yfiles/yfiles'
+import { Point } from '@yfiles/yfiles'
 
 const innerRadius = 30
 const outerRadius = 100

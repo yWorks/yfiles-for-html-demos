@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import licenseValue from './license.json'
-import { GraphComponent, type LayoutDescriptor, LayoutExecutorAsync } from '@yfiles/yfiles'
+import { type GraphComponent, type LayoutDescriptor, LayoutExecutorAsync } from '@yfiles/yfiles'
 
 let onLayoutClicked: () => void
 let layoutButton: HTMLButtonElement

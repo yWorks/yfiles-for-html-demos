@@ -26,16 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphComponent,
-  IEdge,
-  ILabelModelParameter,
-  ILabelOwner,
-  IModelItem,
-  Point,
-  SimpleLabel,
-  Size
-} from '@yfiles/yfiles'
+import { IEdge, Point, SimpleLabel, Size } from '@yfiles/yfiles'
 
 /**
  * This class adds an HTML panel on top of the contents of the GraphComponent that can
@@ -46,9 +37,9 @@ import {
  * parameter} to determine the position of the pop-up.
  */
 export class HTMLPopupSupport {
-  graphComponent
-  div
   labelModelParameter
+  div
+  graphComponent
   _currentItem
   dirty
 

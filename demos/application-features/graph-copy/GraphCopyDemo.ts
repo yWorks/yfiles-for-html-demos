@@ -50,9 +50,9 @@ import {
   Size
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { bindYFilesCommand, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { bindYFilesCommand, finishLoading } from '@yfiles/demo-app/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
@@ -64,7 +64,7 @@ let copyGraphComponent: GraphComponent
  * Bootstraps the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   originalGraphComponent = new GraphComponent('#graphComponent')
   copyGraphComponent = new GraphComponent('#copyGraphComponent')

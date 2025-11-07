@@ -32,9 +32,9 @@ import {
   GraphItemTypes,
   GraphViewerInputMode,
   HierarchicalLayout,
-  IGraph,
-  ILabelStyle,
-  LabelStyle,
+  type IGraph,
+  type ILabelStyle,
+  type LabelStyle,
   LayoutExecutor,
   License,
   Rect
@@ -43,17 +43,17 @@ import {
   FitOwnerLabelStyle,
   ZoomInvariantAboveThresholdLabelStyle,
   ZoomInvariantBelowThresholdLabelStyle,
-  ZoomInvariantLabelStyleBase,
+  type ZoomInvariantLabelStyleBase,
   ZoomInvariantOutsideRangeLabelStyle
 } from './ZoomInvariantLabelStyle'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-app/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode({
     selectableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL

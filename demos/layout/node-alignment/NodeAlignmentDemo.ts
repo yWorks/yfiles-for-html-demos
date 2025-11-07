@@ -46,9 +46,9 @@ import { createConfiguredLayoutAlgorithm, createDefaultSettings } from './config
 import { SnapDistanceVisualCreator } from './SnapDistanceVisualCreator'
 import { sampleData } from './resources/node-alignment-data'
 import { DragAndDropPanel, type DragAndDropPanelItem } from '@yfiles/demo-utils/DragAndDropPanel'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { createDemoShapeNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
+import licenseData from '../../../lib/license.json'
+import { createDemoShapeNodeStyle, initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import { enableSingleSelection } from './SingleSelectionHelper'
 
 /**
@@ -57,7 +57,7 @@ import { enableSingleSelection } from './SingleSelectionHelper'
 const layoutSettings = createDefaultSettings()
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the graph component
   const graphComponent = new GraphComponent('graphComponent')
@@ -193,7 +193,7 @@ function initializeHints(
   mode: MoveInputMode | NodeDropInputMode,
   snapDistanceRenderTreeElement: IRenderTreeElement
 ): void {
-  // the canvas object for the hints has to be marked as dirty to make yFiles rendering framework
+  // the render tree element for the hints has to be marked as dirty to make yFiles rendering framework
   // request a visualization of the hints
   snapDistanceRenderTreeElement.dirty = true
 

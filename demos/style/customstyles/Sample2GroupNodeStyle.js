@@ -26,27 +26,20 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// eslint-disable-next-line import/no-named-as-default
 import {
-  CanvasComponent,
   Command,
   CreateEdgeInputMode,
   DropInputMode,
   GeneralPath,
   GraphComponent,
   IGroupPaddingProvider,
-  IInputModeContext,
   ILassoTestable,
-  ILookup,
-  INode,
   INodeSizeConstraintProvider,
   Insets,
-  IRenderContext,
   MarkupExtension,
   MoveInputMode,
   NodeSizeConstraintProvider,
   NodeStyleBase,
-  Point,
   Rect,
   Size,
   SvgVisual

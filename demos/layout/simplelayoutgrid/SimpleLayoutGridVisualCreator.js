@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  IRenderContext,
-  IVisualCreator,
-  LayoutGrid,
-  SvgVisual,
-  Visual
-} from '@yfiles/yfiles'
+import { BaseClass, IVisualCreator, SvgVisual } from '@yfiles/yfiles'
 
 /**
  * Visualizes the layout grid that has been used in the layout.

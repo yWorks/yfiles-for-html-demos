@@ -27,8 +27,13 @@
  **
  ***************************************************************************/
 import {
+  BaseClass,
+  type ILookup,
+  IMarkupExtensionConverter,
   type INode,
   type IRenderContext,
+  type IWriteContext,
+  MarkupExtension,
   NodeStyleBase,
   type Size,
   SvgVisual,
@@ -46,13 +51,19 @@ type MindMapNodeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
  * The node style used for the non-root nodes of the mind map.
  * Each node will be represented by a colored line based on its level in the mind map.
  */
-export class MindMapNodeStyle extends NodeStyleBase<MindMapNodeStyleVisual> {
+export class MindMapNodeStyle extends BaseClass(
+  NodeStyleBase<MindMapNodeStyleVisual>,
+  IMarkupExtensionConverter
+) {
+  className: string
+
   /**
    * Creates a new instance of this style using the given class name.
-   * @param className The css class attributed to the node.
+   * @param className The CSS class attributed to the node.
    */
-  constructor(public className: string) {
+  constructor(className: string) {
     super()
+    this.className = className
   }
 
   /**
@@ -100,7 +111,7 @@ export class MindMapNodeStyle extends NodeStyleBase<MindMapNodeStyleVisual> {
   /**
    * Creates the line svg element and adds it to the container.
    */
-  render(renderContext: IRenderContext, node: INode, container: SVGGElement): void {
+  render(_renderContext: IRenderContext, node: INode, container: SVGGElement): void {
     const nodeData = getNodeData(node)
     const color = nodeData.color
     const size = node.layout.toSize()
@@ -115,4 +126,48 @@ export class MindMapNodeStyle extends NodeStyleBase<MindMapNodeStyleVisual> {
 
     container.appendChild(line)
   }
+
+  /**
+   * Returns that this style can be converted.
+   */
+  canConvert(_context: IWriteContext, _value: MindMapNodeStyle): boolean {
+    return true
+  }
+
+  /**
+   * Converts this style using {@link MindMapNodeStyleExtension}.
+   */
+  convert(_context: IWriteContext, value: MindMapNodeStyle): MarkupExtension {
+    const mindMapNodeStyleExtension = new MindMapNodeStyleExtension()
+    mindMapNodeStyleExtension.className = value.className
+    return mindMapNodeStyleExtension
+  }
 }
+
+/**
+ * A markup extension that creates a {@link MindMapNodeStyle} instance configured with a specified class name.
+ */
+export class MindMapNodeStyleExtension extends MarkupExtension {
+  private _className!: string
+
+  /**
+   * Gets or sets the class name to be used by the MindMapNodeStyle.
+   */
+  get className(): string {
+    return this._className
+  }
+
+  set className(value: string) {
+    this._className = value
+  }
+
+  /**
+   * Provides a {@link MindMapNodeStyle} instance using the configured class name.
+   * @returns A new `MindMapNodeStyle` initialized with the specified class name.
+   */
+  provideValue(_serviceProvider: ILookup): MindMapNodeStyle {
+    return new MindMapNodeStyle(this.className)
+  }
+}
+
+export default { MindMapNodeStyle, MindMapNodeStyleExtension }

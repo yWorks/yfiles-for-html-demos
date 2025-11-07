@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { HeatData } from './process-visualization/HeatData'
 import {
-  GraphComponent,
+  type GraphComponent,
   HierarchicalLayout,
   type IEdge,
   IEnumerable,

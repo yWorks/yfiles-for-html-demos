@@ -83,7 +83,6 @@ export function configureLabelSizeWithProvider(typeLabelCreator) {
 }
 
 export function configureLabelSizeWithBinding(typeLabelCreator) {
-
   // set different widths for nodes with type 'Trust'
   typeLabelCreator.preferredSizeBindings.addBinding('width', (data) => {
     return data.type === 'Trust' ? 200 : 100

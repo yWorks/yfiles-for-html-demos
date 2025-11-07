@@ -34,10 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Large Graph Aggregation Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
-    <link rel="stylesheet" href="./resources/settings-panel.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -82,12 +81,12 @@
         <h1>Large Graph Aggregation Demo</h1>
 
         <p>
-          This demo shows how to use the smart <a href="https://docs.yworks.com/yfileshtml/#/api/NodeAggregation" target="_blank">NodeAggregation</a> algorithm for drill
-          down exploration of a large graph.
+          This demo shows how to use the smart <a href="https://docs.yworks.com/yfileshtml/#/api/NodeAggregation" class="api" target="_blank">NodeAggregation</a> algorithm for
+          drill-down exploration of a large graph.
         </p>
         <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/api/NodeAggregation" target="_blank">NodeAggregation</a> algorithms consolidates nodes of a graph and thus
-          creates cluster of nodes based on user-specified constraints.
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/NodeAggregation" class="api" target="_blank">NodeAggregation</a> algorithm consolidates nodes of a graph and thus
+          creates clusters of nodes based on user-specified constraints.
         </p>
         <p>
           The demo shows aggregated nodes in a gray style, while original nodes of the data are
@@ -105,7 +104,7 @@
         <ul>
           <li>
             Switch between the <b>two layout styles</b> offered for visualizing the aggregated graph
-            (i.e. <a href="https://docs.yworks.com/yfileshtml/#/api/RadialTreeLayout" target="_blank">RadialTreeLayout</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout" target="_blank">RadialGroupLayout</a>). This
+            (i.e. <a href="https://docs.yworks.com/yfileshtml/#/api/RadialTreeLayout" class="api" target="_blank">RadialTreeLayout</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/RadialGroupLayout" class="api" target="_blank">RadialGroupLayout</a>). This
             re-runs the aggregation as well.
           </li>
           <li>
@@ -138,67 +137,49 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-      <div id="calculating-indicator" class="busyIndicator" style="display: none">
-        Calculating... This may take a while.
-      </div>
       <aside class="demo-main__sidebar">
         <div class="demo-sidebar__content">
-          <div class="settings-grid">
-            <h2 class="settings-legend1">Layout Properties</h2>
-            <label for="layout-style-select" class="settings-label-row1">Layout Style</label>
-            <select id="layout-style-select" class="settings-editor-row1">
+          <h2>Layout Properties</h2>
+          <div class="demo-properties__settings">
+            <label for="layout-style-select">Layout Style</label>
+            <select id="layout-style-select">
               <option value="radial-tree">Radial Tree</option>
               <option value="radial-group">Radial Group</option>
             </select>
+          </div>
 
-            <h2 class="settings-legend2">Aggregation Properties</h2>
-            <label for="aggregation-mode-select" class="settings-label-row2">
-              Aggregation Mode
-            </label>
-            <select id="aggregation-mode-select" class="settings-editor-row2">
+          <h2>Aggregation Properties</h2>
+          <div class="demo-properties__settings">
+            <label for="aggregation-mode-select">Aggregation Mode</label>
+            <select id="aggregation-mode-select">
               <option value="structural">Structural</option>
               <option value="geometric">Geometric</option>
             </select>
 
-            <label for="maximum-duration-range" class="settings-label-row3">Maximum Duration</label>
-            <input
-              class="settings-editor-row3"
-              id="maximum-duration-range"
-              type="range"
-              min="0"
-              max="300"
-              value="240"
-            />
-            <label class="settings-label-value3" id="stop-duration-label">240</label>
+            <label for="maximum-duration-range">Maximum Duration</label>
+            <div>
+              <input id="maximum-duration-range" type="range" min="0" max="300" value="240" />
+              <span id="stop-duration-label" class="number-label">240</span>
+            </div>
 
-            <label for="minimum-cluster-size-range" class="settings-label-row4">
-              Minimum Cluster Size
-            </label>
-            <input
-              class="settings-editor-row4"
-              id="minimum-cluster-size-range"
-              type="range"
-              min="1"
-              max="50"
-              value="5"
-            />
-            <label class="settings-label-value4" id="minimum-cluster-size-label">5</label>
+            <label for="minimum-cluster-size-range">Minimum Cluster Size</label>
+            <div>
+              <input id="minimum-cluster-size-range" type="range" min="1" max="50" value="5" />
+              <span id="minimum-cluster-size-label" class="number-label">5</span>
+            </div>
 
-            <label for="maximum-cluster-size-range" class="settings-label-row5">
-              Maximum Cluster Size
-            </label>
-            <input
-              class="settings-editor-row5"
-              id="maximum-cluster-size-range"
-              type="range"
-              min="2"
-              max="100"
-              value="10"
-            />
-            <label class="settings-label-value5" id="maximum-cluster-size-label">10</label>
+            <label for="maximum-cluster-size-range">Maximum Cluster Size</label>
+            <div>
+              <input id="maximum-cluster-size-range" type="range" min="2" max="100" value="10" />
+              <span id="maximum-cluster-size-label" class="number-label">10</span>
+            </div>
+            <button id="run-aggregation" class="flat-button">Run</button>
           </div>
-          <button id="run-aggregation" class="flat-button">Run</button>
-
+          <div style="height: 15px">
+            <div id="calculating-indicator" style="display: none; text-align: center">
+              Calculating... This might take a while.
+            </div>
+          </div>
           <h2>Graph Info</h2>
           <div class="demo-properties__settings">
             <div class="demo-form-block">
@@ -224,9 +205,8 @@
               <label class="option-label">Descendant Weight Sum:</label>
               <label class="option-element" id="descendant-weight-sum">0</label>
             </div>
+            <button id="switch-view" class="flat-button">Switch to Filtered View</button>
           </div>
-
-          <button id="switch-view" class="flat-button">Switch to Filtered View</button>
         </div>
       </aside>
     </div>

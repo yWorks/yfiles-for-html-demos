@@ -29,8 +29,8 @@
 import { Graph, GraphComponent, LayoutOrientation, License } from '@yfiles/yfiles'
 
 import { FlowchartConfiguration } from './FlowchartConfiguration'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { generateGraphMLIOHandler } from '../flowchart/style/generate-graphMLIO-handler'
 import { saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
@@ -49,7 +49,7 @@ const layoutOrientation = LayoutOrientation.TOP_TO_BOTTOM
  * Bootstraps the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
   legendDiv = document.querySelector<HTMLDivElement>('#legend')!

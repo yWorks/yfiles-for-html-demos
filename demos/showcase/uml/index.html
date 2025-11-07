@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>UML Editor Demo</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       .uml-button {
@@ -104,13 +104,9 @@
       <button
         id="open-file-button"
         title="Open a GraphML file"
-        class="demo-icon-yIconOpen labeled"
+        class="demo-icon-yIconOpen"
       ></button>
-      <button
-        id="save-button"
-        title="Save a GraphML file"
-        class="demo-icon-yIconSave labeled"
-      ></button>
+      <button id="save-button" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
 
       <span class="demo-separator"></span>
 
@@ -158,9 +154,9 @@
         </p>
 
         <p>
-          The node style uses an <a href="https://docs.yworks.com/yfileshtml/#/api/StretchLabelModel" target="_blank">StretchLabelModel</a> to stack the UML entries on top
-          of each other. A custom <a href="https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper" target="_blank">IEditLabelHelper</a> is provided by the UML node style
-          to enable editing of the different UML entries.
+          The node style uses an <a href="https://docs.yworks.com/yfileshtml/#/api/StretchNodeLabelModel" class="api" target="_blank">StretchNodeLabelModel</a> to stack the UML entries on
+          top of each other. A custom <a href="https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper" class="api" target="_blank">IEditLabelHelper</a> is provided by the UML node
+          style to enable editing of the different UML entries.
         </p>
 
         <h2>Things to Try</h2>

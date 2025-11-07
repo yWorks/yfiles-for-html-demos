@@ -33,10 +33,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-    <title>Filtering - Application Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <title>Filtering [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -60,30 +60,9 @@
     </header>
 
     <div class="demo-page__toolbar">
-      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
-      <span class="demo-separator"></span>
-      <button data-command="CUT"></button>
-      <button data-command="COPY"></button>
-      <button data-command="PASTE"></button>
-      <span class="demo-separator"></span>
-      <button data-command="UNDO"></button>
-      <button data-command="REDO"></button>
-      <span class="demo-separator"></span>
-      <button data-command="GROUP_SELECTION"></button>
-      <button data-command="UNGROUP_SELECTION"></button>
-      <span class="demo-separator"></span>
-      <button
-        id="reset-filter"
-        title="Resets the filter state of all items"
-        class="labeled"
-        disabled=""
-      >
-        Reset Filter
-      </button>
-      <button id="filter-items" title="Filter selected items" class="labeled" disabled="">
-        Filter Items
-      </button>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -99,33 +78,44 @@
 
       <div class="demo-description__content">
         <h1>Filtering</h1>
-
         <p>
-          This sample shows how to configure graph
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/filtering" target="_blank">filtering</a>.
+          This demo shows how to dynamically <strong>hide and show graph items</strong> (nodes and
+          edges) without modifying the underlying graph data structure. It uses the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/FilteredGraphWrapper" class="api" target="_blank">FilteredGraphWrapper</a> to provide a temporary, filtered view of your
+          graph.
         </p>
-        <p>Through filtering we can temporarily remove nodes or edges from the graph.</p>
-
         <h2>Things to Try</h2>
         <ul>
           <li>
-            Select graph items and press the <strong>Filter Items</strong> button to hide those
-            items from the graph.
+            <strong>Select Items</strong>: Click on individual nodes or edges, or draw a selection
+            rectangle to select multiple items.
           </li>
           <li>
-            Press the <strong>Reset Filter</strong> button to reinsert any filtered items in the
-            graph.
+            <strong>Filter Selection</strong>: Press the <code>Filter Items</code> button in the
+            toolbar to hide selected items from the graph.
+          </li>
+          <li>
+            <strong>Reset Filter</strong>: Click the <code>Reset Filter</code> button to bring all
+            previously hidden items back into view.
           </li>
         </ul>
-
-        <p>See the sources for details.</p>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../application-features/filtering-with-folding/" class="demo" target="_blank">Filtering With Folding Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/filtering" class="dguide" target="_blank">Filtering</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/FilteredGraphWrapper" class="api" target="_blank">FilteredGraphWrapper</a> class</li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="FilteringDemo.ts" async></script>
+    <script type="module" crossorigin="anonymous" src="./FilteringDemo.ts" async></script>
   </body>
 </html>

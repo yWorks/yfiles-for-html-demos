@@ -27,12 +27,15 @@
  **
  ***************************************************************************/
 import {
+  BaseClass,
   ExteriorNodeLabelModel,
   FilteredGraphWrapper,
   GraphComponent,
   IconLabelStyle,
+  IMarkupExtensionConverter,
   Insets,
   InteriorNodeLabelModel,
+  MarkupExtension,
   NodeStyleBase,
   SimpleLabel,
   Size,
@@ -56,7 +59,7 @@ import { hasChildNodes } from '../subtrees'
  * bottom-right and bottom-left corner of the node. This way the button placement
  * is determined automatically by the dummy label's style.
  */
-export class CollapseDecorator extends NodeStyleBase {
+export class CollapseDecorator extends BaseClass(NodeStyleBase, IMarkupExtensionConverter) {
   wrappedNodeStyle
   /**
    * The size of the collapse/expand icon.
@@ -333,6 +336,23 @@ export class CollapseDecorator extends NodeStyleBase {
       .getShapeGeometry(node, this.wrappedNodeStyle)
       .isInside(point)
   }
+
+  /**
+   * Returns that this style can be converted.
+   */
+  canConvert(_context, _value) {
+    return true
+  }
+
+  /**
+   * Converts this style using {@link CollapseDecoratorExtension}.
+   */
+  convert(_context, value) {
+    const decorator = value
+    const extension = new CollapseDecoratorExtension()
+    extension.wrappedNodeStyle = decorator.wrappedNodeStyle
+    return extension
+  }
 }
 
 /**
@@ -369,7 +389,7 @@ function getLabelModelParameter(data) {
 
 /**
  * Returns the full graph from the render context if the graph is a {@link FilteredGraphWrapper}.
- * Otherwise returns null.
+ * Otherwise, returns null.
  */
 function getFullGraph(context) {
   if (context.canvasComponent instanceof GraphComponent) {
@@ -380,3 +400,32 @@ function getFullGraph(context) {
   }
   return null
 }
+
+/**
+ * A markup extension that creates a {@link CollapseDecorator} instance configured with a wrapped node style.
+ */
+export class CollapseDecoratorExtension extends MarkupExtension {
+  _wrappedNodeStyle
+
+  /**
+   * Gets or sets the node style to be wrapped by the collapse decorator.
+   */
+  get wrappedNodeStyle() {
+    return this._wrappedNodeStyle
+  }
+
+  set wrappedNodeStyle(value) {
+    this._wrappedNodeStyle = value
+  }
+
+  /**
+   * Provides a {@link CollapseDecorator} instance using the configured wrapped node style.
+   * @returns A new `CollapseDecorator` initialized with the specified wrapped node style.
+   */
+  provideValue(_serviceProvider) {
+    return new CollapseDecorator(this.wrappedNodeStyle)
+  }
+}
+
+// export a default object to be able to map a namespace to this module for serialization
+export default { CollapseDecorator, CollapseDecoratorExtension }

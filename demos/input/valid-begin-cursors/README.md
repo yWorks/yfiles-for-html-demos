@@ -9,21 +9,19 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Valid Begin Cursors Demo
+# Valid Begin Cursors
 
 <img src="../../../doc/demo-thumbnails/valid-begin-cursors.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/valid-begin-cursors/).
 
-The demo exhibits a [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) where graph editing is configured to show different cursors depending on which gesture is valid to begin at the current location considering the currently pressed modifiers.
+This demo illustrates how the mouse cursor dynamically changes within a [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) to signal which interactive action (e.g., move, select, create) can be initiated at the current pointer location.
 
-Some input modes were configured to only begin when a specific modifier is pressed to distinguish which gesture should start.
+## Things to Try
 
-## Things to try
-
-- **Move the viewport** by pressing Ctrl while hovering on an empty location on the canvas. Its valid beginning is indicated by [Cursor.GRAB](https://docs.yworks.com/yfileshtml/#/api/Cursor#GRAB)
-- **Start lasso selection** by pressing Alt while hovering on an empty location on the canvas. Its valid beginning is indicated by a custom lasso cursor. Pressing Shift or Ctrl during the lasso gesture will switch between subtract- and extend-selection mode respectively, indicated by a '-' or '+' symbol on the cursor.
-- **Start marquee selection** when neither Shift nor Ctrl is pressed while hovering on an empty location on the canvas. Its valid beginning is indicated by [Cursor.CROSSHAIR](https://docs.yworks.com/yfileshtml/#/api/Cursor#CROSSHAIR). Pressing Shift or Ctrl during the marquee gesture will switch between subtract- and extend-selection mode respectively, indicated by a '-' or '+' symbol on the cursor.
-- **Create a new edge** by pressing Ctrl while hovering on an unselected node. Its valid beginning is indicated by a custom create-edge cursor.
-- **Move a node** when Ctrl is **not** pressed while hovering on a selected or unselected node. Its valid beginning is indicated by [Cursor.MOVE](https://docs.yworks.com/yfileshtml/#/api/Cursor#MOVE).
-- **Show tooltips** when hovering on an edge for a second. Hovering over a location where a tooltip may be displayed is indicated by [Cursor.HELP](https://docs.yworks.com/yfileshtml/#/api/Cursor#HELP).
+- **Move the Viewport:** Press Ctrl while hovering over an empty canvas area. The cursor changes to [Cursor.GRAB](https://docs.yworks.com/yfileshtml/#/api/Cursor#GRAB).
+- **Lasso Select:** Begin a lasso selection by holding Alt over an empty area. The cursor becomes a custom lasso icon. During selection, Shift or Ctrl modifies the cursor to include + (add to selection) or \- (subtract from selection), respectively.
+- **Marquee Select:** Perform a rectangular selection by dragging over an empty area _without_ Ctrl or Alt held. The cursor displays as [Cursor.CROSSHAIR](https://docs.yworks.com/yfileshtml/#/api/Cursor#CROSSHAIR). Similar to lasso, Shift and Ctrl modify the cursor for + (add) or \- (subtract) selection.
+- **Create Edge:** Hold Ctrl and hover over an unselected node. The cursor indicates valid edge creation with a custom icon.
+- **Move Node:** Hover over any node _without_ Ctrl pressed. The cursor changes to [Cursor.MOVE](https://docs.yworks.com/yfileshtml/#/api/Cursor#MOVE), indicating you can drag the node.
+- **Show Tooltip:** Hover over an edge for a second. The cursor changes to [Cursor.HELP](https://docs.yworks.com/yfileshtml/#/api/Cursor#HELP) to indicate that a tooltip can be displayed.

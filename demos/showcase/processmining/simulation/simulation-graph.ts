@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, IEdge, IGraph, INode } from '@yfiles/yfiles'
+import { GraphBuilder, type IEdge, type IGraph, type INode } from '@yfiles/yfiles'
 
 /**
  * A type that describes the graph data.

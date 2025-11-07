@@ -128,11 +128,13 @@ export function applyTimelineLayout<TDataItem>(
  * components bounds.
  */
 class BarScalingStage<TDataItem> extends LayoutStageBase {
-  constructor(
-    private maxHeight: number,
-    private zoom: number
-  ) {
+  private zoom: number
+  private maxHeight: number
+
+  constructor(maxHeight: number, zoom: number) {
     super()
+    this.maxHeight = maxHeight
+    this.zoom = zoom
   }
 
   protected applyLayoutImpl(graph: LayoutGraph): void {

@@ -27,13 +27,10 @@
  **
  ***************************************************************************/
 import {
-  GeneralPath,
   GroupPaddingProvider,
   IGroupPaddingProvider,
-  INode,
   INodeSizeConstraintProvider,
   Insets,
-  IRenderContext,
   NodeSizeConstraintProvider,
   NodeStyleBase,
   Size,
@@ -67,7 +64,6 @@ class NodeTemplateContext extends TemplateContext {
     return this.node.layout.height
   }
 
-  // noinspection JSUnusedGlobalSymbols
   get styleTag() {
     return this.style.tag
   }
@@ -116,7 +112,6 @@ export class StringTemplateNodeStyle extends NodeStyleBase {
 
   /**
    * This mimics the old yFiles 2.x API
-   * @param obj
    */
   static makeObservable(obj) {
     makeObservable(obj)

@@ -33,8 +33,8 @@ import {
   LayoutExecutor,
   License
 } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { configureLayout } from './configure-layout'
 import { initializeStyles } from './styles'
 import { scaleData } from './scale-data'
@@ -45,7 +45,7 @@ import { configureHighlight } from './configure-highlight'
 import { nodeData } from './resources/TrekkingData'
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
   // configure user interaction, disable selection and focus

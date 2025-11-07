@@ -27,10 +27,10 @@
  **
  ***************************************************************************/
 export class WebGLBufferData {
-  entryCount
-  pointerType
-  attributeName
   elementSize
+  attributeName
+  pointerType
+  entryCount
   dirty = true
   buffer = null
   DataType

@@ -27,15 +27,15 @@
  **
  ***************************************************************************/
 import {
-  ILookup,
-  INode,
-  IRenderContext,
+  type ILookup,
+  type INode,
+  type IRenderContext,
   MarkupExtension,
   NodeStyleBase,
   SvgVisual,
   type TaggedSvgVisual
 } from '@yfiles/yfiles'
-import { type ColorSetName, isColorSetName } from '@yfiles/demo-resources/demo-styles'
+import { type ColorSetName, isColorSetName } from '@yfiles/demo-app/demo-styles'
 
 type Sample2NodeStyleCache = { width: number; height: number; cssClass?: string }
 
@@ -48,8 +48,11 @@ type Sample2NodeStyleVisual = TaggedSvgVisual<SVGRectElement, Sample2NodeStyleCa
  * A custom demo node style whose colors match the given well-known CSS rule.
  */
 export class Sample2NodeStyle extends NodeStyleBase<Sample2NodeStyleVisual> {
-  constructor(public cssClass?: string | ColorSetName) {
+  cssClass?: string | ColorSetName
+
+  constructor(cssClass?: string | ColorSetName) {
     super()
+    this.cssClass = cssClass
   }
 
   /**

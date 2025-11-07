@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, INode, INodeSizeConstraintProvider, Rect, Size } from '@yfiles/yfiles'
+import { BaseClass, type INode, INodeSizeConstraintProvider, Rect, Size } from '@yfiles/yfiles'
 
 /**
  * An {@link INodeSizeConstraintProvider} that prevents shrinking of
@@ -34,8 +34,11 @@ import { BaseClass, INode, INodeSizeConstraintProvider, Rect, Size } from '@yfil
  * three times its initial size in each resizing operation.
  */
 export class BlueSizeConstraintProvider extends BaseClass(INodeSizeConstraintProvider) {
-  constructor(private readonly node: INode) {
+  private readonly node: INode
+
+  constructor(node: INode) {
     super()
+    this.node = node
   }
 
   /**

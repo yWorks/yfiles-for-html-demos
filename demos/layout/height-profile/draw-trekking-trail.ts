@@ -51,8 +51,11 @@ export function drawTrekkingTrail(graphComponent: GraphComponent, scaledTrail: P
  * Creates the trail based on a given set of points.
  */
 class TrailVisual extends BaseClass(IVisualCreator) {
-  constructor(private trailPoints: Point[]) {
+    private trailPoints: Point[];
+
+  constructor(trailPoints: Point[]) {
     super()
+      this.trailPoints = trailPoints;
   }
 
   /**

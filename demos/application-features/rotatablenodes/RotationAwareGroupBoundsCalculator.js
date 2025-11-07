@@ -28,10 +28,8 @@
  ***************************************************************************/
 import {
   BaseClass,
-  IGraph,
   IGroupBoundsCalculator,
   IGroupPaddingProvider,
-  INode,
   Insets,
   Rect
 } from '@yfiles/yfiles'
@@ -43,6 +41,7 @@ import { RotatableNodeStyleDecorator } from './RotatableNodes'
  */
 export class RotationAwareGroupBoundsCalculator extends BaseClass(IGroupBoundsCalculator) {
   node
+
   constructor(node) {
     super()
     this.node = node

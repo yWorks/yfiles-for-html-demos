@@ -27,19 +27,16 @@
  **
  ***************************************************************************/
 import {
-  GeneralPath,
-  GraphComponent,
-  INode,
-  INodeStyle,
-  IRenderContext,
+  type GeneralPath,
+  type GraphComponent,
+  type INode,
+  type INodeStyle,
+  type IRenderContext,
   Matrix,
   NodeStyleBase,
   SvgVisual,
   type TaggedSvgVisual
 } from '@yfiles/yfiles'
-
-// @ts-ignore Import via URL
-// eslint-disable-next-line import/no-unresolved
 import { nothing, render, svg } from 'lit-html'
 
 /**
@@ -68,13 +65,15 @@ export type LitNodeStyleRenderFunction<T> = (
  * A node style which uses Lit render functions for displaying the contents of a node with SVG.
  */
 export class LitNodeStyle<T = any> extends NodeStyleBase<LitNodeStyleVisual<T>> {
+  readonly renderFunction: LitNodeStyleRenderFunction<T>
   normalizedOutline?: GeneralPath
 
   /**
    * Creates the style using the provided render function.
    */
-  constructor(public readonly renderFunction: LitNodeStyleRenderFunction<T>) {
+  constructor(renderFunction: LitNodeStyleRenderFunction<T>) {
     super()
+    this.renderFunction = renderFunction
   }
 
   /**
@@ -165,7 +164,6 @@ export class LitNodeStyle<T = any> extends NodeStyleBase<LitNodeStyleVisual<T>> 
  * @param renderFunctionSource The source of the function
  */
 export function createLitNodeStyleFromSource(renderFunctionSource: string): INodeStyle {
-  // eslint-disable-next-line @typescript-eslint/no-implied-eval
   const renderFunction = new Function(
     'const svg = arguments[0]; const nothing = arguments[1]; const renderFunction = ' +
       renderFunctionSource +

@@ -28,13 +28,10 @@
  ***************************************************************************/
 import {
   Command,
-  FolderNodeConverter,
   FoldingManager,
   GraphComponent,
-  GraphEditorInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
-  IGraph,
   INode,
   License,
   NodeAlignmentPolicy,
@@ -43,9 +40,9 @@ import {
   Size
 } from '@yfiles/yfiles'
 import { ZOrderSupport } from './ZOrderSupport'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { bindYFilesCommand, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { bindYFilesCommand, finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent = null
@@ -56,7 +53,7 @@ let zOrderSupport = null
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   // initialize the graph
   initializeGraph()

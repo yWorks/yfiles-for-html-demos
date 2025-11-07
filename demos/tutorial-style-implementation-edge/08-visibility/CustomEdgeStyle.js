@@ -33,6 +33,7 @@ const circleRadius = 20
 
 export class CustomEdgeStyle extends EdgeStyleBase {
   distance
+
   /**
    * Creates a new instance of this style using the given distance.
    * @param distance The distance between the paths. The default value is 1.

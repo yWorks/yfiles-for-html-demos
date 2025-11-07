@@ -52,6 +52,7 @@ export default function DemoToolbar(props: DemoToolbarProps) {
       />
       <button className="demo-icon-yIconZoomOut" title="Zoom Out" onClick={props.zoomOut} />
       <button className="demo-icon-yIconZoomFit" title="Fit Diagram" onClick={props.fitContent} />
+      <span className="demo-separator" />
       <button className="demo-icon-yIconExportImage" title="Export SVG" onClick={props.exportSvg} />
       <input className="search" placeholder="Search Nodes" onChange={props.searchChange} />
     </div>

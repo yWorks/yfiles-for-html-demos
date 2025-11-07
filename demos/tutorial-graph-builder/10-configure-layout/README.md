@@ -33,9 +33,9 @@ const nodeData: NodeLayoutData[] = [
 ]
 ```
 
-A [layout provider](https://docs.yworks.com/yfileshtml/#/api/NodeCreator#NodeCreator-property-layoutProvider) will use this information to create a rectangle at a specific location for each node. These rectangles will be set as the nodes' [layout](https://docs.yworks.com/yfileshtml/#/api/INode#INode-property-layout).
+A [layout provider](https://docs.yworks.com/yfileshtml/#/api/NodeCreator#layoutProvider) will use this information to create a rectangle at a specific location for each node. These rectangles will be set as the nodes' [layout](https://docs.yworks.com/yfileshtml/#/api/INode#layout).
 
-If no layout information is provided, the [default size](https://docs.yworks.com/yfileshtml/#/api/NodeDefaults#NodeDefaults-property-size) will be used and the node will be located at the origin.
+If no layout information is provided, the [default size](https://docs.yworks.com/yfileshtml/#/api/NodeDefaults#size) will be used and the node will be located at the origin.
 
 ```
 // configure the layout provider that returns the layout information
@@ -91,7 +91,7 @@ const edgeData: EdgeLayoutData[] = [
 ]
 ```
 
-Transfer the bend information to the [edge layout](https://docs.yworks.com/yfileshtml/#/api/IEdge#IEdge-property-bends) using a [bend provider](https://docs.yworks.com/yfileshtml/#/api/EdgeCreator#EdgeCreator-property-bendsProvider).
+Transfer the bend information to the [edge layout](https://docs.yworks.com/yfileshtml/#/api/IEdge#bends) using a [bend provider](https://docs.yworks.com/yfileshtml/#/api/EdgeCreator#bendsProvider).
 
 ```
 // configure the bend provider to return the location of each bend point

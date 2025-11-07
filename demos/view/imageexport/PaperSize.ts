@@ -26,14 +26,4 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * This demo supports specific PDF output sizes.
- */
-export enum PaperSize {
-  A3 = 'A3',
-  A4 = 'A4',
-  A5 = 'A5',
-  A6 = 'A6',
-  LETTER = 'Letter',
-  AUTO = 'Auto'
-}
+export type PaperSize = 'a3' | 'a4' | 'a5' | 'a6' | 'letter' | 'auto'

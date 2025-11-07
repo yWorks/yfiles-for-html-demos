@@ -9,29 +9,28 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Recursive Group Layout Demo
+# Recursive Group Layout
 
 <img src="../../../doc/demo-thumbnails/layout-recursive-group-layout.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/recursive-group-layout/).
 
-This demo shows how to use the [Recursive Group Layout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout).
+This demo shows how to use the [RecursiveGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout) algorithm to apply a specific layout algorithm to the contents (direct children) of each group node.
 
-The [Recursive Group Layout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout) algorithm recursively traverses a hierarchically organized graph in a bottom-up fashion and applies a specified layout algorithm to the contents (direct children) of each group node.
+In this demo, [a different layout algorithm](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayoutData#groupNodeLayouts) is used for each group node:
 
-In this demo for every group node a different layout algorithm is used:
+- [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) for group 1
+- [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) for group 2
+- [RadialLayout](https://docs.yworks.com/yfileshtml/#/api/RadialLayout) for group 3
+- [No layout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout#FIX_CONTENT_LAYOUT) for group 4
 
-- [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) for group node 1
-- [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) for group node 2
-- [Radial Layout](https://docs.yworks.com/yfileshtml/#/api/RadialLayout) for group node 3
-- [RecursiveGroupLayout#NULL_LAYOUT](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout#NULL_LAYOUT) for group node 4
+As the child nodes of group node 4 already have predefined layout values in the graph data, [FIX_CONTENT_LAYOUT](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout#FIX_CONTENT_LAYOUT) is used, which only calculates the size of the group node itself and does not alter the layout of its children.
 
-As the child nodes of group node 4 already have fixed layout values in the graph source, [RecursiveGroupLayout#NULL_LAYOUT](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout#NULL_LAYOUT) is used, as it does not alter the layout of the child nodes and is only used to calculate the size of the group node itself.
+The top-level hierarchy as well as groups without an assigned layout algorithm are arranged with the core layout algorithm.
 
-The content of groups without an assigned layout algorithm and the toplevel hierarchy is arranged with the [core layout algorithm](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout#coreLayout), if one has been specified.
+## Documentation
 
-The configuration of which algorithm to use for which group node is done by setting an [Item Mapping](https://docs.yworks.com/yfileshtml/#/api/ItemMapping) to the [groupNodeLayouts](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayoutData#groupNodeLayouts) property of [RecursiveGroupLayoutData](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayoutData).
-
-### Code Snippet
-
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/recursive-group-layout/RecursiveGroupLayout.ts).
+- [Recursive group layout](https://docs.yworks.com/yfileshtml/#/dguide/recursive_group_layout)
+- [groupNodeLayouts](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayoutData#groupNodeLayouts)
+- [RecursiveGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout)
+- [RecursiveGroupLayoutData](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayoutData)

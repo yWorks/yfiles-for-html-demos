@@ -28,14 +28,14 @@
  ***************************************************************************/
 import {
   BaseClass,
-  ClickEventArgs,
-  Cursor,
-  HandleType,
+  type ClickEventArgs,
+  type Cursor,
+  type HandleType,
   IDragHandler,
   IHandle,
-  IInputModeContext,
-  IPoint,
-  Point
+  type IInputModeContext,
+  type IPoint,
+  type Point
 } from '@yfiles/yfiles'
 
 /**
@@ -43,6 +43,10 @@ import {
  * the ones given in the constructor. This makes it possible to use a different handle template.
  */
 export class WrappingHandle extends BaseClass(IHandle) {
+    private handleCursor: Cursor | null;
+    private handleType: HandleType | null;
+    private wrappedHandle: IHandle;
+
   /**
    * Initializes a new WrappingHandle instance.
    * @param wrappedHandle The inner handle implementation.
@@ -50,11 +54,14 @@ export class WrappingHandle extends BaseClass(IHandle) {
    * @param handleCursor The cursor to use for this handle.
    */
   constructor(
-    private wrappedHandle: IHandle,
-    private handleType: HandleType | null,
-    private handleCursor: Cursor | null
+    wrappedHandle: IHandle,
+    handleType: HandleType | null,
+    handleCursor: Cursor | null
   ) {
     super()
+      this.wrappedHandle = wrappedHandle;
+      this.handleType = handleType;
+      this.handleCursor = handleCursor;
   }
 
   /**

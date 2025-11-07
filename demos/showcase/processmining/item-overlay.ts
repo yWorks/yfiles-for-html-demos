@@ -28,7 +28,7 @@
  ***************************************************************************/
 import type { Case, CaseList } from './event-log-types'
 import type { ItemEntry } from './process-visualization/ProcessItemVisual'
-import type { Point } from 'jspdf'
+import type { Point } from '@yfiles/yfiles'
 
 /**
  * Displays ID and any data of the provided entries as a graph overlay.

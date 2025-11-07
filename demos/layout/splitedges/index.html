@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Split Edges Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       .demo-context-menu *:focus {
@@ -106,15 +106,15 @@
 
         <p>
           This demo shows how to use split ids to align edges outside with edges inside a group
-          nodes in <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" target="_blank">RecursiveGroupLayout</a>. In <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" target="_blank">RecursiveGroupLayout</a> the
+          nodes in <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" class="api" target="_blank">RecursiveGroupLayout</a>. In <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" class="api" target="_blank">RecursiveGroupLayout</a> the
           routing for inter-edges is sometimes not satisfactory. Inter-edges are edges that connect
           nodes outside of a group with nodes inside of this group. Since RecursiveGroupLayout
           routes these edges after the rest of the graph is arranged, they sometimes don't fit into
           the overall layout style.
         </p>
         <p>
-          In combination with <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">HierarchicalLayout</a>, inter-edges can be replaced with
-          two edges that are aligned at the group node. <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">HierarchicalLayout</a> provides
+          In combination with <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a>, inter-edges can be replaced with
+          two edges that are aligned at the group node. <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> provides
           the option that an edge is routed directly from the border of a group nodes to a node
           inside of this group node instead of leaving the group node first.
         </p>

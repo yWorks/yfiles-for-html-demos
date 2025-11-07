@@ -30,17 +30,17 @@ import {
   BaseClass,
   Color,
   GeometryUtilities,
-  IGraph,
-  IMapper,
-  INode,
-  IRenderContext,
+  type IGraph,
+  type IMapper,
+  type INode,
+  type IRenderContext,
   IVisualCreator,
   Point,
   RadialLayoutNodePlacementResult,
   Rect,
   Size,
   SvgVisual,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 import { toRadians } from '@yfiles/demo-utils/LegacyGeometryUtilities'
 

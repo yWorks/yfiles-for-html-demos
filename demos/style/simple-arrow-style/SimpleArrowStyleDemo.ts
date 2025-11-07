@@ -33,24 +33,24 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphMLIOHandler,
-  IGraph,
+  type IGraph,
   License,
   PolylineEdgeStyle,
   Stroke
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
 import { TaperedArrow, TaperedArrowExtension } from './TaperedArrow'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 /**
  * Runs the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize graph component
   const graphComponent = new GraphComponent('#graphComponent')

@@ -30,27 +30,25 @@ import {
   Arrow,
   ArrowType,
   Color,
+  EdgeLabelPreferredPlacement,
   EdgePathLabelModel,
   EdgeStyleIndicatorRenderer,
   ExteriorNodeLabelModel,
-  GraphBuilder,
+  type GraphBuilder,
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
   IEdge,
   ILabelStyle,
-  IModelItem,
+  type IModelItem,
   INode,
+  Insets,
   LabelStyle,
   LayoutExecutor,
   License,
   NodeStyleIndicatorRenderer,
   OrganicLayout,
-  OrganicLayoutChainSubstructureStyle,
-  OrganicLayoutCycleSubstructureStyle,
-  OrganicLayoutParallelSubstructureStyle,
-  OrganicLayoutStarSubstructureStyle,
-  ParallelEdgeRouter,
+  OrganicLayoutData,
   PolylineEdgeStyle,
   ShapeNodeShape,
   ShapeNodeStyle,
@@ -58,13 +56,13 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 
-import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
 import { createGraphBuilder } from './Neo4jGraphBuilder'
 import type { Neo4jRecord, Node, Relationship, Result } from './Neo4jUtil'
 import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading, showLoadingIndicator } from '@yfiles/demo-resources/demo-page'
-import { createCodemirrorEditor, EditorView } from '@yfiles/demo-resources/codemirror-editor'
+import licenseData from '../../../lib/license.json'
+import { finishLoading, showLoadingIndicator } from '@yfiles/demo-app/demo-page'
+import { createCodemirrorEditor, type EditorView } from '@yfiles/demo-app/codemirror-editor'
 
 let editor: EditorView
 
@@ -81,7 +79,7 @@ let edges: Relationship[] = []
 // get hold of some UI elements
 const labelsContainer = document.querySelector<HTMLParagraphElement>('#labels')!
 const selectedNodeContainer = document.querySelector<HTMLDivElement>('#selected-node-container')!
-const propertyTable = document.querySelector<HTMLTableElement>('#propertyTable')!
+const propertyTable = document.querySelector<HTMLTableElement>('.property-table')!
 const propertyTableHeader = propertyTable.firstElementChild as HTMLTableHeaderCellElement
 const numNodesInput = document.querySelector<HTMLInputElement>('#numNodes')!
 const numLabelsInput = document.querySelector<HTMLInputElement>('#numLabels')!
@@ -92,7 +90,7 @@ const queryErrorContainer = document.querySelector<HTMLPreElement>('#queryError'
  * Runs the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   if (!('WebSocket' in window)) {
     // early exit the application if WebSockets are not supported
     document.querySelector<HTMLDivElement>('#login')!.hidden = true
@@ -233,9 +231,15 @@ function onCurrentItemChanged(): void {
       for (const propertyName of Object.keys(properties)) {
         const tr = document.createElement('tr')
         const nameTd = document.createElement('td')
-        nameTd.textContent = propertyName
+        const clippedNameDiv = document.createElement('div')
+        clippedNameDiv.classList.add('clipped')
+        clippedNameDiv.textContent = propertyName
+        nameTd.appendChild(clippedNameDiv)
         const valueTd = document.createElement('td')
-        valueTd.textContent = properties[propertyName].toString()
+        const clippedValueDiv = document.createElement('div')
+        clippedValueDiv.classList.add('clipped')
+        clippedValueDiv.textContent = properties[propertyName].toString()
+        valueTd.appendChild(clippedValueDiv)
         tr.appendChild(nameTd)
         tr.appendChild(valueTd)
         propertyTable.appendChild(tr)
@@ -340,21 +344,32 @@ function onHoveredItemChanged(hoveredItem: IModelItem | null): void {
  */
 async function doLayout(): Promise<void> {
   setUIDisabled(true)
-  const organicLayout = new OrganicLayout()
-  organicLayout.chainSubstructureStyle = OrganicLayoutChainSubstructureStyle.STRAIGHT_LINE
-  organicLayout.cycleSubstructureStyle = OrganicLayoutCycleSubstructureStyle.CIRCULAR
-  organicLayout.parallelSubstructureStyle = OrganicLayoutParallelSubstructureStyle.STRAIGHT_LINE
-  organicLayout.starSubstructureStyle = OrganicLayoutStarSubstructureStyle.CIRCULAR
-  organicLayout.defaultMinimumNodeDistance = 60
-  organicLayout.deterministic = true
-  organicLayout.avoidNodeEdgeOverlap = true
-  organicLayout.qualityTimeRatio = 0.8
-  ;(organicLayout.parallelEdgeRouter as ParallelEdgeRouter).joinEnds = true
-  ;(organicLayout.parallelEdgeRouter as ParallelEdgeRouter).edgeDistance = 15
+  const organicLayout = new OrganicLayout({
+    chainSubstructureStyle: 'straight-line',
+    chainSubstructureSize: 3,
+    cycleSubstructureStyle: 'circular',
+    starSubstructureStyle: 'radial',
+    starSubstructureSize: 4,
+    edgeLabelPlacement: 'generic',
+    nodeLabelPlacement: 'consider'
+  })
+
+  const organicLayoutData = new OrganicLayoutData({
+    edgeLabelPreferredPlacements: new EdgeLabelPreferredPlacement({
+      angleReference: 'relative-to-edge-flow'
+    }),
+    preferredEdgeLengths: (edge) =>
+      edge.labels.reduce((width, label) => {
+        return Math.max(label.layout.width + 50, width)
+      }, 150),
+    nodeMargins: () => new Insets(30)
+  })
+
   try {
     await new LayoutExecutor({
       graphComponent,
       layout: organicLayout,
+      layoutData: organicLayoutData,
       animationDuration: '1s',
       animateViewport: true
     }).start()
@@ -411,9 +426,8 @@ function initializeUI(): void {
       runCypherQuery = await connectToDB(url, database, user, pass)
 
       // hide the login form and show the graph component
-      document.querySelector<HTMLDivElement>('#loginPane')!.setAttribute('style', 'display: none;')
-      document.querySelector<HTMLElement>('#graphPane')!.style.visibility = 'visible'
-      document.querySelector<HTMLElement>('#queryPane')!.style.visibility = 'visible'
+      document.querySelector<HTMLDivElement>('#login-pane')!.hidden = true
+      document.querySelector<HTMLElement>('#graph-pane')!.hidden = false
       await loadGraph()
     } catch (e) {
       document.querySelector<HTMLDivElement>('#connectionError')!.innerHTML =

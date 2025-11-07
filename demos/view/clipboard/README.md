@@ -30,5 +30,5 @@ The main goal of this demo is to show custom clipboard functionality. Regular cl
 - Note how both paste variants update the labels of the copied nodes.
 - _Paste Special_ only pastes nodes and node labels, even if edges have been also copied or cut.
 - The nodes have a "business object" associated with the elements reflected in the nodes' titles (the text which is displayed inside the node). Editing the `name` property of a node's business object via the "Edit name" button changes the node's title, too, as it is bound to the name of the business object.  
-  See class `ClipboardBusinessObject` which is associated via the node's [ITagOwner#tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag).
+  See class `ClipboardBusinessObject` which is associated via the node's [ITagOwner.tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag).
 - The two nodes which are linked with the "Shared Object" edge share the same business object. Editing the name of one of the nodes will also change the name of the other object. Note that, the referential identity between them is maintained across clipboard operations: For instance, copy and paste both nodes and edit the name of one of the new nodes to see that the names of the associated nodes also change.

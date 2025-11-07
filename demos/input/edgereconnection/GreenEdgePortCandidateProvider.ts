@@ -31,8 +31,8 @@ import {
   FreeNodePortLocationModel,
   IEdgeReconnectionPortCandidateProvider,
   IEnumerable,
-  IInputModeContext,
-  IPortCandidate,
+  type IInputModeContext,
+  type IPortCandidate,
   List,
   PortCandidate
 } from '@yfiles/yfiles'

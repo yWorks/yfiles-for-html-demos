@@ -31,4 +31,4 @@ A _weighted_ property, controlled by the **Constraints** button, determines whet
 - Disable the sequence constraints for a node by unchecking the constraints button.
 - Run a layout to see how the sequence constraints affect the layout.
 - Create a new random graph with the _New Graph_ button.
-- Clicking on ![](../../resources/icons/delete2-16.svg) in the toolbar will remove all constraints from the nodes, while clicking on ![](../../resources/icons/star-16.svg) activates the constraints for each node.
+- Clicking on ![](../../demo-app/icons/delete2-16.svg) in the toolbar will remove all constraints from the nodes, while clicking on ![](../../demo-app/icons/star-16.svg) activates the constraints for each node.

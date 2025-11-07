@@ -52,8 +52,8 @@ import {
   getTaskForId,
   getX
 } from './gantt-utils'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { ActivityNodeLabelModel } from './activity-node/ActivityNodeLabelModel'
 import { TaskComponent } from './components/TaskComponent'
 import { hideActivityInfo } from './info-panel'
@@ -81,7 +81,7 @@ let graphComponent
 let taskComponent
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // create and initializes the main graph component
   graphComponent = createGraphComponent()
 

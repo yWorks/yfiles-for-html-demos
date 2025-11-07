@@ -53,12 +53,15 @@ import { convertLoadToColor } from './model/Device'
  * icon.
  */
 export class ConnectionEdgeStyle extends EdgeStyleBase {
+  private readonly packetAnimator: Animator
+
   /**
    * Initializes the EdgeStyle using the given Animator.
    * @param packetAnimator The animator for the animation of the packages.
    */
-  constructor(private readonly packetAnimator: Animator) {
+  constructor(packetAnimator: Animator) {
     super()
+    this.packetAnimator = packetAnimator
   }
 
   /**
@@ -275,6 +278,9 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
  * An animation that moves a packet visualization along the edge path.
  */
 class PacketAnimation extends BaseClass(IAnimation) {
+  private readonly forward: boolean
+  private readonly edge: IEdge
+  private readonly packet: SVGElement
   private sourceLocation: Point | null = null
   private targetLocation: Point | null = null
 
@@ -288,12 +294,11 @@ class PacketAnimation extends BaseClass(IAnimation) {
   /**
    * Constructor that takes the packet Element, the Edge to move on and the move direction.
    */
-  constructor(
-    private readonly packet: SVGElement,
-    private readonly edge: IEdge,
-    private readonly forward: boolean
-  ) {
+  constructor(packet: SVGElement, edge: IEdge, forward: boolean) {
     super()
+    this.packet = packet
+    this.edge = edge
+    this.forward = forward
   }
 
   /**

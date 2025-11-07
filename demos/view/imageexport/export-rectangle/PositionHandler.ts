@@ -39,13 +39,15 @@ import {
  * An {@link IPositionHandler} that manages the position of a given {@link MutableRectangle}.
  */
 export class PositionHandler extends BaseClass(IPositionHandler) {
+    private rectangle: MutableRectangle;
   /**
    * Stores the offset from the mouse event location to the handled rectangle's upper left corner.
    */
   private offset: MutablePoint = new MutablePoint()
 
-  constructor(private rectangle: MutableRectangle) {
+  constructor(rectangle: MutableRectangle) {
     super()
+      this.rectangle = rectangle;
   }
 
   /**

@@ -24,4 +24,4 @@ The demo starts with an empty graph, but graph items can be created interactivel
 
 Tests are run in both Firefox and Chrome in headless mode. Please note that the tests will fail if the corresponding browser binaries cannot be found on your system. If you want to see the gestures that are being tested, you can disable the "headless" options in `wdio.conf.js` and add an `await browser.debug()` [statement](https://webdriver.io/docs/api/browser/debug.html) at the end of a test in the spec file.
 
-In order to obtain access to the yFiles API, in particular for access to the GraphComponent instance through CanvasComponent#getComponent, the yFiles API is exposed globally when the application runs in the test environment.
+In order to obtain access to the yFiles API, in particular for access to the GraphComponent instance through CanvasComponent.getComponent, the yFiles API is exposed globally when the application runs in the test environment.

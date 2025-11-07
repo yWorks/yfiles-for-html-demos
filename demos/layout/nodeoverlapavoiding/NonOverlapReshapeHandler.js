@@ -29,16 +29,7 @@
 /**
  * An {@link IReshapeHandler} that resizes a node and creates space if it grows.
  */
-import {
-  BaseClass,
-  GraphComponent,
-  IInputModeContext,
-  INode,
-  IRectangle,
-  IReshapeHandler,
-  Rect,
-  WaitInputMode
-} from '@yfiles/yfiles'
+import { BaseClass, IReshapeHandler, MoveInputMode, WaitInputMode } from '@yfiles/yfiles'
 import { LayoutHelper } from './LayoutHelper'
 
 export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
@@ -75,8 +66,12 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
    * The node is upon to be resized.
    */
   initializeReshape(context) {
-    this.layoutHelper = new LayoutHelper(context.canvasComponent, this.node)
-    this.layoutHelper.initializeLayout()
+    if (context.inputMode instanceof MoveInputMode) {
+      this.layoutHelper = new LayoutHelper(context.canvasComponent, this.node)
+      this.layoutHelper.initializeLayout()
+    } else {
+      this.layoutHelper = null
+    }
     this.handler.initializeReshape(context)
   }
 
@@ -87,7 +82,7 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
     this.clearTimeout()
     this.handler.handleReshape(context, originalBounds, newBounds)
     this.timeoutHandle = setTimeout(async () => {
-      await this.layoutHelper.runLayout()
+      await this.layoutHelper?.runLayout()
     }, 50)
   }
 
@@ -104,7 +99,7 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
       waitInputMode.waiting = true
     }
 
-    await this.layoutHelper.cancelLayout()
+    await this.layoutHelper?.cancelLayout()
 
     if (waitInputMode) {
       waitInputMode.waiting = false
@@ -124,7 +119,7 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
       waitInputMode.waiting = true
     }
 
-    await this.layoutHelper.finishLayout()
+    await this.layoutHelper?.finishLayout()
 
     if (waitInputMode) {
       waitInputMode.waiting = false
@@ -132,7 +127,7 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
   }
 
   clearTimeout() {
-    if (this.timeoutHandle !== null) {
+    if (this.timeoutHandle != null) {
       clearTimeout(this.timeoutHandle)
       this.timeoutHandle = null
     }

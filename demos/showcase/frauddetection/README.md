@@ -30,7 +30,7 @@ This demo shows how _yFiles for HTML_ can be used for detecting _fraud cases_ in
 - Contains a time frame rectangle to select which time segment is represented in the main graph by _resizing/dragging_ it.
 - Provides three detail levels (days/months/years) that are switched by _scrolling_ anywhere in the component.
 - Updates the highlights/selection in the main graph when _hovering/selecting_ bars.
-- Offers a ![play](timeline/icons/play.svg)\-button to automatically move the time frame to the right while updating the main graph.
+- Offers a play button to automatically move the time frame to the right while updating the main graph.
 
 ## Inspection View Component
 

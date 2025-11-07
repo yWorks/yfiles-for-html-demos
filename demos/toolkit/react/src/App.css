@@ -98,7 +98,7 @@
   color: white;
   cursor: default;
   letter-spacing: 1px;
-  background: url('@yfiles/demo-resources/icons/header-angle.svg') no-repeat 5px 50%;
+  background: url('@yfiles/demo-app/icons/header-angle.svg') no-repeat 5px 50%;
   background-size: 20px 20px;
   vertical-align: top;
 }

@@ -26,22 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  EdgeStyleBase,
-  ICanvasContext,
-  IInputModeContext,
-  ILabel,
-  ILabelStyle,
-  IOrientedRectangle,
-  IRenderContext,
-  LabelStyleBase,
-  Point,
-  Rect,
-  Size,
-  SvgVisual,
-  SvgVisualGroup,
-  Visual
-} from '@yfiles/yfiles'
+import { LabelStyleBase, SvgVisual, SvgVisualGroup } from '@yfiles/yfiles'
 
 const SVG_NS = 'http://www.w3.org/2000/svg'
 
@@ -50,6 +35,7 @@ const SVG_NS = 'http://www.w3.org/2000/svg'
  */
 export class LabelStyleDecorator extends LabelStyleBase {
   baseStyle
+
   /**
    * Initializes a new instance of this class.
    * @param baseStyle The base style.

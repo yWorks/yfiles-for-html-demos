@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Tabular Groups Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -95,16 +95,20 @@
 
       <span class="demo-separator"></span>
 
-      <label>
-        Child Distance
-        <input type="range" min="0" max="50" value="0" id="child-distance-slider" />
-        <span
-          style="max-width: 15px; width: 15px; margin-right: 2px; display: inline-block"
-          id="childDistanceLabel"
-        >
-          0
-        </span>
-      </label>
+      <label for="child-distance-slider" class="yplay__menu--select-label option-label"
+        >Child Distance</label
+      >
+      <div class="yplay__menu--slider-container option-element">
+        <input
+          type="range"
+          min="0"
+          max="50"
+          value="0"
+          id="child-distance-slider"
+          class="yplay__menu--slider option-element"
+        />
+        <span class="yplay__menu--slider-value" id="childDistanceLabel">0</span>
+      </div>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -123,8 +127,8 @@
 
         <p>
           This demo shows how to configure the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#tabularGroups" target="_blank">tabular groups</a> feature of the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">Hierarchical Layout</a>.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#tabularGroups" class="api" target="_blank">tabular groups</a> feature of the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">Hierarchical Layout</a>.
         </p>
 
         <p>

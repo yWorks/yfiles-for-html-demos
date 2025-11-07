@@ -28,7 +28,7 @@
  ***************************************************************************/
 import {
   Arrow,
-  GraphComponent,
+  type GraphComponent,
   InteriorNodeLabelModel,
   LabelStyle,
   PolylineEdgeStyle,

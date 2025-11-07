@@ -33,20 +33,13 @@ import {
   GeneralPath,
   GradientSpreadMethod,
   GradientStop,
-  GraphComponent,
-  IEdge,
-  IInputModeContext,
-  INode,
-  IRectangle,
-  IRenderContext,
   IVisualCreator,
   LinearGradient,
   Matrix,
   NodeStyleBase,
   Point,
   Rect,
-  SvgVisual,
-  Visual
+  SvgVisual
 } from '@yfiles/yfiles'
 
 /**
@@ -340,14 +333,15 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
  * The equals method detects if the cache has changed.
  */
 class NodeRenderDataCache {
-  supply
-  flow
-  adjustableSupply
-  bounds
-  source
-  sink
-  inDegree
   outDegree
+  inDegree
+  sink
+  source
+  bounds
+  adjustableSupply
+  flow
+  supply
+
   constructor(supply, flow, adjustableSupply, bounds, source, sink, inDegree, outDegree) {
     this.supply = supply
     this.flow = flow
@@ -629,12 +623,13 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
  * The equals method detects if the cache has changed.
  */
 class EdgeRenderDataCache {
-  id
-  capacity
-  edgeFlow
-  path
-  color
   selected
+  color
+  path
+  edgeFlow
+  capacity
+  id
+
   /**
    * Creates a new RenderDataCache object.
    * @param id The unique identifier of the gradient used for the edge
@@ -857,8 +852,9 @@ export class MinCutLine extends BaseClass(IVisualCreator) {
  * The equals method detects if the cache has changed.
  */
 class MclRenderDataCache {
-  bounds
   visible
+  bounds
+
   constructor(bounds, visible) {
     this.bounds = bounds
     this.visible = visible

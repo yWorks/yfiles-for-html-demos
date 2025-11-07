@@ -45,19 +45,19 @@ import {
   GraphItemTypes,
   GraphOverviewComponent,
   GraphViewerInputMode,
-  HoveredItemChangedEventArgs,
-  IAnimation,
+  type HoveredItemChangedEventArgs,
+  type IAnimation,
   IEdge,
   IEdgeStyle,
   IEnumerable,
-  IGraph,
+  type IGraph,
   ILabelOwner,
-  ILayoutAlgorithm,
+  type ILayoutAlgorithm,
   INode,
   Insets,
   LabelStyle,
   LayoutExecutor,
-  LayoutGraph,
+  type LayoutGraph,
   LayoutGraphGrouping,
   LayoutGraphHider,
   LayoutStageBase,
@@ -85,15 +85,15 @@ import {
   ViewportAnimation
 } from '@yfiles/yfiles'
 
-import { AggregationHelper, AggregationNodeInfo } from './AggregationHelper'
+import { AggregationHelper, type AggregationNodeInfo } from './AggregationHelper'
 import {
   AggregationGraphWrapper,
   EdgeReplacementPolicy
 } from '@yfiles/demo-utils/AggregationGraphWrapper'
 import SampleGraph from './resources/SampleGraph'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { LitNodeStyle, type LitNodeStyleProps } from '@yfiles/demo-utils/LitNodeStyle'
 
 // @ts-ignore Import via URL
@@ -120,9 +120,9 @@ let descendantLabelStyle: LabelStyle = null!
  * Bootstraps the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
-  const overviewComponent = new GraphOverviewComponent('#overviewComponent', graphComponent)
+  new GraphOverviewComponent('#overviewComponent', graphComponent)
 
   // initialize node click listener that toggles the aggregation status
   initializeToggleAggregation()
@@ -654,8 +654,11 @@ class CustomRadialGroupLayoutStage extends LayoutStageBase {
  * {@link TemporaryGroupDescriptor} for the {@link RadialGroupLayout} algorithm.
  */
 class TemporaryGroupCustomizationStage extends LayoutStageBase {
-  constructor(public radialGroupLayout: RadialGroupLayout) {
+  radialGroupLayout: RadialGroupLayout
+
+  constructor(radialGroupLayout: RadialGroupLayout) {
     super(radialGroupLayout)
+    this.radialGroupLayout = radialGroupLayout
   }
 
   public static innerTreeNodesDataKey = new NodeDataKey<TemporaryGroupDescriptor>(

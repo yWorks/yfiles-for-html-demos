@@ -31,20 +31,9 @@ import {
   Font,
   FontStyle,
   HtmlCanvasVisual,
-  IBend,
-  IEdge,
-  IInputModeContext,
-  ILabel,
-  IListEnumerable,
-  INode,
-  IOrientedRectangle,
-  IPoint,
-  IRectangle,
-  IRenderContext,
   LabelStyleBase,
   Matrix,
   NodeStyleBase,
-  Point,
   Size
 } from '@yfiles/yfiles'
 
@@ -64,6 +53,7 @@ export class FastNodeStyle extends NodeStyleBase {
  */
 class NodeCanvasVisual extends HtmlCanvasVisual {
   layout
+
   /**
    * Initializes a new NodeCanvasVisual instance with the given property value.
    * @param layout A live view of the layout of a node.
@@ -119,9 +109,10 @@ export class FastEdgeStyle extends EdgeStyleBase {
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeCanvasVisual extends HtmlCanvasVisual {
-  bends
-  sourcePortLocation
   targetPortLocation
+  sourcePortLocation
+  bends
+
   /**
    * Initializes a new EdgeCanvasVisual instance with the given property values.
    * @param bends The bends in the edge's path.
@@ -224,10 +215,11 @@ export class FastLabelStyle extends LabelStyleBase {
  * The CanvasVisual for label rendering
  */
 class LabelCanvasVisual extends HtmlCanvasVisual {
-  text
-  layout
-  font
   zoomThreshold
+  font
+  layout
+  text
+
   /**
    * Initializes a new LabelCanvasVisual with the given property values.
    * @param text The text to be rendered.

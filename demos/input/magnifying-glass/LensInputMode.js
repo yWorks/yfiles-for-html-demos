@@ -26,22 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/unbound-method */
 import {
-  CanvasComponent,
-  ConcurrencyController,
   delegate,
   EventArgs,
   Graph,
   GraphComponent,
-  IInputModeContext,
   InputModeBase,
   MouseWheelBehaviors,
-  PointerEventArgs,
   ScrollBarVisibility
 } from '@yfiles/yfiles'
 
-// noinspection CssInvalidFunction
 /**
  * A specialized input mode that shows a floating magnifying lens that magnifies the cursor's
  * surroundings.
@@ -150,9 +144,9 @@ export class LensInputMode extends InputModeBase {
 
   /**
    * Updates the location of the magnifying component.
-   * @param component The source of the event
    * @param location The event
    * @param location.location The current mouse location
+   * @param component The source of the event
    */
   updateLensLocation({ location }, component) {
     if (

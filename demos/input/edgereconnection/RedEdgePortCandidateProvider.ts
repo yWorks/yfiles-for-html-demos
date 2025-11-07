@@ -28,11 +28,11 @@
  ***************************************************************************/
 import {
   BaseClass,
-  IEdge,
+  type IEdge,
   IEdgeReconnectionPortCandidateProvider,
   IEnumerable,
-  IInputModeContext,
-  IPortCandidate,
+  type IInputModeContext,
+  type IPortCandidate,
   List,
   PortCandidate
 } from '@yfiles/yfiles'

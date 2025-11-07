@@ -36,10 +36,8 @@ import {
   GroupNodeStyle,
   HierarchicalLayout,
   IEdge,
-  IGraph,
   ILabel,
   ILabelOwner,
-  IModelItem,
   INode,
   InteriorNodeLabelModel,
   IPort,
@@ -50,9 +48,9 @@ import {
   Size
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import graphData from './graph-data.json'
 
 let graphComponent = null
@@ -62,7 +60,7 @@ let graphComponent = null
 LayoutExecutor.ensure()
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode({ focusableItems: 'all' })

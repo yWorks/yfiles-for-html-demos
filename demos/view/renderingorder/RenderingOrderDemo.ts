@@ -34,23 +34,22 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HierarchicalNestingPolicy,
-  IRenderContext,
+  type IRenderContext,
   IVisualCreator,
   LabelLayerPolicy,
   License,
-  ShapePortStyle,
   Point,
   PortLayerPolicy,
-  ShapeNodeStyle,
+  ShapePortStyle,
   Size,
   SmartEdgeLabelModel,
   SvgVisual,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -58,7 +57,7 @@ let graphComponent: GraphComponent
  * Bootstraps the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
@@ -319,19 +318,23 @@ function initializeUI(): void {
  * Creates a boundary rectangle with a title for a sample graph.
  */
 class RectangleBorder extends BaseClass(IVisualCreator) {
+  private title: string
+  private titleOrigin: Point
+  private size: Size
+  private rectOrigin: Point
+
   /**
    * @param rectOrigin the position where to draw the rectangle
    * @param size   the size of the rectangle
    * @param titleOrigin the position where to draw the title
    * @param title  the content of the label above the rectangle
    */
-  constructor(
-    private rectOrigin: Point,
-    private size: Size,
-    private titleOrigin: Point,
-    private title: string
-  ) {
+  constructor(rectOrigin: Point, size: Size, titleOrigin: Point, title: string) {
     super()
+    this.rectOrigin = rectOrigin
+    this.size = size
+    this.titleOrigin = titleOrigin
+    this.title = title
   }
 
   createVisual(ctx: IRenderContext): SvgVisual {

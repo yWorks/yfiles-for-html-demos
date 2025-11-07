@@ -33,6 +33,7 @@ import { BaseClass, IVisualCreator, SvgVisualGroup } from '@yfiles/yfiles'
  */
 export class MazeVisual extends BaseClass(IVisualCreator) {
   nodes
+
   /**
    * Creates a new instance of MazeVisual.
    */

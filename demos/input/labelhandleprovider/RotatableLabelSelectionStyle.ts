@@ -27,12 +27,12 @@
  **
  ***************************************************************************/
 import {
-  ILabel,
+  type ILabel,
   type IOrientedRectangle,
-  IRenderContext,
+  type IRenderContext,
   LabelStyleBase,
-  OrientedRectangle,
-  Size,
+  type OrientedRectangle,
+  type Size,
   SvgVisual,
   type TaggedSvgVisual
 } from '@yfiles/yfiles'

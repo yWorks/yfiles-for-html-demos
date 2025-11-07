@@ -26,18 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  IBoundsProvider,
-  IHitTestable,
-  INode,
-  INodeStyle,
-  IObjectRenderer,
-  IVisibilityTestable,
-  IVisualCreator,
-  Rect,
-  SimpleNode
-} from '@yfiles/yfiles'
+import { BaseClass, IObjectRenderer, IVisibilityTestable, SimpleNode } from '@yfiles/yfiles'
 
 /**
  * An {@link IObjectRenderer} for nodes using a fixed {@link INodeStyle node style}

@@ -51,7 +51,6 @@ export class CustomLabelStyle extends LabelStyleBase {
       'text'
     )
 
-    const labelSize = label.layout.toSize()
     // use a convenience method to place text content in the <text> element.
     TextRenderSupport.addText(textElement, label.text, font)
 

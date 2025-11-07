@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Table Editor Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       .table-background {
@@ -116,13 +116,9 @@
       <button
         id="open-file-button"
         title="Open a GraphML file"
-        class="demo-icon-yIconOpen labeled"
+        class="demo-icon-yIconOpen"
       ></button>
-      <button
-        id="save-button"
-        title="Save a GraphML file"
-        class="demo-icon-yIconSave labeled"
-      ></button>
+      <button id="save-button" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
 
       <span class="demo-separator"></span>
 
@@ -154,7 +150,7 @@
         <p>
           The Table Editor demo shows the support for diagrams that are organized in a tabular way,
           for example in a grid or a swimlane layout. Besides model items and styles for
-          <a href="https://docs.yworks.com/yfileshtml/#/api/Table" target="_blank">Table</a>, yFiles provides dedicated editing features to add, remove, resize,
+          <a href="https://docs.yworks.com/yfileshtml/#/api/Table" class="api" target="_blank">Table</a>, yFiles provides dedicated editing features to add, remove, resize,
           and reparent rows, columns, and the table contents.
         </p>
 

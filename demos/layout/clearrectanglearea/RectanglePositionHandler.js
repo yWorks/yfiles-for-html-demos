@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  IInputModeContext,
-  IMutablePoint,
-  IPoint,
-  IPositionHandler,
-  MutableRectangle,
-  Point
-} from '@yfiles/yfiles'
+import { BaseClass, IMutablePoint, IPositionHandler } from '@yfiles/yfiles'
 
 /**
  * Simple implementation of an {@link IPositionHandler} that moves a {@link MutableRectangle}
@@ -93,7 +85,6 @@ export class RectanglePositionHandler extends BaseClass(IPositionHandler) {
   }
 
   dragFinished(context, originalLocation, newLocation) {
-    // eslint-disable-next-line no-useless-return
     return
   }
 }

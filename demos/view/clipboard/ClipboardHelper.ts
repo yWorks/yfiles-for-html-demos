@@ -26,13 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  IClipboardHelper,
-  IGraphClipboardContext,
-  IModelItem,
-  INode
-} from '@yfiles/yfiles'
+import { BaseClass, IClipboardHelper, type IGraphClipboardContext, type IModelItem, INode } from '@yfiles/yfiles'
 
 /**
  * This class is used to assign custom labels to pasted nodes.
@@ -129,10 +123,13 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
  * of pasted elements.
  */
 class CopyItem {
+    text: string;
+
   /**
    * Creates a new instance of {@link CopyItem}.
    */
-  constructor(public text: string) {}
+  constructor(text: string) {
+      this.text = text;}
 
   public pasteCount = 0
 

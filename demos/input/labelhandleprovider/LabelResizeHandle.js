@@ -28,19 +28,11 @@
  ***************************************************************************/
 import {
   BaseClass,
-  CanvasComponent,
-  ClickEventArgs,
   Cursor,
   HandleType,
   IHandle,
-  IInputModeContext,
-  ILabel,
   ILabelModelParameterFinder,
-  IOrientedRectangle,
   IPoint,
-  IRenderContext,
-  IRenderTreeElement,
-  ISize,
   OrientedRectangle,
   Point,
   Size
@@ -51,8 +43,8 @@ import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectan
  * A custom {@link IHandle} implementation that allows resizing a label.
  */
 export class LabelResizeHandle extends BaseClass(IHandle) {
-  label
   symmetricResize
+  label
   sizeIndicator = null
   handleLocation = new LabelResizeHandleLivePoint(this)
   emulate = false
@@ -227,6 +219,7 @@ export class LabelResizeHandle extends BaseClass(IHandle) {
  */
 class LabelResizeHandleLivePoint extends BaseClass(IPoint) {
   handle
+
   /**
    * Creates a new point for the given handler.
    * @param handle The given handler

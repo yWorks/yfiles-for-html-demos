@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>02 Create Nodes Sources - Tutorial: Graph Builder [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -135,7 +135,7 @@
               </div>
               <div class="paragraph">
                 <p>
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> can import data from multiple sources. All node
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> can import data from multiple sources. All node
                   sources that are presented in this step are combined in the graph on the right.
                   Nodes that are retrieved from the same data source have the same color.
                 </p>
@@ -152,8 +152,8 @@
                           Give data items a unique identifier. It will ensure the correct connection
                           of edges as well as updating the graph correctly after changes in the
                           business data. If <code>null</code> is set for an
-                          <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-property-idProvider" target="_blank">id provider</a>,
-                          the item itself will be used as identifier.
+                          <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider" class="api" target="_blank">id provider</a>, the item itself will
+                          be used as identifier.
                         </p>
                       </div>
                       <div class="paragraph">
@@ -173,7 +173,7 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> accepts different types of data collections. The most
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> accepts different types of data collections. The most
                   commonly used collection is probably the
                   <strong><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array" target="_blank">Array</a></strong
                   >.
@@ -183,7 +183,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodeData = [{ <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;00&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;01&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;02&#x27;</span> }]
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> nodeData = [{ <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;00&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;01&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;02&#x27;</span> }]
 
 <span class="hljs-comment">// nodes source for the turquoise nodes</span>
 <span class="hljs-keyword">const</span> nodesSource = graphBuilder.<span class="hljs-title function_">createNodesSource</span>(
@@ -195,15 +195,14 @@
               <div class="paragraph">
                 <p>
                   Another one is the
-                  <strong><a href="https://docs.yworks.com/yfileshtml/#/api/IEnumerable" target="_blank">IEnumerable&lt;T&gt;</a></strong
-                  >. The
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-property-idProvider" target="_blank">id provider</a> function
-                  retrieves the identifiers for the nodes.
+                  <strong><a href="https://docs.yworks.com/yfileshtml/#/api/IEnumerable" class="api" target="_blank">IEnumerable&lt;T&gt;</a></strong
+                  >. The <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider" class="api" target="_blank">id provider</a> function retrieves the
+                  identifiers for the nodes.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IEnumerable" target="_blank">IEnumerable&lt;T&gt;</a> implements the iterable
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/IEnumerable" class="api" target="_blank">IEnumerable&lt;T&gt;</a> implements the iterable
                   protocol, and therefore all yFiles for HTML collections are accepted, as well.
                   Since they are live collections, they become useful when updating the graph with
                   changing data.
@@ -213,7 +212,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodeData = <span class="hljs-title class_">IEnumerable</span>.<span class="hljs-title function_">from</span>([{ <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;10&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;11&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;12&#x27;</span> }])
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> nodeData = <span class="hljs-title class_">IEnumerable</span>.<span class="hljs-title function_">from</span>([{ <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;10&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;11&#x27;</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;12&#x27;</span> }])
 
 <span class="hljs-comment">// nodes source for the blue nodes</span>
 <span class="hljs-keyword">const</span> nodesSource = graphBuilder.<span class="hljs-title function_">createNodesSource</span>(
@@ -227,16 +226,16 @@
                   If you have organized the data in a
                   <strong><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map" target="_blank">Map</a></strong> for
                   easy and fast access by a <code>key</code>, you can pass it to
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> as is. The map key of an item is passed to the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-property-idProvider" target="_blank">id provider</a> function
-                  as a second parameter and can be used as the identifier or a part of it.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> as is. The map key of an item is passed to the
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider" class="api" target="_blank">id provider</a> function as a second
+                  parameter and can be used as the identifier or a part of it.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodeData = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>&lt;string, { <span class="hljs-attr">id</span>: string }&gt;()
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> nodeData = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>&lt;<span class="hljs-built_in">string</span>, { <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span> }&gt;()
 nodeData.<span class="hljs-title function_">set</span>(<span class="hljs-string">&#x27;node1&#x27;</span>, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;30&#x27;</span> })
 nodeData.<span class="hljs-title function_">set</span>(<span class="hljs-string">&#x27;node2&#x27;</span>, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;31&#x27;</span> })
 nodeData.<span class="hljs-title function_">set</span>(<span class="hljs-string">&#x27;node3&#x27;</span>, { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;32&#x27;</span> })
@@ -263,7 +262,7 @@ nodeData.<span class="hljs-title function_">set</span>(<span class="hljs-string"
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodeData = {
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> nodeData = {
   <span class="hljs-attr">node1</span>: { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;20&#x27;</span> },
   <span class="hljs-attr">node2</span>: { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;21&#x27;</span> },
   <span class="hljs-attr">node3</span>: { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;22&#x27;</span> }
@@ -286,10 +285,10 @@ nodeData.<span class="hljs-title function_">set</span>(<span class="hljs-string"
               <div class="paragraph">
                 <p>
                   Especially with dynamic data, generator functions can be very useful. If a
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" target="_blank">NodesSource</a> is created from a generator function, it is very easy
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a> is created from a generator function, it is very easy
                   to update the data as it is described in the tutorial step about
                   <a href="../11-update-graph/">updating the graph</a>. In the following example the
-                  limit might be variable and the <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" target="_blank">NodesSource</a> will provide the data
+                  limit might be variable and the <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a> will provide the data
                   accordingly.
                 </p>
               </div>
@@ -297,7 +296,7 @@ nodeData.<span class="hljs-title function_">set</span>(<span class="hljs-string"
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">function</span>* <span class="hljs-title function_">nodes</span>(): <span class="hljs-title class_">Generator</span>&lt;{ <span class="hljs-attr">id</span>: string }&gt; {
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">function</span>* <span class="hljs-title function_">nodes</span>(): <span class="hljs-title class_">Generator</span>&lt;{ <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span> }&gt; {
   <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; limit; i++) {
     <span class="hljs-keyword">yield</span> { <span class="hljs-attr">id</span>: <span class="hljs-string">`4<span class="hljs-subst">${i}</span>`</span> }
   }
@@ -341,7 +340,7 @@ nodeData.<span class="hljs-title function_">set</span>(<span class="hljs-string"
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

@@ -28,20 +28,20 @@
  ***************************************************************************/
 import {
   FreeNodePortLocationModel,
-  ICanvasContext,
-  ILabel,
-  ILabelStyle,
-  INode,
-  IRenderContext,
+  type ICanvasContext,
+  type ILabel,
+  type ILabelStyle,
+  type INode,
+  type IRenderContext,
   LabelStyleBase,
   PolylineEdgeStyle,
-  Rect,
+  type Rect,
   ShapeNodeStyle,
   SimpleEdge,
   SimpleNode,
   SimplePort,
-  Size,
-  SvgVisual,
+  type Size,
+  type SvgVisual,
   SvgVisualGroup
 } from '@yfiles/yfiles'
 

@@ -39,6 +39,7 @@ import {
  */
 export class ActivityNodePortCandidateProvider extends BaseClass(IPortCandidateProvider) {
   node
+
   constructor(node) {
     super()
     this.node = node

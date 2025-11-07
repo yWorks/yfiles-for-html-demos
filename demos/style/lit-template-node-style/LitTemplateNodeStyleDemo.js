@@ -40,15 +40,15 @@ import {
 import SampleData from './resources/sample'
 import { createLitNodeStyleFromSource, LitNodeStyle } from './LitNodeStyle'
 import { registerLitNodeStyleSerialization } from './LitNodeStyleMarkupExtension'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 import {
   createCodemirrorEditor,
   EditorView,
   StateEffect,
   StateField
-} from '@yfiles/demo-resources/codemirror-editor'
+} from '@yfiles/demo-app/codemirror-editor'
 
 let graphComponent
 
@@ -59,7 +59,7 @@ let tagTextArea
  * Runs the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
@@ -80,7 +80,7 @@ function initializeTextAreas() {
   const renderFunctionSourceTextAreaEditable = StateField.define({
     create: () => true,
     update: (value, transaction) => {
-      for (let e of transaction.effects) {
+      for (const e of transaction.effects) {
         if (e.is(setRenderFunctionSourceTextAreaEditable)) {
           value = e.value
         }
@@ -101,7 +101,7 @@ function initializeTextAreas() {
   const tagTextAreaEditable = StateField.define({
     create: () => true,
     update: (value, transaction) => {
-      for (let e of transaction.effects) {
+      for (const e of transaction.effects) {
         if (e.is(setTagTextAreaEditable)) {
           value = e.value
         }

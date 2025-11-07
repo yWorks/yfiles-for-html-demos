@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core'
+import { type ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core'
 
 export const appComponentConfig: ApplicationConfig = {
   providers: [provideBrowserGlobalErrorListeners()]

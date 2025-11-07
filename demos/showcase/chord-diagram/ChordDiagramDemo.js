@@ -33,7 +33,6 @@ import {
   GraphItemTypes,
   GraphViewerInputMode,
   IEdge,
-  IGraph,
   INode,
   LayoutExecutor,
   License,
@@ -44,13 +43,13 @@ import { ChordDiagramLayout } from './ChordDiagramLayout'
 import { ChordEdgeStyle } from './ChordEdgeStyle'
 import { CircleSegmentNodeStyle } from './CircleSegmentNodeStyle'
 import SampleData from './resources/SampleData'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 // maps edges to their thickness
-let weightMapping = new Mapper()
+const weightMapping = new Mapper()
 // maps edges to layout specific information
-let edgeStyleHints = new Mapper()
+const edgeStyleHints = new Mapper()
 
 let edgeHighlightDecoratorLookupChainLink
 
@@ -60,7 +59,7 @@ let edgeHighlightDecoratorLookupChainLink
 async function run() {
   LayoutExecutor.ensure()
 
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
   // setup effects of hovering and selecting edges
@@ -197,8 +196,9 @@ function showGraph(graphComponent, enabled) {
   const graph = graphComponent.graph
   // if the actual, basic graph is shown, use the standard selection indicators, else hide them.
   if (enabled) {
-    edgeHighlightDecoratorLookupChainLink &&
+    if (edgeHighlightDecoratorLookupChainLink) {
       graph.decorator.edges.remove(edgeHighlightDecoratorLookupChainLink)
+    }
   } else {
     edgeHighlightDecoratorLookupChainLink = graph.decorator.edges.selectionRenderer.hide()
   }
@@ -235,7 +235,6 @@ function updateGapRatio(graphComponent, gapRatio) {
 
 /**
  * Runs the chord layout.
- * @param graphComponent
  */
 function runLayout(graphComponent) {
   const layout = new ChordDiagramLayout()

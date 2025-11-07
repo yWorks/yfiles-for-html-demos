@@ -7,13 +7,13 @@
   "private": true,
   "scripts": {
     "start": "web-dev-server",
-    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json', 'src/license.json'); require('fs-extra').copySync('../../resources/style/loading-demo.css', 'src/demo.css'); require('fs-extra').copySync('../../resources/icons', 'src/icons');\""
+    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json', 'src/license.json'); require('fs-extra').copySync('../../demo-app/style/loading-demo.css', 'src/demo.css'); require('fs-extra').copySync('../../demo-app/icons', 'src/icons');\""
   },
   "devDependencies": {
     "@web/dev-server": "^0.4.6",
     "fs-extra": "^11.3.0"
   },
   "dependencies": {
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.3+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.4+dev.tgz"
   }
 }

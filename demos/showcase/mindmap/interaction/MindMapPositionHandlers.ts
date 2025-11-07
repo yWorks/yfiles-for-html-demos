@@ -57,6 +57,8 @@ import { getFullGraph, getInEdge, getRoot, getSubtree } from '../subtrees'
  * to the moved node.
  */
 export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
+  private handler: IPositionHandler
+  private movedNode: INode
   private lastLocation: Point = Point.ORIGIN
   private rootNodeCenter: Point = Point.ORIGIN
   // get the mind map root node
@@ -70,11 +72,10 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Creates the SubtreePositionHandler that wraps the given position handler.
    */
-  constructor(
-    private movedNode: INode,
-    private handler: IPositionHandler
-  ) {
+  constructor(movedNode: INode, handler: IPositionHandler) {
     super()
+    this.movedNode = movedNode
+    this.handler = handler
   }
 
   /**

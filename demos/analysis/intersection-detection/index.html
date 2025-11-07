@@ -34,21 +34,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Intersection Detection Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       .demo-properties__settings {
-        display: grid;
-        grid-template-columns: auto auto;
-        grid-column-gap: 5px;
-      }
-
-      .option-element {
-        align-self: center;
-        width: 100%;
-        margin-bottom: 10px;
+        align-items: flex-start !important;
       }
 
       .yfiles-tooltip {
@@ -81,6 +73,35 @@
 
       .tooltip-separator {
         border-top: 1px dashed black;
+      }
+
+      .option-label-wrapper {
+        display: contents;
+      }
+
+      .option-label:hover .hover-link {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .hover-link {
+        cursor: pointer;
+        background-color: #4caf50;
+        color: #ffffff;
+        font-size: 10px;
+        font-family: monospace;
+        padding: 0 2px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease-in-out;
+      }
+
+      .demo-properties__settings:first-of-type {
+        margin-bottom: 5px;
+      }
+
+      .demo-properties__settings:nth-of-type(2) {
+        margin-top: 0;
       }
     </style>
   </head>
@@ -138,7 +159,7 @@
 
         <p>
           The
-          <a href="https://docs.yworks.com/yfileshtml/#/api/Intersections" target="_blank">Intersections</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/Intersections" class="api" target="_blank">Intersections</a>
           algorithm calculates all geometric intersections between nodes, edges, and labels in a
           diagram. Checking whether items overlap can be helpful in various scenarios. For example,
           you could check if a newly inserted or moved graph item intersects other items. Or, more
@@ -148,7 +169,7 @@
 
         <p>
           The result of the algorithm is provided as a list of
-          <a href="https://docs.yworks.com/yfileshtml/#/api/Intersection" target="_blank">Intersection</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/Intersection" class="api" target="_blank">Intersection</a>
           objects, where each one represents the intersection between exactly two elements and
           additionally provides the exact points describing the shape of the intersection. The
           shapes of the intersections are visualized in this demo using different colors for
@@ -181,60 +202,116 @@
       <aside class="demo-main__sidebar">
         <div class="demo-sidebar__content">
           <h2>Algorithm Properties</h2>
-          <div class="demo-properties__settings">
-            <label for="considered-items-select" class="option-label">Considered Item Types</label>
-            <select id="considered-items-select" class="option-element">
-              <option value="all">All</option>
-              <option value="nodes">Nodes</option>
-              <option value="edges">Edges</option>
-              <option value="labels">Labels</option>
-              <option value="nodes-and-edges">Nodes and Edges</option>
-              <option value="nodes-and-labels">Nodes and Labels</option>
-            </select>
-            <label for="consider-item-geometry" class="option-label">Consider Item Geometry</label>
-            <input
-              class="option-element"
-              id="consider-item-geometry"
-              type="checkbox"
-              value="false"
-              checked=""
-            />
-            <label for="consider-only-selection" class="option-label">
-              Consider Only Selected Elements
-            </label>
-            <input
-              class="option-element"
-              id="consider-only-selection"
-              type="checkbox"
-              value="false"
-            />
-            <label for="consider-source-target-node-intersections" class="option-label">
-              Source/Target Node Intersections
-            </label>
-            <input
-              class="option-element"
-              id="consider-source-target-node-intersections"
-              type="checkbox"
-              value="false"
-            />
-            <label for="consider-group-content-intersections" class="option-label">
-              Content With Group Intersections
-            </label>
-            <input
-              class="option-element"
-              id="consider-group-content-intersections"
-              type="checkbox"
-              value="false"
-            />
-            <label for="consider-label-owner-intersections" class="option-label">
-              Label With Owner Intersections
-            </label>
-            <input
-              class="option-element"
-              id="consider-label-owner-intersections"
-              type="checkbox"
-              value="false"
-            />
+          <div class="demo-properties__settings select-container">
+            <div class="option-label-wrapper">
+              <label for="considered-items-select" class="option-label">
+                Considered Item Types
+                <a
+                  href="https://docs.yworks.com/yfileshtml/#/api/Intersections#Intersections-property-consideredItemTypes"
+                  target="_blank"
+                  class="hover-link"
+                  class="hover-link"
+                  >API&#8594;</a
+                >
+              </label>
+
+              <select id="considered-items-select" class="option-element">
+                <option value="all">All</option>
+                <option value="nodes">Nodes</option>
+                <option value="edges">Edges</option>
+                <option value="labels">Labels</option>
+                <option value="nodes-and-edges">Nodes and Edges</option>
+                <option value="nodes-and-labels">Nodes and Labels</option>
+              </select>
+            </div>
+          </div>
+          <div class="demo-properties__settings checkbox-container">
+            <div class="option-label-wrapper">
+              <label for="consider-item-geometry" class="option-label"
+                >Consider Item Geometry
+                <a
+                  href="https://docs.yworks.com/yfileshtml/#/api/Intersections#Intersections-property-considerItemGeometry"
+                  target="_blank"
+                  class="hover-link"
+                  >API&#8594;</a
+                >
+              </label>
+              <input
+                class="option-element"
+                id="consider-item-geometry"
+                type="checkbox"
+                value="false"
+                checked=""
+              />
+            </div>
+            <div class="option-label-wrapper">
+              <label for="consider-only-selection" class="option-label">
+                Consider Only Selected Elements
+                <a
+                  href="https://docs.yworks.com/yfileshtml/#/api/Intersections#Intersections-property-affectedItems"
+                  target="_blank"
+                  class="hover-link"
+                  >API&#8594;</a
+                >
+              </label>
+              <input
+                class="option-element"
+                id="consider-only-selection"
+                type="checkbox"
+                value="false"
+              />
+            </div>
+            <div class="option-label-wrapper">
+              <label for="consider-source-target-node-intersections" class="option-label">
+                Source/Target Node Intersections
+                <a
+                  href="https://docs.yworks.com/yfileshtml/#/api/Intersections#Intersections-property-independentItems"
+                  target="_blank"
+                  class="hover-link"
+                  >API&#8594;</a
+                >
+              </label>
+              <input
+                class="option-element"
+                id="consider-source-target-node-intersections"
+                type="checkbox"
+                value="false"
+              />
+            </div>
+            <div class="option-label-wrapper">
+              <label for="consider-group-content-intersections" class="option-label">
+                Content With Group Intersections
+                <a
+                  href="https://docs.yworks.com/yfileshtml/#/api/Intersections#Intersections-property-independentItems"
+                  target="_blank"
+                  class="hover-link"
+                  >API&#8594;</a
+                >
+              </label>
+              <input
+                class="option-element"
+                id="consider-group-content-intersections"
+                type="checkbox"
+                value="false"
+              />
+            </div>
+            <div class="option-label-wrapper">
+              <label for="consider-label-owner-intersections" class="option-label">
+                Label With Owner Intersections
+                <a
+                  href="https://docs.yworks.com/yfileshtml/#/api/Intersections#Intersections-property-independentItems"
+                  target="_blank"
+                  class="hover-link"
+                  >API&#8594;</a
+                >
+              </label>
+              <input
+                class="option-element"
+                id="consider-label-owner-intersections"
+                type="checkbox"
+                value="false"
+              />
+            </div>
           </div>
           <h2>Found Intersections</h2>
           <div class="demo-properties__settings">

@@ -36,9 +36,9 @@
     <title>
       03 Adding a Background Shape - Tutorial: Label Style Implementation [yFiles for HTML]
     </title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -150,7 +150,7 @@
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> backgroundPathElement = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> backgroundPathElement = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(
   <span class="hljs-string">&#x27;http://www.w3.org/2000/svg&#x27;</span>,
   <span class="hljs-string">&#x27;path&#x27;</span>
 )
@@ -169,7 +169,7 @@ backgroundPathElement.<span class="hljs-title function_">setAttribute</span>(<sp
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript">private <span class="hljs-title function_">createBackgroundShapeData</span>(<span class="hljs-attr">labelSize</span>: <span class="hljs-title class_">Size</span>): string {
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">private</span> <span class="hljs-title function_">createBackgroundShapeData</span>(<span class="hljs-attr">labelSize</span>: <span class="hljs-title class_">Size</span>): <span class="hljs-built_in">string</span> {
   <span class="hljs-keyword">const</span> { <span class="hljs-attr">width</span>: w, <span class="hljs-attr">height</span>: h } = labelSize
   <span class="hljs-keyword">return</span> <span class="hljs-string">`M 0 0 h <span class="hljs-subst">${w}</span> v <span class="hljs-subst">${h}</span> h -<span class="hljs-subst">${w * <span class="hljs-number">0.5</span> - <span class="hljs-number">5</span>}</span> l -5 5 v -5 h -<span class="hljs-subst">${w * <span class="hljs-number">0.5</span>}</span> z`</span>
 }</code></pre>
@@ -185,7 +185,7 @@ backgroundPathElement.<span class="hljs-title function_">setAttribute</span>(<sp
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> gElement = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(<span class="hljs-string">&#x27;http://www.w3.org/2000/svg&#x27;</span>, <span class="hljs-string">&#x27;g&#x27;</span>)
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> gElement = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(<span class="hljs-string">&#x27;http://www.w3.org/2000/svg&#x27;</span>, <span class="hljs-string">&#x27;g&#x27;</span>)
 gElement.<span class="hljs-title function_">appendChild</span>(backgroundPathElement)
 gElement.<span class="hljs-title function_">appendChild</span>(textElement)</code></pre>
             </div>
@@ -217,7 +217,7 @@ gElement.<span class="hljs-title function_">appendChild</span>(textElement)</cod
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

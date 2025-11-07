@@ -30,40 +30,23 @@ import {
   BaseClass,
   Command,
   EventArgs,
-  GraphComponent,
   GraphEditorInputMode,
   GraphMLIOHandler,
   GroupingNodePositionHandler,
-  GroupingSupport,
   HashMap,
   IEnumerable,
-  IFoldingView,
-  IGraph,
-  IGraphSelection,
-  IInputModeContext,
-  IMap,
   IModelItem,
   INode,
   InputHandlerBase,
-  InputModeEventArgs,
   IOutputHandler,
-  IParseContext,
-  IPositionHandler,
-  IRenderTreeElement,
   IRenderTreeGroup,
   IReparentNodeHandler,
-  ItemEventArgs,
-  ItemsEventArgs,
   IUndoUnit,
-  IWriteContext,
   KeyScope,
   KeyType,
   LabelLayerPolicy,
   List,
-  NodeEventArgs,
   OutputHandlerBase,
-  Point,
-  SelectionEventArgs,
   WritePrecedence
 } from '@yfiles/yfiles'
 import { ZOrderGraphClipboard } from './ZOrderGraphClipboard'
@@ -298,7 +281,7 @@ export class ZOrderSupport {
 
   /**
    * Sets new ascending z-orders for `viewNodes` starting from `zOrder` and sorts their
-   * {@link GraphModelManager.getMainRenderTreeElement canvas objects} as well.
+   * {@link GraphModelManager.getMainRenderTreeElement render tree element} as well.
    */
   arrangeNodes(viewNodes, zOrder) {
     let prev = null
@@ -1001,8 +984,9 @@ class ZOrderOutputHandler extends OutputHandlerBase {
  * the reparent handler that is passed to the callback function.
  */
 class ZOrderReparentHandler extends BaseClass(IReparentNodeHandler) {
-  handler
   zOrderSupport
+  handler
+
   constructor(handler, zOrderSupport) {
     super()
     this.handler = handler

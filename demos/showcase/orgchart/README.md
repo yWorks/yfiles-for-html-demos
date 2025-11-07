@@ -50,7 +50,7 @@ Click on a superior, subordinate, or colleague link to select and zoom to the co
   - Hide children: hides the children of the currently selected employee.
   - Show children: Shows the children of the currently selected employee.
   - Show all: show all employees
-- In the Toolbar, you can **Show All** nodes by clicking on ![show all](../../resources/icons/star-16.svg).
+- In the Toolbar, you can **Show All** nodes by clicking on ![show all](../../demo-app/icons/star-16.svg).
 
 ## Developer Information
 

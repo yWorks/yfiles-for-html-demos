@@ -27,9 +27,9 @@
  **
  ***************************************************************************/
 import {
-  IEdge,
-  IGraph,
-  IInputModeContext,
+  type IEdge,
+  type IGraph,
+  type IInputModeContext,
   IOrthogonalEdgeHelper,
   IShapeGeometry,
   OrthogonalEdgeHelper

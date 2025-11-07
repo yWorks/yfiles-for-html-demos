@@ -35,22 +35,22 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  HandleInputMode,
+  type HandleInputMode,
   IEdge,
-  IGraph,
-  INode,
-  InputModeEventArgs,
+  type IGraph,
+  type INode,
+  type InputModeEventArgs,
   LayoutExecutor,
   License,
-  MoveInputMode,
+  type MoveInputMode,
   PortSides,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
 
 import MazeData from './resources/maze'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { MazeVisual } from './MazeVisual'
 
 /**
@@ -74,7 +74,7 @@ let filteredGraph: FilteredGraphWrapper
  * Starts the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
 

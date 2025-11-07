@@ -28,8 +28,8 @@
  ***************************************************************************/
 import './DemoDataPanel.css'
 import ItemElement from './ItemElement'
-import plusIcon from '@yfiles/demo-resources/icons/plus-16.svg'
-import minusIcon from '@yfiles/demo-resources/icons/minus-16.svg'
+import plusIcon from '@yfiles/demo-app/icons/plus-16.svg'
+import minusIcon from '@yfiles/demo-app/icons/minus-16.svg'
 import { GraphData } from '../App'
 
 interface DemoDataPanelProps {

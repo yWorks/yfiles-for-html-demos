@@ -32,16 +32,16 @@ import {
   CompositeLayoutData,
   GivenCoordinatesLayout,
   GivenCoordinatesLayoutData,
-  GraphComponent,
-  ICompoundEdit,
+  type GraphComponent,
+  type ICompoundEdit,
   IEdge,
-  IGraph,
-  ILayoutAlgorithm,
-  INode,
-  LayoutData,
+  type IGraph,
+  type ILayoutAlgorithm,
+  type INode,
+  type LayoutData,
   LayoutExecutor,
-  MutableRectangle,
-  Rect
+  type MutableRectangle,
+  type Rect
 } from '@yfiles/yfiles'
 
 import type { LayoutOptions } from './LayoutOptions'
@@ -274,7 +274,6 @@ export class ClearAreaLayoutHelper {
     }
     this.stopped = true
 
-    // noinspection JSIgnoredPromiseFromCall
     this.runLayout()
   }
 

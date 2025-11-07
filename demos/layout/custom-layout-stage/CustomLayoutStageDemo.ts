@@ -32,8 +32,8 @@ import {
   GraphEditorInputMode,
   HierarchicalLayout,
   HierarchicalLayoutData,
-  IGraph,
-  LayoutData,
+  type IGraph,
+  type LayoutData,
   LayoutExecutor,
   License,
   PolylineEdgeStyle,
@@ -45,9 +45,9 @@ import {
 import { MoveNodesAsideStage } from './MoveNodesAsideStage'
 import { AlignmentStage } from './AlignmentStage'
 import { ZigZagEdgesStage } from './ZigZagEdgesStage'
-import { createDemoNodeLabelStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoNodeLabelStyle, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * The graph component in which the graph is displayed.
@@ -58,7 +58,7 @@ let graphComponent: GraphComponent
  * Bootstraps the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
 

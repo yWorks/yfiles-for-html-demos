@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, PortLayerPolicy } from '@yfiles/yfiles'
+import { PortLayerPolicy } from '@yfiles/yfiles'
 import { FlowNodePortCandidateProvider } from './FlowNodePortCandidateProvider'
 import { FlowEdgeReconnectionPortCandidateProvider } from './FlowEdgeReconnectionPortCandidateProvider'
 

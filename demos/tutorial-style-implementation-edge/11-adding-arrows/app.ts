@@ -27,17 +27,17 @@
  **
  ***************************************************************************/
 import { GraphComponent, License } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   enableGraphEditing,
   initializeTutorialDefaults,
   zoomToContent
 } from '../common'
 
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { createEdges } from './create-edges'
 
-License.value = await fetchLicense()
+License.value = licenseData
 
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)

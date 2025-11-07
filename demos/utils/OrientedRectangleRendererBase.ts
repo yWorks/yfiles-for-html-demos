@@ -29,24 +29,24 @@
 import {
   BaseClass,
   IBoundsProvider,
-  ICanvasContext,
+  type ICanvasContext,
   IFocusRenderer,
   IHighlightRenderer,
   IHitTestable,
-  IInputModeContext,
-  IOrientedRectangle,
-  IRenderContext,
+  type IInputModeContext,
+  type IOrientedRectangle,
+  type IRenderContext,
   ISelectionRenderer,
-  ISize,
+  type ISize,
   IVisibilityTestable,
   IVisualCreator,
   LabelStyleBase,
   MatrixOrder,
   OrientedRectangle,
   Point,
-  Rect,
+  type Rect,
   SvgVisual,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 /**
@@ -64,13 +64,16 @@ export abstract class OrientedRectangleRendererBase<TRenderTag> extends BaseClas
   IVisibilityTestable,
   IVisualCreator
 ) {
+    protected useViewCoordinates: boolean;
+
   /**
    * Creates a new instance.
    * @param useViewCoordinates Gets or sets a value indicating whether the visualization is drawn in
    * view coordinates or intermediate coordinates.
    */
-  constructor(protected useViewCoordinates = true) {
+  constructor(useViewCoordinates = true) {
     super()
+      this.useViewCoordinates = useViewCoordinates;
   }
 
   private $renderTag: TRenderTag | null = null

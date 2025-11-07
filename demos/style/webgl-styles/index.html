@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>WebGL Styles Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       .two-column {
@@ -111,11 +111,12 @@
 
       .collapsible-img {
         filter: brightness(100);
+        vertical-align: bottom;
+        margin-right: 4px;
       }
 
       .collapsible-content {
-        margin-top: 12px;
-        margin-bottom: 12px;
+        margin: 12px;
       }
     </style>
 
@@ -217,12 +218,6 @@
             corresponding configuration options in the sidebar.
           </li>
         </ul>
-
-        <h3>Note on Firefox</h3>
-        <p>
-          Firefox currently has a problem generating images from the Font Awesome glyphs used as
-          image labels for the nodes. Please reload the demo to properly show the image labels.
-        </p>
       </div>
     </aside>
     <div class="demo-page__main">
@@ -233,7 +228,7 @@
         <div class="demo-sidebar__content" style="padding: 20px 10px 0 5px">
           <p></p>
           <button id="nodes-section-button" type="button" class="collapsible">
-            <img src="../../resources/icons/plus2-16.svg" class="collapsible-img" />
+            <img src="../../demo-app/icons/plus2-16.svg" class="collapsible-img" />
             Nodes
           </button>
           <div id="nodes-section" class="collapsible-content">
@@ -303,7 +298,7 @@
           </div>
 
           <button id="group-nodes-section-button" type="button" class="collapsible">
-            <img src="../../resources/icons/plus2-16.svg" class="collapsible-img" />
+            <img src="../../demo-app/icons/plus2-16.svg" class="collapsible-img" />
             Group Nodes
           </button>
           <div id="group-nodes-section" class="collapsible-content">
@@ -431,7 +426,7 @@
           </div>
 
           <button id="edges-section-button" type="button" class="collapsible">
-            <img src="../../resources/icons/plus2-16.svg" class="collapsible-img" />
+            <img src="../../demo-app/icons/plus2-16.svg" class="collapsible-img" />
             Edges
           </button>
           <div id="edges-section" class="collapsible-content">
@@ -519,7 +514,7 @@
           </div>
 
           <button id="labels-section-button" type="button" class="collapsible">
-            <img src="../../resources/icons/plus2-16.svg" class="collapsible-img" />
+            <img src="../../demo-app/icons/plus2-16.svg" class="collapsible-img" />
             Labels
           </button>
           <div id="labels-section" class="collapsible-content">

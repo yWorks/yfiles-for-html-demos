@@ -28,27 +28,32 @@
  ***************************************************************************/
 import {
   Arrow,
-  ArrowType,
   Color,
   CompositeLabelModel,
   EdgeDirectionPolicy,
-  GraphComponent,
+  EdgeRouter,
+  EdgeRouterData,
+  type GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  IGraph,
+  type IEdge,
+  type IGraph,
   IHitTestable,
   INode,
   InsideOutsidePortLabelModel,
   IPort,
   LabelEventArgs,
   LabelStyle,
+  LayoutExecutor,
   License,
   Point,
   PolylineEdgeStyle,
+  PortPlacementPolicy,
   Rect,
   ShapePortStyle,
   Size,
-  StretchNodeLabelModel
+  StretchNodeLabelModel,
+  Stroke
 } from '@yfiles/yfiles'
 import { ListNodeStyle } from './ListNodeStyle'
 import {
@@ -56,13 +61,13 @@ import {
   getPortForData,
   RowPositionHandler
 } from './RowPositionHandler'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
+import { graphComponent } from '@yfiles/demo-app/init'
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
-  const graphComponent = new GraphComponent('graphComponent')
   configureGraph(graphComponent.graph)
 
   // create some graph elements
@@ -125,6 +130,23 @@ function initializeInteraction(graphComponent: GraphComponent): void {
       }
     }
   })
+
+  // reroute the edges that have been affected by the drag operation
+  geim.moveUnselectedItemsInputMode.addEventListener('drag-finished', async () => {
+    const affectedPorts = new Set(
+      geim.moveUnselectedItemsInputMode.affectedItems.ofType(IPort).toArray()
+    )
+    const affectedEdges = graphComponent.graph.edges
+      .filter((edge) => affectedPorts.has(edge.sourcePort) || affectedPorts.has(edge.targetPort))
+      .toArray()
+    await rerouteEdges(affectedEdges)
+  })
+
+  // reroute the newly created edge
+  geim.createEdgeInputMode.addEventListener(
+    'edge-created',
+    async (evt) => await rerouteEdges([evt.item])
+  )
 
   // disable normal move mode, enable unselected
   geim.moveSelectedItemsInputMode.enabled = false
@@ -214,7 +236,12 @@ function createNode(
  */
 function addRow(graph: IGraph, node: INode, rowInfo: RowInfo): void {
   const labelStyle = new LabelStyle({ padding: [1, 3, 1, 3], textFill: '#0C313A' })
-  const portStyle = new ShapePortStyle({ fill: '#304048', shape: 'ellipse' })
+  const portStyle = new ShapePortStyle({
+    fill: '#2C4B52',
+    stroke: 'transparent',
+    shape: 'ellipse',
+    renderSize: [8, 8]
+  })
 
   const nodeInfo = node.tag as NodeInfo
   if (rowInfo.in) {
@@ -318,8 +345,16 @@ function removeRow(graph: IGraph, node: INode, rowIndex: number): void {
 function configureGraph(graph: IGraph): void {
   // sets some default styles
   graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: '3px #2C4B52',
-    targetArrow: new Arrow(ArrowType.STEALTH),
+    stroke: new Stroke({ fill: '#2C4B52', thickness: 3, lineCap: 'round' }),
+    sourceArrow: new Arrow({ type: 'none', cropLength: 8, cropAtPort: true }),
+    targetArrow: new Arrow({
+      type: 'stealth',
+      cropLength: 6,
+      cropAtPort: true,
+      fill: '#2C4B52',
+      lengthScale: 1.5,
+      widthScale: 1.5
+    }),
     smoothingLength: 50,
     orthogonalEditing: true
   })
@@ -433,6 +468,27 @@ function registerContextMenu(graphComponent: GraphComponent, geim: GraphEditorIn
       evt.contextMenu = menuItems
     }
   })
+}
+
+/**
+ * Reroutes the edges that have been affected during an edge creation
+ * or a drag operation.
+ * @param affectedEdges The edges that have to be rerouted.
+ */
+async function rerouteEdges(affectedEdges?: IEdge[]): Promise<void> {
+  const router = new EdgeRouter()
+
+  const data = new EdgeRouterData({ scope: { edges: affectedEdges } })
+
+  const layoutExecutor = new LayoutExecutor({
+    graphComponent,
+    layout: router,
+    layoutData: data,
+    portPlacementPolicies: PortPlacementPolicy.KEEP_PARAMETER,
+    animationDuration: '0.5s',
+    animateViewport: false
+  })
+  await layoutExecutor.start()
 }
 
 // model data for a node: the node's name and the rows

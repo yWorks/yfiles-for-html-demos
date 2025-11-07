@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEdge, IGraph, INode, IPort, Point } from '@yfiles/yfiles'
+import { Point } from '@yfiles/yfiles'
 
 /**
  * A simple, minimal data structure that can be used for storing a FlowEdge in JSON

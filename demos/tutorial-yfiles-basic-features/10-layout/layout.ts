@@ -26,23 +26,20 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphComponent,
-  HierarchicalLayout,
-  LayoutExecutor,
-  OrganicLayout
-} from '@yfiles/yfiles'
+import { type GraphComponent, HierarchicalLayout, LayoutExecutor, OrganicLayout } from '@yfiles/yfiles'
 
 /**
  * Calculates and applies a hierarchical layout.
  */
-export function applyLayout(graphComponent: GraphComponent) {
+export async function applyLayout(
+  graphComponent: GraphComponent
+): Promise<void> {
   const graph = graphComponent.graph
   const layout = new HierarchicalLayout()
   graph.applyLayout(layout)
 
   // Fit the graph bounds since they changed for the new layout
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
 }
 
 /**

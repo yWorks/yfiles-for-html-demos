@@ -1,19 +1,22 @@
 {
   "compilerOptions": {
-    "noEmit": false,
-    "lib": ["ES2022", "dom", "dom.iterable"],
-    "module": "es2022",
-    "target": "es2022",
-    "strict": true,
-    "esModuleInterop": true,
+    "target": "es2023",
+    "lib": ["ES2023", "DOM", "DOM.Iterable", "WebWorker"],
     "skipLibCheck": true,
+    "types": [],
+
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "noImplicitAny": true,
-    "resolveJsonModule": true,
-    "preserveSymlinks": true
-  }
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "noUnusedLocals": true
+  },
+  "include": ["src"]
 }

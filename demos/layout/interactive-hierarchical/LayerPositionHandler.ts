@@ -29,17 +29,17 @@
 import {
   BaseClass,
   ConstrainedPositionHandler,
-  IInputModeContext,
-  INode,
-  IPositionHandler,
-  IRenderContext,
-  IRenderTreeElement,
+  type IInputModeContext,
+  type INode,
+  type IPositionHandler,
+  type IRenderContext,
+  type IRenderTreeElement,
   IVisualCreator,
-  Mapper,
-  Point,
-  Rect,
+  type Mapper,
+  type Point,
+  type Rect,
   SvgVisual,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 import type { LayerVisual } from './LayerVisual'
 
@@ -48,6 +48,9 @@ import type { LayerVisual } from './LayerVisual'
  * to determine the layer where the nodes should be moved to.
  */
 export class LayerPositionHandler extends ConstrainedPositionHandler {
+  private newLayerMapper: Mapper<INode, number>
+  private readonly node: INode
+  private layerVisual: LayerVisual
   private renderTreeElement: IRenderTreeElement = null!
 
   /**
@@ -55,11 +58,14 @@ export class LayerPositionHandler extends ConstrainedPositionHandler {
    */
   constructor(
     baseHandler: IPositionHandler,
-    private layerVisual: LayerVisual,
-    private readonly node: INode,
-    private newLayerMapper: Mapper<INode, number>
+    layerVisual: LayerVisual,
+    node: INode,
+    newLayerMapper: Mapper<INode, number>
   ) {
     super(baseHandler)
+    this.layerVisual = layerVisual
+    this.node = node
+    this.newLayerMapper = newLayerMapper
   }
 
   /**

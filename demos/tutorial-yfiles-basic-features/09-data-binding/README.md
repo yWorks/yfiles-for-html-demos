@@ -19,7 +19,7 @@
 
 This step shows how to [bind data to graph elements](https://docs.yworks.com/yfileshtml/#/dguide/customizing_graph-binding_data).
 
-Business data can be stored conveniently in the [tag](https://docs.yworks.com/yfileshtml/#/api/IModelItem#ITagOwner-property-tag) of a graph item. In this example, we store the creation date with each node as follows:
+Business data can be stored conveniently in the [tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag) of a graph item. In this example, we store the creation date with each node as follows:
 
 ```
 // Store the current time as node creation time
@@ -54,9 +54,7 @@ graphEditorInputMode.addEventListener('node-created', (evt): void => {
 })
 ```
 
-Once we have data stored in the `tag`, it is conveniently available in all parts of the API.
-
-E.g., now we can get the data from the tag to display in the tooltip. In the event handler that handles tooltips, this works like this:
+Once we have data stored in the `tag`, it is conveniently available in all parts of the API. For example, now we can get the data from the tag to display in the tooltip. In the event handler that handles tooltips, this works like this:
 
 ```
 // Set the tooltip content
@@ -72,6 +70,6 @@ evt.toolTip =
 
 Note
 
-Since this demo focuses on storing the data, the tooltip and context menu code is not explained in detail. See the application-features-tooltips and the [Context Menu Demo](../../input/contextmenu/) for more information.
+Since this demo focuses on storing the data, the tooltip and context menu code is not explained in detail. See the [Tooltips Demo](../../application-features/tooltips/) and the [Context Menu Demo](../../input/context-menu/) for more information.
 
 [10 Layout](../../tutorial-yfiles-basic-features/10-layout/)

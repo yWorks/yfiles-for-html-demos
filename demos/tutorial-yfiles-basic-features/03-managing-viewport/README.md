@@ -19,7 +19,7 @@
 
 This step shows how to work with [the viewport of a GraphComponent](https://docs.yworks.com/yfileshtml/#/dguide/view_graphcontrol#view_graphcontrol_managing-the-view).
 
-The graph in this example consists of four nodes, only three of which are visible in the initial viewport. The fourth node is initially outside of the viewport. Calling [fitGraphBounds](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-method-fitGraphBounds) adjusts the viewport of the [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) to contain the complete graph.
+The graph in this example consists of four nodes, only three of which are visible in the initial viewport. The fourth node is initially outside the viewport. Calling [fitGraphBounds](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#fitGraphBounds) adjusts the viewport of the [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) to contain the complete graph.
 
 ```
 void graphComponent.fitGraphBounds()
@@ -27,7 +27,7 @@ void graphComponent.fitGraphBounds()
 
 Fit Graph Bounds
 
-The [zoom](https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#CanvasComponent-property-zoom) and [viewPoint](https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#CanvasComponent-property-viewPoint) can also be set manually. In this sample, we use both to reset the viewport to the initial state.
+The [zoom](https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#zoom) and [viewPoint](https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#viewPoint) can also be set manually. In this sample, we use both to reset the viewport to the initial state.
 
 ```
 graphComponent.zoom = 1
@@ -36,14 +36,14 @@ graphComponent.viewPoint = Point.ORIGIN
 
 Reset Viewport
 
-Fitting the graph bounds actually consists of two operations, which are combined in [fitGraphBounds](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-method-fitGraphBounds). First, the [contentRect](https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#CanvasComponent-property-contentRect) of the [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) is adjusted to the current graph size. Then, the content rect is fitted into the view using [fitContent](https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#CanvasComponent-method-fitContent). Calling [fitGraphBounds](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-method-fitGraphBounds) has the same result as the following code:
+Fitting the graph bounds actually consists of two operations, which are combined in [fitGraphBounds](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#fitGraphBounds). First, the [contentBounds](https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#contentBounds) of the [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) is adjusted to the current graph size. Then, the content rect is fitted into the view using [fitContent](https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#fitContent). Calling [fitGraphBounds](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#fitGraphBounds) has the same result as the following code:
 
 ```
 graphComponent.updateContentBounds()
-graphComponent.fitContent()
+await graphComponent.fitContent()
 ```
 
-Fitting the graph bounds can also be animated using the optional parameters of the [fitGraphBounds](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-method-fitGraphBounds) method.
+Fitting the graph bounds can also be animated using the optional parameters of the [fitGraphBounds](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#fitGraphBounds) method.
 
 ```
 await graphComponent.fitGraphBounds({ animated: true })
@@ -53,6 +53,6 @@ Animated Fit Graph Bounds
 
 Note
 
-Whether some of the default (keyboard) commands are animated can be configured with [animatedViewportChanges](https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#CanvasComponent-property-animatedViewportChanges).
+Whether some of the default (keyboard) commands are animated can be configured with [animatedViewportChanges](https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#animatedViewportChanges).
 
 [04 Setting Styles](../../tutorial-yfiles-basic-features/04-setting-styles/)

@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, IRenderContext, NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
+import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 import * as d3 from 'd3'
 
 const margin = { top: 3, right: 3, bottom: 1, left: 3 }
@@ -144,9 +144,10 @@ export class D3ChartNodeStyle extends NodeStyleBase {
 }
 
 class RenderDataCache {
-  width
-  height
   data
+  height
+  width
+
   constructor(width, height, data) {
     this.width = width
     this.height = height

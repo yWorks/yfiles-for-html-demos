@@ -28,10 +28,10 @@
  ***************************************************************************/
 import {
   IEdgeStyle,
-  IGraph,
+  type IGraph,
   ILabelStyle,
   type IModelItem,
-  INode,
+  type INode,
   INodeStyle,
   IPortStyle,
   Mapper

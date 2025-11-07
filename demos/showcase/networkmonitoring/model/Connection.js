@@ -32,8 +32,9 @@ import { Simulator } from './Simulator'
  * Represents a connection in the network.
  */
 export class Connection {
-  sender
   receiver
+  sender
+
   /**
    * Creates a new instance.
    * @param sender The sending device.

@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- no-header-injection -->
 <html lang="en">
   <head>
 <!-- ////////////////////////////////////////////////////////////////////////
@@ -32,7 +33,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Simple Testable App [yFiles for HTML]</title>
-    <link rel="stylesheet" href="../../resources/style/loading-demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/loading-demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -54,15 +55,15 @@
           demos:
         </p>
         <ul>
-          <li><a href="../../../demos-ts/testing/cypress/README.html" target="_blank">Cypress Demo</a></li>
-          <li><a href="../../../demos-ts/testing/playwright/README.html" target="_blank">Playwright Demo</a></li>
-          <li><a href="../../../demos-ts/testing/selenium-webdriver/README.html" target="_blank">Selenium WebDriver Demo</a></li>
+          <li><a href="../../../demos-ts/testing/cypress/README.html" class="demo" target="_blank">Cypress Demo</a></li>
+          <li><a href="../../../demos-ts/testing/playwright/README.html" class="demo" target="_blank">Playwright Demo</a></li>
+          <li><a href="../../../demos-ts/testing/selenium-webdriver/README.html" class="demo" target="_blank">Selenium WebDriver Demo</a></li>
         </ul>
         <p>Please refer to the README files in the aforementioned demos for further guidance.</p>
         <p>
           A simple way to make a yFiles App testable is making the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> available to the testing framework. In this app, this is
-          achieved by setting the instantiated <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> as a property of the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a> available to the testing framework. In this app, this is
+          achieved by setting the instantiated <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a> as a property of the
           <code>Window</code> object.
         </p>
       </div>

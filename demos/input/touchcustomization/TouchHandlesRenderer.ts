@@ -27,10 +27,10 @@
  **
  ***************************************************************************/
 import {
-  HandlesRenderTag,
+  type HandlesRenderTag,
   HandleType,
   type IPoint,
-  IRenderContext,
+  type IRenderContext,
   ObjectRendererBase,
   SvgVisual
 } from '@yfiles/yfiles'

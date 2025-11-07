@@ -37,7 +37,7 @@ import {
   type LayoutData,
   LayoutExecutor
 } from '@yfiles/yfiles'
-import { disableUIElements, enableUIElements } from '@yfiles/demo-resources/demo-page'
+import { disableUIElements, enableUIElements } from '@yfiles/demo-app/demo-page'
 
 /**
  * Applies the selected layout algorithm.

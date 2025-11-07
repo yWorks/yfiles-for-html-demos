@@ -28,9 +28,9 @@
  ***************************************************************************/
 import {
   HierarchicalLayout,
-  LayoutDescriptor,
+  type LayoutDescriptor,
   LayoutExecutorAsyncWorker,
-  LayoutGraph,
+  type LayoutGraph,
   License
 } from '@yfiles/yfiles'
 

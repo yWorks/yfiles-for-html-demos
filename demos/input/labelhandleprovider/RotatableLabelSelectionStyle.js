@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  ILabel,
-  IRenderContext,
-  LabelStyleBase,
-  OrientedRectangle,
-  Size,
-  SvgVisual
-} from '@yfiles/yfiles'
+import { LabelStyleBase, SvgVisual } from '@yfiles/yfiles'
 
 /**
  * A label style that visualizes the label selection for rotatable labels.

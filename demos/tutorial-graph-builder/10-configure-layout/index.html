@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>10 Configure Layout - Tutorial: Graph Builder [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -133,7 +133,7 @@
               <div class="paragraph">
                 <p>
                   In this tutorial step we will learn how to configure
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> to arrange the graph elements and/or adjust their
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> to arrange the graph elements and/or adjust their
                   size using the information stored in the dataset.
                 </p>
               </div>
@@ -147,7 +147,7 @@
                       <div class="paragraph">
                         <p>
                           This step is optional when building a graph with
-                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>. If your data does not contain layout
+                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. If your data does not contain layout
                           information, you can proceed with the next step.
                         </p>
                       </div>
@@ -171,7 +171,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> <span class="hljs-attr">nodeData</span>: <span class="hljs-title class_">NodeLayoutData</span>[] = [
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> <span class="hljs-attr">nodeData</span>: <span class="hljs-title class_">NodeLayoutData</span>[] = [
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;00&#x27;</span>, <span class="hljs-attr">layout</span>: { <span class="hljs-attr">x</span>: <span class="hljs-number">110</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">20</span>, <span class="hljs-attr">width</span>: <span class="hljs-number">30</span>, <span class="hljs-attr">height</span>: <span class="hljs-number">30</span> } },
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;01&#x27;</span>, <span class="hljs-attr">layout</span>: { <span class="hljs-attr">x</span>: <span class="hljs-number">145</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">95</span>, <span class="hljs-attr">width</span>: <span class="hljs-number">30</span>, <span class="hljs-attr">height</span>: <span class="hljs-number">30</span> } },
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;02&#x27;</span>, <span class="hljs-attr">layout</span>: { <span class="hljs-attr">x</span>: <span class="hljs-number">75</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">95</span>, <span class="hljs-attr">width</span>: <span class="hljs-number">30</span>, <span class="hljs-attr">height</span>: <span class="hljs-number">30</span> } }
@@ -180,25 +180,23 @@
               </div>
               <div class="paragraph">
                 <p>
-                  A
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator#NodeCreator-property-layoutProvider" target="_blank">layout provider</a>
-                  will use this information to create a rectangle at a specific location for each
-                  node. These rectangles will be set as the nodes'
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/INode#INode-property-layout" target="_blank">layout</a>.
+                  A <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator#layoutProvider" class="api" target="_blank">layout provider</a> will use this
+                  information to create a rectangle at a specific location for each node. These
+                  rectangles will be set as the nodes' <a href="https://docs.yworks.com/yfileshtml/#/api/INode#layout" class="api" target="_blank">layout</a>.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   If no layout information is provided, the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDefaults#NodeDefaults-property-size" target="_blank">default size</a> will be
-                  used and the node will be located at the origin.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDefaults#size" class="api" target="_blank">default size</a> will be used and the node will be
+                  located at the origin.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// configure the layout provider that returns the layout information</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// configure the layout provider that returns the layout information</span>
 nodeSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">layoutProvider</span> = <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> data.<span class="hljs-property">layout</span></code></pre>
                 </div>
               </div>
@@ -212,7 +210,7 @@ nodeSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-prop
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> <span class="hljs-attr">nodeData</span>: { <span class="hljs-attr">id</span>: string; <span class="hljs-attr">locationY</span>: number }[] = [
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> <span class="hljs-attr">nodeData</span>: { <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">locationY</span>: <span class="hljs-built_in">number</span> }[] = [
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;03&#x27;</span>, <span class="hljs-attr">locationY</span>: <span class="hljs-number">20</span> },
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;04&#x27;</span>, <span class="hljs-attr">locationY</span>: <span class="hljs-number">95</span> }
 ]</code></pre>
@@ -228,7 +226,7 @@ nodeSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-prop
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// create some binding for the x, y, width and height properties of the layout</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// create some binding for the x, y, width and height properties of the layout</span>
 nodeSources.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">layoutBindings</span>.<span class="hljs-title function_">addBinding</span>(<span class="hljs-string">&#x27;x&#x27;</span>, <span class="hljs-function">() =&gt;</span> <span class="hljs-number">250</span>)
 nodeSources.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">layoutBindings</span>.<span class="hljs-title function_">addBinding</span>(
   <span class="hljs-string">&#x27;y&#x27;</span>,
@@ -260,7 +258,7 @@ nodeSources.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> <span class="hljs-attr">edgeData</span>: <span class="hljs-title class_">EdgeLayoutData</span>[] = [
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> <span class="hljs-attr">edgeData</span>: <span class="hljs-title class_">EdgeLayoutData</span>[] = [
   {
     <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;00&#x27;</span>,
     <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;01&#x27;</span>,
@@ -283,15 +281,15 @@ nodeSources.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
               <div class="paragraph">
                 <p>
                   Transfer the bend information to the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IEdge#IEdge-property-bends" target="_blank">edge layout</a> using a
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeCreator#EdgeCreator-property-bendsProvider" target="_blank">bend provider</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/IEdge#bends" class="api" target="_blank">edge layout</a> using a
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeCreator#bendsProvider" class="api" target="_blank">bend provider</a>.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// configure the bend provider to return the location of each bend point</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// configure the bend provider to return the location of each bend point</span>
 edgeSources.<span class="hljs-property">edgeCreator</span>.<span class="hljs-property">bendsProvider</span> = <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> data.<span class="hljs-property">bends</span></code></pre>
                 </div>
               </div>
@@ -329,7 +327,7 @@ edgeSources.<span class="hljs-property">edgeCreator</span>.<span class="hljs-pro
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

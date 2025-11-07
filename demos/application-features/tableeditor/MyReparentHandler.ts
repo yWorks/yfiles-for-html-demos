@@ -28,8 +28,8 @@
  ***************************************************************************/
 import {
   BaseClass,
-  IInputModeContext,
-  INode,
+  type IInputModeContext,
+  type INode,
   IReparentNodeHandler,
   ITable,
   NodeDropInputMode
@@ -39,11 +39,14 @@ import {
  * Custom {@link NodeDropInputMode} that disallows to reparent a table node.
  */
 export class MyReparentHandler extends BaseClass(IReparentNodeHandler) {
+  private readonly coreHandler: IReparentNodeHandler
+
   /**
    * Creates a new instance of MyReparentHandler.
    */
-  constructor(private readonly coreHandler: IReparentNodeHandler) {
+  constructor(coreHandler: IReparentNodeHandler) {
     super()
+    this.coreHandler = coreHandler
   }
 
   isReparentGesture(context: IInputModeContext, node: INode): boolean {

@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>03 Managing Viewport - Tutorial: Basic Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -138,24 +138,22 @@
               <div class="paragraph">
                 <p>
                   This step shows how to work with
-                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/view_graphcontrol#view_graphcontrol_managing-the-view" target="_blank">the viewport of a GraphComponent</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/view_graphcontrol#view_graphcontrol_managing-the-view" class="dguide" target="_blank">the viewport of a GraphComponent</a>.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   The graph in this example consists of four nodes, only three of which are visible
-                  in the initial viewport. The fourth node is initially outside of the viewport.
-                  Calling
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-method-fitGraphBounds" target="_blank">fitGraphBounds</a>
-                  adjusts the viewport of the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> to contain the complete
-                  graph.
+                  in the initial viewport. The fourth node is initially outside the viewport.
+                  Calling <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#fitGraphBounds" class="api" target="_blank">fitGraphBounds</a> adjusts the
+                  viewport of the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a> to contain the complete graph.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">void</span> graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code></pre>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-built_in">void</span> graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code></pre>
                 </div>
               </div>
               <div class="paragraph">
@@ -167,17 +165,16 @@
               </div>
               <div class="paragraph">
                 <p>
-                  The <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#CanvasComponent-property-zoom" target="_blank">zoom</a> and
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#CanvasComponent-property-viewPoint" target="_blank">viewPoint</a> can
-                  also be set manually. In this sample, we use both to reset the viewport to the
-                  initial state.
+                  The <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#zoom" class="api" target="_blank">zoom</a> and
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#viewPoint" class="api" target="_blank">viewPoint</a> can also be set manually. In
+                  this sample, we use both to reset the viewport to the initial state.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">graphComponent.<span class="hljs-property">zoom</span> = <span class="hljs-number">1</span>
+                  ><code class="language-typescript" data-lang="typescript">graphComponent.<span class="hljs-property">zoom</span> = <span class="hljs-number">1</span>
 graphComponent.<span class="hljs-property">viewPoint</span> = <span class="hljs-title class_">Point</span>.<span class="hljs-property">ORIGIN</span></code></pre>
                 </div>
               </div>
@@ -189,37 +186,34 @@ graphComponent.<span class="hljs-property">viewPoint</span> = <span class="hljs-
               <div class="paragraph">
                 <p>
                   Fitting the graph bounds actually consists of two operations, which are combined
-                  in
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-method-fitGraphBounds" target="_blank">fitGraphBounds</a>. First, the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#CanvasComponent-property-contentRect" target="_blank">contentRect</a>
-                  of the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> is adjusted to the current graph size. Then,
-                  the content rect is fitted into the view using
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#CanvasComponent-method-fitContent" target="_blank">fitContent</a>.
-                  Calling
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-method-fitGraphBounds" target="_blank">fitGraphBounds</a>
-                  has the same result as the following code:
+                  in <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#fitGraphBounds" class="api" target="_blank">fitGraphBounds</a>. First, the
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#contentBounds" class="api" target="_blank">contentBounds</a> of the
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a> is adjusted to the current graph size. Then, the
+                  content rect is fitted into the view using
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#fitContent" class="api" target="_blank">fitContent</a>. Calling
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#fitGraphBounds" class="api" target="_blank">fitGraphBounds</a> has the same result
+                  as the following code:
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">graphComponent.<span class="hljs-title function_">updateContentBounds</span>()
-graphComponent.<span class="hljs-title function_">fitContent</span>()</code></pre>
+                  ><code class="language-typescript" data-lang="typescript">graphComponent.<span class="hljs-title function_">updateContentBounds</span>()
+<span class="hljs-keyword">await</span> graphComponent.<span class="hljs-title function_">fitContent</span>()</code></pre>
                 </div>
               </div>
               <div class="paragraph">
                 <p>
                   Fitting the graph bounds can also be animated using the optional parameters of the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-method-fitGraphBounds" target="_blank">fitGraphBounds</a>
-                  method.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#fitGraphBounds" class="api" target="_blank">fitGraphBounds</a> method.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">await</span> graphComponent.<span class="hljs-title function_">fitGraphBounds</span>({ <span class="hljs-attr">animated</span>: <span class="hljs-literal">true</span> })</code></pre>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">await</span> graphComponent.<span class="hljs-title function_">fitGraphBounds</span>({ <span class="hljs-attr">animated</span>: <span class="hljs-literal">true</span> })</code></pre>
                 </div>
               </div>
               <div class="paragraph">
@@ -238,7 +232,7 @@ graphComponent.<span class="hljs-title function_">fitContent</span>()</code></pr
                     <td class="content">
                       Whether some of the default (keyboard) commands are animated can be configured
                       with
-                      <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#CanvasComponent-property-animatedViewportChanges" target="_blank">animatedViewportChanges</a>.
+                      <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#animatedViewportChanges" class="api" target="_blank">animatedViewportChanges</a>.
                     </td>
                   </tr>
                 </table>
@@ -259,7 +253,7 @@ graphComponent.<span class="hljs-title function_">fitContent</span>()</code></pr
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

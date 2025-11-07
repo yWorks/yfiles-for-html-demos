@@ -30,26 +30,26 @@ import {
   EdgeCreator,
   FreeNodePortLocationModel,
   FreePortLabelModel,
-  IEdge,
-  IEdgeStyle,
-  IGraph,
-  ILabelModelParameter,
-  ILabelStyle,
-  INode,
-  INodeStyle,
-  IPort,
-  LabelCreator,
+  type IEdge,
+  type IEdgeStyle,
+  type IGraph,
+  type ILabelModelParameter,
+  type ILabelStyle,
+  type INode,
+  type INodeStyle,
+  type IPort,
+  type LabelCreator,
   LabelStyle,
   NodeCreator,
   NodeStylePortStyleAdapter,
   Point,
   type PointConvertible,
-  Rect,
+  type Rect,
   ShapeNodeStyle,
   TreeBuilder,
-  TreeNodesSource
+  type TreeNodesSource
 } from '@yfiles/yfiles'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
 
 /*
  This file shows how to configure TreeBuilder to support ports.

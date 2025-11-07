@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ICanvasContext, ISvgDefsCreator, Matrix } from '@yfiles/yfiles'
+import { type ICanvasContext, ISvgDefsCreator, Matrix } from '@yfiles/yfiles'
 import { SVGNS } from './Namespaces'
 
 function createGradient(): SVGLinearGradientElement {

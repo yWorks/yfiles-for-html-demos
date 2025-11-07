@@ -183,7 +183,3 @@ function preventPropagation(element) {
     element.addEventListener(eventName, stopPropagation)
   }
 }
-
-function extractName(path) {
-  return path.substring(path.lastIndexOf('_') + 1, path.lastIndexOf('.'))
-}

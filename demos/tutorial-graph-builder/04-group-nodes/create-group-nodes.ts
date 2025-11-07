@@ -37,13 +37,13 @@ export function createGroupNodes(graphBuilder: GraphBuilder): void {
     { id: 'group1', parentId: 'group0' }
   ]
 
-  const nodesSource = graphBuilder.createNodesSource({
+  graphBuilder.createNodesSource({
     data: nodeData.filter((item) => item.id.startsWith('item')),
     id: (item) => item.id,
     parentId: (item) => item.parentId
   })
 
-  const groupNodesSource = graphBuilder.createGroupNodesSource({
+  graphBuilder.createGroupNodesSource({
     data: nodeData.filter((item) => item.id.startsWith('group')),
     id: (item) => item.id,
     parentId: (item) => item.parentId

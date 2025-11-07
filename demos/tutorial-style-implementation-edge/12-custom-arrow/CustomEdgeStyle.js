@@ -37,9 +37,10 @@ import {
 } from '@yfiles/yfiles'
 
 export class CustomEdgeStyle extends EdgeStyleBase {
-  distance
-  sourceArrow
   targetArrow
+  sourceArrow
+  distance
+
   /**
    * Creates a new instance of this style using the given distance and arrows.
    * @param distance The distance between the paths. The default value is 1.

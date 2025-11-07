@@ -66,8 +66,8 @@ import {
  * applies a {@link TreeLayout} after each update.
  */
 export class CollapsibleTree {
-  graphComponent
   completeGraph
+  graphComponent
   hiddenNodesSet = new Set()
   filteredGraph
 

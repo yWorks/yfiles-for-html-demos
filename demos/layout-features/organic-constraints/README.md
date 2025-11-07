@@ -9,24 +9,23 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Organic Layout with Constraints - Layout Features
+# Organic Layout with Constraints
 
 <img src="../../../doc/demo-thumbnails/layout-organic-constraints.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/organic-constraints/).
 
-This demo shows how to use supplemental layout data to enforce [placement constraints](https://docs.yworks.com/yfileshtml/#/api/OrganicConstraintData) when using the [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) algorithm.
+This demo shows how to use supplemental layout data to enforce placement constraints when using the [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) algorithm.
 
-The [placement constraints](https://docs.yworks.com/yfileshtml/#/api/OrganicConstraintData) used in this demo force the turquoise nodes onto a perfect circle. Without constraints, the turquoise nodes are placed on an irregular path.
+## Placement Constraints
 
-Click the button in the toolbar to toggle between [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) with and without constraints.
+The placement constraints used in this demo force the **orange nodes** onto a perfect circle.
 
-### Code Snippet
+## Things to Try
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/organic-constraints/OrganicConstraints.ts).
+Click the button in the toolbar to toggle between Organic Layout with and without constraints.
 
-### Documentation
+## Documentation
 
-See the [Constraints](https://docs.yworks.com/yfileshtml/#/dguide/organic_layout-constraints) section in the Developer's Guide for an in-depth discussion of the relevant concepts.
-
-See the [OrganicConstraintData](https://docs.yworks.com/yfileshtml/#/api/OrganicConstraintData) API documentation for detailed information on all available placement constraints.
+- [Constraints](https://docs.yworks.com/yfileshtml/#/dguide/organic_layout-constraints)
+- [OrganicConstraintData](https://docs.yworks.com/yfileshtml/#/api/OrganicConstraintData)

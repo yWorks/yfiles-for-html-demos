@@ -20,7 +20,7 @@
             "polyfills": ["zone.js"],
             "tsConfig": "src/tsconfig.json",
             "assets": ["src/assets"],
-            "styles": ["@yfiles/demo-resources/style/demo.css", "src/styles.css"],
+            "styles": ["@yfiles/demo-app/demo.css", "src/styles.css"],
             "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {

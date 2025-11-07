@@ -26,9 +26,9 @@ This demo shows how to export the whole diagram or a part of it to a PDF.
 
 ## Details
 
-The demo shows two approaches, one that completely runs in the client's browser and a server-side export. The client-side export uses the open source [svg2pdf](https://github.com/yWorks/svg2pdf.js) and [jsPDF](https://github.com/MrRio/jsPDF) libraries, to which we contributed major improvements and bug fixes.
+The demo shows two approaches, one that completely runs in the client's browser and a server-side export. The client-side export uses the open source [svg2pdf](https://github.com/yWorks/svg2pdf.js) and [jsPDF](https://github.com/parallax/jsPDF) libraries, to which we contributed major improvements and bug fixes.
 
-The client-side PDF export also supports custom fonts which is illustrated by the node labels with custom fonts. To make use of custom fonts, they need to be preprocessed and registered at the [jsPDF](https://github.com/MrRio/jsPDF) instance.
+The client-side PDF export also supports custom fonts which is illustrated by the node labels with custom fonts. To make use of custom fonts, they need to be preprocessed and registered at the [jsPDF](https://github.com/parallax/jsPDF) instance.
 
 ### Server-side export
 

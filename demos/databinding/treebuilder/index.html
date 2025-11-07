@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Tree Builder Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       #schemaGraphComponent {
@@ -168,13 +168,19 @@
 
         <p>
           This demo interactively builds and modifies a graph from <b>JSON</b> business data using
-          class <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a>.
+          class <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" class="api" target="_blank">TreeBuilder</a>.
         </p>
 
         <p>
-          See the the Developer's Guide section on the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-TreeBuilder" target="_blank">TreeBuilder</a> for an in-depth explanation of
+          See the Developer's Guide section on the
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-TreeBuilder" class="dguide" target="_blank">TreeBuilder</a> for an in-depth explanation of
           the involved concepts.
+        </p>
+
+        <p>
+          See also the <a href="../../tutorial-graph-builder/01-create-graph/" class="demo" target="_blank">Step Tutorial: Graph Builder</a> for a step-by-step guide on
+          configuring the <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" class="api" target="_blank">TreeBuilder</a> class, loading data, and customizing graph
+          visualizations.
         </p>
 
         <p>
@@ -215,7 +221,7 @@
           Since this demo evaluates the complete data source texts every time a source is edited,
           <em>Update Graph</em> works as expected only for node data items of primitive type or if
           the node id binding resolves to primitive ids. Note that this restriction applies only to
-          the demo, not the class <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a>.
+          the demo, not the class <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" class="api" target="_blank">TreeBuilder</a>.
         </p>
       </div>
     </aside>
@@ -224,7 +230,7 @@
         <div id="graphComponent"></div>
       </div>
       <aside class="demo-main__sidebar">
-        <div class="demo-properties__settings" style="margin: 10px; height: 100%">
+        <div class="demo-sidebar__content">
           <h2>Tree Builder Settings</h2>
 
           <div class="demo-form-block">

@@ -28,10 +28,7 @@
  ***************************************************************************/
 import {
   EdgePathPortLocationModel,
-  IEdge,
   IEnumerable,
-  IInputModeContext,
-  IPortCandidate,
   PortCandidate,
   PortCandidateProviderBase
 } from '@yfiles/yfiles'
@@ -42,6 +39,7 @@ import {
  */
 export class EdgePathPortCandidateProvider extends PortCandidateProviderBase {
   edge
+
   /**
    * Create a new instance of this type.
    */

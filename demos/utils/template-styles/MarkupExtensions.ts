@@ -28,8 +28,8 @@
  ***************************************************************************/
 import {
   GeneralPath,
-  GraphMLIOHandler,
-  ILookup,
+  type GraphMLIOHandler,
+  type ILookup,
   Insets,
   MarkupExtension,
   Point,

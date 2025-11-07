@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { Graph, GraphComponent } from '@yfiles/yfiles'
-import React, { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 
 export function DiagramComponent(props: { initGraph: (graphComponent: GraphComponent) => void }) {
   const gcDiv = useRef<HTMLDivElement>(null)

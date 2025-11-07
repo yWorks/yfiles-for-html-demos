@@ -31,13 +31,13 @@ import {
   IBoundsProvider,
   IHitTestable,
   IObjectRenderer,
-  IRenderContext,
+  type IRenderContext,
   IRenderTreeElement,
   IVisibilityTestable,
   IVisualCreator,
-  MutableRectangle,
+  type MutableRectangle,
   SvgVisual,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 /**

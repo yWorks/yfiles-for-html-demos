@@ -30,7 +30,6 @@ import {
   BaseClass,
   HierarchicalLayout,
   ILayoutAlgorithm,
-  LayoutGraph,
   LayoutGraphAlgorithms,
   Point
 } from '@yfiles/yfiles'
@@ -69,7 +68,7 @@ export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
    * Specifies the left-to-right order of nodes.
    * @see {@link NodeOrder}
    */
-  nodeOrder = NodeOrder.FROM_SKETCH
+  nodeOrder = 'from-sketch'
 
   /**
    * Arranges the given graph.
@@ -149,35 +148,21 @@ export class ArcDiagramLayout extends BaseClass(ILayoutAlgorithm) {
  * @param nodeOrderPolicy the node order policy that determines the calculated order.
  */
 function calculateNodeOrder(graph, nodeOrderPolicy) {
-  const order = new Array(graph.nodes.size)
-
+  const nodes = graph.nodes.toArray()
   switch (nodeOrderPolicy) {
-    case NodeOrder.MINIMIZE_CROSSINGS:
-      minimizeCrossings(graph, order)
-      break
-    case NodeOrder.TOPOLOGICAL:
+    case 'from-sketch':
+      const order = graph.nodes
+        .toArray()
+        .sort((node1, node2) => node1.layout.center.x - node2.layout.center.x)
+      return nodes.map((node) => order.indexOf(node))
+    case 'minimize-crossings':
+      return minimizeCrossings(graph)
+    case 'topological':
       const topologicalNodeOrder = LayoutGraphAlgorithms.topologicalNodeOrder(graph)
-      graph.nodes.forEach((node, index) => {
-        order[index] = topologicalNodeOrder.indexOf(node)
-      })
-      break
+      return nodes.map((node) => topologicalNodeOrder.indexOf(node))
     default:
-      // From sketch
-      fill(order)
-      break
-  }
-
-  return order
-}
-
-/**
- * Fills the given array with numbers from `0` to `array.length - 1`
- * in ascending order.
- * @param order the array to fill.
- */
-function fill(order) {
-  for (let i = 0, n = order.length; i < n; ++i) {
-    order[i] = i
+      // the order in which they were created in the graph
+      return nodes.map((node, index) => index)
   }
 }
 
@@ -187,9 +172,9 @@ function fill(order) {
  * Note, crossing minimization is an NP-hard problem. For this reason, {@link HierarchicalLayout}
  * uses an approximation when calculating a sequence.
  * @param graph the graph for which a node order is calculated.
- * @param order the array to store the new node order for the given graph.
+ * @returns an array containing the new node order for the given graph.
  */
-function minimizeCrossings(graph, order) {
+function minimizeCrossings(graph) {
   // run hierarchical layout's sequencing phase to calculate a node order with few crossings
   const hierarchicalLayout = new HierarchicalLayout({
     fromScratchLayeringStrategy: 'user-defined',
@@ -200,30 +185,5 @@ function minimizeCrossings(graph, order) {
   graph.applyLayout(hierarchicalLayout, hierarchicalLayoutData)
 
   // write the node sequence to the order array
-  graph.nodes.forEach((node, index) => {
-    order[index] = hierarchicalLayoutData.sequenceIndicesResult.get(node)
-  })
+  return graph.nodes.toArray().map((node) => hierarchicalLayoutData.sequenceIndicesResult.get(node))
 }
-
-/**
- * Specifies policies for calculating the node order in an arc diagram.
- */
-export var NodeOrder
-;(function (NodeOrder) {
-  /**
-   * Nodes will be placed from left to right in the order they were created in the graph.
-   */
-  NodeOrder[(NodeOrder['FROM_SKETCH'] = 0)] = 'FROM_SKETCH'
-  /**
-   * Nodes will be placed from left to right such that the number of crossings between edges is
-   * reduced as much as possible.
-   */
-  NodeOrder[(NodeOrder['MINIMIZE_CROSSINGS'] = 1)] = 'MINIMIZE_CROSSINGS'
-  /**
-   * If the graph is acyclic, nodes will be placed from left to right in the order calculated
-   * by a topological sorting.
-   * If the graph is not acyclic, nodes will be placed from left to right in the order they were
-   * created in the graph.
-   */
-  NodeOrder[(NodeOrder['TOPOLOGICAL'] = 2)] = 'TOPOLOGICAL'
-})(NodeOrder || (NodeOrder = {}))

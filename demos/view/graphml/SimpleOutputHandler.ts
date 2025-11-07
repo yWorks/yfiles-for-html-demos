@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IGraph, IModelItem, IWriteContext, KeyType, OutputHandlerBase } from '@yfiles/yfiles'
+import { IGraph, IModelItem, type IWriteContext, KeyType, OutputHandlerBase } from '@yfiles/yfiles'
 import type { GraphMLProperty } from './GraphMLProperty'
 import type { PropertiesPanel } from './PropertiesPanel'
 
@@ -34,11 +34,13 @@ import type { PropertiesPanel } from './PropertiesPanel'
  * An output handler that writes primitive data types and ignores complex types.
  */
 export class SimpleOutputHandler extends OutputHandlerBase<any, any> {
-  constructor(
-    private property: GraphMLProperty,
-    private propertiesPanel: PropertiesPanel
-  ) {
+  private propertiesPanel: PropertiesPanel
+  private property: GraphMLProperty
+
+  constructor(property: GraphMLProperty, propertiesPanel: PropertiesPanel) {
     super(Object, Object, property.keyScope, property.name, property.type)
+    this.property = property
+    this.propertiesPanel = propertiesPanel
     this.defaultExists = property.defaultExists
     if (property.defaultExists) {
       this.defaultValue = property.defaultValue

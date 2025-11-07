@@ -27,14 +27,14 @@
  **
  ***************************************************************************/
 import {
-  CollectSnapResultsEventArgs,
+  type CollectSnapResultsEventArgs,
   GraphComponent,
-  GraphSnapContext,
+  type GraphSnapContext,
   type INode,
   NodeSnapResultProvider,
-  Rect,
-  SnapCircle,
-  SnapLine
+  type Rect,
+  type SnapCircle,
+  type SnapLine
 } from '@yfiles/yfiles'
 import { EqualAngleSnapLine, NodeSnapCircle, NodeSnapLine } from './SnapReferences'
 import { EqualAngleObjectRenderer } from './EqualAngleObjectRenderer'

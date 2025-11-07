@@ -31,7 +31,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HandlePositions,
-  IGraph,
+  type IGraph,
   IReshapeHandler,
   License,
   NodeReshapeHandleProvider
@@ -45,13 +45,14 @@ import {
   OrganicDemoConfiguration
 } from './LargeGraphDemoConfiguration'
 import { OrgChartDemoConfiguration } from './OrgChartDemoConfiguration'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   addNavigationButtons,
   addOptions,
   checkWebGL2Support,
   finishLoading
-} from '@yfiles/demo-resources/demo-page'
+} from '@yfiles/demo-app/demo-page'
+import { createBenchmarkingUI } from '@yfiles/demo-app/benchmarking'
 
 let renderingTypesManager: RenderingTypesManager = null!
 
@@ -60,7 +61,7 @@ async function run(): Promise<void> {
     return
   }
 
-  License.value = await fetchLicense()
+  License.value = licenseData
   const graphComponent = new GraphComponent('#graphComponent')
   configureInteraction(graphComponent)
   initToolbar(graphComponent)
@@ -69,6 +70,10 @@ async function run(): Promise<void> {
 
   initGraphInformationUI(graphComponent)
   initRenderingInformationUI(graphComponent)
+
+  document
+    .querySelector<HTMLDivElement>('#benchmarking')
+    ?.appendChild(createBenchmarkingUI(graphComponent))
 }
 
 /**

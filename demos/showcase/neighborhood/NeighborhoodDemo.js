@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   GraphComponent,
-  GraphInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
   GraphViewerInputMode,
@@ -39,25 +38,25 @@ import {
 } from '@yfiles/yfiles'
 
 import { NeighborhoodView } from './NeighborhoodView'
-import { NeighborhoodType } from './NeighborhoodType'
+import {} from './NeighborhoodType'
 import { getApplyLayoutCallback } from './apply-layout-callback'
 import { getBuildGraphCallback } from './build-graph-callback'
 import { enableFolding } from './enable-folding'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
 import {
   addNavigationButtons,
   disableUIElements,
   enableUIElements,
   finishLoading
-} from '@yfiles/demo-resources/demo-page'
+} from '@yfiles/demo-app/demo-page'
 import { StringTemplateNodeStyle } from '@yfiles/demo-utils/template-styles/StringTemplateNodeStyle'
 import { registerTemplateStyleSerialization } from '@yfiles/demo-utils/template-styles/MarkupExtensions'
 
 let graphComponent
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize a GraphComponent with folding and GraphML I/O support
   graphComponent = new GraphComponent('graphComponent')
@@ -83,7 +82,7 @@ async function run() {
 function createNeighborhoodView(graphComponent) {
   const neighborhoodView = new NeighborhoodView('#neighborhood-graph-component')
   neighborhoodView.graphComponent = graphComponent
-  configureNeighborhoodView(neighborhoodView, NeighborhoodType.NEIGHBORHOOD, 1)
+  configureNeighborhoodView(neighborhoodView, 'neighborhood', 1)
   return neighborhoodView
 }
 
@@ -137,7 +136,7 @@ function initializeUI(neighborhoodView) {
   // initialize the mode dropdown for the NeighborhoodView
   const neighborhoodModeSelect = document.querySelector('#neighborhood-mode-select')
   neighborhoodModeSelect.addEventListener('change', () =>
-    changeNeighborhoodType(neighborhoodView, neighborhoodModeSelect.selectedIndex)
+    changeNeighborhoodType(neighborhoodView, neighborhoodModeSelect.value)
   )
   addNavigationButtons(neighborhoodModeSelect)
   populateSelectElement(neighborhoodModeSelect, [
@@ -145,7 +144,7 @@ function initializeUI(neighborhoodView) {
     'Predecessors',
     'Successors',
     'Both',
-    'FolderContents'
+    'Folder-Contents'
   ])
 
   // initialize the depth slider for the NeighborhoodView
@@ -162,7 +161,7 @@ function populateSelectElement(element, items) {
   for (const item of items) {
     const option = document.createElement('option')
     option.text = item
-    option.value = item
+    option.value = item.toLowerCase()
     element.add(option)
   }
 }
@@ -177,7 +176,7 @@ function changeNeighborhoodType(neighborhoodView, type) {
   configureNeighborhoodView(neighborhoodView, type, parseInt(neighborhoodDistanceSlider.value))
 
   // disable distance slider when the NeighborhoodView is in the FOLDER_CONTENTS mode
-  neighborhoodDistanceSlider.disabled = type === NeighborhoodType.FOLDER_CONTENTS
+  neighborhoodDistanceSlider.disabled = type === 'folder-contents'
 
   neighborhoodView.update()
 }
@@ -190,7 +189,7 @@ function changeNeighborhoodDistance(neighborhoodView, distance) {
   document.getElementById('neighborhood-distance-label').textContent = `${distance}`
 
   neighborhoodView.buildNeighborhoodGraph = getBuildGraphCallback(
-    document.querySelector('#neighborhood-mode-select').selectedIndex,
+    document.querySelector('#neighborhood-mode-select').value,
     distance
   )
 
@@ -206,7 +205,7 @@ function configureNeighborhoodView(neighborhoodView, type, distance) {
 
   // mirror navigation in the NeighborhoodView to the demo's main GraphComponent
   neighborhoodView.clickCallback =
-    NeighborhoodType.FOLDER_CONTENTS === type
+    'folder-contents' === type
       ? (node) => {
           const foldingView = graphComponent.graph.foldingView
           if (foldingView.manager.masterGraph.contains(node)) {

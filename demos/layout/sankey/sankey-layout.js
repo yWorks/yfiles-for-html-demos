@@ -151,7 +151,6 @@ function createHierarchicalLayoutData(graph, fromSketchMode) {
  * all edges can be placed without overlaps.
  */
 class NodeResizingStage extends LayoutStageBase {
-  layout
   #layoutOrientation
   #portBorderGapRatio
   #minimumPortDistance
@@ -161,7 +160,6 @@ class NodeResizingStage extends LayoutStageBase {
    */
   constructor(layout) {
     super(layout)
-    this.layout = layout
     this.#layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
     this.#portBorderGapRatio = 0
     this.#minimumPortDistance = 0

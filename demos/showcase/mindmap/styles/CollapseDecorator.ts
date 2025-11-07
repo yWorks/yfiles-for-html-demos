@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  BaseClass,
   type Constructor,
   ExteriorNodeLabelModel,
   FilteredGraphWrapper,
@@ -37,11 +38,15 @@ import {
   type IGraph,
   type IInputModeContext,
   type ILabelModelParameter,
+  type ILookup,
+  IMarkupExtensionConverter,
   type INode,
   type INodeStyle,
   Insets,
   InteriorNodeLabelModel,
   type IRenderContext,
+  type IWriteContext,
+  MarkupExtension,
   NodeStyleBase,
   type Point,
   type Rect,
@@ -79,7 +84,11 @@ declare type CachedButton = SVGElement & { label?: SimpleLabel; iconVisual?: Svg
  * bottom-right and bottom-left corner of the node. This way the button placement
  * is determined automatically by the dummy label's style.
  */
-export class CollapseDecorator extends NodeStyleBase<CollapseDecoratorVisual> {
+export class CollapseDecorator extends BaseClass(
+  NodeStyleBase<CollapseDecoratorVisual>,
+  IMarkupExtensionConverter
+) {
+  readonly wrappedNodeStyle: INodeStyle
   /**
    * The size of the collapse/expand icon.
    */
@@ -89,8 +98,9 @@ export class CollapseDecorator extends NodeStyleBase<CollapseDecoratorVisual> {
    * Creates a new instance of this style using the given node style as wrapped style.
    * @param wrappedNodeStyle The style used for rendering the node.
    */
-  constructor(readonly wrappedNodeStyle: INodeStyle) {
+  constructor(wrappedNodeStyle: INodeStyle) {
     super()
+    this.wrappedNodeStyle = wrappedNodeStyle
   }
 
   /**
@@ -363,6 +373,23 @@ export class CollapseDecorator extends NodeStyleBase<CollapseDecoratorVisual> {
       .getShapeGeometry(node, this.wrappedNodeStyle)
       .isInside(point)
   }
+
+  /**
+   * Returns that this style can be converted.
+   */
+  canConvert(_context: IWriteContext, _value: CollapseDecorator): boolean {
+    return true
+  }
+
+  /**
+   * Converts this style using {@link CollapseDecoratorExtension}.
+   */
+  convert(_context: IWriteContext, value: CollapseDecorator): MarkupExtension {
+    const decorator = value as CollapseDecorator
+    const extension = new CollapseDecoratorExtension()
+    extension.wrappedNodeStyle = decorator.wrappedNodeStyle
+    return extension
+  }
 }
 
 /**
@@ -399,7 +426,7 @@ function getLabelModelParameter(data: NodeData): ILabelModelParameter {
 
 /**
  * Returns the full graph from the render context if the graph is a {@link FilteredGraphWrapper}.
- * Otherwise returns null.
+ * Otherwise, returns null.
  */
 function getFullGraph(context: IRenderContext): IGraph | null {
   if (context.canvasComponent instanceof GraphComponent) {
@@ -410,3 +437,32 @@ function getFullGraph(context: IRenderContext): IGraph | null {
   }
   return null
 }
+
+/**
+ * A markup extension that creates a {@link CollapseDecorator} instance configured with a wrapped node style.
+ */
+export class CollapseDecoratorExtension extends MarkupExtension {
+  private _wrappedNodeStyle!: INodeStyle
+
+  /**
+   * Gets or sets the node style to be wrapped by the collapse decorator.
+   */
+  get wrappedNodeStyle(): INodeStyle {
+    return this._wrappedNodeStyle
+  }
+
+  set wrappedNodeStyle(value: INodeStyle) {
+    this._wrappedNodeStyle = value
+  }
+
+  /**
+   * Provides a {@link CollapseDecorator} instance using the configured wrapped node style.
+   * @returns A new `CollapseDecorator` initialized with the specified wrapped node style.
+   */
+  provideValue(_serviceProvider: ILookup): CollapseDecorator {
+    return new CollapseDecorator(this.wrappedNodeStyle)
+  }
+}
+
+// export a default object to be able to map a namespace to this module for serialization
+export default { CollapseDecorator, CollapseDecoratorExtension }

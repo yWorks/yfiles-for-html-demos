@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   Font,
-  SmartEdgeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
@@ -38,13 +37,14 @@ import {
   License,
   ShapeNodeStyle,
   Size,
+  SmartEdgeLabelModel,
   StretchNodeLabelModel
 } from '@yfiles/yfiles'
 
 import { HtmlLabelStyle } from './HtmlLabelStyle'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
@@ -52,7 +52,7 @@ import graphData from './graph-data.json'
  * Simple demo that shows how to create a custom style that uses HTML for rendering the labels.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('graphComponent')
   // Disable node creation since they wouldn't have an HTML label anyway

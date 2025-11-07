@@ -28,7 +28,7 @@
  ***************************************************************************/
 import {
   AdjacencyTypes,
-  CreateEdgeInputMode,
+  type CreateEdgeInputMode,
   type GraphComponent,
   GraphEditorInputMode,
   IHitTestable,
@@ -37,7 +37,7 @@ import {
   ShowPortCandidates,
   Stroke
 } from '@yfiles/yfiles'
-import { LayerColors, SubtreePlacerPanel } from './SubtreePlacerPanel'
+import { LayerColors, type SubtreePlacerPanel } from './SubtreePlacerPanel'
 
 /**
  * Initializes interactive behavior

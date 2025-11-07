@@ -28,15 +28,15 @@
  ***************************************************************************/
 import {
   Font,
-  INode,
+  type INode,
   INodeStyle,
-  IRenderContext,
+  type IRenderContext,
   NodeStyleBase,
   Point,
   SvgVisual,
   SvgVisualGroup,
   TextRenderSupport,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 /**

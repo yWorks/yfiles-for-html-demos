@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 import {
-  GraphComponent,
-  GraphEditorInputMode,
+  type GraphComponent,
+  type GraphEditorInputMode,
   GraphSnapContext,
   SnappableItems
 } from '@yfiles/yfiles'

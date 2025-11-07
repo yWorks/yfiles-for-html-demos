@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { getMax, SCALED_MAX_X, SCALED_MAX_Y, scalePoint } from './scale-data'
-import { MultiPageNodeType, nodeData } from './resources/TrekkingData'
+import { nodeData } from './resources/TrekkingData'
 import { getIcon, labelNodeSize, leaderEdgeStyle } from './styles'
 import {
   type GraphComponent,
@@ -59,12 +59,12 @@ export function initializeGraph(graphComponent: GraphComponent): void {
 
     const waypoint = graph.createNode({
       layout: new Rect(xPos - width * 0.5, yPos - height * 0.5, width, height),
-      tag: { ...data, type: MultiPageNodeType.WAYPOINT }
+      tag: { ...data, type: 'waypoint' }
     })
 
     // create the label node and define its tag based on the tag of the associated waypoint
     const labelNode = graph.createNode({
-      tag: { ...data, type: MultiPageNodeType.LABEL },
+      tag: { ...data, type: 'label' },
       layout: new Rect(0, 0, labelNodeSize.width, labelNodeSize.height)
     })
 

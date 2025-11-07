@@ -32,10 +32,10 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   GraphSnapContext,
-  IEdge,
-  IGraph,
-  INode,
-  IPort,
+  type IEdge,
+  type IGraph,
+  type INode,
+  type IPort,
   License,
   OrthogonalEdgeHelper,
   Point,
@@ -50,10 +50,10 @@ import { OrangeOrthogonalEdgeHelper } from './OrangeOrthogonalEdgeHelper'
 import { PurpleOrthogonalEdgeHelper } from './PurpleOrthogonalEdgeHelper'
 import { RedOrthogonalEdgeHelper } from './RedOrthogonalEdgeHelper'
 import { YellowOrthogonalEdgeHelper } from './YellowOrthogonalEdgeHelper'
-import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
-import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { ColorSetName } from '@yfiles/demo-app/demo-styles'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Registers different IOrthogonalEdgeHelpers to demonstrate various custom behaviour.
@@ -119,7 +119,7 @@ function registerOrthogonalEdgeHelperDecorators(graph: IGraph): void {
 }
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph

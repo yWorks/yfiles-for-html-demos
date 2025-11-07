@@ -29,20 +29,20 @@
 import {
   ClearAreaLayout,
   ClearAreaLayoutData,
-  ClearAreaStrategy,
-  ComponentAssignmentStrategy,
+  type ClearAreaStrategy,
+  type ComponentAssignmentStrategy,
   CompositeLayoutData,
   GivenCoordinatesLayout,
   GivenCoordinatesLayoutData,
-  GraphComponent,
-  ICompoundEdit,
+  type GraphComponent,
+  type ICompoundEdit,
   IEdge,
-  IGraph,
-  ILayoutAlgorithm,
-  INode,
-  LayoutData,
+  type IGraph,
+  type ILayoutAlgorithm,
+  type INode,
+  type LayoutData,
   LayoutExecutor,
-  Rect
+  type Rect
 } from '@yfiles/yfiles'
 
 /**

@@ -63,7 +63,7 @@ export function changeLabelLayoutParameters(graph) {
   const interiorStretchModel = new StretchNodeLabelModel({ padding: 3 })
   graph.setLabelLayoutParameter(label1, interiorStretchModel.createParameter('top'))
 
-  // ExteriorLabelModel places the label on discrete positions outside the node bounds
+  // ExteriorLabelModel places the label in discrete positions outside the node bounds
   const exteriorLabelModel = new ExteriorNodeLabelModel({ margins: 10 })
 
   graph.setLabelLayoutParameter(label2, exteriorLabelModel.createParameter('bottom'))
@@ -73,7 +73,7 @@ export function changeLabelLayoutParameters(graph) {
 }
 
 /**
- * Resets each label layout to the graph default.
+ * Resets each label layout to the graph defaults.
  */
 export function resetLabelLayoutParameters(graph) {
   graph.nodeLabels.forEach((label) =>

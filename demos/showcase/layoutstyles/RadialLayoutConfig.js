@@ -31,9 +31,6 @@ import {
   Class,
   EdgeBundleDescriptor,
   GenericLabeling,
-  GraphComponent,
-  ILayoutAlgorithm,
-  LayoutData,
   RadialLayeringStrategy,
   RadialLayout,
   RadialLayoutData,
@@ -49,35 +46,23 @@ import {
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 
-var EdgeRoutingStrategies
-;(function (EdgeRoutingStrategies) {
-  EdgeRoutingStrategies[(EdgeRoutingStrategies['ARC'] = RadialLayoutRoutingStyle.ARC)] = 'ARC'
-  EdgeRoutingStrategies[(EdgeRoutingStrategies['POLYLINE'] = RadialLayoutRoutingStyle.POLYLINE)] =
-    'POLYLINE'
-  EdgeRoutingStrategies[(EdgeRoutingStrategies['CURVED'] = RadialLayoutRoutingStyle.CURVED)] =
-    'CURVED'
-  EdgeRoutingStrategies[
-    (EdgeRoutingStrategies['RADIAL_POLYLINE'] = RadialLayoutRoutingStyle.RADIAL_POLYLINE)
-  ] = 'RADIAL_POLYLINE'
-  EdgeRoutingStrategies[(EdgeRoutingStrategies['BUNDLED'] = 4)] = 'BUNDLED'
-})(EdgeRoutingStrategies || (EdgeRoutingStrategies = {}))
+const EdgeRoutingStrategies = {
+  ARC: RadialLayoutRoutingStyle.ARC,
+  POLYLINE: RadialLayoutRoutingStyle.POLYLINE,
+  CURVED: RadialLayoutRoutingStyle.CURVED,
+  RADIAL_POLYLINE: RadialLayoutRoutingStyle.RADIAL_POLYLINE,
+  BUNDLED: 4
+}
 
-var CenterPolicy
-;(function (CenterPolicy) {
-  CenterPolicy[(CenterPolicy['DIRECTED'] = 0)] = 'DIRECTED'
-  CenterPolicy[(CenterPolicy['CENTRALITY'] = 1)] = 'CENTRALITY'
-  CenterPolicy[(CenterPolicy['WEIGHTED_CENTRALITY'] = 2)] = 'WEIGHTED_CENTRALITY'
-  CenterPolicy[(CenterPolicy['CUSTOM'] = 3)] = 'CUSTOM'
-})(CenterPolicy || (CenterPolicy = {}))
+const CenterPolicy = { DIRECTED: 0, CENTRALITY: 1, WEIGHTED_CENTRALITY: 2, CUSTOM: 3 }
 
 /**
  * @type {number}
@@ -128,7 +113,7 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
     ],
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     minimumLayerDistanceItem: [
@@ -138,7 +123,7 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
       ),
       new OptionGroupAttribute('GeneralGroup', 10),
       new MinMaxAttribute(1, 1000),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumNodeToNodeDistanceItem: [
@@ -148,7 +133,7 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
       ),
       new OptionGroupAttribute('GeneralGroup', 20),
       new MinMaxAttribute(0, 300),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     maximumChildSectorAngleItem: [
@@ -158,7 +143,7 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
       ),
       new OptionGroupAttribute('GeneralGroup', 30),
       new MinMaxAttribute(15, 360),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     edgeRoutingStrategyItem: [
@@ -168,11 +153,11 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
       ),
       new OptionGroupAttribute('GeneralGroup', 40),
       new EnumValuesAttribute([
-        ['Straight', EdgeRoutingStrategies.POLYLINE],
-        ['Arc', EdgeRoutingStrategies.ARC],
-        ['Curved', EdgeRoutingStrategies.CURVED],
-        ['Radial Polyline', EdgeRoutingStrategies.RADIAL_POLYLINE],
-        ['Bundled', EdgeRoutingStrategies.BUNDLED]
+        ['Straight', 'polyline'],
+        ['Arc', 'arc'],
+        ['Curved', 'curved'],
+        ['Radial Polyline', 'radial-polyline'],
+        ['Bundled', 'bundled']
       ]),
       new TypeAttribute(EdgeRoutingStrategies)
     ],
@@ -183,7 +168,7 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
       ),
       new OptionGroupAttribute('GeneralGroup', 50),
       new MinMaxAttribute(MINIMUM_SMOOTHNESS, MAXIMUM_SMOOTHNESS),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     edgeBundlingStrengthItem: [
@@ -193,7 +178,7 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
       ),
       new OptionGroupAttribute('GeneralGroup', 55),
       new MinMaxAttribute(0, 1.0, 0.01),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     centerStrategyItem: [
@@ -203,10 +188,10 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
       ),
       new OptionGroupAttribute('GeneralGroup', 60),
       new EnumValuesAttribute([
-        ['Directed', CenterPolicy.DIRECTED],
-        ['Centrality', CenterPolicy.CENTRALITY],
-        ['Weighted Centrality', CenterPolicy.WEIGHTED_CENTRALITY],
-        ['Selected Nodes', CenterPolicy.CUSTOM]
+        ['Directed', 'directed'],
+        ['Centrality', 'centrality'],
+        ['Weighted Centrality', 'weighted-centrality'],
+        ['Selected Nodes', 'custom']
       ]),
       new TypeAttribute(CenterPolicy)
     ],
@@ -262,10 +247,10 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 10),
       new EnumValuesAttribute([
-        ['Parallel', LabelPlacementOrientation.PARALLEL],
-        ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
-        ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
-        ['Vertical', LabelPlacementOrientation.VERTICAL]
+        ['Parallel', 'parallel'],
+        ['Orthogonal', 'orthogonal'],
+        ['Horizontal', 'horizontal'],
+        ['Vertical', 'vertical']
       ]),
       new TypeAttribute(LabelPlacementOrientation)
     ],
@@ -276,12 +261,12 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 20),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
-        ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
-        ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
-        ['At Target', LabelPlacementAlongEdge.AT_TARGET],
-        ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
-        ['Centered', LabelPlacementAlongEdge.CENTERED]
+        ['Anywhere', 'anywhere'],
+        ['At Source', 'at-source'],
+        ['At Source Port', 'at-source-port'],
+        ['At Target', 'at-target'],
+        ['At Target Port', 'at-target-port'],
+        ['Centered', 'centered']
       ]),
       new TypeAttribute(LabelPlacementAlongEdge)
     ],
@@ -292,11 +277,11 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 30),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
-        ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
-        ['Left', LabelPlacementSideOfEdge.LEFT],
-        ['Right', LabelPlacementSideOfEdge.RIGHT],
-        ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+        ['Anywhere', 'anywhere'],
+        ['On Edge', 'on-edge'],
+        ['Left', 'left'],
+        ['Right', 'right'],
+        ['Left or Right', 'left-or-right']
       ]),
       new TypeAttribute(LabelPlacementSideOfEdge)
     ],
@@ -307,7 +292,7 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 40),
       new MinMaxAttribute(0.0, 40.0),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ]
   },
@@ -321,19 +306,19 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
     const layout = new RadialLayout()
 
-    this.centerStrategyItem = CenterPolicy.WEIGHTED_CENTRALITY
+    this.centerStrategyItem = 'weighted-centrality'
     this.layeringStrategyItem = RadialLayeringStrategy.BFS
     this.minimumLayerDistanceItem = layout.minimumLayerDistance | 0
     this.minimumNodeToNodeDistanceItem = layout.minimumNodeDistance | 0
     this.maximumChildSectorAngleItem = layout.maximumChildSectorAngle | 0
-    this.edgeRoutingStrategyItem = RadialLayoutRoutingStyle.ARC
+    this.edgeRoutingStrategyItem = 'arc'
     this.edgeSmoothnessItem = MAXIMUM_SMOOTHNESS
     this.edgeBundlingStrengthItem = 0.95
 
     this.edgeLabelingItem = false
-    this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
-    this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
-    this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
+    this.labelPlacementAlongEdgeItem = 'centered'
+    this.labelPlacementSideOfEdgeItem = 'on-edge'
+    this.labelPlacementOrientationItem = 'horizontal'
     this.labelPlacementDistanceItem = 10
     this.title = 'Radial Layout'
 
@@ -350,7 +335,7 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
     const layout = new RadialLayout()
     layout.minimumNodeDistance = this.minimumNodeToNodeDistanceItem
 
-    if (this.edgeRoutingStrategyItem !== EdgeRoutingStrategies.BUNDLED) {
+    if (this.edgeRoutingStrategyItem !== 'bundled') {
       layout.edgeRoutingStyle = this.edgeRoutingStrategyItem
     }
     layout.minimumBendAngle =
@@ -363,7 +348,7 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
     const ebc = layout.edgeBundling
     ebc.bundlingStrength = this.edgeBundlingStrengthItem
     ebc.defaultBundleDescriptor = new EdgeBundleDescriptor({
-      bundled: this.edgeRoutingStrategyItem === EdgeRoutingStrategies.BUNDLED
+      bundled: this.edgeRoutingStrategyItem === 'bundled'
     })
 
     if (this.edgeLabelingItem) {
@@ -385,7 +370,7 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
     let layoutData
-    if (this.centerStrategyItem === CenterPolicy.CUSTOM) {
+    if (this.centerStrategyItem === 'custom') {
       layoutData = new RadialLayoutData({
         centerNodes: (node) => graphComponent.selection.includes(node)
       })
@@ -406,12 +391,12 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   getCenterNodesPolicy(policy) {
     switch (policy) {
-      case CenterPolicy.CENTRALITY:
+      case 'centrality':
         return CenterNodesPolicy.CENTRALITY
-      case CenterPolicy.DIRECTED:
+      case 'directed':
         return CenterNodesPolicy.DIRECTED
-      case CenterPolicy.WEIGHTED_CENTRALITY:
-      case CenterPolicy.CUSTOM:
+      case 'weighted-centrality':
+      case 'custom':
       default:
         return CenterNodesPolicy.WEIGHTED_CENTRALITY
     }
@@ -460,7 +445,7 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
   /** @type {boolean} */
   shouldDisableEdgeSmoothnessItem: {
     get: function () {
-      return this.edgeRoutingStrategyItem !== RadialLayoutRoutingStyle.ARC
+      return this.edgeRoutingStrategyItem !== 'arc'
     }
   },
 
@@ -470,7 +455,7 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
   /** @type {boolean} */
   shouldDisableEdgeBundlingStrengthItem: {
     get: function () {
-      return this.edgeRoutingStrategyItem !== EdgeRoutingStrategies.BUNDLED
+      return this.edgeRoutingStrategyItem !== 'bundled'
     }
   },
 
@@ -532,10 +517,7 @@ export const RadialLayoutConfig = Class('RadialLayoutConfig', {
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
     get: function () {
-      return (
-        !this.edgeLabelingItem ||
-        this.labelPlacementSideOfEdgeItem === LabelPlacementSideOfEdge.ON_EDGE
-      )
+      return !this.edgeLabelingItem || this.labelPlacementSideOfEdgeItem === 'on-edge'
     }
   }
 })

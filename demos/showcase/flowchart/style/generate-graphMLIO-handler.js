@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { FlowchartNodeStyle, FlowchartNodeType } from './FlowchartStyle'
+import { FlowchartNodeStyle } from './FlowchartStyle'
 import { Color, Fill, GraphMLIOHandler, MarkupExtension, Stroke } from '@yfiles/yfiles'
 
 export function generateGraphMLIOHandler() {
@@ -61,7 +61,7 @@ export function generateGraphMLIOHandler() {
 export class FlowchartNodeStyleExtension extends MarkupExtension {
   $stroke = Stroke.BLACK
   $fill = new Color(183, 201, 227)
-  $type = FlowchartNodeType.Data
+  $type = 'Data'
   $cssClass = null
 
   get type() {

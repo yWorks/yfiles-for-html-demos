@@ -27,13 +27,13 @@
  **
  ***************************************************************************/
 import {
-  GraphComponent,
-  IEdge,
-  IEdgeStyle,
-  IGraph,
-  IInputModeContext,
-  INode,
-  INodeStyle,
+  type GraphComponent,
+  type IEdge,
+  type IEdgeStyle,
+  type IGraph,
+  type IInputModeContext,
+  type INode,
+  type INodeStyle,
   Point,
   Rect
 } from '@yfiles/yfiles'

@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>08 Grouping - Tutorial: Basic Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -134,7 +134,7 @@
           <div class="paragraph">
             <p>
               This step shows how to configure
-              <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-support#interaction-grouping" target="_blank">support for grouped or hierarchically organized graphs</a>.
+              <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-support#interaction-grouping" class="dguide" target="_blank">support for grouped or hierarchically organized graphs</a>.
             </p>
           </div>
           <div class="admonitionblock note">
@@ -157,7 +157,7 @@
           </div>
           <div class="paragraph">
             <p>
-              <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a> already provides default gestures for
+              <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" class="api" target="_blank">GraphEditorInputMode</a> already provides default gestures for
               grouping/ungrouping.
             </p>
           </div>
@@ -217,15 +217,15 @@
             <p>
               Group nodes can use special styles that are optimized to visualize a group with
               content. However, a group node can also use a normal node style like
-              <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" target="_blank">ShapeNodeStyle</a>. In this example, we use
-              <a href="https://docs.yworks.com/yfileshtml/#/api/GroupNodeStyle" target="_blank">GroupNodeStyle</a>.
+              <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" class="api" target="_blank">ShapeNodeStyle</a>. In this example, we use
+              <a href="https://docs.yworks.com/yfileshtml/#/api/GroupNodeStyle" class="api" target="_blank">GroupNodeStyle</a>.
             </p>
           </div>
           <div class="listingblock">
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript">graph.<span class="hljs-property">groupNodeDefaults</span>.<span class="hljs-property">style</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">GroupNodeStyle</span>({ <span class="hljs-attr">tabFill</span>: <span class="hljs-string">&#x27;#0b7189&#x27;</span> })
+              ><code class="language-typescript" data-lang="typescript">graph.<span class="hljs-property">groupNodeDefaults</span>.<span class="hljs-property">style</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">GroupNodeStyle</span>({ <span class="hljs-attr">tabFill</span>: <span class="hljs-string">&#x27;#0b7189&#x27;</span> })
 
 <span class="hljs-comment">// Set a label style with right-aligned text</span>
 graph.<span class="hljs-property">groupNodeDefaults</span>.<span class="hljs-property">labels</span>.<span class="hljs-property">style</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LabelStyle</span>({
@@ -246,7 +246,7 @@ graph.<span class="hljs-property">groupNodeDefaults</span>.<span class="hljs-pro
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> n1 = graph.<span class="hljs-title function_">createNodeAt</span>([<span class="hljs-number">30</span>, -<span class="hljs-number">200</span>])
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> n1 = graph.<span class="hljs-title function_">createNodeAt</span>([<span class="hljs-number">30</span>, -<span class="hljs-number">200</span>])
 <span class="hljs-keyword">const</span> n2 = graph.<span class="hljs-title function_">createNodeAt</span>([<span class="hljs-number">170</span>, -<span class="hljs-number">200</span>])
 <span class="hljs-keyword">const</span> n3 = graph.<span class="hljs-title function_">createNodeAt</span>([<span class="hljs-number">30</span>, -<span class="hljs-number">100</span>])
 graph.<span class="hljs-title function_">createEdge</span>(n1, n3)
@@ -265,15 +265,14 @@ graph.<span class="hljs-title function_">addLabel</span>(groupNode, <span class=
             <p>
               If the group content is changed in code, i.e. a child node is added or removed
               programmatically, the group node size is not adjusted automatically. Instead, we have
-              to call
-              <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph#IGraph-defaultmethod-adjustGroupNodeLayout" target="_blank">adjustGroupNodeLayout</a>.
+              to call <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph#adjustGroupNodeLayout" class="api" target="_blank">adjustGroupNodeLayout</a>.
             </p>
           </div>
           <div class="listingblock">
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Get a group node</span>
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// Get a group node</span>
 <span class="hljs-keyword">const</span> groupNode = graph.<span class="hljs-property">nodes</span>.<span class="hljs-title function_">find</span>(<span class="hljs-function">(<span class="hljs-params">node</span>) =&gt;</span> graph.<span class="hljs-title function_">isGroupNode</span>(node))!
 <span class="hljs-comment">// Create a child node that&#x27;s outside the group bounds</span>
 graph.<span class="hljs-title function_">createNode</span>({ <span class="hljs-attr">parent</span>: groupNode, <span class="hljs-attr">layout</span>: [<span class="hljs-number">100</span>, -<span class="hljs-number">60</span>, <span class="hljs-number">30</span>, <span class="hljs-number">30</span>] })
@@ -302,7 +301,7 @@ graph.<span class="hljs-title function_">adjustGroupNodeLayout</span>(groupNode)
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

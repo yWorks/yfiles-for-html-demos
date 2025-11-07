@@ -29,8 +29,8 @@
 import {
   HierarchicalLayout,
   IGraph,
-  LayoutEdge,
-  LayoutGraph,
+  type LayoutEdge,
+  type LayoutGraph,
   LayoutStageBase,
   NodeDataKey
 } from '@yfiles/yfiles'
@@ -122,15 +122,15 @@ export class AlignmentStage extends LayoutStageBase {
    * alignment nodes in the data map registered with key {@link ALIGNED_NODES_DATA_KEY}.
    */
   private insertAlignmentEdges(graph: LayoutGraph): LayoutEdge[] {
-    const dp = graph.context.getItemData(AlignmentStage.ALIGNED_NODES_DATA_KEY)
-    if (dp === null) {
+    const dataMap = graph.context.getItemData(AlignmentStage.ALIGNED_NODES_DATA_KEY)
+    if (dataMap === null) {
       // If no provider is registered, there is nothing to do
       return []
     }
 
     const orderedAlignmentNodes = graph.nodes
       // Handle nodes where the data map indicates that it is an alignment node
-      .filter((node) => dp.get(node)!)
+      .filter((node) => dataMap.get(node)!)
       // Order them by y-coordinates
       .toSorted((a, b) => a.layout.y - b.layout.y)
       .toArray()

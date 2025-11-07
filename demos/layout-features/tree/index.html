@@ -32,10 +32,11 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Basic Tree Layout - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <title>Basic Tree Layout [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -60,7 +61,6 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
     </div>
@@ -78,70 +78,48 @@
 
       <div class="demo-description__content">
         <h1>Basic Tree Layout</h1>
-
         <p>
-          This demo shows basic configuration options for the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">Tree Layout</a>.
+          This demo showcases basic configuration options for the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" class="api" target="_blank">TreeLayout</a> algorithm.
         </p>
+        <p>It highlights the configuration of various aspects, including:</p>
         <ul>
           <li>
-            The global <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout#layoutOrientation" target="_blank">layout orientation</a> is changed
-            to left-to-right to get a horizontal tree layout.
+            Layout <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout#layoutOrientation" class="api" target="_blank">orientation</a> changed to
+            left-to-right for horizontal flow
           </li>
           <li>
-            A <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultSubtreePlacer" target="_blank">DefaultSubtreePlacer</a> is specified as placer for the tree nodes, its
-            distance settings are configured to get a rather wide spacing between elements.
+            <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout#defaultSubtreePlacer" class="api" target="_blank">Subtree placer</a> configuration for wide
+            spacing between elements
           </li>
           <li>
-            The <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout#defaultPortAssignmer" target="_blank">port assignment</a> is configured such
-            that the edges are distributed at the node border and the segments are forced to keep
-            some distance in this example (via
-            <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultSubtreePlacer#minimumChannelSegmentDistance" target="_blank">minimumChannelSegmentDistance</a>). By default, the tree layout groups the edge segments and places the ports in the
-            node center.
+            <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout#defaultPortAssigner" class="api" target="_blank">Port assignment</a> configured to
+            distribute edges at node borders
           </li>
           <li>
-            Edges from the parent to the child nodes are ordered with respect to the label text of
-            the child nodes by defining an appropriate
-            <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayoutData#outEdgeComparers" target="_blank">edge comparer</a> function.
+            Edge ordering based on child node label text using
+            <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayoutData#childOrder" class="api" target="_blank">edge comparers</a>
           </li>
         </ul>
-
-        <h3>Code Snippet</h3>
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/tree/Tree.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Demos</h3>
-
+        <h2>Demos</h2>
         <ul>
-          <li>
-            The <a href="../../layout/tree/" target="_blank">Tree Layout Demo</a> shows complex configurations of
-            <a href="https://docs.yworks.com/yfileshtml/#/api/ISubtreePlacer" target="_blank">ISubtreePlacer</a> instances to further customize the node placement.
-          </li>
-          <li>
-            More features of the tree layout and supported use cases are shown in the
-            <a href="../../showcase/layoutstyles/index.html?layout=tree&sample=tree" target="_blank">Layout Styles: Tree Demo</a>.
-          </li>
+          <li><a href="../../layout/tree/" class="demo" target="_blank">Tree Layout Demo</a></li>
+          <li><a href="../../showcase/layoutstyles/index.html?layout=tree&sample=tree" class="demo" target="_blank">Layout Styles: Tree Demo</a></li>
         </ul>
-
-        <h3>Documentation</h3>
-
-        <p>
-          The Developer's Guide provides more in-depth information about the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/tree_layout" target="_blank">Tree Layout</a> provided by yFiles.
-        </p>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/tree_layout" class="dguide" target="_blank">Tree layout algorithm</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" class="api" target="_blank">TreeLayout</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayoutData" class="api" target="_blank">TreeLayoutData</a></li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script type="module" crossorigin="anonymous" src="./TreeDemo.ts" async></script>
   </body>
 </html>

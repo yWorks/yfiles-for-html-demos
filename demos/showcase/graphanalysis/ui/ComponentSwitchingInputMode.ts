@@ -67,11 +67,11 @@ import { getTag, type Tag } from '../demo-types'
 export class ComponentSwitchingInputMode extends InputModeBase {
   /** The {@link GraphModelManager} that shows an overlay for potentially every node. */
   private modelManager?: GraphModelManager
-  /** The canvas object group into which the overlays are rendered. */
+  /** The render tree group into which the overlays are rendered. */
   private renderTreeGroup?: IRenderTreeGroup
   /** The node currently hovered over, showing an extended popup for selecting the displayed component. */
   hoveredNode?: INode
-  /** The canvas object for the popup on a hovered node */
+  /** The render tree element for the popup on a hovered node */
   private popupRenderTreeElement?: IRenderTreeElement
 
   // Input event listeners; we need to bind them once, so we can remove them later again.
@@ -299,10 +299,12 @@ class ComponentOverlayRenderer extends BaseClass(
   IVisibilityTestable,
   IVisualCreator
 ) {
+  private readonly inputMode: ComponentSwitchingInputMode
   private node?: INode
 
-  constructor(private readonly inputMode: ComponentSwitchingInputMode) {
+  constructor(inputMode: ComponentSwitchingInputMode) {
     super()
+    this.inputMode = inputMode
   }
 
   createVisual(context: IRenderContext): Visual | null {
@@ -533,8 +535,11 @@ function sortToBeginning(component: number, components: number[]): void {
  * hit-test.
  */
 class ComponentSelectionPopup extends BaseClass(IObjectRenderer, IHitTestable) {
-  constructor(public node: INode) {
+  node: INode
+
+  constructor(node: INode) {
     super()
+    this.node = node
   }
 
   getBoundsProvider(renderTag: any): IBoundsProvider {

@@ -26,19 +26,18 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable no-unused-vars */
 import {
   Bfs,
-  CompositeLayoutData,
-  FilteredGraphWrapper,
-  GraphComponent,
+  type CompositeLayoutData,
+  type FilteredGraphWrapper,
+  type GraphComponent,
   HashMap,
   HierarchicalLayout,
   HierarchicalLayoutData,
-  IGraph,
-  ILayoutAlgorithm,
-  IList,
-  INode,
+  type IGraph,
+  type ILayoutAlgorithm,
+  type IList,
+  type INode,
   LayoutAnchoringPolicy,
   LayoutAnchoringStageData,
   List,
@@ -54,10 +53,12 @@ import {
  * algorithms.
  */
 export class CollapseAndExpandNodes {
+    private graphComponent: GraphComponent;
   private nodeCollapsedMap: HashMap<INode, boolean> = new HashMap()
   private nodeVisibility: HashMap<INode, boolean> = new HashMap()
 
-  constructor(private graphComponent: GraphComponent) {}
+  constructor(graphComponent: GraphComponent) {
+      this.graphComponent = graphComponent;}
 
   /**
    * Sets the given node's collapsed state.

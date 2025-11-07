@@ -28,10 +28,10 @@
  ***************************************************************************/
 import {
   AdjacencyGraphBuilder,
-  AdjacencyNodesSource,
+  type AdjacencyNodesSource,
   Arrow,
   ArrowType,
-  CreateEdgeInputMode,
+  type CreateEdgeInputMode,
   Cursor,
   EdgeCreator,
   EdgePortCandidates,
@@ -46,9 +46,9 @@ import {
   HierarchicalLayoutEdgeDescriptor,
   HierarchicalLayoutRoutingStyle,
   IEdge,
-  IGraph,
+  type IGraph,
   IHitTestable,
-  IInputMode,
+  type IInputMode,
   ILabel,
   INode,
   INodeStyle,
@@ -75,11 +75,8 @@ import {
 } from './ModelClasses'
 import { EditAdjacencyNodesSourceDialog } from './EditAdjacencyNodeSourceDialog'
 import { FlippedArrow } from './FlippedArrow'
-import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
+import { createDemoEdgeStyle } from '@yfiles/demo-app/demo-styles'
 import { LitNodeStyle, type LitNodeStyleRenderFunction } from '@yfiles/demo-utils/LitNodeStyle'
-
-// @ts-ignore Import via URL
-// eslint-disable-next-line import/no-unresolved
 import { nothing, svg } from 'lit-html'
 
 type NeighborType = 'successor' | 'predecessor'
@@ -100,7 +97,6 @@ interface AdjacencyGraphBuilderSample {
   edgesSource: SchemaEdge[]
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type DataItemType = any
 type DataType = DataItemType[] | Record<string, DataItemType>
 
@@ -223,16 +219,13 @@ export class SchemaComponent {
         graphComponent.selection.edges.add(edge)
 
         if (edge.labels.size === 0) {
-          // noinspection JSIgnoredPromiseFromCall
           inputMode.editLabelInputMode.startLabelAddition(edge)
         } else {
-          // noinspection JSIgnoredPromiseFromCall
           inputMode.editLabelInputMode.startLabelEditing(edge.labels.get(0))
         }
       } else if (evt.item instanceof ILabel && evt.item.owner instanceof IEdge) {
         evt.handled = true
         graphComponent.selection.add(evt.item.owner)
-        // noinspection JSIgnoredPromiseFromCall
         inputMode.editLabelInputMode.startLabelEditing(evt.item)
       }
     })
@@ -248,14 +241,12 @@ export class SchemaComponent {
     // create a new nodes source and layout the graph
     inputMode.addEventListener('node-created', (evt) => {
       this.createNewAdjacencyNodesSource(evt.item)
-      // noinspection JSIgnoredPromiseFromCall
       this.applySchemaLayout()
     })
 
     // create the relationship in the AdjacencyGraphBuilder and layout the graph
     inputMode.createEdgeInputMode.addEventListener('edge-created', (evt) => {
       this.createNeighborRelationship('successors', evt.item, 'successor')
-      // noinspection JSIgnoredPromiseFromCall
       this.applySchemaLayout()
     })
 
@@ -577,7 +568,6 @@ export class SchemaComponent {
   private openEditNodeSourceDialog(schemaNode: INode): void {
     const sourceDefinitionConnector =
       schemaNode.tag as AdjacencyNodesSourceDefinitionBuilderConnector
-    // noinspection JSIgnoredPromiseFromCall
     new EditAdjacencyNodesSourceDialog(sourceDefinitionConnector, () => {
       this.schemaGraphComponent.graph.setLabelText(
         schemaNode.labels.first()!,

@@ -75,6 +75,7 @@ export function configureExtensions(callback) {
 }
 
 function createMetadata(type, metadata, callback, ns = YfilesCommon_3_0_XamlNS) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   metadata.name = type.name
   metadata.xmlNamespace = ns
   callback(type, metadata)
@@ -125,6 +126,7 @@ class GenericPortLocationModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for SegmentRatioPortLocationModel
 
@@ -169,3 +171,4 @@ class SegmentRatioParameterExtension extends MarkupExtension {
   }
 }
 
+// endregion

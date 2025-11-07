@@ -26,7 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { WebGLVisual, Color, IEnumerable, IRenderContext, Point } from '@yfiles/yfiles'
+import {
+  type Color,
+  type IEnumerable,
+  type IRenderContext,
+  type Point,
+  WebGLVisual
+} from '@yfiles/yfiles'
 
 export class WebglBlobVisual extends WebGLVisual {
   locations: IEnumerable<Point>

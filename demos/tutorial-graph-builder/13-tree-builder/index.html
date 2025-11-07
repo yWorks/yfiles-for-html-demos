@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>13 Tree Builder - Tutorial: Graph Builder [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -133,7 +133,7 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  In this tutorial step we show how to use <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a> to build a
+                  In this tutorial step we show how to use <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" class="api" target="_blank">TreeBuilder</a> to build a
                   graph from data, where nodes and their children are already available in a
                   tree-like format.
                 </p>
@@ -150,7 +150,7 @@
               </div>
               <div class="listingblock">
                 <div class="content">
-                  <pre class="highlight"><code class="language-javascript" data-lang="javascript">{
+                  <pre class="highlight"><code class="language-typescript" data-lang="typescript">{
   <span class="hljs-attr">position</span>: <span class="hljs-string">&#x27;Chief Executive Officer&#x27;</span>,
   <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Eric Joplin&#x27;</span>,
   <span class="hljs-attr">colleagues</span>: [
@@ -185,10 +185,10 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">export</span> type <span class="hljs-title class_">OrgChartEntry</span> = {
-  <span class="hljs-attr">position</span>: string
-  <span class="hljs-attr">name</span>: string
-  colleagues?: <span class="hljs-title class_">OrgChartEntry</span>[]
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> <span class="hljs-title class_">OrgChartEntry</span> = {
+  <span class="hljs-attr">position</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">colleagues</span>?: <span class="hljs-title class_">OrgChartEntry</span>[]
 }</code></pre>
                 </div>
               </div>
@@ -199,30 +199,30 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  In the first step, we instantiate <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a> and configure a
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/TreeNodesSource" target="_blank">TreeNodesSource</a>:
+                  In the first step, we instantiate <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" class="api" target="_blank">TreeBuilder</a> and configure a
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/TreeNodesSource" class="api" target="_blank">TreeNodesSource</a>:
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> treeBuilder = <span class="hljs-keyword">new</span> <span class="hljs-title class_">TreeBuilder</span>(graph)
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> treeBuilder = <span class="hljs-keyword">new</span> <span class="hljs-title class_">TreeBuilder</span>(graph)
 
 <span class="hljs-keyword">const</span> rootNodesSource = treeBuilder.<span class="hljs-title function_">createRootNodesSource</span>(nodesData, <span class="hljs-literal">null</span>)</code></pre>
                 </div>
               </div>
               <div class="paragraph">
                 <p>
-                  In the second step, we configure a child <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" target="_blank">NodesSource</a> on the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/TreeNodesSource" target="_blank">TreeNodesSource</a>:
+                  In the second step, we configure a child <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a> on the
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/TreeNodesSource" class="api" target="_blank">TreeNodesSource</a>:
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// the childDataProvider identifies the property of a node object that contains its child nodes</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// the childDataProvider identifies the property of a node object that contains its child nodes</span>
 rootNodesSource.<span class="hljs-title function_">addChildNodesSource</span>(
   <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> data.<span class="hljs-property">colleagues</span>,
   rootNodesSource
@@ -232,21 +232,21 @@ rootNodesSource.<span class="hljs-title function_">addChildNodesSource</span>(
               <div class="paragraph">
                 <p>
                   Note that we have used the <code>rootNodesSource</code> as the source for the
-                  colleagues <em>recursively.</em> The <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a> makes sure no
+                  colleagues <em>recursively.</em> The <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" class="api" target="_blank">TreeBuilder</a> makes sure no
                   nodes or edges with the same <code>id</code> are created twice.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   Finally, we add labels to the graph building process by providing a label binding
-                  for the <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" target="_blank">NodesSource</a>'s <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator" target="_blank">NodeCreator</a>.
+                  for the <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a>'s <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator" class="api" target="_blank">NodeCreator</a>.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">rootNodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-title function_">createLabelBinding</span>({
+                  ><code class="language-typescript" data-lang="typescript">rootNodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-title function_">createLabelBinding</span>({
   <span class="hljs-attr">text</span>: <span class="hljs-function">(<span class="hljs-params">dataItem</span>) =&gt;</span> dataItem.<span class="hljs-property">name</span>
 })</code></pre>
                 </div>
@@ -260,8 +260,8 @@ rootNodesSource.<span class="hljs-title function_">addChildNodesSource</span>(
                     <td class="content">
                       <div class="paragraph">
                         <p>
-                          <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a> supports the same labeling functionality as
-                          the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>.
+                          <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" class="api" target="_blank">TreeBuilder</a> supports the same labeling functionality as
+                          the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>.
                         </p>
                       </div>
                     </td>
@@ -271,9 +271,9 @@ rootNodesSource.<span class="hljs-title function_">addChildNodesSource</span>(
               <div class="paragraph">
                 <p>
                   See the
-                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-TreeBuilder" target="_blank">TreeBuilder Developer&#8217;s Guide</a>
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-TreeBuilder" class="dguide" target="_blank">TreeBuilder Developer&#8217;s Guide</a>
                   for a deeper discussion of the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder&#8217;s</a> functionalities.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" class="api" target="_blank">TreeBuilder&#8217;s</a> functionalities.
                 </p>
               </div>
               <div class="admonitionblock note">
@@ -309,7 +309,7 @@ rootNodesSource.<span class="hljs-title function_">addChildNodesSource</span>(
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

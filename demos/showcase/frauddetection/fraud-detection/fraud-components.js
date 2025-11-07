@@ -38,7 +38,7 @@ import {
 import { getEntityData, isFraud } from '../entity-data'
 import { FraudHighlightManager } from './FraudHighlightManager'
 import { openFraudDetectionView } from './inspection-view'
-import { forceToolbarOverflowUpdate } from '@yfiles/demo-resources/demo-page'
+import { forceToolbarOverflowUpdate } from '@yfiles/demo-app/demo-page'
 
 /**
  * The main graph component that displays the graph.

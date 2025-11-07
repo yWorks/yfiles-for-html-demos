@@ -28,24 +28,39 @@
  ***************************************************************************/
 import {
   BaseClass,
-  IRenderContext,
+  type IRenderContext,
   IVisualCreator,
-  Rect,
+  type Rect,
   SvgVisual,
   SvgVisualGroup
 } from '@yfiles/yfiles'
 
 export class RectangleVisualCreator extends BaseClass(IVisualCreator) {
+  private renderInViewCoordinates: boolean
+  private boundsProvider: () => Rect | null
+  private stroke: string
+  private fill: string
+  private dashed: boolean
+  private titlePosition: 'top' | 'bottom'
+  private title: string
+
   constructor(
-    private title: string,
-    private titlePosition: 'top' | 'bottom',
-    private dashed: boolean,
-    private fill: string,
-    private stroke: string,
-    private boundsProvider: () => Rect | null,
-    private renderInViewCoordinates = false
+    title: string,
+    titlePosition: 'top' | 'bottom',
+    dashed: boolean,
+    fill: string,
+    stroke: string,
+    boundsProvider: () => Rect | null,
+    renderInViewCoordinates = false
   ) {
     super()
+    this.title = title
+    this.titlePosition = titlePosition
+    this.dashed = dashed
+    this.fill = fill
+    this.stroke = stroke
+    this.boundsProvider = boundsProvider
+    this.renderInViewCoordinates = renderInViewCoordinates
   }
 
   /**

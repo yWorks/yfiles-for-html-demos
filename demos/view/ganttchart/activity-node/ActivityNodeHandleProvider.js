@@ -61,6 +61,7 @@ import { patternFill } from './ActivityNodeStyle'
  */
 export class ActivityNodeHandleProvider extends BaseClass(IHandleProvider) {
   node
+
   constructor(node) {
     super()
     this.node = node
@@ -207,13 +208,12 @@ class ActivityNodeReshapeHandler extends BaseClass(IReshapeHandler, IRectangle) 
  * A handle implementation that modifies the lead or follow-up time of an activity.
  */
 export class TimeHandle extends BaseClass(IHandle, IPoint) {
-  node
   isFollowUpTime
+  node
   /**
    * Stores the time when at which the drag operation was started.
    */
   originalDuration = 0
-  minimumWidth = 0
   originalNodeLayout
   activity
   originalExtent = 0
@@ -230,9 +230,6 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
    * gesture starts.
    */
   initializeDrag(context) {
-    this.minimumWidth =
-      this.node.layout.width -
-      (this.isFollowUpTime ? getFollowUpWidth(this.activity) : getLeadWidth(this.activity))
     this.originalNodeLayout = this.node.layout.toRect()
     this.originalDuration = this.getDuration()
     this.originalExtent = this.isFollowUpTime

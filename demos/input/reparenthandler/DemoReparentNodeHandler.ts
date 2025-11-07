@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IInputModeContext, INode, ReparentNodeHandler } from '@yfiles/yfiles'
+import { type IInputModeContext, type INode, ReparentNodeHandler } from '@yfiles/yfiles'
 
 /**
  * Customized variant of the default {@link ReparentNodeHandler} that

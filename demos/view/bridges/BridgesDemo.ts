@@ -42,9 +42,9 @@ import {
 } from '@yfiles/yfiles'
 
 import { CustomCallback, GroupNodeObstacleProvider } from './BridgeHelper'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Holds the graphComponent.
@@ -60,7 +60,7 @@ let bridgeManager: BridgeManager
  * Runs the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
 

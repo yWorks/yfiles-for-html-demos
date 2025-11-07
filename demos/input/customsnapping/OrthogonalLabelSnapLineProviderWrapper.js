@@ -28,9 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
-  GraphSnapContext,
   ILabelOwner,
-  IModelItem,
   ISnapReferenceProvider,
   OrthogonalSnapLine,
   Point,
@@ -45,8 +43,9 @@ import {
  * {@link OrthogonalSnapLine}s added for its top, bottom, left, and right side.
  */
 export class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapReferenceProvider) {
-  item
   wrapped
+  item
+
   /**
    * Creates a new instance that wraps the given snap line provider.
    * @param item The owner of the label

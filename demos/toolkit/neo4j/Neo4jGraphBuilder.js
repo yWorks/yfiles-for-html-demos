@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, GraphComponent, INodeStyle, ShapeNodeStyle } from '@yfiles/yfiles'
+import { GraphBuilder, ShapeNodeStyle } from '@yfiles/yfiles'
 
 /**
  * Helper method to convert the Neo4j "long" ids, to a simple string

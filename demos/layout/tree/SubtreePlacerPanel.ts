@@ -37,8 +37,8 @@ import {
   DoubleLayerSubtreePlacer,
   Fill,
   GraphComponent,
-  IGraph,
-  INode,
+  type IGraph,
+  type INode,
   type ISubtreePlacer,
   LayoutExecutor,
   LeftRightSubtreePlacer,
@@ -54,12 +54,10 @@ import {
   SubtreeRootAlignment,
   SubtreeTransform,
   TreeLayout,
-  TreeLayoutData,
-  ViewportLimitingMode,
-  ViewportLimitingPolicy
+  TreeLayoutData
 } from '@yfiles/yfiles'
 
-import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
+import { createDemoEdgeStyle } from '@yfiles/demo-app/demo-styles'
 
 type LayerColor = { fill: Fill; stroke: Stroke }
 
@@ -90,6 +88,7 @@ function createLayerColor(fillColor: string, strokeColor: string): LayerColor {
  * A panel that provides access to customize the subtree placers for each node.
  */
 export class SubtreePlacerPanel {
+  readonly graphComponent: GraphComponent
   readonly graph: IGraph
 
   // initialize the preview component where the subtree placer settings are demonstrated on a small graph
@@ -108,7 +107,8 @@ export class SubtreePlacerPanel {
   /**
    * Creates a new instance of {@link SubtreePlacerPanel}.
    */
-  constructor(readonly graphComponent: GraphComponent) {
+  constructor(graphComponent: GraphComponent) {
+    this.graphComponent = graphComponent
     this.graph = graphComponent.graph
     createPreviewGraph(this.previewComponent)
 
@@ -229,26 +229,29 @@ export class SubtreePlacerPanel {
       this.currentSubtreePlacerConfiguration.visible = false
     }
     this.currentSubtreePlacerConfiguration = configuration
-    this.currentSubtreePlacerConfiguration.visible = true
 
-    if (configuration.rotatable) {
-      rotationElement.style.display = 'block'
-      spacingElement.style.display = 'block'
-    } else {
-      rotationElement.style.display = 'none'
-      spacingElement.style.display = 'none'
-    }
+    if (this.currentSubtreePlacerConfiguration) {
+      this.currentSubtreePlacerConfiguration.visible = true
 
-    previewElement.style.visibility = configuration.hasPreview ? 'visible' : 'hidden'
+      if (configuration.rotatable) {
+        rotationElement.style.display = 'block'
+        spacingElement.style.display = 'block'
+      } else {
+        rotationElement.style.display = 'none'
+        spacingElement.style.display = 'none'
+      }
 
-    this.currentSubtreePlacerConfiguration.updatePanel()
+      previewElement.style.visibility = configuration.hasPreview ? 'visible' : 'hidden'
 
-    // request some time to make sure that the panel has the correct size before starting the
-    requestAnimationFrame(() =>
-      requestAnimationFrame(
-        async () => await runPreviewLayout(referencePlacer, this.previewComponent)
+      this.currentSubtreePlacerConfiguration.updatePanel()
+
+      // request some time to make sure that the panel has the correct size before starting the
+      requestAnimationFrame(() =>
+        requestAnimationFrame(
+          async () => await runPreviewLayout(referencePlacer, this.previewComponent)
+        )
       )
-    )
+    }
   }
 
   /**
@@ -314,25 +317,27 @@ function bindActions(panel: SubtreePlacerPanel): void {
     if (panel.currentSubtreePlacerConfiguration) {
       panel.currentSubtreePlacerConfiguration.visible = false
     }
-    panel.currentSubtreePlacerConfiguration = panel.subtreePlacerConfigurations.get(
-      selectSubtreePlacer.value
-    )!
-    panel.currentSubtreePlacerConfiguration.visible = true
-    const defaultPlacer = panel.currentSubtreePlacerConfiguration.getDefaultSubtreePlacer()
-    if (defaultPlacer) {
-      panel.currentSubtreePlacerConfiguration.adoptSettings([defaultPlacer])
-    }
+    panel.currentSubtreePlacerConfiguration =
+      panel.subtreePlacerConfigurations.get(selectSubtreePlacer.value) ?? null
 
-    const rotationElement = document.querySelector<HTMLDivElement>('#rotation')!
-    const spacingElement = document.querySelector<HTMLDivElement>('#rotatable-spacing')!
-    if (panel.currentSubtreePlacerConfiguration.rotatable) {
-      rotationElement.style.display = 'block'
-      spacingElement.style.display = 'block'
-    } else {
-      rotationElement.style.display = 'none'
-      spacingElement.style.display = 'none'
+    if (panel.currentSubtreePlacerConfiguration) {
+      panel.currentSubtreePlacerConfiguration.visible = true
+      const defaultPlacer = panel.currentSubtreePlacerConfiguration.getDefaultSubtreePlacer()
+      if (defaultPlacer) {
+        panel.currentSubtreePlacerConfiguration.adoptSettings([defaultPlacer])
+      }
+
+      const rotationElement = document.querySelector<HTMLDivElement>('#rotation')!
+      const spacingElement = document.querySelector<HTMLDivElement>('#rotatable-spacing')!
+      if (panel.currentSubtreePlacerConfiguration.rotatable) {
+        rotationElement.style.display = 'block'
+        spacingElement.style.display = 'block'
+      } else {
+        rotationElement.style.display = 'none'
+        spacingElement.style.display = 'none'
+      }
+      await panel.panelChanged()
     }
-    await panel.panelChanged()
   })
 
   const rotationLeft = document.querySelector<HTMLButtonElement>('#rotation-left')!
@@ -376,7 +381,7 @@ function updateTransformation(
   transform: SubtreeTransform,
   panel: SubtreePlacerPanel
 ): void {
-  let rotatedSubtreePlacer: ISubtreePlacer | null = panel.subtreePlacers.get(node)
+  const rotatedSubtreePlacer: ISubtreePlacer | null = panel.subtreePlacers.get(node)
   if (
     rotatedSubtreePlacer instanceof SingleLayerSubtreePlacer ||
     rotatedSubtreePlacer instanceof AssistantSubtreePlacer ||
@@ -573,16 +578,18 @@ function createPreviewGraph(graphComponent: GraphComponent): void {
  * {@link ISubtreePlacer} and manages the user input.
  */
 abstract class SubtreePlacerConfiguration {
+  private readonly div: HTMLDivElement
   private _visible = false
 
   /**
    * Creates a new instance of {@link SubtreePlacerConfiguration}.
    */
   protected constructor(
-    private readonly div: HTMLDivElement,
+    div: HTMLDivElement,
     subtreePlacer: ISubtreePlacer | null,
     panel: SubtreePlacerPanel
   ) {
+    this.div = div
     if (subtreePlacer !== null) {
       this.adoptSettings([subtreePlacer])
     }

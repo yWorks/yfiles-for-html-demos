@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HtmlCanvasVisual, IEdge, INode, IVisualCreator } from '@yfiles/yfiles'
+import { HtmlCanvasVisual, IVisualCreator } from '@yfiles/yfiles'
 
 const heatScale = 0.5
 

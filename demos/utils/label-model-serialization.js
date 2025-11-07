@@ -241,14 +241,17 @@ export function serializeLabelModelParameter(parameter) {
 export function deserializeLabelModelParameter(serializedParameter) {
   switch (serializedParameter.model) {
     case 'FreeEdgeLabelModel': {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { model, modelProperties, ...options } = serializedParameter
       return new FreeEdgeLabelModel(modelProperties).createParameter(options)
     }
     case 'BezierEdgePathLabelModel': {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { model, modelProperties, ...options } = serializedParameter
       return new BezierEdgePathLabelModel().createParameter(options)
     }
     case 'BezierEdgeSegmentLabelModel': {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { model, modelProperties, atSource, ...options } = serializedParameter
       if (atSource) {
         return new BezierEdgeSegmentLabelModel(modelProperties).createParameterFromSource(options)
@@ -257,6 +260,7 @@ export function deserializeLabelModelParameter(serializedParameter) {
       }
     }
     case 'EdgeSegmentLabelModel': {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { model, modelProperties, placeAlongEdge, ...options } = serializedParameter
       if (placeAlongEdge === PlaceAlongEdge.AT_TARGET) {
         return new EdgeSegmentLabelModel(modelProperties).createParameterFromTarget({
@@ -278,10 +282,12 @@ export function deserializeLabelModelParameter(serializedParameter) {
       break
     }
     case 'EdgePathLabelModel': {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { model, modelProperties, ...options } = serializedParameter
       return new EdgePathLabelModel().createRatioParameter(options)
     }
     case 'SmartEdgeLabelModel': {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { model, modelProperties, placeAlongEdge, ...options } = serializedParameter
       if (placeAlongEdge === PlaceAlongEdge.AT_TARGET) {
         return new SmartEdgeLabelModel(modelProperties).createParameterFromTarget({
@@ -304,23 +310,23 @@ export function deserializeLabelModelParameter(serializedParameter) {
       break
     }
     case 'NinePositionsEdgeLabelModel': {
-      const { model, modelProperties, position } = serializedParameter
+      const { modelProperties, position } = serializedParameter
       return new NinePositionsEdgeLabelModel(modelProperties).createParameter(position)
     }
     case 'FreeNodeLabelModel': {
-      const { model, ...options } = serializedParameter
+      const { ...options } = serializedParameter
       return FreeNodeLabelModel.INSTANCE.createParameter(options)
     }
     case 'ExteriorNodeLabelModel': {
-      const { model, modelProperties, position } = serializedParameter
+      const { modelProperties, position } = serializedParameter
       return new ExteriorNodeLabelModel(modelProperties).createParameter(position)
     }
     case 'InteriorNodeLabelModel': {
-      const { model, modelProperties, position } = serializedParameter
+      const { modelProperties, position } = serializedParameter
       return new InteriorNodeLabelModel(modelProperties).createParameter(position)
     }
     case 'StretchNodeLabelModel': {
-      const { model, modelProperties, position } = serializedParameter
+      const { modelProperties, position } = serializedParameter
       return new StretchNodeLabelModel(modelProperties).createParameter(position)
     }
     case 'FreeLabelModel': {
@@ -346,11 +352,15 @@ export function deserializeLabelModelParameter(serializedParameter) {
       }
     }
     case 'FreePortLabelModel': {
-      const { model, ...options } = serializedParameter
-      return FreePortLabelModel.INSTANCE.createParameter(options)
+      return FreePortLabelModel.INSTANCE.createParameter({
+        locationOffset: serializedParameter.locationOffset,
+        labelRatio: serializedParameter.labelRatio,
+        labelOffset: serializedParameter.labelOffset,
+        angle: serializedParameter.angle
+      })
     }
     case 'InsideOutsidePortLabelModel':
-      const { model, modelProperties, outside } = serializedParameter
+      const { modelProperties, outside } = serializedParameter
       if (outside) {
         return new InsideOutsidePortLabelModel(modelProperties).createOutsideParameter()
       } else {

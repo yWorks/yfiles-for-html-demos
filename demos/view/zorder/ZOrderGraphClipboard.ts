@@ -28,15 +28,15 @@
  ***************************************************************************/
 import {
   type ClipboardOperationContext,
-  EventArgs,
+  type EventArgs,
   GraphClipboard,
   type GraphComponent,
   HashMap,
-  IFoldingView,
-  IModelItem,
+  type IFoldingView,
+  type IModelItem,
   INode,
-  IRenderTreeGroup,
-  ItemCopiedEventArgs,
+  type IRenderTreeGroup,
+  type ItemCopiedEventArgs,
   List
 } from '@yfiles/yfiles'
 import type { ZOrderSupport } from './ZOrderSupport'
@@ -46,12 +46,14 @@ import type { ZOrderSupport } from './ZOrderSupport'
  *  them for the corresponding duplicated or pasted nodes.
  */
 export class ZOrderGraphClipboard extends GraphClipboard {
+  zOrderSupport: ZOrderSupport
   private clipboardZOrders = new Map<INode, number>()
   private readonly newClipboardItems = new List<INode>()
   private graphComponent: GraphComponent
 
-  constructor(public zOrderSupport: ZOrderSupport) {
+  constructor(zOrderSupport: ZOrderSupport) {
     super()
+    this.zOrderSupport = zOrderSupport
     this.graphComponent = zOrderSupport.graphComponent
     this.toClipboardCopier.addEventListener('node-copied', this.onCopiedToClipboard.bind(this))
     this.fromClipboardCopier.addEventListener('node-copied', this.onCopiedFromClipboard.bind(this))
@@ -146,7 +148,7 @@ export class ZOrderGraphClipboard extends GraphClipboard {
     )
     const gmm = this.graphComponent.graphModelManager
 
-    // group new nodes by common parent canvas object groups of their main canvas objects
+    // group new nodes by common parent render tree groups of their main render tree element
     const itemsNotInView = new List<INode>()
     const groupToItems = new HashMap<IRenderTreeGroup, List<INode>>()
     for (const masterItem of newMasterItems) {

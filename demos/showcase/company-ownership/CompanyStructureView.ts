@@ -45,7 +45,7 @@ import {
 import {
   type Company,
   type CompanyRelationshipEdge,
-  EdgeTypeEnum,
+  type EdgeType,
   getCompany,
   getRelationship,
   type GraphData,
@@ -71,8 +71,7 @@ import { modifyGraph } from './prepare-smooth-animation'
  * Returns whether the edge is a hierarchy edge.
  * @param edge The edge to be checked
  */
-const isHierarchyEdge = (edge: IEdge): boolean =>
-  getRelationship(edge).type === EdgeTypeEnum.Hierarchy
+const isHierarchyEdge = (edge: IEdge): boolean => getRelationship(edge).type === 'Hierarchy'
 
 /**
  * Returns the ownership percentage for the given edge.
@@ -80,7 +79,7 @@ const isHierarchyEdge = (edge: IEdge): boolean =>
  */
 const ownershipPercentage = (edge: IEdge): number => {
   const relationship = getRelationship(edge)
-  if (relationship.type === EdgeTypeEnum.Hierarchy) {
+  if (relationship.type === 'Hierarchy') {
     return relationship.ownership
   } else {
     return 0
@@ -151,10 +150,7 @@ export class CompanyStructureView {
   /**
    * Returns the edge types.
    */
-  private currentEdgeTypes: Set<EdgeTypeEnum> = new Set<EdgeTypeEnum>([
-    EdgeTypeEnum.Hierarchy,
-    EdgeTypeEnum.Relation
-  ])
+  private currentEdgeTypes: Set<EdgeType> = new Set<EdgeType>(['Hierarchy', 'Relation'])
 
   private toggleButtonSupport = new TogglePortButtonSupport()
 
@@ -450,8 +446,7 @@ export class CompanyStructureView {
     })
 
     const edgeLabel = edgeSource.edgeCreator.createLabelBinding({
-      text: (dataItem) =>
-        dataItem.type === EdgeTypeEnum.Hierarchy ? `${dataItem.ownership}` : null,
+      text: (dataItem) => (dataItem.type === 'Hierarchy' ? `${dataItem.ownership}` : null),
       defaults: edgeLabelDefaults
     })
     edgeSource.edgeCreator.addEventListener('edge-updated', (evt) => {

@@ -19,17 +19,20 @@ Arrows are a decorative element that can be added to both ends of an edge to ind
 
 Note
 
-Note that arrows indicate the direction of edges, but do not define them. The actual direction in the graph model is determined by the source and target nodes of the edge.
+Note that arrows indicate the direction of edges but do not define them. The actual direction in the graph model is determined by the source and target nodes of the edge.
 
 In this step, we want to give our edge style the ability to render arrows. To do this, we add two properties to define the arrows: one property for the arrow at the source node and another for the arrow at the target node.
 
 ```
 constructor(
-  public distance = 1,
-  public sourceArrow: IArrow = IArrow.NONE,
-  public targetArrow: IArrow = IArrow.NONE
+  distance = 1,
+  sourceArrow: IArrow = IArrow.NONE,
+  targetArrow: IArrow = IArrow.NONE
 ) {
   super()
+  this.distance = distance
+  this.sourceArrow = sourceArrow
+  this.targetArrow = targetArrow
 }
 ```
 
@@ -40,7 +43,7 @@ const style = new CustomEdgeStyle(2)
 style.sourceArrow = new Arrow(ArrowType.TRIANGLE)
 ```
 
-In `createVisual`, we add the arrows to our visualization using the method [addArrows](https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#EdgeStyleBase-method-addArrows) from the base class EdgeStyleBase. For this purpose, we create an own SVG group `arrows`. The addArrows method adds the arrows to this group. Finally, this group is added to the group with the other edge visualization elements.
+In `createVisual`, we add the arrows to our visualization using the method [addArrows](https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#addArrows) from the base class EdgeStyleBase. For this purpose, we create an own SVG group `arrows`. The addArrows method adds the arrows to this group. Finally, this group is added to the group with the other edge visualization elements.
 
 ```
 const arrows = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -55,7 +58,7 @@ this.addArrows(
 group.append(arrows)
 ```
 
-Additionally, we need to update the visualization of arrows in `updateVisual` with the [updateArrows](https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#EdgeStyleBase-method-updateArrows) method, if the arrows or edge path have changed since the last call.
+Additionally, we need to update the visualization of arrows in `updateVisual` with the [updateArrows](https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#updateArrows) method, if the arrows or edge path have changed since the last call.
 
 ```
 const arrows = group.children[2] as SVGGElement

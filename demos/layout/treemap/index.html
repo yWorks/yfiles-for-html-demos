@@ -34,36 +34,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Tree Map Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       #path {
         float: right;
-        margin-right: 5px;
-      }
-
-      #apply-layout {
-        width: 100%;
-        margin-top: 30px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        font-weight: bold;
-        text-transform: UPPERCASE;
-        color: white;
-        background-color: #4caf50;
-        border-color: transparent;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-
-      #apply-layout:hover {
-        background-color: #67bb6a;
-      }
-
-      #apply-layout:active {
-        background-color: #4caf50;
+        margin: 0 5px;
       }
 
       /* a hidden container to measure text sizes */
@@ -106,7 +84,7 @@
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
       <span class="demo-separator"></span>
-      <span id="path"></span>
+      <div>Current Location: <span id="path"></span></div>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -129,7 +107,7 @@
           certain data value (i.e. weight).
         </p>
         <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/api/TreeMapLayout" target="_blank">TreeMapLayout</a> algorithm arranges the nodes according to their weights
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/TreeMapLayout" class="api" target="_blank">TreeMapLayout</a> algorithm arranges the nodes according to their weights
           and relations inside groups.
         </p>
 
@@ -165,60 +143,53 @@
         <div class="demo-sidebar__content">
           <h2>Tree Map Layout</h2>
           <div class="demo-properties__settings">
-            <div class="demo-form-block">
-              <label for="select-zooming-mode" class="option-label">Zooming Mode</label>
-              <select id="select-zooming-mode" class="option-element">
-                <option value="constant">Constant Size</option>
-                <option value="aspect-ratio">Aspect Ratio of Root</option>
-              </select>
-            </div>
-            <div class="demo-form-block">
-              <label for="select-tiling-algorithm" class="option-label">Tiling Algorithm</label>
-              <select id="select-tiling-algorithm" class="option-element">
-                <option value="squarified">Squarified</option>
-                <option value="slice-and-dice">Slice-And-Dice</option>
-              </select>
-            </div>
-            <div class="demo-form-block">
-              <label for="aspect-ratio" class="option-label">Aspect Ratio</label>
-              <input type="range" id="aspect-ratio" min="1" max="10" value="1" />
-              <label id="aspect-ratio-label" class="number-label">1</label>
-            </div>
-            <div class="demo-form-block">
-              <label for="select-sorting-criterion" class="option-label">Sorting Criterion</label>
-              <select id="select-sorting-criterion" class="option-element">
-                <option value="size-descending">Size of File/Directory (descending)</option>
-                <option value="size-ascending">Size of File/Directory (ascending)</option>
-                <option value="name-descending">Name of File/Directory (descending)</option>
-                <option value="name-ascending">Name of File/Directory (ascending)</option>
-              </select>
-            </div>
-            <div class="demo-form-block">
-              <label for="select-file-directory-order" class="option-label">
-                File-Directory Order
-              </label>
-              <select id="select-file-directory-order" class="option-element">
-                <option value="files-after-directories">Files after Directories</option>
-                <option value="files-before-directories">Files before Directories</option>
-                <option value="mix-files-and-directories">Mix Files and Directories</option>
-              </select>
-            </div>
-            <div class="demo-form-block">
-              <label for="spacing" class="option-label">Spacing</label>
-              <input type="range" id="spacing" min="0" max="20" value="2" />
-              <label id="spacing-label" class="number-label">2</label>
-            </div>
-            <div class="demo-form-block">
-              <label for="minimum-node-width" class="option-label">Minimum Node Width</label>
-              <input type="range" id="minimum-node-width" min="5" max="50" value="5" />
-              <label id="minimum-node-width-label" class="number-label">5</label>
-            </div>
-            <div class="demo-form-block">
-              <label for="minimum-node-height" class="option-label">Minimum Node Height</label>
-              <input type="range" id="minimum-node-height" min="5" max="50" value="5" />
-              <label id="minimum-node-height-label" class="number-label">5</label>
-            </div>
+            <label for="select-zooming-mode" class="option-label">Zooming Mode</label>
+            <select id="select-zooming-mode" class="option-element">
+              <option value="constant">Constant Size</option>
+              <option value="aspect-ratio">Aspect Ratio of Root</option>
+            </select>
 
+            <label for="select-tiling-algorithm" class="option-label">Tiling Algorithm</label>
+            <select id="select-tiling-algorithm" class="option-element">
+              <option value="squarified">Squarified</option>
+              <option value="slice-and-dice">Slice-And-Dice</option>
+            </select>
+
+            <label for="aspect-ratio" class="option-label">Aspect Ratio</label>
+            <div>
+              <input type="range" id="aspect-ratio" min="1" max="10" value="1" />
+              <span id="aspect-ratio-label" class="number-label">1</span>
+            </div>
+            <label for="select-sorting-criterion" class="option-label">Sorting Criterion</label>
+            <select id="select-sorting-criterion" class="option-element">
+              <option value="size-descending">Size of File/Directory (descending)</option>
+              <option value="size-ascending">Size of File/Directory (ascending)</option>
+              <option value="name-descending">Name of File/Directory (descending)</option>
+              <option value="name-ascending">Name of File/Directory (ascending)</option>
+            </select>
+            <label for="select-file-directory-order" class="option-label">
+              File-Directory Order
+            </label>
+            <select id="select-file-directory-order" class="option-element">
+              <option value="files-after-directories">Files after Directories</option>
+              <option value="files-before-directories">Files before Directories</option>
+              <option value="mix-files-and-directories">Mix Files and Directories</option>
+            </select>
+            <label for="spacing" class="option-label">Spacing</label>
+            <div>
+              <input type="range" id="spacing" min="0" max="20" value="2" />
+              <span id="spacing-label" class="number-label">2</span>
+            </div>
+            <label for="minimum-node-width" class="option-label">Minimum Node Width</label>
+            <div>
+              <input type="range" id="minimum-node-width" min="5" max="50" value="5" />
+              <span id="minimum-node-width-label" class="number-label">5</span>
+            </div>
+            <label for="minimum-node-height" class="option-label">Minimum Node Height</label>
+            <div>
+              <input type="range" id="minimum-node-height" min="5" max="50" value="5" />
+              <span id="minimum-node-height-label" class="number-label">5</span>
+            </div>
             <button id="apply-layout">Apply</button>
           </div>
         </div>

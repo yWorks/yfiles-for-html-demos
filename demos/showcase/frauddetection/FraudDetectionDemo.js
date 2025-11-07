@@ -45,8 +45,8 @@ import { initializeLayout } from './interactive-layout'
 import { ConnectionEdgeStyle } from './styles/ConnectionEdgeStyle'
 import { bankFraudData } from './resources/bank-fraud-data'
 import { insuranceFraudData } from './resources/insurance-fraud-data'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading, showLoadingIndicator } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading, showLoadingIndicator } from '@yfiles/demo-app/demo-page'
 import {
   calculateComponents,
   clearFraudHighlights,
@@ -87,7 +87,7 @@ let timeline
  * time-frames. Time-frames are chosen using a timeline component.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
   initializeGraphComponent()

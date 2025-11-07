@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 import { GraphComponent, License } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { initializeEditorComponent, readSampleGraph } from './editor-component/editor-component'
 import {
   initializeDecisionTreeComponent,
@@ -37,7 +37,7 @@ import {
 import { initializeSwitchButton } from './switch-components-button/switch-components-button'
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the editor graph component
   // this component contains the input graph which is the model for the decision tree

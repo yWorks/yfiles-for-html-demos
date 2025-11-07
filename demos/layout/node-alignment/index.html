@@ -34,10 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Node Alignment Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
-    <link rel="stylesheet" href="../../showcase/layoutstyles/resources/styles.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       .yfiles-drag {
@@ -47,60 +46,6 @@
       }
       .yfiles-drag.hidden {
         opacity: 0;
-      }
-      .settings-grid {
-        display: grid;
-        align-items: center;
-        grid-template-areas:
-          'label1 editor1'
-          'label2 editor2'
-          'label3 editor3'
-          'label4 editor4'
-          'button button';
-      }
-
-      .settings-row1 {
-        grid-area: label1;
-      }
-      .settings-row2 {
-        grid-area: label2;
-      }
-      .settings-row3 {
-        grid-area: label3;
-      }
-      .settings-row4 {
-        grid-area: label4;
-      }
-
-      .settings-editor-row1 {
-        grid-area: editor1;
-        justify-self: end;
-        width: initial !important;
-      }
-
-      .settings-editor-row2 {
-        grid-area: editor2;
-        justify-self: end;
-      }
-
-      .settings-editor-row3 {
-        grid-area: editor3;
-        justify-self: end;
-      }
-
-      .settings-editor-row4 {
-        grid-area: editor4;
-        justify-self: end;
-        width: initial !important;
-      }
-
-      .settings-editor-row5 {
-        grid-area: button;
-        justify-self: stretch;
-        margin-top: 12px !important;
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        width: initial !important;
       }
     </style>
   </head>
@@ -153,18 +98,18 @@
 
         <p>
           This demo shows how to automatically align nodes in rows and columns using the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage" target="_blank">AlignmentStage</a> layout algorithm.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage" class="api" target="_blank">AlignmentStage</a> layout algorithm.
         </p>
         <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage" target="_blank">AlignmentStage</a> assigns nodes to rows and columns and places all nodes
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage" class="api" target="_blank">AlignmentStage</a> assigns nodes to rows and columns and places all nodes
           in a column/row centered on a vertical/horizontal line. Two nodes belong to the same
           column/row, if the horizontal/vertical distance between the centers of said nodes is less
-          than or equal to the value of the <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage#snapDistance" target="_blank">AlignmentStage.snapDistance</a> property.
+          than or equal to the value of the <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage#snapDistance" class="api" target="_blank">AlignmentStage.snapDistance</a> property.
         </p>
         <p>
           When aligning nodes, the horizontal distance between nodes in a shared row and the
           vertical distance between nodes in a shared column can only increase. As a result,
-          reducing the <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage#minimumNodeDistance" target="_blank">minimumNodeDistance</a>
+          reducing the <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage#minimumNodeDistance" class="api" target="_blank">minimumNodeDistance</a>
           will not move existing rows and columns closer together.
         </p>
 
@@ -186,7 +131,7 @@
           </li>
           <li>
             Change one of the property values in the <em>Settings</em> panel and observe how the
-            graph is re-aligned. Since <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage" target="_blank">AlignmentStage</a> only increases distances
+            graph is re-aligned. Since <a href="https://docs.yworks.com/yfileshtml/#/api/AlignmentStage" class="api" target="_blank">AlignmentStage</a> only increases distances
             between nodes, decreasing the <em>Minimum Node Distance</em> will have no immediate
             effect.
           </li>
@@ -205,28 +150,22 @@
           <h2 style="margin-top: 0">Settings</h2>
 
           <div class="demo-properties__settings">
-            <div class="settings-grid">
-              <label for="cycleStyle" class="settings-row1">Alignment Policy</label>
-              <select
-                class="settings-editor-row1"
-                title="Select an alignment policy"
-                id="alignment-policy"
-              >
-                <option value="SNAP_X">Snap X</option>
-                <option value="SNAP_Y">Snap Y</option>
-                <option value="SNAP_X_Y">Snap XY</option>
-              </select>
-              <label for="starStyle" class="settings-row2"> Minimum Node Distance </label>
-              <input class="settings-editor-row2" id="minimum-node-distance" type="number" />
-              <label for="parallelStyle" class="settings-row3">Snap Distance</label>
-              <input class="settings-editor-row3" id="snap-distance" type="number" />
-              <label for="groupScope" class="settings-row4">Separate Stripes</label>
-              <input class="settings-editor-row4" id="separate-stripes" type="checkbox" />
+            <label for="alignment-policy">Alignment Policy</label>
+            <select title="Select an alignment policy" id="alignment-policy">
+              <option value="SNAP_X">Snap X</option>
+              <option value="SNAP_Y">Snap Y</option>
+              <option value="SNAP_X_Y">Snap XY</option>
+            </select>
+            <label for="minimum-node-distance"> Minimum Node Distance </label>
+            <input id="minimum-node-distance" type="number" />
+            <label for="snap-distance">Snap Distance</label>
+            <input id="snap-distance" type="number" />
+            <label for="separate-stripes">Separate Stripes</label>
+            <input id="separate-stripes" type="checkbox" />
 
-              <button id="align-nodes-button" class="settings-editor-row5 flat-button">
-                <span>Align Nodes</span>
-              </button>
-            </div>
+            <button id="align-nodes-button" class="flat-button">
+              <span>Align Nodes</span>
+            </button>
           </div>
         </div>
       </div>

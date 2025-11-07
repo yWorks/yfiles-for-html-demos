@@ -30,10 +30,6 @@ import {
   EventRecognizers,
   HandlePositions,
   HandleType,
-  IHandle,
-  IInputModeContext,
-  INode,
-  IReshapeHandler,
   NodeReshapeHandleProvider,
   NodeReshapeHandlerHandle,
   ReshapePolicy

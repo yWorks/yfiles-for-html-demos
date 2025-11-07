@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { PaperSize } from './PaperSize'
 import {
   Graph,
   GraphComponent,
@@ -106,7 +105,7 @@ function requestFile(
   svgString: string,
   size: Size,
   margins = Insets.from(5),
-  paperSize = PaperSize.AUTO
+  paperSize = 'auto'
 ): void {
   const svgStringInput = document.querySelector<HTMLInputElement>('#postSvgString')!
   svgStringInput.setAttribute('value', `${svgString}`)
@@ -119,7 +118,7 @@ function requestFile(
   const margin = document.querySelector<HTMLInputElement>('#postMargin')!
   margin.setAttribute('value', `${margins.left}`)
   const pSize = document.querySelector<HTMLInputElement>('#postPaperSize')!
-  pSize.setAttribute('value', paperSize === PaperSize.AUTO ? '' : paperSize)
+  pSize.setAttribute('value', paperSize === 'auto' ? '' : paperSize)
 
   const form = document.querySelector<HTMLFormElement>('#postForm')!
   form.setAttribute('action', url)

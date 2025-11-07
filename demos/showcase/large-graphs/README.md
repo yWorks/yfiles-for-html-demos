@@ -23,6 +23,8 @@ Rendering a large number of elements which are not too detailed is where WebGL r
 
 Depending on the desired item visualization, using WebGL rendering for all zoom values is a valid option, too. You can disable SVG rendering completely in the toolbar.
 
+You can use the FPS meter on the right side to benchmark the performance. Click the animation buttons to run example animations.
+
 ## Hierarchical sample
 
 The node styles for both SVG and WebGL are instantiated with the same image data so that the transition between the rendering methods is as smooth as possible.

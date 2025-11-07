@@ -29,20 +29,23 @@
 import {
   Arrow,
   ArrowType,
-  CreateEdgeInputMode,
+  type CreateEdgeInputMode,
   Cursor,
+  EdgePortCandidates,
   EventRecognizers,
-  SmartEdgeLabelModel,
   FreeNodePortLocationModel,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   HierarchicalLayout,
+  HierarchicalLayoutData,
+  HierarchicalLayoutEdgeDescriptor,
+  HierarchicalLayoutRoutingStyle,
   IEdge,
-  IGraph,
+  type IGraph,
   IHitTestable,
-  IInputMode,
+  type IInputMode,
   ILabel,
   INode,
   INodeStyle,
@@ -53,17 +56,14 @@ import {
   PolylineEdgeStyle,
   PortAdjustmentPolicy,
   PortCandidate,
+  PortData,
+  PortSides,
+  RoutingStyleDescriptor,
   ShapeNodeStyle,
   Size,
+  SmartEdgeLabelModel,
   TreeBuilder,
-  TreeNodesSource,
-  HierarchicalLayoutEdgeDescriptor,
-  RoutingStyleDescriptor,
-  HierarchicalLayoutRoutingStyle,
-  HierarchicalLayoutData,
-  PortData,
-  EdgePortCandidates,
-  PortSides
+  type TreeNodesSource
 } from '@yfiles/yfiles'
 import {
   createBinding,
@@ -72,11 +72,8 @@ import {
   TreeNodesSourceDefinitionBuilderConnector
 } from './ModelClasses'
 import { EditTreeNodesSourceDialog } from './EditTreeNodeSourceDialog'
-import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
+import { createDemoEdgeStyle } from '@yfiles/demo-app/demo-styles'
 import { LitNodeStyle, type LitNodeStyleRenderFunction } from '@yfiles/demo-utils/LitNodeStyle'
-
-// @ts-ignore Import via URL
-// eslint-disable-next-line import/no-unresolved
 import { nothing, svg } from 'lit-html'
 
 type SchemaEdge = { parentSource: string; childSource: string; childBinding: string }
@@ -189,16 +186,13 @@ export class SchemaComponent {
         graphComponent.selection.edges.add(edge)
 
         if (edge.labels.size === 0) {
-          // noinspection JSIgnoredPromiseFromCall
           inputMode.editLabelInputMode.startLabelAddition(edge)
         } else {
-          // noinspection JSIgnoredPromiseFromCall
           inputMode.editLabelInputMode.startLabelEditing(edge.labels.get(0))
         }
       } else if (evt.item instanceof ILabel && evt.item.owner instanceof IEdge) {
         evt.handled = true
         graphComponent.selection.add(evt.item.owner)
-        // noinspection JSIgnoredPromiseFromCall
         inputMode.editLabelInputMode.startLabelEditing(evt.item)
       }
     })
@@ -214,14 +208,12 @@ export class SchemaComponent {
     // create a new nodes source and layout the graph
     inputMode.addEventListener('node-created', (evt) => {
       this.createNewTreeNodesSource(evt.item, true)
-      // noinspection JSIgnoredPromiseFromCall
       this.applySchemaLayout()
     })
 
     // create the relationship in the TreeBuilder and layout the graph
     inputMode.createEdgeInputMode.addEventListener('edge-created', (evt) => {
       this.createChildRelationship('children', evt.item)
-      // noinspection JSIgnoredPromiseFromCall
       this.applySchemaLayout()
     })
 
@@ -486,7 +478,6 @@ export class SchemaComponent {
    */
   private openEditNodeSourceDialog(schemaNode: INode): void {
     const sourceDefinitionConnector = schemaNode.tag as TreeNodesSourceDefinitionBuilderConnector
-    // noinspection JSIgnoredPromiseFromCall
     new EditTreeNodesSourceDialog(sourceDefinitionConnector, () => {
       this.schemaGraphComponent.graph.setLabelText(
         schemaNode.labels.first()!,

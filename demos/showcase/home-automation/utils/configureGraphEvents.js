@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent } from '@yfiles/yfiles'
+import {} from '@yfiles/yfiles'
 
 export function configureGraphEvents(graphComponent) {
   // trigger a re-rendering of the graph when a node tag changed to have the labels reflect the data

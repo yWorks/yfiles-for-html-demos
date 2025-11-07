@@ -52,11 +52,14 @@ const MAX_ZOOM_CHANGE_THRESHOLD = 3
  * The contents are scaled and rendered within the bounds of the node.
  */
 export class DeepZoomGroupNodeStyle extends NodeStyleBase<SvgVisual> {
+    backgroundStyle: INodeStyle;
+
   /**
    * Creates a new group node style with the given backgroundStyle.
    */
-  constructor(public backgroundStyle: INodeStyle = new ShapeNodeStyle()) {
+  constructor(backgroundStyle: INodeStyle = new ShapeNodeStyle()) {
     super()
+      this.backgroundStyle = backgroundStyle;
   }
 
   /**

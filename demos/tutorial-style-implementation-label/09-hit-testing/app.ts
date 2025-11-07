@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, GraphItemTypes, License } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   addHoverEffect,
   createSampleGraphHitTesting,
@@ -39,9 +39,9 @@ import {
 } from '../common'
 import { CustomLabelStyle } from './CustomLabelStyle'
 
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
-License.value = await fetchLicense()
+License.value = licenseData
 
 const graphComponent = new GraphComponent('#graphComponent')
 

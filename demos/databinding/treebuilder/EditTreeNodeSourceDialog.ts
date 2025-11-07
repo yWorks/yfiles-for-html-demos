@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import type { TreeNodesSourceDefinitionBuilderConnector } from './ModelClasses'
-import { createCodemirrorEditor, EditorView } from '@yfiles/demo-resources/codemirror-editor'
+import { createCodemirrorEditor, type EditorView } from '@yfiles/demo-app/codemirror-editor'
 
 /**
  * Editing dialog for schema graph nodes business data ({@link TreeNodesSourceDefinition}

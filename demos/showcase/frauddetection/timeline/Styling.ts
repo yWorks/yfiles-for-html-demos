@@ -75,6 +75,8 @@ export const defaultStyling: TimelineStyle = {
  * Manages the styling of the timeline component.
  */
 export class Styling {
+  private readonly style: TimelineStyle
+  private readonly graphComponent: GraphComponent
   readonly defaultStyle: ShapeNodeStyle
   readonly inTimeframeStyle: ShapeNodeStyle
 
@@ -82,10 +84,9 @@ export class Styling {
   readonly groupStyleEven: LabelStyle
   readonly groupStyleOdd: LabelStyle
 
-  constructor(
-    private readonly graphComponent: GraphComponent,
-    private readonly style: TimelineStyle
-  ) {
+  constructor(graphComponent: GraphComponent, style: TimelineStyle) {
+    this.graphComponent = graphComponent
+    this.style = style
     const nodeDecorator = graphComponent.graph.decorator.nodes
     nodeDecorator.focusRenderer.hide()
     nodeDecorator.highlightRenderer.hide()

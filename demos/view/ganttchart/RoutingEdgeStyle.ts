@@ -26,22 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  Arrow,
-  ArrowType,
-  GeneralPath,
-  IArrow,
-  type IEdge,
-  PathEdgeStyleBase,
-  Point,
-  Stroke
-} from '@yfiles/yfiles'
+import { Arrow, ArrowType, GeneralPath, IArrow, type IEdge, PathEdgeStyleBase, Point, Stroke } from '@yfiles/yfiles'
 
 /**
  * An edge style that draws an edge in an orthogonal fashion.
  * All existing bends of the edge are ignored.
  */
 export class RoutingEdgeStyle extends PathEdgeStyleBase {
+  stroke: Stroke
+  inSegmentLength: number
+  outSegmentLength: number
   /**
    * The distance on the y-axis between the source port and the horizontal middle segment.
    * This only has an effect when the source location is right of the target location.
@@ -64,11 +58,14 @@ export class RoutingEdgeStyle extends PathEdgeStyleBase {
    * @param stroke The edge stroke.
    */
   constructor(
-    public outSegmentLength: number,
-    public inSegmentLength: number,
-    public stroke: Stroke = new Stroke(100, 100, 100, 255, 2)
+    outSegmentLength: number,
+    inSegmentLength: number,
+    stroke: Stroke = new Stroke(100, 100, 100, 255, 2)
   ) {
     super()
+    this.outSegmentLength = outSegmentLength
+    this.inSegmentLength = inSegmentLength
+    this.stroke = stroke
     this.sourceArrow = IArrow.NONE
     this.targetArrow = new Arrow({ fill: stroke.fill, type: ArrowType.TRIANGLE })
   }

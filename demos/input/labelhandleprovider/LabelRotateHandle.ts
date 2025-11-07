@@ -28,22 +28,22 @@
  ***************************************************************************/
 import {
   BaseClass,
-  CanvasComponent,
-  ClickEventArgs,
+  type CanvasComponent,
+  type ClickEventArgs,
   Cursor,
   HandleType,
   IHandle,
-  IInputModeContext,
-  ILabel,
+  type IInputModeContext,
+  type ILabel,
   ILabelModelParameterFinder,
-  IOrientedRectangle,
+  type IOrientedRectangle,
   IPoint,
-  IRenderContext,
-  IRenderTreeElement,
-  ISize,
+  type IRenderContext,
+  type IRenderTreeElement,
+  type ISize,
   OrientedRectangle,
   Point,
-  Size
+  type Size
 } from '@yfiles/yfiles'
 import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectangleRendererBase'
 
@@ -210,12 +210,15 @@ export class LabelRotateHandle extends BaseClass(IHandle) {
  * Represents the new resize point for the given handler.
  */
 class LabelRotateHandleLivePoint extends BaseClass(IPoint) {
+  private readonly handle: LabelRotateHandle
+
   /**
    * Creates a new point for the given handle.
    * @param handle The given handle
    */
-  constructor(private readonly handle: LabelRotateHandle) {
+  constructor(handle: LabelRotateHandle) {
     super()
+    this.handle = handle
   }
 
   /**

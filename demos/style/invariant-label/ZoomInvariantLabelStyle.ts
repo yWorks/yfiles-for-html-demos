@@ -30,17 +30,17 @@ import {
   BaseClass,
   type Constructor,
   FreeLabelModel,
-  ICanvasContext,
+  type ICanvasContext,
   IEdge,
-  IInputModeContext,
-  ILabel,
-  ILabelStyle,
+  type IInputModeContext,
+  type ILabel,
+  type ILabelStyle,
   INode,
-  IOrientedRectangle,
+  type IOrientedRectangle,
   IRenderContext,
   ISelectionRenderer,
-  ISize,
-  ISvgDefsCreator,
+  type ISize,
+  type ISvgDefsCreator,
   IVisualCreator,
   LabelStyleBase,
   Matrix,
@@ -50,9 +50,9 @@ import {
   Rect,
   SimpleLabel,
   Size,
-  SvgVisual,
+  type SvgVisual,
   SvgVisualGroup,
-  WebGLSupport
+  type WebGLSupport
 } from '@yfiles/yfiles'
 import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectangleRendererBase'
 
@@ -339,12 +339,11 @@ export class ZoomInvariantAboveThresholdLabelStyle extends ZoomInvariantLabelSty
 }
 
 export class ZoomInvariantOutsideRangeLabelStyle extends ZoomInvariantLabelStyleBase {
-  constructor(
-    innerLabelStyle: ILabelStyle,
-    zoomThreshold: number,
-    public maxScale: number
-  ) {
+  maxScale: number
+
+  constructor(innerLabelStyle: ILabelStyle, zoomThreshold: number, maxScale: number) {
     super(innerLabelStyle, zoomThreshold)
+    this.maxScale = maxScale
   }
 
   /**
@@ -393,6 +392,7 @@ export class FitOwnerLabelStyle extends ZoomInvariantLabelStyleBase {
 }
 
 class DummyContext extends BaseClass(IRenderContext) {
+  private readonly innerContext: IRenderContext
   private readonly _zoom: number
   private readonly _transform: Matrix
   // multiply all necessary transforms with the given inverse transform to nullify the outer transform
@@ -400,12 +400,9 @@ class DummyContext extends BaseClass(IRenderContext) {
   private readonly _intermediateTransform: Matrix
   private readonly _projection: Matrix
 
-  constructor(
-    private readonly innerContext: IRenderContext,
-    zoom: number,
-    inverseTransform: Matrix
-  ) {
+  constructor(innerContext: IRenderContext, zoom: number, inverseTransform: Matrix) {
     super()
+    this.innerContext = innerContext
     this._zoom = zoom
     this._transform = inverseTransform
 
@@ -471,7 +468,6 @@ class DummyContext extends BaseClass(IRenderContext) {
     return this.innerContext.getDefsId(defsSupport)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup<T>(type: Constructor<T>): T | null {
     return this.innerContext.lookup(type)
   }
@@ -487,8 +483,11 @@ class DummyContext extends BaseClass(IRenderContext) {
 }
 
 class ZoomInvariantSelectionRenderer extends OrientedRectangleRendererBase<ILabel> {
-  constructor(private fixedLayout: IOrientedRectangle) {
+  private fixedLayout: IOrientedRectangle
+
+  constructor(fixedLayout: IOrientedRectangle) {
     super()
+    this.fixedLayout = fixedLayout
   }
 
   createIndicatorElement(_context: IRenderContext, size: ISize, _renderTag: ILabel): SVGElement {

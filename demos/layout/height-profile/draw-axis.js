@@ -108,6 +108,7 @@ const AXIS_FONT = new Font({ fontFamily: 'Roboto,sans-serif', fontSize: 14 })
  */
 class AxisVisual extends BaseClass(IVisualCreator, IBoundsProvider) {
   trail
+
   constructor(trail) {
     super()
     this.trail = trail

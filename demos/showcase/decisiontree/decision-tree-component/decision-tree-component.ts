@@ -34,7 +34,7 @@ import {
   type GraphEditorInputMode,
   type IGraph
 } from '@yfiles/yfiles'
-import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'
+import { addNavigationButtons } from '@yfiles/demo-app/demo-page'
 import './decision-tree.css'
 
 let decisionTree: DecisionTree | null

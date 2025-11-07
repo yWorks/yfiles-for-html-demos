@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { PaperSize } from './PaperSize'
 import {
   Graph,
   GraphComponent,
@@ -94,14 +93,7 @@ export function requestServerExport(svgData, format, size, url) {
 /**
  * Send the request to the server which initiates a file download.
  */
-function requestFile(
-  url,
-  format,
-  svgString,
-  size,
-  margins = Insets.from(5),
-  paperSize = PaperSize.AUTO
-) {
+function requestFile(url, format, svgString, size, margins = Insets.from(5), paperSize = 'auto') {
   const svgStringInput = document.querySelector('#postSvgString')
   svgStringInput.setAttribute('value', `${svgString}`)
   const formatInput = document.querySelector('#postFormat')
@@ -113,7 +105,7 @@ function requestFile(
   const margin = document.querySelector('#postMargin')
   margin.setAttribute('value', `${margins.left}`)
   const pSize = document.querySelector('#postPaperSize')
-  pSize.setAttribute('value', paperSize === PaperSize.AUTO ? '' : paperSize)
+  pSize.setAttribute('value', paperSize === 'auto' ? '' : paperSize)
 
   const form = document.querySelector('#postForm')
   form.setAttribute('action', url)

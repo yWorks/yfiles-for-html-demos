@@ -31,7 +31,7 @@ import {
   type IGraph,
   type IModelItem,
   type INode,
-  ItemEventArgs,
+  type ItemEventArgs,
   Rect
 } from '@yfiles/yfiles'
 
@@ -65,6 +65,8 @@ type SynchronizeMessage =
  * or styles.
  */
 export class GraphSynchronizer {
+  private readonly messageHandler: (message: unknown) => void
+  readonly graph: IGraph
   private readonly item2Id = new Map<IModelItem, number>()
   private readonly id2Item = new Map<number, IModelItem>()
   private lastId = 0
@@ -92,10 +94,9 @@ export class GraphSynchronizer {
    * a message that must be sent to the other {@link GraphSynchronizer} instance and passed to
    * {@link acceptMessage}.
    */
-  constructor(
-    public readonly graph: IGraph,
-    private readonly messageHandler: (message: unknown) => void
-  ) {
+  constructor(graph: IGraph, messageHandler: (message: unknown) => void) {
+    this.graph = graph
+    this.messageHandler = messageHandler
     this.registerGraphEvents()
   }
 

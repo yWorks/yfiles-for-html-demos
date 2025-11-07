@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  ClipboardOperationContext,
-  GraphClipboard,
-  IEnumerable,
-  IGraph,
-  IModelItem,
-  INode,
-  Point
-} from '@yfiles/yfiles'
+import { GraphClipboard, Point } from '@yfiles/yfiles'
 
 /**
  * A special clipboard implementation which doesn't cut elements immediately.

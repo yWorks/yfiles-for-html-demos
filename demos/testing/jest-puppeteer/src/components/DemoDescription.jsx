@@ -98,7 +98,7 @@ export default class DemoDescription extends Component {
 
           <p>
             In order to obtain access to the yFiles API, in particular for access to the{' '}
-            <code>GraphComponent</code> instance through <code>CanvasComponent#getComponent()</code>
+            <code>GraphComponent</code> instance through <code>CanvasComponent.getComponent()</code>
             , this sample introduces an environment variable that causes the application code to
             expose the yFiles API to the global scope.
           </p>

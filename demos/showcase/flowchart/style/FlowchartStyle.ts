@@ -49,36 +49,37 @@ import {
   type TaggedSvgVisual
 } from '@yfiles/yfiles'
 
-export enum FlowchartNodeType {
-  Process = 'process',
-  Decision = 'decision',
-  Start1 = 'start1',
-  Start2 = 'start2',
-  Terminator = 'terminator',
-  Cloud = 'cloud',
-  Data = 'data',
-  DirectData = 'directData',
-  Database = 'database',
-  Document = 'document',
-  PredefinedProcess = 'predefinedProcess',
-  StoredData = 'storedData',
-  InternalStorage = 'internalStorage',
-  SequentialData = 'sequentialData',
-  ManualInput = 'manualInput',
-  Card = 'card',
-  PaperType = 'paperType',
-  Delay = 'delay',
-  Display = 'display',
-  ManualOperation = 'manualOperation',
-  Preparation = 'preparation',
-  LoopLimit = 'loopLimit',
-  LoopLimitEnd = 'loopLimitEnd',
-  OnPageReference = 'onPageReference',
-  OffPageReference = 'offPageReference',
-  Annotation = 'annotation',
-  UserMessage = 'userMessage',
-  NetworkMessage = 'networkMessage'
+export const FlowchartNodeType = {
+  Process: 'process',
+  Decision: 'decision',
+  Start1: 'start1',
+  Start2: 'start2',
+  Terminator: 'terminator',
+  Cloud: 'cloud',
+  Data: 'data',
+  DirectData: 'directData',
+  Database: 'database',
+  Document: 'document',
+  PredefinedProcess: 'predefinedProcess',
+  StoredData: 'storedData',
+  InternalStorage: 'internalStorage',
+  SequentialData: 'sequentialData',
+  ManualInput: 'manualInput',
+  Card: 'card',
+  PaperType: 'paperType',
+  Delay: 'delay',
+  Display: 'display',
+  ManualOperation: 'manualOperation',
+  Preparation: 'preparation',
+  LoopLimit: 'loopLimit',
+  LoopLimitEnd: 'loopLimitEnd',
+  OnPageReference: 'onPageReference',
+  OffPageReference: 'offPageReference',
+  Annotation: 'annotation',
+  UserMessage: 'userMessage',
+  NetworkMessage: 'networkMessage'
 }
+export type FlowchartNodeType = (typeof FlowchartNodeType)[keyof typeof FlowchartNodeType]
 
 type Cache = {
   location: Point
@@ -95,6 +96,11 @@ type FlowchartNodeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
  * This style can be customized by changing the properties 'fill' and 'stroke' as well as with a css-stylesheet.
  */
 export class FlowchartNodeStyle extends NodeStyleBase<FlowchartNodeStyleVisual> {
+  cssClass: string | null
+  stroke: Stroke
+  fill: Fill
+  type: FlowchartNodeType
+
   /**
    * Creates a new instance with the given type.
    * @param type The element type
@@ -103,12 +109,16 @@ export class FlowchartNodeStyle extends NodeStyleBase<FlowchartNodeStyleVisual> 
    * @param cssClass The CSS class name for this style.
    */
   constructor(
-    public type: FlowchartNodeType,
-    public fill: Fill = new Color(183, 201, 227),
-    public stroke: Stroke = Stroke.BLACK,
-    public cssClass: string | null = null
+    type: FlowchartNodeType,
+    fill: Fill = new Color(183, 201, 227),
+    stroke: Stroke = Stroke.BLACK,
+    cssClass: string | null = null
   ) {
     super()
+    this.type = type
+    this.fill = fill
+    this.stroke = stroke
+    this.cssClass = cssClass
   }
 
   createVisual(context: IRenderContext, node: INode): FlowchartNodeStyleVisual {
@@ -296,63 +306,64 @@ export class FlowchartNodeStyle extends NodeStyleBase<FlowchartNodeStyleVisual> 
  * Returns the outline of the shape according to the type
  */
 function getPath(type: FlowchartNodeType, node: INode): GeneralPath {
-  switch (type) {
+  const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1)
+  switch (capitalizedType) {
     default:
-    case FlowchartNodeType.Annotation:
+    case 'Annotation':
       return renderAnnotationPath(node)
-    case FlowchartNodeType.Card:
+    case 'Card':
       return renderCardPath(node)
-    case FlowchartNodeType.Cloud:
+    case 'Cloud':
       return renderCloudPath(node)
-    case FlowchartNodeType.Data:
+    case 'Data':
       return renderDataPath(node)
-    case FlowchartNodeType.Database:
+    case 'Database':
       return renderDatabasePath(node)
-    case FlowchartNodeType.Decision:
+    case 'Decision':
       return renderDecisionPath(node)
-    case FlowchartNodeType.Delay:
+    case 'Delay':
       return renderDelayPath(node)
-    case FlowchartNodeType.DirectData:
+    case 'DirectData':
       return renderDirectDataPath(node)
-    case FlowchartNodeType.Display:
+    case 'Display':
       return renderDisplayPath(node)
-    case FlowchartNodeType.Document:
+    case 'Document':
       return renderDocumentPath(node)
-    case FlowchartNodeType.InternalStorage:
+    case 'InternalStorage':
       return renderInternalStoragePath(node)
-    case FlowchartNodeType.LoopLimit:
+    case 'LoopLimit':
       return renderLoopLimitPath(node)
-    case FlowchartNodeType.LoopLimitEnd:
+    case 'LoopLimitEnd':
       return renderLoopLimitEndPath(node)
-    case FlowchartNodeType.ManualInput:
+    case 'ManualInput':
       return renderManualInputPath(node)
-    case FlowchartNodeType.ManualOperation:
+    case 'ManualOperation':
       return renderManualOperationPath(node)
-    case FlowchartNodeType.NetworkMessage:
+    case 'NetworkMessage':
       return renderNetworkMessagePath(node)
-    case FlowchartNodeType.OffPageReference:
+    case 'OffPageReference':
       return renderOffPageReferencePath(node)
-    case FlowchartNodeType.OnPageReference:
+    case 'OnPageReference':
       return renderOnPageReferencePath(node)
-    case FlowchartNodeType.PaperType:
+    case 'PaperType':
       return renderPaperTapePath(node)
-    case FlowchartNodeType.PredefinedProcess:
+    case 'PredefinedProcess':
       return renderPredefinedProcessPath(node)
-    case FlowchartNodeType.Preparation:
+    case 'Preparation':
       return renderPreparationPath(node)
-    case FlowchartNodeType.Process:
+    case 'Process':
       return renderProcessPath(node)
-    case FlowchartNodeType.SequentialData:
+    case 'SequentialData':
       return renderSequentialDataPath(node)
-    case FlowchartNodeType.Start1:
+    case 'Start1':
       return renderStart1Path(node)
-    case FlowchartNodeType.Start2:
+    case 'Start2':
       return renderStart2Path(node)
-    case FlowchartNodeType.StoredData:
+    case 'StoredData':
       return renderStoredDataPath(node)
-    case FlowchartNodeType.Terminator:
+    case 'Terminator':
       return renderTerminatorPath(node)
-    case FlowchartNodeType.UserMessage:
+    case 'UserMessage':
       return renderUserMessagePath(node)
   }
 }
@@ -365,20 +376,21 @@ function getDecoration(
   node: INode,
   context: IRenderContext
 ): GeneralPath | null {
-  switch (type) {
+  const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1)
+  switch (capitalizedType) {
     default:
       return null
-    case FlowchartNodeType.Annotation:
+    case 'Annotation':
       return renderAnnotationDecoration(node, context)
-    case FlowchartNodeType.Database:
+    case 'Database':
       return renderDatabaseDecoration(node)
-    case FlowchartNodeType.DirectData:
+    case 'DirectData':
       return renderDirectDataDecoration(node)
-    case FlowchartNodeType.InternalStorage:
+    case 'InternalStorage':
       return renderInternalStorageDecoration(node)
-    case FlowchartNodeType.PredefinedProcess:
+    case 'PredefinedProcess':
       return renderPredefinedProcessDecoration(node)
-    case FlowchartNodeType.SequentialData:
+    case 'SequentialData':
       return renderSequentialDataDecoration(node)
   }
 }

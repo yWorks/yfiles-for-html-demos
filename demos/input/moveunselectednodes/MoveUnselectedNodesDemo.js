@@ -28,32 +28,26 @@
  ***************************************************************************/
 import {
   BaseClass,
-  EventArgs,
   EventRecognizers,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GroupNodeStyle,
-  IGraph,
   IGroupPaddingProvider,
   IHitTestable,
   IHitTester,
-  IInputModeContext,
-  INode,
   Insets,
   InteriorNodeLabelModel,
   LabelStyle,
   License,
-  MoveInputMode,
-  Point,
   Rect,
   ShowPortCandidates,
   Size
 } from '@yfiles/yfiles'
 
-import { colorSets, createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { colorSets, createDemoEdgeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent
 
@@ -66,7 +60,7 @@ const edgeCreationModeSelect = document.querySelector('#edge-creation-modes')
 const classicModeButton = document.querySelector('#toggle-classic-mode')
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize the GraphComponent
   initializeGraph()
 
@@ -136,13 +130,12 @@ function initializeInputModes() {
  */
 function onMoveModeChanged() {
   const selectedIndex = moveModeSelect.selectedIndex
-  let geim = graphComponent.inputMode
+  const geim = graphComponent.inputMode
   if (selectedIndex === 2) {
     // mode 2 (only top region): set a custom hit-testable which detects hits only at the top of
     // the nodes
     moveUnselectedItemsInputMode.hitTestable = new TopPaddingHitTestable(
-      moveUnselectedItemsInputMode.hitTestable,
-      geim
+      moveUnselectedItemsInputMode.hitTestable
     )
   } else if (moveUnselectedItemsInputMode.hitTestable instanceof TopPaddingHitTestable) {
     // all other modes: if a TopPaddingHitTestable is the current hit-testable, restore the original
@@ -225,13 +218,11 @@ function initializeUI() {
  * so the original behavior can be restored conveniently.
  */
 class TopPaddingHitTestable extends BaseClass(IHitTestable) {
-  inputMode
   /**
    * Creates a new instance of {@link TopPaddingHitTestable}.
    */
-  constructor(original, inputMode) {
+  constructor(original) {
     super()
-    this.inputMode = inputMode
     this.original = original
   }
 

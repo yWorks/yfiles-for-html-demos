@@ -28,16 +28,16 @@
  ***************************************************************************/
 import { createApp, defineComponent, onMounted } from 'vue'
 import {
-  GraphComponent,
-  GraphEditorInputMode,
+  type GraphComponent,
+  type GraphEditorInputMode,
   type GraphInputMode,
   GraphItemTypes,
-  GraphViewerInputMode,
+  type GraphViewerInputMode,
   IEdge,
-  IModelItem,
+  type IModelItem,
   INode,
   Point,
-  QueryItemToolTipEventArgs,
+  type QueryItemToolTipEventArgs,
   TimeSpan
 } from '@yfiles/yfiles'
 import Tooltip from '@/components/Tooltip.vue'

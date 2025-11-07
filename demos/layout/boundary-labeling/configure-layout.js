@@ -33,7 +33,7 @@ import {
   OrganicLayoutData,
   Rect
 } from '@yfiles/yfiles'
-import { getPointData, isLabel, MultiPageNodeType } from './data-types'
+import { getPointData, isLabel } from './data-types'
 
 /**
  * Returns a layout configuration of the organic layout with constraints so that:
@@ -60,9 +60,7 @@ export function configureLayout(graph, imageRect) {
   // specifies desired edge lengths and the set of node to be arranged, i.e., the label nodes
   const organicLayoutData = new OrganicLayoutData({
     preferredEdgeLengths: (edge) => (isLeftPoint(edge.sourceNode, imageRect) ? 50 : 25),
-    scope: {
-      nodes: graph.nodes.filter((node) => getPointData(node).type === MultiPageNodeType.LABEL)
-    }
+    scope: { nodes: graph.nodes.filter((node) => getPointData(node).type === 'label') }
   })
   // create the constraints for the layout algorithm
   for (const edge of graph.edges) {

@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, License, ShapePortStyle, Size } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   createSimpleGraph,
   enableGraphEditing,
@@ -37,11 +37,11 @@ import {
 } from '../common'
 import { CustomEdgeStyle as OldCustomEdgeStyle } from '../01-create-a-polyline/CustomEdgeStyle'
 
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { CustomEdgeStyle } from './CustomEdgeStyle'
 import { initializeInlineGraphComponent } from '../../tutorial-style-implementation-node/common'
 
-License.value = await fetchLicense()
+License.value = licenseData
 
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)

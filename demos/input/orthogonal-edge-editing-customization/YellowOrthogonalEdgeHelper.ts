@@ -39,7 +39,7 @@ export class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
   /**
    * Stores if a new bend has been added when moving a segment of an orthogonal edge.
    */
-  private bendAddedState = BendAddedState.None
+  private bendAddedState: BendAddedState = 'None'
 
   constructor(edge: IEdge) {
     super(edge)
@@ -53,19 +53,11 @@ export class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
    */
   shouldMoveEndImplicitly(inputModeContext: IInputModeContext, sourceEnd: boolean): boolean {
     if (sourceEnd) {
-      this.bendAddedState = BendAddedState.AtSource
-      inputModeContext.graph!.addBend(
-        this.edge,
-        this.edge.sourcePort.location,
-        BendAddedState.AtSource
-      )
+      this.bendAddedState = 'AtSource'
+      inputModeContext.graph!.addBend(this.edge, this.edge.sourcePort.location, 0)
     } else {
-      this.bendAddedState = BendAddedState.AtTarget
-      inputModeContext.graph!.addBend(
-        this.edge,
-        this.edge.targetPort.location,
-        BendAddedState.AtTarget
-      )
+      this.bendAddedState = 'AtTarget'
+      inputModeContext.graph!.addBend(this.edge, this.edge.targetPort.location, -1)
     }
 
     return false
@@ -78,9 +70,9 @@ export class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
 
   private cleanUpEdgeImpl(graph: IGraph): void {
     const bendAddedState = this.bendAddedState
-    this.bendAddedState = BendAddedState.None
+    this.bendAddedState = 'None'
 
-    if (bendAddedState == BendAddedState.None || this.edge.bends.size < 1) {
+    if (bendAddedState == 'None' || this.edge.bends.size < 1) {
       return
     }
 
@@ -95,12 +87,8 @@ export class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
  * @param edge The edge whose path needs to be cleaned up.
  * @param bendAddedState Specifies which end of the given edge has to be cleaned up.
  */
-function cleanUpEdgeEnd(
-  graph: IGraph,
-  edge: IEdge,
-  bendAddedState: BendAddedState.AtSource | BendAddedState.AtTarget
-): void {
-  const atSource = bendAddedState == BendAddedState.AtSource
+function cleanUpEdgeEnd(graph: IGraph, edge: IEdge, bendAddedState: 'AtSource' | 'AtTarget'): void {
+  const atSource = bendAddedState === 'AtSource'
 
   const port = atSource ? edge.sourcePort : edge.targetPort
   const geometry = port.owner.lookup(IShapeGeometry)!
@@ -131,20 +119,11 @@ function cleanUpEdgeEnd(
   if (portX !== otherX && portY !== otherY) {
     const candidate = new Point(otherX, portY)
     if (geometry.isInside(candidate)) {
-      graph.addBend(edge, candidate, bendAddedState)
+      graph.addBend(edge, candidate, bendAddedState === 'AtSource' ? 0 : -1)
     } else {
-      graph.addBend(edge, new Point(portX, otherY), bendAddedState)
+      graph.addBend(edge, new Point(portX, otherY), bendAddedState === 'AtSource' ? 0 : -1)
     }
   }
 }
 
-/**
- * Important: Do not change the numeric values of {@link #AtSource} and {@link #AtTarget}.
- * Changing the numeric values will break the `addBend` logic in
- * {@link YellowOrthogonalEdgeHelper#shouldMoveEndImplicitly} and {@link #cleanUpEdgeEnd}.
- */
-enum BendAddedState {
-  None = -2,
-  AtTarget = -1,
-  AtSource = 0
-}
+type BendAddedState = 'None' | 'AtTarget' | 'AtSource'

@@ -37,14 +37,14 @@ import {
   type INode,
   License,
   NodeAlignmentPolicy,
-  NodesSource,
+  type NodesSource,
   Size
 } from '@yfiles/yfiles'
 import { graphData, type GroupData, type NodeData } from './sample-graph'
 import { initializeInteractiveHierarchicalNestingLayout } from './InteractiveHierarchicalNestingLayout'
-import { DemoStyleOverviewRenderer, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { DemoStyleOverviewRenderer, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent: GraphComponent
 let builder: GraphBuilder
@@ -55,7 +55,7 @@ let groupNodesSource: NodesSource<GroupData>
  * This demo shows how to nicely expand and collapse sub-graphs organized in groups.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')

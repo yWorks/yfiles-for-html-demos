@@ -28,9 +28,9 @@
  ***************************************************************************/
 import {
   EdgeStyleIndicatorRenderer,
-  GraphComponent,
+  type GraphComponent,
   GraphItemTypes,
-  GraphViewerInputMode,
+  type GraphViewerInputMode,
   IEdge,
   ILabel,
   INode,

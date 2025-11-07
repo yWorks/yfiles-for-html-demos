@@ -31,20 +31,20 @@ import {
   Font,
   FontStyle,
   HtmlCanvasVisual,
-  IBend,
-  IEdge,
-  IInputModeContext,
-  ILabel,
-  IListEnumerable,
-  INode,
-  IOrientedRectangle,
-  IPoint,
-  IRectangle,
-  IRenderContext,
+  type IBend,
+  type IEdge,
+  type IInputModeContext,
+  type ILabel,
+  type IListEnumerable,
+  type INode,
+  type IOrientedRectangle,
+  type IPoint,
+  type IRectangle,
+  type IRenderContext,
   LabelStyleBase,
   Matrix,
   NodeStyleBase,
-  Point,
+  type Point,
   Size
 } from '@yfiles/yfiles'
 
@@ -67,12 +67,15 @@ export class FastNodeStyle extends NodeStyleBase {
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class NodeCanvasVisual extends HtmlCanvasVisual {
+    layout: IRectangle;
+
   /**
    * Initializes a new NodeCanvasVisual instance with the given property value.
    * @param layout A live view of the layout of a node.
    */
-  constructor(public layout: IRectangle) {
+  constructor(layout: IRectangle) {
     super()
+      this.layout = layout;
   }
 
   /**
@@ -125,6 +128,10 @@ export class FastEdgeStyle extends EdgeStyleBase {
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeCanvasVisual extends HtmlCanvasVisual {
+    targetPortLocation: Point;
+    sourcePortLocation: Point;
+    bends: IListEnumerable<IBend>;
+
   /**
    * Initializes a new EdgeCanvasVisual instance with the given property values.
    * @param bends The bends in the edge's path.
@@ -132,11 +139,14 @@ class EdgeCanvasVisual extends HtmlCanvasVisual {
    * @param targetPortLocation The end point of the edge's path.
    */
   constructor(
-    public bends: IListEnumerable<IBend>,
-    public sourcePortLocation: Point,
-    public targetPortLocation: Point
+    bends: IListEnumerable<IBend>,
+    sourcePortLocation: Point,
+    targetPortLocation: Point
   ) {
     super()
+      this.bends = bends;
+      this.sourcePortLocation = sourcePortLocation;
+      this.targetPortLocation = targetPortLocation;
   }
 
   render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
@@ -234,6 +244,11 @@ export class FastLabelStyle extends LabelStyleBase {
  * The CanvasVisual for label rendering
  */
 class LabelCanvasVisual extends HtmlCanvasVisual {
+    zoomThreshold: number;
+    font: Font;
+    layout: IOrientedRectangle;
+    text: string;
+
   /**
    * Initializes a new LabelCanvasVisual with the given property values.
    * @param text The text to be rendered.
@@ -243,12 +258,16 @@ class LabelCanvasVisual extends HtmlCanvasVisual {
    * this visual is displayed is greater than the given value.
    */
   constructor(
-    public text: string,
-    public layout: IOrientedRectangle,
-    public font: Font,
-    public zoomThreshold: number
+    text: string,
+    layout: IOrientedRectangle,
+    font: Font,
+    zoomThreshold: number
   ) {
     super()
+      this.text = text;
+      this.layout = layout;
+      this.font = font;
+      this.zoomThreshold = zoomThreshold;
   }
 
   render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D) {

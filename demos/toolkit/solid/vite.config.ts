@@ -48,8 +48,11 @@ export default defineConfig(({ mode }) => {
             logLevel: 'info',
             blacklist: ['template', 'render', 'effect'],
             shouldOptimize({ id }) {
-              // make sure not to exclude demo-utils since it is in node_modules and uses yFiles API
-              return !id.includes('node_modules')
+              // Make sure not to exclude the demo-app and demo-utils directories which are
+              // installed as dependencies but use yFiles API.
+              return (
+                id.includes('demo-app') || id.includes('demo-utils') || !id.includes('node_modules')
+              )
             }
           })
         : undefined

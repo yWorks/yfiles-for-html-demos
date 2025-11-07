@@ -26,30 +26,4 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * Enumeration that specifies the supported types of neighborhood graphs to be shown in the
- * demo's {@link NeighborhoodView}.
- */
-export var NeighborhoodType
-;(function (NeighborhoodType) {
-  /**
-   * The neighbors of a given node are all connected nodes. The direction of the edges connecting
-   * neighbor nodes to the given node does not matter.
-   * The union of all predecessor nodes and all successor nodes.
-   * For a graph distance of 1, mode {@link NEIGHBORHOOD} yields the same result as mode {@link BOTH}.
-   */
-  NeighborhoodType[(NeighborhoodType['NEIGHBORHOOD'] = 0)] = 'NEIGHBORHOOD'
-  /**
-   * The neighbors of a given node are the source nodes of the given node's incoming edges.
-   */
-  NeighborhoodType[(NeighborhoodType['PREDECESSORS'] = 1)] = 'PREDECESSORS'
-  /**
-   * The neighbors of a given node are the target nodes of the given node's outgoing edges.
-   */
-  NeighborhoodType[(NeighborhoodType['SUCCESSORS'] = 2)] = 'SUCCESSORS'
-  /**
-   * The union of all predecessor nodes and all successor nodes.
-   * For a graph distance of 1, mode {@link BOTH} yields the same result as mode {@link NEIGHBORHOOD}.
-   */
-  NeighborhoodType[(NeighborhoodType['BOTH'] = 3)] = 'BOTH'
-})(NeighborhoodType || (NeighborhoodType = {}))
+export {}

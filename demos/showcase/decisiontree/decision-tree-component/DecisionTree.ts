@@ -44,11 +44,7 @@ import {
   Rect
 } from '@yfiles/yfiles'
 
-import {
-  colorSets,
-  createDemoGroupStyle,
-  createDemoNodeStyle
-} from '@yfiles/demo-resources/demo-styles'
+import { colorSets, createDemoGroupStyle, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
 
 const pathNodeStyle = createDemoNodeStyle('demo-palette-403')
 const sideNodeStyle = createDemoNodeStyle('demo-palette-44')
@@ -72,6 +68,9 @@ const targetZoom = 2
  * A component that displays a graph as an interactive decision tree.
  */
 export class DecisionTree {
+  afterLayoutCallback?: (running: boolean, graphComponent: GraphComponent) => void
+  beforeLayoutCallback?: (running: boolean, graphComponent: GraphComponent) => void
+  originalGraph: IGraph
   graphComponent: GraphComponent
 
   private graph: IGraph
@@ -100,12 +99,15 @@ export class DecisionTree {
    * @param afterLayoutCallback a callback when layout ends
    */
   constructor(
-    public originalGraph: IGraph,
+    originalGraph: IGraph,
     _containerElement: HTMLDivElement | string,
     rootNode?: INode,
-    public beforeLayoutCallback?: (running: boolean, graphComponent: GraphComponent) => void,
-    public afterLayoutCallback?: (running: boolean, graphComponent: GraphComponent) => void
+    beforeLayoutCallback?: (running: boolean, graphComponent: GraphComponent) => void,
+    afterLayoutCallback?: (running: boolean, graphComponent: GraphComponent) => void
   ) {
+    this.originalGraph = originalGraph
+    this.beforeLayoutCallback = beforeLayoutCallback
+    this.afterLayoutCallback = afterLayoutCallback
     // initialize the GraphComponent
     const graphComponent = new GraphComponent('#decision-tree')
     this.graph = graphComponent.graph

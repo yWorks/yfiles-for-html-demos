@@ -26,7 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EdgesSource, GraphBuilder, IGraph, INode, NodesSource } from '@yfiles/yfiles'
+import {
+  type EdgesSource,
+  GraphBuilder,
+  type IGraph,
+  type INode,
+  type NodesSource
+} from '@yfiles/yfiles'
 import type { Person } from './Person'
 
 type Friendship = { from: number; to: number }

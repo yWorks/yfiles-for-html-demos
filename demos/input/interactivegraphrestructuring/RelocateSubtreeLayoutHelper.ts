@@ -37,15 +37,15 @@ import {
   FilteredGraphWrapper,
   GivenCoordinatesLayout,
   GivenCoordinatesLayoutData,
-  GraphComponent,
+  type GraphComponent,
   IAnimation,
-  IBend,
-  IEdge,
-  ILayoutAlgorithm,
-  INode,
-  IPoint,
-  IRenderTreeElement,
-  LayoutData,
+  type IBend,
+  type IEdge,
+  type ILayoutAlgorithm,
+  type INode,
+  type IPoint,
+  type IRenderTreeElement,
+  type LayoutData,
   LayoutExecutor,
   List,
   Mapper,
@@ -87,7 +87,7 @@ export class RelocateSubtreeLayoutHelper {
   private subtree: Subtree
 
   /**
-   * The canvas object of the edge connecting the subtree with the rest of the graph.
+   * The render tree element of the edge connecting the subtree with the rest of the graph.
    * This edge is hidden while the subtree is dragged.
    */
   private renderTreeElementEdge!: IRenderTreeElement

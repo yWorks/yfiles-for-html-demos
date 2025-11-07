@@ -38,10 +38,6 @@ import {
   FreeNodePortLocationModel,
   GeneralPath,
   GraphComponent,
-  IEnumerable,
-  IGraph,
-  INode,
-  IPort,
   License,
   LineCap,
   Point,
@@ -55,19 +51,19 @@ import {
 
 import { PropertiesView } from './PropertiesView'
 import OrgChartData from './resources/OrgChartData'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   orgchartLabelTemplate,
   orgchartNodeTemplate,
   orgchartPortTemplate
 } from './style-templates'
-import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { StringTemplateNodeStyle } from '@yfiles/demo-utils/template-styles/StringTemplateNodeStyle'
 import { StringTemplateLabelStyle } from '@yfiles/demo-utils/template-styles/StringTemplateLabelStyle'
 import { StringTemplatePortStyle } from '@yfiles/demo-utils/template-styles/StringTemplatePortStyle'
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // set up the binding converters for the TemplateNodeStyle used to visualize the demo's nodes
   initConverters()
@@ -184,7 +180,6 @@ function initConverters() {
       const expression = parameter.replace('$v', val)
       // for safety, check if the expression contains only allowed characters
       if (expression.match(/^[\d+-/()*]+$/g) !== null) {
-        // eslint-disable-next-line no-eval
         return eval(expression)
       }
     }

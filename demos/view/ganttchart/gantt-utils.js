@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { getActivity } from './resources/data-model'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
 import { getTask } from './sweepline-layout'
 import { ganttChartData as dataModel } from './resources/gantt-chart-data'
 

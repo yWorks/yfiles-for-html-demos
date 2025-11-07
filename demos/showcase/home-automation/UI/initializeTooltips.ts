@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 import {
-  GraphComponent,
-  GraphEditorInputMode,
+  type GraphComponent,
+  type GraphEditorInputMode,
   GraphItemTypes,
   Point,
   TimeSpan

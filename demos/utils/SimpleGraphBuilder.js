@@ -26,25 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any,jsdoc/check-alignment,jsdoc/multiline-blocks */
+/* eslint-disable jsdoc/check-alignment,jsdoc/multiline-blocks */
 import {
   AdjacencyGraphBuilder,
-  AdjacencyNodesSource,
   EdgeCreator,
-  EdgesSource,
   Graph,
   GraphBuilder,
-  IEdge,
-  IEnumerable,
   IGraph,
-  ILabelDefaults,
-  ILabelOwner,
-  IModelItem,
-  INode,
   ITagOwner,
   ItemEventArgs,
   NodeCreator,
-  NodesSource,
   Point,
   Rect
 } from '@yfiles/yfiles'
@@ -120,7 +111,7 @@ export class SimpleGraphBuilder {
      Initializes a new instance of the {@link SimpleGraphBuilder} class that operates on the given graph.
      The `graph` will be {@link IGraph.clear cleared} and re-built from the data in {@link SimpleGraphBuilder.nodesSource}, {@link SimpleGraphBuilder.groupsSource}, and {@link SimpleGraphBuilder.edgesSource} when {@link SimpleGraphBuilder.buildGraph} is called.
      @param graphOrOptions The parameters to pass.
-     @param [graphOrOptions.graph=null] The graph
+     @param [graphOrOptions.graph] The graph
      @param [graphOrOptions.lazyNodeDefinition] A value indicating whether or not to automatically create nodes for values returned from {@link SimpleGraphBuilder.sourceNodeBinding} and {@link SimpleGraphBuilder.targetNodeBinding} that don't exist in {@link SimpleGraphBuilder.nodesSource}. This option sets the {@link SimpleGraphBuilder.lazyNodeDefinition} property on the created object.
      @param [graphOrOptions.nodesSource] The objects to be represented as nodes of the {@link SimpleGraphBuilder.graph}. This option sets the {@link SimpleGraphBuilder.nodesSource} property on the created object.
      @param [graphOrOptions.edgesSource] The objects to be represented as edges of the {@link SimpleGraphBuilder.graph}. This option sets the {@link SimpleGraphBuilder.edgesSource} property on the created object.
@@ -1192,7 +1183,7 @@ export class SimpleTreeBuilder {
      Initializes a new instance of the {@link SimpleTreeBuilder} class that operates on the given graph.
      The `graph` will be {@link IGraph.clear cleared} and re-built from the data in {@link SimpleTreeBuilder.nodesSource} and {@link SimpleTreeBuilder.groupsSource} when {@link SimpleTreeBuilder.buildGraph} is called.
      @param graphOrOptions The parameters to pass.
-     @param [graphOrOptions.graph=null] The graph.
+     @param [graphOrOptions.graph] The graph.
      @param [graphOrOptions.nodesSource] The objects to be represented as nodes of the {@link SimpleTreeBuilder.graph}. This option sets the {@link SimpleTreeBuilder.nodesSource} property on the created object.
      @param [graphOrOptions.groupsSource] The objects to be represented as group nodes of the {@link SimpleTreeBuilder.graph}. This option sets the {@link SimpleTreeBuilder.groupsSource} property on the created object.
      @param [graphOrOptions.idBinding] A binding that maps node objects to their identifier. This option sets the {@link SimpleTreeBuilder.idBinding} property on the created object.
@@ -1924,7 +1915,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      is called.
   
      @param graphOrOptions The parameters to pass.
-     @param [graphOrOptions.graph=null] The graph.
+     @param [graphOrOptions.graph] The graph.
      @param [graphOrOptions.nodesSource] The objects to be represented as nodes of the {@link SimpleAdjacentNodesGraphBuilder.graph}. This option sets the {@link SimpleAdjacentNodesGraphBuilder.nodesSource} property on the created object.
      @param [graphOrOptions.groupsSource] The objects to be represented as group nodes of the {@link SimpleAdjacentNodesGraphBuilder.graph}. This option sets the {@link SimpleAdjacentNodesGraphBuilder.groupsSource} property on the created object.
      @param [graphOrOptions.nodeIdBinding] A binding that maps node objects to their identifier. This option sets the {@link SimpleAdjacentNodesGraphBuilder.nodeIdBinding} property on the created object.

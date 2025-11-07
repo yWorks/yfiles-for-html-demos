@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ConstrainedHandle, IHandle, IInputModeContext, INode, Point } from '@yfiles/yfiles'
+import { ConstrainedHandle, type IHandle, type IInputModeContext, type INode, type Point } from '@yfiles/yfiles'
 
 /**
  * A port location handle that is constrained to the layout rectangle of

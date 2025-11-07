@@ -28,18 +28,18 @@
  ***************************************************************************/
 import {
   CanvasComponent,
-  EdgePortCandidates,
+  type EdgePortCandidates,
   GivenLayersAssigner,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   HierarchicalLayout,
   HierarchicalLayoutData,
-  IBend,
+  type IBend,
   IEdge,
-  IGraph,
-  IHandle,
-  IInputMode,
+  type IGraph,
+  type IHandle,
+  type IInputMode,
   type IMapper,
   INode,
   LayoutExecutor,
@@ -51,10 +51,10 @@ import {
 
 import { PortCandidateBendHandle } from './PortCandidateBendHandle'
 import { LayerPositionHandler } from './LayerPositionHandler'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import { LayerVisual } from './LayerVisual'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
@@ -67,7 +67,7 @@ import graphData from './graph-data.json'
  * Use the context menu to reroute selected edges or optimize selected nodes locations.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   layerVisual = new LayerVisual()
   newLayerMapper = new Mapper()

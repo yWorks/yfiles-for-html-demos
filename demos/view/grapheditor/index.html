@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Graph Editor Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
     <style>
       .side-panel-icons {
         width: 15px;
@@ -73,13 +73,9 @@
       <button
         id="open-file-button"
         title="Open a GraphML file"
-        class="demo-icon-yIconOpen labeled"
+        class="demo-icon-yIconOpen"
       ></button>
-      <button
-        id="save-button"
-        title="Save a GraphML file"
-        class="demo-icon-yIconSave labeled"
-      ></button>
+      <button id="save-button" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
 
       <span class="demo-separator"></span>
 
@@ -134,8 +130,8 @@
         <h1>Graph Editor Demo</h1>
 
         <p>
-          The Simple Editor demo exhibits a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> which enables graph
-          editing via the default <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a>.
+          The Simple Editor demo exhibits a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a> which enables graph
+          editing via the default <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" class="api" target="_blank">GraphEditorInputMode</a>.
         </p>
 
         <h4>Creating Elements (Nodes / Vertices)</h4>

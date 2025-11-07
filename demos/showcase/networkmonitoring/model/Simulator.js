@@ -33,6 +33,7 @@ import { DeviceKind } from './Device'
  */
 export class Simulator {
   network
+
   get paused() {
     return this._paused
   }
@@ -324,10 +325,11 @@ function shuffle(array) {
  * Simple data structure to model a packet moving through the network.
  */
 class Packet {
-  sender
-  receiver
-  connection
   time
+  connection
+  receiver
+  sender
+
   constructor(sender, receiver, connection, time) {
     this.sender = sender
     this.receiver = receiver

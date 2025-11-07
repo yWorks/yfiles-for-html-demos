@@ -32,7 +32,6 @@ import {
   Graph,
   GraphComponent,
   GraphEditorInputMode,
-  IGraph,
   LabelStyle,
   License,
   Point,
@@ -50,14 +49,14 @@ import {
   createFontAwesomeIcon,
   createUrlIcon
 } from '@yfiles/demo-utils/IconCreation'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   addNavigationButtons,
   addOptions,
   checkWebGL2Support,
   finishLoading,
   showLoadingIndicator
-} from '@yfiles/demo-resources/demo-page'
+} from '@yfiles/demo-app/demo-page'
 
 // Some selected colors to colorize the icons
 const iconColors = [
@@ -88,7 +87,7 @@ async function run() {
     return
   }
 
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
 
@@ -127,7 +126,7 @@ async function createSmallSampleGraph(graphComponent) {
     new Size(16, 16)
   )
   // Create Font Awesome icon
-  const fontAwesomeIcon = createFontAwesomeIcon(ctx, 'fas fa-anchor')
+  const fontAwesomeIcon = await createFontAwesomeIcon(ctx, 'fas fa-anchor')
   // Create icon from PNG file
   const pngIcon = await createUrlIcon(ctx, './resources/usericon.png', new Size(256, 256))
   // Create another icon from SVG file
@@ -221,13 +220,15 @@ async function createSmallSampleGraph(graphComponent) {
 /**
  * Creates graph of 250x400 nodes with random Font Awesome icons and colors.
  */
-function createLargeSampleGraph(graphComponent) {
+async function createLargeSampleGraph(graphComponent) {
   const graph = new Graph()
   graphComponent.graph = graph
 
   const ctx = createCanvasContext(128, 128)
 
-  const fontAwesomeIcons = faClasses.map((faClass) => createFontAwesomeIcon(ctx, faClass))
+  const fontAwesomeIcons = await Promise.all(
+    faClasses.map((faClass) => createFontAwesomeIcon(ctx, faClass))
+  )
 
   for (let i = 0; i < 400; i++) {
     for (let k = 0; k < 250; k++) {
@@ -265,7 +266,7 @@ function createLargeSampleGraph(graphComponent) {
     }
   }
 
-  return Promise.resolve(graph)
+  return graph
 }
 
 /**
@@ -286,11 +287,11 @@ function configureInteraction(graphComponent) {
   // Disable moving of individual edge segments
   graphComponent.graph.decorator.edges.positionHandler.hide()
 
-  graphEditorInputMode.addEventListener('node-created', (evt) => {
+  graphEditorInputMode.addEventListener('node-created', async (evt) => {
     const node = evt.item
     const faClass = faClasses[Math.floor(Math.random() * faClasses.length)]
     const ctx = createCanvasContext(128, 128)
-    const icon = createFontAwesomeIcon(ctx, faClass)
+    const icon = await createFontAwesomeIcon(ctx, faClass)
     // select a random color for the node
     const colorIndex = Math.floor(Math.random() * iconColors.length)
     let iconColorIndex = colorIndex

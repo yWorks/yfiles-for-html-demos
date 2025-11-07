@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import React from 'react'
 import {
   Avatar,
   Button,
@@ -38,10 +37,10 @@ import {
   Typography
 } from '@mui/material'
 import FavoriteIcon from '@mui/icons-material/Favorite'
+import OpenInNew from '@mui/icons-material/Favorite'
 import ShareIcon from '@mui/icons-material/Share'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import OpenInNew from '@mui/icons-material/Favorite'
 import { ReactComponentHtmlNodeStyleProps } from './ReactComponentHtmlNodeStyle'
 
 const darkTheme = createTheme({ palette: { mode: 'dark' } })

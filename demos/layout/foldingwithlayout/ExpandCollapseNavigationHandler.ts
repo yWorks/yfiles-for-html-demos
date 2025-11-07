@@ -35,18 +35,18 @@ import {
   FillAreaLayout,
   FillAreaLayoutData,
   HierarchicalLayout,
-  IEdge,
-  IEnumerable,
-  IFoldingView,
+  type IEdge,
+  type IEnumerable,
+  type IFoldingView,
   IGroupPaddingProvider,
-  ILayoutAlgorithm,
-  INode,
-  InputModeItemEventArgs,
-  LayoutData,
+  type ILayoutAlgorithm,
+  type INode,
+  type InputModeItemEventArgs,
+  type LayoutData,
   LayoutExecutor,
-  NavigationInputMode,
+  type NavigationInputMode,
   NodeAlignmentPolicy,
-  Point,
+  type Point,
   Rect,
   SequentialLayout
 } from '@yfiles/yfiles'
@@ -307,7 +307,6 @@ export class ExpandCollapseNavigationHelper {
     // configure ClearAreaLayout to make a clear area using the bounds of the group node
     const layout = ExpandCollapseNavigationHelper.createClearAreaLayout()
     const layoutData = ExpandCollapseNavigationHelper.createClearAreaLayoutData(groupNode)
-    // noinspection JSIgnoredPromiseFromCall
     this.runLayout(layout, layoutData)
   }
 
@@ -320,7 +319,6 @@ export class ExpandCollapseNavigationHelper {
       groupNode,
       foldingView
     )
-    // noinspection JSIgnoredPromiseFromCall
     this.runLayout(layout, layoutData)
   }
 

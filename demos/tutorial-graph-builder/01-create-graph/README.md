@@ -37,7 +37,7 @@ const data = {
 
 In this case, there are two arrays that contain objects with business data which are associated with an `id` to be able to reference them in connections or during updates.
 
-Now, we are using [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) to create a graph containing two nodes that are connected. First, we create an instance of [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) and associate it with an [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph) instance. Most often the [GraphComponent’s graph](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-property-graph) property is used for this purpose. Then, data sources are added for nodes and for edges. Finally, `buildGraph()` creates the graph.
+Now, we are using [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) to create a graph containing two nodes that are connected. First, we create an instance of [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) and associate it with an [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph) instance. Most often the [GraphComponent’s graph](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#graph) property is used for this purpose. Then, data sources are added for nodes and for edges. Finally, `buildGraph()` creates the graph.
 
 ```
 // use the graph from the graph component, for example

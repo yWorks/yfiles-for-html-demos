@@ -32,13 +32,13 @@ The decision tree contains different types of nodes.
 - Click the _orange nodes_ to make a decision and expand the next level of the tree.
 - Click the _blue_ or _green nodes_ to reset the decision tree back to this level and select the clicked option.
 - Click _Restart_ to reset the current decision tree.
-- Click the _edit button_ ![edit button](../../resources/icons/settings-16.svg) to edit the current sample and view the complete graph.
+- Click the _edit button_ ![edit button](../../demo-app/icons/settings-16.svg) to edit the current sample and view the complete graph.
 
 ### Edit View
 
 - Modify the current sample graph or load other graphs from your computer.
 - Right click a node and select "Set as root node" to start the decision tree at this node. Right click the empty canvas to clear the root node.
-- Click the _start button_ ![start button](../../resources/icons/play2-16.svg) to start the decision tree with the current graph.
+- Click the _start button_ ![start button](../../demo-app/icons/play2-16.svg) to start the decision tree with the current graph.
 
 ## Source Graph Structure
 

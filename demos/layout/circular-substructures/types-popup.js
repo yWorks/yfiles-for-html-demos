@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { NodeTypePanel } from '@yfiles/demo-utils/NodeTypePanel'
-import { colorSets, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { colorSets, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
 
 /**
  * The color sets for the eight different node types.

@@ -33,34 +33,25 @@ import {
   GraphComponent,
   GraphCopier,
   GraphEditorInputMode,
-  GraphInputMode,
-  GraphMLIOHandler,
   GraphOverviewComponent,
   GraphSnapContext,
   GridSnapTypes,
   HandlesRenderer,
   IArrow,
   IEdge,
-  IEnumerable,
-  IGraph,
-  IInputMode,
-  ILabel,
-  ILabelOwner,
-  IModelItem,
   INode,
   License,
   List,
   OrthogonalEdgeEditingContext,
   Point,
   PolylineEdgeStyle,
-  PopulateItemContextMenuEventArgs,
   Rect,
   RenderMode,
   SmartEdgeLabelModel,
   Stroke,
   TableNodeStyle
 } from '@yfiles/yfiles'
-import { OptionEditor } from '@yfiles/demo-resources/demo-option-editor'
+import { OptionEditor } from '@yfiles/demo-app/demo-option-editor'
 import { HierarchicalLayoutConfig } from './HierarchicalLayoutConfig'
 import { OrganicLayoutConfig } from './OrganicLayoutConfig'
 import { OrthogonalLayoutConfig } from './OrthogonalLayoutConfig'
@@ -88,13 +79,9 @@ import {
   createDemoNodeStyle,
   DemoStyleOverviewRenderer,
   initDemoStyles
-} from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import {
-  addNavigationButtons,
-  BrowserDetection,
-  finishLoading
-} from '@yfiles/demo-resources/demo-page'
+} from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, BrowserDetection, finishLoading } from '@yfiles/demo-app/demo-page'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
@@ -131,7 +118,7 @@ let customGraphSelected = false
 let customGraph = null
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
   // initialize the GraphOverviewComponent
@@ -512,7 +499,6 @@ async function onHashChanged() {
  * Checks whether the location hash specifies a valid sample, and loads that.
  */
 async function loadConfigurationFromLocationHash(windowLocationHash) {
-  // eslint-disable-next-line @typescript-eslint/prefer-regexp-exec
   const match = windowLocationHash.match(/#([\w_-]+)/)
   const hash = match && match.length > 1 ? match[1].toLowerCase().replace(/_/g, '-') : ''
 

@@ -68,7 +68,6 @@ export class PanelNodeStyle extends BaseClass(INodeStyle) {
 
   /**
    * Creates a new instance using the provided options.
-   * @param options Optional, including renderer, color, labelInsetsColor and insets
    */
   constructor(options) {
     super()

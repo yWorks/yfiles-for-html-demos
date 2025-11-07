@@ -26,18 +26,25 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
+import {
+  BaseClass,
+  IMarkupExtensionConverter,
+  MarkupExtension,
+  NodeStyleBase,
+  SvgVisual
+} from '@yfiles/yfiles'
 import { getNodeData } from '../data-types'
 
 /**
  * The node style used for the non-root nodes of the mind map.
  * Each node will be represented by a colored line based on its level in the mind map.
  */
-export class MindMapNodeStyle extends NodeStyleBase {
+export class MindMapNodeStyle extends BaseClass(NodeStyleBase, IMarkupExtensionConverter) {
   className
+
   /**
    * Creates a new instance of this style using the given class name.
-   * @param className The css class attributed to the node.
+   * @param className The CSS class attributed to the node.
    */
   constructor(className) {
     super()
@@ -85,7 +92,7 @@ export class MindMapNodeStyle extends NodeStyleBase {
   /**
    * Creates the line svg element and adds it to the container.
    */
-  render(renderContext, node, container) {
+  render(_renderContext, node, container) {
     const nodeData = getNodeData(node)
     const color = nodeData.color
     const size = node.layout.toSize()
@@ -100,4 +107,48 @@ export class MindMapNodeStyle extends NodeStyleBase {
 
     container.appendChild(line)
   }
+
+  /**
+   * Returns that this style can be converted.
+   */
+  canConvert(_context, _value) {
+    return true
+  }
+
+  /**
+   * Converts this style using {@link MindMapNodeStyleExtension}.
+   */
+  convert(_context, value) {
+    const mindMapNodeStyleExtension = new MindMapNodeStyleExtension()
+    mindMapNodeStyleExtension.className = value.className
+    return mindMapNodeStyleExtension
+  }
 }
+
+/**
+ * A markup extension that creates a {@link MindMapNodeStyle} instance configured with a specified class name.
+ */
+export class MindMapNodeStyleExtension extends MarkupExtension {
+  _className
+
+  /**
+   * Gets or sets the class name to be used by the MindMapNodeStyle.
+   */
+  get className() {
+    return this._className
+  }
+
+  set className(value) {
+    this._className = value
+  }
+
+  /**
+   * Provides a {@link MindMapNodeStyle} instance using the configured class name.
+   * @returns A new `MindMapNodeStyle` initialized with the specified class name.
+   */
+  provideValue(_serviceProvider) {
+    return new MindMapNodeStyle(this.className)
+  }
+}
+
+export default { MindMapNodeStyle, MindMapNodeStyleExtension }

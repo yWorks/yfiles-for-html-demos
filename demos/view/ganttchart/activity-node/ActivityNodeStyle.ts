@@ -65,8 +65,11 @@ export const patternFill: PatternFill = createPatternFill()
  * two parts with hatch fill that show lead/follow-up time, if such time exists.
  */
 export class ActivityNodeStyle extends NodeStyleBase<ActivityNodeStyleVisual> {
-  constructor(public color: string) {
+  color: string
+
+  constructor(color: string) {
     super()
+    this.color = color
   }
 
   /**

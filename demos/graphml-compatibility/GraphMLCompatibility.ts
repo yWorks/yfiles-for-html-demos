@@ -36,7 +36,7 @@
 
 import {
   type Constructor,
-  GraphMLIOHandler,
+  type GraphMLIOHandler,
   HashMap,
   IXamlNameMapper,
   type TypeMetadata,
@@ -109,12 +109,12 @@ export function configureGraphMLCompatibility(graphMLIOHandler: GraphMLIOHandler
     const xmlns = evt.xmlName.namespace
     const tag = evt.xmlName.localName
 
-    let newName = typeRenamings.get(evt.xmlName)
+    const newName = typeRenamings.get(evt.xmlName)
     if (newName) {
       if (newName instanceof XmlName) {
         const nameMapper = evt.context.lookup(IXamlNameMapper)
         //requery with the mapped Xml name
-        const type = nameMapper!.getClassForName(evt.context, <XmlName>newName)
+        const type = nameMapper!.getClassForName(evt.context, (newName) as XmlName)
         if (type) {
           evt.result = type
         }

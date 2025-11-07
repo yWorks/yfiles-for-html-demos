@@ -35,7 +35,6 @@ import {
   GraphModelManager,
   GroupNodeLabelModel,
   GroupNodeStyle,
-  IGraph,
   INode,
   LabelStyle,
   License,
@@ -44,13 +43,13 @@ import {
   WebGLGraphModelManager
 } from '@yfiles/yfiles'
 import { configureToolTips } from './ToolTipHelper'
-import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { BrowserDetection, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { colorSets, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { BrowserDetection, finishLoading } from '@yfiles/demo-app/demo-page'
 import { initializeSvgWebGlSwitchButton } from './svg-webgl-switch'
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
   configureFolding(graphComponent)
@@ -99,7 +98,7 @@ function createSampleGraph(graph) {
       folderIcon: 'triangle-up',
       // enable general CSS support by setting a CSS class
       // this is used for the rotation and hover animations of the folder/group icon
-      cssClass: 'group-node',
+      cssClass: 'demo-group-node',
       iconPosition: 'leading',
       iconBackgroundShape: 'square',
       iconForegroundFill: 'white',
@@ -119,7 +118,7 @@ function createSampleGraph(graph) {
       folderIcon: 'chevron-up',
       // enable general CSS support by setting a CSS class
       // this is used for the rotation and hover animations of the folder/group icon
-      cssClass: 'group-node',
+      cssClass: 'demo-group-node',
       iconForegroundFill: blue.stroke,
       iconPosition: 'trailing',
       tabPosition: 'top-leading',
@@ -141,7 +140,7 @@ function createSampleGraph(graph) {
       groupIcon: 'minus',
       // enable general CSS support by setting a CSS class
       // this is used for the hover animation of the folder/group icon
-      cssClass: 'group-node',
+      cssClass: 'demo-group-node',
       iconBackgroundFill: orange.nodeLabelFill,
       iconForegroundFill: orange.stroke,
       iconBackgroundShape: 'circle-solid',
@@ -162,7 +161,7 @@ function createSampleGraph(graph) {
       groupIcon: 'minus',
       // enable general CSS support by setting a CSS class
       // this is used for the hover animation of the folder/group icon
-      cssClass: 'group-node',
+      cssClass: 'demo-group-node',
       contentAreaFill: 'none',
       renderTransparentContentArea: true,
       iconForegroundFill: gold.fill,
@@ -179,7 +178,7 @@ function createSampleGraph(graph) {
       folderIcon: 'triangle-right',
       // enable general CSS support by setting a CSS class
       // this is used for the rotation and hover animations of the folder/group icon
-      cssClass: 'group-node',
+      cssClass: 'demo-group-node',
       iconPosition: 'leading',
       iconBackgroundShape: 'square',
       iconForegroundFill: 'white',
@@ -199,7 +198,7 @@ function createSampleGraph(graph) {
       folderIcon: 'chevron-down',
       // enable general CSS support by setting a CSS class
       // this is used for the rotation and hover animations of the folder/group icon
-      cssClass: 'group-node',
+      cssClass: 'demo-group-node',
       iconForegroundFill: blue.stroke,
       iconPosition: 'leading',
       tabPosition: 'bottom-trailing',
@@ -221,7 +220,7 @@ function createSampleGraph(graph) {
       groupIcon: 'minus',
       // enable general CSS support by setting a CSS class
       // this is used for the hover animation of the folder/group icon
-      cssClass: 'group-node',
+      cssClass: 'demo-group-node',
       iconPosition: 'leading',
       iconBackgroundFill: purple.nodeLabelFill,
       iconForegroundFill: purple.stroke,

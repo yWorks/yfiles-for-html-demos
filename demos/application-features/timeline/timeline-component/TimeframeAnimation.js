@@ -32,10 +32,9 @@ import { Animator, delegate, Point } from '@yfiles/yfiles'
  * Creates the animation of the timeline.
  */
 export class TimeframeAnimation {
-  timeframeRect
   timelineComponent
+  timeframeRect
   animator = null
-  startLocation = null
   timeframeListener = null
   animationEndedListener = null
   animating = false
@@ -62,9 +61,6 @@ export class TimeframeAnimation {
 
       // set animating flag
       this.animating = true
-
-      // store start location to be able to reset animation
-      this.startLocation = this.timeframeRect.topLeft
 
       // start animation
       void this.animator.animate(() => {

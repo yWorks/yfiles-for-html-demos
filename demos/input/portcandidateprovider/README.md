@@ -21,7 +21,7 @@ Add the custom implementation as decoration to the edge decorator of the graph t
 
 ## Things to Try
 
-Initiate edge creation by dragging from an unselected node (with the left mouse button pressed). Releasing the button finishes edge creation if the mouse is on a valid target and creates a bend otherwise.
+Start edge creation and observe which target port candidates are valid depending on the start port candidate.
 
 ## Node Types
 

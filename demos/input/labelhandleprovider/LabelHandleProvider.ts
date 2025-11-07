@@ -31,11 +31,11 @@ import {
   FreeEdgeLabelModel,
   FreeLabelModel,
   FreeNodeLabelModel,
-  IEnumerable,
-  IHandle,
+  type IEnumerable,
+  type IHandle,
   IHandleProvider,
-  IInputModeContext,
-  ILabel,
+  type IInputModeContext,
+  type ILabel,
   List,
   StretchNodeLabelModel
 } from '@yfiles/yfiles'
@@ -48,12 +48,15 @@ import { LabelResizeHandle } from './LabelResizeHandle'
  * label which can be resized and a {@link LabelRotateHandle} for each label which can be rotated.
  */
 export class LabelHandleProvider extends BaseClass(IHandleProvider) {
+  private readonly label: ILabel
+
   /**
    * Creates a new instance of {@link LabelHandleProvider}.
    * @param label The given label
    */
-  constructor(private readonly label: ILabel) {
+  constructor(label: ILabel) {
     super()
+    this.label = label
   }
 
   /**

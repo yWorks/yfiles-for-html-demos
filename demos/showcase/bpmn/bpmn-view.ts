@@ -29,12 +29,12 @@
 import {
   BaseClass,
   CanvasComponent,
-  ClickEventArgs,
+  type ClickEventArgs,
   Color,
   CompositeLabelModel,
   type Constructor,
   CreateEdgeInputMode,
-  Cursor,
+  type Cursor,
   DashStyle,
   EdgePathCropper,
   EdgeStyleBase,
@@ -47,41 +47,41 @@ import {
   FreeNodePortLocationModel,
   GeneralPath,
   GeometryUtilities,
-  GradientStop,
-  GraphComponent,
-  GraphEditorInputMode,
-  GraphMLIOHandler,
+  type GradientStop,
+  type GraphComponent,
+  type GraphEditorInputMode,
+  type GraphMLIOHandler,
   HandlePositions,
-  HandleType,
+  type HandleType,
   HashMap,
   HorizontalTextAlignment,
   IArrow,
   IBoundsProvider,
-  ICanvasContext,
+  type ICanvasContext,
   ICloneable,
   IColumn,
   IDragHandler,
-  IEdge,
+  type IEdge,
   IEdgePathCropper,
-  IEdgeStyle,
+  type IEdgeStyle,
   IEditLabelHelper,
-  IEnumerable,
-  IEnumerator,
+  type IEnumerable,
+  type IEnumerator,
   IGroupPaddingProvider,
   IHandle,
-  IHitTestable,
-  IInputModeContext,
-  ILabel,
+  type IHitTestable,
+  type IInputModeContext,
+  type ILabel,
   ILabelModel,
   ILabelModelParameter,
   ILabelModelParameterProvider,
-  ILabelOwner,
+  type ILabelOwner,
   ILabelStyle,
   ILabelStyleRenderer,
-  ILassoTestable,
+  type ILassoTestable,
   IList,
   ILookup,
-  IMarqueeTestable,
+  type IMarqueeTestable,
   INode,
   INodeSizeConstraintProvider,
   INodeStyle,
@@ -91,21 +91,21 @@ import {
   IObjectRenderer,
   IOrientedRectangle,
   IOrthogonalEdgeHelper,
-  IPoint,
-  IPort,
-  IPortCandidate,
-  IPortLocationModelParameter,
+  type IPoint,
+  type IPort,
+  type IPortCandidate,
+  type IPortLocationModelParameter,
   IPortStyle,
   IPortStyleRenderer,
-  IRenderContext,
+  type IRenderContext,
   IReshapeHandleProvider,
-  IRow,
+  type IRow,
   IShapeGeometry,
   IStripe,
   ITable,
-  IVisibilityTestable,
+  type IVisibilityTestable,
   IVisualCreator,
-  LabelEditingEventArgs,
+  type LabelEditingEventArgs,
   LabelStyle,
   LabelStyleBase,
   LinearGradient,
@@ -162,7 +162,6 @@ const Enum = (yfiles as any).lang.Enum
 let passiveSupported = false
 try {
   const opts = Object.defineProperty({}, 'passive', {
-    // eslint-disable-next-line getter-return
     get: (): void => {
       passiveSupported = true
     }
@@ -435,13 +434,15 @@ export const ActivityType = (Enum as any)('ActivityType', {
 })
 
 class ScalingLabelModel extends BaseClass(ILabelModel) {
+  insets: Insets
   private static _dummyLabel: SimpleLabel
   private static _dummyNode: SimpleNode
   private static _stretchParameter: ILabelModelParameter
   private static _stretchModel: StretchNodeLabelModel
 
-  constructor(public insets: Insets = Insets.EMPTY) {
+  constructor(insets: Insets = Insets.EMPTY) {
     super()
+    this.insets = insets
   }
 
   /**
@@ -1294,11 +1295,13 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel) {
 }
 
 class ChoreographyLabelModelLookup extends BaseClass(ILookup, ILabelModelParameterProvider) {
-  constructor(
-    private label: ILabel,
-    private model: ChoreographyLabelModel
-  ) {
+  private model: ChoreographyLabelModel
+  private label: ILabel
+
+  constructor(label: ILabel, model: ChoreographyLabelModel) {
     super()
+    this.label = label
+    this.model = model
   }
 
   lookup(type: Constructor): any | null {
@@ -1988,19 +1991,19 @@ class IconBuilder {
   }
 
   moveTo(x: number, y: number): void {
-    this.path && this.path.moveTo(x, y)
+    this.path?.moveTo(x, y)
   }
 
   lineTo(x: number, y: number): void {
-    this.path && this.path.lineTo(x, y)
+    this.path?.lineTo(x, y)
   }
 
   quadTo(cx: number, cy: number, x: number, y: number): void {
-    this.path && this.path.quadTo(cx, cy, x, y)
+    this.path?.quadTo(cx, cy, x, y)
   }
 
   cubicTo(c1x: number, c1y: number, c2x: number, c2y: number, x: number, y: number): void {
-    this.path && this.path.cubicTo(c1x, c1y, c2x, c2y, x, y)
+    this.path?.cubicTo(c1x, c1y, c2x, c2y, x, y)
   }
 
   arcTo(r: number, cx: number, cy: number, fromAngle: number, toAngle: number): void {
@@ -5414,9 +5417,9 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * This method is called by the framework to create a {@link Visual}
    * that will be included into the {@link IRenderContext}.
    * {@link CanvasComponent} uses this interface through the {@link IObjectRenderer}
-   * to populate the visual canvas object tree.
+   * to populate the visual render tree.
    * @param context The context that describes where the visual will be used.
-   * @returns The visual to include in the canvas object visual tree. This may be
+   * @returns The visual to include in the render tree. This may be
    *   `null`.
    * @see {@link IVisualCreator.updateVisual}
    * @see Specified by {@link IVisualCreator.createVisual}.
@@ -5445,7 +5448,7 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * @param oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
    * @returns `oldVisual`, if this instance modified the visual, or a new visual
-   *   that should replace the existing one in the canvas object visual tree.
+   *   that should replace the existing one in the render tree.
    * @see {@link IVisualCreator.createVisual}
    * @see {@link IObjectRenderer}
    * @see {@link CanvasComponent}
@@ -5718,10 +5721,10 @@ export class BpmnEdgeStyle extends EdgeStyleBase<BpmnEdgeStyleVisual> {
    * This method is called by the framework to create a {@link Visual}
    * that will be included into the {@link IRenderContext}.
    * {@link CanvasComponent} uses this interface through the {@link IObjectRenderer}
-   * to populate the visual canvas object tree.
+   * to populate the visual render tree.
    * @param context The context that describes where the visual will be used.
    * @param edge The edge for which the visual is created.
-   * @returns The visual to include in the canvas object visual tree. This may be
+   * @returns The visual to include in the render tree. This may be
    *   `null`.
    * @see {@link IVisualCreator.updateVisual}
    */
@@ -5771,7 +5774,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase<BpmnEdgeStyleVisual> {
    *   IVisualCreator#createVisual} method was called on this instance.
    * @param edge The edge for which the visual is updated.
    * @returns `oldVisual`, if this instance modified the visual, or a new visual
-   *   that should replace the existing one in the canvas object visual tree.
+   *   that should replace the existing one in the render tree.
    * @see {@link IVisualCreator.createVisual}
    * @see {@link IObjectRenderer}
    * @see {@link CanvasComponent}
@@ -7066,7 +7069,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * Creates a new visual for the label.
    * @param context The context that describes where the visual will be used.
    * @param label The label for which the visual is created.
-   * @returns The visual to include in the canvas object visual tree. This may be
+   * @returns The visual to include in the render tree. This may be
    *   `null`.
    * @see {@link IVisualCreator.updateVisual}
    * @see Specified by {@link IVisualCreator.createVisual}.
@@ -7131,7 +7134,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    *   IVisualCreator#createVisual} method was called on this instance.
    * @param label The label whose visual is updated.
    * @returns `oldVisual`, if this instance modified the visual, or a new visual
-   *   that should replace the existing one in the canvas object visual tree.
+   *   that should replace the existing one in the render tree.
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, label: ILabel): SvgVisual {
     this.configure(context, label)
@@ -7531,10 +7534,10 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    * This method is called by the framework to create a {@link Visual}
    * that will be included into the {@link IRenderContext}.
    * {@link CanvasComponent} uses this interface through the {@link IObjectRenderer}
-   * to populate the visual canvas object tree.
+   * to populate the visual render tree.
    * @param context The context that describes where the visual will be used.
    * @param label The label.
-   * @returns The visual to include in the canvas object visual tree. This may be
+   * @returns The visual to include in the render tree. This may be
    *   `null`.
    * @see {@link IVisualCreator.updateVisual}
    * @see Specified by {@link IVisualCreator.createVisual}.
@@ -7565,7 +7568,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    *   IVisualCreator#createVisual} method was called on this instance.
    * @param label The label.
    * @returns `oldVisual`, if this instance modified the visual, or a new visual
-   *   that should replace the existing one in the canvas object visual tree.
+   *   that should replace the existing one in the render tree.
    * @see {@link IVisualCreator.createVisual}
    * @see {@link IObjectRenderer}
    * @see {@link CanvasComponent}
@@ -7803,10 +7806,10 @@ export class PoolNodeStyle extends NodeStyleBase {
    * This method is called by the framework to create a {@link Visual}
    * that will be included into the {@link IRenderContext}.
    * {@link CanvasComponent} uses this interface through the {@link IObjectRenderer}
-   * to populate the visual canvas object tree.
+   * to populate the visual render tree.
    * @param renderContext The context that describes where the visual will be used.
    * @param node The node.
-   * @returns The visual to include in the canvas object visual tree. This may be
+   * @returns The visual to include in the render tree. This may be
    *   `null`.
    * @see {@link IVisualCreator.updateVisual}
    * @see Specified by {@link IVisualCreator.createVisual}.
@@ -7840,7 +7843,7 @@ export class PoolNodeStyle extends NodeStyleBase {
    *   IVisualCreator#createVisual} method was called on this instance.
    * @param node The node
    * @returns `oldVisual`, if this instance modified the visual, or a new visual
-   *   that should replace the existing one in the canvas object visual tree.
+   *   that should replace the existing one in the render tree.
    * @see {@link IVisualCreator.createVisual}
    * @see {@link IObjectRenderer}
    * @see {@link CanvasComponent}
@@ -8256,7 +8259,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * This method is called by the framework to create a
    * that will be included into the {@link IRenderContext}.
    * @param context The context that describes where the visual will be used.
-   * @returns The arrow visual to include in the canvas object visual tree.
+   * @returns The arrow visual to include in the render tree.
    * @see {@link IconArrow.updateVisual}
    * @see Specified by {@link IVisualCreator.createVisual}.
    */
@@ -8291,9 +8294,9 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * `null`.
    * @param context The context that describes where the visual will be used in.
    * @param oldVisual The visual instance that had been returned the last time the {@link
-   *   IconArrow#createVisual} method was called on this instance.
+   *   IconArrow.createVisual} method was called on this instance.
    * @returns the old visual if this instance modified the visual, or a new visual that
-   *   should replace the existing one in the canvas object visual tree.
+   *   should replace the existing one in the render tree.
    * @see {@link IconArrow.createVisual}
    * @see {@link IObjectRenderer}
    * @see {@link CanvasComponent}
@@ -9390,7 +9393,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * @returns an instance that is assignable to type or `null`
    * @see Specified by {@link ILookup.lookup}.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+
   lookup<T>(type: Constructor<any>): T | null {
     if (type === IGroupPaddingProvider && this.lastStyle != null) {
       return new GroupInsetsProvider(this.lastStyle) as T
@@ -9878,7 +9881,7 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * @returns an instance that is assignable to type or `null`
    * @see Specified by {@link ILookup.lookup}.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+
   lookup<T>(type: Constructor<any>): T | null {
     if (type === IEdgePathCropper) {
       return EventPortEdgeIntersectionCalculator.CalculatorInstance as T

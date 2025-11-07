@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { SimpleNode } from '@yfiles/yfiles'
+import {} from '@yfiles/yfiles'
 import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
 import { FlowNodeStyle } from '../FlowNode/FlowNodeStyle'
 import { createFlowNode, flowNodeVariants } from '../FlowNode/FlowNode'

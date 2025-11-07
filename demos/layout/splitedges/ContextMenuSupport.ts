@@ -29,23 +29,26 @@
 import {
   Arrow,
   ArrowType,
-  GraphComponent,
-  GraphEditorInputMode,
-  IBend,
+  type GraphComponent,
+  type GraphEditorInputMode,
+  type IBend,
   IEdge,
-  IModelItem,
+  type IModelItem,
   INode,
-  IPort,
-  Point,
+  type IPort,
+  type Point,
   PolylineEdgeStyle,
-  PopulateItemContextMenuEventArgs
+  type PopulateItemContextMenuEventArgs
 } from '@yfiles/yfiles'
 
 export class ContextMenuSupport {
-  constructor(
-    private readonly graphComponent: GraphComponent,
-    private readonly runLayout: () => Promise<void>
-  ) {}
+  private readonly runLayout: () => Promise<void>
+  private readonly graphComponent: GraphComponent
+
+  constructor(graphComponent: GraphComponent, runLayout: () => Promise<void>) {
+    this.graphComponent = graphComponent
+    this.runLayout = runLayout
+  }
 
   createContextMenu(): void {
     const inputMode = this.graphComponent.inputMode as GraphEditorInputMode

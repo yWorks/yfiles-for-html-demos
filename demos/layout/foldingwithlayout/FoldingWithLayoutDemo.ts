@@ -33,17 +33,17 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HierarchicalLayout,
-  IGraph,
+  type IGraph,
   License,
   Point,
   Size
 } from '@yfiles/yfiles'
 
 import GraphData from './resources/SampleData'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import { ExpandCollapseNavigationHelper } from './ExpandCollapseNavigationHandler'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent: GraphComponent = null!
 
@@ -52,7 +52,7 @@ let graphComponent: GraphComponent = null!
  * when opening or closing groups.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
   initializeGraph()

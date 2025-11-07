@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>04 Preferred Label Size - Tutorial: Label Style Implementation [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -134,9 +134,9 @@
           <h1>Preferred Label Size</h1>
           <div class="paragraph">
             <p>
-              <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase" target="_blank">LabelStyleBase</a> provides the abstract method
-              <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#LabelStyleBase-method-getPreferredSize" target="_blank">getPreferredSize</a>
-              that needs to be implemented to tell the framework how large the label prefers to be.
+              <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase" class="api" target="_blank">LabelStyleBase</a> provides the abstract method
+              <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#getPreferredSize" class="api" target="_blank">getPreferredSize</a> that needs to be
+              implemented to tell the framework how large the label prefers to be.
             </p>
           </div>
           <div class="paragraph">
@@ -150,17 +150,17 @@
           <div class="paragraph">
             <p>
               We adjust the implementation of
-              <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#LabelStyleBase-method-getPreferredSize" target="_blank">getPreferredSize</a>
-              to measure the label text and return the measured size.
-              <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport#TextRenderSupport-method-measureText" target="_blank">TextRenderSupport.measureText</a>
-              helps us to get the desired size. We add a small padding of 3 for each side.
+              <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#getPreferredSize" class="api" target="_blank">getPreferredSize</a> to measure the
+              label text and return the measured size.
+              <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport#measureText" class="api" target="_blank">TextRenderSupport.measureText</a> helps us
+              to get the desired size. We add a small padding of 3 for each side.
             </p>
           </div>
           <div class="listingblock">
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript">protected <span class="hljs-title function_">getPreferredSize</span>(<span class="hljs-attr">label</span>: <span class="hljs-title class_">ILabel</span>): <span class="hljs-title class_">Size</span> {
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">getPreferredSize</span>(<span class="hljs-attr">label</span>: <span class="hljs-title class_">ILabel</span>): <span class="hljs-title class_">Size</span> {
   <span class="hljs-comment">// measure the label text using the font</span>
   <span class="hljs-keyword">const</span> { width, height } = <span class="hljs-title class_">TextRenderSupport</span>.<span class="hljs-title function_">measureText</span>(label.<span class="hljs-property">text</span>, font)
   <span class="hljs-comment">// return the measured size plus a small padding</span>
@@ -185,7 +185,7 @@
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript">textElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;transform&#x27;</span>, <span class="hljs-string">`translate(<span class="hljs-subst">${padding}</span> <span class="hljs-subst">${padding}</span>)`</span>)</code></pre>
+              ><code class="language-typescript" data-lang="typescript">textElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;transform&#x27;</span>, <span class="hljs-string">`translate(<span class="hljs-subst">${padding}</span> <span class="hljs-subst">${padding}</span>)`</span>)</code></pre>
             </div>
           </div>
           <div class="admonitionblock note">
@@ -195,13 +195,13 @@
                   <div class="title">Note</div>
                 </td>
                 <td class="content">
-                  The <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModel" target="_blank">ILabelModel</a> may or may not take the preferred size into
+                  The <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModel" class="api" target="_blank">ILabelModel</a> may or may not take the preferred size into
                   account. Therefore, it is not guaranteed that the label will become as large as
-                  the preferred size. Most label models, like <a href="https://docs.yworks.com/yfileshtml/#/api/ExteriorLabelModel" target="_blank">ExteriorLabelModel</a>,
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/InteriorLabelModel" target="_blank">InteriorLabelModel</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/FreeLabelModel" target="_blank">FreeLabelModel</a> etc. will
-                  respect the value, though. Usually, only stretch label models like
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/InteriorStretchLabelModel" target="_blank">InteriorStretchLabelModel</a>, that fit the content into the owner
-                  node, will result in a different size.
+                  the preferred size. Most label models, like
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/ExteriorNodeLabelModel" class="api" target="_blank">ExteriorNodeLabelModel</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/InteriorNodeLabelModel" class="api" target="_blank">InteriorNodeLabelModel</a>,
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/FreeLabelModel" class="api" target="_blank">FreeLabelModel</a> etc. will respect the value, though. Usually, only
+                  stretch label models like <a href="https://docs.yworks.com/yfileshtml/#/api/StretchNodeLabelModel" class="api" target="_blank">StretchNodeLabelModel</a>, that fit the
+                  content into the owner node, will result in a different size.
                 </td>
               </tr>
             </table>
@@ -220,7 +220,7 @@
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

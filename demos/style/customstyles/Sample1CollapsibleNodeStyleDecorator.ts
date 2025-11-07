@@ -26,12 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  CollapsibleNodeStyleDecorator,
-  type INodeStyle,
-  IRenderContext,
-  Size
-} from '@yfiles/yfiles'
+import { CollapsibleNodeStyleDecorator, type INodeStyle, type IRenderContext, type Size } from '@yfiles/yfiles'
 
 /**
  * Provides a customized visualization of the collapse/expand button of a group node.

@@ -28,21 +28,21 @@
  ***************************************************************************/
 import {
   CssFill,
-  Fill,
+  type Fill,
   FreeNodePortLocationModel,
   GivenCoordinatesLayout,
   GivenCoordinatesLayoutData,
   IEdge,
-  ILabelOwner,
-  ILayoutAlgorithm,
+  type ILabelOwner,
+  type ILayoutAlgorithm,
   INode,
-  INodeStyle,
+  type INodeStyle,
   KeyEventArgs,
-  LabelStyle,
+  type LabelStyle,
   LayoutAnchoringPolicy,
   LayoutAnchoringStage,
   LayoutAnchoringStageData,
-  LayoutData,
+  type LayoutData,
   LayoutExecutor,
   Mapper,
   ModifierKeys,
@@ -65,7 +65,7 @@ import {
 } from './Preconditions'
 import type { ColorSet } from './ColorThemes'
 
-import { GraphWizardInputMode, WizardEventArgs } from './GraphWizardInputMode'
+import { type GraphWizardInputMode, WizardEventArgs } from './GraphWizardInputMode'
 
 /**
  * Creates a {@link WizardAction} that navigates to the next {@INode node} in the direction of

@@ -26,22 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  ICanvasContext,
   IHitTestable,
-  IInputModeContext,
   IMarqueeTestable,
-  INode,
-  INodeStyle,
-  IRenderContext,
   NodeStyleBase,
-  Point,
-  Rect,
   ShapeNodeStyle,
   SvgVisual,
-  SvgVisualGroup,
-  Visual
+  SvgVisualGroup
 } from '@yfiles/yfiles'
 
 /**

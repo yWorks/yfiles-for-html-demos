@@ -27,9 +27,9 @@
  **
  ***************************************************************************/
 import { NodeTypePanel } from '@yfiles/demo-utils/NodeTypePanel'
-import { colorSets, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { colorSets, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
 import type { GraphComponent, INode } from '@yfiles/yfiles'
-import type { ColorSetName } from '@yfiles/demo-resources/demo-colors'
+import type { ColorSetName } from '@yfiles/demo-app/demo-colors'
 import type { MultiPageNodeType } from './resources/SampleData'
 
 /**

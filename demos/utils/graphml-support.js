@@ -37,31 +37,28 @@ import { createConfiguredGraphMLIOHandler } from './FaultTolerantGraphMLIOHandle
 
 /**
  * Opens a GraphML file and loads its content into {@link graphComponent} using the {@link graphMLIOHandler}
- * @param graphComponent
- * @param graphMLIOHandler
  */
 export async function openGraphML(graphComponent, graphMLIOHandler) {
   try {
-    const { content, filename } = await openFile()
-    const fileExtension = getFileExtension(filename) ?? ''
-    switch (fileExtension.toLowerCase()) {
+    const { content, filename } = await openFile('.graphml')
+    const fileExtension = getFileExtension(filename)
+    switch (fileExtension?.toLowerCase()) {
       case 'graphml':
         await readGraphML(graphComponent, content, graphMLIOHandler)
-        //more cases like json could extend this
+        // more cases like json could extend this
         return
       default:
         alert(`This demo cannot open files of type ${fileExtension}.`)
     }
   } catch (err) {
-    alert(err)
+    if (err !== 'canceled') {
+      alert(err)
+    }
   }
 }
 /**
  * Serializes the graph {@link graphComponent} into graphML and saves it at a given location using
  * the {@link graphMLIOHandler}
- * @param graphComponent
- * @param fileName
- * @param graphMLIOHandler
  */
 export async function saveGraphML(
   graphComponent,

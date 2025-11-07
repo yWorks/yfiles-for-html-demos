@@ -28,10 +28,12 @@
  ***************************************************************************/
 /**
  * Creates a copy of the given item's current tag and replaces the given item's tag with the copy.
+ * A new instance is required for undo to work.
  */
 export function copyAndReplaceTag(item) {
   const oldTag = getTag(item)
 
+  // create a shallow copy of the old tag
   const newTag = { ...oldTag }
   newTag.components = []
   for (const component of oldTag.components) {

@@ -29,11 +29,11 @@
 import {
   BaseClass,
   FreeNodePortLocationModel,
-  IEdge,
+  type IEdge,
   IEdgeReconnectionPortCandidateProvider,
-  IEnumerable,
-  IInputModeContext,
-  IPortCandidate,
+  type IEnumerable,
+  type IInputModeContext,
+  type IPortCandidate,
   IPortCandidateProvider,
   List,
   PortCandidate

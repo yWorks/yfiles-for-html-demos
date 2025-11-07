@@ -28,8 +28,8 @@
  ***************************************************************************/
 import {
   HtmlVisual,
-  INode,
-  IRenderContext,
+  type INode,
+  type IRenderContext,
   NodeStyleBase,
   type TaggedHtmlVisual
 } from '@yfiles/yfiles'

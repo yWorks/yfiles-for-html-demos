@@ -38,12 +38,10 @@ import {
   GraphItemTypes,
   GraphViewerInputMode,
   HierarchicalNestingPolicy,
-  IGraph,
   IGroupPaddingProvider,
   ILabelStyle,
   INode,
   Insets,
-  IRenderContext,
   LabelStyle,
   LayoutExecutor,
   License,
@@ -62,8 +60,8 @@ import {
 } from '@yfiles/yfiles'
 
 import TreeMapData from './resources/TreeMapData'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Maps each node to a preferred size.
@@ -85,7 +83,7 @@ let masterGraph
  * Starts and sets up the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
   initializeInputModes()
@@ -378,7 +376,7 @@ async function updateGraph(root, clickedNode, isDrillDown = false) {
     }
   }
   const path = document.querySelector(`#path`)
-  path.innerHTML = pathString || 'yFiles-for-HTML-Complete'
+  path.innerHTML = pathString || 'yFiles-for-HTML'
 
   // register a highlight
   graph.decorator.nodes.highlightRenderer.addConstant(

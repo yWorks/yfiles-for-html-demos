@@ -28,14 +28,14 @@
  ***************************************************************************/
 import {
   DelegatingEdgeStyle,
-  GeneralPath,
+  type GeneralPath,
   GraphComponent,
   type IArrow,
   type IEdge,
   type IEdgeStyle,
-  IRenderContext,
+  type IRenderContext,
   SvgVisualGroup,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 /**
@@ -45,6 +45,7 @@ import {
  * behind plotting cubic Beziér curves based on point data.
  */
 export class FlowEdgeStyle extends DelegatingEdgeStyle {
+    private delegatingStyle: IEdgeStyle;
   private static cssClass = {
     container: 'flow-edge',
     basePath: 'flow-edge__main',
@@ -56,10 +57,11 @@ export class FlowEdgeStyle extends DelegatingEdgeStyle {
   private readonly isReconnecting: boolean
 
   constructor(
-    private delegatingStyle: IEdgeStyle,
+    delegatingStyle: IEdgeStyle,
     mode?: 'newEdge' | 'edgeReconnection'
   ) {
     super()
+      this.delegatingStyle = delegatingStyle;
     this.isDummyNewEdge = mode === 'newEdge'
     this.isReconnecting = mode === 'edgeReconnection'
   }
@@ -191,11 +193,15 @@ export class FlowEdgeStyle extends DelegatingEdgeStyle {
 
     if (path && outline && animation) {
       const pathData = path.getAttribute('d')
-      pathData && outline.setAttribute('d', pathData)
-      pathData && animation.setAttribute('d', pathData)
+      if (pathData) {
+        outline.setAttribute('d', pathData)
+        animation.setAttribute('d', pathData)
+      }
     }
 
-    groupElement && this.setClassModifiers(context, groupElement, edge)
+    if (groupElement) {
+      this.setClassModifiers(context, groupElement, edge)
+    }
 
     return visual
   }

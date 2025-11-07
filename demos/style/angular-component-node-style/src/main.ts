@@ -29,7 +29,7 @@
 import { bootstrapApplication } from '@angular/platform-browser'
 import { AppComponent } from './app/app.component'
 import { appComponentConfig } from './app/app.component.config'
-import licenseData from '../../../../lib/license.json'
+import licenseData from './license.json'
 import { License } from '@yfiles/yfiles'
 
 License.value = licenseData

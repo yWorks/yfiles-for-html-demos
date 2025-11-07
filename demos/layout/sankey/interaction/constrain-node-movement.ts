@@ -57,10 +57,12 @@ export function allowOnlyVerticalNodeMovement(graph: IGraph): void {
  * This implementation wraps the default position handler and delegates most of the work to it.
  */
 class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
+    private readonly handler: IPositionHandler | null;
   private lastLocation = Point.ORIGIN
 
-  constructor(private readonly handler: IPositionHandler | null) {
+  constructor(handler: IPositionHandler | null) {
     super()
+      this.handler = handler;
   }
 
   get location(): IPoint {

@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Large Graphs Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
     <link rel="stylesheet" href="resources/demo-style.css" />
   </head>
   <body>
@@ -99,7 +99,7 @@
 
         <p>
           This demo shows how to display large graphs with both good performance and high quality.
-          For this, the demo uses <em><a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2" target="_blank">WebGL</a></em> rendering on small zoom
+          For this, the demo uses <em><a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2" class="dguide" target="_blank">WebGL</a></em> rendering on small zoom
           levels and switches to high quality <em>SVG</em> rendering when the user zoomed-in above a
           certain threshold.
         </p>
@@ -117,6 +117,10 @@
         <p>
           Depending on the desired item visualization, using WebGL rendering for all zoom values is
           a valid option, too. You can disable SVG rendering completely in the toolbar.
+        </p>
+        <p>
+          You can use the FPS meter on the right side to benchmark the performance. Click the
+          animation buttons to run example animations.
         </p>
 
         <h2><span id="sampleName">Hierarchical</span> sample</h2>
@@ -189,7 +193,7 @@
         <h2>Troubleshooting</h2>
         <p>
           When encountering rendering issues or low frame rates, please refer to the
-          <em><a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2_troubleshooting" target="_blank">WebGL Troubleshooting</a></em> section in the
+          <em><a href="https://docs.yworks.com/yfileshtml/#/dguide/webgl2_troubleshooting" class="dguide" target="_blank">WebGL Troubleshooting</a></em> section in the
           Developer's guide.
         </p>
       </div>
@@ -200,6 +204,12 @@
       </div>
       <div id="renderingInfoPopup" style="pointer-events: none"></div>
       <div id="loadingPopup" style="pointer-events: none">Loading graph...</div>
+
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content" style="position: relative">
+          <div id="benchmarking"></div>
+        </div>
+      </aside>
     </div>
     <script type="module" crossorigin="anonymous" src="LargeGraphsDemo.ts" async></script>
   </body>

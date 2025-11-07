@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { CanvasComponent, INode, Matrix, Point } from '@yfiles/yfiles'
+import { type CanvasComponent, type INode, Matrix, Point } from '@yfiles/yfiles'
 import { IsometricNodeStyle } from './IsometricNodeStyle'
 
 /**
@@ -34,11 +34,13 @@ import { IsometricNodeStyle } from './IsometricNodeStyle'
  * projection.
  */
 export class IsometricNodeComparator {
+  private canvasComponent: CanvasComponent
   private projection = new Matrix()
   private leftFaceVisible = false
   private backFaceVisible = false
 
-  constructor(private canvasComponent: CanvasComponent) {
+  constructor(canvasComponent: CanvasComponent) {
+    this.canvasComponent = canvasComponent
     this.update()
   }
 

@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { showErrorDialog } from '../UI/showErrorDialog'
 import { GraphData } from './GraphData'
-import { GraphComponent } from '@yfiles/yfiles'
+import {} from '@yfiles/yfiles'
 
 export function initializeJsonIo(graphComponent) {
   setupButtons(graphComponent)

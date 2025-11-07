@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   EdgeStyleIndicatorRenderer,
   GraphBuilder,
@@ -34,8 +33,8 @@ import {
   GraphItemTypes,
   GraphViewerInputMode,
   IEdge,
-  IGraph,
-  IModelItem,
+  type IGraph,
+  type IModelItem,
   INode,
   License,
   NodeStyleIndicatorRenderer,
@@ -45,9 +44,9 @@ import {
 } from '@yfiles/yfiles'
 
 import GraphBuilderData from './resources/graph'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 const graphChooserBox = document.querySelector<HTMLSelectElement>('#graph-chooser-box')!
 
@@ -57,7 +56,7 @@ let graphComponent: GraphComponent
  * Bootstraps the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
@@ -78,7 +77,7 @@ async function run(): Promise<void> {
   // Enable the undo engine. This prevents undoing of the graph creation
   graphComponent.graph.undoEngineEnabled = true
 
-  // Zoom to a node that has "Sport" label
+  // Zoom to a node that has the "Sport" label
   await graphComponent.zoomToAnimated(1, new Point(1637.468, 1828))
 }
 
@@ -107,7 +106,7 @@ function initHighlightingStyle(graphComponent: GraphComponent): void {
       stroke: '3px #621B00',
       fill: 'transparent'
     }),
-    // With a padding for the decoration
+    // With padding for the decoration
     margins: 7
   })
 
@@ -123,13 +122,15 @@ function initHighlightingStyle(graphComponent: GraphComponent): void {
  * Initializes the input mode for this component.
  */
 function initializeInputMode(): void {
-  const inputMode = new GraphViewerInputMode()
+  const inputMode = new GraphViewerInputMode({
+    clickableItems: GraphItemTypes.NODE || GraphItemTypes.EDGE
+  })
   inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE || GraphItemTypes.EDGE
   // Implements the smart click navigation
   inputMode.addEventListener('item-left-clicked', async (evt): Promise<void> => {
     // Zooms to the suitable point
     await zoomToLocation(evt.item, evt.location)
-    // Highlights the concerned objects(node or edge with target and source node)
+    // Highlights the concerned objects (node or edge with target and source node)
     updateHighlight(evt.item)
   })
   graphComponent.inputMode = inputMode
@@ -141,17 +142,18 @@ function initializeInputMode(): void {
  * @param currentMouseClickLocation The argument that is used by the event.
  */
 async function zoomToLocation(item: IModelItem, currentMouseClickLocation: Point): Promise<void> {
-  // Get the point where we should zoom in
+  // Get the point to where we should zoom in
   const location = getFocusPoint(item)
+
   // Check the type of zooming
   const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
   if (selectedItem === 'Zoom to Mouse Location') {
     // The distance between where we clicked and the viewport center
     const offset = currentMouseClickLocation.subtract(graphComponent.viewport.center)
     // Zooms to the new location of the mouse
-    await graphComponent.zoomToAnimated(graphComponent.zoom, location!.subtract(offset))
+    await graphComponent.zoomToAnimated(graphComponent.zoom, location.subtract(offset))
   } else {
-    await graphComponent.zoomToAnimated(graphComponent.zoom, location!)
+    await graphComponent.zoomToAnimated(graphComponent.zoom, location)
   }
 }
 
@@ -160,7 +162,7 @@ async function zoomToLocation(item: IModelItem, currentMouseClickLocation: Point
  * @param item The element that we clicked.
  * @returns The point that we should zoom to.
  */
-function getFocusPoint(item: IModelItem): Point | null {
+function getFocusPoint(item: IModelItem): Point {
   if (item instanceof IEdge) {
     // If the source and the target node are in the view port, then zoom to the middle point of the edge
     const targetNodeCenter = item.targetNode.layout.center
@@ -186,7 +188,9 @@ function getFocusPoint(item: IModelItem): Point | null {
   } else if (item instanceof INode) {
     return item.layout.center
   }
-  return null
+
+  // Since the clickable items are only nodes and edges, we should never reach this point
+  return Point.ORIGIN
 }
 
 /**

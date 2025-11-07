@@ -26,22 +26,18 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  INode,
-  INodeSizeConstraintProvider,
-  InteriorNodeLabelModel,
-  Rect,
-  Size
-} from '@yfiles/yfiles'
+import { BaseClass, type INode, INodeSizeConstraintProvider, InteriorNodeLabelModel, Rect, Size } from '@yfiles/yfiles'
 
 /**
  * An {@link INodeSizeConstraintProvider} that returns the size of the
  * first label as minimum size. The maximum size is not limited.
  */
 export class GreenSizeConstraintProvider extends BaseClass(INodeSizeConstraintProvider) {
-  constructor(private readonly node: INode) {
+    private readonly node: INode;
+
+  constructor(node: INode) {
     super()
+      this.node = node;
   }
 
   /**

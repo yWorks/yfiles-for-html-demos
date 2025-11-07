@@ -37,23 +37,23 @@ import {
   HandlesRenderer,
   HierarchicalLayout,
   IEdge,
-  IGraph,
-  IModelItem,
+  type IGraph,
+  type IModelItem,
   INode,
   LayoutExecutor,
   License,
   NodeAlignmentPolicy,
   OrthogonalEdgeEditingContext,
-  PopulateItemContextMenuEventArgs,
+  type PopulateItemContextMenuEventArgs,
   RenderMode,
   SmartEdgeLabelModel,
   TextBoxPlacementPolicy
 } from '@yfiles/yfiles'
 
-import { DemoStyleOverviewRenderer, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { DemoStyleOverviewRenderer, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
-import { BrowserDetection, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { BrowserDetection, finishLoading } from '@yfiles/demo-app/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
@@ -66,7 +66,7 @@ let overviewComponent: GraphOverviewComponent
  * Runs the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // Initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')

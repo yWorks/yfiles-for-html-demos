@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>05 Label Placement - Tutorial: Basic Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -140,21 +140,21 @@
               <div class="paragraph">
                 <p>
                   This step shows how to control label placement with the help of
-                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-placing_labels" target="_blank">layout parameters</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-placing_labels" class="dguide" target="_blank">layout parameters</a>.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   The default label layout parameters can be configured in the graph&#8217;s
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph#IGraph-property-nodeDefaults" target="_blank">nodeDefaults</a> and
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph#IGraph-property-edgeDefaults" target="_blank">edgeDefaults</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph#nodeDefaults" class="api" target="_blank">nodeDefaults</a> and
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph#edgeDefaults" class="api" target="_blank">edgeDefaults</a>.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Place node labels in the node center</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// Place node labels in the node center</span>
 graph.<span class="hljs-property">nodeDefaults</span>.<span class="hljs-property">labels</span>.<span class="hljs-property">layoutParameter</span> = <span class="hljs-title class_">InteriorNodeLabelModel</span>.<span class="hljs-property">CENTER</span>
 
 <span class="hljs-comment">// Use a rotated layout for edge labels</span>
@@ -187,14 +187,14 @@ graph.<span class="hljs-property">edgeDefaults</span>.<span class="hljs-property
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// InteriorStretchLabelModel stretches the label width or height to match the node size</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// InteriorStretchLabelModel stretches the label width or height to match the node size</span>
 <span class="hljs-keyword">const</span> interiorStretchModel = <span class="hljs-keyword">new</span> <span class="hljs-title class_">StretchNodeLabelModel</span>({ <span class="hljs-attr">padding</span>: <span class="hljs-number">3</span> })
 graph.<span class="hljs-title function_">setLabelLayoutParameter</span>(
   label1,
   interiorStretchModel.<span class="hljs-title function_">createParameter</span>(<span class="hljs-string">&#x27;top&#x27;</span>)
 )
 
-<span class="hljs-comment">// ExteriorLabelModel places the label on discrete positions outside the node bounds</span>
+<span class="hljs-comment">// ExteriorLabelModel places the label in discrete positions outside the node bounds</span>
 <span class="hljs-keyword">const</span> exteriorLabelModel = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ExteriorNodeLabelModel</span>({ <span class="hljs-attr">margins</span>: <span class="hljs-number">10</span> })
 
 graph.<span class="hljs-title function_">setLabelLayoutParameter</span>(
@@ -211,9 +211,9 @@ graph.<span class="hljs-title function_">setLabelLayoutParameter</span>(
               </div>
               <div class="paragraph">
                 <p>
-                  You can also take a look at the <a href="" target="_blank">node-label-placement</a> and the
-                  <a href="../../layout/edgelabelplacement/" target="_blank">Edge Label Placement Demo</a> that show how to configure node and edge
-                  labels.
+                  You can also take a look at the <a href="../../showcase/layoutstyles/index.html?layout=labeling" class="demo" target="_blank">Layout Styles: Labeling Demo</a>,
+                  <a href="../../layout/node-labeling/" class="demo" target="_blank">Automatic Node Labeling Demo</a> and the <a href="../../layout/edgelabelplacement/" class="demo" target="_blank">Edge Label Placement Demo</a> that
+                  show how to configure node and edge labels.
                 </p>
               </div>
             </div>
@@ -232,7 +232,7 @@ graph.<span class="hljs-title function_">setLabelLayoutParameter</span>(
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

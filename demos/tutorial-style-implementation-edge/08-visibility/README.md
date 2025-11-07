@@ -19,7 +19,7 @@ yFiles for HTML will only render items that are considered visible in the viewpo
 
 If the edge visualization exceeds the edge path, it is considered invisible, even if the overflowing part of the visualization is in the viewport. yFiles for HTML will cause the item to disappear prematurely as it nears the borders of the viewport. This is the case if the edge is rendered with a thick stroke, for example.
 
-To make this more evident, the edge visualization in this step has been augmented with a large circle that exceeds the edge path. We create an SVG circle and add it to the center of the edge path:
+To make this more noticeable, the edge visualization in this step has been augmented with a large circle that exceeds the edge path. We create an SVG circle and add it to the center of the edge path:
 
 ```
 const circleLocation = generalPath.getPoint(0.5)

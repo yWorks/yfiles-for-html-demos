@@ -29,12 +29,12 @@
 import {
   GraphItemTypes,
   type GraphItemTypesConvertible,
-  INode,
-  Point,
+  type INode,
+  type Point,
   type PointConvertible,
   SnapCircle,
   SnapLine,
-  SnapReferenceVisualizationType,
+  type SnapReferenceVisualizationType,
   type SnapReferenceVisualizationTypeStringValues
 } from '@yfiles/yfiles'
 

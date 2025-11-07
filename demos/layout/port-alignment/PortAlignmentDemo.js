@@ -35,9 +35,7 @@ import {
   HierarchicalLayoutEdgeDescriptor,
   HierarchicalLayoutNodeDescriptor,
   HierarchicalLayoutRoutingStyle,
-  IEdge,
   LayoutExecutor,
-  LayoutGraph,
   LayoutOrientation,
   LayoutStageBase,
   License,
@@ -47,9 +45,9 @@ import {
   ShapeNodeStyle,
   Stroke
 } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
 import data from './resources/sample.json'
 
 let graphComponent
@@ -58,7 +56,7 @@ const togglePortAlignment = document.querySelector('#toggle-port-alignment')
 const toggleMinimumDistance = document.querySelector('#minimum-port-distance')
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the graph component and input mode
   graphComponent = new GraphComponent('#graphComponent')
@@ -198,8 +196,9 @@ export function buildGraph() {
  * Helper class to resize nodes during layout.
  */
 class NodeResizeStage extends LayoutStageBase {
-  width
   height
+  width
+
   constructor(width, height) {
     super()
     this.width = width

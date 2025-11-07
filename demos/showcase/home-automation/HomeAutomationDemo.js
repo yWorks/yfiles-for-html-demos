@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, License } from '@yfiles/yfiles'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { initializeSnapping } from './layout/initializeSnapping'
 import { initializeGrid } from './layout/initializeGrid'
 import { initializeToolbar } from './UI/initializeToolbar'
@@ -38,7 +38,7 @@ import { initializeTagExplorer } from './UI/initializeTagExplorer'
 import { configureGraphEvents } from './utils/configureGraphEvents'
 import { initializeTooltips } from './UI/initializeTooltips'
 import { initializeContextMenu } from './UI/initializeContextMenu'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { configureFlowNodes } from './FlowNode/FlowNode'
 import { configureFlowNodePorts } from './FlowNode/FlowNodePort'
 import { configureFlowEdges } from './FlowEdge/FlowEdge'
@@ -46,7 +46,7 @@ import { importGraphData, initializeJsonIo } from './ImportExportManager/ImportE
 import { SampleData } from './resources/weather-data'
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('graphComponent')
   configureInputMode(graphComponent)

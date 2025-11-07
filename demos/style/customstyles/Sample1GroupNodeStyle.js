@@ -32,15 +32,11 @@ import {
   GraphComponent,
   IGroupBoundsCalculator,
   IGroupPaddingProvider,
-  IInputModeContext,
-  INode,
   INodeSizeConstraintProvider,
   Insets,
-  IRenderContext,
   ITagOwner,
   Matrix,
   NodeStyleBase,
-  Point,
   Rect,
   Size,
   SvgVisual
@@ -263,10 +259,11 @@ export class Sample1GroupNodeStyle extends NodeStyleBase {
 }
 
 class NodeRenderDataCache {
-  color
-  width
-  height
   isCollapsed
+  height
+  width
+  color
+
   constructor(color, width, height, isCollapsed) {
     this.color = color
     this.width = width

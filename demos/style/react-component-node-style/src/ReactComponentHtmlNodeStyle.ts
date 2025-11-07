@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import type { INode, IRenderContext, TaggedHtmlVisual } from '@yfiles/yfiles'
-import { GraphComponent, HtmlVisual, NodeStyleBase, Visual } from '@yfiles/yfiles'
+import { GraphComponent, HtmlVisual, NodeStyleBase, type Visual } from '@yfiles/yfiles'
 
 import { createRoot, type Root } from 'react-dom/client'
 import { type ComponentClass, createElement, type FunctionComponent } from 'react'
@@ -43,10 +43,8 @@ type TagProvider<P> = (context: IRenderContext, node: INode) => P
 
 /**
  * The default implementation just uses the props from the tag of the item to be rendered.
- * @param context
- * @param node
  */
-const defaultTagProvider: TagProvider<any> = (context, node) => node.tag
+const defaultTagProvider: TagProvider<any> = (_, node) => node.tag
 
 /**
  * The interface of the props passed to the HTML react component for rendering the node contents.
@@ -69,11 +67,7 @@ type ReactComponentHtmlNodeStyleVisual<TTag> = TaggedHtmlVisual<HTMLDivElement, 
  * Helper method that will be used by the below style to release React resources when the
  * node gets removed from the yFiles scene graph.
  */
-function unmountReact(
-  context: IRenderContext,
-  removedVisual: Visual,
-  dispose: boolean
-): Visual | null {
+function unmountReact(_: IRenderContext, removedVisual: Visual, __: boolean): Visual | null {
   ;(removedVisual as ReactComponentHtmlNodeStyleVisual<unknown>).tag.root.unmount()
   return null
 }

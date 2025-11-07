@@ -26,8 +26,9 @@ In this example, we add a `fillColor` property to the style, that defines the co
  * Creates a new instance of this style using the given fill color.
  * @param fillColor The color used to fill nodes.
  */
-constructor(public fillColor?: string) {
+constructor(fillColor?: string) {
   super()
+  this.fillColor = fillColor
 }
 ```
 

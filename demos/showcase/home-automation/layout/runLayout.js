@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { createHierarchicalLayoutConfiguration } from './HierarchicalLayout'
-import { GraphComponent, LayoutExecutor } from '@yfiles/yfiles'
+import { LayoutExecutor } from '@yfiles/yfiles'
 
 export async function runLayout(graphComponent) {
   // Ensure that the LayoutExecutor class is not removed by build optimizers

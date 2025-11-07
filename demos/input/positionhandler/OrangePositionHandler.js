@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  ConstrainedPositionHandler,
-  IInputModeContext,
-  INode,
-  IPositionHandler,
-  MutableRectangle,
-  Point,
-  Rect
-} from '@yfiles/yfiles'
+import { ConstrainedPositionHandler, Rect } from '@yfiles/yfiles'
 
 /**
  * A {@link ConstrainedPositionHandler} that limits the movement of a
@@ -42,8 +34,8 @@ import {
  * another (the original) handler.
  */
 export class OrangePositionHandler extends ConstrainedPositionHandler {
-  boundaryRectangle
   node
+  boundaryRectangle
   boundaryPositionRectangle = null
 
   /**

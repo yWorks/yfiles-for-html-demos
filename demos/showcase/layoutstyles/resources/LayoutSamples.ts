@@ -51,16 +51,6 @@ import {
   SubgraphPlacement,
   SubstructureOrientation
 } from '@yfiles/yfiles'
-import {
-  LabelPlacementAlongEdge,
-  LabelPlacementOrientation,
-  LabelPlacementSideOfEdge,
-  OperationType
-} from '../LayoutConfiguration'
-import { SubgraphLayouts } from '../PartialLayoutConfig'
-import { BusMembership, PortSide } from '../PolylineEdgeRouterConfig'
-import { SubtreePlacer } from '../TreeLayoutConfig'
-import { CircularPartitioningPolicy } from '../CircularLayoutConfig'
 
 export type LayoutSample = { layout: string; presets: string[]; samples: SampleDiagram[] }
 
@@ -444,7 +434,7 @@ export const Presets: Record<string, Preset> = {
     label: 'Flowchart',
     settings: {
       edgeRoutingItem: HierarchicalLayoutRoutingStyle.CURVED,
-      labelPlacementAlongEdgeItem: LabelPlacementAlongEdge.AT_SOURCE,
+      labelPlacementAlongEdgeItem: 'at-source',
       edgeLabelingItem: EdgeLabelPlacement.INTEGRATED,
       highlightCriticalPath: true
     }
@@ -525,7 +515,7 @@ export const Presets: Record<string, Preset> = {
       'thus increase the readability in diagrams with a large number of connections.</p>',
     label: 'Single-Cycle Bundled',
     settings: {
-      partitioningPolicyItem: CircularPartitioningPolicy.SINGLE_CYCLE,
+      partitioningPolicyItem: 'single-cycle',
       edgeBundlingItem: true
     }
   },
@@ -548,7 +538,7 @@ export const Presets: Record<string, Preset> = {
       minNodeDistItem: 5,
       orientationItem: PartialLayoutOrientation.TOP_TO_BOTTOM,
       routingToSubgraphItem: PartialLayoutRoutingStyle.ORTHOGONAL,
-      subgraphLayoutItem: SubgraphLayouts.HIERARCHICAL,
+      subgraphLayoutItem: 'hierarchical',
       subgraphPlacementItem: SubgraphPlacement.BARYCENTER
     }
   },
@@ -561,7 +551,7 @@ export const Presets: Record<string, Preset> = {
       minNodeDistItem: 5,
       orientationItem: PartialLayoutOrientation.NONE,
       routingToSubgraphItem: PartialLayoutRoutingStyle.STRAIGHT_LINE,
-      subgraphLayoutItem: SubgraphLayouts.ORGANIC,
+      subgraphLayoutItem: 'organic',
       subgraphPlacementItem: SubgraphPlacement.BARYCENTER
     }
   },
@@ -574,7 +564,7 @@ export const Presets: Record<string, Preset> = {
       minNodeDistItem: 5,
       orientationItem: PartialLayoutOrientation.NONE,
       routingToSubgraphItem: PartialLayoutRoutingStyle.ORTHOGONAL,
-      subgraphLayoutItem: SubgraphLayouts.ORTHOGONAL,
+      subgraphLayoutItem: 'orthogonal',
       subgraphPlacementItem: SubgraphPlacement.BARYCENTER
     }
   },
@@ -587,7 +577,7 @@ export const Presets: Record<string, Preset> = {
       minNodeDistItem: 5,
       orientationItem: PartialLayoutOrientation.NONE,
       routingToSubgraphItem: PartialLayoutRoutingStyle.STRAIGHT_LINE,
-      subgraphLayoutItem: SubgraphLayouts.CIRCULAR,
+      subgraphLayoutItem: 'circular',
       subgraphPlacementItem: SubgraphPlacement.BARYCENTER
     }
   },
@@ -598,7 +588,7 @@ export const Presets: Record<string, Preset> = {
       ' places edge labels using the integrated labeling approach.</p>',
     label: 'Left/Right Ports & Labeling',
     settings: {
-      portSidesItem: PortSide.LEFT_RIGHT,
+      portSidesItem: 'left-right',
       edgeLabelingItem: EdgeLabelPlacement.INTEGRATED,
       routingStyleItem: EdgeRouterRoutingStyle.OCTILINEAR
     }
@@ -609,7 +599,7 @@ export const Presets: Record<string, Preset> = {
       '<p>All edges are routed on a single, common bus that must consist of ' +
       'only a single backbone segment.</p>',
     label: 'Single Bus',
-    settings: { busMembershipItem: BusMembership.SINGLE, allowMultipleBackboneSegmentsItem: false }
+    settings: { busMembershipItem: 'single', allowMultipleBackboneSegmentsItem: false }
   },
 
   'edge-router-with-buses': {
@@ -619,7 +609,7 @@ export const Presets: Record<string, Preset> = {
       ' "Buses" sample graph. In that sample, the color of the edges reflect the data tag and thus' +
       ' the bus membership of an edge.</p>',
     label: 'Custom Buses',
-    settings: { busMembershipItem: BusMembership.TAG }
+    settings: { busMembershipItem: 'tag' }
   },
 
   'edge-router-with-curves': {
@@ -640,25 +630,25 @@ export const Presets: Record<string, Preset> = {
       ' that delegates to two layered placers with different orientations, one arranging the subtree' +
       ' from left to right and the other from right to left.</p>',
     label: 'Mindmap',
-    settings: { subtreePlacerItem: SubtreePlacer.SINGLE_SPLIT_LAYERED, spacingItem: 50 }
+    settings: { subtreePlacerItem: 'single-split-layered', spacingItem: 50 }
   },
 
   scale3: {
     description: '<p>Scales the graph by 3.</p>',
     label: 'Scale x3',
-    settings: { operationItem: OperationType.SCALE, scaleFactorItem: 3 }
+    settings: { operationItem: 'scale', scaleFactorItem: 3 }
   },
 
   mirrorY: {
     description: '<p>Mirrors the diagram at the y-axis.</p>',
     label: 'Mirror Vertically',
-    settings: { operationItem: OperationType.MIRROR_Y_AXIS }
+    settings: { operationItem: 'mirror-y-axis' }
   },
 
   rotate45: {
     description: '<p>Rotates the graph by 45 degrees.</p>',
     label: 'Rotate 45°',
-    settings: { operationItem: OperationType.ROTATE, rotationAngleItem: 45 }
+    settings: { operationItem: 'rotate', rotationAngleItem: 45 }
   },
 
   'labeling-edges-sides': {
@@ -670,7 +660,7 @@ export const Presets: Record<string, Preset> = {
       placeNodeLabelsItem: false,
       placeEdgeLabelsItem: true,
       labelPlacementDistanceItem: 4,
-      labelPlacementSideOfEdgeItem: LabelPlacementSideOfEdge.LEFT_OR_RIGHT
+      labelPlacementSideOfEdgeItem: 'left-or-right'
     }
   },
 
@@ -682,9 +672,9 @@ export const Presets: Record<string, Preset> = {
     settings: {
       placeNodeLabelsItem: false,
       placeEdgeLabelsItem: true,
-      labelPlacementSideOfEdgeItem: LabelPlacementSideOfEdge.ON_EDGE,
-      labelPlacementOrientationItem: LabelPlacementOrientation.PARALLEL,
-      labelPlacementAlongEdgeItem: LabelPlacementAlongEdge.ANYWHERE
+      labelPlacementSideOfEdgeItem: 'on-edge',
+      labelPlacementOrientationItem: 'parallel',
+      labelPlacementAlongEdgeItem: 'anywhere'
     }
   },
 
@@ -696,9 +686,9 @@ export const Presets: Record<string, Preset> = {
     settings: {
       placeNodeLabelsItem: true,
       placeEdgeLabelsItem: true,
-      labelPlacementSideOfEdgeItem: LabelPlacementSideOfEdge.LEFT_OR_RIGHT,
-      labelPlacementOrientationItem: LabelPlacementOrientation.PARALLEL,
-      labelPlacementAlongEdgeItem: LabelPlacementAlongEdge.ANYWHERE
+      labelPlacementSideOfEdgeItem: 'left-or-right',
+      labelPlacementOrientationItem: 'parallel',
+      labelPlacementAlongEdgeItem: 'anywhere'
     }
   },
 
@@ -731,7 +721,7 @@ export const Presets: Record<string, Preset> = {
     description:
       '<p>This preset utilizes the compact subtree placer and places all nodes that are marked with <code>assistant</code> in their tag alongside the main branch as assistantNodes.</p>',
     label: 'Compact',
-    settings: { subtreePlacerItem: SubtreePlacer.COMPACT }
+    settings: { subtreePlacerItem: 'compact' }
   },
 
   dendrogram: {

@@ -27,14 +27,14 @@
  **
  ***************************************************************************/
 import {
-  AdjacencyGraphBuilder,
+  type AdjacencyGraphBuilder,
   type GraphBuilderItemEventArgs,
   GraphComponent,
   GraphViewerInputMode,
   HierarchicalLayout,
   HierarchicalLayoutData,
-  IGraph,
-  INode,
+  type IGraph,
+  type INode,
   InsideOutsidePortLabelModel,
   InteriorNodeLabelModel,
   LayoutExecutor,
@@ -46,9 +46,9 @@ import {
 
 import { createPortAwareAdjacencyGraphBuilder, setBuilderData } from './AdjacencyGraphBuilder'
 import GraphData from './graph-builder-data'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * This demo shows how to automatically build a graph from business data using
@@ -60,7 +60,7 @@ import { finishLoading } from '@yfiles/demo-resources/demo-page'
  * new elements while keeping the location of the unchanged items as stable as possible.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize graph component
   const graphComponent = new GraphComponent('graphComponent')

@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>02 Using Text Utilities - Tutorial: Label Style Implementation [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -136,7 +136,7 @@
             <p>
               In the previous step, we&#8217;ve learned how to render the label text with the DOM
               api. In this step, we&#8217;ll use the utility class
-              <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport" target="_blank">TextRenderSupport</a> to place text more conveniently.
+              <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport" class="api" target="_blank">TextRenderSupport</a> to place text more conveniently.
             </p>
           </div>
           <div class="admonitionblock note">
@@ -146,7 +146,7 @@
                   <div class="title">Note</div>
                 </td>
                 <td class="content">
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport" target="_blank">TextRenderSupport</a> adds important features that the SVG does not
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport" class="api" target="_blank">TextRenderSupport</a> adds important features that the SVG does not
                   support out-of-the-box, like text measuring, wrapping and trimming. We&#8217;ll
                   use more of these features later in this tutorial.
                 </td>
@@ -155,7 +155,7 @@
           </div>
           <div class="paragraph">
             <p>
-              To be able to work with TextRenderSupport, we need a <a href="https://docs.yworks.com/yfileshtml/#/api/Font" target="_blank">Font</a>. We add a
+              To be able to work with TextRenderSupport, we need a <a href="https://docs.yworks.com/yfileshtml/#/api/Font" class="api" target="_blank">Font</a>. We add a
               default font to the label style.
             </p>
           </div>
@@ -163,21 +163,21 @@
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> <span class="hljs-attr">font</span>: <span class="hljs-title class_">Font</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Font</span>({ <span class="hljs-attr">fontFamily</span>: <span class="hljs-string">&#x27;Arial&#x27;</span>, <span class="hljs-attr">fontSize</span>: <span class="hljs-number">12</span> })</code></pre>
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> <span class="hljs-attr">font</span>: <span class="hljs-title class_">Font</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Font</span>({ <span class="hljs-attr">fontFamily</span>: <span class="hljs-string">&#x27;Arial&#x27;</span>, <span class="hljs-attr">fontSize</span>: <span class="hljs-number">12</span> })</code></pre>
             </div>
           </div>
           <div class="paragraph">
             <p>
               We can then use
-              <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport#TextRenderSupport-method-addText" target="_blank">TextRenderSupport.addText</a>
-              to place the label text in the <code>&lt;text&gt;</code> element.
+              <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport#addText" class="api" target="_blank">TextRenderSupport.addText</a> to place the
+              label text in the <code>&lt;text&gt;</code> element.
             </p>
           </div>
           <div class="listingblock">
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript"><span class="hljs-title class_">TextRenderSupport</span>.<span class="hljs-title function_">addText</span>(textElement, label.<span class="hljs-property">text</span>, font)</code></pre>
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-title class_">TextRenderSupport</span>.<span class="hljs-title function_">addText</span>(textElement, label.<span class="hljs-property">text</span>, font)</code></pre>
             </div>
           </div>
           <div class="paragraph">
@@ -187,7 +187,7 @@
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript">textElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;transform&#x27;</span>, <span class="hljs-string">`translate(<span class="hljs-subst">${padding}</span> 0)`</span>)</code></pre>
+              ><code class="language-typescript" data-lang="typescript">textElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;transform&#x27;</span>, <span class="hljs-string">`translate(<span class="hljs-subst">${padding}</span> 0)`</span>)</code></pre>
             </div>
           </div>
           <div class="paragraph">
@@ -200,7 +200,7 @@
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> gElement = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(<span class="hljs-string">&#x27;http://www.w3.org/2000/svg&#x27;</span>, <span class="hljs-string">&#x27;g&#x27;</span>)
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> gElement = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(<span class="hljs-string">&#x27;http://www.w3.org/2000/svg&#x27;</span>, <span class="hljs-string">&#x27;g&#x27;</span>)
 gElement.<span class="hljs-title function_">appendChild</span>(textElement)
 
 <span class="hljs-comment">// move text to label location</span>
@@ -228,7 +228,7 @@ transform.<span class="hljs-title function_">applyTo</span>(gElement)
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

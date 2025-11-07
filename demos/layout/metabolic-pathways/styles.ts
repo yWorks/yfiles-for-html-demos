@@ -47,18 +47,18 @@ import {
   Size,
   VerticalTextAlignment
 } from '@yfiles/yfiles'
-import { type ColorSet, colorSets } from '@yfiles/demo-resources/demo-colors'
-import { getType, NodeTypes } from './data-types'
+import { type ColorSet, colorSets } from '@yfiles/demo-app/demo-colors'
+import { getType, type NodeTypes } from './data-types'
 
 /**
  * A mapping between node types and colors.
  */
 const predefinedColorSets = new Map<NodeTypes, ColorSet>([
-  [NodeTypes.PRODUCT, colorSets['demo-palette-54']],
-  [NodeTypes.REACTANT, colorSets['demo-palette-56']],
-  [NodeTypes.ENZYME, colorSets['demo-palette-59']],
+  ['product', colorSets['demo-palette-54']],
+  ['reactant', colorSets['demo-palette-56']],
+  ['enzyme', colorSets['demo-palette-59']],
   [
-    NodeTypes.REACTION,
+    'reaction',
     {
       fill: '#0b7189',
       stroke: 'black',
@@ -67,8 +67,8 @@ const predefinedColorSets = new Map<NodeTypes, ColorSet>([
       text: '#0e0e28'
     }
   ],
-  [NodeTypes.CO_REACTANT, colorSets['demo-palette-72']],
-  [NodeTypes.OTHER, colorSets['demo-palette-511']]
+  ['co-reactant', colorSets['demo-palette-72']],
+  ['other', colorSets['demo-palette-511']]
 ])
 
 /**
@@ -109,7 +109,7 @@ export function updateStyles(graph: IGraph): void {
     const colorSet = predefinedColorSets.get(type)!
     graph.setStyle(
       node,
-      type !== NodeTypes.REACTION
+      type !== 'reaction'
         ? new RectangleNodeStyle({
             fill: colorSet.nodeLabelFill,
             stroke: `2px solid ${colorSet.fill}`
@@ -120,14 +120,14 @@ export function updateStyles(graph: IGraph): void {
     if (node.labels.size > 0) {
       const label = node.labels.at(0)!
       graph.setStyle(label, markupLabelStyle)
-      if (type === NodeTypes.CO_REACTANT || type === NodeTypes.OTHER) {
+      if (type === 'co-reactant' || type === 'other') {
         graph.setLabelLayoutParameter(label, ExteriorNodeLabelModel.TOP)
       }
     }
 
-    if (type === NodeTypes.REACTION) {
+    if (type === 'reaction') {
       graph.setNodeLayout(node, new Rect(0, 0, 40, 40))
-    } else if (type === NodeTypes.CO_REACTANT || type === NodeTypes.OTHER) {
+    } else if (type === 'co-reactant' || type === 'other') {
       graph.setNodeLayout(node, new Rect(0, 0, 20, 20))
     }
   })
@@ -158,7 +158,7 @@ export function updateStyles(graph: IGraph): void {
       visited.add(edge)
     }
 
-    if (sourceType === NodeTypes.CO_REACTANT || targetType === NodeTypes.CO_REACTANT) {
+    if (sourceType === 'co-reactant' || targetType === 'co-reactant') {
       graph.setStyle(edge, getArcEdgeStyle(graph, edge))
     }
   })
@@ -168,7 +168,7 @@ export function updateStyles(graph: IGraph): void {
  * Returns an arc-edge style for edges attached to co-reactants by calculating the appropriate edge height.
  */
 export function getArcEdgeStyle(graph: IGraph, edge: IEdge): IEdgeStyle {
-  const hasArrow = getType(edge.sourceNode) !== NodeTypes.CO_REACTANT
+  const hasArrow = getType(edge.sourceNode) !== 'co-reactant'
   return new ArcEdgeStyle({
     height: getArcHeight(graph, edge),
     stroke: `3px dashed ${edgeStrokeColor}`,
@@ -189,12 +189,11 @@ function getArcHeight(graph: IGraph, edge: IEdge): number {
   const source = edge.sourceNode
   const target = edge.targetNode
 
-  const reaction = getType(source) === NodeTypes.REACTION ? source : target
+  const reaction = getType(source) === 'reaction' ? source : target
   const coReactants = graph
     .neighbors(reaction)
     .filter(
-      (neighbor) =>
-        getType(neighbor) === NodeTypes.CO_REACTANT && neighbor.layout.x > reaction.layout.x
+      (neighbor) => getType(neighbor) === 'co-reactant' && neighbor.layout.x > reaction.layout.x
     )
   return coReactants.size > 1 ? -40 : 40
 }

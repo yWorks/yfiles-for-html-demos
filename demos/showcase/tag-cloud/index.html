@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Tag Cloud Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -77,8 +77,10 @@
 
       <span class="demo-separator"></span>
 
-      <label>
-        Word Frequency:
+      <label for="frequencySlider" class="yplay__menu--select-label option-label"
+        >Word Frequency:</label
+      >
+      <div class="yplay__menu--slider-container option-element">
         <input
           id="frequencySlider"
           type="range"
@@ -86,11 +88,10 @@
           max="350"
           value="80"
           title="Filter words based on frequency"
-          class="labeled"
-          style="line-height: 24px; vertical-align: middle"
+          class="yplay__menu--slider option-element"
         />
-        <span id="frequencySliderLabel">80</span>
-      </label>
+        <span class="yplay__menu--slider-value" id="frequencySliderLabel">80</span>
+      </div>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">

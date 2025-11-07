@@ -29,7 +29,6 @@
 import {
   GraphComponent,
   GraphViewerInputMode,
-  IGraph,
   InsideOutsidePortLabelModel,
   LayoutExecutor,
   License,
@@ -37,15 +36,14 @@ import {
   PortPlacementPolicy,
   SingleLayerSubtreePlacer,
   Size,
-  TreeBuilder,
   TreeLayout
 } from '@yfiles/yfiles'
 
 import { createPortAwareTreeBuilder, setBuilderData } from './TreeBuilder'
 import TreeData from './tree-builder-data'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * This demo shows how to automatically build a graph from business data using
@@ -56,7 +54,7 @@ import { finishLoading } from '@yfiles/demo-resources/demo-page'
  * to reflect changes in the business data.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // Initialize graph component
   const graphComponent = new GraphComponent('graphComponent')

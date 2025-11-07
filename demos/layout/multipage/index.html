@@ -34,52 +34,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Multi-page Layout Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
-      #apply-layout {
-        width: 100%;
-        margin-top: 20px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        font-weight: bold;
-        text-transform: UPPERCASE;
-        color: white;
-        background-color: #4caf50;
-        border-color: transparent;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-
-      #apply-layout:hover {
-        background-color: #67bb6a;
-      }
-
-      #apply-layout:active {
-        background-color: #4caf50;
-      }
-
-      .demo-properties__settings {
-        display: grid;
-        gap: 10px;
-        align-items: center;
-        margin-bottom: 10px;
-      }
-
-      .option-label {
-        grid-column: 1 / 2;
-        align-self: center;
-      }
-
-      .option-input,
-      input[type='number'],
-      input[type='checkbox'] {
-        grid-column: 2 / 3;
-        align-self: center;
-      }
-
       #modelGraphComponent {
         height: 50%;
         background-color: white;
@@ -145,7 +104,7 @@
         <h2>About Multi-page Layout</h2>
 
         <p>
-          <a href="https://docs.yworks.com/yfileshtml/#/api/MultiPageLayout" target="_blank">MultiPageLayout</a> subdivides a large graph (called model graph) into a set
+          <a href="https://docs.yworks.com/yfileshtml/#/api/MultiPageLayout" class="api" target="_blank">MultiPageLayout</a> subdivides a large graph (called model graph) into a set
           of smaller graphs (called page graphs) such that the layout of each page graph fits a
           specified maximum page size. To guarantee that no information is lost when distributing
           the elements of the model over several pages, the algorithm introduces the following three
@@ -283,8 +242,8 @@
               Place Multiple Components on Single Page
             </label>
             <input id="placeMultipleComponentsOnSinglePage" type="checkbox" checked="" />
+            <button id="apply-layout" title="Layout" data-icon="yIconLayout">Layout</button>
           </div>
-          <button id="apply-layout" title="Layout" data-icon="yIconLayout">Layout</button>
 
           <h2>Model Graph</h2>
 

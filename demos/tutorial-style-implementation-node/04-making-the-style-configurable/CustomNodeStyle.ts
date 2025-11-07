@@ -46,12 +46,14 @@ type Cache = { width: number; height: number; fillColor: string }
 type CustomNodeStyleVisual = TaggedSvgVisual<SVGPathElement, Cache>
 
 export class CustomNodeStyle extends NodeStyleBase<CustomNodeStyleVisual> {
+  fillColor?: string
   /**
    * Creates a new instance of this style using the given fill color.
    * @param fillColor The color used to fill nodes.
    */
-  constructor(public fillColor?: string) {
+  constructor(fillColor?: string) {
     super()
+    this.fillColor = fillColor
   }
 
   protected createVisual(

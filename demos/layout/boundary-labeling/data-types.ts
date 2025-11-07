@@ -28,19 +28,7 @@
  ***************************************************************************/
 import type { INode } from '@yfiles/yfiles'
 
-/**
- * Describes the type of nodes used in this demo.
- */
-export enum MultiPageNodeType {
-  /**
-   * The nodes that represent the points on image.
-   */
-  POINT = 0,
-  /**
-   * The nodes that represent the label associated with the point.
-   */
-  LABEL = 1
-}
+export type MultiPageNodeType = 'point' | 'label'
 
 /**
  * The data that describes a point in this demo.
@@ -71,5 +59,5 @@ export function getPointData(node: INode): PointData {
  * Returns whether the given node represents a label node.
  */
 export function isLabel(node: INode): boolean {
-  return getPointData(node).type === MultiPageNodeType.LABEL
+  return getPointData(node).type === 'label'
 }

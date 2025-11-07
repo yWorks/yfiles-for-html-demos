@@ -33,13 +33,9 @@
  */
 import {
   BaseClass,
-  GraphComponent,
-  IInputModeContext,
-  INode,
-  IPoint,
   IPositionHandler,
   IReparentNodeHandler,
-  Point,
+  MoveInputMode,
   WaitInputMode
 } from '@yfiles/yfiles'
 import { LayoutHelper } from './LayoutHelper'
@@ -48,12 +44,12 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
   /**
    * The node we are currently moving.
    */
-  node = null
+  node
 
   /**
    * The original {@link IPositionHandler}.
    */
-  handler = null
+  handler
 
   /**
    * Creates space at the new location.
@@ -83,8 +79,12 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
    */
   initializeDrag(context) {
     this.reparentHandler = context.lookup(IReparentNodeHandler)
-    this.layoutHelper = new LayoutHelper(context.canvasComponent, this.node)
-    this.layoutHelper.initializeLayout()
+    if (context.inputMode instanceof MoveInputMode) {
+      this.layoutHelper = new LayoutHelper(context.canvasComponent, this.node)
+      this.layoutHelper.initializeLayout()
+    } else {
+      this.layoutHelper = null
+    }
     this.handler.initializeDrag(context)
   }
 
@@ -98,7 +98,7 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
 
     if (!this.reparentHandler || !this.reparentHandler.isReparentGesture(context, this.node)) {
       this.timeoutHandle = setTimeout(async () => {
-        await this.layoutHelper.runLayout()
+        await this.layoutHelper?.runLayout()
       }, 50)
     }
   }
@@ -116,7 +116,7 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
       waitInputMode.waiting = true
     }
 
-    await this.layoutHelper.cancelLayout()
+    await this.layoutHelper?.cancelLayout()
 
     if (waitInputMode) {
       waitInputMode.waiting = false
@@ -136,7 +136,7 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
       waitInputMode.waiting = true
     }
 
-    await this.layoutHelper.finishLayout()
+    await this.layoutHelper?.finishLayout()
 
     if (waitInputMode) {
       waitInputMode.waiting = false

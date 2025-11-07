@@ -21,14 +21,14 @@ This tutorial will guide you through creating your own node visualizations for y
 
 Note
 
-Implementing a custom node style from scratch is an advanced concept. In a lot of cases, other approaches like template styles, or decorating built-in styles with custom elements are sufficient. For more information on the topic of styling graph items, please have a look at [Node Styles](https://docs.yworks.com/yfileshtml/#/dguide/styles-node_styles).
+Implementing a custom node style from scratch is an advanced concept. In a lot of cases, other approaches like template styles or decorating built-in styles with custom elements are enough. For more information on the topic of styling graph items, please have a look at [Node Styles](https://docs.yworks.com/yfileshtml/#/dguide/styles-node_styles).
 
 ## Subclassing NodeStyleBase
 
 yFiles for HTML provides an abstract base class which provides the basic functionality to create a custom node style. We start with a custom subclass of [NodeStyleBase](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase).
 
 ```
-class CustomNodeStyle extends NodeStyleBase {
+export class CustomNodeStyle extends NodeStyleBase {
   protected createVisual(context: IRenderContext, node: INode): Visual | null {
     return null // TODO - create the SVG element
   }
@@ -64,8 +64,6 @@ rect.width.baseVal.value = width
 rect.height.baseVal.value = height
 ```
 
-Note
-
-It’s important that SvgVisual contains an SVG element in the 'http://www.w3.org/2000/svg' namespace. HTML elements are not supported.
+Besides [SvgVisual](https://docs.yworks.com/yfileshtml/#/api/SvgVisual), which can contain only an SVG element, there are other visuals as well, for example [HtmlVisual](https://docs.yworks.com/yfileshtml/#/api/HtmlVisual) for HTML elements.
 
 [02 Create A Custom Shape](../../tutorial-style-implementation-node/02-create-a-custom-shape/)

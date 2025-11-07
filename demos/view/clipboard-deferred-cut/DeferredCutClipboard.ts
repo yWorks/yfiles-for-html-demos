@@ -27,13 +27,13 @@
  **
  ***************************************************************************/
 import {
-  ClipboardOperationContext,
+  type ClipboardOperationContext,
   GraphClipboard,
-  IEnumerable,
+  type IEnumerable,
   type IEnumerableConvertible,
-  IGraph,
-  IModelItem,
-  INode,
+  type IGraph,
+  type IModelItem,
+  type INode,
   Point
 } from '@yfiles/yfiles'
 

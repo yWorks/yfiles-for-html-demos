@@ -28,20 +28,20 @@
  ***************************************************************************/
 import {
   BaseClass,
-  ConcurrencyController,
+  type ConcurrencyController,
   Cursor,
-  GraphComponent,
+  type GraphComponent,
   HandlePositions,
   IEdge,
-  IHandle,
-  IInputModeContext,
-  IModelItem,
+  type IHandle,
+  type IInputModeContext,
+  type IModelItem,
   INode,
   InputModeBase,
   IReshapeHandleProvider,
   Point,
   PointerButtons,
-  PointerEventArgs,
+  type PointerEventArgs,
   Rect
 } from '@yfiles/yfiles'
 

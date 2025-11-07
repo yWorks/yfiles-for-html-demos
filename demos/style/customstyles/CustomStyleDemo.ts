@@ -55,18 +55,18 @@ import { Sample2EdgeStyle, Sample2EdgeStyleExtension } from './Sample2EdgeStyle'
 import { Sample2NodeStyle, Sample2NodeStyleExtension } from './Sample2NodeStyle'
 import { Sample2Arrow, Sample2ArrowExtension } from './Sample2Arrow'
 import { applyDefaultStyles } from './style-utils'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   addNavigationButtons,
   addOptions,
   BrowserDetection,
   finishLoading
-} from '@yfiles/demo-resources/demo-page'
+} from '@yfiles/demo-app/demo-page'
 import { saveGraphML } from '@yfiles/demo-utils/graphml-support'
 import { Sample1CollapsibleNodeStyleDecorator } from './Sample1CollapsibleNodeStyleDecorator'
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('graphComponent')
   // Enable folding such that the group styles show an expand/collapse button

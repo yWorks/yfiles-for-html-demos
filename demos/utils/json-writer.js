@@ -57,7 +57,7 @@ export function getDefaultWriterOptions() {
 /**
  * Stores the {@link graph} as JSON object with the provided {@link options configuration object}.
  * This implementation always writes the structure of the graph, i.e., its nodes, groups, and edges.
- * @yjs:keep=nodeList,edgeList
+ * @yjs:keep = nodeList,edgeList
  */
 export function toJSON(graph, options) {
   const nodeIdProvider = createNodeIdProvider()

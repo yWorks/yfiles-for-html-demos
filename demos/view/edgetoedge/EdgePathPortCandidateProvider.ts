@@ -28,10 +28,10 @@
  ***************************************************************************/
 import {
   EdgePathPortLocationModel,
-  IEdge,
+  type IEdge,
   IEnumerable,
-  IInputModeContext,
-  IPortCandidate,
+  type IInputModeContext,
+  type IPortCandidate,
   PortCandidate,
   PortCandidateProviderBase
 } from '@yfiles/yfiles'
@@ -41,11 +41,14 @@ import {
  * to provide a number of port candidates along the path of the edge.
  */
 export class EdgePathPortCandidateProvider extends PortCandidateProviderBase {
+    private readonly edge: IEdge;
+
   /**
    * Create a new instance of this type.
    */
-  constructor(private readonly edge: IEdge) {
+  constructor(edge: IEdge) {
     super()
+      this.edge = edge;
   }
 
   /**

@@ -179,7 +179,7 @@ class NodeResizingStage extends LayoutStageBase {
   /**
    * Creates a new instance of NodeResizingStage.
    */
-  constructor(private readonly layout: ILayoutAlgorithm) {
+  constructor(layout: ILayoutAlgorithm) {
     super(layout)
     this.#layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
     this.#portBorderGapRatio = 0

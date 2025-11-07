@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  ICanvasContext,
-  IPort,
-  IRenderContext,
-  PortStyleBase,
-  Rect,
-  Size,
-  SvgVisual
-} from '@yfiles/yfiles'
+import { PortStyleBase, Rect, Size, SvgVisual } from '@yfiles/yfiles'
 import { SVGNS } from './Namespaces'
 
 /** the size of the port rendering */

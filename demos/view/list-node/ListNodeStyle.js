@@ -28,17 +28,11 @@
  ***************************************************************************/
 import {
   Fill,
-  IEnumerable,
-  IInputModeContext,
-  INode,
   INodeSizeConstraintProvider,
-  IPortCandidate,
   IPortCandidateProvider,
-  IRenderContext,
   List,
   NodeSizeConstraintProvider,
   NodeStyleBase,
-  Point,
   PortCandidate,
   PortCandidateProviderBase,
   PortCandidateValidity,
@@ -252,6 +246,7 @@ export class ListNodeStyle extends NodeStyleBase {
  */
 class ExistingAndFreePortCandidateProvider extends PortCandidateProviderBase {
   node
+
   /**
    * Creates a new instance.
    * @param node The given node.

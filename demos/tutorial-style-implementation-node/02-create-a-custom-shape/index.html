@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>02 Create A Custom Shape - Tutorial: Node Style Implementation [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -139,8 +139,8 @@
           <div class="paragraph">
             <p>
               Currently, the custom node style renders a rectangle. This is something yFiles for HTML
-              already offers out-of-the box with <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" target="_blank">ShapeNodeStyle</a> and
-              <a href="https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle" target="_blank">RectangleNodeStyle</a>. So let&#8217;s use something a little more
+              already offers out-of-the box with <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" class="api" target="_blank">ShapeNodeStyle</a> and
+              <a href="https://docs.yworks.com/yfileshtml/#/api/RectangleNodeStyle" class="api" target="_blank">RectangleNodeStyle</a>. So let&#8217;s use something a little more
               interesting, for example a typical card shape with a tab in the top left corner.
             </p>
           </div>
@@ -148,7 +148,7 @@
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript">protected <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">node</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">node</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
   <span class="hljs-keyword">const</span> { x, y, width, height } = node.<span class="hljs-property">layout</span>
 
   <span class="hljs-keyword">const</span> pathElement = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(
@@ -171,12 +171,11 @@
                   <div class="title">Note</div>
                 </td>
                 <td class="content">
-                  The
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-createVisual" target="_blank">createVisual</a>
-                  method can return anything SVG supports. You are not limited to
-                  <code>&lt;rect&gt;</code> or <code>&lt;path&gt;</code> here. This tutorial focuses
-                  on how yFiles for HTML works, so we try to keep it simple. For more information about
-                  the capabilities of SVG, take a look at
+                  The <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#createVisual" class="api" target="_blank">createVisual</a> method can return
+                  anything SVG supports. You are not limited to <code>&lt;rect&gt;</code> or
+                  <code>&lt;path&gt;</code> here. This tutorial focuses on how yFiles for HTML works, so
+                  we try to keep it simple. For more information about the capabilities of SVG, take
+                  a look at
                   <a href="https://www.w3.org/TR/SVG2/" target="_blank" rel="noopener"
                     >the SVG specification</a
                   >.
@@ -194,18 +193,18 @@
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> tabWidth = <span class="hljs-number">50</span>
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> tabWidth = <span class="hljs-number">50</span>
 <span class="hljs-keyword">const</span> tabHeight = <span class="hljs-number">10</span>
 
 <span class="hljs-comment">/**
  * Creates the path data for the SVG path element.
  */</span>
 <span class="hljs-keyword">function</span> <span class="hljs-title function_">createPathData</span>(<span class="hljs-params">
-  x: number,
-  y: number,
-  width: number,
-  height: number
-</span>): string {
+  <span class="hljs-attr">x</span>: <span class="hljs-built_in">number</span>,
+  <span class="hljs-attr">y</span>: <span class="hljs-built_in">number</span>,
+  <span class="hljs-attr">width</span>: <span class="hljs-built_in">number</span>,
+  <span class="hljs-attr">height</span>: <span class="hljs-built_in">number</span>
+</span>): <span class="hljs-built_in">string</span> {
   <span class="hljs-keyword">return</span> (
     <span class="hljs-string">`M <span class="hljs-subst">${x}</span> <span class="hljs-subst">${y}</span> `</span> +
     <span class="hljs-string">`h <span class="hljs-subst">${tabWidth}</span> `</span> +
@@ -231,7 +230,7 @@
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

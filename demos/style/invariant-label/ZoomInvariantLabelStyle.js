@@ -29,17 +29,10 @@
 import {
   BaseClass,
   FreeLabelModel,
-  ICanvasContext,
   IEdge,
-  IInputModeContext,
-  ILabel,
-  ILabelStyle,
   INode,
-  IOrientedRectangle,
   IRenderContext,
   ISelectionRenderer,
-  ISize,
-  ISvgDefsCreator,
   IVisualCreator,
   LabelStyleBase,
   Matrix,
@@ -49,9 +42,7 @@ import {
   Rect,
   SimpleLabel,
   Size,
-  SvgVisual,
-  SvgVisualGroup,
-  WebGLSupport
+  SvgVisualGroup
 } from '@yfiles/yfiles'
 import { OrientedRectangleRendererBase } from '@yfiles/demo-utils/OrientedRectangleRendererBase'
 
@@ -339,6 +330,7 @@ export class ZoomInvariantAboveThresholdLabelStyle extends ZoomInvariantLabelSty
 
 export class ZoomInvariantOutsideRangeLabelStyle extends ZoomInvariantLabelStyleBase {
   maxScale
+
   constructor(innerLabelStyle, zoomThreshold, maxScale) {
     super(innerLabelStyle, zoomThreshold)
     this.maxScale = maxScale
@@ -466,7 +458,6 @@ class DummyContext extends BaseClass(IRenderContext) {
     return this.innerContext.getDefsId(defsSupport)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup(type) {
     return this.innerContext.lookup(type)
   }
@@ -483,6 +474,7 @@ class DummyContext extends BaseClass(IRenderContext) {
 
 class ZoomInvariantSelectionRenderer extends OrientedRectangleRendererBase {
   fixedLayout
+
   constructor(fixedLayout) {
     super()
     this.fixedLayout = fixedLayout

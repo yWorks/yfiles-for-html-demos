@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import { Graph, HierarchicalLayout, LayoutExecutorAsyncWorker, License } from '@yfiles/yfiles'
 import express from 'express'
 
-const licenseData = JSON.parse(fs.readFileSync('../../../../lib/license.json', 'utf8'))
+const licenseData = JSON.parse(fs.readFileSync('./license.json', 'utf8'))
 License.value = licenseData
 
 function applyLayout(graph) {

@@ -26,9 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// eslint-disable-next-line import/no-named-as-default
 import {
-  CanvasComponent,
+  type CanvasComponent,
   Command,
   type Constructor,
   CreateEdgeInputMode,
@@ -36,18 +35,18 @@ import {
   GeneralPath,
   GraphComponent,
   IGroupPaddingProvider,
-  IInputModeContext,
+  type IInputModeContext,
   ILassoTestable,
-  ILookup,
-  INode,
+  type ILookup,
+  type INode,
   INodeSizeConstraintProvider,
   Insets,
-  IRenderContext,
+  type IRenderContext,
   MarkupExtension,
   MoveInputMode,
   NodeSizeConstraintProvider,
   NodeStyleBase,
-  Point,
+  type Point,
   Rect,
   Size,
   SvgVisual,
@@ -77,14 +76,16 @@ type Sample2GroupNodeStyleVisual = TaggedSvgVisual<SVGGElement, GroupNodeStyleCa
  * A custom demo group style whose colors match the given well-known CSS rule.
  */
 export class Sample2GroupNodeStyle extends NodeStyleBase<Sample2GroupNodeStyleVisual> {
+  cssClass: string | null
   isCollapsible = false
   solidHitTest = false
   private borderColor = '#0B7189'
   private folderFrontColor = '#9CC5CF'
   private folderBackColor = '#0B7189'
 
-  constructor(public cssClass: string | null = null) {
+  constructor(cssClass: string | null = null) {
     super()
+    this.cssClass = cssClass
   }
 
   /**

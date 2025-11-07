@@ -30,19 +30,19 @@
 import { html, type RefObject, useEffect, useRef } from '../../preact-loader'
 import type { ConnectionItem, DataItem } from '../../PreactDemo'
 import {
-  EdgesSource,
+  type EdgesSource,
   Graph,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
   HierarchicalLayout,
   LayoutExecutor,
-  NodesSource,
+  type NodesSource,
   PolylineEdgeStyle
 } from '@yfiles/yfiles'
 import { PreactComponentNodeStyle } from './PreactComponentNodeStyle'
 import NodeTemplate from './NodeTemplate'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 LayoutExecutor.ensure()
 

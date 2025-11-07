@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 import * as yfiles from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from './license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 const { GraphComponent, GraphEditorInputMode, License } = yfiles
 
@@ -36,7 +36,7 @@ const { GraphComponent, GraphEditorInputMode, License } = yfiles
 exposeYfiles()
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   const graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
   graphComponent.fitGraphBounds()

@@ -29,7 +29,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import { License } from '@yfiles/yfiles'
-import licenseData from '../../../../lib/license.json'
+import licenseData from './license.json'
 
 import './assets/main.css'
 import { vuetify } from './vuetify'

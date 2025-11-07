@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>10 Layout - Tutorial: Basic Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -141,7 +141,7 @@
               <div class="paragraph">
                 <p>
                   This step shows how to use the
-                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-layout" target="_blank">layout algorithms</a>
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-layout" class="dguide" target="_blank">layout algorithms</a>
                   in yFiles for HTML to automatically place the graph elements.
                 </p>
               </div>
@@ -151,7 +151,7 @@
                   library provides a large set of ready-to-use, highly customizable algorithms for
                   most scenarios. The purpose of this sample is to demonstrate how to run an
                   arbitrary layout algorithm. For an overview of the available layout styles, please
-                  see the <a href="../../showcase/layoutstyles/" target="_blank">Layout Styles Demo</a>.
+                  see the <a href="../../showcase/layoutstyles/" class="demo" target="_blank">Layout Styles Demo</a>.
                 </p>
               </div>
               <div class="sect2">
@@ -173,11 +173,11 @@
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> layout = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HierarchicalLayout</span>()
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> layout = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HierarchicalLayout</span>()
 graph.<span class="hljs-title function_">applyLayout</span>(layout)
 
 <span class="hljs-comment">// Fit the graph bounds since they changed for the new layout</span>
-graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code></pre>
+<span class="hljs-keyword">await</span> graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code></pre>
                   </div>
                 </div>
               </div>
@@ -186,13 +186,12 @@ graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code>
                 <div class="paragraph">
                   <p>
                     An automatic layout can also be applied with an animation. In this sample, we
-                    use
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-defaultmethod-applyLayoutAnimated" target="_blank">applyLayoutAnimated</a>
-                    to perform the layout, animate it, manage undo and adjust the content rectangle
-                    in one call.
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-defaultmethod-applyLayoutAnimated" target="_blank">applyLayoutAnimated</a>
-                    runs asynchronously and returns immediately yielding a Promise that we can await
-                    or use to catch errors.
+                    use <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#applyLayoutAnimated" class="api" target="_blank">applyLayoutAnimated</a> to
+                    perform the layout, animate it, manage undo and adjust the content rectangle in
+                    one call.
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#applyLayoutAnimated" class="api" target="_blank">applyLayoutAnimated</a> runs
+                    asynchronously and returns immediately yielding a Promise that we can await or
+                    use to catch errors.
                   </p>
                 </div>
                 <div class="paragraph">
@@ -206,7 +205,7 @@ graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code>
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Ensure that the LayoutExecutor class is not removed by build optimizers</span>
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// Ensure that the LayoutExecutor class is not removed by build optimizers</span>
 <span class="hljs-comment">// It is needed for the &#x27;applyLayoutAnimated&#x27; method in this demo.</span>
 <span class="hljs-title class_">LayoutExecutor</span>.<span class="hljs-title function_">ensure</span>() <span class="hljs-comment">// doing this somewhere in your code should suffice</span>
 
@@ -226,7 +225,7 @@ graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code>
                         applyLayoutAnimated is a convenience method that comes with a lot of
                         parameters that can be used to adjust various aspects of the layout
                         animation. For more customized scenarios, use class
-                        <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutor" target="_blank">LayoutExecutor</a>.
+                        <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutor" class="api" target="_blank">LayoutExecutor</a>.
                       </td>
                     </tr>
                   </table>
@@ -248,7 +247,7 @@ graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code>
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

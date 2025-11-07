@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GeneralPath,
-  GraphMLIOHandler,
-  ILookup,
-  Insets,
-  MarkupExtension,
-  Point,
-  Size
-} from '@yfiles/yfiles'
+import { GeneralPath, Insets, MarkupExtension, Point, Size } from '@yfiles/yfiles'
 
 import { StringTemplateNodeStyle } from './StringTemplateNodeStyle'
 import { StringTemplateLabelStyle } from './StringTemplateLabelStyle'

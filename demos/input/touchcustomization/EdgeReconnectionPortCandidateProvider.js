@@ -29,11 +29,7 @@
 import {
   BaseClass,
   FreeNodePortLocationModel,
-  IEdge,
   IEdgeReconnectionPortCandidateProvider,
-  IEnumerable,
-  IInputModeContext,
-  IPortCandidate,
   IPortCandidateProvider,
   List,
   PortCandidate
@@ -47,6 +43,7 @@ export class EdgeReconnectionPortCandidateProvider extends BaseClass(
   IEdgeReconnectionPortCandidateProvider
 ) {
   edge
+
   constructor(edge) {
     super()
     this.edge = edge

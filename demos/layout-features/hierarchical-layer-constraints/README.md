@@ -9,36 +9,32 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Hierarchical Layout with Layer Constraints - Layout Features
+# Hierarchical Layout with Layer Constraints
 
 <img src="../../../doc/demo-thumbnails/layout-layer-constraints.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-layer-constraints/).
 
-This demo shows how to customize the assignment of nodes to layers (layering) when using the [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
+This demo shows how to customize the assignment of nodes to layers (layering) when using [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
 
-### Layer constraints
+## Layer constraints
 
-Nodes 9 is placed in the topmost layer with the [placeAtTop](https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeAtTop) method.
+- Node 9 is placed in the topmost layer with the [placeAtTop](https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeAtTop) method.
+- Node 7 is placed in the bottommost layer with the [placeAtBottom](https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeAtBottom) method.
+- Node 0 is placed at least one layer below node 9 with the [placeInOrder](https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeInOrder) method.
+- Node 2 is placed in the same layer as node 0 with the [placeInSameLayer](https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeInSameLayer) method.
 
-Nodes 7 is placed in the bottommost layer with the [placeAtBottom](https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeAtBottom) method.
+## Things to Try
 
-Nodes 0 is placed at least one layer below node 9 with the [placeBelow](https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeBelow) method.
+Click the button in the toolbar to toggle between hierarchical layout with and without configured constraints.
 
-Nodes 2 is placed in the same layer as node 0 with the [placeInSameLayer](https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeInSameLayer) method.
+## Demos
 
-Click the button in the toolbar to toggle between [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) with and without configured constraints.
+- [Layer Constraints Demo](../../layout/layerconstraints/)
 
-### Code Snippet
+## Documentation
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-layer-constraints/HierarchicalLayerConstraints.ts).
-
-### Demos
-
-See the [Layer Constraints Demo](../../layout/layerconstraints/) for a more elaborate example of the constraints functionality.
-
-### Documentation
-
-See the [Constrained Node Sequencing](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#hierarchical_layout-constrained_layer_assignment) section in the Developer's Guide for an in-depth discussion of the relevant concepts.
-
-See the [LayerConstraintData](https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData) API documentation for detailed information on all available constraints.
+- [Constrained Layer Assignment](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_layer_assignment)
+- [Constrained Node Sequencing](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_node_sequencing)
+- [LayerConstraintData](https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData)
+- [HierarchicalLayoutData](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData)

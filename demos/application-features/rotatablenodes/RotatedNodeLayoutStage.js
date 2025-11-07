@@ -29,11 +29,6 @@
 import {
   EdgePortCandidates,
   GeneralPath,
-  IMapper,
-  IOrientedRectangle,
-  LayoutEdge,
-  LayoutGraph,
-  LayoutNode,
   LayoutStageBase,
   Mapper,
   Matrix,

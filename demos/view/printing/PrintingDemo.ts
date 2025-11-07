@@ -29,9 +29,9 @@
 import { GraphComponent, GraphEditorInputMode, License } from '@yfiles/yfiles'
 
 import { PrintingSupport } from '@yfiles/demo-utils/PrintingSupport'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { createSampleGraph } from './samples'
 import { initializeExportRectangle } from './export-rectangle/export-rectangle'
 import { initializeOptionPanel } from './option-panel/option-panel'
@@ -40,7 +40,7 @@ import { retainAspectRatio } from './aspect-ratio'
 import { DelayedNodeStyle } from './node-styles/delayed-node-style'
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the main graph component
   const graphComponent = new GraphComponent('graphComponent')

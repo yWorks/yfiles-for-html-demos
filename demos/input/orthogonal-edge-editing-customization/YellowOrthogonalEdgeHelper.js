@@ -38,7 +38,7 @@ export class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
   /**
    * Stores if a new bend has been added when moving a segment of an orthogonal edge.
    */
-  bendAddedState = BendAddedState.None
+  bendAddedState = 'None'
 
   constructor(edge) {
     super(edge)
@@ -52,19 +52,11 @@ export class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
    */
   shouldMoveEndImplicitly(inputModeContext, sourceEnd) {
     if (sourceEnd) {
-      this.bendAddedState = BendAddedState.AtSource
-      inputModeContext.graph.addBend(
-        this.edge,
-        this.edge.sourcePort.location,
-        BendAddedState.AtSource
-      )
+      this.bendAddedState = 'AtSource'
+      inputModeContext.graph.addBend(this.edge, this.edge.sourcePort.location, 0)
     } else {
-      this.bendAddedState = BendAddedState.AtTarget
-      inputModeContext.graph.addBend(
-        this.edge,
-        this.edge.targetPort.location,
-        BendAddedState.AtTarget
-      )
+      this.bendAddedState = 'AtTarget'
+      inputModeContext.graph.addBend(this.edge, this.edge.targetPort.location, -1)
     }
 
     return false
@@ -77,9 +69,9 @@ export class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
 
   cleanUpEdgeImpl(graph) {
     const bendAddedState = this.bendAddedState
-    this.bendAddedState = BendAddedState.None
+    this.bendAddedState = 'None'
 
-    if (bendAddedState == BendAddedState.None || this.edge.bends.size < 1) {
+    if (bendAddedState == 'None' || this.edge.bends.size < 1) {
       return
     }
 
@@ -95,7 +87,7 @@ export class YellowOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
  * @param bendAddedState Specifies which end of the given edge has to be cleaned up.
  */
 function cleanUpEdgeEnd(graph, edge, bendAddedState) {
-  const atSource = bendAddedState == BendAddedState.AtSource
+  const atSource = bendAddedState === 'AtSource'
 
   const port = atSource ? edge.sourcePort : edge.targetPort
   const geometry = port.owner.lookup(IShapeGeometry)
@@ -126,21 +118,9 @@ function cleanUpEdgeEnd(graph, edge, bendAddedState) {
   if (portX !== otherX && portY !== otherY) {
     const candidate = new Point(otherX, portY)
     if (geometry.isInside(candidate)) {
-      graph.addBend(edge, candidate, bendAddedState)
+      graph.addBend(edge, candidate, bendAddedState === 'AtSource' ? 0 : -1)
     } else {
-      graph.addBend(edge, new Point(portX, otherY), bendAddedState)
+      graph.addBend(edge, new Point(portX, otherY), bendAddedState === 'AtSource' ? 0 : -1)
     }
   }
 }
-
-/**
- * Important: Do not change the numeric values of {@link #AtSource} and {@link #AtTarget}.
- * Changing the numeric values will break the `addBend` logic in
- * {@link YellowOrthogonalEdgeHelper#shouldMoveEndImplicitly} and {@link #cleanUpEdgeEnd}.
- */
-var BendAddedState
-;(function (BendAddedState) {
-  BendAddedState[(BendAddedState['None'] = -2)] = 'None'
-  BendAddedState[(BendAddedState['AtTarget'] = -1)] = 'AtTarget'
-  BendAddedState[(BendAddedState['AtSource'] = 0)] = 'AtSource'
-})(BendAddedState || (BendAddedState = {}))

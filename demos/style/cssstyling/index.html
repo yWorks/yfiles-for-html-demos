@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>CSS Styling Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <!-- include stylesheet with styles for templates -->
     <link rel="stylesheet" href="template-styles.css" />
@@ -89,15 +89,17 @@
 
       <div class="demo-description__content">
         <h1>CSS Styling Demo</h1>
-
-        This demo shows how to style the built-in templates and UI elements of the
-        <em>yFiles for HTML</em>
-        library with CSS to match your color theme.
         <p>
-          There is a separate CSS-stylesheet which contains the more information about this demo.
+          This demo shows how to style the built-in templates and UI elements of the
+          <em>yFiles for HTML</em>
+          library with CSS to match your color theme.
         </p>
-
-        <h2>CSS-Styling for the following Elements</h2>
+        <p>
+          In this example, we specify the following set of colors in a separate CSS stylesheet. See
+          the sheet for guidance on how to target certain elements of the graph.
+        </p>
+        <div id="color-grid"></div>
+        <h2>CSS styling customized for the following elements</h2>
         <ul>
           <li>Viewport rectangle in the Overview</li>
           <li>Highlight when hovering a graph element</li>
@@ -112,8 +114,7 @@
           <li>Scroll-bars</li>
           <li>Label Editor</li>
         </ul>
-
-        <h2>CSS-Transitions for the following Elements</h2>
+        <h2>CSS transitions customized for the following elements</h2>
         <ul>
           <li>Node Creation</li>
           <li>Tooltips</li>
@@ -130,6 +131,6 @@
         <div id="graphComponent"></div>
       </div>
     </div>
-    <script type="module" crossorigin="anonymous" src="CSSStylingDemo.ts" async></script>
+    <script type="module" crossorigin="anonymous" src="./CssStylingDemo.ts" async></script>
   </body>
 </html>

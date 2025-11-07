@@ -29,11 +29,8 @@
 import {
   Font,
   GenericLayoutData,
-  IGraph,
-  INode,
   InteriorNodeLabelModel,
   LabelStyle,
-  LayoutGraph,
   LayoutStageBase,
   NodeDataKey,
   Size,

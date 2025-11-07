@@ -44,7 +44,7 @@ import {
   ShortestPath,
   TraversalDirection
 } from '@yfiles/yfiles'
-import { getMetabolicData, getType, NodeTypes } from './data-types'
+import { getMetabolicData, getType } from './data-types'
 
 /**
  * Configures the organic layout and adds the needed constraints to handle the nodes that have to
@@ -66,11 +66,9 @@ export function configurePentosePhosphateLayout(graphComponent: GraphComponent):
   // and to add margins to reaction nodes
   const organicLayoutData = new OrganicLayoutData({
     preferredEdgeLengths: (edge) =>
-      getType(edge.sourceNode) === NodeTypes.ENZYME || getType(edge.targetNode) === NodeTypes.ENZYME
-        ? 5
-        : 80,
+      getType(edge.sourceNode) === 'enzyme' || getType(edge.targetNode) === 'enzyme' ? 5 : 80,
     nodeMargins: (node) =>
-      getType(node) === NodeTypes.REACTION ? new Insets(60, 60, 15, 15) : Insets.EMPTY
+      getType(node) === 'reaction' ? new Insets(60, 60, 15, 15) : Insets.EMPTY
   })
 
   const graph = graphComponent.graph
@@ -80,7 +78,7 @@ export function configurePentosePhosphateLayout(graphComponent: GraphComponent):
   const reactionPath = alignReactionPath(graph, organicLayoutData)
 
   // determine the nodes that represent the reactions
-  const reactions = graph.nodes.filter((node) => getType(node) === NodeTypes.REACTION).toArray()
+  const reactions = graph.nodes.filter((node) => getType(node) === 'reaction').toArray()
   // place the nodes in layers
   const layers = placeNodesOnLayers(graph, reactions, organicLayoutData)
 
@@ -115,7 +113,7 @@ function alignReactionPath(
   // exclude the reaction nodes that contain more than two reactants - these do not need to
   // be vertically aligned since they are attached to four nodes
   const excludeMultiProductReactions = pathNodes.filter(
-    (node) => getType(node) !== NodeTypes.REACTION || !isMultipleProductReaction(graph, node)
+    (node) => getType(node) !== 'reaction' || !isMultipleProductReaction(graph, node)
   )
   // align the main path vertically and order its nodes based on their order in the path
   organicLayoutData.constraints.addAlignmentConstraint(ConstraintOrientation.VERTICAL, 0).source =
@@ -212,7 +210,7 @@ function placeNodesOnLayers(
  */
 function addCoReactantConstraints(graph: IGraph, organicLayoutData: OrganicLayoutData): void {
   // find the nodes representing the co-reactants
-  const coReactants = graph.nodes.filter((node) => getType(node) === NodeTypes.CO_REACTANT)
+  const coReactants = graph.nodes.filter((node) => getType(node) === 'co-reactant')
 
   // align vertically the co-reactants
   organicLayoutData.constraints.addAlignmentConstraint(ConstraintOrientation.VERTICAL).items =
@@ -260,7 +258,7 @@ function addCoReactantConstraints(graph: IGraph, organicLayoutData: OrganicLayou
  * These should be horizontally aligned with their associated reaction and placed after it.
  */
 function addEnzymeConstraints(graph: IGraph, organicLayoutData: OrganicLayoutData): void {
-  const enzymes = graph.nodes.filter((node) => getType(node) === NodeTypes.ENZYME)
+  const enzymes = graph.nodes.filter((node) => getType(node) === 'enzyme')
   enzymes.forEach((enzyme) => {
     const reaction = graph.neighbors(enzyme).at(0)!
     // align horizontally the reaction and the enzyme
@@ -376,8 +374,7 @@ function calculateMainReactionPath(graph: IGraph): ResultItemCollection<INode> {
     source: startNodes,
     sink: endNodes,
     subgraphNodes: {
-      excludes: (node: INode) =>
-        getType(node) === NodeTypes.ENZYME || getType(node) === NodeTypes.CO_REACTANT
+      excludes: (node: INode) => getType(node) === 'enzyme' || getType(node) === 'co-reactant'
     }
   })
   return shortestPath.run(graph).nodes
@@ -398,8 +395,7 @@ function calculateLayers(graph: IGraph, excludedEdges?: IEdge[]): BfsResult {
     coreNodes: startNodes,
     traversalDirection: TraversalDirection.SUCCESSOR,
     subgraphNodes: {
-      excludes: (node: INode) =>
-        getType(node) === NodeTypes.ENZYME || getType(node) === NodeTypes.CO_REACTANT
+      excludes: (node: INode) => getType(node) === 'enzyme' || getType(node) === 'co-reactant'
     },
     subgraphEdges: {
       excludes: (edge: IEdge) =>
@@ -413,7 +409,7 @@ function calculateLayers(graph: IGraph, excludedEdges?: IEdge[]): BfsResult {
  * Returns whether the given node is a product or a reactant.
  */
 function isProductOrReactant(node: INode): boolean {
-  return getType(node) === NodeTypes.PRODUCT || getType(node) === NodeTypes.REACTANT
+  return getType(node) === 'product' || getType(node) === 'reactant'
 }
 
 /**

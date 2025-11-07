@@ -34,7 +34,7 @@
  * At the moment, there is no compatibility functionality available for these styles.
  */
 
-import { GraphMLIOHandler, HashMap, IXamlNameMapper, XmlName } from '@yfiles/yfiles'
+import { HashMap, IXamlNameMapper, XmlName } from '@yfiles/yfiles'
 
 import {
   configureExtensions as configureLabelModelExtensions,
@@ -102,7 +102,7 @@ export function configureGraphMLCompatibility(graphMLIOHandler) {
     const xmlns = evt.xmlName.namespace
     const tag = evt.xmlName.localName
 
-    let newName = typeRenamings.get(evt.xmlName)
+    const newName = typeRenamings.get(evt.xmlName)
     if (newName) {
       if (newName instanceof XmlName) {
         const nameMapper = evt.context.lookup(IXamlNameMapper)

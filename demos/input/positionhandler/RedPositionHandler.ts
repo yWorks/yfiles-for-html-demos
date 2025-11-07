@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  IDragHandler,
-  IInputModeContext,
-  IPoint,
-  IPositionHandler,
-  Point
-} from '@yfiles/yfiles'
+import { BaseClass, IDragHandler, type IInputModeContext, type IPoint, IPositionHandler, Point } from '@yfiles/yfiles'
 
 /**
  * A position handler that prevents node movements. This implementation is

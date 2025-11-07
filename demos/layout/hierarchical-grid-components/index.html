@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Hierarchical Grid Components Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       input {
@@ -152,7 +152,7 @@
 
         <p>
           This demo shows how
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#gridComponents" target="_blank">grid components</a> in the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#gridComponents" class="api" target="_blank">grid components</a> in the
           hierarchical layout can result in much more compact arrangements.
         </p>
         <p>
@@ -170,13 +170,13 @@
           <dt>Balanced</dt>
           <dd>
             Each grid component is assigned a default
-            <a href="https://docs.yworks.com/yfileshtml/#/api/GridComponentDescriptor" target="_blank">GridComponentDescriptor</a>
+            <a href="https://docs.yworks.com/yfileshtml/#/api/GridComponentDescriptor" class="api" target="_blank">GridComponentDescriptor</a>
             with no further configuration.
           </dd>
           <dt>Leaves</dt>
           <dd>
             Each grid component uses a
-            <a href="https://docs.yworks.com/yfileshtml/#/api/GridComponentDescriptor" target="_blank">GridComponentDescriptor</a>
+            <a href="https://docs.yworks.com/yfileshtml/#/api/GridComponentDescriptor" class="api" target="_blank">GridComponentDescriptor</a>
             where only one node is allowed before and after the common bus segment by setting
             <code>maximumNodesAfterBus</code>
             and
@@ -186,7 +186,7 @@
           <dt>Squares</dt>
           <dd>
             The
-            <a href="https://docs.yworks.com/yfileshtml/#/api/GridComponentDescriptor" target="_blank">GridComponentDescriptor</a>
+            <a href="https://docs.yworks.com/yfileshtml/#/api/GridComponentDescriptor" class="api" target="_blank">GridComponentDescriptor</a>
             for each grid component is configured separately such that its elements will be arranged
             in a square.
           </dd>

@@ -29,10 +29,7 @@
 import {
   GraphEditorInputMode,
   GraphModelManager,
-  IInputModeContext,
-  InputModeItemEventArgs,
   List,
-  Point,
   SelectionIndicatorManager,
   WebGLGraphModelManager,
   WebGLGraphModelManagerRenderMode,
@@ -52,10 +49,10 @@ import {
  * constructor arguments.
  */
 export class RenderingTypesManager {
-  graphComponent
-  nodeStyleProvider
-  edgeStyleProvider
   nodeCreator
+  edgeStyleProvider
+  nodeStyleProvider
+  graphComponent
   listeners
 
   /**

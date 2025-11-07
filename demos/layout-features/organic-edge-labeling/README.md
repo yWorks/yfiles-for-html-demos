@@ -9,32 +9,36 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Organic Layout with Edge Labeling - Layout Features
+# Organic Layout with Edge Labeling
 
 <img src="../../../doc/demo-thumbnails/layout-organic-edge-labeling.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/organic-edge-labeling/).
 
-This demo shows how to configure the [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) for automatic edge label placement.
+This demo shows how to configure the [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) for automatic edge label placement.
 
-### Configuring label placement
+## Label Placement
 
-[Label models](https://docs.yworks.com/yfileshtml/#/api/ILabelModel) and their [parameters](https://docs.yworks.com/yfileshtml/#/api/ILabelModelParameter) determine the position of a label. For many interactive use cases, it makes sense to choose a model that restricts the available positions in some way. However, for automatic label placement the opposite is true: Models that do not impose restrictions on a label's position work best. For instance, [FreeEdgeLabelModel](https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel) would be a good choice for integrated label placement.
+[Label models](https://docs.yworks.com/yfileshtml/#/api/ILabelModel) and their [parameters](https://docs.yworks.com/yfileshtml/#/api/ILabelModelParameter) control where labels appear. For manuel placements, it's common to use models that limit possible positions. However, for automatic layout, it's best to use unrestricted models like [FreeEdgeLabelModel](https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel) for maximum flexibility.
 
-[PreferredPlacementDescriptor](https://docs.yworks.com/yfileshtml/#/api/PreferredPlacementDescriptor)s may be associated with labels to control automatic placement. Such a descriptor determines if the algorithm will place a label close to its owner edge's source or target node, next to or on the edge, or even rotate the label. For better results when using [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout), both the side and angle of the labels has to be specified relative to the edge.
+You can further guide label placement using [EdgeLabelPreferredPlacement](https://docs.yworks.com/yfileshtml/#/api/EdgeLabelPreferredPlacement), which specifies preferences such as placing labels near the edge's source or target, on a particular side, or with a specific rotation. For better results when using organic layout, both the side and angle of the labels relative to the edge path should be specified.
 
-Note that self-loops and parallel edges are handled by [SelfLoopRouter](https://docs.yworks.com/yfileshtml/#/api/SelfLoopRouter) and [ParallelEdgeRouter](https://docs.yworks.com/yfileshtml/#/api/ParallelEdgeRouter) respectively. Thus, labels of such edges are not considered by the [organic layout algorithm](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout). To place the labels of these edges, a [generic labeling](https://docs.yworks.com/yfileshtml/#/api/Labeling) algorithm has to be applied as a post-processing step.
+Note that self-loops and parallel edges are handled by [SelfLoopRouter](https://docs.yworks.com/yfileshtml/#/api/SelfLoopRouter) and [ParallelEdgeRouter](https://docs.yworks.com/yfileshtml/#/api/ParallelEdgeRouter) respectively. Thus, labels of such edges are not considered by the organic layout algorithm. To place the labels of these edges, a [GenericLabeling](https://docs.yworks.com/yfileshtml/#/api/GenericLabeling) algorithm has to be applied as a post-processing step.
 
-### Code Snippet
+## Things to Try
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/organic-edge-labeling/OrganicEdgeLabeling.ts).
+- Observe "Source" and "Parallel Source" labels near the edge's source node.
+- Observe "Target" and "Parallel Target" labels near the target node.
+- Check how labels on parallel edges and self-loops are handled by the generic labeling algorithm.
 
-### Demos
+## Demos
 
-See the [Edge Label Placement Demo](../../layout/edgelabelplacement/) for a more elaborate example regarding automatic edge label placement.
+- [Edge Label Placement Demo](../../layout/edgelabelplacement/)
 
-### Documentation
+## Documentation
 
-The [Labeling](https://docs.yworks.com/yfileshtml/#/dguide/organic_layout#_labeling) and [Automatic Label Placement](https://docs.yworks.com/yfileshtml/#/dguide/label_placement) sections in the Developer's Guide contain in-depth discussions of the relevant concepts.
-
-See the [PreferredPlacementDescriptor](https://docs.yworks.com/yfileshtml/#/api/PreferredPlacementDescriptor) API documentation for detailed information on all available placement options.
+- [Labeling](https://docs.yworks.com/yfileshtml/#/dguide/organic_layout#_labeling_3)
+- [Automatic Label Placement](https://docs.yworks.com/yfileshtml/#/dguide/label_placement)
+- [EdgeLabelPreferredPlacement](https://docs.yworks.com/yfileshtml/#/api/EdgeLabelPreferredPlacement)
+- [GenericLabeling](https://docs.yworks.com/yfileshtml/#/api/GenericLabeling)
+- [FreeEdgeLabelModel](https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel)

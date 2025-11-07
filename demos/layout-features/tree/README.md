@@ -9,28 +9,28 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Basic Tree Layout - Layout Features
+# Basic Tree Layout
 
 <img src="../../../doc/demo-thumbnails/layout-tree.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/tree/).
 
-This demo shows basic configuration options for the [Tree Layout](https://docs.yworks.com/yfileshtml/#/api/TreeLayout).
+This demo showcases basic configuration options for the [TreeLayout](https://docs.yworks.com/yfileshtml/#/api/TreeLayout) algorithm.
 
-- The global [layout orientation](https://docs.yworks.com/yfileshtml/#/api/TreeLayout#layoutOrientation) is changed to left-to-right to get a horizontal tree layout.
-- A [DefaultSubtreePlacer](https://docs.yworks.com/yfileshtml/#/api/DefaultSubtreePlacer) is specified as placer for the tree nodes, its distance settings are configured to get a rather wide spacing between elements.
-- The [port assignment](https://docs.yworks.com/yfileshtml/#/api/TreeLayout#defaultPortAssignmer) is configured such that the edges are distributed at the node border and the segments are forced to keep some distance in this example (via [minimumChannelSegmentDistance](https://docs.yworks.com/yfileshtml/#/api/DefaultSubtreePlacer#minimumChannelSegmentDistance)). By default, the tree layout groups the edge segments and places the ports in the node center.
-- Edges from the parent to the child nodes are ordered with respect to the label text of the child nodes by defining an appropriate [edge comparer](https://docs.yworks.com/yfileshtml/#/api/TreeLayoutData#outEdgeComparers) function.
+It highlights the configuration of various aspects, including:
 
-### Code Snippet
+- Layout [orientation](https://docs.yworks.com/yfileshtml/#/api/TreeLayout#layoutOrientation) changed to left-to-right for horizontal flow
+- [Subtree placer](https://docs.yworks.com/yfileshtml/#/api/TreeLayout#defaultSubtreePlacer) configuration for wide spacing between elements
+- [Port assignment](https://docs.yworks.com/yfileshtml/#/api/TreeLayout#defaultPortAssigner) configured to distribute edges at node borders
+- Edge ordering based on child node label text using [edge comparers](https://docs.yworks.com/yfileshtml/#/api/TreeLayoutData#childOrder)
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/tree/Tree.ts).
+## Demos
 
-### Demos
+- [Tree Layout Demo](../../layout/tree/)
+- [Layout Styles: Tree Demo](../../showcase/layoutstyles/index.html?layout=tree&sample=tree)
 
-- The [Tree Layout Demo](../../layout/tree/) shows complex configurations of [ISubtreePlacer](https://docs.yworks.com/yfileshtml/#/api/ISubtreePlacer) instances to further customize the node placement.
-- More features of the tree layout and supported use cases are shown in the [Layout Styles: Tree Demo](../../showcase/layoutstyles/index.html?layout=tree&sample=tree).
+## Documentation
 
-### Documentation
-
-The Developer's Guide provides more in-depth information about the [Tree Layout](https://docs.yworks.com/yfileshtml/#/dguide/tree_layout) provided by yFiles.
+- [Tree layout algorithm](https://docs.yworks.com/yfileshtml/#/dguide/tree_layout)
+- [TreeLayout](https://docs.yworks.com/yfileshtml/#/api/TreeLayout)
+- [TreeLayoutData](https://docs.yworks.com/yfileshtml/#/api/TreeLayoutData)

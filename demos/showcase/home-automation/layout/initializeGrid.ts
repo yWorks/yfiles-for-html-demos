@@ -27,15 +27,15 @@
  **
  ***************************************************************************/
 import {
-  GraphComponent,
-  GraphEditorInputMode,
-  GraphSnapContext,
+  type GraphComponent,
+  type GraphEditorInputMode,
+  type GraphSnapContext,
   GridConstraintProvider,
   GridInfo,
   GridRenderer,
   GridSnapTypes,
   GridStyle,
-  INode,
+  type INode,
   Stroke
 } from '@yfiles/yfiles'
 

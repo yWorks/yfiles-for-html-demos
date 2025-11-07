@@ -61,6 +61,7 @@ type BoundsChangedListener = (bounds: Rect) => void
  * The rectangular window element of the timeline with support for user interaction.
  */
 export class TimeframeRectangle {
+  private readonly graphComponent: GraphComponent
   readonly rect: MutableRectangle = new MutableRectangle(0, 0, 0, 0)
 
   private readonly visual: RectangleVisual
@@ -72,10 +73,8 @@ export class TimeframeRectangle {
 
   private boundsChangedListener: BoundsChangedListener | null = null
 
-  constructor(
-    private readonly graphComponent: GraphComponent,
-    private readonly style?: TimeFrameStyle
-  ) {
+  constructor(graphComponent: GraphComponent, style?: TimeFrameStyle) {
+    this.graphComponent = graphComponent
     // the actual visualization of the timeframe
     this.visual = new RectangleVisual(this.rect, style)
 
@@ -171,17 +170,19 @@ export class TimeframeRectangle {
 type Cache = SvgVisual & { cache?: { size: Size; location: Point } }
 
 class RectangleVisual extends BaseClass(IVisualCreator) {
+  private readonly style?: TimeFrameStyle
+  rectangle: MutableRectangle
+
   /**
    * Creates a new instance of RectangleVisual.
    *
    * @param rectangle The rectangle that determines the bounds of this visual object.
    * @param style The styling for the rectangle
    */
-  constructor(
-    public rectangle: MutableRectangle,
-    private readonly style?: TimeFrameStyle
-  ) {
+  constructor(rectangle: MutableRectangle, style?: TimeFrameStyle) {
     super()
+    this.rectangle = rectangle
+    this.style = style
   }
 
   /**
@@ -242,13 +243,14 @@ class RectangleVisual extends BaseClass(IVisualCreator) {
 }
 
 class RectanglePositionHandler extends BaseClass(IPositionHandler) {
+  limits: Rect
+  private readonly rectangle: IMutableRectangle
   private initialPosition = new Point(0, 0)
 
-  constructor(
-    private readonly rectangle: IMutableRectangle,
-    public limits: Rect = Rect.INFINITE
-  ) {
+  constructor(rectangle: IMutableRectangle, limits: Rect = Rect.INFINITE) {
     super()
+    this.rectangle = rectangle
+    this.limits = limits
   }
 
   get location(): IPoint {

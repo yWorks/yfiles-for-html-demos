@@ -30,7 +30,6 @@ import {
   BaseClass,
   Color,
   DelegatingNodeStyle,
-  Fill,
   GeneralPath,
   GradientSpreadMethod,
   GradientStop,
@@ -51,7 +50,6 @@ import {
   Point,
   Rect,
   ShadowNodeStyleDecorator,
-  Stroke,
   SvgVisualGroup
 } from '@yfiles/yfiles'
 

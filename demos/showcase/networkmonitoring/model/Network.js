@@ -33,8 +33,8 @@ import { Connection } from './Connection'
  * Models the network of devices and connections.
  */
 export class Network {
-  devices
   connections
+  devices
   onDataUpdated
   onDeviceFailure
   onConnectionFailure

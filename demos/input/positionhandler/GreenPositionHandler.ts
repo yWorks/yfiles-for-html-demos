@@ -30,8 +30,8 @@ import {
   BaseClass,
   ConstrainedPositionHandler,
   IDragHandler,
-  IInputModeContext,
-  IPoint,
+  type IInputModeContext,
+  type IPoint,
   IPositionHandler,
   Point
 } from '@yfiles/yfiles'

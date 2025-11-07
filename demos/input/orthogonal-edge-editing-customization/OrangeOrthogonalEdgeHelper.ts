@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IInputModeContext, IOrthogonalEdgeHelper, OrthogonalEdgeHelper } from '@yfiles/yfiles'
+import { type IInputModeContext, IOrthogonalEdgeHelper, OrthogonalEdgeHelper } from '@yfiles/yfiles'
 
 /**
  * An {@link OrthogonalEdgeHelper} that enables moving the

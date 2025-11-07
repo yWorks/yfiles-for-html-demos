@@ -33,7 +33,6 @@ export function configureGraphBuilder(graph, nodesData) {
 
   const rootNodesSource = treeBuilder.createRootNodesSource(nodesData, null)
 
-
   // the childDataProvider identifies the property of a node object that contains its child nodes
   rootNodesSource.addChildNodesSource((data) => data.colleagues, rootNodesSource)
 

@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>03 Render Performance - Tutorial: Node Style Implementation [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -141,17 +141,16 @@
               <div class="paragraph">
                 <p>
                   Until now, we have only implemented
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-createVisual" target="_blank">createVisual</a>,
-                  which creates a new DOM element for each render frame. This is not an efficient
-                  approach and will result in performance issues for large graphs.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#createVisual" class="api" target="_blank">createVisual</a>, which creates a new DOM
+                  element for each render frame. This is not an efficient approach and will result
+                  in performance issues for large graphs.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
-                  By overriding
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-updateVisual" target="_blank">updateVisual</a>, we
-                  can optimize the rendering performance in case no visualization-relevant data of
-                  the node has changed. For example, if the node size changes, we have to update the
+                  By overriding <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#updateVisual" class="api" target="_blank">updateVisual</a>, we can
+                  optimize the rendering performance in case no visualization-relevant data of the
+                  node has changed. For example, if the node size changes, we have to update the
                   path data to fit the node. This approach will greatly improve the rendering
                   performance for gestures such as panning and zooming the viewport as well as
                   moving nodes.
@@ -165,18 +164,18 @@
               <div class="paragraph">
                 <p>
                   As a first step, we modify the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-createVisual" target="_blank">createVisual</a>
-                  implementation. Instead of using the node&#8217;s <code>x</code>- and
-                  <code>y</code>-position in the path, we create the path at (0,0). We then use
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual#SvgVisual-defaultmethod-setTranslate" target="_blank">setTranslate</a> to
-                  set a transform that moves the path to the node location.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#createVisual" class="api" target="_blank">createVisual</a> implementation. Instead
+                  of using the node&#8217;s <code>x</code>- and <code>y</code>-position in the path,
+                  we create the path at (0,0). We then use
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual#setTranslate" class="api" target="_blank">setTranslate</a> to set a transform that
+                  moves the path to the node location.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// we render the path at 0,0 and translate the visual to it&#x27;s final location</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// we render the path at 0,0 and translate the visual to its final location</span>
 pathElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;d&#x27;</span>, <span class="hljs-title function_">createPathData</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, width, height))
 <span class="hljs-title class_">SvgVisual</span>.<span class="hljs-title function_">setTranslate</span>(pathElement, x, y)</code></pre>
                 </div>
@@ -184,11 +183,11 @@ pathElement.<span class="hljs-title function_">setAttribute</span>(<span class="
               <div class="paragraph">
                 <p>
                   To be able to efficiently update the visualization in
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-updateVisual" target="_blank">updateVisual</a>, we
-                  have to store the values that we needed for the construction of the node with the
-                  visual. In this case this is just the size. In order to get proper type-checking,
-                  we first declare the type of the data cache. This is where the yFiles' utility
-                  type <a href="https://docs.yworks.com/yfileshtml/#/api/TaggedSvgVisual" target="_blank">TaggedSvgVisual</a> comes in handy:
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#updateVisual" class="api" target="_blank">updateVisual</a>, we have to store the
+                  values that we needed for the construction of the node with the visual. In this
+                  case this is just the size. In order to get proper type-checking, we first declare
+                  the type of the data cache. This is where the yFiles' utility type
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/TaggedSvgVisual" class="api" target="_blank">TaggedSvgVisual</a> comes in handy:
                 </p>
               </div>
               <div class="listingblock">
@@ -205,7 +204,7 @@ pathElement.<span class="hljs-title function_">setAttribute</span>(<span class="
               <div class="paragraph">
                 <p>
                   With this type declaration we can augment the class declaration for our node
-                  style. <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase" target="_blank">NodeStyleBase</a> comes with an optional type argument which
+                  style. <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase" class="api" target="_blank">NodeStyleBase</a> comes with an optional type argument which
                   specifies the exact type for the visual returned by <code>createVisual</code>.
                   Using this type argument, we can ensure that <code>updateVisual</code> gets the
                   same type of visual that have been created in <code>createVisual</code>. Although
@@ -239,7 +238,7 @@ pathElement.<span class="hljs-title function_">setAttribute</span>(<span class="
     <span class="hljs-string">&#x27;http://www.w3.org/2000/svg&#x27;</span>,
     <span class="hljs-string">&#x27;path&#x27;</span>
   )
-  <span class="hljs-comment">// we render the path at 0,0 and translate the visual to it&#x27;s final location</span>
+  <span class="hljs-comment">// we render the path at 0,0 and translate the visual to its final location</span>
   pathElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;d&#x27;</span>, <span class="hljs-title function_">createPathData</span>(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>, width, height))
   <span class="hljs-title class_">SvgVisual</span>.<span class="hljs-title function_">setTranslate</span>(pathElement, x, y)
 
@@ -259,13 +258,11 @@ pathElement.<span class="hljs-title function_">setAttribute</span>(<span class="
               <div class="paragraph">
                 <p>
                   Now we are ready to add the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-updateVisual" target="_blank">updateVisual</a>
-                  implementation. With the type parameter, we can let our IDE create the matching
-                  signature for the <code>updateVisual</code> method. In the method, in case the
-                  node size has changed, we update the path layout and the cache data. Finally, we
-                  call
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual#SvgVisual-defaultmethod-setTranslate" target="_blank">setTranslate</a> to
-                  update the location.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#updateVisual" class="api" target="_blank">updateVisual</a> implementation. With the
+                  type parameter, we can let our IDE create the matching signature for the
+                  <code>updateVisual</code> method. In the method, in case the node size has
+                  changed, we update the path layout and the cache data. Finally, we call
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual#setTranslate" class="api" target="_blank">setTranslate</a> to update the location.
                 </p>
               </div>
               <div class="listingblock">
@@ -316,10 +313,10 @@ pathElement.<span class="hljs-title function_">setAttribute</span>(<span class="
                     </td>
                     <td class="content">
                       Although implementing
-                      <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-updateVisual" target="_blank">updateVisual</a>
-                      is technically optional, it is highly recommended for larger graphs.
-                      Refraining from an efficient implementation may result in low frame-rates
-                      during animations and interactive gestures.
+                      <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#updateVisual" class="api" target="_blank">updateVisual</a> is technically
+                      optional, it is highly recommended for larger graphs. Refraining from an
+                      efficient implementation may result in low frame-rates during animations and
+                      interactive gestures.
                     </td>
                   </tr>
                 </table>
@@ -340,7 +337,7 @@ pathElement.<span class="hljs-title function_">setAttribute</span>(<span class="
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

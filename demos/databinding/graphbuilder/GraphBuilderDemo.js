@@ -28,33 +28,25 @@
  ***************************************************************************/
 import {
   EdgeLabelPreferredPlacement,
-  SmartEdgeLabelModel,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
   HierarchicalLayout,
   HierarchicalLayoutData,
-  IList,
-  INode,
   LabelEdgeSides,
   LabelSideReferences,
   LayoutExecutor,
   License,
-  Size
+  Size,
+  SmartEdgeLabelModel
 } from '@yfiles/yfiles'
 
 import SamplesData from './samples'
 import { EdgesSourceDialog, NodesSourceDialog } from './EditSourceDialog'
 import { SourcesListBox } from './SourcesListBox'
-import {
-  EdgesSourceDefinition,
-  EdgesSourceDefinitionBuilderConnector,
-  NodesSourceDefinition,
-  NodesSourceDefinitionBuilderConnector,
-  SourcesFactory
-} from './ModelClasses'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { SourcesFactory } from './ModelClasses'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 const samplesComboBox = document.querySelector('#samples-combobox')
 
 const samples = SamplesData
@@ -66,8 +58,6 @@ let layouting = false
 let graphComponent
 let graphBuilder
 
-let existingNodes
-
 /**
  * Shows building a graph from business data with class
  * {@link GraphBuilder}.
@@ -78,9 +68,9 @@ let existingNodes
  * node template can also be changed interactively in order to display arbitrary data
  * of the business data associated with the node.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
@@ -99,7 +89,6 @@ async function run() {
   // load the initial data from samples
   loadSample(samples[0])
 
-  // noinspection JSIgnoredPromiseFromCall
   buildGraphFromData(false)
 
   // register toolbar and other GUI element actions
@@ -146,8 +135,6 @@ async function buildGraphFromData(update) {
   }
 
   if (update) {
-    // remember existing nodes
-    existingNodes = graphComponent.graph.nodes.toList()
     try {
       graphBuilder.updateGraph()
     } catch (e) {

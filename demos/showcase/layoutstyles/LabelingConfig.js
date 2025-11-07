@@ -31,25 +31,21 @@ import {
   FreeEdgeLabelModel,
   GenericLabeling,
   GenericLabelingData,
-  GraphComponent,
   ILabelModelParameterFinder,
-  ILayoutAlgorithm,
   LabelingCosts,
   LabelingOptimizationStrategy,
-  LayoutData,
   RecursiveGroupLayout
 } from '@yfiles/yfiles'
 
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 import {
   LabelPlacementAlongEdge,
   LabelPlacementOrientation,
@@ -81,7 +77,7 @@ export const LabelingConfig = Class('LabelingConfig', {
     ],
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     placeNodeLabelsItem: [
@@ -115,7 +111,7 @@ export const LabelingConfig = Class('LabelingConfig', {
         'Quality Time Ratio',
         '#/api/GenericLabeling#GenericLabeling-property-qualityTimeRatio'
       ),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     optimizationStrategyItem: [
@@ -146,10 +142,10 @@ export const LabelingConfig = Class('LabelingConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 10),
       new EnumValuesAttribute([
-        ['Parallel', LabelPlacementOrientation.PARALLEL],
-        ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
-        ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
-        ['Vertical', LabelPlacementOrientation.VERTICAL]
+        ['Parallel', 'parallel'],
+        ['Orthogonal', 'orthogonal'],
+        ['Horizontal', 'horizontal'],
+        ['Vertical', 'vertical']
       ]),
       new TypeAttribute(LabelPlacementOrientation)
     ],
@@ -160,12 +156,12 @@ export const LabelingConfig = Class('LabelingConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 20),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
-        ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
-        ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
-        ['At Target', LabelPlacementAlongEdge.AT_TARGET],
-        ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
-        ['Centered', LabelPlacementAlongEdge.CENTERED]
+        ['Anywhere', 'anywhere'],
+        ['At Source', 'at-source'],
+        ['At Source Port', 'at-source-port'],
+        ['At Target', 'at-target'],
+        ['At Target Port', 'at-target-port'],
+        ['Centered', 'centered']
       ]),
       new TypeAttribute(LabelPlacementAlongEdge)
     ],
@@ -176,11 +172,11 @@ export const LabelingConfig = Class('LabelingConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 30),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
-        ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
-        ['Left', LabelPlacementSideOfEdge.LEFT],
-        ['Right', LabelPlacementSideOfEdge.RIGHT],
-        ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+        ['Anywhere', 'anywhere'],
+        ['On Edge', 'on-edge'],
+        ['Left', 'left'],
+        ['Right', 'right'],
+        ['Left or Right', 'left-or-right']
       ]),
       new TypeAttribute(LabelPlacementSideOfEdge)
     ],
@@ -191,7 +187,7 @@ export const LabelingConfig = Class('LabelingConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 40),
       new MinMaxAttribute(0.0, 40.0),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ]
   },
@@ -210,9 +206,9 @@ export const LabelingConfig = Class('LabelingConfig', {
 
     this.reduceAmbiguityItem = true
 
-    this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
-    this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
-    this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
+    this.labelPlacementAlongEdgeItem = 'centered'
+    this.labelPlacementSideOfEdgeItem = 'on-edge'
+    this.labelPlacementOrientationItem = 'horizontal'
     this.labelPlacementDistanceItem = 10.0
     this.title = 'Labeling'
   },
@@ -349,7 +345,7 @@ export const LabelingConfig = Class('LabelingConfig', {
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
     get: function () {
-      return this.labelPlacementSideOfEdgeItem === LabelPlacementSideOfEdge.ON_EDGE
+      return this.labelPlacementSideOfEdgeItem === 'on-edge'
     }
   }
 })

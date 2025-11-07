@@ -30,20 +30,20 @@ import {
   EdgeRouter,
   EdgeRouterData,
   EdgeRouterScope,
-  FoldingEdgeConverter,
+  type FoldingEdgeConverter,
   FoldingManager,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
-  IEdge,
+  type IEdge,
   LayoutExecutor,
   License,
   Size
 } from '@yfiles/yfiles'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent: GraphComponent
@@ -51,7 +51,7 @@ let graphComponent: GraphComponent
 const routingPolicy = document.querySelector<HTMLSelectElement>('#select-routing-policy')!
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   // enable undo and folding
   graphComponent.graph.undoEngineEnabled = true

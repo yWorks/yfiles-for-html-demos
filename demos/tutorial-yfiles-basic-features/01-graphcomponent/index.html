@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>01 Creating the View - Tutorial: Basic Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -136,10 +136,10 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  This step introduces class <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a>, which is the
-                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-application" target="_blank">central UI element for working with graphs</a>. The app does not provide any interactive features except basic navigation and
+                  This step introduces class <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a>, which is the
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-application" class="dguide" target="_blank">central UI element for working with graphs</a>. The app does not provide any interactive features except basic navigation and
                   selection, which is enabled by default. It is merely meant as a very basic example
-                  of how to display a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> within a web page.
+                  of how to display a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a> within a web page.
                 </p>
               </div>
               <div class="paragraph">
@@ -182,7 +182,7 @@
               </div>
               <div class="paragraph">
                 <p>
-                  Now, in the code we can initialize the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> and wire it
+                  Now, in the code we can initialize the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a> and wire it
                   up with the existing <code>div</code>.
                 </p>
               </div>
@@ -190,7 +190,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// create a new graph component in the div element specified via the CSS selector</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// create a new graph component in the div element specified via the CSS selector</span>
 <span class="hljs-keyword">const</span> graphComponent = <span class="hljs-keyword">new</span> <span class="hljs-title class_">GraphComponent</span>(<span class="hljs-string">&#x27;#graphComponent&#x27;</span>)</code></pre>
                 </div>
               </div>
@@ -205,12 +205,12 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// create a single node as an example</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// create a single node as an example</span>
 <span class="hljs-keyword">const</span> node = graphComponent.<span class="hljs-property">graph</span>.<span class="hljs-title function_">createNode</span>()
 <span class="hljs-comment">// and add a label</span>
 graphComponent.<span class="hljs-property">graph</span>.<span class="hljs-title function_">addLabel</span>(node, <span class="hljs-string">&#x27;y&#x27;</span>)
 <span class="hljs-comment">// then center the graph in the component</span>
-graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code></pre>
+<span class="hljs-keyword">await</span> graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code></pre>
                 </div>
               </div>
               <div class="admonitionblock note">
@@ -232,7 +232,7 @@ graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code>
               <div class="paragraph">
                 <p>
                   For a minimal example of using yFiles for HTML to display a graph on a web page, please
-                  take a look at the <a href="../../loading/basic-demo/" target="_blank">Basic Demo Demo</a>.
+                  take a look at the <a href="../../loading/basic-demo/" class="demo" target="_blank">Basic Demo Demo</a>.
                 </p>
               </div>
             </div>
@@ -270,7 +270,7 @@ graphComponent.<span class="hljs-title function_">fitGraphBounds</span>()</code>
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

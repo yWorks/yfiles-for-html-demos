@@ -26,19 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable no-unused-vars */
 import {
   Bfs,
-  CompositeLayoutData,
-  FilteredGraphWrapper,
-  GraphComponent,
   HashMap,
   HierarchicalLayout,
   HierarchicalLayoutData,
-  IGraph,
-  ILayoutAlgorithm,
-  IList,
-  INode,
   LayoutAnchoringPolicy,
   LayoutAnchoringStageData,
   List,

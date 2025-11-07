@@ -26,17 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  Cursor,
-  HoveredItemChangedEventArgs,
-  IEdge,
-  ILabel,
-  IModelItem,
-  INode,
-  ItemHoverInputMode,
-  LabelStyle,
-  ModifierKeys
-} from '@yfiles/yfiles'
+import { Cursor, IEdge, ILabel, INode, ItemHoverInputMode, ModifierKeys } from '@yfiles/yfiles'
 
 /**
  * This {@link ItemHoverInputMode} will show a pointer cursor for external links and underline the link's

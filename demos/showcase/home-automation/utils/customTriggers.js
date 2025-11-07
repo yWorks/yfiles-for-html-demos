@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { runLayout } from '../layout/runLayout'
-import { GraphComponent, GraphEditorInputMode } from '@yfiles/yfiles'
+import {} from '@yfiles/yfiles'
 
 export async function runAutoLayout(graphComponent) {
   const layoutButton = document.querySelector('#layoutButton')

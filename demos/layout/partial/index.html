@@ -34,29 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Partial Layout Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
-
-    <style>
-      .demo-properties__settings {
-        display: grid;
-        gap: 10px;
-        align-items: center;
-      }
-
-      .option-label {
-        grid-column: 1 / 2;
-        align-self: center;
-      }
-
-      .option-element,
-      input[type='number'],
-      input[type='checkbox'] {
-        grid-column: 2 / 2;
-        align-self: center;
-      }
-    </style>
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -126,7 +106,7 @@
 
         <p>
           Shows how to integrate (new) graph elements into an existing graph layout with
-          <a href="https://docs.yworks.com/yfileshtml/#/api/PartialLayout" target="_blank">PartialLayout</a>.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/PartialLayout" class="api" target="_blank">PartialLayout</a>.
         </p>
         <p>
           This layout algorithm changes the coordinates of a given set of graph elements (called

@@ -36,9 +36,9 @@
     <title>
       01 Rendering the Label Text - Tutorial: Label Style Implementation [yFiles for HTML]
     </title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -160,9 +160,9 @@
                     <td class="content">
                       Implementing a custom label style from scratch is an advanced concept. In a
                       lot of cases, other approaches like template styles or decorating built-in
-                      styles with custom elements are sufficient. For more information on the topic
-                      of styling graph items, please have a look at
-                      <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-label_styles" target="_blank">Label Styles</a>.
+                      styles with custom elements are enough. For more information on the topic of
+                      styling graph items, please have a look at
+                      <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-label_styles" class="dguide" target="_blank">Label Styles</a>.
                     </td>
                   </tr>
                 </table>
@@ -176,16 +176,23 @@
                 <p>
                   yFiles for HTML provides an abstract base class which provides the basic functionality
                   to create a custom label style. We start with a custom subclass of
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase" target="_blank">LabelStyleBase</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase" class="api" target="_blank">LabelStyleBase</a>.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomLabelStyle</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">LabelStyleBase</span> {
-  protected <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">label</span>: <span class="hljs-title class_">ILabel</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomLabelStyle</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">LabelStyleBase</span> {
+  <span class="hljs-keyword">protected</span> <span class="hljs-title function_">createVisual</span>(
+    <span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>,
+    <span class="hljs-attr">label</span>: <span class="hljs-title class_">ILabel</span>
+  ): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
     <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span> <span class="hljs-comment">// TODO - create the SVG element</span>
+  }
+
+  <span class="hljs-keyword">protected</span> <span class="hljs-title function_">getPreferredSize</span>(<span class="hljs-attr">label</span>: <span class="hljs-title class_">ILabel</span>): <span class="hljs-title class_">Size</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(<span class="hljs-number">50</span>, <span class="hljs-number">20</span>) <span class="hljs-comment">// TODO - calculate the size</span>
   }
 }</code></pre>
                 </div>
@@ -194,7 +201,7 @@
                 <p>
                   This code will not produce anything visible, yet. We first have to implement the
                   <code>createVisual</code> method. This method returns an SVG element, wrapped into
-                  an <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" target="_blank">SvgVisual</a>. Let&#8217;s start with only a text for now to keep
+                  an <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" class="api" target="_blank">SvgVisual</a>. Let&#8217;s start with only a text for now to keep
                   things simple. We will switch to a more complex visualization later on.
                 </p>
               </div>
@@ -202,7 +209,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">protected <span class="hljs-title function_">createVisual</span>(
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">createVisual</span>(
   <span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>,
   <span class="hljs-attr">label</span>: <span class="hljs-title class_">ILabel</span>
 ): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
@@ -255,7 +262,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> transform = <span class="hljs-title class_">LabelStyleBase</span>.<span class="hljs-title function_">createLayoutTransform</span>(
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> transform = <span class="hljs-title class_">LabelStyleBase</span>.<span class="hljs-title function_">createLayoutTransform</span>(
   context,
   label.<span class="hljs-property">layout</span>,
   <span class="hljs-literal">true</span>
@@ -275,7 +282,7 @@ transform.<span class="hljs-title function_">applyTo</span>(textElement)</code><
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">textElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;dy&#x27;</span>, <span class="hljs-title class_">String</span>(label.<span class="hljs-property">layout</span>.<span class="hljs-property">height</span>))</code></pre>
+                  ><code class="language-typescript" data-lang="typescript">textElement.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;dy&#x27;</span>, <span class="hljs-title class_">String</span>(label.<span class="hljs-property">layout</span>.<span class="hljs-property">height</span>))</code></pre>
                 </div>
               </div>
             </div>
@@ -294,7 +301,7 @@ transform.<span class="hljs-title function_">applyTo</span>(textElement)</code><
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

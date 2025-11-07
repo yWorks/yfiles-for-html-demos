@@ -28,17 +28,17 @@
  ***************************************************************************/
 import {
   ArrowNodeDirection,
-  ArrowNodeStyle,
+  type ArrowNodeStyle,
   ArrowStyleShape,
   BaseClass,
-  ClickEventArgs,
+  type ClickEventArgs,
   Cursor,
   HandleType,
   IHandle,
-  IInputModeContext,
-  INode,
+  type IInputModeContext,
+  type INode,
   IPoint,
-  Point
+  type Point
 } from '@yfiles/yfiles'
 import { ArrowNodeStyleAngleHandle } from './ArrowNodeStyleAngleHandle'
 
@@ -47,6 +47,8 @@ import { ArrowNodeStyleAngleHandle } from './ArrowNodeStyleAngleHandle'
  * {@link ArrowNodeStyle.shaftRatio} interactively.
  */
 export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
+  private readonly shaftRatioChanged: () => void
+  private readonly node: INode
   private readonly style: ArrowNodeStyle
   private xFactor = 0
   private yFactor = 0
@@ -57,11 +59,10 @@ export class ArrowNodeStyleShaftRatioHandle extends BaseClass(IHandle, IPoint) {
    * @param node The node whose style shall be changed.
    * @param shaftRatioChanged An action that is called when the handle has been moved.
    */
-  constructor(
-    private readonly node: INode,
-    private readonly shaftRatioChanged: () => void
-  ) {
+  constructor(node: INode, shaftRatioChanged: () => void) {
     super()
+    this.node = node
+    this.shaftRatioChanged = shaftRatioChanged
     this.style = node.style as ArrowNodeStyle
   }
 

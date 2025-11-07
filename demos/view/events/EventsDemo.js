@@ -27,97 +27,47 @@
  **
  ***************************************************************************/
 import {
-  BendEventArgs,
   CanvasComponent,
-  ClickEventArgs,
-  ClickInputMode,
-  ClipboardGraphCopier,
-  ContextMenuInputMode,
-  CreateBendInputMode,
-  CreateEdgeInputMode,
   DragDropEffects,
-  DropInputMode,
-  EdgeEventArgs,
-  EditLabelInputMode,
-  EventArgs,
   FoldingManager,
   GraphBuilder,
   GraphClipboard,
-  GraphClipboardEventArgs,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GraphViewerInputMode,
-  HandleInputMode,
   HierarchicalLayout,
   HierarchicalLayoutEdgeDescriptor,
-  HoveredItemChangedEventArgs,
   IBend,
   IEdge,
   IEdgeReconnectionPortCandidateProvider,
-  IEdgeStyle,
   IFoldingView,
   IGraph,
-  IGraphSelection,
   IInputMode,
   ILabel,
-  ILabelModelParameter,
-  ILabelStyle,
   IModelItem,
   INode,
   INodeStyle,
-  InputModeEventArgs,
-  InputModeItemChangedEventArgs,
-  InputModeItemEventArgs,
   IPort,
-  IPortLocationModelParameter,
-  IPortStyle,
-  ItemChangedEventArgs,
-  ItemClickedEventArgs,
-  ItemCopiedEventArgs,
-  ItemEventArgs,
-  ItemHoverInputMode,
-  ItemsEventArgs,
-  KeyEventArgs,
   LabelDropInputMode,
-  LabelEventArgs,
   LabelStyle,
-  LabelTextValidatingEventArgs,
   LayoutExecutor,
   License,
-  MoveInputMode,
-  MoveViewportInputMode,
-  NavigationInputMode,
   NodeDropInputMode,
-  NodeEventArgs,
-  Point,
   PointerButtons,
-  PointerEventArgs,
-  PopulateContextMenuEventArgs,
-  PopulateItemContextMenuEventArgs,
-  PortEventArgs,
-  PrepareRenderContextEventArgs,
-  PropertyChangedEventArgs,
-  QueryItemToolTipEventArgs,
-  QueryPositionHandlerEventArgs,
-  QueryToolTipEventArgs,
   Rect,
-  SelectionEventArgs,
   SimpleLabel,
   SimpleNode,
   Size,
   SvgExport,
-  TextEditorInputMode,
-  TextEventArgs,
-  ToolTipInputMode,
   UndoEngine
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import { EventView } from './EventView'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import graphData from './graph-data.json'
 
 /**
@@ -125,7 +75,7 @@ import graphData from './graph-data.json'
  * the graph component} and the input modes.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   eventView = new EventView()
 
@@ -1555,8 +1505,6 @@ const eventRegistration = {
 
 /**
  * Invoked when the display has to be invalidated.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onDisplaysInvalidated(args, sender) {
   log(sender, 'Displays Invalidated')
@@ -1564,8 +1512,6 @@ function onDisplaysInvalidated(args, sender) {
 
 /**
  * Invoked when the port of an edge changes.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onEdgePortsChanged(args, sender) {
   logWithType(sender, `Edge Ports Changed: ${args.item}`, 'EdgePortsChanged')
@@ -1573,9 +1519,6 @@ function onEdgePortsChanged(args, sender) {
 
 /**
  * Invoked when the style of an edge changes.
- * @param sender The source of the event
- * @param args An object that
- *   contains the event data
  */
 function onEdgeStyleChanged(args, sender) {
   logWithType(sender, `Edge Style Changed: ${args.item}`, 'EdgeStyleChanged')
@@ -1583,8 +1526,6 @@ function onEdgeStyleChanged(args, sender) {
 
 /**
  * Invoked when the tag of an edge changes.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onEdgeTagChanged(args, sender) {
   logWithType(sender, `Edge Tag Changed: ${args.item}`, 'EdgeTagChanged')
@@ -1592,8 +1533,6 @@ function onEdgeTagChanged(args, sender) {
 
 /**
  * Invoked when an edge has been created.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onEdgeCreated(args, sender) {
   logWithType(sender, `Edge Created: ${args.item}`, 'EdgeCreated')
@@ -1601,8 +1540,6 @@ function onEdgeCreated(args, sender) {
 
 /**
  * Invoked when an edge has been removed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onEdgeRemoved(args, sender) {
   logWithType(sender, `Edge Removed: ${args.item}`, 'EdgeRemoved')
@@ -1610,8 +1547,6 @@ function onEdgeRemoved(args, sender) {
 
 /**
  * Invoked when a label has been added.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onLabelAdded(args, sender) {
   logWithType(sender, `Label Added: ${args.item}`, 'LabelAdded')
@@ -1619,9 +1554,6 @@ function onLabelAdded(args, sender) {
 
 /**
  * Invoked when a label has been added.
- * @param sender The source of the event
- * @param args An object that contains
- *   the event data
  */
 function onLabelPreferredSizeChanged(args, sender) {
   logWithType(sender, `Label Preferred Size Changed: ${args.item}`, 'LabelPreferredSizeChanged')
@@ -1629,9 +1561,6 @@ function onLabelPreferredSizeChanged(args, sender) {
 
 /**
  * Invoked when the parameter of a label has changed.
- * @param sender The source of the event
- * @param args An object
- *   that contains the event data
  */
 function onLabelLayoutParameterChanged(args, sender) {
   logWithType(sender, `Label Layout Parameter Changed: ${args.item}`, 'LabelLayoutParameterChanged')
@@ -1639,9 +1568,6 @@ function onLabelLayoutParameterChanged(args, sender) {
 
 /**
  * Invoked when the style of a label has changed.
- * @param sender The source of the event
- * @param args An object that
- *   contains the event data
  */
 function onLabelStyleChanged(args, sender) {
   logWithType(sender, `Label Style Changed: ${args.item}`, 'LabelStyleChanged')
@@ -1649,8 +1575,6 @@ function onLabelStyleChanged(args, sender) {
 
 /**
  * Invoked when the tag of a label has changed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onLabelTagChanged(args, sender) {
   logWithType(sender, `Label Tag Changed: ${args.item}`, 'LabelTagChanged')
@@ -1658,8 +1582,6 @@ function onLabelTagChanged(args, sender) {
 
 /**
  * Invoked when the text of a label has changed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onLabelTextChanged(args, sender) {
   logWithType(sender, `Label Text Changed: ${args.item}`, 'LabelTextChanged')
@@ -1667,8 +1589,6 @@ function onLabelTextChanged(args, sender) {
 
 /**
  * Invoked when the text of a label has been removed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onLabelRemoved(args, sender) {
   logWithType(sender, `Label Removed: ${args.item}`, 'LabelRemoved')
@@ -1676,9 +1596,6 @@ function onLabelRemoved(args, sender) {
 
 /**
  * Invoked when the layout of a node has changed.
- * @param oldLayout the layout of the node before the layout changed
- * @param sender The source of the event
- * @param node The given node
  */
 function onNodeLayoutChanged(node, oldLayout, sender) {
   logWithType(sender, `Node Layout Changed: ${node}`, 'NodeLayoutChanged')
@@ -1686,9 +1603,6 @@ function onNodeLayoutChanged(node, oldLayout, sender) {
 
 /**
  * Invoked when the style of a node has changed.
- * @param sender The source of the event
- * @param args An object that
- *   contains the event data
  */
 function onNodeStyleChanged(args, sender) {
   logWithType(sender, `Node Style Changed: ${args.item}`, 'NodeStyleChanged')
@@ -1696,8 +1610,6 @@ function onNodeStyleChanged(args, sender) {
 
 /**
  * Invoked when the tag of a node has changed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onNodeTagChanged(args, sender) {
   logWithType(sender, `Node Tag Changed: ${args.item}`, 'NodeTagChanged')
@@ -1705,8 +1617,6 @@ function onNodeTagChanged(args, sender) {
 
 /**
  * Invoked when a node has been created.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onNodeCreated(args, sender) {
   logWithType(sender, `Node Created: ${args.item}`, 'NodeCreated')
@@ -1714,8 +1624,6 @@ function onNodeCreated(args, sender) {
 
 /**
  * Invoked when a node has been removed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onNodeRemoved(args, sender) {
   logWithType(sender, `Node Removed: ${args.item}`, 'NodeRemoved')
@@ -1723,8 +1631,6 @@ function onNodeRemoved(args, sender) {
 
 /**
  * Invoked when a port has been added.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onPortAdded(args, sender) {
   logWithType(sender, `Port Added: ${args.item}`, 'PortAdded')
@@ -1732,9 +1638,6 @@ function onPortAdded(args, sender) {
 
 /**
  * Invoked when the location parameter of a port has changed.
- * @param sender The source of the event
- * @param args An
- *   object that contains the event data
  */
 function onPortLocationParameterChanged(args, sender) {
   logWithType(
@@ -1746,9 +1649,6 @@ function onPortLocationParameterChanged(args, sender) {
 
 /**
  * Invoked when the style of a port has changed.
- * @param sender The source of the event
- * @param args An object that
- *   contains the event data
  */
 function onPortStyleChanged(args, sender) {
   logWithType(sender, `Port Style Changed: ${args.item}`, 'PortStyleChanged')
@@ -1756,8 +1656,6 @@ function onPortStyleChanged(args, sender) {
 
 /**
  * Invoked when the tag of a port has changed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onPortTagChanged(args, sender) {
   logWithType(sender, `Port Tag Changed: ${args.item}`, 'PortTagChanged')
@@ -1765,8 +1663,6 @@ function onPortTagChanged(args, sender) {
 
 /**
  * Invoked when a port has been removed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onPortRemoved(args, sender) {
   logWithType(sender, `Port Removed: ${args.item}`, 'PortRemoved')
@@ -1774,8 +1670,6 @@ function onPortRemoved(args, sender) {
 
 /**
  * Invoked when a bend has been added.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onBendAdded(args, sender) {
   logWithType(sender, `Bend Added: ${args.item}`, 'BendAdded')
@@ -1783,9 +1677,6 @@ function onBendAdded(args, sender) {
 
 /**
  * Invoked when the location of a bend has changed.
- * @param sender The source of the event
- * @param bend The bend whose location has changed
- * @param oldLocation The location of the bend before the change
  */
 function onBendLocationChanged(bend, oldLocation, sender) {
   logWithType(sender, `Bend Location Changed: ${bend}`, 'BendLocationChanged')
@@ -1793,8 +1684,6 @@ function onBendLocationChanged(bend, oldLocation, sender) {
 
 /**
  * Invoked when the tag of a bend has changed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onBendTagChanged(args, sender) {
   logWithType(sender, `Bend Tag Changed: ${args.item}`, 'BendTagChanged')
@@ -1802,8 +1691,6 @@ function onBendTagChanged(args, sender) {
 
 /**
  * Invoked when a bend has been removed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onBendRemoved(args, sender) {
   logWithType(sender, `Bend Removed: ${args.item}`, 'BendRemoved')
@@ -1811,8 +1698,6 @@ function onBendRemoved(args, sender) {
 
 /**
  * Invoked when the parent of a node has changed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onParentChanged(args, sender) {
   logWithType(
@@ -1824,8 +1709,6 @@ function onParentChanged(args, sender) {
 
 /**
  * Invoked when the group node status of a node has changed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onIsGroupNodeChanged(args, sender) {
   logWithType(sender, `Group State Changed: ${args.isGroupNode}`, 'IsGroupNodeChanged')
@@ -1833,8 +1716,6 @@ function onIsGroupNodeChanged(args, sender) {
 
 /**
  * Invoked when a group has been collapsed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onGroupCollapsed(args, sender) {
   logWithType(sender, `Group Collapsed: ${args.item}`, 'GroupCollapsed')
@@ -1842,8 +1723,6 @@ function onGroupCollapsed(args, sender) {
 
 /**
  * Invoked when a group has been expanded.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onGroupExpanded(args, sender) {
   logWithType(sender, `Group Expanded: ${args.item}`, 'GroupExpanded')
@@ -1860,8 +1739,6 @@ function onPropertyChanged(args, view) {
 
 /**
  * Invoked when the entire graph has been copied to clipboard.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function clipboardOnGraphCopiedToClipboard(args, sender) {
   log(sender, 'Graph Copied to Clipboard')
@@ -1869,8 +1746,6 @@ function clipboardOnGraphCopiedToClipboard(args, sender) {
 
 /**
  * Invoked when a node has been copied to clipboard.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function clipboardOnNodeCopiedToClipboard(args, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
@@ -1878,8 +1753,6 @@ function clipboardOnNodeCopiedToClipboard(args, sender) {
 
 /**
  * Invoked when an edge has been copied to clipboard.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function clipboardOnEdgeCopiedToClipboard(args, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
@@ -1887,8 +1760,6 @@ function clipboardOnEdgeCopiedToClipboard(args, sender) {
 
 /**
  * Invoked when a port has been copied to clipboard.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function clipboardOnPortCopiedToClipboard(args, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
@@ -1896,8 +1767,6 @@ function clipboardOnPortCopiedToClipboard(args, sender) {
 
 /**
  * Invoked when a label has been copied to clipboard.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function clipboardOnLabelCopiedToClipboard(args, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
@@ -1905,62 +1774,48 @@ function clipboardOnLabelCopiedToClipboard(args, sender) {
 
 /**
  * Invoked when a style has been copied to clipboard.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function clipboardOnObjectCopiedToClipboard(args, sender) {
   log(sender, 'Object Copied to Clipboard')
 }
 
 /**
- * Invoked when the entire graph has been copied from clipboard.
- * @param sender The source of the event
- * @param args An object that contains the event data
+ * Invoked when the entire graph has been copied from the clipboard.
  */
 function clipboardOnGraphCopiedFromClipboard(args, sender) {
   log(sender, 'Graph Copied From Clipboard')
 }
 
 /**
- * Invoked when a node has been copied from clipboard.
- * @param sender The source of the event
- * @param args An object that contains the event data
+ * Invoked when a node has been copied from the clipboard.
  */
 function clipboardOnNodeCopiedFromClipboard(args, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
- * Invoked when an edge has been copied from clipboard.
- * @param sender The source of the event
- * @param args An object that contains the event data
+ * Invoked when an edge has been copied from the clipboard.
  */
 function clipboardOnEdgeCopiedFromClipboard(args, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
- * Invoked when a port has been copied from clipboard.
- * @param sender The source of the event
- * @param args An object that contains the event data
+ * Invoked when a port has been copied from the clipboard.
  */
 function clipboardOnPortCopiedFromClipboard(args, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
- * Invoked when a label has been copied from clipboard.
- * @param sender The source of the event
- * @param args An object that contains the event data
+ * Invoked when a label has been copied from the clipboard.
  */
 function clipboardOnLabelCopiedFromClipboard(args, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
- * Invoked when a style has been copied from clipboard.
- * @param sender The source of the event
- * @param args An object that contains the event data
+ * Invoked when a style has been copied from the clipboard.
  */
 function clipboardOnObjectCopiedFromClipboard(args, sender) {
   log(sender, 'Object Copied From Clipboard')
@@ -1968,8 +1823,6 @@ function clipboardOnObjectCopiedFromClipboard(args, sender) {
 
 /**
  * Invoked when the entire graph has been duplicated.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function clipboardOnGraphDuplicated(args, sender) {
   log(sender, 'Graph Duplicated')
@@ -1977,8 +1830,6 @@ function clipboardOnGraphDuplicated(args, sender) {
 
 /**
  * Invoked when a node has been duplicated.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function clipboardOnNodeDuplicated(args, sender) {
   log(sender, 'Graph Item Duplicated')
@@ -1986,8 +1837,6 @@ function clipboardOnNodeDuplicated(args, sender) {
 
 /**
  * Invoked when an edge has been duplicated.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function clipboardOnEdgeDuplicated(args, sender) {
   log(sender, 'Graph Item Duplicated')
@@ -1995,8 +1844,6 @@ function clipboardOnEdgeDuplicated(args, sender) {
 
 /**
  * Invoked when a port has been duplicated.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function clipboardOnPortDuplicated(args, sender) {
   log(sender, 'Graph Item Duplicated')
@@ -2004,8 +1851,6 @@ function clipboardOnPortDuplicated(args, sender) {
 
 /**
  * Invoked when a label has been duplicated.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function clipboardOnLabelDuplicated(args, sender) {
   log(sender, 'Graph Item Duplicated')
@@ -2013,8 +1858,6 @@ function clipboardOnLabelDuplicated(args, sender) {
 
 /**
  * Invoked when a style has been duplicated.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function clipboardOnObjectDuplicated(args, sender) {
   log(sender, 'Object Duplicated')
@@ -2022,8 +1865,6 @@ function clipboardOnObjectDuplicated(args, sender) {
 
 /**
  * Invoked before a clipboard copy operation starts.
- * @param args An object that contains the event data.
- * @param sender The {@link GraphClipboard} instance that is the source of the event.
  */
 function clipboardOnItemsCopying(args, sender) {
   log(sender, 'Items Copying')
@@ -2031,8 +1872,6 @@ function clipboardOnItemsCopying(args, sender) {
 
 /**
  * Invoked after a clipboard copy operation has finished.
- * @param args An object that contains the event data.
- * @param sender The {@link GraphClipboard} instance that is the source of the event.
  */
 function clipboardOnItemsCopied(args, sender) {
   log(sender, 'Items Copied')
@@ -2040,8 +1879,6 @@ function clipboardOnItemsCopied(args, sender) {
 
 /**
  * Invoked before a clipboard cut operation starts.
- * @param args An object that contains the event data.
- * @param sender The {@link GraphClipboard} instance that is the source of the event.
  */
 function clipboardOnItemsCutting(args, sender) {
   log(sender, 'Items Cutting')
@@ -2049,8 +1886,6 @@ function clipboardOnItemsCutting(args, sender) {
 
 /**
  * Invoked after a clipboard cut operation has finished.
- * @param args An object that contains the event data.
- * @param sender The {@link GraphClipboard} instance that is the source of the event.
  */
 function clipboardOnItemsCut(args, sender) {
   log(sender, 'Items Cut')
@@ -2058,8 +1893,6 @@ function clipboardOnItemsCut(args, sender) {
 
 /**
  * Invoked before a clipboard paste operation starts.
- * @param args An object that contains the event data.
- * @param sender The {@link GraphClipboard} instance that is the source of the event.
  */
 function clipboardOnItemsPasting(args, sender) {
   log(sender, 'Items Pasting')
@@ -2067,8 +1900,6 @@ function clipboardOnItemsPasting(args, sender) {
 
 /**
  * Invoked after a clipboard paste operation has finished.
- * @param args An object that contains the event data.
- * @param sender The {@link GraphClipboard} instance that is the source of the event.
  */
 function clipboardOnItemsPasted(args, sender) {
   log(sender, 'Items Pasted')
@@ -2076,8 +1907,6 @@ function clipboardOnItemsPasted(args, sender) {
 
 /**
  * Invoked before a clipboard duplicate operation starts.
- * @param args An object that contains the event data.
- * @param sender The {@link GraphClipboard} instance that is the source of the event.
  */
 function clipboardOnItemsDuplicating(args, sender) {
   log(sender, 'Items Duplicating')
@@ -2085,8 +1914,6 @@ function clipboardOnItemsDuplicating(args, sender) {
 
 /**
  * Invoked after a clipboard duplicate operation has finished.
- * @param args An object that contains the event data.
- * @param sender The {@link GraphClipboard} instance that is the source of the event.
  */
 function clipboardOnItemsDuplicated(args, sender) {
   log(sender, 'Items Duplicated')
@@ -2094,8 +1921,6 @@ function clipboardOnItemsDuplicated(args, sender) {
 
 /**
  * Invoked when the currentItem property has changed its value
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnCurrentItemChanged(args, sender) {
   log(sender, 'GraphComponent CurrentItemChanged')
@@ -2103,8 +1928,6 @@ function componentOnCurrentItemChanged(args, sender) {
 
 /**
  * Invoked when keys are being pressed, i.e. keydown.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnKeyDown(args, sender) {
   const modifierText = getModifierText(args)
@@ -2117,8 +1940,6 @@ function componentOnKeyDown(args, sender) {
 
 /**
  * Invoked when keys are being released, i.e. keyup.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnKeyUp(args, sender) {
   const modifierText = getModifierText(args)
@@ -2131,8 +1952,6 @@ function componentOnKeyUp(args, sender) {
 
 /**
  * Invoked when the user clicked the pointer.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnPointerClick(args, sender) {
   log(sender, `GraphComponent PointerClick, clicks: ${args.clickCount}`)
@@ -2140,8 +1959,6 @@ function componentOnPointerClick(args, sender) {
 
 /**
  * Invoked when the pointer is being moved while at least one of the pointer buttons is pressed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnPointerDrag(args, sender) {
   log(sender, 'GraphComponent PointerDrag')
@@ -2149,8 +1966,6 @@ function componentOnPointerDrag(args, sender) {
 
 /**
  * Invoked when the pointer has entered the canvas.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnPointerEnter(args, sender) {
   log(sender, 'GraphComponent PointerEnter')
@@ -2158,8 +1973,6 @@ function componentOnPointerEnter(args, sender) {
 
 /**
  * Invoked when the pointer has exited the canvas.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnPointerLeave(args, sender) {
   log(sender, 'GraphComponent PointerLeave')
@@ -2167,8 +1980,6 @@ function componentOnPointerLeave(args, sender) {
 
 /**
  * Invoked when the pointer capture has been lost.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnPointerLostCapture(args, sender) {
   log(sender, 'GraphComponent PointerLostCapture')
@@ -2176,8 +1987,6 @@ function componentOnPointerLostCapture(args, sender) {
 
 /**
  * Invoked when the pointer has been moved in world coordinates.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnPointerMove(args, sender) {
   log(sender, 'GraphComponent PointerMove')
@@ -2185,8 +1994,6 @@ function componentOnPointerMove(args, sender) {
 
 /**
  * Invoked when a pointer button has been pressed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnPointerDown(args, sender) {
   log(sender, 'GraphComponent PointerDown')
@@ -2194,8 +2001,6 @@ function componentOnPointerDown(args, sender) {
 
 /**
  * Invoked when the pointer button has been released.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnPointerUp(args, sender) {
   log(sender, 'GraphComponent PointerUp')
@@ -2203,8 +2008,6 @@ function componentOnPointerUp(args, sender) {
 
 /**
  * Invoked when the pointer input has been canceled.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnPointerCancel(args, sender) {
   log(sender, 'GraphComponent PointerCancel')
@@ -2212,8 +2015,6 @@ function componentOnPointerCancel(args, sender) {
 
 /**
  * Invoked when the mouse wheel has turned.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnMouseWheelTurned(args, sender) {
   log(sender, 'GraphComponent MouseWheelTurned')
@@ -2221,8 +2022,6 @@ function componentOnMouseWheelTurned(args, sender) {
 
 /**
  * Invoked when a long press gesture has been performed with a touch pointer.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnPointerLongPress(args, sender) {
   log(sender, 'GraphComponent LongPress')
@@ -2230,8 +2029,6 @@ function componentOnPointerLongPress(args, sender) {
 
 /**
  * Invoked when a long press gesture has been performed with a touch pointer.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnPointerLongRest(args, sender) {
   log(sender, 'GraphComponent LongRest')
@@ -2239,8 +2036,6 @@ function componentOnPointerLongRest(args, sender) {
 
 /**
  * Invoked before the visual tree is painted.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnPrepareRenderContext(args, sender) {
   log(sender, 'GraphComponent PrepareRenderContext')
@@ -2248,8 +2043,6 @@ function componentOnPrepareRenderContext(args, sender) {
 
 /**
  * Invoked after the visual tree has been updated.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnUpdatedVisual(args, sender) {
   log(sender, 'GraphComponent UpdatedVisual')
@@ -2257,8 +2050,6 @@ function componentOnUpdatedVisual(args, sender) {
 
 /**
  * Invoked before the visual tree is updated.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnUpdatingVisual(args, sender) {
   log(sender, 'GraphComponent UpdatingVisual')
@@ -2266,8 +2057,6 @@ function componentOnUpdatingVisual(args, sender) {
 
 /**
  * Invoked when the viewport property has been changed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnViewportChanged(args, sender) {
   log(sender, 'GraphComponent ViewportChanged')
@@ -2275,8 +2064,6 @@ function componentOnViewportChanged(args, sender) {
 
 /**
  * Invoked when the value of the zoom property has been changed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function componentOnZoomChanged(args, sender) {
   log(sender, 'GraphComponent ZoomChanged')
@@ -2284,8 +2071,6 @@ function componentOnZoomChanged(args, sender) {
 
 /**
  * Invoked when the empty canvas area has been clicked.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnCanvasClicked(args, sender) {
   log(sender, 'GraphEditorInputMode CanvasClicked')
@@ -2293,8 +2078,6 @@ function geimOnCanvasClicked(args, sender) {
 
 /**
  * Invoked when an item has been deleted interactively by this mode.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnDeletedItem(args, sender) {
   log(sender, 'GraphEditorInputMode DeletedItem')
@@ -2303,8 +2086,6 @@ function geimOnDeletedItem(args, sender) {
 /**
  * Invoked just before the deleteSelection method has deleted the selection after all selected items have been
  * removed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnDeletedSelection(args, sender) {
   log(sender, 'GraphEditorInputMode DeletedSelection')
@@ -2313,8 +2094,6 @@ function geimOnDeletedSelection(args, sender) {
 /**
  * Invoked just before the deleteSelection method starts its work and will be followed by any number of DeletedItem
  * events and finalized by a DeletedSelection event.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnDeletingSelection(args, sender) {
   log(sender, 'GraphEditorInputMode DeletingSelection')
@@ -2322,8 +2101,6 @@ function geimOnDeletingSelection(args, sender) {
 
 /**
  * Invoked when an item has been clicked.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnItemClicked(args, sender) {
   log(sender, `GraphEditorInputMode ItemClicked ${args.handled ? '(Handled)' : '(Unhandled)'}`)
@@ -2331,8 +2108,6 @@ function geimOnItemClicked(args, sender) {
 
 /**
  * Invoked when an item has been double clicked.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnItemDoubleClicked(args, sender) {
   log(sender, `GraphEditorInputMode ItemDoubleClicked${args.handled ? '(Handled)' : '(Unhandled)'}`)
@@ -2340,8 +2115,6 @@ function geimOnItemDoubleClicked(args, sender) {
 
 /**
  * Invoked when an item has been left-clicked.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnItemLeftClicked(args, sender) {
   log(sender, `GraphEditorInputMode ItemLeftClicked${args.handled ? '(Handled)' : '(Unhandled)'}`)
@@ -2349,8 +2122,6 @@ function geimOnItemLeftClicked(args, sender) {
 
 /**
  * Invoked when an item has been left double-clicked.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnItemLeftDoubleClicked(args, sender) {
   log(
@@ -2361,8 +2132,6 @@ function geimOnItemLeftDoubleClicked(args, sender) {
 
 /**
  * Invoked when an item has been right clicked.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnItemRightClicked(args, sender) {
   log(sender, `GraphEditorInputMode ItemRightClicked${args.handled ? '(Handled)' : '(Unhandled)'}`)
@@ -2370,8 +2139,6 @@ function geimOnItemRightClicked(args, sender) {
 
 /**
  * Invoked when an item has been right double-clicked.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnItemRightDoubleClicked(args, sender) {
   log(
@@ -2382,8 +2149,6 @@ function geimOnItemRightDoubleClicked(args, sender) {
 
 /**
  * Invoked when a label has been added.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnLabelAdded(args, sender) {
   log(sender, 'GraphEditorInputMode LabelAdded')
@@ -2391,8 +2156,6 @@ function geimOnLabelAdded(args, sender) {
 
 /**
  * Invoked when the label text has been changed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnLabelEdited(args, sender) {
   log(sender, 'GraphEditorInputMode LabelEdited')
@@ -2400,8 +2163,6 @@ function geimOnLabelEdited(args, sender) {
 
 /**
  * Invoked when a single or multi select operation has been finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnMultiSelectionFinished(args, sender) {
   log(sender, 'GraphEditorInputMode MultiSelectionFinished')
@@ -2409,8 +2170,6 @@ function geimOnMultiSelectionFinished(args, sender) {
 
 /**
  * Invoked when a single or multi select operation has been started.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnMultiSelectionStarted(args, sender) {
   log(sender, 'GraphEditorInputMode MultiSelectionStarted')
@@ -2418,8 +2177,6 @@ function geimOnMultiSelectionStarted(args, sender) {
 
 /**
  * Invoked when this mode has created a node in response to user interaction.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnNodeCreated(args, sender) {
   log(sender, 'GraphEditorInputMode NodeCreated')
@@ -2427,8 +2184,6 @@ function geimOnNodeCreated(args, sender) {
 
 /**
  * Invoked when a node has been reparented interactively.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnNodeReparented(args, sender) {
   log(sender, 'GraphEditorInputMode NodeReparented')
@@ -2436,8 +2191,6 @@ function geimOnNodeReparented(args, sender) {
 
 /**
  * Invoked after an edge's source and/or target ports have been changed as the result of an input gesture.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function geimOnEdgePortsChanged(args, sender) {
   const edge = args.item
@@ -2449,9 +2202,6 @@ function geimOnEdgePortsChanged(args, sender) {
 
 /**
  * Invoked when the context menu over an item is about to be opened to determine the contents of the Menu.
- * @param sender The source of the event
- * @param args An object that contains the
- *   event data
  */
 function geimOnPopulateItemContextMenu(args, sender) {
   log(
@@ -2462,9 +2212,6 @@ function geimOnPopulateItemContextMenu(args, sender) {
 
 /**
  * Invoked when the pointer is hovering over an item to determine the tool tip to display.
- * @param sender The source of the event
- * @param args An object that contains the event
- *   data
  */
 function geimOnQueryItemToolTip(args, sender) {
   log(sender, `GraphEditorInputMode QueryItemToolTip${args.handled ? '(Handled)' : '(Unhandled)'}`)
@@ -2472,8 +2219,6 @@ function geimOnQueryItemToolTip(args, sender) {
 
 /**
  * Invoked when the empty canvas area has been clicked.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function gvimOnCanvasClicked(args, sender) {
   log(sender, 'GraphViewerInputMode CanvasClicked')
@@ -2481,8 +2226,6 @@ function gvimOnCanvasClicked(args, sender) {
 
 /**
  * Invoked when an item has been clicked.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function gvimOnItemClicked(args, sender) {
   log(sender, 'GraphViewerInputMode ItemClicked')
@@ -2490,8 +2233,6 @@ function gvimOnItemClicked(args, sender) {
 
 /**
  * Invoked when an item has been double-clicked.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function gvimOnItemDoubleClicked(args, sender) {
   log(sender, 'GraphViewerInputMode ItemDoubleClicked')
@@ -2499,8 +2240,6 @@ function gvimOnItemDoubleClicked(args, sender) {
 
 /**
  * Invoked when an item has been left-clicked.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function gvimOnItemLeftClicked(args, sender) {
   log(sender, 'GraphViewerInputMode ItemLeftClicked')
@@ -2508,8 +2247,6 @@ function gvimOnItemLeftClicked(args, sender) {
 
 /**
  * Invoked when an item has been left double-clicked.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function gvimOnItemLeftDoubleClicked(args, sender) {
   log(sender, 'GraphViewerInputMode ItemLeftDoubleClicked')
@@ -2517,8 +2254,6 @@ function gvimOnItemLeftDoubleClicked(args, sender) {
 
 /**
  * Invoked when an item has been right-clicked.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function gvimOnItemRightClicked(args, sender) {
   log(sender, 'GraphViewerInputMode ItemRightClicked')
@@ -2526,8 +2261,6 @@ function gvimOnItemRightClicked(args, sender) {
 
 /**
  * Invoked when an item has been right double-clicked.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function gvimOnItemRightDoubleClicked(args, sender) {
   log(sender, 'GraphViewerInputMode ItemRightDoubleClicked')
@@ -2535,8 +2268,6 @@ function gvimOnItemRightDoubleClicked(args, sender) {
 
 /**
  * Invoked when a single or multi select operation has been finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function gvimOnMultiSelectionFinished(args, sender) {
   log(sender, 'GraphViewerInputMode MultiSelectionFinished')
@@ -2544,8 +2275,6 @@ function gvimOnMultiSelectionFinished(args, sender) {
 
 /**
  * Invoked when a single or multi select operation has been started.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function gvimOnMultiSelectionStarted(args, sender) {
   log(sender, 'GraphViewerInputMode MultiSelectionStarted')
@@ -2553,9 +2282,6 @@ function gvimOnMultiSelectionStarted(args, sender) {
 
 /**
  * Invoked when the context menu over an item is about to be opened to determine the contents of the Menu.
- * @param sender The source of the event
- * @param args An object that contains the
- *   event data
  */
 function gvimOnPopulateItemContextMenu(args, sender) {
   log(sender, 'GraphViewerInputMode PopulateItemContextMenu')
@@ -2563,9 +2289,6 @@ function gvimOnPopulateItemContextMenu(args, sender) {
 
 /**
  * Invoked when the pointer is hovering over an item to determine the tool tip to display.
- * @param sender The source of the event
- * @param args An object that contains the event
- *   data
  */
 function gvimOnQueryItemToolTip(args, sender) {
   log(sender, 'GraphViewerInputMode QueryItemToolTip')
@@ -2573,8 +2296,6 @@ function gvimOnQueryItemToolTip(args, sender) {
 
 /**
  * Invoked when the drag has been canceled.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveInputModeOnDragCanceled(args, sender) {
   logWithType(sender, 'MoveInputMode DragCanceled', 'DragCanceled')
@@ -2582,8 +2303,6 @@ function moveInputModeOnDragCanceled(args, sender) {
 
 /**
  * Invoked before the drag will be canceled.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveInputModeOnDragCanceling(args, sender) {
   logWithType(sender, 'MoveInputMode DragCanceling', 'DragCanceling')
@@ -2591,8 +2310,6 @@ function moveInputModeOnDragCanceling(args, sender) {
 
 /**
  * Invoked once the drag has been finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveInputModeOnDragFinished(args, sender) {
   logWithType(sender, 'MoveInputMode DragFinished', 'DragFinished')
@@ -2600,8 +2317,6 @@ function moveInputModeOnDragFinished(args, sender) {
 
 /**
  * Invoked before the drag will be finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveInputModeOnDragFinishing(args, sender) {
   logWithType(sender, `MoveInputMode DragFinishing${getAffectedItems(sender)}`, 'DragFinishing')
@@ -2609,8 +2324,6 @@ function moveInputModeOnDragFinishing(args, sender) {
 
 /**
  * Invoked at the end of every drag.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveInputModeOnDragged(args, sender) {
   logWithType(sender, 'MoveInputMode Dragged', 'Dragged')
@@ -2618,8 +2331,6 @@ function moveInputModeOnDragged(args, sender) {
 
 /**
  * Invoked once the drag is starting.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveInputModeOnDragging(args, sender) {
   logWithType(sender, 'MoveInputMode Dragging', 'Dragging')
@@ -2627,8 +2338,6 @@ function moveInputModeOnDragging(args, sender) {
 
 /**
  * Invoked once the drag is initialized and has started.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveInputModeOnDragStarted(args, sender) {
   logWithType(sender, `MoveInputMode DragStarted${getAffectedItems(sender)}`, 'DragStarted')
@@ -2636,8 +2345,6 @@ function moveInputModeOnDragStarted(args, sender) {
 
 /**
  * Invoked once the drag is starting.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveInputModeOnDragStarting(args, sender) {
   logWithType(sender, 'MoveInputMode DragStarting', 'DragStarting')
@@ -2645,8 +2352,6 @@ function moveInputModeOnDragStarting(args, sender) {
 
 /**
  * Invoked when a drag is recognized for MoveInputMode.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveInputModeOnQueryPositionHandler(args, sender) {
   log(sender, 'MoveInputMode QueryPositionHandler')
@@ -2654,8 +2359,6 @@ function moveInputModeOnQueryPositionHandler(args, sender) {
 
 /**
  * Invoked when the drag operation is dropped.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function itemInputModeOnDragDropped(args, sender) {
   logWithType(sender, `${getDropInputModeName(sender)} DragDropped`, 'DragDropped')
@@ -2663,8 +2366,6 @@ function itemInputModeOnDragDropped(args, sender) {
 
 /**
  * Invoked when the drag operation enters the CanvasComponent.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function itemInputModeOnDragEntered(args, sender) {
   logWithType(sender, `${getDropInputModeName(sender)} DragEntered`, 'DragEntered')
@@ -2672,8 +2373,6 @@ function itemInputModeOnDragEntered(args, sender) {
 
 /**
  * Invoked when the drag operation leaves the CanvasComponent.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function itemInputModeOnDragLeft(args, sender) {
   logWithType(sender, `${getDropInputModeName(sender)} DragLeft`, 'DragLeft')
@@ -2681,8 +2380,6 @@ function itemInputModeOnDragLeft(args, sender) {
 
 /**
  * Invoked when the drag operation drags over the CanvasComponent.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function itemInputModeOnDragOver(args, sender) {
   logWithType(sender, `${getDropInputModeName(sender)} DragOver`, 'DragOver')
@@ -2690,8 +2387,6 @@ function itemInputModeOnDragOver(args, sender) {
 
 /**
  * Invoked when a new item gets created by the drag operation.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function itemInputModeOnItemCreated(args, sender) {
   logWithType(sender, `${getDropInputModeName(sender)} ItemCreated`, 'ItemCreated')
@@ -2706,8 +2401,6 @@ function getDropInputModeName(sender) {
 
 /**
  * Invoked when the item that is being hovered over with the pointer changes.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function itemHoverInputModeOnHoveredItemChanged(args, sender) {
   logWithType(
@@ -2719,8 +2412,6 @@ function itemHoverInputModeOnHoveredItemChanged(args, sender) {
 
 /**
  * Invoked once a bend creation gesture has been recognized.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createBendInputModeOnBendCreated(args, sender) {
   log(sender, 'CreateBendInputMode Bend Created')
@@ -2728,8 +2419,6 @@ function createBendInputModeOnBendCreated(args, sender) {
 
 /**
  * Invoked when the drag on a bend has been canceled.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createBendInputModeOnDragCanceled(args, sender) {
   logWithType(sender, 'CreateBendInputMode DragCanceled', 'DragCanceled')
@@ -2737,8 +2426,6 @@ function createBendInputModeOnDragCanceled(args, sender) {
 
 /**
  * Invoked at the end of every drag on a bend.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createBendInputModeOnDragged(args, sender) {
   logWithType(sender, 'CreateBendInputMode Dragged', 'Dragged')
@@ -2746,8 +2433,6 @@ function createBendInputModeOnDragged(args, sender) {
 
 /**
  * Invoked once the drag on a bend is starting.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createBendInputModeOnDragging(args, sender) {
   logWithType(sender, 'CreateBendInputMode Dragging', 'Dragging')
@@ -2755,8 +2440,6 @@ function createBendInputModeOnDragging(args, sender) {
 
 /**
  * Invoked when the context menu is about to be shown.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function contextMenuInputModeOnPopulateMenu(args, sender) {
   log(sender, 'ContextMenuInputMode Populate Context Menu')
@@ -2764,8 +2447,6 @@ function contextMenuInputModeOnPopulateMenu(args, sender) {
 
 /**
  * Invoked if the editing has not been finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function textEditorInputModeOnEditingCanceled(args, sender) {
   log(sender, 'TextEditorInputMode Editing Canceled')
@@ -2773,8 +2454,6 @@ function textEditorInputModeOnEditingCanceled(args, sender) {
 
 /**
  * Invoked if the editing when text editing is started.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function textEditorInputModeOnEditingStarted(args, sender) {
   log(sender, 'TextEditorInputMode Editing Started')
@@ -2782,8 +2461,6 @@ function textEditorInputModeOnEditingStarted(args, sender) {
 
 /**
  * Invoked once the text has been edited.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function textEditorInputModeOnTextEdited(args, sender) {
   log(sender, 'TextEditorInputMode Text Edited')
@@ -2791,8 +2468,6 @@ function textEditorInputModeOnTextEdited(args, sender) {
 
 /**
  * Invoked when this mode queries the tool tip for a certain query location.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function toolTipInputModeOnQueryToolTip(args, sender) {
   log(sender, 'TooltipInputMode QueryToolTip')
@@ -2800,19 +2475,15 @@ function toolTipInputModeOnQueryToolTip(args, sender) {
 
 /**
  * Invoked once a click has been detected.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function clickInputModeOnClicked(args, sender) {
-  let modifierText = getModifierText(args)
+  const modifierText = getModifierText(args)
   const details = `buttons: ${PointerButtons[args.pointerButtons]}, clicks: ${args.clickCount}${modifierText.length > 0 ? `, modifiers: ${modifierText})` : ''}`
   log(sender, `ClickInputMode Clicked (${details})`)
 }
 
 /**
  * Invoked when the drag has been canceled.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function handleInputModeOnDragCanceled(args, sender) {
   logWithType(sender, 'HandleInputMode DragCanceled', 'DragCanceled')
@@ -2820,8 +2491,6 @@ function handleInputModeOnDragCanceled(args, sender) {
 
 /**
  * Invoked before the drag will be canceled.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function handleInputModeOnDragCanceling(args, sender) {
   logWithType(sender, 'HandleInputMode DragCanceling', 'DragCanceling')
@@ -2829,8 +2498,6 @@ function handleInputModeOnDragCanceling(args, sender) {
 
 /**
  * Invoked once the drag has been finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function handleInputModeOnDragFinished(args, sender) {
   logWithType(sender, 'HandleInputMode DragFinished', 'DragFinished')
@@ -2838,8 +2505,6 @@ function handleInputModeOnDragFinished(args, sender) {
 
 /**
  * Invoked before the drag will be finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function handleInputModeOnDragFinishing(args, sender) {
   logWithType(sender, `HandleInputMode DragFinishing${getAffectedItems(sender)}`, 'DragFinishing')
@@ -2847,8 +2512,6 @@ function handleInputModeOnDragFinishing(args, sender) {
 
 /**
  * Invoked at the end of every drag.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function handleInputModeOnDragged(args, sender) {
   logWithType(sender, 'HandleInputMode Dragged', 'Dragged')
@@ -2856,8 +2519,6 @@ function handleInputModeOnDragged(args, sender) {
 
 /**
  * Invoked once the drag is starting.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function handleInputModeOnDragging(args, sender) {
   logWithType(sender, 'HandleInputMode Dragging', 'Dragging')
@@ -2865,8 +2526,6 @@ function handleInputModeOnDragging(args, sender) {
 
 /**
  * Invoked once the drag is initialized and has started.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function handleInputModeOnDragStarted(args, sender) {
   logWithType(sender, `HandleInputMode DragStarted${getAffectedItems(sender)}`, 'DragStarted')
@@ -2874,8 +2533,6 @@ function handleInputModeOnDragStarted(args, sender) {
 
 /**
  * Invoked once the drag is starting.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function handleInputModeOnDragStarting(args, sender) {
   logWithType(sender, 'HandleInputMode DragStarting', 'DragStarting')
@@ -2883,8 +2540,6 @@ function handleInputModeOnDragStarting(args, sender) {
 
 /**
  * Invoked when the drag has been canceled.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveViewportInputModeOnDragCanceled(args, sender) {
   logWithType(sender, 'MoveViewportInputMode DragCanceled', 'DragCanceled')
@@ -2892,8 +2547,6 @@ function moveViewportInputModeOnDragCanceled(args, sender) {
 
 /**
  * Invoked before the drag will be canceled.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveViewportInputModeOnDragCanceling(args, sender) {
   logWithType(sender, 'MoveViewportInputMode DragCanceling', 'DragCanceling')
@@ -2901,8 +2554,6 @@ function moveViewportInputModeOnDragCanceling(args, sender) {
 
 /**
  * Invoked once the drag has been finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveViewportInputModeOnDragFinished(args, sender) {
   logWithType(sender, 'MoveViewportInputMode DragFinished', 'DragFinished')
@@ -2910,8 +2561,6 @@ function moveViewportInputModeOnDragFinished(args, sender) {
 
 /**
  * Invoked before the drag will be finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveViewportInputModeOnDragFinishing(args, sender) {
   logWithType(sender, `MoveViewportInputMode DragFinishing`, 'DragFinishing')
@@ -2919,8 +2568,6 @@ function moveViewportInputModeOnDragFinishing(args, sender) {
 
 /**
  * Invoked at the end of every drag.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveViewportInputModeOnDragged(args, sender) {
   logWithType(sender, 'MoveViewportInputMode Dragged', 'Dragged')
@@ -2928,8 +2575,6 @@ function moveViewportInputModeOnDragged(args, sender) {
 
 /**
  * Invoked once the drag is starting.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveViewportInputModeOnDragging(args, sender) {
   logWithType(sender, 'MoveViewportInputMode Dragging', 'Dragging')
@@ -2937,8 +2582,6 @@ function moveViewportInputModeOnDragging(args, sender) {
 
 /**
  * Invoked once the drag is initialized and has started.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveViewportInputModeOnDragStarted(args, sender) {
   logWithType(sender, `MoveViewportInputMode DragStarted`, 'DragStarted')
@@ -2946,8 +2589,6 @@ function moveViewportInputModeOnDragStarted(args, sender) {
 
 /**
  * Invoked once the drag is starting.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function moveViewportInputModeOnDragStarting(args, sender) {
   logWithType(sender, 'MoveViewportInputMode DragStarting', 'DragStarting')
@@ -2955,8 +2596,6 @@ function moveViewportInputModeOnDragStarting(args, sender) {
 
 /**
  * Invoked whenever a group has been collapsed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function navigationInputModeOnGroupCollapsed(args, sender) {
   logWithType(sender, `NavigationInputMode Group Collapsed: ${args.item}`, 'GroupCollapsed')
@@ -2964,8 +2603,6 @@ function navigationInputModeOnGroupCollapsed(args, sender) {
 
 /**
  * Invoked before a group will be collapsed.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function navigationInputModeOnGroupCollapsing(args, sender) {
   logWithType(sender, `NavigationInputMode Group Collapsing: ${args.item}`, 'Group Collapsing')
@@ -2973,8 +2610,6 @@ function navigationInputModeOnGroupCollapsing(args, sender) {
 
 /**
  * Invoked whenever a group has been entered.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function navigationInputModeOnGroupEntered(args, sender) {
   logWithType(sender, `NavigationInputMode Group Entered: ${args.item}`, 'Group Entered')
@@ -2982,8 +2617,6 @@ function navigationInputModeOnGroupEntered(args, sender) {
 
 /**
  * Invoked before a group will be entered.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function navigationInputModeOnGroupEntering(args, sender) {
   logWithType(sender, `NavigationInputMode Group Entering: ${args.item}`, 'Group Entering')
@@ -2991,8 +2624,6 @@ function navigationInputModeOnGroupEntering(args, sender) {
 
 /**
  * Invoked whenever a group has been exited.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function navigationInputModeOnGroupExited(args, sender) {
   logWithType(sender, `NavigationInputMode Group Exited: ${args.item}`, 'Group Exited')
@@ -3000,8 +2631,6 @@ function navigationInputModeOnGroupExited(args, sender) {
 
 /**
  * Invoked before a group will be exited.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function navigationInputModeOnGroupExiting(args, sender) {
   logWithType(sender, `NavigationInputMode Group Exiting: ${args.item}`, 'Group Exiting')
@@ -3009,8 +2638,6 @@ function navigationInputModeOnGroupExiting(args, sender) {
 
 /**
  * Invoked when a group has been expanded.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function navigationInputModeOnGroupExpanded(args, sender) {
   logWithType(sender, `NavigationInputMode Group Expanded: ${args.item}`, 'Group Expanded')
@@ -3018,8 +2645,6 @@ function navigationInputModeOnGroupExpanded(args, sender) {
 
 /**
  * Invoked before a group has been expanded.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function navigationInputModeOnGroupExpanding(args, sender) {
   logWithType(sender, `NavigationInputMode Group Expanding: ${args.item}`, 'Group Expanding')
@@ -3027,8 +2652,6 @@ function navigationInputModeOnGroupExpanding(args, sender) {
 
 /**
  * Invoked after an edge has been created by this mode.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createEdgeInputModeOnEdgeCreated(args, sender) {
   log(sender, 'CreateEdgeInputMode Edge Created')
@@ -3036,8 +2659,6 @@ function createEdgeInputModeOnEdgeCreated(args, sender) {
 
 /**
  * Invoked when the edge creation has started.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createEdgeInputModeOnEdgeCreationStarted(args, sender) {
   log(sender, 'CreateEdgeInputMode Edge Creation Started')
@@ -3045,8 +2666,6 @@ function createEdgeInputModeOnEdgeCreationStarted(args, sender) {
 
 /**
  * Invoked when the edge creation gesture has been canceled.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createEdgeInputModeOnGestureCanceled(args, sender) {
   log(sender, 'CreateEdgeInputMode Gesture Canceled')
@@ -3054,8 +2673,6 @@ function createEdgeInputModeOnGestureCanceled(args, sender) {
 
 /**
  * Invoked before the gesture will be canceled.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createEdgeInputModeOnGestureCanceling(args, sender) {
   log(sender, 'CreateEdgeInputMode Gesture Canceling')
@@ -3063,8 +2680,6 @@ function createEdgeInputModeOnGestureCanceling(args, sender) {
 
 /**
  * Invoked once the gesture has been finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createEdgeInputModeOnGestureFinished(args, sender) {
   log(sender, 'CreateEdgeInputMode Gesture Finished')
@@ -3072,8 +2687,6 @@ function createEdgeInputModeOnGestureFinished(args, sender) {
 
 /**
  * Invoked before the gesture will be finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createEdgeInputModeOnGestureFinishing(args, sender) {
   log(sender, 'CreateEdgeInputMode Gesture Finishing')
@@ -3081,8 +2694,6 @@ function createEdgeInputModeOnGestureFinishing(args, sender) {
 
 /**
  * Invoked once the gesture is initialized and has started.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createEdgeInputModeOnGestureStarted(args, sender) {
   log(sender, 'CreateEdgeInputMode Gesture Started')
@@ -3090,8 +2701,6 @@ function createEdgeInputModeOnGestureStarted(args, sender) {
 
 /**
  * Invoked once the gesture is starting.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createEdgeInputModeOnGestureStarting(args, sender) {
   log(sender, 'CreateEdgeInputMode Gesture Starting')
@@ -3099,8 +2708,6 @@ function createEdgeInputModeOnGestureStarting(args, sender) {
 
 /**
  * Invoked at the end of every drag or move.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createEdgeInputModeOnMoved(args, sender) {
   log(sender, 'CreateEdgeInputMode Moved')
@@ -3108,8 +2715,6 @@ function createEdgeInputModeOnMoved(args, sender) {
 
 /**
  * Invoked at the start of every drag or move.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createEdgeInputModeOnMoving(args, sender) {
   log(sender, 'CreateEdgeInputMode Moving')
@@ -3117,8 +2722,6 @@ function createEdgeInputModeOnMoving(args, sender) {
 
 /**
  * Invoked when this instance adds a port to the source or target node during completion of the edge creation gesture.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function createEdgeInputModeOnPortAdded(args, sender) {
   log(sender, 'CreateEdgeInputMode Port Added')
@@ -3126,8 +2729,6 @@ function createEdgeInputModeOnPortAdded(args, sender) {
 
 /**
  * Invoked when an item changed its selection state from selected to unselected or vice versa.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onItemSelectionAdded(args, sender) {
   log(sender, 'GraphComponent Item Selection Added')
@@ -3135,8 +2736,6 @@ function onItemSelectionAdded(args, sender) {
 
 /**
  * Invoked when an item changed its selection state from selected to unselected or vice versa.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function onItemSelectionRemoved(args, sender) {
   log(sender, 'GraphComponent Item Selection Removed')
@@ -3144,8 +2743,6 @@ function onItemSelectionRemoved(args, sender) {
 
 /**
  * Invoked when a adding a new label is finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function editLabelInputModeLabelAdded(args, sender) {
   log(sender, 'Label Added')
@@ -3153,8 +2750,6 @@ function editLabelInputModeLabelAdded(args, sender) {
 
 /**
  * Invoked when a removing a label is finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function editLabelInputModeLabelDeleted(args, sender) {
   log(sender, 'Label Deleted')
@@ -3162,8 +2757,6 @@ function editLabelInputModeLabelDeleted(args, sender) {
 
 /**
  * Invoked when the label editing process is finished.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function editLabelInputModeLabelEdited(args, sender) {
   log(sender, 'Label Edited')
@@ -3171,8 +2764,6 @@ function editLabelInputModeLabelEdited(args, sender) {
 
 /**
  * Invoked when the label editing process is canceled.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function editLabelInputModeLabelEditingCanceled(args, sender) {
   log(sender, 'Label Text Editing Canceled')
@@ -3180,8 +2771,6 @@ function editLabelInputModeLabelEditingCanceled(args, sender) {
 
 /**
  * Invoked when the label editing process is started.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function editLabelInputModeLabelEditingStarted(args, sender) {
   log(sender, 'Label Text Editing Started')
@@ -3189,8 +2778,6 @@ function editLabelInputModeLabelEditingStarted(args, sender) {
 
 /**
  * Invoked when a label is about to be added.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function editLabelInputModeOnQueryLabelAdding(args, sender) {
   log(sender, 'Query Label Adding')
@@ -3198,8 +2785,6 @@ function editLabelInputModeOnQueryLabelAdding(args, sender) {
 
 /**
  * Invoked when the label editing process is about to be started.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function editLabelInputModeOnQueryLabelEditing(args, sender) {
   log(sender, 'Query Label Editing')
@@ -3207,8 +2792,6 @@ function editLabelInputModeOnQueryLabelEditing(args, sender) {
 
 /**
  * Invoked when a label that is about to be added or edited.
- * @param sender The source of the event
- * @param args An object that contains the event data
  */
 function editLabelInputModeOnQueryValidateLabelText(args, sender) {
   log(sender, 'Validate Label Text')
@@ -3218,8 +2801,6 @@ function editLabelInputModeOnQueryValidateLabelText(args, sender) {
  * Invoked when the value of the {@link UndoEngine.canUndo}, {@link UndoEngine.canRedo},
  * {@link UndoEngine.undoName}, {@link UndoEngine.redoName}, or {@link UndoEngine.token}
  * property changes.
- * @param args An object that contains the name of the changed property.
- * @param sender The {@link UndoEngine} instance that is the source of the event.
  */
 function undoEngineOnPropertyChanged(args, sender) {
   log(sender, `UndoEngine Property Changed: ${args.propertyName}`)
@@ -3227,8 +2808,6 @@ function undoEngineOnPropertyChanged(args, sender) {
 
 /**
  * Invoked when the undo engine undoes an edit in its queue.
- * @param args An empty object without further data.
- * @param sender The {@link UndoEngine} instance that is the source of the event.
  */
 function undoEngineOnUnitUndone(args, sender) {
   log(sender, 'Undo performed')
@@ -3236,8 +2815,6 @@ function undoEngineOnUnitUndone(args, sender) {
 
 /**
  * Invoked when the undo engine redoes a previously undone edit.
- * @param args An empty object without further data.
- * @param sender The {@link UndoEngine} instance that is the source of the event.
  */
 function undoEngineOnUnitRedone(args, sender) {
   log(sender, 'Redo performed')
@@ -3255,8 +2832,6 @@ function clearButtonClick() {
 
 /**
  * Creates the log message without type.
- * @param sender The source of the event
- * @param message The given message
  */
 function log(sender, message) {
   logWithType(sender, message, null)
@@ -3264,9 +2839,6 @@ function log(sender, message) {
 
 /**
  * Creates the log message with the given type.
- * @param sender The source of the event
- * @param message The given message
- * @param type The type of the event
  */
 function logWithType(sender, message, type) {
   if (!type) {
@@ -3551,10 +3123,9 @@ let graphComponent
 
 /**
  * Returns the number of affected items as string.
- * @param sender The source of the event
  */
 function getAffectedItems(sender) {
-  let items = sender.affectedItems
+  const items = sender.affectedItems
 
   const nodeCount = items.ofType(INode).size
   const edgeCount = items.ofType(IEdge).size

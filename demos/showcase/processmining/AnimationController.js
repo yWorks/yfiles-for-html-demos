@@ -26,15 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Animator, GraphComponent, TimeSpan } from '@yfiles/yfiles'
+import { Animator, TimeSpan } from '@yfiles/yfiles'
 
 /**
  * This controller manages the animation of the heatmap and process items.
  * It handles the state of the animation and updates the progress via a callback function.
  */
 export class AnimationController {
-  graphComponent
   maxTime
+  graphComponent
   animator
   running
   setProgress

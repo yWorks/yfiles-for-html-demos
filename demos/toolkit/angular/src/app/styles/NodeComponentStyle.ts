@@ -26,10 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ApplicationRef, createComponent, EnvironmentInjector, NgZone } from '@angular/core'
+import {
+  type ApplicationRef,
+  createComponent,
+  type EnvironmentInjector,
+  type NgZone
+} from '@angular/core'
 import { NodeComponent } from './node.component'
-import { INode, IRenderContext, NodeStyleBase, SvgVisual, Visual } from '@yfiles/yfiles'
-import { Person } from '../person'
+import {
+  type INode,
+  type IRenderContext,
+  NodeStyleBase,
+  SvgVisual,
+  type Visual
+} from '@yfiles/yfiles'
+import { type Person } from '../person'
 
 export class NodeComponentStyle extends NodeStyleBase {
   constructor(

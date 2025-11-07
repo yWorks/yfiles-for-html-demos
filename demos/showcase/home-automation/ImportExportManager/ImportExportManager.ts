@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { showErrorDialog } from '../UI/showErrorDialog'
 import { GraphData, type SerializableGraphData } from './GraphData'
-import { GraphComponent } from '@yfiles/yfiles'
+import { type GraphComponent } from '@yfiles/yfiles'
 
 export function initializeJsonIo(graphComponent: GraphComponent): void {
   setupButtons(graphComponent)

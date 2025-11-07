@@ -28,10 +28,10 @@
  ***************************************************************************/
 import {
   BaseClass,
-  IInputModeContext,
+  type IInputModeContext,
   IPositionHandler,
   MutablePoint,
-  MutableRectangle,
+  type MutableRectangle,
   Point
 } from '@yfiles/yfiles'
 

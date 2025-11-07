@@ -70,8 +70,11 @@ export function removeIconDescription(graphComponent: GraphComponent): void {
  * Creates a background visual that contains an icon for the given node.
  */
 export class IconDescriptionVisual extends BaseClass(IVisualCreator) {
-  constructor(private readonly node: INode) {
+  private readonly node: INode
+
+  constructor(node: INode) {
     super()
+    this.node = node
   }
 
   /**

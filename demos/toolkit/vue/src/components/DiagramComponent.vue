@@ -29,7 +29,7 @@ import { useTooltips } from '@/composables/useTooltips'
 import { useGraphSearch } from '@/composables/useGraphSearch'
 import { useLayout } from '@/composables/useLayout'
 import { useDefaultGraph } from '@/composables/useDefaultGraph'
-import licenseData from '../../../../../lib/license.json'
+import licenseData from '../license.json'
 import { downloadFile } from '@yfiles/demo-utils/file-support.ts'
 
 License.value = licenseData

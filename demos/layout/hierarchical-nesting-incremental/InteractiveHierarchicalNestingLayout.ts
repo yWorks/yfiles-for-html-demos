@@ -31,13 +31,13 @@ import {
   GivenCoordinatesLayout,
   GivenCoordinatesLayoutData,
   type GraphComponent,
-  GraphViewerInputMode,
+  type GraphViewerInputMode,
   type GroupingSupport,
   GroupPaddingProvider,
   HierarchicalLayout,
   HierarchicalLayoutData,
   type IEdge,
-  IEnumerable,
+  type IEnumerable,
   type IGraph,
   IGroupPaddingProvider,
   type IMapper,
@@ -115,6 +115,7 @@ export function initializeInteractiveHierarchicalNestingLayout(
  * uses that information to apply an incremental layout after the group node is expanded/collapsed.
  */
 export class InteractiveHierarchicalNestingLayout {
+    private readonly graphComponent: GraphComponent;
   /**
    * The last group node that was collapsed/expanded.
    */
@@ -141,7 +142,8 @@ export class InteractiveHierarchicalNestingLayout {
    * Creates and initializes a new instance.
    * @param graphComponent the current graph component
    */
-  constructor(private readonly graphComponent: GraphComponent) {
+  constructor(graphComponent: GraphComponent) {
+      this.graphComponent = graphComponent;
     this.alternativeGroupBounds = new Mapper()
     this.alternativeEdgePaths = new Mapper()
     this._expandedGroups = new Set<INode>()

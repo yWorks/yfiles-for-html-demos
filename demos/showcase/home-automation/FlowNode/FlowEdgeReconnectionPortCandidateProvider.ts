@@ -28,11 +28,11 @@
  ***************************************************************************/
 import {
   BaseClass,
-  IEdge,
+  type IEdge,
   IEdgeReconnectionPortCandidateProvider,
-  IEnumerable,
-  IInputModeContext,
-  IPortCandidate,
+  type IEnumerable,
+  type IInputModeContext,
+  type IPortCandidate,
   List,
   PortCandidate,
   PortCandidateValidity

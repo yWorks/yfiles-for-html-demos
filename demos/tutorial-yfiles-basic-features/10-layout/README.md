@@ -32,12 +32,12 @@ const layout = new HierarchicalLayout()
 graph.applyLayout(layout)
 
 // Fit the graph bounds since they changed for the new layout
-graphComponent.fitGraphBounds()
+await graphComponent.fitGraphBounds()
 ```
 
 ### Running a layout animation
 
-An automatic layout can also be applied with an animation. In this sample, we use [applyLayoutAnimated](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-defaultmethod-applyLayoutAnimated) to perform the layout, animate it, manage undo and adjust the content rectangle in one call. [applyLayoutAnimated](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-defaultmethod-applyLayoutAnimated) runs asynchronously and returns immediately yielding a Promise that we can await or use to catch errors.
+An automatic layout can also be applied with an animation. In this sample, we use [applyLayoutAnimated](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#applyLayoutAnimated) to perform the layout, animate it, manage undo and adjust the content rectangle in one call. [applyLayoutAnimated](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#applyLayoutAnimated) runs asynchronously and returns immediately yielding a Promise that we can await or use to catch errors.
 
 Animate Organic Layout
 

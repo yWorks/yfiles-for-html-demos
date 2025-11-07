@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ClearAreaStrategy,
   ComponentAssignmentStrategy,
@@ -37,18 +36,18 @@ import {
   HandleInputMode,
   HandlePositions,
   type IEnumerable,
-  IHandle,
+  type IHandle,
   IHitTestable,
   IHitTester,
   type IInputMode,
-  IInputModeContext,
-  INode,
+  type IInputModeContext,
+  type INode,
   InputModeContext,
-  InputModeEventArgs,
+  type InputModeEventArgs,
   License,
   ModifierKeys,
   MoveInputMode,
-  MultiplexingInputMode,
+  type MultiplexingInputMode,
   MutableRectangle,
   ObservableCollection,
   Point,
@@ -62,9 +61,9 @@ import { LayoutOptions } from './LayoutOptions'
 import { RectanglePositionHandler } from './RectanglePositionHandler'
 
 import SampleData from './resources/SampleData'
-import { createDemoGroupStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoGroupStyle, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 import { RectangleRenderer } from '@yfiles/demo-utils/RectangleRenderer'
 
 // UI components
@@ -116,7 +115,7 @@ let graphComponent: GraphComponent
  * Runs the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   initializeUI()
 
@@ -293,7 +292,6 @@ function onDragged(e: InputModeEventArgs, _inputMode: IInputMode): void {
 
     // invoke the layout calculation and animation
     layoutHelper.groupNode = groupNode
-    // noinspection JSIgnoredPromiseFromCall
     layoutHelper.runLayout()
   }
 }
@@ -372,7 +370,7 @@ function loadGraph(sampleName: string): void {
   groupStyle.hitTransparentContentArea = false
   graph.groupNodeDefaults.style = groupStyle
   if (data.groups) {
-    const nodesSource = builder.createGroupNodesSource({
+    builder.createGroupNodesSource({
       data: data.groups,
       id: 'id',
       parentId: 'parentId',

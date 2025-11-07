@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { INode, INodeStyle, IRenderContext, NodeStyleBase, SvgVisual, Visual } from '@yfiles/yfiles'
+import { NodeStyleBase } from '@yfiles/yfiles'
 
 export class LevelOfDetailNodeStyle extends NodeStyleBase {
   detailThreshold

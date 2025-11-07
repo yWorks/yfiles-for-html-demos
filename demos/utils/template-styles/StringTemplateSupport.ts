@@ -30,10 +30,10 @@
 Helper types and functions that are common to all implementations of the string template styles
  */
 import {
-  GeneralPath,
+  type GeneralPath,
   GraphComponent,
   type IModelItem,
-  IRenderContext,
+  type IRenderContext,
   Rect,
   SvgVisual,
   type TaggedSvgVisual
@@ -77,7 +77,6 @@ export abstract class TemplateContext<TModelItem extends IModelItem> {
     return new Rect(0, 0, Math.max(this.width, 0), Math.max(this.height, 0))
   }
 
-  // noinspection JSUnusedGlobalSymbols
   abstract get styleTag(): any
 
   updateState(renderContext: IRenderContext): boolean {

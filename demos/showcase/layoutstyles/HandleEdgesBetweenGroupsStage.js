@@ -29,9 +29,7 @@
 import {
   ContextModificationStage,
   GenericLabeling,
-  ILayoutAlgorithm,
   LayoutEdge,
-  LayoutGraph,
   LayoutGraphGrouping,
   LayoutGraphHider,
   LayoutKeys,
@@ -57,8 +55,9 @@ import {
  * {@link markedEdgeRouter edge routing algorithm} for those edges.
  */
 export class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
-  considerEdgeLabels
   markedEdgeRouter
+  considerEdgeLabels
+
   /**
    * Creates an instance of HandleEdgesBetweenGroupsStage.
    * @param considerEdgeLabels whether or not the stage should place the labels of the edges that

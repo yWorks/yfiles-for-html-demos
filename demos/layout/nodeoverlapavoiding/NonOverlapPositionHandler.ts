@@ -33,13 +33,14 @@
  */
 import {
   BaseClass,
-  GraphComponent,
-  IInputModeContext,
-  INode,
-  IPoint,
+  type GraphComponent,
+  type IInputModeContext,
+  type INode,
+  type IPoint,
   IPositionHandler,
   IReparentNodeHandler,
-  Point,
+  MoveInputMode,
+  type Point,
   WaitInputMode
 } from '@yfiles/yfiles'
 import { LayoutHelper } from './LayoutHelper'
@@ -48,12 +49,12 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
   /**
    * The node we are currently moving.
    */
-  private readonly node: INode | null = null
+  private readonly node: INode
 
   /**
    * The original {@link IPositionHandler}.
    */
-  private handler: IPositionHandler | null = null
+  private handler: IPositionHandler
 
   /**
    * Creates space at the new location.
@@ -75,7 +76,7 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
   }
 
   public get location(): IPoint {
-    return this.handler!.location
+    return this.handler.location
   }
 
   /**
@@ -83,9 +84,13 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
    */
   public initializeDrag(context: IInputModeContext): void {
     this.reparentHandler = context.lookup(IReparentNodeHandler)
-    this.layoutHelper = new LayoutHelper(context.canvasComponent as GraphComponent, this.node!)
-    this.layoutHelper.initializeLayout()
-    this.handler!.initializeDrag(context)
+    if (context.inputMode instanceof MoveInputMode) {
+      this.layoutHelper = new LayoutHelper(context.canvasComponent as GraphComponent, this.node)
+      this.layoutHelper.initializeLayout()
+    } else {
+      this.layoutHelper = null
+    }
+    this.handler.initializeDrag(context)
   }
 
   /**
@@ -94,11 +99,11 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
   public handleMove(context: IInputModeContext, originalLocation: Point, newLocation: Point): void {
     this.clearTimeout()
 
-    this.handler!.handleMove(context, originalLocation, newLocation)
+    this.handler.handleMove(context, originalLocation, newLocation)
 
-    if (!this.reparentHandler || !this.reparentHandler.isReparentGesture(context, this.node!)) {
+    if (!this.reparentHandler || !this.reparentHandler.isReparentGesture(context, this.node)) {
       this.timeoutHandle = setTimeout(async () => {
-        await this.layoutHelper!.runLayout()
+        await this.layoutHelper?.runLayout()
       }, 50)
     }
   }
@@ -108,7 +113,7 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
    */
   public async cancelDrag(context: IInputModeContext, originalLocation: Point): Promise<void> {
     this.clearTimeout()
-    this.handler!.cancelDrag(context, originalLocation)
+    this.handler.cancelDrag(context, originalLocation)
 
     const waitInputMode = context.lookup(WaitInputMode)
     if (waitInputMode) {
@@ -116,7 +121,7 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
       waitInputMode.waiting = true
     }
 
-    await this.layoutHelper!.cancelLayout()
+    await this.layoutHelper?.cancelLayout()
 
     if (waitInputMode) {
       waitInputMode.waiting = false
@@ -132,7 +137,7 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
     newLocation: Point
   ): Promise<void> {
     this.clearTimeout()
-    this.handler!.dragFinished(context, originalLocation, newLocation)
+    this.handler.dragFinished(context, originalLocation, newLocation)
 
     const waitInputMode = context.lookup(WaitInputMode)
     if (waitInputMode) {
@@ -140,7 +145,7 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
       waitInputMode.waiting = true
     }
 
-    await this.layoutHelper!.finishLayout()
+    await this.layoutHelper?.finishLayout()
 
     if (waitInputMode) {
       waitInputMode.waiting = false

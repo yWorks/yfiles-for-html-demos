@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GeneralPath, ILabel, IRenderContext, LabelStyleBase, Size } from '@yfiles/yfiles'
+import { LabelStyleBase, Size } from '@yfiles/yfiles'
 import {
   converters,
   makeObservable,
@@ -67,7 +67,6 @@ class LabelTemplateContext extends TemplateContext {
     return this.isUpsideDown && this.style.autoFlip
   }
 
-  // noinspection JSUnusedGlobalSymbols
   get styleTag() {
     return this.style.tag
   }
@@ -116,7 +115,6 @@ export class StringTemplateLabelStyle extends LabelStyleBase {
 
   /**
    * This mimics the old yFiles 2.x API
-   * @param obj
    */
   static makeObservable(obj) {
     makeObservable(obj)

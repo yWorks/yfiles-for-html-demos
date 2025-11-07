@@ -1,29 +1,11 @@
 {
-  "nodeList": [
+  "nodes": [
     { "id": 0, "layout": { "x": 214, "y": 397, "width": 30, "height": 30 } },
     { "id": 1, "layout": { "x": 451, "y": 2, "width": 30, "height": 30 } },
-    {
-      "id": 2,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    },
+    { "id": 2, "tag": "includeInLayout", "cssClass": "highlight" },
     { "id": 3, "layout": { "x": 330, "y": 195, "width": 30, "height": 30 } },
-    {
-      "id": 4,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    },
-    {
-      "id": 5,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    },
+    { "id": 4, "tag": "includeInLayout", "cssClass": "highlight" },
+    { "id": 5, "tag": "includeInLayout", "cssClass": "highlight" },
     { "id": 6, "layout": { "x": 398, "y": 90, "width": 30, "height": 30 } },
     { "id": 7, "layout": { "x": 313, "y": 83, "width": 30, "height": 30 } },
     { "id": 8, "layout": { "x": 349, "y": 5, "width": 30, "height": 30 } },
@@ -48,92 +30,20 @@
     { "id": 27, "layout": { "x": 144, "y": 255, "width": 30, "height": 30 } },
     { "id": 28, "layout": { "x": 171, "y": 224, "width": 30, "height": 30 } },
     { "id": 29, "layout": { "x": 183, "y": 263, "width": 30, "height": 30 } },
-    {
-      "id": 30,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    },
-    {
-      "id": 31,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    },
-    {
-      "id": 32,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    },
-    {
-      "id": 33,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    },
-    {
-      "id": 34,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    },
-    {
-      "id": 35,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    },
-    {
-      "id": 36,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    },
-    {
-      "id": 37,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    },
-    {
-      "id": 38,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    },
-    {
-      "id": 39,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    },
-    {
-      "id": 40,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    },
-    {
-      "id": 41,
-      "layout": { "x": 0, "y": 0, "width": 30, "height": 30 },
-      "fill": "#17BEBB",
-      "stroke": "#407271",
-      "tag": { "includeInLayout": true }
-    }
+    { "id": 30, "tag": "includeInLayout", "cssClass": "highlight" },
+    { "id": 31, "tag": "includeInLayout", "cssClass": "highlight" },
+    { "id": 32, "tag": "includeInLayout", "cssClass": "highlight" },
+    { "id": 33, "tag": "includeInLayout", "cssClass": "highlight" },
+    { "id": 34, "tag": "includeInLayout", "cssClass": "highlight" },
+    { "id": 35, "tag": "includeInLayout", "cssClass": "highlight" },
+    { "id": 36, "tag": "includeInLayout", "cssClass": "highlight" },
+    { "id": 37, "tag": "includeInLayout", "cssClass": "highlight" },
+    { "id": 38, "tag": "includeInLayout", "cssClass": "highlight" },
+    { "id": 39, "tag": "includeInLayout", "cssClass": "highlight" },
+    { "id": 40, "tag": "includeInLayout", "cssClass": "highlight" },
+    { "id": 41, "tag": "includeInLayout", "cssClass": "highlight" }
   ],
-  "edgeList": [
+  "edges": [
     { "id": 0, "source": 1, "target": 9 },
     { "id": 1, "source": 9, "target": 11 },
     { "id": 2, "source": 11, "target": 1 },

@@ -28,10 +28,10 @@
  ***************************************************************************/
 import {
   Color,
-  ICanvasContext,
-  INode,
-  INodeStyle,
-  IRenderContext,
+  type ICanvasContext,
+  type INode,
+  type INodeStyle,
+  type IRenderContext,
   NodeStyleBase,
   Rect,
   SvgVisual,
@@ -52,6 +52,7 @@ function getIntensityColor(value: number): string {
  * A decorator style which augments the wrapped style with a circular visualization of its workload.
  */
 export class ProcessingStepNodeStyleDecorator extends NodeStyleBase {
+    private readonly wrappedStyle: INodeStyle;
   private readonly valueGetter: (node: INode) => number
 
   /**
@@ -60,10 +61,11 @@ export class ProcessingStepNodeStyleDecorator extends NodeStyleBase {
    * @param valueGetter a function that provides the current amount of workload for a node
    */
   constructor(
-    private readonly wrappedStyle: INodeStyle,
+    wrappedStyle: INodeStyle,
     valueGetter?: (node: INode) => number
   ) {
     super()
+      this.wrappedStyle = wrappedStyle;
     this.valueGetter = valueGetter || ((node) => node?.tag?.value ?? 0)
   }
 

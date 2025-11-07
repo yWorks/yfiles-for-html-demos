@@ -31,14 +31,14 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphSnapContext,
-  IGraph,
+  type IGraph,
   License,
   SnappableItems
 } from '@yfiles/yfiles'
 
-import { createDemoShapeNodeStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoShapeNodeStyle, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import { SnapCircleProvider } from './SnapCircleProvider'
 import { CircleSnapResultProvider } from './CircleSnapResultProvider'
@@ -49,7 +49,7 @@ import graphData from './resources/circle-snapping.json'
  * Runs the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize graph component
   const graphComponent = new GraphComponent('#graphComponent')

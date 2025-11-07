@@ -59,7 +59,7 @@ export function createGroupNodes(graphBuilder) {
   descendantsSource.addChildNodesSource(childDataProvider, descendantsSource)
 
   // Declare edges between all different kinds of entities
-  const edgesSource = graphBuilder.createEdgesSource({
+  graphBuilder.createEdgesSource({
     data: edgeData,
     sourceId: (item) => item.from,
     targetId: (item) => item.to

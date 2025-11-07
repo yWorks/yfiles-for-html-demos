@@ -28,10 +28,10 @@
  ***************************************************************************/
 import {
   BaseClass,
-  IEdge,
+  type IEdge,
   IEdgePortHandleProvider,
   IHandle,
-  IInputModeContext,
+  type IInputModeContext,
   INode
 } from '@yfiles/yfiles'
 import { NodeLayoutPortLocationHandle } from './NodeLayoutPortLocationHandle'
@@ -41,8 +41,11 @@ import { NodeLayoutPortLocationHandle } from './NodeLayoutPortLocationHandle'
  * port location handle to the layout rectangle of the port's owner node.
  */
 export class PortLookupEdgePortHandleProvider extends BaseClass(IEdgePortHandleProvider) {
-  constructor(private readonly edge: IEdge) {
+  private readonly edge: IEdge
+
+  constructor(edge: IEdge) {
     super()
+    this.edge = edge
   }
 
   /**

@@ -36,7 +36,6 @@ export class CustomLabelStyle extends LabelStyleBase {
     // create an SVG text element that displays the label text
     const textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text')
 
-    const labelSize = label.layout.toSize()
     // use a convenience method to place text content in the <text> element.
     TextRenderSupport.addText(textElement, label.text, font)
 

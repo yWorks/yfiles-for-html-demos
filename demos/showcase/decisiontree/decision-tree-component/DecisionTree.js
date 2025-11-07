@@ -42,11 +42,7 @@ import {
   Rect
 } from '@yfiles/yfiles'
 
-import {
-  colorSets,
-  createDemoGroupStyle,
-  createDemoNodeStyle
-} from '@yfiles/demo-resources/demo-styles'
+import { colorSets, createDemoGroupStyle, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
 
 const pathNodeStyle = createDemoNodeStyle('demo-palette-403')
 const sideNodeStyle = createDemoNodeStyle('demo-palette-44')
@@ -70,9 +66,9 @@ const targetZoom = 2
  * A component that displays a graph as an interactive decision tree.
  */
 export class DecisionTree {
-  originalGraph
-  beforeLayoutCallback
   afterLayoutCallback
+  beforeLayoutCallback
+  originalGraph
   graphComponent
 
   graph

@@ -26,20 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  IEnumerable,
-  IGraph,
-  IMapper,
-  INode,
-  IRenderContext,
-  IVisualCreator,
-  List,
-  Point,
-  Rect,
-  SvgVisual,
-  Visual
-} from '@yfiles/yfiles'
+import { BaseClass, IVisualCreator, List, Rect, SvgVisual } from '@yfiles/yfiles'
 
 /**
  * Manages and renders the layers.

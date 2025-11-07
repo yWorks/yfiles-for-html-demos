@@ -26,23 +26,18 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  Color,
+  type Color,
   GraphComponent,
   GraphMLIOHandler,
   GraphViewerInputMode,
-  INode,
+  type INode,
   License,
   Matrix,
-  ShapeNodeStyle
+  type ShapeNodeStyle
 } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import {
-  addNavigationButtons,
-  checkWebGL2Support,
-  finishLoading
-} from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, checkWebGL2Support, finishLoading } from '@yfiles/demo-app/demo-page'
 import { hideBars, initializeAugmentations, showBars, toggleLabelVisibility } from './bar-rendering'
 
 let graphComponent: GraphComponent
@@ -61,7 +56,7 @@ async function run(): Promise<void> {
     return
   }
 
-  License.value = await fetchLicense()
+  License.value = licenseData
   barDataComboBox = document.querySelector<HTMLSelectElement>('#bar-data')!
   addNavigationButtons(barDataComboBox)
 

@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   Exception,
-  LayoutGraph,
   LayoutGraphGrouping,
   LayoutGraphHider,
   LayoutGrid,
@@ -384,8 +383,8 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
 }
 
 class TopLevelColumn {
-  topLevelGroup
   index
+  topLevelGroup
   group
   actualGridLayoutGridColumn = null
   originalLeftInset = 0

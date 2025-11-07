@@ -65,7 +65,7 @@ Undo Redo Clear Undo Queue
 
 ### Clipboard
 
-Clipboard functionality is enabled by default. It is available interactively with short-cuts via [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) if [allowClipboardOperations](https://docs.yworks.com/yfileshtml/#/api/GraphInputMode#GraphInputMode-property-allowClipboardOperations) is enabled.
+Clipboard functionality is enabled by default. It is available interactively with short-cuts via [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) if [allowClipboardOperations](https://docs.yworks.com/yfileshtml/#/api/GraphInputMode#allowClipboardOperations) is enabled.
 
 This means that the following functionality is available by default:
 

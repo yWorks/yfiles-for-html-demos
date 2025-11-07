@@ -30,31 +30,32 @@ import {
   EdgePathCropper,
   GraphComponent,
   GraphEditorInputMode,
+  GraphItemTypes,
   HierarchicalNestingPolicy,
-  IGraph,
-  INode,
+  type IGraph,
+  type INode,
   IPortCandidateProvider,
   License,
-  ShapePortStyle,
   PortCandidateValidity,
-  Rect
+  Rect,
+  ShapePortStyle
 } from '@yfiles/yfiles'
 
 import { OrangePortCandidateProvider } from './OrangePortCandidateProvider'
 import { GreenPortCandidateProvider } from './GreenPortCandidateProvider'
 import { BluePortCandidateProvider } from './BluePortCandidateProvider'
 import { RedPortCandidateProvider } from './RedPortCandidateProvider'
-import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
+import type { ColorSetName } from '@yfiles/demo-app/demo-styles'
 import {
   createDemoNodeLabelStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+} from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
@@ -71,7 +72,8 @@ async function run(): Promise<void> {
     // Just for user convenience: disable node creation and clipboard operations
     allowCreateNode: false,
     allowClipboardOperations: false,
-    createEdgeInputMode: { useHitItemsCandidatesOnly: true }
+    createEdgeInputMode: { useHitItemsCandidatesOnly: true },
+    selectableItems: GraphItemTypes.ALL & ~GraphItemTypes.PORT
   })
   // and enable the undo feature.
   graph.undoEngineEnabled = true

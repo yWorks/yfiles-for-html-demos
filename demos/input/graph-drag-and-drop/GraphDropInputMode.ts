@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import {
-  CollectSnapResultsEventArgs,
+  type CollectSnapResultsEventArgs,
   DragDropEffects,
   DragDropItem,
   DragSource,
@@ -35,13 +35,13 @@ import {
   GraphComponent,
   GraphCopier,
   GraphItemTypes,
-  GraphSnapContext,
+  type GraphSnapContext,
   HighlightIndicatorManager,
-  IBend,
-  IGraph,
+  type IBend,
+  type IGraph,
   IHitTester,
-  IInputModeContext,
-  IModelItem,
+  type IInputModeContext,
+  type IModelItem,
   INode,
   INodeSnapResultProvider,
   ItemDropInputMode,

@@ -26,4 +26,4 @@ The tests run in a [puppeteer environment](https://github.com/smooth-code/jest-p
 
 With puppeteer, the tests can run in a full Chrome headless environment instead.
 
-In order to obtain access to the yFiles API, in particular for access to the GraphComponent instance through CanvasComponent#getComponent, this sample introduces an environment variable that causes the application code to expose the yFiles API to the global scope.
+In order to obtain access to the yFiles API, in particular for access to the GraphComponent instance through CanvasComponent.getComponent, this sample introduces an environment variable that causes the application code to expose the yFiles API to the global scope.

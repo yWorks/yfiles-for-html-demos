@@ -28,33 +28,38 @@
  ***************************************************************************/
 import {
   BaseClass,
-  IEnumerable,
-  IRenderContext,
+  type IEnumerable,
+  type IRenderContext,
   IVisualCreator,
   List,
   OrthogonalSnapLine,
-  Point,
+  type Point,
   SnapLineOrientation,
   SnapLineSnapTypes,
   SnapReferenceVisualizationType,
   SvgVisual,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 /**
  * A visual creator for orthogonal snap lines.
  */
 export class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
+    to: Point;
+    from: Point;
+
   /**
    * Creates a new instance of {@link AdditionalSnapLineVisualCreator}.
    * @param from The start point
    * @param to The end point
    */
   constructor(
-    public from: Point,
-    public to: Point
+    from: Point,
+    to: Point
   ) {
     super()
+      this.from = from;
+      this.to = to;
   }
 
   /**

@@ -26,14 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IGraph, IModelItem, IWriteContext, KeyType, OutputHandlerBase } from '@yfiles/yfiles'
+import { IGraph, IModelItem, KeyType, OutputHandlerBase } from '@yfiles/yfiles'
 
 /**
  * An output handler that writes primitive data types and ignores complex types.
  */
 export class SimpleOutputHandler extends OutputHandlerBase {
-  property
   propertiesPanel
+  property
+
   constructor(property, propertiesPanel) {
     super(Object, Object, property.keyScope, property.name, property.type)
     this.property = property

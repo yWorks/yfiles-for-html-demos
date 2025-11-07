@@ -35,6 +35,7 @@ import { ganttTaskSpacing, getCompleteTaskHeight, getTaskY } from './sweepline-l
  */
 export class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
   dataModel
+
   /**
    * Creates a new grid for the given data model.
    */

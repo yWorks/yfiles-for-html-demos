@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Circular Substructures Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
     <link rel="stylesheet" href="../../showcase/layoutstyles/resources/styles.css" />
 
     <style>
@@ -67,31 +67,6 @@
 
       .settings-content select {
         width: 100%;
-      }
-
-      .settings-grid {
-        display: grid;
-        align-items: center;
-      }
-      .settings-label {
-        grid-column: 1;
-      }
-      .settings-editor {
-        grid-column: 2;
-      }
-      input.settings-editor {
-        justify-self: end;
-      }
-      select.settings-editor {
-        width: 100%;
-      }
-
-      .settings-row1 {
-        grid-row: 1;
-      }
-      .settings-row2 {
-        grid-row: 2;
-        margin-top: 8px;
       }
     </style>
   </head>
@@ -142,7 +117,7 @@
         <h1>Circular Substructures Demo</h1>
 
         <p>
-          This demo showcases how the <a href="https://docs.yworks.com/yfileshtml/#/api/CircularLayout" target="_blank">CircularLayout</a> algorithm handles substructures
+          This demo showcases how the <a href="https://docs.yworks.com/yfileshtml/#/api/CircularLayout" class="api" target="_blank">CircularLayout</a> algorithm handles substructures
           and node types.
         </p>
         <p>
@@ -200,42 +175,23 @@
             </div>
           </div>
 
-          <div class="data-editor-header">
-            <h2 style="margin-top: 0">Substructure Layout</h2>
-            <div class="settings-grid">
-              <label for="starStyle" class="settings-label settings-row1">Star</label>
-              <select
-                class="settings-editor settings-row1"
-                title="Select a style for star substructures"
-                id="starStyle"
-              >
-                <option value="NONE">Ignore</option>
-                <option value="RADIAL">Radial</option>
-                <option value="SEPARATED_RADIAL">Separated Radial</option>
-              </select>
-            </div>
+          <h3>Substructure Layout</h3>
+          <div class="demo-properties__settings">
+            <label for="starStyle">Star</label>
+            <select title="Select a style for star substructures" id="starStyle">
+              <option value="NONE">Ignore</option>
+              <option value="RADIAL">Radial</option>
+              <option value="SEPARATED_RADIAL">Separated Radial</option>
+            </select>
           </div>
 
-          <div class="data-editor-header">
-            <h2 style="margin-top: 0">Node Types</h2>
-            <div class="settings-grid">
-              <label for="consider-node-types" class="settings-label settings-row1">
-                Consider Node Types
-              </label>
-              <input
-                class="settings-editor settings-row1"
-                id="consider-node-types"
-                type="checkbox"
-                checked=""
-              />
-              <label for="separate-star" class="settings-label settings-row2">
-                Separate Star Structures by Type
-              </label>
-              <input class="settings-editor settings-row2" id="separate-star" type="checkbox" />
-            </div>
-          </div>
+          <h3>Node Types</h3>
+          <div class="demo-properties__settings">
+            <label for="consider-node-types">Consider Node Types</label>
+            <input id="consider-node-types" type="checkbox" checked="" />
+            <label for="separate-star">Separate Star Structures by Type</label>
+            <input id="separate-star" type="checkbox" />
 
-          <div id="data-editor-button-container" class="demo-form-block">
             <button id="apply-layout-button" class="flat-button">
               <span>Apply Layout</span>
             </button>

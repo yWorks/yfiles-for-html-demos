@@ -45,7 +45,6 @@ export class CustomNodeStyle extends NodeStyleBase {
   }
 }
 
-
 const tabWidth = 50
 const tabHeight = 10
 
@@ -62,4 +61,3 @@ function createPathData(x, y, width, height) {
     `h ${-width} z`
   )
 }
-

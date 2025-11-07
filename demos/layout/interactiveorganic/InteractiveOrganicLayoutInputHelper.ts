@@ -37,12 +37,11 @@ import { type IGraph, type INode } from '@yfiles/yfiles'
  * react to manual dragging of nodes.
  */
 export class InteractiveOrganicLayoutInputHelper {
+  private readonly graph: IGraph
   private readonly layoutHelper: InteractiveOrganicLayoutHelper
 
-  constructor(
-    private readonly graph: IGraph,
-    config: InteractiveOrganicLayoutConfig
-  ) {
+  constructor(graph: IGraph, config: InteractiveOrganicLayoutConfig) {
+    this.graph = graph
     this.layoutHelper = new InteractiveOrganicLayoutHelper(graph, config)
   }
 

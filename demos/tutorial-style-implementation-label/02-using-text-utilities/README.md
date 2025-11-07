@@ -27,7 +27,7 @@ To be able to work with TextRenderSupport, we need a [Font](https://docs.yworks.
 const font: Font = new Font({ fontFamily: 'Arial', fontSize: 12 })
 ```
 
-We can then use [TextRenderSupport.addText](https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport#TextRenderSupport-method-addText) to place the label text in the `<text>` element.
+We can then use [TextRenderSupport.addText](https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport#addText) to place the label text in the `<text>` element.
 
 ```
 TextRenderSupport.addText(textElement, label.text, font)

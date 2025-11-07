@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { GraphComponent, GraphViewerInputMode, License } from '@yfiles/yfiles'
 import { createEdge, createNode } from './ItemFactory.js'
-import licenseValue from '../../../../lib/license.json'
+import licenseValue from './license.json'
 
 function run() {
   License.value = licenseValue

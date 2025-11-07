@@ -55,11 +55,11 @@
 }
 
 .event-options-heading.collapsed {
-  background: url('../../resources/icons/arrowheadRightWhite.png') no-repeat right 10px center;
+  background: url('../../demo-app/icons/arrowheadRightWhite.png') no-repeat right 10px center;
 }
 
 .event-options-heading.expanded {
-  background: url('../../resources/icons/arrowheadDownWhite.png') no-repeat right 10px center;
+  background: url('../../demo-app/icons/arrowheadDownWhite.png') no-repeat right 10px center;
 }
 
 .options-section {

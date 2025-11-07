@@ -27,10 +27,10 @@
  **
  ***************************************************************************/
 import {
-  GeneralPath,
+  type GeneralPath,
   type ICanvasContext,
   type IPort,
-  IRenderContext,
+  type IRenderContext,
   Point,
   type PointConvertible,
   PortStyleBase,
@@ -86,7 +86,6 @@ class PortTemplateContext extends TemplateContext<IPort> {
     return this.style.renderSize.height
   }
 
-  // noinspection JSUnusedGlobalSymbols
   get styleTag() {
     return this.style.tag
   }
@@ -142,7 +141,6 @@ export class StringTemplatePortStyle extends PortStyleBase<TemplatePortStyleVisu
 
   /**
    * This mimics the old yFiles 2.x API
-   * @param obj
    */
   static makeObservable<T>(
     obj: T

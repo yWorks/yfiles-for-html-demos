@@ -30,10 +30,6 @@ import {
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  IEdge,
-  IGraph,
-  ILabel,
-  INode,
   License,
   Point,
   Size,
@@ -43,8 +39,8 @@ import {
   WebGLSelectionIndicatorManager
 } from '@yfiles/yfiles'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { checkWebGL2Support, finishLoading } from '@yfiles/demo-app/demo-page'
 import { preloadWebglStyles } from './preload-webgl-styles'
 import {
   edgeFocusStyle,
@@ -60,7 +56,7 @@ import {
   webGLLabelStyles,
   webGLNodeStyles
 } from './webgl-styles'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 
 const webGLLoadingOverlay = document.querySelector('.webgl-loading')
 
@@ -68,9 +64,10 @@ const webGLLoadingOverlay = document.querySelector('.webgl-loading')
  * A WebGLGraphModelManager that uses callbacks for graph items to determine their WebGL styles.
  */
 export class MyWebGLGraphModelManager extends WebGLGraphModelManager {
-  nodeStyle
-  edgeStyle
   labelStyle
+  edgeStyle
+  nodeStyle
+
   constructor(nodeStyle, edgeStyle, labelStyle) {
     super()
     this.nodeStyle = nodeStyle
@@ -98,7 +95,7 @@ async function run() {
     return
   }
 
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponentWithoutPreload = new GraphComponent('#graphComponent')
   const graphComponentWithPreload = new GraphComponent('#graphComponentWithPreload')

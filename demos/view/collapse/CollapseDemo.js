@@ -35,8 +35,6 @@ import {
   GraphItemTypes,
   GraphViewerInputMode,
   HierarchicalLayout,
-  IGraph,
-  ILayoutAlgorithm,
   INode,
   LayoutAnchoringStage,
   LayoutExecutor,
@@ -49,9 +47,9 @@ import {
 } from '@yfiles/yfiles'
 
 import { CollapseAndExpandNodes } from './CollapseAndExpandNodes'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { createDemoEdgeStyle } from '@yfiles/demo-app/demo-styles'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 import { initializeStyles } from './style-templates'
 
 /**
@@ -73,7 +71,7 @@ let runningLayout = false
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
 

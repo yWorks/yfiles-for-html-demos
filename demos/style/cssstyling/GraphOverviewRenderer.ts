@@ -41,6 +41,7 @@ import {
   IVisualCreator,
   type Visual
 } from '@yfiles/yfiles'
+import { getColor } from './getColor'
 
 /**
  * A customized overview renderer with adjusted styles for nodes and edges.
@@ -89,7 +90,7 @@ class CanvasVisual extends HtmlCanvasVisual {
    * Draws the path of the edge in a very light gray.
    */
   renderEdge(_renderContext: IRenderContext, ctx: CanvasRenderingContext2D, edge: IEdge): void {
-    ctx.strokeStyle = '#f7f7f7'
+    ctx.strokeStyle = getColor('--neutral-gray')
     ctx.beginPath()
     ctx.moveTo(edge.sourcePort.location.x, edge.sourcePort.location.y)
     edge.bends.forEach((bend) => ctx.lineTo(bend.location.x, bend.location.y))
@@ -105,7 +106,7 @@ class CanvasVisual extends HtmlCanvasVisual {
     ctx: CanvasRenderingContext2D,
     node: INode
   ): void {
-    ctx.strokeStyle = '#f7f7f7'
+    ctx.strokeStyle = getColor('--neutral-gray')
     ctx.strokeRect(node.layout.x, node.layout.y, node.layout.width, node.layout.height)
   }
 
@@ -113,7 +114,7 @@ class CanvasVisual extends HtmlCanvasVisual {
    * Paints the rectangle of the node in a very light gray
    */
   renderNode(_renderContext: IRenderContext, ctx: CanvasRenderingContext2D, node: INode): void {
-    ctx.fillStyle = '#f7f7f7'
+    ctx.fillStyle = getColor('--neutral-gray')
     ctx.fillRect(node.layout.x, node.layout.y, node.layout.width, node.layout.height)
   }
 }

@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import {
-  GraphComponent,
+  type GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   INode,

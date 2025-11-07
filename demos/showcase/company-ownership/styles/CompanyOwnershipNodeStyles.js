@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { NodeTypeEnum } from '../data-types'
 import {
   Fill,
   InteriorNodeLabelModel,
@@ -37,24 +36,24 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 import { CustomShapeNodeStyle } from './CustomShapeNodeStyle'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
 import { tableNodeStyle } from './TableNodeStyle'
 
 // maps each node type with an enum value
 const nodeTypeMap = {
-  Corporation: NodeTypeEnum.CORPORATION,
-  CTB: NodeTypeEnum.CTB,
-  Partnership: NodeTypeEnum.PARTNERSHIP,
-  RCTB: NodeTypeEnum.RCTB,
-  Branch: NodeTypeEnum.BRANCH,
-  Disregarded: NodeTypeEnum.DISREGARDED,
-  'Dual Resident': NodeTypeEnum.DUAL_RESIDENT,
-  Multiple: NodeTypeEnum.MULTIPLE,
-  Trust: NodeTypeEnum.TRUST,
-  Individual: NodeTypeEnum.INDIVIDUAL,
-  'Third Party': NodeTypeEnum.THIRD_PARTY,
-  PE_Risk: NodeTypeEnum.PE_RISK,
-  Trapezoid: NodeTypeEnum.TRAPEZOID
+  Corporation: 'corporation',
+  CTB: 'ctb',
+  Partnership: 'partnership',
+  RCTB: 'rctb',
+  Branch: 'branch',
+  Disregarded: 'disregarded',
+  'Dual Resident': 'dual-resident',
+  Multiple: 'multiple',
+  Trust: 'trust',
+  Individual: 'individual',
+  'Third Party': 'third-party',
+  PE_Risk: 'pe-risk',
+  Trapezoid: 'trapezoid'
 }
 
 // maps each node type with a color palette

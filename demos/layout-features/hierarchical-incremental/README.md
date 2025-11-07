@@ -9,31 +9,29 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Incremental Hierarchical Layout - Layout Features
+# Incremental Hierarchical Layout
 
 <img src="../../../doc/demo-thumbnails/layout-hierarchical-incremental.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-incremental/).
 
-This demo shows how to run the hierarchical layout algorithm on a predefined subset of nodes (and edges) in a graph.
+This demo shows how to run the [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) algorithm on a predefined subset of nodes in a graph.
 
 To achieve this, two setup steps are necessary:
 
-First, the algorithm has to be told to work on a subset only. To do so, [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout)'s [from sketch mode](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#fromSketch) property has to be set to `true`.
+- The algorithm has to be told to work on a subset only. To do so, hierarchical layout's [from sketch mode](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#fromSketchMode) property has to be set to `true`.
+- The algorithm has to know which set of nodes (and edges) to rearrange. The class [HierarchicalLayoutData](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData) offers the [incrementalNodes](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#incrementalNodes)
+- and [incrementalEdges](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#incrementalEdges) properties for this purpose.
 
-Second, the algorithm has to be told which set of nodes (and edges) to rearrange. The class [HierarchicalLayoutData](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData) offers the property [incrementalNodes](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#incrementalNodes) and [incrementalEdges](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#incrementalEdges) for this purpose.
+In this demo, the algorithm is only applied to the **orange nodes**.
 
-In this demo, the algorithm works on the subset of turquoise nodes only.
+## Things to Try
 
-Click the button in the toolbar to run the layout and see the effect.
+Click the button in the toolbar to run the incremental layout and observe the effect.
 
-### Code Snippet
+## Demos
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-incremental/HierarchicalIncremental.ts).
-
-### Demos
-
-You can also take a look at more extensive demos that take advantage of this feature:
+More demos that make use of this feature:
 
 - [Hierarchical Nesting Demo](../../layout/hierarchical-nesting/)
 - [Hierarchical Nesting (Incremental) Demo](../../layout/hierarchical-nesting-incremental/)
@@ -42,6 +40,9 @@ You can also take a look at more extensive demos that take advantage of this fea
 - [Collapsible Trees Demo](../../view/collapse/)
 - [Network Flows Demo](../../analysis/networkflows/)
 
-### Documentation
+## Documentation
 
-The Developer's Guide has detailed information about the [hierarchical layout algorithm](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout) in general and about [how to run the algorithm on a subset of nodes](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-incremental_layout) specifically.
+- [Run hierarchical layout on a subset of nodes](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-incremental_layout)
+- [Hierarchical layout algorithm](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout)
+- [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) class
+- [HierarchicalLayoutData](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData) class

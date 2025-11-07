@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEdge, IGraph, INode, IPort, Point } from '@yfiles/yfiles'
+import { type IEdge, type IGraph, type INode, type IPort, Point } from '@yfiles/yfiles'
 
 export type SerializableEdgeData = {
   bends: Array<[number, number]>

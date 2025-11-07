@@ -31,15 +31,14 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HierarchicalLayoutData,
-  IEdge,
   Insets,
   LayoutExecutorAsync,
   License,
   WaitInputMode
 } from '@yfiles/yfiles'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import {
   createGroupedSampleGraph,
   initializeBasicDemoStyles,
@@ -54,7 +53,7 @@ let executor = null
 const worker = new Worker(new URL('./WorkerLayout', import.meta.url), { type: 'module' })
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('#graphComponent')
   // initialize styles as well as graph

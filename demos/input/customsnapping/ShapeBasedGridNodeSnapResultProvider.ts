@@ -27,13 +27,13 @@
  **
  ***************************************************************************/
 import {
-  CollectSnapResultsEventArgs,
-  GraphSnapContext,
-  INode,
+  type CollectSnapResultsEventArgs,
+  type GraphSnapContext,
+  type INode,
   NodeSnapResultProvider,
   PathType,
   Point,
-  Rect,
+  type Rect,
   type SnapGrid
 } from '@yfiles/yfiles'
 

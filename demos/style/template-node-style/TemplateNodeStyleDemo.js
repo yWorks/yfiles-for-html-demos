@@ -33,7 +33,6 @@ import {
   GraphComponent,
   GraphMLIOHandler,
   GraphViewerInputMode,
-  IGraph,
   License,
   PolylineEdgeStyle,
   Rect,
@@ -44,8 +43,8 @@ import { StringTemplateNodeStyle } from '@yfiles/demo-utils/template-styles/Stri
 
 import SampleData from './resources/SampleData'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 import { registerTemplateStyleSerialization } from '@yfiles/demo-utils/template-styles/MarkupExtensions'
 import {
@@ -53,7 +52,7 @@ import {
   EditorView,
   StateEffect,
   StateField
-} from '@yfiles/demo-resources/codemirror-editor'
+} from '@yfiles/demo-app/codemirror-editor'
 
 let templateEditor
 let setTemplateEditorEditable
@@ -62,7 +61,7 @@ let tagEditor
 let setTagEditorEditable
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = new GraphViewerInputMode()
@@ -85,7 +84,7 @@ function initializeEditors(graphComponent) {
   const templateEditorEditable = StateField.define({
     create: () => true,
     update: (value, transaction) => {
-      for (let e of transaction.effects) {
+      for (const e of transaction.effects) {
         if (e.is(setTemplateEditorEditable)) {
           value = e.value
         }
@@ -103,7 +102,7 @@ function initializeEditors(graphComponent) {
   const tagEditorEditable = StateField.define({
     create: () => true,
     update: (value, transaction) => {
-      for (let e of transaction.effects) {
+      for (const e of transaction.effects) {
         if (e.is(setTagEditorEditable)) {
           value = e.value
         }

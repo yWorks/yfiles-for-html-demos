@@ -29,7 +29,6 @@
 import {
   Animator,
   BaseClass,
-  SmartEdgeLabelModel,
   FreeNodeLabelModel,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -46,6 +45,7 @@ import {
   PointerType,
   PolylineEdgeStyle,
   ShapeNodeStyle,
+  SmartEdgeLabelModel,
   SvgVisual
 } from '@yfiles/yfiles'
 import { CustomEdgeStyle } from './07-hit-testing/CustomEdgeStyle'

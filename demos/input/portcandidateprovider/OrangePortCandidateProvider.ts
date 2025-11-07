@@ -28,10 +28,10 @@
  ***************************************************************************/
 import {
   FreeNodePortLocationModel,
-  IEnumerable,
-  IInputModeContext,
-  INode,
-  IPortCandidate,
+  type IEnumerable,
+  type IInputModeContext,
+  type INode,
+  type IPortCandidate,
   List,
   PortCandidate,
   PortCandidateProviderBase

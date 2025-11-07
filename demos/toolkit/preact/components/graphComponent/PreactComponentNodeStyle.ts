@@ -28,9 +28,9 @@
  ***************************************************************************/
 // @ts-ignore - We have no proper types for preact, here
 import { type ComponentType, h, render } from '../../preact-loader'
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import type { INode, IRenderContext, TaggedSvgVisual } from '@yfiles/yfiles'
-import { NodeStyleBase, SvgVisual, Visual } from '@yfiles/yfiles'
+import { NodeStyleBase, SvgVisual, type Visual } from '@yfiles/yfiles'
 
 /**
  * The interface of the props passed to the SVG Preact component for rendering the node contents.
@@ -78,8 +78,11 @@ type PreactComponentNodeStyleVisual<TTag> = TaggedSvgVisual<
 export class PreactComponentNodeStyle<TTag> extends NodeStyleBase<
   PreactComponentNodeStyleVisual<TTag>
 > {
-  constructor(private readonly type: RenderType<TTag>) {
+    private readonly type: RenderType<TTag>;
+
+  constructor(type: RenderType<TTag>) {
     super()
+      this.type = type;
   }
 
   createProps(node: INode): PreactComponentNodeStyleProps<TTag> {

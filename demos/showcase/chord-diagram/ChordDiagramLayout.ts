@@ -29,9 +29,9 @@
 import {
   EdgeDataKey,
   IGraph,
-  IMapper,
-  LayoutEdge,
-  LayoutGraph,
+  type IMapper,
+  type LayoutEdge,
+  type LayoutGraph,
   LayoutStageBase,
   Point
 } from '@yfiles/yfiles'

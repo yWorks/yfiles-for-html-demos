@@ -49,7 +49,7 @@ export class MindMapGraphModelManager extends GraphModelManager {
   ): void {
     super.install(canvasComponent, graph, contentGroup)
 
-    // create a new canvas object group for reference edges
+    // create a new render tree group for reference edges
     this.crossReferenceEdgeGroup = this.createEdgeGroup()
 
     // put this group above the node group

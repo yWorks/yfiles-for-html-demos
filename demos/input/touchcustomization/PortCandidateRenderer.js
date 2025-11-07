@@ -26,13 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  IRenderContext,
-  ObjectRendererBase,
-  PortCandidateRenderTag,
-  SimplePort,
-  SvgVisual
-} from '@yfiles/yfiles'
+import { ObjectRendererBase, SimplePort, SvgVisual } from '@yfiles/yfiles'
 
 /**
  * A port candidate renderer using colored circles as visualizations.

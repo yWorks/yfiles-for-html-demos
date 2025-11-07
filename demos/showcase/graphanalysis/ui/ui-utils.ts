@@ -45,7 +45,7 @@ import { runLayout } from '../layout/layout'
 import type { Tag } from '../demo-types'
 import { updateDescriptionText } from './algorithm-description'
 import { updateGraphInformation } from './graph-structure-information'
-import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'
+import { addNavigationButtons } from '@yfiles/demo-app/demo-page'
 import { TagColoredShapeNodeStyle } from '../styles'
 
 const sampleComboBox = document.querySelector<HTMLSelectElement>('#samples')!

@@ -26,13 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  type INode,
-  type IRenderContext,
-  NodeStyleBase,
-  SvgVisual,
-  type Visual
-} from '@yfiles/yfiles'
+import { type INode, type IRenderContext, NodeStyleBase, SvgVisual, type Visual } from '@yfiles/yfiles'
 
 /**
  * A basic node style that renders a rectangle.
@@ -54,7 +48,7 @@ export class CustomNodeStyle extends NodeStyleBase {
 /**
  * A second basic node style that uses the baseVal attribute instead of setAttribute.
  */
-class CustomNodeStyle2 extends NodeStyleBase {
+export class CustomNodeStyle2 extends NodeStyleBase {
   protected createVisual(context: IRenderContext, node: INode): Visual | null {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     const { x, y, width, height } = node.layout

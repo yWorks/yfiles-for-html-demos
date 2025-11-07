@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { predefinedColorSets } from './CompanyOwnershipNodeStyles'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
 import { LitNodeStyle, type LitNodeStyleProps } from '@yfiles/demo-utils/LitNodeStyle'
 
 // @ts-ignore Import via URL

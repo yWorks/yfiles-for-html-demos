@@ -9,30 +9,30 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Hierarchical Layout with Node Alignment - Layout Features
+# Hierarchical Layout with Node Alignment
 
 <img src="../../../doc/demo-thumbnails/layout-hierarchical-node-alignment.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-node-alignment/).
 
-This demo shows how to configure the [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) so that nodes on different layers that are connected by a critical (important) edge are aligned.
+This demo shows how to configure the [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) to align nodes connected by critical paths.
 
-To achieve this, the user has to specify a priority value for each edge that should be considered as important. This value has to be a number greater than zero.
+The priorities are passed to the layout algorithm through the [criticalEdgePriorities](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#criticalEdgePriorities) property, causing the connected nodes to be aligned.
 
-The critical edge priorities can be passed to the [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) algorithm through the [criticalEdgePriorities](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#criticalEdgePriorities) property.
+In this demo, edges belonging to the longest path in the graph are designated as critical (see **pink edges**). Of course, any other criterion may be used to define the set of critical edges.
 
-In this demo, we consider as critical the edges that belong to the longest path of the graph (refer to the pink edges). After the execution of the algorithm, the nodes that are connected with the critical edges are vertically aligned. Of course any other criterion may be used to define the set of critical edges and, thus, the aligned nodes.
+## Things to Try
 
-_Note_: The nodes are horizontally aligned when using a horizontal layout orientation (i.e. left-to-right).
+- Observe how nodes connected by **critical edges** are vertically aligned.
+- Notice that the critical edges in this demo are determined by finding the longest path.
+- Consider how this technique could be used to highlight key relationships or workflows in your own hierarchical layouts.
 
-### Code Snippet
+## Demos
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-node-alignment/HierarchicalNodeAlignment.ts).
+- [Critical Paths Demo](../../layout/criticalpaths/)
 
-### Demos
+## Documentation
 
-You can also take a look at the more involved [Critical Paths Demo](../../layout/criticalpaths/) which shows how important paths can be emphasised by the hierarchical layout.
-
-### Documentation
-
-The Developer's Guide provides more information about the concepts of the [hierarchical layout](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout) in general and especially about [how to align a set of given nodes](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#hierarchical_layout-emphasizing_critical_paths).
+- [Emphasizing critical paths](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#hierarchical_layout-emphasizing_critical_paths)
+- [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout)
+- [HierarchicalLayoutData](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData)

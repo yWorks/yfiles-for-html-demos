@@ -33,52 +33,51 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-    <title>Neo4j Integration Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <title>Neo4j Demo [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
+    <link rel="stylesheet" href="property-table.css" />
 
     <style>
-      #propertyTable {
-        width: 100%;
-        table-layout: fixed;
-        word-wrap: break-word;
-        border-collapse: collapse;
+      [hidden] {
+        display: none !important;
       }
 
-      #propertyTable td {
-        border: 1px solid #ccc;
-      }
-
-      .custom-slider {
-        vertical-align: middle;
+      input[type='range'] {
+        vertical-align: bottom;
         width: 5em;
+        height: 16px;
         padding: 0;
       }
 
-      .custom-slider[disabled] {
-        opacity: 0.5;
-      }
-
-      [hidden] {
-        display: none;
-      }
-
-      #noWebSocketAPI {
-        margin: 30px;
-        font-size: 18px;
-      }
-
-      #loginPane {
-        position: absolute;
-        height: calc(100% - 60px);
-        left: 0;
-        right: 0;
-        z-index: 10;
-        margin-top: 90px;
+      #login-pane {
+        display: block;
         padding: 20px;
+      }
+
+      .panel {
+        width: min(40rem, 100%);
         box-sizing: border-box;
+        padding: 12px;
+        border: 2px solid #b2bdc2;
+        border-radius: 4px;
         background-color: #fff;
+        z-index: 10;
+      }
+
+      .panel > :first-child {
+        margin-top: 0;
+      }
+
+      .panel > :last-child {
+        margin-bottom: 0;
+      }
+
+      .warning {
+        margin-top: 20px;
+        font-size: 18px;
+        border-color: firebrick;
       }
 
       #login-form {
@@ -97,13 +96,14 @@
 
       #connectionError,
       #queryError {
-        color: darkred;
+        color: firebrick;
       }
 
       #queryError {
         margin-top: 10px;
         overflow: auto;
       }
+
       #queryEditorContainer .cm-editor {
         height: 300px;
         background-color: #fff;
@@ -138,28 +138,34 @@
       <button data-command="FIT_GRAPH_BOUNDS"></button>
 
       <span class="demo-separator"></span>
+      <div class="option">
+        <label for="numNodes">Maximum Node Count:</label>
+        <input
+          type="range"
+          id="numNodes"
+          value="50"
+          min="50"
+          max="500"
+          step="50"
+          class="custom-slider"
+        />
+        <span id="numNodesLabel">50</span>
+      </div>
 
-      <span style="margin: 0 10px 0 10px">Maximum Node Count:</span>
-      <input
-        type="range"
-        id="numNodes"
-        value="50"
-        min="50"
-        max="500"
-        step="50"
-        class="custom-slider"
-      />
-      <span id="numNodesLabel">50</span> <span class="demo-separator"></span>
-      <span style="margin: 0 10px 0 10px">Label Diversity:</span>
-      <input type="range" id="numLabels" value="2" min="2" max="5" class="custom-slider" />
-      <span id="numLabelsLabel">2</span>
-      <span>
-        <label>
-          <input type="checkbox" checked="" id="showEdgeLabels" />
-          Show Edge Labels
-        </label>
-      </span>
-      <span class="demo-separator"></span>
+      <span class="demo-separator margin"></span>
+
+      <div class="option">
+        <label for="numLabels">Label Diversity:</label>
+        <input type="range" id="numLabels" value="2" min="2" max="5" class="custom-slider" />
+        <span id="numLabelsLabel">2</span>
+      </div>
+      <label>
+        <input type="checkbox" checked="" id="showEdgeLabels" />
+        Show Edge Labels
+      </label>
+
+      <span class="demo-separator margin"></span>
+
       <button id="reloadDataButton" class="demo-icon-yIconReload labeled" disabled="">
         Reload Data
       </button>
@@ -177,7 +183,7 @@
       <div class="demo-description__play-button">Start here</div>
 
       <div class="demo-description__content">
-        <h1>Neo4j Integration Demo</h1>
+        <h1>Neo4j Demo</h1>
 
         <p>
           This demo shows how to load data from a Neo4j database and display it with yFiles for
@@ -232,7 +238,7 @@
           to connect to a Neo4j database and query it for data.
         </p>
         <p>
-          The query results are then used by a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> with a custom
+          The query results are then used by a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> with a custom
           configuration to construct a graph from the data, while assigning different node styles to
           nodes with different labels.
         </p>
@@ -242,109 +248,99 @@
           label sequences that is searched for.
         </p>
         <p>
-          The graph layout is achieved by using <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">OrganicLayout</a> with substructures
+          The graph layout is achieved by using <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a> with substructures
           enabled.
         </p>
       </div>
     </aside>
-    <div class="demo-page__main">
-      <div id="loginPane">
-        <div id="login">
-          <h2>Connect to Neo4j database</h2>
-          <form id="login-form">
-            <div class="login-form-row">
-              <label for="hostInput">Database URL</label>
-              <input type="text" id="hostInput" value="neo4j+s://demo.neo4jlabs.com:7687" />
-            </div>
-            <div class="login-form-row" style="font-size: 0.9em; margin-top: 0">
-              (see &nbsp;
-              <a
-                href="https://neo4j.com/docs/javascript-manual/current/connect-advanced/"
-                target="_blank"
-              >
-                neo4j docs
-              </a>
-              &nbsp; for URI scheme specs)
-            </div>
-            <div class="login-form-row">
-              <label for="databaseNameInput">Database Name</label>
-              <input type="text" id="databaseNameInput" value="movies" />
-            </div>
-            <div class="login-form-row">
-              <label for="userInput">Username</label>
-              <input type="text" id="userInput" value="movies" autocomplete="username" />
-            </div>
-            <div class="login-form-row">
-              <label for="passwordInput">Password</label>
-              <input
-                type="password"
-                id="passwordInput"
-                value="movies"
-                autofocus=""
-                autocomplete="current-password"
-              />
-            </div>
-            <div class="login-form-row">
-              <input type="submit" value="Connect" />
-            </div>
-            <div class="login-form-row">
-              <div id="connectionError"></div>
-            </div>
-            <div class="login-form-row">
-              <div id="openInHttp" hidden="">
-                Connections from https to http are forbidden by the browser's security policy. If
-                you can't connect to a non-encrypted database, try clicking the link below to open
-                this tool served on http. <br />
-                <a>Open in http</a>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div id="noWebSocketAPI" hidden="">
-          <p>
-            This demo application uses <a href="https://developer.mozilla.org/docs/Web/API/WebSockets_API" target="_blank">WebSockets</a> to connect to
-            the given Neo4j database.
-          </p>
-          <p>Unfortunately, your browser does not support WebSockets.</p>
-          <p>To view this demo, please switch to a recent browser.</p>
-        </div>
-      </div>
-      <div id="graphPane" class="demo-main__graph-component" style="visibility: hidden">
-        <div class="demo-main__graph-component">
-          <div id="graphComponent">
-            <div id="loading-indicator">Retrieving data from the Neo4j database...</div>
+    <div id="login-pane" class="demo-page__main">
+      <div id="login" class="panel">
+        <h2>Connect to a Neo4j database</h2>
+        <form id="login-form">
+          <div class="login-form-row">
+            <label for="hostInput">Database URL</label>
+            <input
+              type="text"
+              id="hostInput"
+              style="width: 100%"
+              value="neo4j+s://demo.neo4jlabs.com:7687"
+            />
           </div>
+          <div class="login-form-row" style="font-size: 0.9em; margin-top: 4px">
+            <label></label>
+            (Supported URIs are described in the&nbsp;<a
+              href="https://neo4j.com/docs/javascript-manual/current/connect-advanced/"
+              target="_blank"
+            >
+              Neo4j documentation</a
+            >)
+          </div>
+          <div class="login-form-row">
+            <label for="databaseNameInput">Database Name</label>
+            <input type="text" id="databaseNameInput" value="recommendations" />
+          </div>
+          <div class="login-form-row">
+            <label for="userInput">Username</label>
+            <input type="text" id="userInput" value="recommendations" autocomplete="username" />
+          </div>
+          <div class="login-form-row">
+            <label for="passwordInput">Password</label>
+            <input
+              type="password"
+              id="passwordInput"
+              value="recommendations"
+              autofocus=""
+              autocomplete="current-password"
+            />
+          </div>
+          <div class="login-form-row">
+            <input type="submit" value="Connect" id="connect-button" />
+          </div>
+          <div class="login-form-row" id="connectionError"></div>
+        </form>
+      </div>
+      <div id="openInHttp" class="panel warning" hidden>
+        Connections from https to http are forbidden by the browser's security policy. If you can't
+        connect to a non-encrypted database, try clicking the link below to open this tool served on
+        http. <br />
+        <a href=".">Open in http</a>
+      </div>
+      <div id="noWebSocketAPI" class="panel warning" hidden>
+        <p>
+          This demo application uses the <a href="https://developer.mozilla.org/docs/Web/API/WebSockets_API" target="_blank">WebSocket API</a> to
+          connect to a Neo4j database, which seems to be disabled in this browser
+        </p>
+        <p>To use this demo, please enable it or switch to a different browser.</p>
+      </div>
+    </div>
+    <div id="graph-pane" class="demo-page__main" hidden>
+      <div class="demo-main__graph-component">
+        <div id="graphComponent">
+          <div id="loading-indicator">Retrieving data from the Neo4j database...</div>
         </div>
       </div>
-      <aside
-        id="queryPane"
-        class="demo-main__sidebar"
-        style="--sidebar-width: 30%; visibility: hidden"
-      >
+      <aside class="demo-main__sidebar" style="--sidebar-width: 30%">
         <div class="demo-sidebar__content">
-          <div style="padding: 10px 29px">
-            <h2>Custom Cypher Query</h2>
-          </div>
+          <h2>Custom Cypher Query</h2>
           <div id="queryEditorContainer" class="editorText"></div>
-          <div style="padding: 10px 29px">
+          <div style="margin-top: 12px">
             <button id="run-cypher-button">Run Cypher Query</button>
-            <pre id="queryError"></pre>
+            <pre id="queryError" hidden></pre>
           </div>
-          <div style="padding: 10px 29px">
-            <div id="selected-node-container" hidden="">
-              <h2>Selected Node</h2>
-              <h3>Labels</h3>
-              <p id="labels">None.</p>
-              <h3>Properties</h3>
-              <table id="propertyTable">
-                <tbody>
-                  <tr>
-                    <th>Name</th>
-                    <th>Value</th>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+
+          <div id="selected-node-container" hidden>
+            <h2>Selected Node</h2>
+            <h3>Labels</h3>
+            <p id="labels">None.</p>
+            <h3>Properties</h3>
+            <table class="property-table">
+              <tbody>
+                <tr>
+                  <th>Name</th>
+                  <th>Value</th>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </aside>

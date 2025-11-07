@@ -28,12 +28,12 @@
  ***************************************************************************/
 import {
   BaseClass,
-  ClickEventArgs,
+  type ClickEventArgs,
   Cursor,
   HandleType,
   IHandle,
-  IInputModeContext,
-  INode,
+  type IInputModeContext,
+  type INode,
   Point
 } from '@yfiles/yfiles'
 

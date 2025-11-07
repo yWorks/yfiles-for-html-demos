@@ -39,8 +39,8 @@ import {
   NodeStyleIndicatorRenderer,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { initializeToolbar, switchSample, useUniformEdgeWeights } from './ui/ui-utils'
 import { runLayout } from './layout/layout'
 import { TagColoredPolylineEdgeStyle, TagColoredShapeNodeStyle } from './styles'
@@ -58,7 +58,7 @@ const validationPattern = new RegExp('^(0*[1-9][0-9]*(\\.[0-9]+)?|0+\\.[0-9]*[1-
  * Main function for running the Graph Analysis demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('graphComponent')
   // configure the interaction for this demo

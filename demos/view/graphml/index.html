@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>GraphML Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       .editorText {
@@ -150,13 +150,9 @@
       <button
         id="open-file-button"
         title="Open a GraphML file"
-        class="demo-icon-yIconOpen labeled"
+        class="demo-icon-yIconOpen"
       ></button>
-      <button
-        id="save-button"
-        title="Save a GraphML file"
-        class="demo-icon-yIconSave labeled"
-      ></button>
+      <button id="save-button" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
 
       <span class="demo-separator"></span>
 
@@ -199,7 +195,7 @@
 
         <p>
           This demo provides a live view of the graph's
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_io_graphml#customizing_io_graphml" target="_blank">GraphML</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_io_graphml#customizing_io_graphml" class="dguide" target="_blank">GraphML</a>
           representation. GraphML is the default serialization format for yFiles graphs.
         </p>
 

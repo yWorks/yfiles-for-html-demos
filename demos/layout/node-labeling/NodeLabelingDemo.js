@@ -36,13 +36,9 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   ILabel,
-  IModelItem,
   INode,
-  InputModeEventArgs,
-  ItemClickedEventArgs,
   LabelingCosts,
   LabelingOptimizationStrategy,
-  LabelStyle,
   LayoutExecutor,
   License,
   NodeLabelCandidates,
@@ -54,12 +50,9 @@ import {
 import SampleData from './resources/sample'
 import { MapVisualCreator } from './MapVisualCreator'
 import { CityLabelStyle } from './CityLabelStyle'
-import {
-  createDemoNodeLabelStyle,
-  createDemoShapeNodeStyle
-} from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoNodeLabelStyle, createDemoShapeNodeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * The graph component.
@@ -89,7 +82,7 @@ let pinnedCityLabelStyle
  * Runs the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   // initialize the node label properties
   initializeOptions()
@@ -190,7 +183,6 @@ function initializeInputMode() {
 
   /**
    * Pins the label on drag finished
-   * @param evt
    */
   function dragFinished(evt) {
     inputMode.moveUnselectedItemsInputMode.affectedItems
@@ -206,7 +198,6 @@ function initializeInputMode() {
 
   /**
    * Unpins the label on click and runs the currently selected label layout
-   * @param evt
    */
   async function clickLabel(evt) {
     const item = evt.item

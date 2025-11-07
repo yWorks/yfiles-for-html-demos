@@ -43,6 +43,7 @@ export function drawTrekkingTrail(graphComponent, scaledTrail) {
  */
 class TrailVisual extends BaseClass(IVisualCreator) {
   trailPoints
+
   constructor(trailPoints) {
     super()
     this.trailPoints = trailPoints

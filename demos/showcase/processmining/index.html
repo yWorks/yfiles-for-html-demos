@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Process Mining Visualization Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
     <link rel="stylesheet" href="./style/processMining.css" />
   </head>
   <body>
@@ -152,6 +152,18 @@
             Enable the infinite loop to restart the animation automatically after every finish.
           </li>
         </ul>
+
+        <h2>Known Issue in Safari</h2>
+
+        <p>
+          The heat map is currently not visible in Safari. It uses the
+          <a
+            href="https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/filter"
+            target="_blank"
+            >filter property of the Canvas 2D API</a
+          >, which is still an experimental feature in Safari and must be explicitly enabled in the
+          settings.
+        </p>
       </div>
     </aside>
     <div class="demo-page__main">

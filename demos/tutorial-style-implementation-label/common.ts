@@ -30,7 +30,6 @@ import {
   Animator,
   BaseClass,
   ExteriorNodeLabelModel,
-  SmartEdgeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -58,6 +57,7 @@ import {
   type Rect,
   ScrollBarVisibility,
   ShapeNodeStyle,
+  SmartEdgeLabelModel,
   SvgVisual,
   type Visual
 } from '@yfiles/yfiles'

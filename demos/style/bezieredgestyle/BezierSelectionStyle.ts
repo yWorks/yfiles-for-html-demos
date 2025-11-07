@@ -32,33 +32,36 @@ import {
   EdgeStyleIndicatorRenderer,
   GeneralPath,
   IBoundsProvider,
-  ICanvasContext,
+  type ICanvasContext,
   IEdge,
   type IEdgeStyle,
   IHitTestable,
-  IInputModeContext,
-  IObjectRenderer,
-  IRenderContext,
+  type IInputModeContext,
+  type IObjectRenderer,
+  type IRenderContext,
   ISelectionRenderer,
   IVisibilityTestable,
   IVisualCreator,
   MutableRectangle,
-  Point,
+  type Point,
   PolylineEdgeStyle,
-  Rect,
+  type Rect,
   Stroke,
   StyleIndicatorZoomPolicy,
-  SvgVisual,
+  type SvgVisual,
   SvgVisualGroup,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 /**
  * Custom selection style that renders a line segment for collinear control point triples
  */
 class SelectionEdgeStyle extends DelegatingEdgeStyle {
-  constructor(private delegatingStyle: IEdgeStyle) {
+    private delegatingStyle: IEdgeStyle;
+
+  constructor(delegatingStyle: IEdgeStyle) {
     super()
+      this.delegatingStyle = delegatingStyle;
   }
 
   protected getStyle(edge: IEdge): IEdgeStyle {
@@ -144,16 +147,20 @@ class CompositeRenderer extends BaseClass(
   IVisibilityTestable,
   IHitTestable
 ) {
-  public renderTag: Object | null = null
+    second: IObjectRenderer;
+    first: IObjectRenderer;
+  public renderTag: object | null = null
 
   constructor(
-    public first: IObjectRenderer,
-    public second: IObjectRenderer
+    first: IObjectRenderer,
+    second: IObjectRenderer
   ) {
     super()
+      this.first = first;
+      this.second = second;
   }
 
-  configure(renderTag: Object) {
+  configure(renderTag: object) {
     this.renderTag = renderTag
   }
 

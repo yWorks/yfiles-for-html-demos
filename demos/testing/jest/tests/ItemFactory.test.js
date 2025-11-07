@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { Graph, License } from '@yfiles/yfiles'
 import { createEdge, createNode } from '../src/ItemFactory.js'
-import licenseData from '../../../../lib/license.json'
+import licenseData from '../src/license.json'
 
 /**
  * This test file tests ItemFactory without mocking yFiles. Note that some yFiles functionality

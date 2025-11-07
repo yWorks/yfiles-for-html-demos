@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEnumerable, INode, InputModeEventArgs, MoveInputMode } from '@yfiles/yfiles'
+import { type IEnumerable, INode, type InputModeEventArgs, MoveInputMode } from '@yfiles/yfiles'
 import { recalculateEdges } from '../FlowEdge/FlowEdge'
 
 export class FlowMoveInputMode extends MoveInputMode {

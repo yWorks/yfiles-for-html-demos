@@ -29,8 +29,8 @@
 import {
   type GraphComponent,
   HtmlCanvasVisual,
-  IEdge,
-  INode,
+  type IEdge,
+  type INode,
   type IRenderContext,
   type IRenderTreeElement,
   IVisualCreator,

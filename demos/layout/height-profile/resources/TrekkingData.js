@@ -27,21 +27,6 @@
  **
  ***************************************************************************/
 /**
- * Describes the type of nodes used in this demo.
- */
-export var MultiPageNodeType
-;(function (MultiPageNodeType) {
-  /**
-   * The nodes that represent the waypoints.
-   */
-  MultiPageNodeType[(MultiPageNodeType['WAYPOINT'] = 0)] = 'WAYPOINT'
-  /**
-   * The nodes that represent the label associated with the waypoints.
-   */
-  MultiPageNodeType[(MultiPageNodeType['LABEL'] = 1)] = 'LABEL'
-})(MultiPageNodeType || (MultiPageNodeType = {}))
-
-/**
  * Returns the data associated with each waypoint.
  */
 export function getWayPoint(node) {

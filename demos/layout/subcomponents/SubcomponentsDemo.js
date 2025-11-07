@@ -34,24 +34,18 @@ import {
   HierarchicalLayout,
   HierarchicalLayoutData,
   HierarchicalLayoutSubcomponentDescriptor,
-  IEnumerable,
-  IGraph,
-  ILayoutAlgorithm,
-  INode,
   LayoutExecutor,
   LayoutOrientation,
   License,
   OrganicLayout,
   OrthogonalLayout,
-  SingleLayerSubtreePlacer,
-  StraightLineEdgeRouter,
-  TreeLayout,
-  TreeReductionStage
+  TreeLayout
 } from '@yfiles/yfiles'
 
-import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
+import graphData from './resources/sample.json'
 
 /**
  * The collection of subcomponents contains all currently assigned subcomponents.
@@ -70,7 +64,7 @@ const nodeStyles = [
 ]
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('graphComponent')
   configureUserInteraction(graphComponent)
@@ -194,16 +188,13 @@ function initializeGraph(graph) {
  * @yjs:keep = nodes,edges
  */
 async function createSampleGraph(graph) {
-  const response = await fetch('./resources/sample.json')
-  const data = await response.json()
-
   const builder = new GraphBuilder(graph)
   builder.createNodesSource({
-    data: data.nodes,
+    data: graphData.nodes,
     id: 'id',
     tag: (data) => (data.tag != null ? data.tag : null)
   })
-  builder.createEdgesSource(data.edges, 'source', 'target')
+  builder.createEdgesSource(graphData.edges, 'source', 'target')
 
   builder.buildGraph()
 }

@@ -28,7 +28,7 @@
  ***************************************************************************/
 // eslint-disable @typescript-eslint/explicit-function-return-type
 
-import type { IGraph, ILabelStyle, INode } from '@yfiles/yfiles'
+import { GroupNodeStyle, type IGraph, type ILabelStyle, type INode } from '@yfiles/yfiles'
 import {
   Arrow,
   EdgePathLabelModel,
@@ -44,8 +44,10 @@ import {
 
 type SampleDataNode = {
   id: number
-  layout: { x: number; y: number; width: number; height: number }
+  layout?: { x: number; y: number; width: number; height: number }
   tag: { type: number }
+  isGroup?: boolean
+  parent?: number
 }
 type SampleDataType = { nodeList: SampleDataNode[]; edgeList: { source: number; target: number }[] }
 
@@ -56,10 +58,10 @@ const SampleData: SampleDataType = {
     { id: 2, layout: { x: 255, y: 181.25, width: 40, height: 40 }, tag: { type: 2 } },
     { id: 3, layout: { x: 30, y: 181.25, width: 40, height: 40 }, tag: { type: 1 } },
     { id: 4, layout: { x: 580, y: 181.25, width: 40, height: 40 }, tag: { type: 0 } },
-    { id: 5, layout: { x: 820, y: 295.75, width: 40, height: 40 }, tag: { type: 1 } },
-    { id: 6, layout: { x: 575, y: 295.75, width: 40, height: 40 }, tag: { type: 2 } },
+    { id: 5, layout: { x: 820, y: 295.75, width: 40, height: 40 }, tag: { type: 1 }, parent: 36 },
+    { id: 6, layout: { x: 575, y: 295.75, width: 40, height: 40 }, tag: { type: 2 }, parent: 35 },
     { id: 7, layout: { x: 400, y: 295.75, width: 40, height: 40 }, tag: { type: 1 } },
-    { id: 8, layout: { x: 750, y: 295.75, width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 8, layout: { x: 750, y: 295.75, width: 40, height: 40 }, tag: { type: 1 }, parent: 36 },
     { id: 9, layout: { x: 600, y: 646.75, width: 40, height: 40 }, tag: { type: 1 } },
     { id: 10, layout: { x: 190, y: 295.75, width: 40, height: 40 }, tag: { type: 0 } },
     { id: 11, layout: { x: 260, y: 295.75, width: 40, height: 40 }, tag: { type: 2 } },
@@ -75,17 +77,19 @@ const SampleData: SampleDataType = {
     { id: 21, layout: { x: 400, y: 447.75, width: 40, height: 40 }, tag: { type: 1 } },
     { id: 22, layout: { x: 480, y: 539.75, width: 80, height: 55 }, tag: { type: 0 } },
     { id: 23, layout: { x: 370, y: 539.75, width: 80, height: 55 }, tag: { type: 0 } },
-    { id: 24, layout: { x: 470, y: 387.75, width: 40, height: 40 }, tag: { type: 2 } },
-    { id: 25, layout: { x: 610, y: 387.75, width: 40, height: 40 }, tag: { type: 2 } },
-    { id: 26, layout: { x: 540, y: 387.75, width: 40, height: 40 }, tag: { type: 2 } },
+    { id: 24, layout: { x: 470, y: 387.75, width: 40, height: 40 }, tag: { type: 2 }, parent: 35 },
+    { id: 25, layout: { x: 610, y: 387.75, width: 40, height: 40 }, tag: { type: 2 }, parent: 35 },
+    { id: 26, layout: { x: 540, y: 387.75, width: 40, height: 40 }, tag: { type: 2 }, parent: 35 },
     { id: 27, layout: { x: 680, y: 387.75, width: 40, height: 40 }, tag: { type: 0 } },
-    { id: 28, layout: { x: 785, y: 387.75, width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 28, layout: { x: 785, y: 387.75, width: 40, height: 40 }, tag: { type: 1 }, parent: 36 },
     { id: 29, layout: { x: 460, y: 769.6071428571429, width: 40, height: 40 }, tag: { type: 0 } },
     { id: 30, layout: { x: 600, y: 769.6071428571429, width: 40, height: 40 }, tag: { type: 1 } },
     { id: 31, layout: { x: 810, y: 769.6071428571429, width: 40, height: 40 }, tag: { type: 1 } },
     { id: 32, layout: { x: 530, y: 769.6071428571429, width: 40, height: 40 }, tag: { type: 0 } },
     { id: 33, layout: { x: 740, y: 769.6071428571429, width: 40, height: 40 }, tag: { type: 1 } },
-    { id: 34, layout: { x: 670, y: 769.6071428571429, width: 40, height: 40 }, tag: { type: 1 } }
+    { id: 34, layout: { x: 670, y: 769.6071428571429, width: 40, height: 40 }, tag: { type: 1 } },
+    { id: 35, isGroup: true, tag: { type: 1 } },
+    { id: 36, isGroup: true, tag: { type: 0 } }
   ],
   edgeList: [
     { source: 0, target: 1 },
@@ -136,8 +140,9 @@ export function createSampleGraph(graph: IGraph): void {
   graph.clear()
   const builder = new GraphBuilder(graph)
   const nodesSource = builder.createNodesSource({
-    data: SampleData.nodeList,
+    data: SampleData.nodeList.filter((node) => !node.isGroup),
     id: 'id',
+    parentId: 'parent',
     layout: 'layout',
     tag: 'tag',
     style: (dataItem) => {
@@ -147,18 +152,20 @@ export function createSampleGraph(graph: IGraph): void {
       })
     }
   })
-  const nodeLabelCreator = nodesSource.nodeCreator.createLabelBinding()
-  nodeLabelCreator.defaults.layoutParameter = new ExteriorNodeLabelModel({
-    margins: { right: 7 }
-  }).createParameter('right')
-  const labelStyle = new LabelStyle({
-    cssClass: 'label invisible', // fade-in labels on hover
-    padding: 5,
-    backgroundFill: 'rgba(255,255,255,0.7)',
-    shape: 'round-rectangle'
+
+  const groupNodeSource = builder.createGroupNodesSource({
+    data: SampleData.nodeList.filter((node) => node.isGroup),
+    id: 'id',
+    parentId: 'parent',
+    tag: 'tag',
+    layout: 'layout',
+    style: (dataItem) => {
+      return new GroupNodeStyle({
+        tabPosition: 'top',
+        cssClass: `group-node type-${dataItem.tag.type || '0'}`
+      })
+    }
   })
-  nodeLabelCreator.styleProvider = (): ILabelStyle => labelStyle.clone()
-  nodeLabelCreator.textProvider = (dataItem): string => `.node\n.type-${dataItem.tag.type || '0'}`
 
   const edgesSource = builder.createEdgesSource({
     data: SampleData.edgeList,
@@ -174,18 +181,44 @@ export function createSampleGraph(graph: IGraph): void {
       })
     }
   })
-  const edgeLabelCreator = edgesSource.edgeCreator.createLabelBinding()
-  edgeLabelCreator.defaults.layoutParameter = new EdgePathLabelModel({
-    sideOfEdge: 'below-edge',
-    autoRotation: false,
-    distance: 7
-  }).createRatioParameter()
-  edgeLabelCreator.styleProvider = (): ILabelStyle => labelStyle.clone()
-  edgeLabelCreator.textProvider = (): string => '.edge'
+
+  const nodeLabelParameter = new ExteriorNodeLabelModel({ margins: { right: 7 } }).createParameter(
+    'right'
+  )
+  const labelStyle = new LabelStyle({
+    cssClass: 'label invisible', // fade-in labels on hover
+    padding: 5,
+    backgroundFill: 'rgba(255,255,255,0.7)',
+    shape: 'round-rectangle'
+  })
+  nodesSource.nodeCreator.createLabelBinding({
+    text: (dataItem: SampleDataNode) => `.node\n.type-${dataItem.tag.type || '0'}`,
+    layoutParameter: () => nodeLabelParameter,
+    style: () => labelStyle.clone()
+  })
+  groupNodeSource.nodeCreator.createLabelBinding({
+    text: (dataItem: SampleDataNode) => `.group-node\n.type-${dataItem.tag.type || '0'}`,
+    layoutParameter: () => nodeLabelParameter,
+    style: () => labelStyle.clone()
+  })
+  edgesSource.edgeCreator.createLabelBinding({
+    text: (_) => '.edge',
+    layoutParameter: () =>
+      new EdgePathLabelModel({
+        sideOfEdge: 'below-edge',
+        autoRotation: false
+      }).createRatioParameter(),
+    style: () => labelStyle.clone()
+  })
 
   builder.buildGraph()
 
-  const layout = new HierarchicalLayout({ nodeDistance: 50 })
+  const layout = new HierarchicalLayout({
+    nodeDistance: 70,
+    defaultEdgeDescriptor: { minimumFirstSegmentLength: 30, minimumLastSegmentLength: 30 },
+    nodeLabelPlacement: 'ignore',
+    edgeLabelPlacement: 'ignore'
+  })
   const layoutData = new HierarchicalLayoutData({
     // consider the node types of the sample data
     nodeTypes: (node: INode) => (node.tag as SampleDataNode['tag']).type

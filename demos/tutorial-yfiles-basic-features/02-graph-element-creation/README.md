@@ -19,7 +19,7 @@
 
 This step shows how to [create the basic graph elements](https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-creating_graph_elements) using the core [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph). Note that depending on your specific use-case, you will let the user create the elements, interactively, or you might be using [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) to populate your graph. The latter is covered in the **[Graph Builder Tutorial](../../README.html#tutorial-graph-builder)**. Also consider using the **[App Generator](https://www.yworks.com/app-generator)** which can help you load your graphs from a convenient low-code interface.
 
-In this example, we use the low-level [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph) to first create the nodes. The size is determined by [the default size](https://docs.yworks.com/yfileshtml/#/api/INodeDefaults#INodeDefaults-property-size).
+In this example, we use the low-level [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph) to first create the nodes. The size is determined by [the default size](https://docs.yworks.com/yfileshtml/#/api/INodeDefaults#size).
 
 ```
 const node1 = graph.createNode()

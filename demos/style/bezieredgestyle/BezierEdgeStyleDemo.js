@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Arrow,
   ArrowType,
@@ -37,10 +36,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HorizontalTextAlignment,
-  IBend,
-  IHandle,
-  IInputMode,
-  ILabelModelParameter,
   LabelStyle,
   License,
   ShapeNodeShape,
@@ -53,8 +48,8 @@ import { BezierEdgeHandleProvider } from './BezierEdgeHandleProvider'
 import { BezierSelectionStyle } from './BezierSelectionStyle'
 import { BezierCreateEdgeInputMode } from './BezierCreateEdgeInputMode'
 import { SampleCircle, SampleLabels } from './resources/SampleGraphs'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent = null
 
@@ -77,7 +72,7 @@ const bezierEdgeStyle = new BezierEdgeStyle({
 })
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   graphComponent.inputMode = createEditorMode()
 

@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Color,
   EdgePathLabelModel,
@@ -44,7 +43,6 @@ import {
   GridSnapTypes,
   GridStyle,
   HierarchicalLayout,
-  IGraph,
   LayoutExecutor,
   License,
   RenderMode,
@@ -53,9 +51,9 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { BrowserDetection, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { BrowserDetection, finishLoading } from '@yfiles/demo-app/demo-page'
 import graphData from './graph-data.json'
 
 let graphComponent
@@ -69,7 +67,7 @@ let grid = null
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')

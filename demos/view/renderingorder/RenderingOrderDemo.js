@@ -34,23 +34,20 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HierarchicalNestingPolicy,
-  IRenderContext,
   IVisualCreator,
   LabelLayerPolicy,
   License,
-  ShapePortStyle,
   Point,
   PortLayerPolicy,
-  ShapeNodeStyle,
+  ShapePortStyle,
   Size,
   SmartEdgeLabelModel,
-  SvgVisual,
-  Visual
+  SvgVisual
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent
 
@@ -58,7 +55,7 @@ let graphComponent
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
@@ -320,10 +317,11 @@ function initializeUI() {
  * Creates a boundary rectangle with a title for a sample graph.
  */
 class RectangleBorder extends BaseClass(IVisualCreator) {
-  rectOrigin
-  size
-  titleOrigin
   title
+  titleOrigin
+  size
+  rectOrigin
+
   /**
    * @param rectOrigin the position where to draw the rectangle
    * @param size   the size of the rectangle

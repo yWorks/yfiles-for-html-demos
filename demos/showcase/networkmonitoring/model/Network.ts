@@ -34,6 +34,8 @@ import type { NetworkData, NodeId } from './network-sample'
  * Models the network of devices and connections.
  */
 export class Network {
+  readonly connections: Connection[]
+  readonly devices: Device[]
   onDataUpdated: (() => void) | undefined
   onDeviceFailure: ((item: Device) => void) | undefined
   onConnectionFailure: ((item: Connection) => void) | undefined
@@ -68,10 +70,10 @@ export class Network {
    * @param devices The devices in the network.
    * @param connections The connections in the network.
    */
-  constructor(
-    readonly devices: Device[],
-    readonly connections: Connection[]
-  ) {}
+  constructor(devices: Device[], connections: Connection[]) {
+    this.devices = devices
+    this.connections = connections
+  }
 
   /**
    * Returns the connections having the given device as either sender or receiver.

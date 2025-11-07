@@ -29,12 +29,9 @@
 import {
   Class,
   EdgeRouter,
-  GraphComponent,
-  ILayoutAlgorithm,
   LayoutOrientation,
   OrganicEdgeRouter,
   SeriesParallelLayout,
-  SeriesParallelLayoutPortAssigner,
   SeriesParallelLayoutPortAssignmentMode,
   SeriesParallelLayoutRoutingStyle,
   StraightLineEdgeRouter
@@ -44,21 +41,15 @@ import { LayoutConfiguration } from './LayoutConfiguration'
 
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 
-var NonSeriesParallelRoutingStyle
-;(function (NonSeriesParallelRoutingStyle) {
-  NonSeriesParallelRoutingStyle[(NonSeriesParallelRoutingStyle['ORTHOGONAL'] = 0)] = 'ORTHOGONAL'
-  NonSeriesParallelRoutingStyle[(NonSeriesParallelRoutingStyle['ORGANIC'] = 1)] = 'ORGANIC'
-  NonSeriesParallelRoutingStyle[(NonSeriesParallelRoutingStyle['STRAIGHT'] = 2)] = 'STRAIGHT'
-})(NonSeriesParallelRoutingStyle || (NonSeriesParallelRoutingStyle = {}))
+const NonSeriesParallelRoutingStyle = { ORTHOGONAL: 0, ORGANIC: 1, STRAIGHT: 2 }
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -79,7 +70,7 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
     ],
     descriptionText: [
       new OptionGroupAttribute('descriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     orientationItem: [
@@ -129,7 +120,7 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
       ),
       new MinMaxAttribute(0, 100),
       new OptionGroupAttribute('distanceGroup', 10),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumNodeToEdgeDistanceItem: [
@@ -139,7 +130,7 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
       ),
       new MinMaxAttribute(0, 100),
       new OptionGroupAttribute('distanceGroup', 20),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumEdgeDistanceItem: [
@@ -149,7 +140,7 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
       ),
       new MinMaxAttribute(0, 100),
       new OptionGroupAttribute('distanceGroup', 30),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     labelingGroup: [
@@ -207,7 +198,7 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
       ),
       new OptionGroupAttribute('edgesGroup', 30),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumPolylineSegmentLengthItem: [
@@ -217,7 +208,7 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
       ),
       new OptionGroupAttribute('edgesGroup', 40),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumSlopeItem: [
@@ -227,7 +218,7 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         '#/api/SeriesParallelLayout#SeriesParallelLayout-property-minimumSlope'
       ),
       new OptionGroupAttribute('edgesGroup', 50),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     routingStyleNonSeriesParallelItem: [
@@ -237,9 +228,9 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
       ),
       new OptionGroupAttribute('edgesGroup', 60),
       new EnumValuesAttribute([
-        ['Orthogonal', NonSeriesParallelRoutingStyle.ORTHOGONAL],
-        ['Organic', NonSeriesParallelRoutingStyle.ORGANIC],
-        ['Straight-Line', NonSeriesParallelRoutingStyle.STRAIGHT]
+        ['Orthogonal', 'orthogonal'],
+        ['Organic', 'organic'],
+        ['Straight-Line', 'straight']
       ]),
       new TypeAttribute(NonSeriesParallelRoutingStyle)
     ],
@@ -250,7 +241,7 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
       ),
       new OptionGroupAttribute('edgesGroup', 80),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumLastSegmentLengthItem: [
@@ -260,7 +251,7 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
       ),
       new OptionGroupAttribute('edgesGroup', 90),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumEdgeLengthItem: [
@@ -270,7 +261,7 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
       ),
       new OptionGroupAttribute('edgesGroup', 100),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ]
   },
@@ -295,7 +286,7 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
     this.preferredOctilinearSegmentLengthItem = layout.preferredOctilinearSegmentLength
     this.minimumPolylineSegmentLengthItem = layout.minimumPolylineSegmentLength
     this.minimumSlopeItem = layout.minimumSlope
-    this.routingStyleNonSeriesParallelItem = NonSeriesParallelRoutingStyle.ORTHOGONAL
+    this.routingStyleNonSeriesParallelItem = 'orthogonal'
     this.minimumFirstSegmentLengthItem = edgeDescriptor.minimumFirstSegmentLength
     this.minimumLastSegmentLengthItem = edgeDescriptor.minimumLastSegmentLength
     this.minimumEdgeLengthItem = 20
@@ -330,11 +321,11 @@ export const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
       layout.minimumSlope = this.minimumSlopeItem
     }
 
-    if (this.routingStyleNonSeriesParallelItem === NonSeriesParallelRoutingStyle.ORTHOGONAL) {
+    if (this.routingStyleNonSeriesParallelItem === 'orthogonal') {
       layout.nonSeriesParallelEdgeRouter = new EdgeRouter({ rerouting: true })
-    } else if (this.routingStyleNonSeriesParallelItem === NonSeriesParallelRoutingStyle.ORGANIC) {
+    } else if (this.routingStyleNonSeriesParallelItem === 'organic') {
       layout.nonSeriesParallelEdgeRouter = new OrganicEdgeRouter()
-    } else if (this.routingStyleNonSeriesParallelItem === NonSeriesParallelRoutingStyle.STRAIGHT) {
+    } else if (this.routingStyleNonSeriesParallelItem === 'straight') {
       layout.nonSeriesParallelEdgeRouter = new StraightLineEdgeRouter()
     }
 

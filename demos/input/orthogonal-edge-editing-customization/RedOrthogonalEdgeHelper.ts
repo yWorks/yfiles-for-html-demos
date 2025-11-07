@@ -28,9 +28,9 @@
  ***************************************************************************/
 import {
   BaseClass,
-  IEdge,
-  IGraph,
-  IInputModeContext,
+  type IEdge,
+  type IGraph,
+  type IInputModeContext,
   IOrthogonalEdgeHelper,
   SegmentOrientation
 } from '@yfiles/yfiles'

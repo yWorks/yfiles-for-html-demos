@@ -30,12 +30,12 @@ import {
   Font,
   FreeNodePortLocationModel,
   HorizontalTextAlignment,
-  IEdge,
-  IEdgeStyle,
-  ILabel,
-  ILabelStyle,
-  INode,
-  IRenderContext,
+  type IEdge,
+  type IEdgeStyle,
+  type ILabel,
+  type ILabelStyle,
+  type INode,
+  type IRenderContext,
   LabelStyle,
   LabelStyleBase,
   Rect,
@@ -107,13 +107,15 @@ export class ExtensibilityButtonStyle extends LabelStyleBase {
 }
 
 export class RelationButtonStyle extends LabelStyleBase {
+  private readonly foregroundStyle: IEdgeStyle
   private readonly backgroundStyle: ILabelStyle
   private readonly foregroundSrc: SimpleNode
   private readonly foregroundTgt: SimpleNode
   private readonly foregroundEdge: IEdge
 
-  constructor(private readonly foregroundStyle: IEdgeStyle) {
+  constructor(foregroundStyle: IEdgeStyle) {
     super()
+    this.foregroundStyle = foregroundStyle
     this.backgroundStyle = createBackgroundStyle()
     this.foregroundSrc = new SimpleNode()
     this.foregroundTgt = new SimpleNode()

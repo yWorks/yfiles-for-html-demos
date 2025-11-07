@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 import { GraphComponent, License } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import {
   BoundsVisual,
   configureMinimumSize,
@@ -41,7 +41,7 @@ import {
 import { CustomNodeStyle } from './CustomNodeStyle'
 import { CustomNodeStyle as OldCustomNodeStyle } from '../06-render-text/CustomNodeStyle'
 
-License.value = await fetchLicense()
+License.value = licenseData
 
 const graphComponent = new GraphComponent('#graphComponent')
 

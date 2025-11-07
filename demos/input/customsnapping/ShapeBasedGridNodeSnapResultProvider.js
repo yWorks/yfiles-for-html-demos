@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  CollectSnapResultsEventArgs,
-  GraphSnapContext,
-  INode,
-  NodeSnapResultProvider,
-  PathType,
-  Point,
-  Rect
-} from '@yfiles/yfiles'
+import { NodeSnapResultProvider, PathType, Point } from '@yfiles/yfiles'
 
 /**
  * Customizes the grid snapping behavior of NodeSnapResultProvider by providing SnapResults for each point of the

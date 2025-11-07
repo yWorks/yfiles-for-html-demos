@@ -28,21 +28,21 @@
  ***************************************************************************/
 import {
   BaseClass,
-  ClickEventArgs,
-  Cursor,
+  type ClickEventArgs,
+  type Cursor,
   EventRecognizers,
-  GraphEditorInputMode,
+  type GraphEditorInputMode,
   HandlePositions,
   HandleType,
-  IGraph,
+  type IGraph,
   IHandle,
-  IInputModeContext,
-  INode,
-  IPoint,
-  IReshapeHandler,
+  type IInputModeContext,
+  type INode,
+  type IPoint,
+  type IReshapeHandler,
   NodeReshapeHandleProvider,
-  NodeReshapeHandlerHandle,
-  Point
+  type NodeReshapeHandlerHandle,
+  type Point
 } from '@yfiles/yfiles'
 
 /**

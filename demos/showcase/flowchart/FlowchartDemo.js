@@ -29,7 +29,6 @@
 import {
   Arrow,
   ArrowType,
-  SmartEdgeLabelModel,
   FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
@@ -39,12 +38,13 @@ import {
   LabelStyle,
   License,
   PolylineEdgeStyle,
-  Size
+  Size,
+  SmartEdgeLabelModel
 } from '@yfiles/yfiles'
-import { FlowchartNodeStyle, FlowchartNodeType } from './style/FlowchartStyle'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { FlowchartNodeStyle } from './style/FlowchartStyle'
+import licenseData from '../../../lib/license.json'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import {
   enableUI,
   getLayoutOptions,
@@ -61,7 +61,7 @@ import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 let graphComponent = null
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   initializeOptionPanel(loadSample, runLayout)
   configureUserInteraction()
@@ -115,7 +115,7 @@ function initializeGraphDefaults() {
   const graph = graphComponent.graph
 
   const nodeDefaults = graph.nodeDefaults
-  nodeDefaults.style = new FlowchartNodeStyle(FlowchartNodeType.Start1)
+  nodeDefaults.style = new FlowchartNodeStyle('Start1')
   nodeDefaults.size = new Size(80, 40)
   nodeDefaults.labels.style = new LabelStyle({
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
@@ -135,7 +135,11 @@ function initializeGraphDefaults() {
   }).createParameterFromSource(0)
 
   const groupNodeDefaults = graph.groupNodeDefaults
-  groupNodeDefaults.style = new GroupNodeStyle({ tabFill: 'rgb(214, 229, 248)' })
+  groupNodeDefaults.style = new GroupNodeStyle({
+    tabFill: 'rgb(214, 229, 248)',
+    stroke: 'black',
+    contentAreaPadding: 10
+  })
   groupNodeDefaults.labels.layoutParameter =
     new GroupNodeLabelModel().createTabBackgroundParameter()
 }

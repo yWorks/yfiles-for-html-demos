@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent } from '@yfiles/yfiles'
+import {} from '@yfiles/yfiles'
 import { runAutoLayout, triggerGridDisplay } from '../utils/customTriggers'
 
 export function initializeToolbar(graphComponent, grid) {

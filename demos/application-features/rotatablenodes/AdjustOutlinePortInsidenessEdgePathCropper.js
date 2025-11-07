@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  EdgePathCropper,
-  GeneralPath,
-  IEdge,
-  INode,
-  IShapeGeometry,
-  Matrix,
-  Point
-} from '@yfiles/yfiles'
+import { EdgePathCropper, GeneralPath, Matrix, Point } from '@yfiles/yfiles'
 
 /**
  * Crops adjacent edges at the nodes rotated bounds for internal ports.

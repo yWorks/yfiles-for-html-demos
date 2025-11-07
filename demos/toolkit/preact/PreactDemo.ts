@@ -28,7 +28,7 @@
  ***************************************************************************/
 // @ts-ignore - We have no proper types for preact, here
 import { type FunctionalComponent, html, render, useState } from './preact-loader'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { License } from '@yfiles/yfiles'
 import ItemList from './components/items/ItemList'
 import PreactGraphComponent from './components/graphComponent/PreactGraphComponent'
@@ -116,9 +116,8 @@ const App: FunctionalComponent = () => {
 }
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   render(html` <${App} /> `, document.querySelector('.preact-app'))
 }
 
-// noinspection JSIgnoredPromiseFromCall
 run()

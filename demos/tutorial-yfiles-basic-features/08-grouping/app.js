@@ -26,9 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, License } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { GraphComponent, License } from '@yfiles/yfiles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import {
   addButtonListener,
   configureInteraction,
@@ -39,7 +39,7 @@ import {
 } from '../common'
 import { adjustGroupNodeSize, configureGroupNodeStyles, createGroupNodes } from './grouping'
 
-License.value = await fetchLicense()
+License.value = licenseData
 
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)
@@ -55,7 +55,7 @@ configureInteraction(graphComponent)
 const nodes = graph.nodes.filter((node) => !graph.isGroupNode(node) && node.labels.size > 0)
 nodes.forEach((node) => graphComponent.selection.nodes.add(node))
 
-fitGraphBounds(graphComponent)
+await fitGraphBounds(graphComponent)
 finishLoading()
 
 addButtonListener('#groupButton', () => graphComponent.inputMode.groupSelection())

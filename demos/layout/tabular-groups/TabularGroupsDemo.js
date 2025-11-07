@@ -42,9 +42,9 @@ import {
   createDefaultHierarchicalLayout,
   createTabularGroupsHierarchicalLayout
 } from './HierarchicalLayoutTabularGroups'
-import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { colorSets, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 const sortingToggle = document.querySelector('#sorting-toggle')
 const tabularGroupsToggle = document.querySelector('#tabular-groups-toggle')
@@ -61,7 +61,7 @@ let graphComponent
  * Runs this demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   //basic graph component configuration
   graphComponent = new GraphComponent('#graphComponent')
@@ -272,6 +272,7 @@ function initializeUI() {
       tabularGroupsToggle.checked = true
       distanceSlider.value = '0'
       distanceLabel.textContent = '0'
+      sampleComboBox.disabled = true
 
       // load new sample and arrange with tabular groups feature
       await loadSampleGraph()
@@ -281,6 +282,7 @@ function initializeUI() {
       sortingToggle.disabled = false
       tabularGroupsToggle.disabled = false
       distanceSlider.disabled = false
+      sampleComboBox.disabled = false
     }
   )
 

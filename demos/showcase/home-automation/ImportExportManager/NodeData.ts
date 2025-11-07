@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IGraph, INode, Point } from '@yfiles/yfiles'
+import { type IGraph, type INode, Point } from '@yfiles/yfiles'
 import {
   createInGraph,
   type FlowNodeProperties,

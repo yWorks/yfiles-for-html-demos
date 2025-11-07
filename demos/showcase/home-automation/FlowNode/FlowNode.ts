@@ -28,10 +28,10 @@
  ***************************************************************************/
 import {
   FreeNodePortLocationModel,
-  GraphComponent,
-  IGraph,
+  type GraphComponent,
+  type IGraph,
   INode,
-  Point,
+  type Point,
   SimpleNode
 } from '@yfiles/yfiles'
 import { type FlowNodePortProperties } from './FlowNodePort'
@@ -82,12 +82,12 @@ type FlowNodeInGraphOptions = { variant: FlowNodeVariant; position: Point; graph
 /**
  * Properties that should never appear in the tag editor
  */
-export let hiddenProperties: Array<keyof FlowNodeProperties> = [
+export const hiddenProperties: Array<keyof FlowNodeProperties> = [
   'hasLeftPort',
   'hasRightPort',
   'validate'
 ]
-export let lockedProperties: Array<keyof FlowNodeProperties> = ['variant']
+export const lockedProperties: Array<keyof FlowNodeProperties> = ['variant']
 
 const portStyle = new FlowNodePortStyle()
 
@@ -110,20 +110,22 @@ export function configureFlowNodes({ graph, selection }: GraphComponent): void {
     }
     const { hasLeftPort, hasRightPort } = node.tag
     if (node.ports.size === 0) {
-      hasLeftPort &&
+      if (hasLeftPort) {
         graph.addPort({
           owner: node,
           style: portStyle,
           locationParameter: FreeNodePortLocationModel.LEFT,
           tag: { side: 'left' } as FlowNodePortProperties
         })
-      hasRightPort &&
+      }
+      if (hasRightPort) {
         graph.addPort({
           owner: node,
           style: portStyle,
           locationParameter: FreeNodePortLocationModel.RIGHT,
           tag: { side: 'right' } as FlowNodePortProperties
         })
+      }
     }
     const label = node.tag.label
     const duplicateLabelNodes = graph.nodes.filter((node) => node.tag.label.startsWith(label))
@@ -189,6 +191,6 @@ export function validateNodeTag(tag: unknown): tag is FlowNodeProperties {
   return (
     typeof tag === 'object' &&
     tag !== null &&
-    flowNodeVariants.includes((<FlowNodeProperties>tag).variant)
+    flowNodeVariants.includes((tag as FlowNodeProperties).variant)
   )
 }

@@ -28,11 +28,11 @@
  ***************************************************************************/
 import {
   CompactSubtreePlacer,
-  IEdge,
-  IGraph,
-  ILayoutAlgorithm,
-  INode,
-  LayoutData,
+  type IEdge,
+  type IGraph,
+  type ILayoutAlgorithm,
+  type INode,
+  type LayoutData,
   LeftRightSubtreePlacer,
   Mapper,
   OrganicEdgeRouter,

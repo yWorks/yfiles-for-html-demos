@@ -26,9 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, GraphComponent, IGraph } from '@yfiles/yfiles'
-import { EdgeData, GraphData, NodeData } from '../page'
-import { LayoutSupport } from './LayoutSupport'
+import { GraphBuilder, type GraphComponent, type IGraph } from '@yfiles/yfiles'
+import { type EdgeData, type GraphData, type NodeData } from '../page'
+import { type LayoutSupport } from './LayoutSupport'
 import { useEffect, useMemo } from 'react'
 
 function createGraphBuilder(graph: IGraph) {

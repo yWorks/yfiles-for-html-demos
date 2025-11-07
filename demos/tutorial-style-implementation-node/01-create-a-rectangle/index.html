@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>01 Create A Rectangle - Tutorial: Node Style Implementation [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -161,10 +161,10 @@
                     </td>
                     <td class="content">
                       Implementing a custom node style from scratch is an advanced concept. In a lot
-                      of cases, other approaches like template styles, or decorating built-in styles
-                      with custom elements are sufficient. For more information on the topic of
-                      styling graph items, please have a look at
-                      <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-node_styles" target="_blank">Node Styles</a>.
+                      of cases, other approaches like template styles or decorating built-in styles
+                      with custom elements are enough. For more information on the topic of styling
+                      graph items, please have a look at
+                      <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-node_styles" class="dguide" target="_blank">Node Styles</a>.
                     </td>
                   </tr>
                 </table>
@@ -178,15 +178,15 @@
                 <p>
                   yFiles for HTML provides an abstract base class which provides the basic functionality
                   to create a custom node style. We start with a custom subclass of
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase" target="_blank">NodeStyleBase</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase" class="api" target="_blank">NodeStyleBase</a>.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomNodeStyle</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">NodeStyleBase</span> {
-  protected <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">node</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomNodeStyle</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">NodeStyleBase</span> {
+  <span class="hljs-keyword">protected</span> <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">node</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
     <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span> <span class="hljs-comment">// TODO - create the SVG element</span>
   }
 }</code></pre>
@@ -196,7 +196,7 @@
                 <p>
                   This code will not produce anything visible, yet. We first have to implement the
                   <code>createVisual</code> method. This method returns an SVG element, wrapped into
-                  an <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" target="_blank">SvgVisual</a>. Let&#8217;s start with a simple rectangle for now to
+                  an <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" class="api" target="_blank">SvgVisual</a>. Let&#8217;s start with a simple rectangle for now to
                   keep things simple. We will switch to a more complex visualization later on.
                 </p>
               </div>
@@ -204,7 +204,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">protected <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">node</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">node</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
   <span class="hljs-keyword">const</span> rect = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(<span class="hljs-string">&#x27;http://www.w3.org/2000/svg&#x27;</span>, <span class="hljs-string">&#x27;rect&#x27;</span>)
   <span class="hljs-keyword">const</span> { x, y, width, height } = node.<span class="hljs-property">layout</span>
   rect.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;x&#x27;</span>, <span class="hljs-title class_">String</span>(x))
@@ -245,24 +245,18 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">rect.<span class="hljs-property">x</span>.<span class="hljs-property">baseVal</span>.<span class="hljs-property">value</span> = x
+                  ><code class="language-typescript" data-lang="typescript">rect.<span class="hljs-property">x</span>.<span class="hljs-property">baseVal</span>.<span class="hljs-property">value</span> = x
 rect.<span class="hljs-property">y</span>.<span class="hljs-property">baseVal</span>.<span class="hljs-property">value</span> = y
 rect.<span class="hljs-property">width</span>.<span class="hljs-property">baseVal</span>.<span class="hljs-property">value</span> = width
 rect.<span class="hljs-property">height</span>.<span class="hljs-property">baseVal</span>.<span class="hljs-property">value</span> = height</code></pre>
                 </div>
               </div>
-              <div class="admonitionblock note">
-                <table>
-                  <tr>
-                    <td class="icon">
-                      <div class="title">Note</div>
-                    </td>
-                    <td class="content">
-                      It&#8217;s important that SvgVisual contains an SVG element in the
-                      'http://www.w3.org/2000/svg' namespace. HTML elements are not supported.
-                    </td>
-                  </tr>
-                </table>
+              <div class="paragraph">
+                <p>
+                  Besides <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" class="api" target="_blank">SvgVisual</a>, which can contain only an SVG element, there
+                  are other visuals as well, for example <a href="https://docs.yworks.com/yfileshtml/#/api/HtmlVisual" class="api" target="_blank">HtmlVisual</a> for HTML
+                  elements.
+                </p>
               </div>
             </div>
           </div>
@@ -280,7 +274,7 @@ rect.<span class="hljs-property">height</span>.<span class="hljs-property">baseV
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

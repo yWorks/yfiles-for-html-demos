@@ -54,11 +54,10 @@ export default defineConfig(({ mode }) => {
     plugins.push(
       optimizer({
         shouldOptimize({ id }) {
-          // make sure not to exclude demo-resources since it is in node_modules and uses yFiles API
+          // Make sure not to exclude the demo-app and demo-utils directories which are
+          // installed as dependencies but use yFiles API.
           return (
-            id.includes('demo-resources') ||
-            id.includes('demo-utils') ||
-            !id.includes('node_modules')
+            id.includes('demo-app') || id.includes('demo-utils') || !id.includes('node_modules')
           )
         },
         blacklist: [

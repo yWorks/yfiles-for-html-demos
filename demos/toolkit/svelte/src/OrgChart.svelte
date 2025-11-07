@@ -14,12 +14,12 @@
     PolylineEdgeStyle,
     Rect
   } from '@yfiles/yfiles'
-  import licenseValue from '../../../../lib/license.json'
+  import licenseData from './license.json'
   import { SvelteComponentNodeStyle } from './SvelteComponentNodeStyle.svelte'
   import SvgNodeComponent from './SvgNodeComponent.svelte'
   import type { Person } from './types'
 
-  License.value = licenseValue
+  License.value = licenseData
 
   // Create a new module web worker
   const worker = new Worker(new URL('./layout-worker.ts', import.meta.url), {
@@ -27,7 +27,7 @@
   })
   // The Web Worker is running yFiles in a different context, therefore, we need to register the
   // yFiles license in the Web Worker as well.
-  worker.postMessage({ license: licenseValue })
+  worker.postMessage({ license: licenseData })
 
 
   export let width = '100%'

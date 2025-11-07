@@ -32,10 +32,11 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Organic Layout with Constraints - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <title>Organic Layout with Constraints [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -60,20 +61,8 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
-
-      <span class="demo-separator"></span>
-
-      <input
-        type="checkbox"
-        id="toggle-feature"
-        class="demo-toggle-button labeled"
-        title="Use Constraints"
-        checked=""
-      />
-      <label for="toggle-feature">Use Constraints</label>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -89,52 +78,33 @@
 
       <div class="demo-description__content">
         <h1>Organic Layout with Constraints</h1>
-
         <p>
-          This demo shows how to use supplemental layout data to enforce
-          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicConstraintData" target="_blank">placement constraints</a> when using the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">Organic Layout</a> algorithm.
+          This demo shows how to use supplemental layout data to enforce placement constraints when
+          using the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a> algorithm.
         </p>
-
+        <h2>Placement Constraints</h2>
         <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicConstraintData" target="_blank">placement constraints</a> used in this demo force
-          the <span style="color: #17bebb; font-weight: bold">turquoise nodes</span> onto a perfect
-          circle. Without constraints, the
-          <span style="color: #17bebb; font-weight: bold">turquoise nodes</span> are placed on an
-          irregular path.
+          The placement constraints used in this demo force the
+          <strong><span style="color: #ff6c00">orange nodes</span></strong> onto a perfect circle.
         </p>
-
+        <h2>Things to Try</h2>
         <p>
-          Click the button in the toolbar to toggle between
-          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">Organic Layout</a> with and without constraints.
+          Click the button in the toolbar to toggle between Organic Layout with and without
+          constraints.
         </p>
-
-        <h3>Code Snippet</h3>
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/organic-constraints/OrganicConstraints.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Documentation</h3>
-        <p>
-          See the <a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout-constraints" target="_blank">Constraints</a> section in the
-          Developer's Guide for an in-depth discussion of the relevant concepts.
-        </p>
-        <p>
-          See the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicConstraintData" target="_blank">OrganicConstraintData</a> API documentation for detailed information
-          on all available placement constraints.
-        </p>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout-constraints" class="dguide" target="_blank">Constraints</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/OrganicConstraintData" class="api" target="_blank">OrganicConstraintData</a></li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script type="module" crossorigin="anonymous" src="./OrganicConstraintsDemo.ts" async></script>
   </body>
 </html>

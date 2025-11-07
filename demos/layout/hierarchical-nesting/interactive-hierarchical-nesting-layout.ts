@@ -113,6 +113,7 @@ export function initializeInteractiveHierarchicalNestingLayout(
  * uses that information to apply an incremental layout after the group node is expanded/collapsed.
  */
 class InteractiveHierarchicalNestingLayout {
+    private readonly graphComponent: GraphComponent;
   /**
    * The last group node that was collapsed/expanded.
    */
@@ -131,7 +132,8 @@ class InteractiveHierarchicalNestingLayout {
    * Creates and initializes a new instance.
    * @param graphComponent the current graph component
    */
-  constructor(private readonly graphComponent: GraphComponent) {
+  constructor(graphComponent: GraphComponent) {
+      this.graphComponent = graphComponent;
     this.alternativeGroupBounds = new Mapper()
     this.alternativeEdgePaths = new Mapper()
   }

@@ -26,25 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  type IRenderContext,
-  IVisualCreator,
-  type Rect,
-  SvgVisual,
-  type Visual
-} from '@yfiles/yfiles'
+import { BaseClass, type IRenderContext, IVisualCreator, type Rect, SvgVisual, type Visual } from '@yfiles/yfiles'
 
 /**
  * Creates a visual for the demo's background image.
  */
 export class ImageVisualCreator extends BaseClass(IVisualCreator) {
+    private imageRect: Rect;
+
   /**
    * Initializes a new instance of <code>ImageVisualCreator</code>.
    * @param imageRect The rectangle that defines the location and the size of the image.
    */
-  constructor(private imageRect: Rect) {
+  constructor(imageRect: Rect) {
     super()
+      this.imageRect = imageRect;
   }
 
   /**

@@ -33,10 +33,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-    <title>Folding - Application Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <title>Folding [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -60,20 +60,9 @@
     </header>
 
     <div class="demo-page__toolbar">
-      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
-      <span class="demo-separator"></span>
-      <button data-command="CUT"></button>
-      <button data-command="COPY"></button>
-      <button data-command="PASTE"></button>
-      <span class="demo-separator"></span>
-      <button data-command="UNDO"></button>
-      <button data-command="REDO"></button>
-      <span class="demo-separator"></span>
-      <button data-command="GROUP_SELECTION"></button>
-      <button data-command="UNGROUP_SELECTION"></button>
-      <button data-command="ENTER_GROUP"></button>
-      <button data-command="EXIT_GROUP"></button>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -89,40 +78,54 @@
 
       <div class="demo-description__content">
         <h1>Folding</h1>
-
         <p>
-          This step shows how to enable
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/folding" target="_blank">collapsing and expanding of group nodes</a>. This is provided
-          through class <a href="https://docs.yworks.com/yfileshtml/#/api/FoldingManager" target="_blank">FoldingManager</a> and its support classes.
+          This demo shows how to enable collapsing and expanding of group nodes, the so-called
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/folding" class="dguide" target="_blank">Folding</a> feature. This is provided through the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/FoldingManager" class="api" target="_blank">FoldingManager</a> class and its support classes.
         </p>
-
         <p>
-          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a> provides the following default gestures for
-          collapse/expand:
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" class="api" target="_blank">GraphEditorInputMode</a> class provides the following interactive
+          gestures for collapsing and expanding groups:
         </p>
         <ul>
           <li>
-            Press <kbd>Alt</kbd> + <kbd>LeftArrow</kbd> or click the expand-button on the node's top
-            left corner to close (collapse) an open group node.
+            Close (collapse) a selected open group node by pressing <kbd>Alt</kbd> +
+            <kbd>&#x2190;</kbd> or clicking the expand icon in the group&#39;s top left corner.
           </li>
           <li>
-            Press <kbd>Alt</kbd> + <kbd>RightArrow</kbd> or click the collapse-button on the node's
-            top left corner to open (expand) a closed group node.
+            Open (expand) a selected closed group node by pressing <kbd>Alt</kbd> +
+            <kbd>&#x2192;</kbd> or clicking the collapse icon in the node&#39;s top left corner.
           </li>
           <li>
-            Press <kbd>Alt</kbd> + <kbd>DownArrow</kbd> to enter (navigate into) a group node.
+            Enter (navigate into) a selected group node by pressing <kbd>Alt</kbd> +
+            <kbd>&#x2193;</kbd>.
           </li>
-          <li>Press <kbd>Alt</kbd> + <kbd>UpArrow</kbd> to exit (navigate out of) a group node.</li>
+          <li>
+            Exit (navigate out of) a selected group node by pressing <kbd>Alt</kbd> +
+            <kbd>&#x2191;</kbd>.
+          </li>
         </ul>
-
-        <p>See the sources for details.</p>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../application-features/folding-with-merged-edges/" class="demo" target="_blank">Folding With Merged Edges Demo</a></li>
+          <li><a href="../../layout/foldingwithlayout/" class="demo" target="_blank">Folding With Layout Demo</a></li>
+          <li><a href="../../application-features/filtering-with-folding/" class="demo" target="_blank">Filtering With Folding Demo</a></li>
+          <li><a href="../../layout/hierarchical-nesting/" class="demo" target="_blank">Hierarchical Nesting Demo</a></li>
+          <li><a href="../../layout/hierarchical-nesting-incremental/" class="demo" target="_blank">Hierarchical Nesting (Incremental) Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/folding" class="dguide" target="_blank">Folding</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/FoldingManager" class="api" target="_blank">FoldingManager</a> class</li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="FoldingDemo.ts" async></script>
+    <script type="module" crossorigin="anonymous" src="./FoldingDemo.ts" async></script>
   </body>
 </html>

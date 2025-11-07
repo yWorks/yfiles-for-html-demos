@@ -26,15 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphCopier,
-  IEdge,
-  IModelItem,
-  INode,
-  Neighborhood,
-  TraversalDirection
-} from '@yfiles/yfiles'
-import { NeighborhoodType } from './NeighborhoodType'
+import { GraphCopier, IEdge, INode, Neighborhood, TraversalDirection } from '@yfiles/yfiles'
+import {} from './NeighborhoodType'
 
 /**
  * Returns the "build neighborhood graph" callback that is able to create neighborhood graphs
@@ -43,7 +36,7 @@ import { NeighborhoodType } from './NeighborhoodType'
  * @param distance the maximum graph distance between a start node and its neighbor nodes.
  */
 export function getBuildGraphCallback(type, distance) {
-  return NeighborhoodType.FOLDER_CONTENTS === type
+  return 'folder-contents' === type
     ? getBuildFolderContentsCallback()
     : getBuildNeighborhoodCallback(getTraversalDirection(type), distance)
 }
@@ -144,17 +137,17 @@ function buildNeighborhood(view, selectedSourceNodes, itemCopiedCallback, direct
  */
 function getTraversalDirection(type) {
   switch (type) {
-    case NeighborhoodType.PREDECESSORS:
+    case 'predecessors':
       // Get predecessors of root node
       return TraversalDirection.PREDECESSOR
-    case NeighborhoodType.SUCCESSORS:
+    case 'successors':
       // Get successors of root node
       return TraversalDirection.SUCCESSOR
-    case NeighborhoodType.BOTH:
+    case 'both':
       // Get predecessors and successors of root node
       return TraversalDirection.BOTH
     default:
-    case NeighborhoodType.NEIGHBORHOOD:
+    case 'neighborhood':
       // Get direct and indirect neighbors of root node
       return TraversalDirection.UNDIRECTED
   }

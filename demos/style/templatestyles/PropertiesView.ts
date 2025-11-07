@@ -33,11 +33,15 @@ import type { Employee } from './TemplateStylesDemo'
  * Helper class for showing properties of a node in the OrgChart.
  */
 export class PropertiesView {
+  private readonly element: Element
+
   /**
    * Creates a new PropertiesView
    * @param element The DOM element that will be filled with the properties.
    */
-  constructor(private readonly element: Element) {}
+  constructor(element: Element) {
+    this.element = element
+  }
 
   showProperties(node: INode): void {
     this.clear()

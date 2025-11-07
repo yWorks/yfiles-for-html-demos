@@ -32,8 +32,8 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HorizontalTextAlignment,
-  IGraph,
-  ILabelModelParameter,
+  type IGraph,
+  type ILabelModelParameter,
   Insets,
   LabelShape,
   LabelStyle,
@@ -44,21 +44,21 @@ import {
 } from '@yfiles/yfiles'
 
 import { configureToolTips } from './ToolTipHelper'
-import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
+import type { ColorSetName } from '@yfiles/demo-app/demo-styles'
 import {
   colorSets,
   createDemoEdgeStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+} from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Runs the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
   const graph = graphComponent.graph
@@ -312,13 +312,14 @@ function createSampleEdgeLabels(graph: IGraph) {
 
 /**
  * Creates and configures a node label style.
- * @param theme The name of the color set to use for the style's fills and stroke.
- * @param shape The label shape for the background.
- * @param font The font for the label text.
- * @param padding Optional padding to account for special background shapes.
- * @param wrapping The optional text wrapping defining how text of the label is trimmed.
- * @param verticalTextAlignment The vertical text alignment.
- * @param horizontalTextAlignment The horizontal text alignment.
+ * @param options The options for the label style.
+ * @param options.theme The name of the color set to use for the style's fills and stroke.
+ * @param options.shape The label shape for the background.
+ * @param options.font The font for the label text.
+ * @param options.padding Optional padding to account for special background shapes.
+ * @param options.wrapping The optional text wrapping defining how text of the label is trimmed.
+ * @param options.verticalTextAlignment The vertical text alignment.
+ * @param options.horizontalTextAlignment The horizontal text alignment.
  */
 function createNodeLabelStyle({
   theme = 'demo-palette-13',
@@ -352,13 +353,14 @@ function createNodeLabelStyle({
 
 /**
  * Creates and configures an edge label style.
- * @param theme The name of the color set to use for the style's fills and stroke.
- * @param shape The label shape for the background.
- * @param font The font for the label text.
- * @param padding Optional padding to account for special background shapes.
- * @param wrapping The optional text wrapping defining how text of the label is trimmed.
- * @param verticalTextAlignment The vertical text alignment.
- * @param horizontalTextAlignment The horizontal text alignment.
+ * @param options The options for the edge style.
+ * @param options.theme The name of the color set to use for the style's fills and stroke.
+ * @param options.shape The label shape for the background.
+ * @param options.font The font for the label text.
+ * @param options.padding Optional padding to account for special background shapes.
+ * @param options.wrapping The optional text wrapping defining how text of the label is trimmed.
+ * @param options.verticalTextAlignment The vertical text alignment.
+ * @param options.horizontalTextAlignment The horizontal text alignment.
  */
 function createEdgeLabelStyle({
   theme = 'demo-palette-13',

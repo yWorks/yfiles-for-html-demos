@@ -78,11 +78,11 @@ import {
   ShapeNodeStyle,
   Size,
   Stroke,
-  Tangent,
+  type Tangent,
   type TypeMetadata,
   VerticalTextAlignment,
   XmlName,
-  yfiles
+  yfiles as yfilesUnknown
 } from '@yfiles/yfiles'
 import { YfilesForHtml_2_0_XamlNS, YfilesForHtmlXamlNS } from './GraphMLCompatibility'
 import { BevelNodeStyle } from './BevelNodeStyle'
@@ -101,11 +101,16 @@ import {
 } from '@yfiles/demo-utils/template-styles/TemplateStyles'
 
 /**
+ * The usage of yfiles here is only for GraphML compatibility and shouldn't be needed elsewhere.
+ */
+const yfiles = yfilesUnknown as any
+
+/**
  * The usage of yfiles.lang.Enum here is only for GraphML compatibility, and shouldn't be needed
  * elsewhere. For enums in your own application, use either TypeScript enums or a simple keyed
  * object with constants.
  */
-const Enum = (yfiles as any).lang.Enum
+const Enum = yfiles.lang.Enum
 
 export function configureRenamings(callback: (oldName: XmlName, newName: XmlName) => void) {
   const nameMappings = new Map<string, string>()
@@ -470,6 +475,7 @@ function createMetadata<T>(
   callback: <T>(type: Constructor<T>, metadata: TypeMetadata<T>) => void,
   ns: string = YfilesForHtml_2_0_XamlNS
 ): void {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   metadata.name = (type as Function).name
   metadata.xmlNamespace = ns
   callback(type, metadata)
@@ -684,6 +690,7 @@ class VoidPathGeometry extends BaseClass(IPathGeometry) implements IPathGeometry
   }
 }
 
+// endregion
 
 // region Compatibility classes for ShadowNodeStyleDecorator
 
@@ -703,6 +710,7 @@ class ShadowNodeStyleDecoratorExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for GroupNodeStyle
 
@@ -1001,6 +1009,7 @@ class GroupNodeStyleExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for CollapsibleNodeStyleDecorator
 
@@ -1046,6 +1055,7 @@ class CollapsibleNodeStyleDecoratorExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for ImageNodeStyle
 
@@ -1110,41 +1120,30 @@ class ImageNodeStyleExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for ShapeNodeStyle
 
 const ShapeNodeShape = (Enum as any)('ShapeNodeShape', {
-  //@ts-ignore
   RECTANGLE: yfiles.styles.ShapeNodeShape.RECTANGLE,
-  //@ts-ignore
   ROUND_RECTANGLE: yfiles.styles.ShapeNodeShape.ROUND_RECTANGLE,
-  //@ts-ignore
   ELLIPSE: yfiles.styles.ShapeNodeShape.ELLIPSE,
-  //@ts-ignore
   TRIANGLE: yfiles.styles.ShapeNodeShape.TRIANGLE,
-  //@ts-ignore
   TRIANGLE2: yfiles.styles.ShapeNodeShape.TRIANGLE_POINTING_DOWN,
   SHEARED_RECTANGLE: LegacyShapeNodeShape.SHEARED_RECTANGLE,
   SHEARED_RECTANGLE2: LegacyShapeNodeShape.SHEARED_RECTANGLE2,
   TRAPEZ: LegacyShapeNodeShape.TRAPEZ,
   TRAPEZ2: LegacyShapeNodeShape.TRAPEZ2,
   STAR5: LegacyShapeNodeShape.STAR5,
-  //@ts-ignore
   STAR6: yfiles.styles.ShapeNodeShape.STAR6,
-  //@ts-ignore
   STAR8: yfiles.styles.ShapeNodeShape.STAR8,
   FAT_ARROW: LegacyShapeNodeShape.FAT_ARROW,
   FAT_ARROW2: LegacyShapeNodeShape.FAT_ARROW2,
-  //@ts-ignore
   DIAMOND: yfiles.styles.ShapeNodeShape.DIAMOND,
-  //@ts-ignore
   OCTAGON: yfiles.styles.ShapeNodeShape.OCTAGON,
-  //@ts-ignore
   HEXAGON: yfiles.styles.ShapeNodeShape.HEXAGON,
-  //@ts-ignore
   HEXAGON2: yfiles.styles.ShapeNodeShape.HEXAGON_STANDING,
   STAR5_UP: LegacyShapeNodeShape.STAR5_UP,
-  //@ts-ignore
   PILL: yfiles.styles.ShapeNodeShape.PILL
 })
 
@@ -1231,53 +1230,33 @@ class ShapeNodeStyleExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for DefaultLabelStyle
 
 const TextWrappingShape = (Enum as any)('TextWrappingShape', {
-  //@ts-ignore
   RECTANGLE: yfiles.styles.TextWrappingShape.RECTANGLE,
-  //@ts-ignore
   ROUND_RECTANGLE: yfiles.styles.TextWrappingShape.ROUND_RECTANGLE,
-  //@ts-ignore
   ELLIPSE: yfiles.styles.TextWrappingShape.ELLIPSE,
-  //@ts-ignore
   TRIANGLE: yfiles.styles.TextWrappingShape.TRIANGLE,
-  //@ts-ignore
   TRIANGLE2: yfiles.styles.TextWrappingShape.TRIANGLE_POINTING_DOWN,
-  //@ts-ignore
   SHEARED_RECTANGLE: yfiles.styles.TextWrappingShape.RECTANGLE,
-  //@ts-ignore
   SHEARED_RECTANGLE2: yfiles.styles.TextWrappingShape.RECTANGLE,
-  //@ts-ignore
   TRAPEZ: yfiles.styles.TextWrappingShape.RECTANGLE,
-  //@ts-ignore
   TRAPEZ2: yfiles.styles.TextWrappingShape.RECTANGLE,
-  //@ts-ignore
   DIAMOND: yfiles.styles.TextWrappingShape.DIAMOND,
-  //@ts-ignore
   OCTAGON: yfiles.styles.TextWrappingShape.OCTAGON,
-  //@ts-ignore
   HEXAGON: yfiles.styles.TextWrappingShape.HEXAGON,
-  //@ts-ignore
   HEXAGON2: yfiles.styles.TextWrappingShape.HEXAGON_STANDING,
-  //@ts-ignore
   PILL: yfiles.styles.TextWrappingShape.PILL,
-  //@ts-ignore
   LABEL_SHAPE: yfiles.styles.TextWrappingShape.LABEL_SHAPE
 })
 
-// @ts-ignore
 const TextWrapping = (Enum as any)('TextWrapping', {
-  // @ts-ignore
   NONE: yfiles.view.TextWrapping.NONE,
-  // @ts-ignore
   CHARACTER: yfiles.view.TextWrapping.WRAP_CHARACTER,
-  // @ts-ignore
   CHARACTER_ELLIPSIS: yfiles.view.TextWrapping.WRAP_CHARACTER_ELLIPSIS,
-  // @ts-ignore
   WORD: yfiles.view.TextWrapping.WRAP_WORD,
-  // @ts-ignore
   WORD_ELLIPSIS: yfiles.view.TextWrapping.WRAP_WORD_ELLIPSIS
 })
 
@@ -1471,13 +1450,13 @@ class DefaultLabelStyleExtension extends MarkupExtension {
       verticalTextAlignment: this._verticalTextAlignment,
       wrapping:
         this.clipText && this._wrapping == TextWrapping.NONE
-          ? // @ts-ignore
-            yfiles.view.TextWrapping.CLIP
+          ? yfiles.view.TextWrapping.CLIP
           : this._wrapping
     })
   }
 }
 
+// endregion
 
 // region Compatibility classes for MarkupLabelStyle
 
@@ -1501,13 +1480,13 @@ class MarkupLabelStyleExtension extends DefaultLabelStyleExtension {
       verticalTextAlignment: this.verticalTextAlignment,
       wrapping:
         this.clipText && this.wrapping == TextWrapping.NONE
-          ? // @ts-ignore
-            yfiles.view.TextWrapping.CLIP
+          ? yfiles.view.TextWrapping.CLIP
           : this.wrapping
     })
   }
 }
 
+// endregion
 
 // region Compatibility classes for IconLabelStyle
 
@@ -1597,6 +1576,7 @@ class IconLabelStyleExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for NodeStyleLabelStyleAdapter
 
@@ -1651,25 +1631,18 @@ class NodeStyleLabelStyleAdapterExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for Arrow
 
 const ArrowType = (Enum as any)('ArrowType', {
-  //@ts-ignore
   DEFAULT: yfiles.styles.ArrowType.STEALTH,
-  //@ts-ignore
   SIMPLE: yfiles.styles.ArrowType.OPEN,
-  //@ts-ignore
   SHORT: yfiles.styles.ArrowType.STEALTH + 100,
-  //@ts-ignore
   DIAMOND: yfiles.styles.ArrowType.DIAMOND,
-  //@ts-ignore
   NONE: yfiles.styles.ArrowType.NONE,
-  //@ts-ignore
   CIRCLE: yfiles.styles.ArrowType.ELLIPSE,
-  //@ts-ignore
   CROSS: yfiles.styles.ArrowType.CROSS,
-  //@ts-ignore
   TRIANGLE: yfiles.styles.ArrowType.TRIANGLE
 })
 
@@ -1817,6 +1790,7 @@ class ArrowExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for Template Node Style
 
@@ -1972,6 +1946,7 @@ export class TemplateLabelStyleExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for Template Port Style
 

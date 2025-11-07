@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  HierarchicalLayout,
-  IGraph,
-  LayoutEdge,
-  LayoutGraph,
-  LayoutStageBase,
-  NodeDataKey
-} from '@yfiles/yfiles'
+import { HierarchicalLayout, IGraph, LayoutStageBase, NodeDataKey } from '@yfiles/yfiles'
 
 /**
  * A layout stage that tries to align a specified set of nodes by using critical edge
@@ -120,15 +113,15 @@ export class AlignmentStage extends LayoutStageBase {
    * alignment nodes in the data map registered with key {@link ALIGNED_NODES_DATA_KEY}.
    */
   insertAlignmentEdges(graph) {
-    const dp = graph.context.getItemData(AlignmentStage.ALIGNED_NODES_DATA_KEY)
-    if (dp === null) {
+    const dataMap = graph.context.getItemData(AlignmentStage.ALIGNED_NODES_DATA_KEY)
+    if (dataMap === null) {
       // If no provider is registered, there is nothing to do
       return []
     }
 
     const orderedAlignmentNodes = graph.nodes
       // Handle nodes where the data map indicates that it is an alignment node
-      .filter((node) => dp.get(node))
+      .filter((node) => dataMap.get(node))
       // Order them by y-coordinates
       .toSorted((a, b) => a.layout.y - b.layout.y)
       .toArray()

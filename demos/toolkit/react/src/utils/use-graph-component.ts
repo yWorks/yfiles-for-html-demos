@@ -32,7 +32,7 @@ import {
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  IGraph,
+  type IGraph,
   License,
   PolylineEdgeStyle,
   Size
@@ -40,7 +40,7 @@ import {
 import { ReactComponentNodeStyle } from './ReactComponentNodeStyle.ts'
 import NodeTemplate from '../components/NodeTemplate.tsx'
 import { useLayoutEffect, useMemo, useRef } from 'react'
-import yFilesLicense from '../license.json'
+import licenseData from '../license.json'
 import LabelTemplate from '../components/LabelTemplate'
 import { ReactComponentLabelStyle } from './ReactComponentLabelStyle'
 
@@ -64,7 +64,7 @@ export function useGraphComponent() {
 
   const graphComponent = useMemo(() => {
     // include the yFiles License
-    License.value = yFilesLicense
+    License.value = licenseData
     // initialize the GraphComponent
     const gc = new GraphComponent()
     // register interaction

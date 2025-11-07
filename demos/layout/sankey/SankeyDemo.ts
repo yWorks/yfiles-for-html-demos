@@ -29,8 +29,8 @@
 import { GraphBuilder, GraphComponent, License } from '@yfiles/yfiles'
 
 import { electionData } from './resources/samples'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import type { VoterShift } from './data-types'
 import { initializeDefaultStyles, updateAdjacentEdges } from './styles-support'
 import { configureInteraction } from './interaction/configure-interaction'
@@ -41,7 +41,7 @@ import { updateStylesAndLayout } from './sankey-layout'
 import { allowOnlyVerticalNodeMovement } from './interaction/constrain-node-movement'
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   const graphComponent = new GraphComponent('graphComponent')
   // set default styles for nodes, edges and edge labels
   initializeDefaultStyles(graphComponent)

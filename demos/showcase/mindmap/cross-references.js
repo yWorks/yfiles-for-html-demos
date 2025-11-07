@@ -180,6 +180,7 @@ export function createCrossReferenceEdge(
  */
 class CrossReferenceEdgeHandleProvider extends BaseClass(IHandleProvider) {
   edge
+
   constructor(edge) {
     super()
     this.edge = edge
@@ -197,6 +198,7 @@ class CrossReferenceEdgeHandleProvider extends BaseClass(IHandleProvider) {
  */
 class ArcEdgeSelectionStyle extends DelegatingEdgeStyle {
   delegatingEdgeStyle
+
   constructor(delegatingEdgeStyle) {
     super()
     this.delegatingEdgeStyle = delegatingEdgeStyle

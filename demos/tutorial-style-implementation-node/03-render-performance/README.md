@@ -15,21 +15,21 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-node/03-render-performance/).
 
-Until now, we have only implemented [createVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-createVisual), which creates a new DOM element for each render frame. This is not an efficient approach and will result in performance issues for large graphs.
+Until now, we have only implemented [createVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#createVisual), which creates a new DOM element for each render frame. This is not an efficient approach and will result in performance issues for large graphs.
 
-By overriding [updateVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-updateVisual), we can optimize the rendering performance in case no visualization-relevant data of the node has changed. For example, if the node size changes, we have to update the path data to fit the node. This approach will greatly improve the rendering performance for gestures such as panning and zooming the viewport as well as moving nodes.
+By overriding [updateVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#updateVisual), we can optimize the rendering performance in case no visualization-relevant data of the node has changed. For example, if the node size changes, we have to update the path data to fit the node. This approach will greatly improve the rendering performance for gestures such as panning and zooming the viewport as well as moving nodes.
 
 ## Adjusting createVisual
 
-As a first step, we modify the [createVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-createVisual) implementation. Instead of using the node’s `x`\- and `y`\-position in the path, we create the path at (0,0). We then use [setTranslate](https://docs.yworks.com/yfileshtml/#/api/SvgVisual#SvgVisual-defaultmethod-setTranslate) to set a transform that moves the path to the node location.
+As a first step, we modify the [createVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#createVisual) implementation. Instead of using the node’s `x`\- and `y`\-position in the path, we create the path at (0,0). We then use [setTranslate](https://docs.yworks.com/yfileshtml/#/api/SvgVisual#setTranslate) to set a transform that moves the path to the node location.
 
 ```
-// we render the path at 0,0 and translate the visual to it's final location
+// we render the path at 0,0 and translate the visual to its final location
 pathElement.setAttribute('d', createPathData(0, 0, width, height))
 SvgVisual.setTranslate(pathElement, x, y)
 ```
 
-To be able to efficiently update the visualization in [updateVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-updateVisual), we have to store the values that we needed for the construction of the node with the visual. In this case this is just the size. In order to get proper type-checking, we first declare the type of the data cache. This is where the yFiles' utility type [TaggedSvgVisual](https://docs.yworks.com/yfileshtml/#/api/TaggedSvgVisual) comes in handy:
+To be able to efficiently update the visualization in [updateVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#updateVisual), we have to store the values that we needed for the construction of the node with the visual. In this case this is just the size. In order to get proper type-checking, we first declare the type of the data cache. This is where the yFiles' utility type [TaggedSvgVisual](https://docs.yworks.com/yfileshtml/#/api/TaggedSvgVisual) comes in handy:
 
 ```
 // the values we use to render the graphics
@@ -58,7 +58,7 @@ protected createVisual(
     'http://www.w3.org/2000/svg',
     'path'
   )
-  // we render the path at 0,0 and translate the visual to it's final location
+  // we render the path at 0,0 and translate the visual to its final location
   pathElement.setAttribute('d', createPathData(0, 0, width, height))
   SvgVisual.setTranslate(pathElement, x, y)
 
@@ -72,7 +72,7 @@ protected createVisual(
 
 ## Implementing updateVisual
 
-Now we are ready to add the [updateVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-updateVisual) implementation. With the type parameter, we can let our IDE create the matching signature for the `updateVisual` method. In the method, in case the node size has changed, we update the path layout and the cache data. Finally, we call [setTranslate](https://docs.yworks.com/yfileshtml/#/api/SvgVisual#SvgVisual-defaultmethod-setTranslate) to update the location.
+Now we are ready to add the [updateVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#updateVisual) implementation. With the type parameter, we can let our IDE create the matching signature for the `updateVisual` method. In the method, in case the node size has changed, we update the path layout and the cache data. Finally, we call [setTranslate](https://docs.yworks.com/yfileshtml/#/api/SvgVisual#setTranslate) to update the location.
 
 ```
 protected updateVisual(
@@ -103,6 +103,6 @@ When the style gets more complex, there may be a point where some updates are di
 
 Note
 
-Although implementing [updateVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#NodeStyleBase-method-updateVisual) is technically optional, it is highly recommended for larger graphs. Refraining from an efficient implementation may result in low frame-rates during animations and interactive gestures.
+Although implementing [updateVisual](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#updateVisual) is technically optional, it is highly recommended for larger graphs. Refraining from an efficient implementation may result in low frame-rates during animations and interactive gestures.
 
 [04 Making the Style Configurable](../../tutorial-style-implementation-node/04-making-the-style-configurable/)

@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CanvasComponent,
   ClearAreaStrategy,
@@ -39,13 +38,13 @@ import {
   type IEdge,
   type IEnumerable,
   IHitTester,
-  IInputModeContext,
-  INode,
+  type IInputModeContext,
+  type INode,
   type IRectangle,
-  IRenderContext,
+  type IRenderContext,
   License,
-  MarqueeRenderTag,
-  MarqueeSelectionEventArgs,
+  type MarqueeRenderTag,
+  type MarqueeSelectionEventArgs,
   MarqueeSelectionInputMode,
   ObjectRendererBase,
   Point,
@@ -58,9 +57,9 @@ import {
 
 import SampleData from './resources/SampleData'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
-import { createDemoGroupStyle, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoGroupStyle, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent: GraphComponent = null!
 
@@ -71,7 +70,7 @@ let componentAssignmentStrategy: ComponentAssignmentStrategy = ComponentAssignme
 let clearAreaStrategy: ClearAreaStrategy = ClearAreaStrategy.PRESERVE_SHAPES
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   initializeInputModes()
   initDemoStyles(graphComponent.graph)
@@ -233,7 +232,7 @@ function loadGraph(sampleName: string): void {
   graph.groupNodeDefaults.style = groupStyle
 
   if (data.groups) {
-    const nodesSource = builder.createGroupNodesSource({
+    builder.createGroupNodesSource({
       data: data.groups,
       id: 'id',
       parentId: 'parentId',

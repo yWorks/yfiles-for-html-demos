@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>11 Adding Arrows - Tutorial: Edge Style Implementation [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -149,7 +149,7 @@
                   <div class="title">Note</div>
                 </td>
                 <td class="content">
-                  Note that arrows indicate the direction of edges, but do not define them. The
+                  Note that arrows indicate the direction of edges but do not define them. The
                   actual direction in the graph model is determined by the source and target nodes
                   of the edge.
                 </td>
@@ -168,11 +168,14 @@
               <pre
                 class="highlight"
               ><code class="language-typescript" data-lang="typescript"><span class="hljs-title function_">constructor</span>(<span class="hljs-params">
-  <span class="hljs-keyword">public</span> distance = <span class="hljs-number">1</span>,
-  <span class="hljs-keyword">public</span> <span class="hljs-attr">sourceArrow</span>: <span class="hljs-title class_">IArrow</span> = <span class="hljs-title class_">IArrow</span>.NONE,
-  <span class="hljs-keyword">public</span> <span class="hljs-attr">targetArrow</span>: <span class="hljs-title class_">IArrow</span> = <span class="hljs-title class_">IArrow</span>.NONE
+  distance = <span class="hljs-number">1</span>,
+  <span class="hljs-attr">sourceArrow</span>: <span class="hljs-title class_">IArrow</span> = <span class="hljs-title class_">IArrow</span>.NONE,
+  <span class="hljs-attr">targetArrow</span>: <span class="hljs-title class_">IArrow</span> = <span class="hljs-title class_">IArrow</span>.NONE
 </span>) {
   <span class="hljs-variable language_">super</span>()
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">distance</span> = distance
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">sourceArrow</span> = sourceArrow
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">targetArrow</span> = targetArrow
 }</code></pre>
             </div>
           </div>
@@ -180,7 +183,7 @@
             <p>
               Now, we can specify the desired arrows when creating an edge style. For this we can
               use the predefined arrows which are shipped with yFiles for HTML. See also
-              <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-arrows" target="_blank">Decorations: Arrows</a>.
+              <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-arrows" class="dguide" target="_blank">Decorations: Arrows</a>.
             </p>
           </div>
           <div class="listingblock">
@@ -194,10 +197,10 @@ style.<span class="hljs-property">sourceArrow</span> = <span class="hljs-keyword
           <div class="paragraph">
             <p>
               In <code>createVisual</code>, we add the arrows to our visualization using the method
-              <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#EdgeStyleBase-method-addArrows" target="_blank">addArrows</a> from the base
-              class EdgeStyleBase. For this purpose, we create an own SVG group <code>arrows</code>.
-              The addArrows method adds the arrows to this group. Finally, this group is added to
-              the group with the other edge visualization elements.
+              <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#addArrows" class="api" target="_blank">addArrows</a> from the base class EdgeStyleBase.
+              For this purpose, we create an own SVG group <code>arrows</code>. The addArrows method
+              adds the arrows to this group. Finally, this group is added to the group with the
+              other edge visualization elements.
             </p>
           </div>
           <div class="listingblock">
@@ -220,8 +223,8 @@ group.<span class="hljs-title function_">append</span>(arrows)</code></pre>
             <p>
               Additionally, we need to update the visualization of arrows in
               <code>updateVisual</code> with the
-              <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#EdgeStyleBase-method-updateArrows" target="_blank">updateArrows</a> method,
-              if the arrows or edge path have changed since the last call.
+              <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#updateArrows" class="api" target="_blank">updateArrows</a> method, if the arrows or
+              edge path have changed since the last call.
             </p>
           </div>
           <div class="listingblock">
@@ -254,7 +257,8 @@ cache.<span class="hljs-property">targetArrow</span> = <span class="hljs-variabl
         <div id="graphComponent"></div>
       </div>
     </div>
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

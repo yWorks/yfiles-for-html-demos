@@ -31,7 +31,7 @@ import { AdjacencyGraphBuilder, EdgeCreator, FreeEdgeLabelModel } from '@yfiles/
 import { runLayout } from '../layout/layout'
 import { updateDescriptionText } from './algorithm-description'
 import { updateGraphInformation } from './graph-structure-information'
-import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'
+import { addNavigationButtons } from '@yfiles/demo-app/demo-page'
 import { TagColoredShapeNodeStyle } from '../styles'
 
 const sampleComboBox = document.querySelector('#samples')

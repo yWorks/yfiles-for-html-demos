@@ -33,8 +33,8 @@ import type {
 import {
   createCodemirrorEditor,
   type EditorMode,
-  EditorView
-} from '@yfiles/demo-resources/codemirror-editor'
+  type EditorView
+} from '@yfiles/demo-app/codemirror-editor'
 
 /**
  * Abstract base class for a node-/edge-source editing dialog

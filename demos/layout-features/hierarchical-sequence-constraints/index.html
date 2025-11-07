@@ -32,10 +32,11 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Hierarchical Layout with Sequence Constraints - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <title>Hierarchical Layout with Sequence Constraints [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -60,20 +61,8 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
-
-      <span class="demo-separator"></span>
-
-      <input
-        type="checkbox"
-        id="toggle-feature"
-        class="demo-toggle-button labeled"
-        title="Use Constraints"
-        checked=""
-      />
-      <label for="toggle-feature">Use Constraints</label>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -89,55 +78,46 @@
 
       <div class="demo-description__content">
         <h1>Hierarchical Layout with Sequence Constraints</h1>
-
         <p>
-          This demo shows how to customize the order of the nodes in a layer (sequencing) when using
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">Hierarchical Layout</a>.
+          This demo shows how to customize the order of the nodes within a layer (sequencing) when
+          using <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a>.
         </p>
-        <h3>Sequence constraints</h3>
+        <h2>Sequence constraints</h2>
         <p>
-          Nodes 2, 6 and 11 are configured to be placed at the beginning (or head) of the sequence
-          with the <a href="https://docs.yworks.com/yfileshtml/#/api/SequenceConstraintData#placeAtHead" target="_blank">placeAtHead</a> method.
+          <strong>Nodes 2, 6 and 11</strong> are configured to be placed at the beginning (or head)
+          of the sequence with the
+          <a href="https://docs.yworks.com/yfileshtml/#/api/SequenceConstraintData#placeNodeAtHead" class="api" target="_blank">placeNodeAtHead</a> method.
         </p>
+        <h2>Things to Try</h2>
         <p>
-          Click the button in the toolbar to toggle between
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">Hierarchical Layout</a> with and without configured
-          constraints.
+          Click the button in the toolbar to toggle between hierarchical layout with and without
+          configured constraints.
         </p>
-
-        <h3>Code Snippet</h3>
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-sequence-constraints/HierarchicalSequenceConstraints.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Demos</h3>
-        <p>
-          See the <a href="../../layout/sequenceconstraints/" target="_blank">Sequence Constraints Demo</a> for more elaborate examples of the
-          constraints functionality.
-        </p>
-
-        <h3>Documentation</h3>
-        <p>
-          See the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_node_sequencing" target="_blank">Constrained Node Sequencing</a>
-          section in the Developer's Guide for an in-depth discussion of the relevant concepts.
-        </p>
-        <p>
-          See the <a href="https://docs.yworks.com/yfileshtml/#/api/SequenceConstraintData" target="_blank">SequenceConstraintData</a> API documentation for detailed information
-          on all available constraints.
-        </p>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../layout/sequenceconstraints/" class="demo" target="_blank">Sequence Constraints Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_node_sequencing" class="dguide" target="_blank">Constrained Node Sequencing</a>
+          </li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/SequenceConstraintData" class="api" target="_blank">SequenceConstraintData</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a></li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="./HierarchicalSequenceConstraintsDemo.ts"
+      async
+    ></script>
   </body>
 </html>

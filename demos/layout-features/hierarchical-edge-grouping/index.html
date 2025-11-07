@@ -32,10 +32,11 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Hierarchical Layout with Edge Grouping - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <title>Hierarchical Layout with Edge Grouping [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -60,20 +61,8 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
-
-      <span class="demo-separator"></span>
-
-      <input
-        type="checkbox"
-        id="toggle-feature"
-        class="demo-toggle-button labeled"
-        title="Use Edge Grouping"
-        checked=""
-      />
-      <label for="toggle-feature">Use Edge Grouping</label>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -89,58 +78,47 @@
 
       <div class="demo-description__content">
         <h1>Hierarchical Layout with Edge Grouping</h1>
-
         <p>
-          This demo shows how to configure edge grouping for the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">Hierarchical Layout</a>.
+          This demo shows how to customize the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> to group edges
+          at their source or target nodes.
         </p>
         <p>
-          For edges connecting to nodes <code>0</code> and <code>5</code>, source and target group
-          IDs are configured, which causes the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">HierarchicalLayout</a> to group them. The
-          IDs are defined via properties
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#sourceGroupIds" target="_blank">sourceGroupIds</a> and
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#targetGroupIds" target="_blank">targetGroupIds</a>.
+          An alternative:
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#automaticEdgeGrouping" class="api" target="_blank">automaticEdgeGrouping</a>.
         </p>
+        <h2>Edge Grouping</h2>
+        <p>The layout is configured such that:</p>
+        <ul>
+          <li>All edges starting from node 0 are grouped at their source side</li>
+          <li>All edges ending at node 5 are grouped at their target side</li>
+        </ul>
         <p>
-          Click the button in the toolbar to toggle between <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">HierarchicalLayout</a> with
-          and without configured edge routing.
+          The default hierarchical layout without edge grouping will place each edge individually.
         </p>
-
-        <h3>Code Snippet</h3>
+        <h2>Things to Try</h2>
         <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-edge-grouping/HierarchicalEdgeGrouping.ts"
-            target="_blank"
-            >GitHub</a
-          >.
+          Click the button in the toolbar to toggle between hierarchical layout with and without
+          edge grouping.
         </p>
-
-        <h3>Edge grouping for other layouts</h3>
-        <p>
-          The edge grouping setup for other algorithms that support the feature is basically
-          identical. The respective <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutData" target="_blank">LayoutData</a> implementations offer the same
-          properties, so that the snippet provided by this demo can easily be adjusted.
-        </p>
-
-        <h3>Demos</h3>
-        <p>
-          You can also take a look at the <a href="../../layout/edgegrouping/" target="_blank">Edge Grouping Demo</a> and the
-          <a href="../../layout/edgeroutergrouping/" target="_blank">EdgeRouter Grouping Demo</a> for more elaborate applications of edge grouping.
-        </p>
-
-        <h3>Documentation</h3>
-        <p>
-          The Developer's Guide provides more information about
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout-edge_grouping" target="_blank">Layout with Edge Grouping</a>.
-        </p>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-edge_grouping" class="dguide" target="_blank">Edge Grouping</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData" class="api" target="_blank">HierarchicalLayoutData</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#automaticEdgeGrouping" class="api" target="_blank">automaticEdgeGrouping</a></li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="./HierarchicalEdgeGroupingDemo.ts"
+      async
+    ></script>
   </body>
 </html>

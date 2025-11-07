@@ -28,14 +28,14 @@
  ***************************************************************************/
 import {
   BaseClass,
-  ClickEventArgs,
-  Cursor,
+  type ClickEventArgs,
+  type Cursor,
   HandleType,
-  IBend,
+  type IBend,
   IHandle,
-  IInputModeContext,
+  type IInputModeContext,
   InputModeContext,
-  IPoint,
+  type IPoint,
   MoveInputMode,
   Point
 } from '@yfiles/yfiles'

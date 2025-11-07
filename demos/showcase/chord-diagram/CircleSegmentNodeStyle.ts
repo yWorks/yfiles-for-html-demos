@@ -27,10 +27,10 @@
  **
  ***************************************************************************/
 import {
-  ICanvasContext,
-  IInputModeContext,
-  INode,
-  IRenderContext,
+  type ICanvasContext,
+  type IInputModeContext,
+  type INode,
+  type IRenderContext,
   NodeStyleBase,
   Point,
   Rect,
@@ -190,7 +190,6 @@ export class CircleSegmentNodeStyle extends NodeStyleBase<CircleSegmentNodeStyle
     oldVisual: CircleSegmentNodeStyleVisual,
     node: INode
   ): CircleSegmentNodeStyleVisual {
-    const container = oldVisual.svgElement
     // get the data with which the oldvisual was created
     const oldData = oldVisual.tag
     // get the data for the new visual
@@ -210,8 +209,7 @@ export class CircleSegmentNodeStyle extends NodeStyleBase<CircleSegmentNodeStyle
       return false
     }
 
-    const { nodeCenter, nodeRadiusY, circleCenter, startAngle, endAngle, nodeDist } =
-      circleData(node)
+    const { nodeRadiusY, circleCenter, startAngle, endAngle, nodeDist } = circleData(node)
 
     // check whether the given point lies inside the node's height
     const locationDist = location.distanceTo(circleCenter)
@@ -233,8 +231,7 @@ export class CircleSegmentNodeStyle extends NodeStyleBase<CircleSegmentNodeStyle
    * @param node the node whose bounding box is calculated.
    */
   protected getBounds(context: ICanvasContext, node: INode): Rect {
-    const { nodeCenter, nodeRadiusY, circleCenter, startAngle, endAngle, nodeDist } =
-      circleData(node)
+    const { nodeRadiusY, circleCenter, startAngle, endAngle, nodeDist } = circleData(node)
 
     // handle the start and end points of the upper and lower arc segments
     const corner1 = polarToCartesian(circleCenter, nodeDist + nodeRadiusY, endAngle)
@@ -342,10 +339,13 @@ type NodeData = {
 }
 
 class NodeRenderDataCache {
-  constructor(
-    public readonly nodeData: NodeData,
-    public readonly showStyleHints: boolean
-  ) {}
+  readonly showStyleHints: boolean
+  readonly nodeData: NodeData
+
+  constructor(nodeData: NodeData, showStyleHints: boolean) {
+    this.nodeData = nodeData
+    this.showStyleHints = showStyleHints
+  }
 
   equals(other?: NodeRenderDataCache): boolean {
     if (!other) {

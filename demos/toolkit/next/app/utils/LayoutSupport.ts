@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 'use client'
-import { GraphComponent, LayoutExecutorAsync } from '@yfiles/yfiles'
+import { type GraphComponent, LayoutExecutorAsync } from '@yfiles/yfiles'
 
 let layoutWorker: Worker
 function getWorker(): Worker {

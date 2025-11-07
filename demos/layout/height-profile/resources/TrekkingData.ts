@@ -66,7 +66,7 @@ export type Waypoint = {
    * The type of the waypoint.
    * Used for distinguishing the waypoints from the label nodes.
    */
-  type?: number
+  type?: 'waypoint' | 'label'
 
   /**
    * An icon used for the description of the waypoint during highlighting.
@@ -78,20 +78,6 @@ export type Waypoint = {
    * Used only for the points from which the nodes will be created.
    */
   id?: number
-}
-
-/**
- * Describes the type of nodes used in this demo.
- */
-export enum MultiPageNodeType {
-  /**
-   * The nodes that represent the waypoints.
-   */
-  WAYPOINT = 0,
-  /**
-   * The nodes that represent the label associated with the waypoints.
-   */
-  LABEL = 1
 }
 
 /**

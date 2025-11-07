@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  FreeNodePortLocationModel,
-  GraphComponent,
-  IGraph,
-  INode,
-  Point,
-  SimpleNode
-} from '@yfiles/yfiles'
+import { FreeNodePortLocationModel, INode, SimpleNode } from '@yfiles/yfiles'
 import {} from './FlowNodePort'
 import { FlowNodePortStyle } from './FlowNodePortStyle'
 import { FlowNodeStyle } from './FlowNodeStyle'
@@ -63,8 +56,8 @@ export const flowNodeVariants = [
 /**
  * Properties that should never appear in the tag editor
  */
-export let hiddenProperties = ['hasLeftPort', 'hasRightPort', 'validate']
-export let lockedProperties = ['variant']
+export const hiddenProperties = ['hasLeftPort', 'hasRightPort', 'validate']
+export const lockedProperties = ['variant']
 
 const portStyle = new FlowNodePortStyle()
 
@@ -87,20 +80,22 @@ export function configureFlowNodes({ graph, selection }) {
     }
     const { hasLeftPort, hasRightPort } = node.tag
     if (node.ports.size === 0) {
-      hasLeftPort &&
+      if (hasLeftPort) {
         graph.addPort({
           owner: node,
           style: portStyle,
           locationParameter: FreeNodePortLocationModel.LEFT,
           tag: { side: 'left' }
         })
-      hasRightPort &&
+      }
+      if (hasRightPort) {
         graph.addPort({
           owner: node,
           style: portStyle,
           locationParameter: FreeNodePortLocationModel.RIGHT,
           tag: { side: 'right' }
         })
+      }
     }
     const label = node.tag.label
     const duplicateLabelNodes = graph.nodes.filter((node) => node.tag.label.startsWith(label))

@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Arc Diagram Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -68,11 +68,11 @@
       <button data-command="UNDO"></button>
       <button data-command="REDO"></button>
       <span class="demo-separator"></span>
-      <span>Node Order:</span>
+      <label for="node-order">Node Order:</label>
       <select id="node-order">
-        <option value="FROM_SKETCH">From Sketch</option>
-        <option value="MINIMIZE_CROSSINGS">Minimize Crossings</option>
-        <option value="TOPOLOGICAL">Topological</option>
+        <option value="from-sketch">From Sketch</option>
+        <option value="minimize-crossings">Minimize Crossings</option>
+        <option value="topological">Topological</option>
       </select>
       <span class="demo-separator"></span>
       <button id="arrange" class="demo-icon-yIconLayout labeled">Layout</button>

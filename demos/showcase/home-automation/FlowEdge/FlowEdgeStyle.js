@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  DelegatingEdgeStyle,
-  GeneralPath,
-  GraphComponent,
-  IRenderContext,
-  SvgVisualGroup,
-  Visual
-} from '@yfiles/yfiles'
+import { DelegatingEdgeStyle, GraphComponent, SvgVisualGroup } from '@yfiles/yfiles'
 
 /**
  * This class decorates the original `BezierEdgeStyleRenderer` in such a way that the resulting
@@ -183,11 +176,15 @@ export class FlowEdgeStyle extends DelegatingEdgeStyle {
 
     if (path && outline && animation) {
       const pathData = path.getAttribute('d')
-      pathData && outline.setAttribute('d', pathData)
-      pathData && animation.setAttribute('d', pathData)
+      if (pathData) {
+        outline.setAttribute('d', pathData)
+        animation.setAttribute('d', pathData)
+      }
     }
 
-    groupElement && this.setClassModifiers(context, groupElement, edge)
+    if (groupElement) {
+      this.setClassModifiers(context, groupElement, edge)
+    }
 
     return visual
   }

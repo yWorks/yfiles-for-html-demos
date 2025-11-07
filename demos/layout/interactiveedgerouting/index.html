@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Interactive Edge Routing Demo</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -64,13 +64,9 @@
       <button
         id="open-file-button"
         title="Open a GraphML file"
-        class="demo-icon-yIconOpen labeled"
+        class="demo-icon-yIconOpen"
       ></button>
-      <button
-        id="save-button"
-        title="Save a GraphML file"
-        class="demo-icon-yIconSave labeled"
-      ></button>
+      <button id="save-button" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
 
       <span class="demo-separator"></span>
 
@@ -94,7 +90,7 @@
       <span class="demo-separator"></span>
 
       <label>
-        Routing Policy:
+        Routing Scope:
         <select title="Select Routing Policy" id="select-routing-policy">
           <option value="segment">Segment as Needed</option>
           <option value="path">Path as Needed</option>
@@ -118,13 +114,13 @@
 
         <p>
           The Interactive Edge Routing demo showcases
-          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a>
           's ability to find and re-layout edge paths which are not yet ‘good’.
         </p>
 
         <p>
           After each user interaction the edge router is applied with
-          <a href="https://docs.yworks.com/yfileshtml/#/api/RoutingPolicy" target="_blank">RoutingPolicy</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterScope" class="api" target="_blank">EdgeRouterScope</a>
           set to either re-route entire edges or only necessary segments of edges. The edge router
           itself determines automatically which edges need a re-routing based on various criteria
           like intersections with other elements or routing style violations.
@@ -139,7 +135,7 @@
           <li>Open/close group nodes with incident edges.</li>
           <li>Move nodes or create nodes in a way that they overlap existing edges.</li>
           <li>Create new edges and see how they are routed to match the other edges.</li>
-          <li>Choose different routing policies with the Routing Policy combo box.</li>
+          <li>Choose different routing scopes with the Routing Scope combo box.</li>
         </ul>
       </div>
     </aside>

@@ -30,9 +30,9 @@ import {
   BaseClass,
   FreeNodePortLocationModel,
   IEdgeReconnectionPortCandidateProvider,
-  IEnumerable,
-  IInputModeContext,
-  IPortCandidate,
+  type IEnumerable,
+  type IInputModeContext,
+  type IPortCandidate,
   List,
   PortCandidate
 } from '@yfiles/yfiles'

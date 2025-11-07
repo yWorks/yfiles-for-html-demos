@@ -33,7 +33,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   IEdge,
-  IGraph,
+  type IGraph,
   ILabel,
   INode,
   LayoutExecutor,
@@ -45,8 +45,8 @@ import {
 } from '@yfiles/yfiles'
 
 import { ContextualToolbar } from './ContextualToolbar'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import type { JSONGraph, JSONNode } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
@@ -54,7 +54,7 @@ let graphComponent: GraphComponent
 let contextualToolbar: ContextualToolbar
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   graphComponent.graph.undoEngineEnabled = true
 

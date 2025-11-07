@@ -26,13 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GroupNodeLabelModel,
-  GroupNodeStyle,
-  type IGraph,
-  LabelStyle,
-  Point
-} from '@yfiles/yfiles'
+import { GroupNodeLabelModel, GroupNodeStyle, type IGraph, LabelStyle, Point } from '@yfiles/yfiles'
 
 /**
  * Configures the default style for group nodes.
@@ -74,7 +68,7 @@ export function createGroupNodes(graph: IGraph): void {
   graph.addBend(edgeFromGroup, new Point(170, -35), 1)
 }
 
-export function adjustGroupNodeSize(graph: IGraph) {
+export function adjustGroupNodeSize(graph: IGraph): void {
   // Get a group node
   const groupNode = graph.nodes.find((node) => graph.isGroupNode(node))!
   // Create a child node that's outside the group bounds

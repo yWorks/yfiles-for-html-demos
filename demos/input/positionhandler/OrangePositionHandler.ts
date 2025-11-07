@@ -28,11 +28,11 @@
  ***************************************************************************/
 import {
   ConstrainedPositionHandler,
-  IInputModeContext,
-  INode,
-  IPositionHandler,
-  MutableRectangle,
-  Point,
+  type IInputModeContext,
+  type INode,
+  type IPositionHandler,
+  type MutableRectangle,
+  type Point,
   Rect
 } from '@yfiles/yfiles'
 
@@ -42,6 +42,8 @@ import {
  * another (the original) handler.
  */
 export class OrangePositionHandler extends ConstrainedPositionHandler {
+    private readonly node: INode;
+    private readonly boundaryRectangle: MutableRectangle;
   private boundaryPositionRectangle: Rect = null!
 
   /**
@@ -51,11 +53,13 @@ export class OrangePositionHandler extends ConstrainedPositionHandler {
    * @param delegateHandler The default handler
    */
   constructor(
-    private readonly boundaryRectangle: MutableRectangle,
-    private readonly node: INode,
+    boundaryRectangle: MutableRectangle,
+    node: INode,
     delegateHandler: IPositionHandler
   ) {
     super(delegateHandler)
+      this.boundaryRectangle = boundaryRectangle;
+      this.node = node;
   }
 
   /**

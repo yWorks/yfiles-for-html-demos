@@ -30,12 +30,7 @@ import {
   FreeNodePortLocationModel,
   GraphComponent,
   GraphEditorInputMode,
-  IEnumerable,
-  IGraph,
-  IInputModeContext,
-  INode,
   InteriorNodeLabelModel,
-  IPortCandidate,
   License,
   List,
   PolylineEdgeStyle,
@@ -47,15 +42,15 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 
-import { colorSets, createDemoEdgeLabelStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { colorSets, createDemoEdgeLabelStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Runs the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   const graphComponent = new GraphComponent('#graphComponent')
 
   // Create and configure ports using shape port style

@@ -29,9 +29,9 @@
 import {
   Font,
   GraphComponent,
-  ICanvasContext,
-  INode,
-  IRenderContext,
+  type ICanvasContext,
+  type INode,
+  type IRenderContext,
   NodeStyleBase,
   Point,
   Rect,

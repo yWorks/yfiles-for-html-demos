@@ -51,16 +51,16 @@ import {
 import type { CircleInfo } from './apply-layout-callback'
 import { getApplyLayoutCallback } from './apply-layout-callback'
 import { getBuildGraphCallback } from './build-graph-callback'
-import { NeighborhoodType } from './NeighborhoodType'
+import type { NeighborhoodType } from './NeighborhoodType'
 import { NeighborhoodView } from '../neighborhood/NeighborhoodView'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './resources/graph-data.json'
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize a GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
@@ -138,7 +138,7 @@ function createNeighborhoodView(graphComponent: GraphComponent): NeighborhoodVie
   neighborhoodView.applyNeighborhoodLayout = getApplyLayoutCallback((_, circles) => {
     layoutCircleInfo = circles
   })
-  neighborhoodView.buildNeighborhoodGraph = getBuildGraphCallback(NeighborhoodType.NEIGHBORHOOD, 1)
+  neighborhoodView.buildNeighborhoodGraph = getBuildGraphCallback('Neighbors', 1)
   neighborhoodView.graphComponent = graphComponent
   // mirror navigation in the neighborhood view to the demo's main GraphComponent
   neighborhoodView.clickCallback = (node: INode): void => {
@@ -278,10 +278,15 @@ function initializeUI(neighborhoodView: NeighborhoodView): void {
     '#neighborhood-type-select'
   )!
   neighborhoodTypeSelect.addEventListener('change', () =>
-    changeNeighborhoodType(neighborhoodView, neighborhoodTypeSelect.selectedIndex)
+    changeNeighborhoodType(neighborhoodView, neighborhoodTypeSelect.value as NeighborhoodType)
   )
   addNavigationButtons(neighborhoodTypeSelect)
-  populateSelectElement(neighborhoodTypeSelect, ['Neighbors', 'Predecessors', 'Successors', 'Both'])
+  populateSelectElement(neighborhoodTypeSelect, [
+    'Neighborhood',
+    'Predecessors',
+    'Successors',
+    'Both'
+  ] as NeighborhoodType[])
 
   // initialize the depth slider for the NeighborhoodView
   const neighborhoodDistanceSlider = document.querySelector<HTMLInputElement>(
@@ -334,7 +339,7 @@ function changeNeighborhoodDistance(neighborhoodView: NeighborhoodView, distance
     '#neighborhood-type-select'
   )!
   neighborhoodView.buildNeighborhoodGraph = getBuildGraphCallback(
-    neighborhoodTypeSelect.selectedIndex,
+    neighborhoodTypeSelect.value as NeighborhoodType,
     distance
   )
 

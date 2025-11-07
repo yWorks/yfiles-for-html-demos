@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, LayoutExecutorAsync } from '@yfiles/yfiles'
+import { type GraphComponent, LayoutExecutorAsync } from '@yfiles/yfiles'
 
 import { onMounted } from 'vue'
 

@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import {
-  GraphBuilder,
+  type GraphBuilder,
   type GraphBuilderItemEventArgs,
   GraphComponent,
   GraphViewerInputMode,
@@ -38,11 +38,11 @@ import {
   PortPlacementPolicy
 } from '@yfiles/yfiles'
 
-import { createPortAwareGraphBuilder, setBuilderData } from './GraphBuilder'
+import { createPortAwareGraphBuilder, setBuilderData } from './port-aware-graph-builder'
 import GraphBuilderData from './graph-builder-data'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './GraphItemsHider'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { hideNodesAndRelatedItems, showNodesAndRelatedItems } from './hide-items'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * This demo shows how to automatically build a graph from business data using
@@ -53,7 +53,7 @@ import { finishLoading } from '@yfiles/demo-resources/demo-page'
  * to reflect changes in the business data.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // Initialize graph component
   const graphComponent = new GraphComponent('graphComponent')

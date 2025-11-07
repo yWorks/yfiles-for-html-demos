@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   CompositeLabelModel,
-  CompositeLabelModelParameter,
   EditLabelHelper,
   EventRecognizers,
   ExteriorNodeLabelModel,
@@ -46,10 +45,6 @@ import {
   IEdge,
   IEdgeReconnectionPortCandidateProvider,
   IEditLabelHelper,
-  IInputModeContext,
-  ILabelModelParameter,
-  ILabelOwner,
-  IModelItem,
   INode,
   Insets,
   InteriorNodeLabelModel,
@@ -63,7 +58,6 @@ import {
   NodeDropInputMode,
   ParentNodeDetectionModes,
   Point,
-  PopulateItemContextMenuEventArgs,
   PortCandidate,
   PortCandidateValidity,
   Rect,
@@ -87,7 +81,6 @@ import BpmnView, {
   AnnotationNodeStyle,
   BpmnEdgeStyle,
   BpmnEdgeType,
-  BpmnNodeStyle,
   BpmnPortCandidateProvider,
   BpmnReshapeHandleProvider,
   ChoreographyLabelModel,
@@ -111,9 +104,9 @@ import BpmnView, {
 } from './bpmn-view'
 import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
 import { BpmnDiParser } from './bpmn-di'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 import { saveGraphML } from '@yfiles/demo-utils/graphml-support'
 import { openFile } from '@yfiles/demo-utils/file-support'
 
@@ -145,7 +138,7 @@ addNavigationButtons(graphChooserBox)
  * Starts the BPMN editor.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize UI elements
   graphComponent = new GraphComponent('graphComponent')
   new GraphOverviewComponent('overviewComponent', graphComponent)
@@ -477,8 +470,14 @@ function initializeUI(graphMLIOHandler) {
   popupSupport.registerPopupCommands()
 
   document.querySelector('#open-file-button').addEventListener('click', async () => {
-    const { content, filename } = await openFile()
-    await readFile(content, filename)
+    try {
+      const { content, filename } = await openFile('.bpmn,.graphml')
+      await readFile(content, filename)
+    } catch (err) {
+      if (err !== 'canceled') {
+        alert(err)
+      }
+    }
   })
 
   document.querySelector('#save-button').addEventListener('click', async () => {
@@ -871,7 +870,7 @@ class AdditionalEditLabelHelper extends EditLabelHelper {
     if (owner.style instanceof BpmnGroupNodeStyle) {
       return InteriorNodeLabelModel.TOP
     }
-    // eslint-disable-next-line arrow-body-style
+
     const validParameters = parameters.filter((parameter) =>
       owner.labels.every((label) => {
         const bounds = label.layoutParameter.model.getGeometry(label, label.layoutParameter)

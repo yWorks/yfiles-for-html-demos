@@ -32,18 +32,13 @@ import {
   Font,
   GeneralPath,
   GeometryUtilities,
-  IRectangle,
-  IRenderContext,
   IVisualCreator,
   Point,
-  Rect,
-  ResultItemCollection,
   SvgVisual,
   TextRenderSupport,
-  Visual,
   YList
 } from '@yfiles/yfiles'
-import { colorSets } from '@yfiles/demo-resources/demo-styles'
+import { colorSets } from '@yfiles/demo-app/demo-styles'
 
 const GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
 const GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
@@ -62,8 +57,9 @@ function setAttribute(e, name, value) {
  * This visual draws a Voronoi diagram.
  */
 export class VoronoiVisual extends BaseClass(IVisualCreator) {
-  voronoiDiagram
   clusters
+  voronoiDiagram
+
   /**
    * Creates a new VoronoiVisual that draws the faces of the given voronoi diagram.
    */
@@ -133,8 +129,8 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
  * This visual creates a polygon around the nodes that belong to the same cluster.
  */
 export class PolygonVisual extends BaseClass(IVisualCreator) {
-  drawCenter
   clusters
+  drawCenter
   startColor
   endColor
 
@@ -237,6 +233,7 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
  */
 export class AxisVisual extends BaseClass(IVisualCreator) {
   rect
+
   constructor(rect) {
     super()
     this.rect = rect
@@ -313,8 +310,8 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
  * This is only used for Hierarchical Clustering.
  */
 export class CutoffVisual extends BaseClass(IVisualCreator) {
-  rectangle
   maxY
+  rectangle
   cutOffValue
 
   constructor(rectangle, maxY) {

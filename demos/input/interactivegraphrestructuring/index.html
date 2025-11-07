@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Interactive Graph Restructuring Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       .yfiles-focus-template {
@@ -90,7 +90,7 @@
         <p>
           Every time that a node is selected, the subtree rooted at this particular node is dragged
           interactively, and
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout" target="_blank">ClearAreaLayout</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout" class="api" target="_blank">ClearAreaLayout</a>
           will try to create free space by pushing away the other elements of the graph so that the
           dragged subtree is relocated to another parent.
         </p>

@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>06 Rendering Text - Tutorial: Node Style Implementation [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -138,7 +138,7 @@
           <h1>Rendering text</h1>
           <div class="paragraph">
             <p>
-              Not all visualisations consist of shapes and colors. Frequently, the business data
+              Not all visualizations consist of shapes and colors. Frequently, the business data
               stored in the <code>tag</code> property also contains textual content that should be
               rendered. Although yFiles for HTML offers labels for that purpose, text can also be rendered
               as part of the node visualization. This can be useful when users don&#8217;t need to
@@ -167,7 +167,7 @@ graph.<span class="hljs-title function_">createNode</span>({
           </div>
           <div class="paragraph">
             <p>
-              yFiles for HTML offers the <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport" target="_blank">TextRenderSupport</a> utility class to measure and
+              yFiles for HTML offers the <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport" class="api" target="_blank">TextRenderSupport</a> utility class to measure and
               render text. Compared with just a plain SVG <code>&lt;text&gt;</code> element it
               supports wrapping and trimming text based on a specified maximum size. In this
               example, we add text to the &#8220;tab&#8221; in a way that the text is cut off with
@@ -213,7 +213,7 @@ graph.<span class="hljs-title function_">createNode</span>({
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

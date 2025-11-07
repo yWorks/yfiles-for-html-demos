@@ -28,9 +28,9 @@
  ***************************************************************************/
 import {
   Class,
-  GraphComponent,
-  ILayoutAlgorithm,
-  LayoutData,
+  type GraphComponent,
+  type ILayoutAlgorithm,
+  type LayoutData,
   OrganicEdgeRouter,
   OrganicEdgeRouterData
 } from '@yfiles/yfiles'
@@ -38,13 +38,12 @@ import {
 import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -60,7 +59,7 @@ export const OrganicEdgeRouterConfig = (Class as any)('OrganicEdgeRouterConfig',
     ],
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     selectionOnlyItem: [
@@ -78,7 +77,7 @@ export const OrganicEdgeRouterConfig = (Class as any)('OrganicEdgeRouterConfig',
       ),
       new OptionGroupAttribute('LayoutGroup', 20),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     keepBendsItem: [

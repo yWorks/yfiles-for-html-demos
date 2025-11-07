@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>11 Layout Data - Tutorial: Basic Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -140,7 +140,7 @@
               <div class="paragraph">
                 <p>
                   This step shows how to
-                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout-applying_a_layout#layout-layout_data" target="_blank">configure a layout algorithm</a>
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout-applying_a_layout#layout-layout_data" class="dguide" target="_blank">configure a layout algorithm</a>
                   using the information stored in the first label of each node.
                 </p>
               </div>
@@ -190,7 +190,7 @@
               </div>
               <div class="paragraph">
                 <p>
-                  We create a <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutData" target="_blank">LayoutData</a> instance that defines how each node should
+                  We create a <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutData" class="api" target="_blank">LayoutData</a> instance that defines how each node should
                   be aligned.
                 </p>
               </div>
@@ -198,7 +198,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Configure the layout data using the information from the node labels</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// Configure the layout data using the information from the node labels</span>
 <span class="hljs-keyword">const</span> hierarchicalLayoutData = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HierarchicalLayoutData</span>({
   <span class="hljs-attr">nodeDescriptors</span>: (<span class="hljs-attr">node</span>: <span class="hljs-title class_">INode</span>): <span class="hljs-function"><span class="hljs-params">HierarchicalLayoutNodeDescriptor</span> =&gt;</span>
     <span class="hljs-keyword">new</span> <span class="hljs-title class_">HierarchicalLayoutNodeDescriptor</span>({
@@ -219,8 +219,8 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">getAlignment</span>(<span class="hljs-params">node: INode</span>): number {
-  <span class="hljs-keyword">const</span> text = node.<span class="hljs-property">labels</span>.<span class="hljs-title function_">at</span>(<span class="hljs-number">0</span>)?.<span class="hljs-property">text</span>?.<span class="hljs-title function_">toLowerCase</span>() ?? <span class="hljs-string">&#x27;center&#x27;</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">function</span> <span class="hljs-title function_">getAlignment</span>(<span class="hljs-params"><span class="hljs-attr">node</span>: <span class="hljs-title class_">INode</span></span>): <span class="hljs-built_in">number</span> {
+  <span class="hljs-keyword">const</span> text = node.<span class="hljs-property">labels</span>.<span class="hljs-title function_">at</span>(<span class="hljs-number">0</span>)?.<span class="hljs-property">text</span>.<span class="hljs-title function_">toLowerCase</span>() ?? <span class="hljs-string">&#x27;center&#x27;</span>
   <span class="hljs-keyword">switch</span> (text) {
     <span class="hljs-attr">default</span>:
     <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;center&#x27;</span>:
@@ -236,15 +236,15 @@
               <div class="paragraph">
                 <p>
                   The layout data is used as a parameter for
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#GraphComponent-defaultmethod-applyLayoutAnimated" target="_blank">applyLayoutAnimated</a>
-                  to pass the information to the layout algorithm.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#applyLayoutAnimated" class="api" target="_blank">applyLayoutAnimated</a> to pass
+                  the information to the layout algorithm.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">await</span> graphComponent.<span class="hljs-title function_">applyLayoutAnimated</span>({
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">await</span> graphComponent.<span class="hljs-title function_">applyLayoutAnimated</span>({
   <span class="hljs-attr">layout</span>: hierarchicalLayout,
   <span class="hljs-attr">layoutData</span>: hierarchicalLayoutData,
   <span class="hljs-attr">animationDuration</span>: <span class="hljs-string">&#x27;1s&#x27;</span>
@@ -267,7 +267,7 @@
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

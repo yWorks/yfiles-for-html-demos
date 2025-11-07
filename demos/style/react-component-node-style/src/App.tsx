@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import React from 'react'
 import { DiagramComponent } from './DiagramComponent'
 import { ReactComponentHtmlNodeStyle } from './ReactComponentHtmlNodeStyle'
 import { HtmlNodeComponent } from './HtmlNodeComponent'
@@ -41,7 +40,7 @@ function initGraph(graphComponent: GraphComponent) {
     // the React component used to render a node
     HtmlNodeComponent,
     // the props the component should receive
-    (context, node) => node.tag ?? { name: 'New Node', color: 'blue-grey', content: 'No content' }
+    (_, node) => node.tag ?? { name: 'New Node', color: 'blue-grey', content: 'No content' }
   )
 
   // register the node style as the default for all new nodes

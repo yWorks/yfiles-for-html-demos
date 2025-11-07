@@ -31,14 +31,14 @@ import {
   ArrowType,
   Class,
   ComponentArrangementStyle,
-  ComponentLayout,
+  type ComponentLayout,
   EdgeLabelPlacement,
-  GraphComponent,
+  type GraphComponent,
   GroupHidingStage,
   GroupNodeHandlingPolicy,
   GroupSubstructureStyle,
-  ILayoutAlgorithm,
-  LayoutData,
+  type ILayoutAlgorithm,
+  type LayoutData,
   LayoutOrientation,
   NodeLabelPlacement,
   OrganicLayout,
@@ -65,51 +65,53 @@ import {
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 
 /// <summary>
 ///   Enum constants that specify the scope for the <see cref="OrganicLayout"/>.
 /// </summary>
-enum OrganicLayoutScope {
+const OrganicLayoutScope = {
   /// <summary>Scope mode indicating that the algorithm should place <em>all</em> nodes of the graph.</summary>
-  ALL = 0,
+  ALL: 0,
 
   /// Scope mode indicating that the algorithm should place the node.
-  AFFECTED = OrganicScope.AFFECTED,
+  AFFECTED: OrganicScope.AFFECTED,
 
   /// <summary>
   ///   Scope mode indicating that the algorithm should place a node but may to a certain degree
   //    also move nodes that are geometrically close to a node from the subset.
   /// </summary>
-  INCLUDE_CLOSE_NODES = OrganicScope.INCLUDE_CLOSE_NODES,
+  INCLUDE_CLOSE_NODES: OrganicScope.INCLUDE_CLOSE_NODES,
 
   /// <summary>
   ///   Scope mode indicating that the algorithm should place a node but may to a certain degree
   //    also move nodes that are structurally close to the node.
   /// </summary>
-  INCLUDE_EXTENDED_NEIGHBORHOOD = OrganicScope.INCLUDE_EXTENDED_NEIGHBORHOOD
+  INCLUDE_EXTENDED_NEIGHBORHOOD: OrganicScope.INCLUDE_EXTENDED_NEIGHBORHOOD
 }
+export type OrganicLayoutScope = (typeof OrganicLayoutScope)[keyof typeof OrganicLayoutScope]
 
-export enum OutputRestrictions {
-  NONE,
-  OUTPUT_CAGE,
-  OUTPUT_AR,
-  OUTPUT_ELLIPTICAL_CAGE
+export const OutputRestrictions = {
+  NONE: 0,
+  OUTPUT_CAGE: 1,
+  OUTPUT_AR: 2,
+  OUTPUT_ELLIPTICAL_CAGE: 3
 }
+export type OutputRestrictions = (typeof OutputRestrictions)[keyof typeof OutputRestrictions]
 
-export enum GroupLayoutPolicy {
-  LAYOUT_GROUPS,
-  FIX_GROUP_BOUNDS,
-  FIX_GROUP_CONTENTS,
-  IGNORE_GROUPS
+export const GroupLayoutPolicy = {
+  LAYOUT_GROUPS: 0,
+  FIX_GROUP_BOUNDS: 1,
+  FIX_GROUP_CONTENTS: 2,
+  IGNORE_GROUPS: 3
 }
+export type GroupLayoutPolicy = (typeof GroupLayoutPolicy)[keyof typeof GroupLayoutPolicy]
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -175,17 +177,17 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
     ],
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     scopeItem: [
       new LabelAttribute('Scope', '#/api/OrganicLayoutData#OrganicLayoutData-property-scope'),
       new OptionGroupAttribute('VisualGroup', 10),
       new EnumValuesAttribute([
-        ['All', OrganicLayoutScope.ALL],
-        ['Selection', OrganicLayoutScope.AFFECTED],
-        ['Selection and Connected Nodes', OrganicLayoutScope.INCLUDE_EXTENDED_NEIGHBORHOOD],
-        ['Selection and Nearby Nodes', OrganicLayoutScope.INCLUDE_CLOSE_NODES]
+        ['All', 'all'],
+        ['Selection', 'affected'],
+        ['Selection and Connected Nodes', 'include-extended-neighborhood'],
+        ['Selection and Nearby Nodes', 'include-close-nodes']
       ]),
       new TypeAttribute(Number)
     ],
@@ -196,7 +198,7 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
       ),
       new OptionGroupAttribute('VisualGroup', 20),
       new MinMaxAttribute(5, 500),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     allowNodeOverlapsItem: [
@@ -214,7 +216,7 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
       ),
       new OptionGroupAttribute('VisualGroup', 30),
       new MinMaxAttribute(0.0, 100.0, 0.01),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     avoidNodeEdgeOverlapsItem: [
@@ -232,7 +234,7 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
       ),
       new OptionGroupAttribute('VisualGroup', 70),
       new MinMaxAttribute(0.0, 1.0, 0.1),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     orientationItem: [
@@ -271,10 +273,10 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
       ),
       new OptionGroupAttribute('RestrictionsGroup', 10),
       new EnumValuesAttribute([
-        ['Unrestricted', OutputRestrictions.NONE],
-        ['Rectangular', OutputRestrictions.OUTPUT_CAGE],
-        ['Aspect Ratio', OutputRestrictions.OUTPUT_AR],
-        ['Elliptical', OutputRestrictions.OUTPUT_ELLIPTICAL_CAGE]
+        ['Unrestricted', 'none'],
+        ['Rectangular', 'output-cage'],
+        ['Aspect Ratio', 'output-ar'],
+        ['Elliptical', 'output-elliptical-cage']
       ]),
       new TypeAttribute(OutputRestrictions)
     ],
@@ -317,7 +319,7 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
       new LabelAttribute('Aspect Ratio'),
       new OptionGroupAttribute('ARGroup', 20),
       new MinMaxAttribute(0.2, 5.0, 0.01),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     groupLayoutPolicyItem: [
@@ -327,10 +329,10 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
       ),
       new OptionGroupAttribute('GroupingGroup', 10),
       new EnumValuesAttribute([
-        ['Layout Groups', GroupLayoutPolicy.LAYOUT_GROUPS],
-        ['Fix Bounds of Groups', GroupLayoutPolicy.FIX_GROUP_BOUNDS],
-        ['Fix Contents of Groups', GroupLayoutPolicy.FIX_GROUP_CONTENTS],
-        ['Ignore Groups', GroupLayoutPolicy.IGNORE_GROUPS]
+        ['Layout Groups', 'layout-groups'],
+        ['Fix Bounds of Groups', 'fix-group-bounds'],
+        ['Fix Contents of Groups', 'fix-group-contents'],
+        ['Ignore Groups', 'ignore-groups']
       ]),
       new TypeAttribute(GroupLayoutPolicy)
     ],
@@ -338,7 +340,7 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
       new LabelAttribute('Quality', '#/api/OrganicLayout#OrganicLayout-property-qualityTimeRatio'),
       new OptionGroupAttribute('AlgorithmGroup', 10),
       new MinMaxAttribute(0.0, 1.0, 0.01),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     stopDurationItem: [
@@ -348,7 +350,7 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
       ),
       new OptionGroupAttribute('AlgorithmGroup', 20),
       new MinMaxAttribute(0, 150),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     activateDeterministicModeItem: [
@@ -595,10 +597,10 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 10),
       new EnumValuesAttribute([
-        ['Parallel', LabelPlacementOrientation.PARALLEL],
-        ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
-        ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
-        ['Vertical', LabelPlacementOrientation.VERTICAL]
+        ['Parallel', 'parallel'],
+        ['Orthogonal', 'orthogonal'],
+        ['Horizontal', 'horizontal'],
+        ['Vertical', 'vertical']
       ]),
       new TypeAttribute(LabelPlacementOrientation)
     ],
@@ -609,12 +611,12 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 20),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
-        ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
-        ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
-        ['At Target', LabelPlacementAlongEdge.AT_TARGET],
-        ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
-        ['Centered', LabelPlacementAlongEdge.CENTERED]
+        ['Anywhere', 'anywhere'],
+        ['At Source', 'at-source'],
+        ['At Source Port', 'at-source-port'],
+        ['At Target', 'at-target'],
+        ['At Target Port', 'at-target-port'],
+        ['Centered', 'centered']
       ]),
       new TypeAttribute(LabelPlacementAlongEdge)
     ],
@@ -625,11 +627,11 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 30),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
-        ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
-        ['Left', LabelPlacementSideOfEdge.LEFT],
-        ['Right', LabelPlacementSideOfEdge.RIGHT],
-        ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+        ['Anywhere', 'anywhere'],
+        ['On Edge', 'on-edge'],
+        ['Left', 'left'],
+        ['Right', 'right'],
+        ['Left or Right', 'left-or-right']
       ]),
       new TypeAttribute(LabelPlacementSideOfEdge)
     ],
@@ -640,7 +642,7 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 40),
       new MinMaxAttribute(0.0, 40.0),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ]
   },
@@ -652,7 +654,7 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
     // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
     const layout = new OrganicLayout()
-    this.scopeItem = OrganicLayoutScope.ALL
+    this.scopeItem = 'all'
     this.preferredEdgeLengthItem = layout.defaultPreferredEdgeLength
     this.allowNodeOverlapsItem = layout.allowNodeOverlaps
     this.minimumNodeDistanceItem = 10
@@ -661,7 +663,7 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
     this.orientationItem = null
     this.clusteringPolicy = layout.clusteringPolicy
 
-    this.restrictOutputItem = OutputRestrictions.NONE
+    this.restrictOutputItem = 'none'
     this.rectCageUseViewItem = true
     this.cageXItem = 0.0
     this.cageYItem = 0.0
@@ -670,7 +672,7 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
     this.arCageUseViewItem = true
     this.cageRatioItem = 1.0
 
-    this.groupLayoutPolicyItem = GroupLayoutPolicy.LAYOUT_GROUPS
+    this.groupLayoutPolicyItem = 'layout-groups'
 
     this.qualityTimeRatioItem = layout.qualityTimeRatio
     this.stopDurationItem = layout.stopDuration.totalSeconds
@@ -693,9 +695,9 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
 
     this.nodeLabelingItem = layout.nodeLabelPlacement
     this.edgeLabelingItem = layout.edgeLabelPlacement
-    this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
-    this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
-    this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
+    this.labelPlacementAlongEdgeItem = 'centered'
+    this.labelPlacementSideOfEdgeItem = 'on-edge'
+    this.labelPlacementOrientationItem = 'horizontal'
     this.labelPlacementDistanceItem = 10.0
     this.title = 'Organic Layout'
   },
@@ -766,11 +768,11 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
     layout: ILayoutAlgorithm
   ): LayoutData {
     const layoutData = new OrganicLayoutData()
-    if (this.groupLayoutPolicyItem == GroupLayoutPolicy.IGNORE_GROUPS) {
+    if (this.groupLayoutPolicyItem == 'ignore-groups') {
       ;(layout as OrganicLayout).layoutStages.get(GroupHidingStage)!.enabled = true
     }
 
-    if (this.scopeItem != OrganicLayoutScope.ALL) {
+    if (this.scopeItem != 'all') {
       layoutData.scope.nodes = graphComponent.selection.nodes
       layoutData.scope.scopeModes = (node) =>
         graphComponent.selection.nodes.includes(node) ? this.scopeItem : OrganicScope.FIXED
@@ -779,11 +781,11 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
     layoutData.scope.groupNodeHandlingPolicies = (node) => {
       if (graphComponent.graph.isGroupNode(node)) {
         switch (this.groupLayoutPolicyItem) {
-          case GroupLayoutPolicy.FIX_GROUP_BOUNDS:
+          case 'fix-group-bounds':
             return GroupNodeHandlingPolicy.FIX_BOUNDS
-          case GroupLayoutPolicy.LAYOUT_GROUPS:
+          case 'layout-groups':
             return GroupNodeHandlingPolicy.FREE
-          case GroupLayoutPolicy.FIX_GROUP_CONTENTS:
+          case 'fix-group-contents':
             return GroupNodeHandlingPolicy.FIX_CONTENTS
         }
       }
@@ -849,11 +851,11 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
       h = visibleRect[3]
     }
     switch (this.restrictOutputItem) {
-      case OutputRestrictions.NONE:
+      case 'none':
         layout.componentLayout.enabled = true
         layout.shapeConstraint = ShapeConstraint.NONE
         break
-      case OutputRestrictions.OUTPUT_CAGE:
+      case 'output-cage':
         if (!viewInfoIsAvailable || !this.rectCageUseViewItem) {
           x = this.cageXItem
           y = this.cageYItem
@@ -863,14 +865,14 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
         layout.shapeConstraint = ShapeConstraint.createRectangularConstraint(x, y, w, h)
         layout.componentLayout.enabled = false
         break
-      case OutputRestrictions.OUTPUT_AR: {
+      case 'output-ar': {
         const ratio = viewInfoIsAvailable && this.arCageUseViewItem ? w / h : this.cageRatioItem
         layout.shapeConstraint = ShapeConstraint.createAspectRatioConstraint(ratio)
         layout.componentLayout.enabled = true
         ;(layout.componentLayout as ComponentLayout).preferredSize = new Size(ratio * 100, 100)
         break
       }
-      case OutputRestrictions.OUTPUT_ELLIPTICAL_CAGE:
+      case 'output-elliptical-cage':
         if (!viewInfoIsAvailable || !this.rectCageUseViewItem) {
           x = this.cageXItem
           y = this.cageYItem
@@ -950,21 +952,21 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
   allowNodeOverlapsItem: false,
 
   /** @type {boolean} */
-  shouldDisableAllowNodeOverlapsItem: <any>{
+  shouldDisableAllowNodeOverlapsItem: {
     get: function (): boolean {
       return this.nodeLabelingItem !== NodeLabelPlacement.IGNORE
     }
-  },
+  } as any,
 
   /** @type {number} */
   minimumNodeDistanceItem: 0,
 
   /** @type {boolean} */
-  shouldDisableMinimumNodeDistanceItem: <any>{
+  shouldDisableMinimumNodeDistanceItem: {
     get: function (): boolean {
       return this.allowNodeOverlapsItem && this.nodeLabelingItem === NodeLabelPlacement.IGNORE
     }
-  },
+  } as any,
 
   /** @type {boolean} */
   avoidNodeEdgeOverlapsItem: false,
@@ -982,14 +984,14 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
   restrictOutputItem: null,
 
   /** @type {boolean} */
-  shouldDisableCageGroup: <any>{
+  shouldDisableCageGroup: {
     get: function (): boolean {
       return (
-        this.restrictOutputItem !== OutputRestrictions.OUTPUT_CAGE &&
-        this.restrictOutputItem !== OutputRestrictions.OUTPUT_ELLIPTICAL_CAGE
+        this.restrictOutputItem !== 'output-cage' &&
+        this.restrictOutputItem !== 'output-elliptical-cage'
       )
     }
-  },
+  } as any,
 
   /** @type {boolean} */
   rectCageUseViewItem: false,
@@ -998,41 +1000,41 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
   cageXItem: 0,
 
   /** @type {boolean} */
-  shouldDisableCageXItem: <any>{
+  shouldDisableCageXItem: {
     get: function (): boolean {
       return this.rectCageUseViewItem
     }
-  },
+  } as any,
 
   /** @type {number} */
   cageYItem: 0,
 
   /** @type {boolean} */
-  shouldDisableCageYItem: <any>{
+  shouldDisableCageYItem: {
     get: function (): boolean {
       return this.rectCageUseViewItem
     }
-  },
+  } as any,
 
   /** @type {number} */
   cageWidthItem: 0,
 
   /** @type {boolean} */
-  shouldDisableCageWidthItem: <any>{
+  shouldDisableCageWidthItem: {
     get: function (): boolean {
       return this.rectCageUseViewItem
     }
-  },
+  } as any,
 
   /** @type {number} */
   cageHeightItem: 0,
 
   /** @type {boolean} */
-  shouldDisableCageHeightItem: <any>{
+  shouldDisableCageHeightItem: {
     get: function (): boolean {
       return this.rectCageUseViewItem
     }
-  },
+  } as any,
 
   /** @type {boolean} */
   arCageUseViewItem: false,
@@ -1041,11 +1043,11 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
   cageRatioItem: 0,
 
   /** @type {boolean} */
-  shouldDisableCageRatioItem: <any>{
+  shouldDisableCageRatioItem: {
     get: function (): boolean {
       return this.arCageUseViewItem
     }
-  },
+  } as any,
 
   /** @type {GroupLayoutPolicy} */
   groupLayoutPolicyItem: null,
@@ -1068,11 +1070,11 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
   /** @type {number} */
   cycleSubstructureSizeItem: 4,
 
-  shouldDisableCycleSubstructureSizeItem: <any>{
+  shouldDisableCycleSubstructureSizeItem: {
     get: function (): boolean {
       return this.cycleSubstructureItem === OrganicLayoutCycleSubstructureStyle.NONE
     }
-  },
+  } as any,
 
   /** @type {OrganicLayoutChainSubstructureStyle} */
   chainSubstructureItem: null,
@@ -1080,11 +1082,11 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
   /** @type {number} */
   chainSubstructureSizeItem: 4,
 
-  shouldDisableChainSubstructureSizeItem: <any>{
+  shouldDisableChainSubstructureSizeItem: {
     get: function (): boolean {
       return this.chainSubstructureItem === OrganicLayoutChainSubstructureStyle.NONE
     }
-  },
+  } as any,
 
   /** @type {OrganicLayoutStarSubstructureStyle} */
   starSubstructureItem: null,
@@ -1092,11 +1094,11 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
   /** @type {number} */
   starSubstructureSizeItem: 4,
 
-  shouldDisableStarSubstructureSizeItem: <any>{
+  shouldDisableStarSubstructureSizeItem: {
     get: function () {
       return this.starSubstructureItem === OrganicLayoutStarSubstructureStyle.NONE
     }
-  },
+  } as any,
 
   /** @type {OrganicLayoutParallelSubstructureStyle  } */
   parallelSubstructureItem: null,
@@ -1104,11 +1106,11 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
   /** @type {number} */
   parallelSubstructureSizeItem: 3,
 
-  shouldDisableParallelSubstructureSizeItem: <any>{
+  shouldDisableParallelSubstructureSizeItem: {
     get: function (): boolean {
       return this.parallelSubstructureItem === OrganicLayoutParallelSubstructureStyle.NONE
     }
-  },
+  } as any,
 
   /** @type {OrganicLayoutTreeSubstructureStyle} */
   treeSubstructureItem: null,
@@ -1116,20 +1118,20 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
   /** @type {number} */
   treeSubstructureSizeItem: 4,
 
-  shouldDisableTreeSubstructureSizeItem: <any>{
+  shouldDisableTreeSubstructureSizeItem: {
     get: function (): boolean {
       return this.treeSubstructureItem === OrganicLayoutTreeSubstructureStyle.NONE
     }
-  },
+  } as any,
 
   /** @type {GroupSubstructureStyle} */
   groupSubstructureStyleItem: null,
 
-  shouldDisableGroupSubstructureStyleItem: <any>{
+  shouldDisableGroupSubstructureStyleItem: {
     get: function (): boolean {
       return this.groupSubstructureScopeItem === OrganicLayoutGroupSubstructureScope.NO_GROUPS
     }
-  },
+  } as any,
 
   /** @type {OrganicLayoutGroupSubstructureScope} */
   groupSubstructureScopeItem: null,
@@ -1137,16 +1139,16 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
   /** @type {number} */
   groupSubstructureSizeItem: 4,
 
-  shouldDisableGroupSubstructureSizeItem: <any>{
+  shouldDisableGroupSubstructureSizeItem: {
     get: function (): boolean {
       return this.groupSubstructureScopeItem === OrganicLayoutGroupSubstructureScope.NO_GROUPS
     }
-  },
+  } as any,
 
   /** @type {boolean} */
   clusterAsGroupSubstructureItem: false,
 
-  shouldDisableClusterAsGroupSubstructureItem: <any>{
+  shouldDisableClusterAsGroupSubstructureItem: {
     get: function (): boolean {
       return (
         this.groupSubstructureScopeItem !== OrganicLayoutGroupSubstructureScope.ALL_GROUPS &&
@@ -1154,7 +1156,7 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
           OrganicLayoutGroupSubstructureScope.GROUPS_WITHOUT_INTER_EDGES
       )
     }
-  },
+  } as any,
 
   /** @type {boolean} */
   edgeDirectednessItem: false,
@@ -1169,52 +1171,52 @@ export const OrganicLayoutConfig = (Class as any)('OrganicLayoutConfig', {
   reduceAmbiguityItem: false,
 
   /** @type {boolean} */
-  shouldDisableReduceAmbiguityItem: <any>{
+  shouldDisableReduceAmbiguityItem: {
     get: function (): boolean {
       return this.edgeLabelingItem !== EdgeLabelPlacement.GENERIC
     }
-  },
+  } as any,
 
   /** @type {LabelPlacementOrientation} */
   labelPlacementOrientationItem: null,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementOrientationItem: <any>{
+  shouldDisableLabelPlacementOrientationItem: {
     get: function (): boolean {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
-  },
+  } as any,
 
   /** @type {LabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: null,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementAlongEdgeItem: <any>{
+  shouldDisableLabelPlacementAlongEdgeItem: {
     get: function (): boolean {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
-  },
+  } as any,
 
   /** @type {LabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: null,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementSideOfEdgeItem: <any>{
+  shouldDisableLabelPlacementSideOfEdgeItem: {
     get: function (): boolean {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
-  },
+  } as any,
 
   /** @type {number} */
   labelPlacementDistanceItem: 0,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementDistanceItem: <any>{
+  shouldDisableLabelPlacementDistanceItem: {
     get: function (): boolean {
       return (
         this.edgeLabelingItem === EdgeLabelPlacement.IGNORE ||
-        this.labelPlacementSideOfEdgeItem === LabelPlacementSideOfEdge.ON_EDGE
+        this.labelPlacementSideOfEdgeItem === 'on-edge'
       )
     }
-  }
+  } as any
 })

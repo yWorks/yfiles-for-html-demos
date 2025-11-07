@@ -40,7 +40,7 @@ import {
   Point,
   Rect
 } from '@yfiles/yfiles'
-import { getAlignment, getType, isOnCircle, NodeTypes } from './data-types'
+import { getAlignment, getType, isOnCircle } from './data-types'
 
 /**
  * Creates a layout algorithm that uses the organic layout and adds additional constraints
@@ -455,26 +455,26 @@ function calculateCircleCenter(circleNodes) {
  * Returns whether the given node represents a reaction.
  */
 function isReaction(node) {
-  return getType(node) === NodeTypes.REACTION
+  return getType(node) === 'reaction'
 }
 
 /**
  * Returns whether the given node represents an enzyme.
  */
 function isEnzyme(node) {
-  return getType(node) === NodeTypes.ENZYME
+  return getType(node) === 'enzyme'
 }
 
 /**
  * Returns whether the given node represents a co-reactant.
  */
 function isCoReactant(node) {
-  return getType(node) === NodeTypes.CO_REACTANT
+  return getType(node) === 'co-reactant'
 }
 
 /**
  * Returns whether the given node has type 'OTHER'.
  */
 function isOther(node) {
-  return getType(node) === NodeTypes.OTHER
+  return getType(node) === 'other'
 }

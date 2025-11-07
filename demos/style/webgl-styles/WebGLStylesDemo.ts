@@ -30,7 +30,7 @@ import {
   Arrow,
   ArrowType,
   Color,
-  FolderNodeConverter,
+  type FolderNodeConverter,
   FoldingManager,
   FreeNodeLabelModel,
   GraphComponent,
@@ -42,13 +42,13 @@ import {
   GroupNodeStyleIconPosition,
   GroupNodeStyleIconType,
   GroupNodeStyleTabPosition,
-  IGraph,
-  INode,
+  type IGraph,
+  type INode,
   Insets,
   LabelStyle,
   License,
   NodeAlignmentPolicy,
-  PolylineEdgeStyle,
+  type PolylineEdgeStyle,
   Size,
   WebGLArcEdgeStyle,
   WebGLArrowType,
@@ -68,10 +68,10 @@ import {
 } from '@yfiles/yfiles'
 
 import { createCanvasContext, createFontAwesomeIcon } from '@yfiles/demo-utils/IconCreation'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { configureEditor, getNumber, getStroke, getValue, updateEditor } from './PropertiesEditor'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
-import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { checkWebGL2Support, finishLoading } from '@yfiles/demo-app/demo-page'
 
 let fontAwesomeIcons: ImageData[]
 let foldingManager: FoldingManager
@@ -81,7 +81,7 @@ async function run(): Promise<void> {
     return
   }
 
-  License.value = await fetchLicense()
+  License.value = licenseData
   const graphComponent = new GraphComponent('#graphComponent')
 
   enableWebGLRendering(graphComponent)
@@ -90,7 +90,7 @@ async function run(): Promise<void> {
   enableFolding(graphComponent)
   configureInteraction(graphComponent)
 
-  fontAwesomeIcons = createFontAwesomeIcons()
+  fontAwesomeIcons = await createFontAwesomeIcons()
 
   // create an initial sample graph
   createGraph(graphComponent)
@@ -263,7 +263,7 @@ function enableWebGLRendering(graphComponent: GraphComponent) {
 /**
  * Creates an array of {@link ImageData} from a selection of font awesome classes.
  */
-function createFontAwesomeIcons(): ImageData[] {
+async function createFontAwesomeIcons(): Promise<ImageData[]> {
   // the font awesome classes used in this demo
   const faClasses = [
     'fa fa-minus',
@@ -280,7 +280,7 @@ function createFontAwesomeIcons(): ImageData[] {
     'fas fa-camera-retro'
   ]
   const ctx = createCanvasContext(128, 128)
-  return faClasses.map((faClass) => createFontAwesomeIcon(ctx, faClass))
+  return await Promise.all(faClasses.map((faClass) => createFontAwesomeIcon(ctx, faClass)))
 }
 
 /**
@@ -784,7 +784,7 @@ function updateSelectedItems(
   }
 
   //Handle state may have changed, make sure to update it
-  ;(<GraphEditorInputMode>graphComponent.inputMode).requeryHandles()
+  ;(graphComponent.inputMode as GraphEditorInputMode).requeryHandles()
   graphComponent.invalidate()
 }
 

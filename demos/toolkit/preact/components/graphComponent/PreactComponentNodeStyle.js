@@ -28,7 +28,7 @@
  ***************************************************************************/
 // @ts-ignore - We have no proper types for preact, here
 import { h, render } from '../../preact-loader'
-import { NodeStyleBase, SvgVisual, Visual } from '@yfiles/yfiles'
+import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 
 function dispose(context, removedVisual, dispose) {
   const gElement = removedVisual.svgElement
@@ -59,6 +59,7 @@ function dispose(context, removedVisual, dispose) {
  */
 export class PreactComponentNodeStyle extends NodeStyleBase {
   type
+
   constructor(type) {
     super()
     this.type = type

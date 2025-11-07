@@ -26,18 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable no-prototype-builtins */
 import {
   Font,
-  FontStyle,
-  GraphComponent,
-  INode,
-  IRenderContext,
+  type FontStyle,
+  type GraphComponent,
+  type INode,
+  type IRenderContext,
   NodeStyleBase,
   Size,
-  SvgDefsManager,
+  type SvgDefsManager,
   SvgVisual,
-  TextDecorations,
+  type TextDecorations,
   TextRenderSupport,
   TextWrapping
 } from '@yfiles/yfiles'
@@ -371,7 +370,6 @@ export class Vue2NodeStyle extends NodeStyleBase {
    * @see Overrides {@link LabelStyleBase.createVisual}
    */
   createVisual(context: IRenderContext, node: INode): SvgVisual {
-    // eslint-disable-next-line new-cap
     const component = new this.constructorFunction()
 
     this.prepareVueComponent(component, context, node)

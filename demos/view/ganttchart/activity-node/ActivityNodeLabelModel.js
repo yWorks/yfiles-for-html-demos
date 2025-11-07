@@ -80,6 +80,7 @@ export class ActivityNodeLabelModel extends BaseClass(ILabelModel) {
  */
 class ActivityNodeStyleLabelModelParameter extends BaseClass(ILabelModelParameter) {
   _model
+
   constructor(_model) {
     super()
     this._model = _model

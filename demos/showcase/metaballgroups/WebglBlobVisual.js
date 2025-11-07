@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { WebGLVisual, Color, IEnumerable, IRenderContext, Point } from '@yfiles/yfiles'
+import { WebGLVisual } from '@yfiles/yfiles'
 
 export class WebglBlobVisual extends WebGLVisual {
   locations

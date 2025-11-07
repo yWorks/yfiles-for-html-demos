@@ -37,17 +37,15 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   GraphSnapContext,
-  IEdge,
-  IGraph,
   LayoutExecutor,
   License,
   PolylineEdgeStyle,
   Stroke
 } from '@yfiles/yfiles'
 import SampleData from './resources/SampleData'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Provides different color fills for new edge busses in this demo.
@@ -120,7 +118,7 @@ const colorUtil = new ColorUtil()
  * Runs the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   initializeUI()
 

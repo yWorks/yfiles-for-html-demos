@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, License } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   BoundsVisual,
   createSampleGraphBounds,
@@ -35,12 +35,12 @@ import {
   initializeTutorialDefaults
 } from '../common'
 
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { CustomEdgeStyle } from './CustomEdgeStyle'
 import { initializeInlineGraphComponent } from '../../tutorial-style-implementation-node/common'
 import { CustomEdgeStyle as OldCustomEdgeStyle } from '../08-visibility/CustomEdgeStyle'
 
-License.value = await fetchLicense()
+License.value = licenseData
 
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)

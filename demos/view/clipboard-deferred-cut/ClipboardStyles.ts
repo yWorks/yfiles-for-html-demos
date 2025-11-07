@@ -28,22 +28,22 @@
  ***************************************************************************/
 import {
   EdgeStyleBase,
-  GeneralPath,
-  GraphComponent,
-  IEdge,
-  IEdgeStyle,
-  IGraph,
-  ILabel,
-  ILabelStyle,
-  IModelItem,
-  INode,
-  INodeStyle,
-  IRenderContext,
+  type GeneralPath,
+  type GraphComponent,
+  type IEdge,
+  type IEdgeStyle,
+  type IGraph,
+  type ILabel,
+  type ILabelStyle,
+  type IModelItem,
+  type INode,
+  type INodeStyle,
+  type IRenderContext,
   LabelStyleBase,
   NodeStyleBase,
-  Size,
+  type Size,
   SvgVisual,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 import { DeferredCutClipboard } from './DeferredCutClipboard'
 

@@ -26,19 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GeneralPath,
-  GraphComponent,
-  INode,
-  INodeStyle,
-  IRenderContext,
-  Matrix,
-  NodeStyleBase,
-  SvgVisual
-} from '@yfiles/yfiles'
-
-// @ts-ignore Import via URL
-// eslint-disable-next-line import/no-unresolved
+import { Matrix, NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 import { nothing, render, svg } from 'lit-html'
 
 /**
@@ -139,7 +127,6 @@ export class LitNodeStyle extends NodeStyleBase {
  * @param renderFunctionSource The source of the function
  */
 export function createLitNodeStyleFromSource(renderFunctionSource) {
-  // eslint-disable-next-line @typescript-eslint/no-implied-eval
   const renderFunction = new Function(
     'const svg = arguments[0]; const nothing = arguments[1]; const renderFunction = ' +
       renderFunctionSource +

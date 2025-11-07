@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Boundary Labeling [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -75,7 +75,7 @@
         <h1>Boundary Labeling</h1>
         <p>
           This demo shows how to configure the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">Organic Layout</a> algorithm for annotating a set of points on
+          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" class="api" target="_blank">Organic Layout</a> algorithm for annotating a set of points on
           a diagram (map, technical drawing, etc.).
         </p>
         <p>
@@ -89,7 +89,7 @@
         </p>
         <p>
           This demo defines constraints for the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">Organic Layout</a> algorithm to make sure that each label is
+          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" class="api" target="_blank">Organic Layout</a> algorithm to make sure that each label is
           placed on the correct side of the drawing based on the point's position, i.e., left/right
           or top/bottom. It also defines constraints for the vertical alignment of the label nodes.
         </p>
@@ -108,11 +108,21 @@
       <button data-command="FIT_GRAPH_BOUNDS"></button>
       <span class="demo-separator"></span>
 
-      <label>
-        Label Font Size:
-        <input type="range" min="10" max="25" value="12" step="1" id="font-size-slider" />
-        <span id="font-size-label">12</span>
-      </label>
+      <label for="font-size-slider" class="yplay__menu--select-label option-label"
+        >Label Font Size:</label
+      >
+      <div class="yplay__menu--slider-container option-element">
+        <input
+          type="range"
+          min="10"
+          max="25"
+          value="12"
+          step="1"
+          id="font-size-slider"
+          class="yplay__menu--slider option-element"
+        />
+        <span class="yplay__menu--slider-value" id="font-size-label">12</span>
+      </div>
     </div>
 
     <div class="demo-page__main">

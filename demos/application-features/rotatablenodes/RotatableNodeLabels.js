@@ -30,8 +30,6 @@ import {
   BaseClass,
   FreeNodeLabelModel,
   Graph,
-  IEnumerable,
-  ILabel,
   ILabelModel,
   ILabelModelParameter,
   ILabelModelParameterFinder,
@@ -39,8 +37,6 @@ import {
   ILookup,
   IMarkupExtensionConverter,
   INode,
-  IOrientedRectangle,
-  IWriteContext,
   List,
   MarkupExtension,
   OrientedRectangle
@@ -58,8 +54,9 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
   ILabelModel,
   IMarkupExtensionConverter
 ) {
-  wrapped
   useNodeRotation
+  wrapped
+
   /**
    * Creates a new instance of {@link RotatableNodeLabelModelDecorator}.
    */
@@ -151,8 +148,9 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
 }
 
 class RotatableNodeLabelModelLookup extends BaseClass(ILookup) {
-  label
   model
+  label
+
   constructor(label, model) {
     super()
     this.label = label
@@ -164,7 +162,7 @@ class RotatableNodeLabelModelLookup extends BaseClass(ILookup) {
    * {@link ILabelModelParameterFinder} that consider the nodes' rotation.
    * Wraps the default implementations in a special wrapper which supports rotation.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+
   lookup(type) {
     if (type === ILabelModelParameterProvider) {
       const provider = this.model.wrapped
@@ -247,8 +245,9 @@ export class RotatableNodeLabelModelDecoratorParameter extends BaseClass(ILabelM
  * Provides candidate parameters for rotated label models.
  */
 class RotatedNodeLabelModelParameterProvider extends BaseClass(ILabelModelParameterProvider) {
-  decorator
   wrappedProvider
+  decorator
+
   /**
    * Creates a new instance using the given parameter provider.
    */
@@ -277,9 +276,10 @@ class RotatedNodeLabelModelParameterProvider extends BaseClass(ILabelModelParame
  * Finds the best {@link ILabelModelParameter} to approximate a specific rotated layout.
  */
 class RotatedNodeLabelModelParameterFinder extends BaseClass(ILabelModelParameterFinder) {
-  label
-  wrappedFinder
   decorator
+  wrappedFinder
+  label
+
   /**
    * Creates a new instance using the given parameter finder.
    */

@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>07 Create Labels Sources - Tutorial: Graph Builder [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -133,7 +133,7 @@
               <div class="paragraph">
                 <p>
                   In this tutorial step, you will learn how to configure
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> in order to add labels to the visualization.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> in order to add labels to the visualization.
                 </p>
               </div>
               <div class="admonitionblock note">
@@ -146,7 +146,7 @@
                       <div class="paragraph">
                         <p>
                           This step is optional when building a graph with
-                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>. If you do not want to add labels to your
+                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. If you do not want to add labels to your
                           graph, you can proceed with the next step.
                         </p>
                       </div>
@@ -162,8 +162,8 @@
               <div class="paragraph">
                 <p>
                   There are three ways to add labels to the visualization using
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>. You can use <em>bindings</em> or load the labels
-                  from their own <em>sources</em> on the <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator" target="_blank">NodeCreator</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. You can use <em>bindings</em> or load the labels
+                  from their own <em>sources</em> on the <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator" class="api" target="_blank">NodeCreator</a>.
                 </p>
               </div>
               <div class="paragraph">
@@ -183,7 +183,7 @@
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodeData = [
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> nodeData = [
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Investment Capital&#x27;</span> },
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;1&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Melissa Barner&#x27;</span> }
 ]
@@ -196,16 +196,16 @@ nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-tit
                 <div class="paragraph">
                   <p>
                     The label binding can also be set explicitly using the
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#LabelCreator-property-textProvider" target="_blank">text provider</a>
-                    property. In this example, the label text is converted to upper-case to show
-                    that text can be augmented.
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#textProvider" class="api" target="_blank">text provider</a> property. In this
+                    example, the label text is converted to upper-case to show that text can be
+                    augmented.
                   </p>
                 </div>
                 <div class="listingblock">
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodeData = [{ <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;2&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Monster Inc&#x27;</span> }]
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> nodeData = [{ <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;2&#x27;</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Monster Inc&#x27;</span> }]
 <span class="hljs-keyword">const</span> nodesSource = graphBuilder.<span class="hljs-title function_">createNodesSource</span>(nodeData, <span class="hljs-string">&#x27;id&#x27;</span>)
 
 <span class="hljs-comment">// create the text provider that will return the name of each node</span>
@@ -221,7 +221,7 @@ labelCreator.<span class="hljs-property">textProvider</span> = (data): <span cla
                 <div class="paragraph">
                   <p>
                     If the node data contains a varying number of label data, you can use a
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelsSource" target="_blank">LabelsSource</a> to create the labels. For instance, take a look at
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelsSource" class="api" target="_blank">LabelsSource</a> to create the labels. For instance, take a look at
                     the dataset below where the label information is stored in the
                     <code>owners</code> property.
                   </p>
@@ -230,7 +230,7 @@ labelCreator.<span class="hljs-property">textProvider</span> = (data): <span cla
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> nodeData = [
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> nodeData = [
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;3&#x27;</span>, <span class="hljs-attr">owners</span>: [<span class="hljs-string">&#x27;Local Group&#x27;</span>, <span class="hljs-string">&#x27;Germany&#x27;</span>] },
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;4&#x27;</span>, <span class="hljs-attr">owners</span>: [<span class="hljs-string">&#x27;International Group&#x27;</span>] }
 ]</code></pre>
@@ -238,15 +238,15 @@ labelCreator.<span class="hljs-property">textProvider</span> = (data): <span cla
                 </div>
                 <div class="paragraph">
                   <p>
-                    In this case, the provider which is given as parameter is expected to return an
-                    enumerable of data items where each item represents one label.
+                    In this case, the provider which is given as a parameter is expected to return
+                    an enumerable of data items where each item represents one label.
                   </p>
                 </div>
                 <div class="listingblock">
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// create the label sources based on the `owners` property</span>
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// create the label sources based on the `owners` property</span>
 <span class="hljs-keyword">const</span> labelsSource = nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-title function_">createLabelsSource</span>(
   <span class="hljs-function">(<span class="hljs-params">data</span>) =&gt;</span> data.<span class="hljs-property">owners</span>
 )</code></pre>
@@ -259,14 +259,14 @@ labelCreator.<span class="hljs-property">textProvider</span> = (data): <span cla
                   <p>
                     Following a similar approach, we can also create labels for the edges. In this
                     example, we bind the edge label text to the <code>ownership</code> property of
-                    the dataset and we add some more text information.
+                    the dataset, and we add some more text information.
                   </p>
                 </div>
                 <div class="listingblock">
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> edgeData = [
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> edgeData = [
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;1&#x27;</span>, <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">ownership</span>: <span class="hljs-number">30</span> },
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;1&#x27;</span>, <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;2&#x27;</span>, <span class="hljs-attr">ownership</span>: <span class="hljs-number">60</span> },
   { <span class="hljs-attr">id</span>: <span class="hljs-string">&#x27;2&#x27;</span>, <span class="hljs-attr">sourceId</span>: <span class="hljs-string">&#x27;4&#x27;</span>, <span class="hljs-attr">targetId</span>: <span class="hljs-string">&#x27;0&#x27;</span>, <span class="hljs-attr">ownership</span>: <span class="hljs-number">5</span> },
@@ -320,7 +320,7 @@ edgesSource.<span class="hljs-property">edgeCreator</span>.<span class="hljs-tit
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

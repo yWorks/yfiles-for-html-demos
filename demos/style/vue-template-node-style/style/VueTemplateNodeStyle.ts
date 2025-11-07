@@ -44,7 +44,7 @@ import {
   TextWrapping
 } from '@yfiles/yfiles'
 
-import '@yfiles/demo-resources/style/demo.css'
+import '@yfiles/demo-app/demo.css'
 import type { App, Component, ComponentPublicInstance } from 'vue'
 import { createApp, customRef, defineComponent, markRaw, type Ref } from 'vue'
 

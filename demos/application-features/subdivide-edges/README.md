@@ -31,7 +31,7 @@ See the sources for details.
 ## Related Demos
 
 - [Drag and Drop Demo](../../input/draganddrop/)
-- application-features-drag-and-drop
+- [Component Drag and Drop Demo](../../input/componentdraganddrop/)
 - [Graph Drag and Drop Demo](../../input/graph-drag-and-drop/)
 - [Custom Drag and Drop Demo](../../input/custom-drag-and-drop/)
 - [Drag From Component Demo](../../input/drag-from-component/)

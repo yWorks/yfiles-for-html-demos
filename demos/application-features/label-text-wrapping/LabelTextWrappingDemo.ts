@@ -34,20 +34,20 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphModelManager,
-  IGraph,
+  type IGraph,
   LabelStyle,
   License,
   Rect,
-  RectangleNodeStyle,
+  type RectangleNodeStyle,
   ShapeNodeStyle,
   Size,
   StretchNodeLabelModel,
   WebGLGraphModelManager
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { BrowserDetection, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { BrowserDetection, finishLoading } from '@yfiles/demo-app/demo-page'
 import {
   initializeSvgWebGlSwitchButton,
   updateSvgWebGlSwitchButton
@@ -59,7 +59,7 @@ let graphComponent: GraphComponent
  * Bootstraps the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   // configure the graphModelManager to support switching between svg and webgl rendering

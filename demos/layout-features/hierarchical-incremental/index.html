@@ -33,10 +33,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-    <title>Incremental Hierarchical Layout - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <title>Incremental Hierarchical Layout [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -61,11 +61,8 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
-      <span class="demo-separator"></span>
-      <button id="layout" title="Run Layout" class="labeled">Layout</button>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -81,69 +78,74 @@
 
       <div class="demo-description__content">
         <h1>Incremental Hierarchical Layout</h1>
-
         <p>
-          This demo shows how to run the hierarchical layout algorithm on a predefined subset of
-          nodes (and edges) in a graph.
+          This demo shows how to run the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> algorithm on a
+          predefined subset of nodes in a graph.
         </p>
-
         <p>To achieve this, two setup steps are necessary:</p>
+        <ul>
+          <li>
+            <p>
+              The algorithm has to be told to work on a subset only. To do so, hierarchical
+              layout&#39;s
+              <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#fromSketchMode" class="api" target="_blank">from sketch mode</a> property has to
+              be set to <code>true</code>.
+            </p>
+          </li>
+          <li>
+            <p>
+              The algorithm has to know which set of nodes (and edges) to rearrange. The class
+              <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData" class="api" target="_blank">HierarchicalLayoutData</a> offers the
+              <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#incrementalNodes" class="api" target="_blank">incrementalNodes</a>
+            </p>
+          </li>
+          <li>
+            <p>
+              and
+              <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#incrementalEdges" class="api" target="_blank">incrementalEdges</a> properties
+              for this purpose.
+            </p>
+          </li>
+        </ul>
         <p>
-          First, the algorithm has to be told to work on a subset only. To do so,
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">HierarchicalLayout</a>'s
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#fromSketch" target="_blank">from sketch mode</a> property has to be set to
-          <code>true</code>.
-        </p>
-        <p>
-          Second, the algorithm has to be told which set of nodes (and edges) to rearrange. The
-          class <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData" target="_blank">HierarchicalLayoutData</a> offers the property
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#incrementalNodes" target="_blank">incrementalNodes</a> and
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#incrementalEdges" target="_blank">incrementalEdges</a> for this
-          purpose.
-        </p>
-
-        <p>
-          In this demo, the algorithm works on the subset of
-          <span style="color: #17bebb; font-weight: bold">turquoise nodes</span> only.
-        </p>
-        <p>Click the button in the toolbar to run the layout and see the effect.</p>
-
-        <h3>Code Snippet</h3>
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-incremental/HierarchicalIncremental.ts"
-            target="_blank"
-            >GitHub</a
+          In this demo, the algorithm is only applied to the
+          <strong><span style="color: #ff6c00">orange nodes</span></strong
           >.
         </p>
-
-        <h3>Demos</h3>
-
-        <p>You can also take a look at more extensive demos that take advantage of this feature:</p>
+        <h2>Things to Try</h2>
+        <p>Click the button in the toolbar to run the incremental layout and observe the effect.</p>
+        <h2>Demos</h2>
+        <p>More demos that make use of this feature:</p>
         <ul>
-          <li><a href="../../layout/hierarchical-nesting/" target="_blank">Hierarchical Nesting Demo</a></li>
-          <li><a href="../../layout/hierarchical-nesting-incremental/" target="_blank">Hierarchical Nesting (Incremental) Demo</a></li>
-          <li><a href="../../layout/interactive-hierarchical/" target="_blank">Interactive Hierarchical Layout Demo</a></li>
-          <li><a href="../../showcase/decisiontree/" target="_blank">Decision Tree Demo</a></li>
-          <li><a href="../../view/collapse/" target="_blank">Collapsible Trees Demo</a></li>
-          <li><a href="../../analysis/networkflows/" target="_blank">Network Flows Demo</a></li>
+          <li><a href="../../layout/hierarchical-nesting/" class="demo" target="_blank">Hierarchical Nesting Demo</a></li>
+          <li><a href="../../layout/hierarchical-nesting-incremental/" class="demo" target="_blank">Hierarchical Nesting (Incremental) Demo</a></li>
+          <li><a href="../../layout/interactive-hierarchical/" class="demo" target="_blank">Interactive Hierarchical Layout Demo</a></li>
+          <li><a href="../../showcase/decisiontree/" class="demo" target="_blank">Decision Tree Demo</a></li>
+          <li><a href="../../view/collapse/" class="demo" target="_blank">Collapsible Trees Demo</a></li>
+          <li><a href="../../analysis/networkflows/" class="demo" target="_blank">Network Flows Demo</a></li>
         </ul>
-        <h3>Documentation</h3>
-        <p>
-          The Developer's Guide has detailed information about the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout" target="_blank">hierarchical layout algorithm</a> in general and
-          about
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-incremental_layout" target="_blank">how to run the algorithm on a subset of nodes</a>
-          specifically.
-        </p>
+        <h2>Documentation</h2>
+        <ul>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-incremental_layout" class="dguide" target="_blank">Run hierarchical layout on a subset of nodes</a>
+          </li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout" class="dguide" target="_blank">Hierarchical layout algorithm</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData" class="api" target="_blank">HierarchicalLayoutData</a> class</li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="./HierarchicalIncrementalDemo.ts"
+      async
+    ></script>
   </body>
 </html>

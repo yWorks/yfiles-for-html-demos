@@ -28,14 +28,9 @@
  ***************************************************************************/
 import {
   Color,
-  EventArgs,
-  EventRecognizers,
   Fill,
   HorizontalTextAlignment,
   IconLabelStyle,
-  ILabelModelParameter,
-  ILabelStyle,
-  IModelItem,
   InteriorNodeLabelModel,
   KeyEventArgs,
   KeyEventType,
@@ -46,16 +41,6 @@ import {
   VerticalTextAlignment
 } from '@yfiles/yfiles'
 import { GraphWizardInputMode } from './GraphWizardInputMode'
-
-/**
- * The layout style buttons shall be arranged in.
- */
-export var PickerLayout
-;(function (PickerLayout) {
-  PickerLayout[(PickerLayout['Grid'] = 0)] = 'Grid'
-  PickerLayout[(PickerLayout['Row'] = 1)] = 'Row'
-  PickerLayout[(PickerLayout['Column'] = 2)] = 'Column'
-})(PickerLayout || (PickerLayout = {}))
 
 /**
  * An action managed by the {@link GraphWizardInputMode}.

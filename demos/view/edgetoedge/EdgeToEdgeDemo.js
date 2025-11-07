@@ -36,27 +36,25 @@ import {
   GridConstraintProvider,
   GridInfo,
   IBend,
-  IEdge,
   IEdgePortHandleProvider,
   IEdgeReconnectionPortCandidateProvider,
   IHitTestable,
   IPortCandidateProvider,
   IPortLocationModel,
-  KeyEventArgs,
   License,
-  ShapePortStyle,
   OrthogonalEdgeEditingContext,
   Point,
   PolylineEdgeStyle,
   PortRelocationHandleProvider,
+  ShapePortStyle,
   Stroke,
   Visualization
 } from '@yfiles/yfiles'
 
 import { EdgePathPortCandidateProvider } from './EdgePathPortCandidateProvider'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent
 
@@ -76,7 +74,7 @@ let graphComponent
  * etc.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
   initializeInputMode()

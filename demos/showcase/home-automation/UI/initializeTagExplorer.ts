@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, INode } from '@yfiles/yfiles'
+import { type GraphComponent, type INode } from '@yfiles/yfiles'
 import {
   type FlowNode,
   type FlowNodeValidation,

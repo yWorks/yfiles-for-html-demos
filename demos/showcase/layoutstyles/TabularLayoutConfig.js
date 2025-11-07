@@ -29,9 +29,6 @@
 import {
   Class,
   FreeNodeLabelModel,
-  GraphComponent,
-  ILayoutAlgorithm,
-  LayoutData,
   LayoutGrid,
   NodeLabelPlacement,
   TabularLayout,
@@ -43,37 +40,23 @@ import {
 import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 
-var LayoutPolicies
-;(function (LayoutPolicies) {
-  LayoutPolicies[(LayoutPolicies['AUTO_SIZE'] = 0)] = 'AUTO_SIZE'
-  LayoutPolicies[(LayoutPolicies['SINGLE_ROW'] = 1)] = 'SINGLE_ROW'
-  LayoutPolicies[(LayoutPolicies['SINGLE_COLUMN'] = 2)] = 'SINGLE_COLUMN'
-  LayoutPolicies[(LayoutPolicies['FIXED_TABLE_SIZE'] = 3)] = 'FIXED_TABLE_SIZE'
-  LayoutPolicies[(LayoutPolicies['FROM_SKETCH'] = 4)] = 'FROM_SKETCH'
-})(LayoutPolicies || (LayoutPolicies = {}))
-
-var HorizontalAlignments
-;(function (HorizontalAlignments) {
-  HorizontalAlignments[(HorizontalAlignments['LEFT'] = 0)] = 'LEFT'
-  HorizontalAlignments[(HorizontalAlignments['CENTER'] = 1)] = 'CENTER'
-  HorizontalAlignments[(HorizontalAlignments['RIGHT'] = 2)] = 'RIGHT'
-})(HorizontalAlignments || (HorizontalAlignments = {}))
-
-var VerticalAlignments
-;(function (VerticalAlignments) {
-  VerticalAlignments[(VerticalAlignments['TOP'] = 0)] = 'TOP'
-  VerticalAlignments[(VerticalAlignments['CENTER'] = 1)] = 'CENTER'
-  VerticalAlignments[(VerticalAlignments['BOTTOM'] = 2)] = 'BOTTOM'
-})(VerticalAlignments || (VerticalAlignments = {}))
+const LayoutPolicies = {
+  AUTO_SIZE: 0,
+  SINGLE_ROW: 1,
+  SINGLE_COLUMN: 2,
+  FIXED_TABLE_SIZE: 3,
+  FROM_SKETCH: 4
+}
+const HorizontalAlignments = { LEFT: 0, CENTER: 1, RIGHT: 2 }
+const VerticalAlignments = { TOP: 0, CENTER: 1, BOTTOM: 2 }
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -89,18 +72,18 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
     ],
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     layoutModeItem: [
       new LabelAttribute('Layout Mode', '#/api/TabularLayout#TabularLayout-property-layoutMode'),
       new OptionGroupAttribute('GeneralGroup', 10),
       new EnumValuesAttribute([
-        ['Automatic Table Size', LayoutPolicies.AUTO_SIZE],
-        ['Single Row', LayoutPolicies.SINGLE_ROW],
-        ['Single Column', LayoutPolicies.SINGLE_COLUMN],
-        ['Fixed Table Size', LayoutPolicies.FIXED_TABLE_SIZE],
-        ['From Sketch', LayoutPolicies.FROM_SKETCH]
+        ['Automatic Table Size', 'auto-size'],
+        ['Single Row', 'single-row'],
+        ['Single Column', 'single-column'],
+        ['Fixed Table Size', 'fixed-table-size'],
+        ['From Sketch', 'from-sketch']
       ]),
       new TypeAttribute(LayoutPolicies)
     ],
@@ -108,14 +91,14 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
       new LabelAttribute('Row Count', '#/api/LayoutGrid#LayoutGrid-constructor-LayoutGrid'),
       new OptionGroupAttribute('GeneralGroup', 20),
       new MinMaxAttribute(1, 200, 1),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     columnCountItem: [
       new LabelAttribute('Column Count', '#/api/LayoutGrid#LayoutGrid-constructor-LayoutGrid'),
       new OptionGroupAttribute('GeneralGroup', 30),
       new MinMaxAttribute(1, 200, 1),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     nodeLabelingItem: [
@@ -138,9 +121,9 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
         '#/api/TabularLayoutNodeDescriptor#TabularLayoutNodeDescriptor-property-horizontalAlignment'
       ),
       new EnumValuesAttribute([
-        ['Left', HorizontalAlignments.LEFT],
-        ['Center', HorizontalAlignments.CENTER],
-        ['Right', HorizontalAlignments.RIGHT]
+        ['Left', 'left'],
+        ['Center', 'center'],
+        ['Right', 'right']
       ]),
       new TypeAttribute(HorizontalAlignments)
     ],
@@ -151,9 +134,9 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
         '#/api/TabularLayoutNodeDescriptor#TabularLayoutNodeDescriptor-property-verticalAlignment'
       ),
       new EnumValuesAttribute([
-        ['Top', VerticalAlignments.TOP],
-        ['Center', VerticalAlignments.CENTER],
-        ['Bottom', VerticalAlignments.BOTTOM]
+        ['Top', 'top'],
+        ['Center', 'center'],
+        ['Bottom', 'bottom']
       ]),
       new TypeAttribute(VerticalAlignments)
     ],
@@ -161,7 +144,7 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
       new LabelAttribute('Cell Padding (all sides)', '#/api/LayoutGridRow'),
       new OptionGroupAttribute('GeneralGroup', 70),
       new MinMaxAttribute(0, 50, 1),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumRowHeightItem: [
@@ -171,7 +154,7 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
       ),
       new OptionGroupAttribute('GeneralGroup', 80),
       new MinMaxAttribute(0, 100, 1),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumColumnWidthItem: [
@@ -181,7 +164,7 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
       ),
       new OptionGroupAttribute('GeneralGroup', 90),
       new MinMaxAttribute(0, 100, 1),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ]
   },
@@ -195,11 +178,11 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
     const layout = new TabularLayout()
 
-    this.layoutModeItem = LayoutPolicies.AUTO_SIZE
+    this.layoutModeItem = 'auto-size'
     this.rowCountItem = 8
     this.columnCountItem = 12
-    this.horizontalAlignmentItem = HorizontalAlignments.CENTER
-    this.verticalAlignmentItem = HorizontalAlignments.CENTER
+    this.horizontalAlignmentItem = 'center'
+    this.verticalAlignmentItem = 'center'
     this.nodeLabelingItem = layout.nodeLabelPlacement
     this.minimumRowHeightItem = 0
     this.minimumColumnWidthItem = 0
@@ -217,15 +200,15 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
     const layout = new TabularLayout()
 
     switch (this.layoutModeItem) {
-      case LayoutPolicies.AUTO_SIZE:
+      case 'auto-size':
         layout.layoutMode = TabularLayoutMode.AUTO_SIZE
         break
-      case LayoutPolicies.FIXED_TABLE_SIZE:
-      case LayoutPolicies.SINGLE_ROW:
-      case LayoutPolicies.SINGLE_COLUMN:
+      case 'fixed-table-size':
+      case 'single-row':
+      case 'single-column':
         layout.layoutMode = TabularLayoutMode.FIXED_SIZE
         break
-      case LayoutPolicies.FROM_SKETCH:
+      case 'from-sketch':
         layout.layoutMode = TabularLayoutMode.FROM_SKETCH
         break
       default:
@@ -252,26 +235,26 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
     let horizontalAlignment
     switch (this.horizontalAlignmentItem) {
       default:
-      case HorizontalAlignments.CENTER:
+      case 'center':
         horizontalAlignment = 0.5
         break
-      case HorizontalAlignments.LEFT:
+      case 'left':
         horizontalAlignment = 0
         break
-      case HorizontalAlignments.RIGHT:
+      case 'right':
         horizontalAlignment = 1
         break
     }
     let verticalAlignment
     switch (this.verticalAlignmentItem) {
       default:
-      case VerticalAlignments.CENTER:
+      case 'center':
         verticalAlignment = 0.5
         break
-      case VerticalAlignments.TOP:
+      case 'top':
         verticalAlignment = 0
         break
-      case VerticalAlignments.BOTTOM:
+      case 'bottom':
         verticalAlignment = 1
         break
     }
@@ -283,7 +266,7 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
     const nodeCount = graphComponent.graph.nodes.size
     let layoutGrid
     switch (this.layoutModeItem) {
-      case LayoutPolicies.FIXED_TABLE_SIZE: {
+      case 'fixed-table-size': {
         const rowCount = this.rowCountItem
         const columnCount = this.columnCountItem
         if (rowCount * columnCount >= nodeCount) {
@@ -294,10 +277,10 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
         }
         break
       }
-      case LayoutPolicies.SINGLE_ROW:
+      case 'single-row':
         layoutGrid = new LayoutGrid(1, nodeCount)
         break
-      case LayoutPolicies.SINGLE_COLUMN:
+      case 'single-column':
         layoutGrid = new LayoutGrid(nodeCount, 1)
         break
       default:
@@ -347,7 +330,7 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
   /** @type {boolean} */
   shouldDisableRowCountItem: {
     get: function () {
-      return this.layoutModeItem !== LayoutPolicies.FIXED_TABLE_SIZE
+      return this.layoutModeItem !== 'fixed-table-size'
     }
   },
 
@@ -357,7 +340,7 @@ export const TabularLayoutConfig = Class('TabularLayoutConfig', {
   /** @type {boolean} */
   shouldDisableColumnCountItem: {
     get: function () {
-      return this.layoutModeItem !== LayoutPolicies.FIXED_TABLE_SIZE
+      return this.layoutModeItem !== 'fixed-table-size'
     }
   },
 

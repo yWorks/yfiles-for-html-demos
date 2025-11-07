@@ -72,6 +72,7 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
  */
 class EdgeRenderVisual extends HtmlCanvasVisual {
   edge
+
   /**
    * Creates an EdgeRenderVisual for the given edge with the given thickness.
    */

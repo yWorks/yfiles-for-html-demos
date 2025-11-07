@@ -27,14 +27,19 @@
  **
  ***************************************************************************/
 import {
+  BaseClass,
   DelegatingLabelStyle,
   IconLabelStyle,
   type ILabel,
   type ILabelModelParameter,
   type ILabelStyle,
+  type ILookup,
+  IMarkupExtensionConverter,
   type INode,
   Insets,
   InteriorNodeLabelModel,
+  type IWriteContext,
+  MarkupExtension,
   Size
 } from '@yfiles/yfiles'
 import { getNodeData, type NodeData } from '../data-types'
@@ -68,9 +73,15 @@ export const stateIcons = [
  * The placement of the icon is on the right (left) side of the text label for nodes on the
  * left (right) side of the tree.
  */
-export class MindMapIconLabelStyle extends DelegatingLabelStyle {
-  constructor(private delegatingLabelStyle: ILabelStyle) {
+export class MindMapIconLabelStyle extends BaseClass(
+  DelegatingLabelStyle,
+  IMarkupExtensionConverter
+) {
+  private delegatingLabelStyle: ILabelStyle
+
+  constructor(delegatingLabelStyle: ILabelStyle) {
     super()
+    this.delegatingLabelStyle = delegatingLabelStyle
   }
 
   /**
@@ -126,4 +137,49 @@ export class MindMapIconLabelStyle extends DelegatingLabelStyle {
     }
     return Insets.EMPTY
   }
+
+  /**
+   * Returns that this style can be converted.
+   */
+  canConvert(_context: IWriteContext, _value: MindMapIconLabelStyle): boolean {
+    return true
+  }
+
+  /**
+   * Converts this style using {@link MindMapIconLabelStyleExtension}.
+   */
+  convert(_context: IWriteContext, value: MindMapIconLabelStyle): MarkupExtension {
+    const mindMapIconLabelStyleExtension = new MindMapIconLabelStyleExtension()
+    mindMapIconLabelStyleExtension.delegatingLabelStyle = value.delegatingLabelStyle
+    return mindMapIconLabelStyleExtension
+  }
 }
+
+/**
+ * A markup extension that creates a {@link MindMapIconLabelStyle} instance configured with a delegating label style.
+ */
+class MindMapIconLabelStyleExtension extends MarkupExtension {
+  private _delegatingLabelStyle!: ILabelStyle
+
+  /**
+   * Gets or sets the label style that this icon label style delegates to.
+   */
+  get delegatingLabelStyle(): ILabelStyle {
+    return this._delegatingLabelStyle
+  }
+
+  set delegatingLabelStyle(value: ILabelStyle) {
+    this._delegatingLabelStyle = value
+  }
+
+  /**
+   * Provides a {@link MindMapIconLabelStyle} instance using the configured delegating label style.
+   * @returns A new `MindMapIconLabelStyle` initialized with the specified delegating label style.
+   */
+  provideValue(_serviceProvider: ILookup): MindMapIconLabelStyle {
+    return new MindMapIconLabelStyle(this.delegatingLabelStyle)
+  }
+}
+
+// export a default object to be able to map a namespace to this module for serialization
+export default { MindMapIconLabelStyle, MindMapIconLabelStyleExtension }

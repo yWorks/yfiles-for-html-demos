@@ -29,19 +29,13 @@
 import {
   DragDropEffects,
   DragDropItem,
-  DragEventArgs,
   DragSource,
   DropInputMode,
   HighlightIndicatorManager,
   IEdge,
-  IGraph,
   IHitTester,
-  IInputModeContext,
-  IModelItem,
   INode,
   InputModeContext,
-  InputModeEventArgs,
-  Point,
   PolylineEdgeStyle,
   ShapeNodeStyle
 } from '@yfiles/yfiles'

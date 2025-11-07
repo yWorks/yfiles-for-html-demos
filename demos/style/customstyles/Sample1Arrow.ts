@@ -32,10 +32,10 @@ import {
   GeneralPath,
   IArrow,
   IBoundsProvider,
-  ICanvasContext,
-  IEdge,
-  IEdgeStyle,
-  IRenderContext,
+  type ICanvasContext,
+  type IEdge,
+  type IEdgeStyle,
+  type IRenderContext,
   ISvgDefsCreator,
   IVisualCreator,
   Point,
@@ -269,8 +269,11 @@ export class Sample1Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
  * defined interface to deal with.
  */
 class CustomGradientSupport extends BaseClass(ISvgDefsCreator) {
-  constructor(public readonly gradient: SVGLinearGradientElement) {
+  readonly gradient: SVGLinearGradientElement
+
+  constructor(gradient: SVGLinearGradientElement) {
     super()
+    this.gradient = gradient
   }
 
   createDefsElement(context: ICanvasContext): SVGElement {

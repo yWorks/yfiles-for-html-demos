@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 import { GraphBuilder, GraphComponent, License } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import {
   configureStyles,
   fitGraphBounds,
@@ -40,7 +40,7 @@ import {
   configureNodeLayoutWithProvider
 } from './configure-layout'
 
-License.value = await fetchLicense()
+License.value = licenseData
 
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)

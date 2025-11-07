@@ -20,11 +20,11 @@ This demo presents simple operations for aligning and distributing nodes.
 ## Things to Try
 
 - Select several nodes and use  
-  ![Align Top](../../resources/icons/align-top-16.svg 'Align Top')   ![Align Bottom](../../resources/icons/align-bottom-16.svg 'Align Bottom')   ![Align Left](../../resources/icons/align-left-16.svg 'Align Left')   ![Align Right](../../resources/icons/align-right-16.svg 'Align Right')  
+  ![Align Top](../../demo-app/icons/align-top-16.svg 'Align Top')   ![Align Bottom](../../demo-app/icons/align-bottom-16.svg 'Align Bottom')   ![Align Left](../../demo-app/icons/align-left-16.svg 'Align Left')   ![Align Right](../../demo-app/icons/align-right-16.svg 'Align Right')  
   to align these nodes at their top, bottom, left, or right border.
 - Select several nodes and use  
-  ![Align Vertically](../../resources/icons/align-vertical-16.svg 'Align Vertically')   ![Align Horizontally](../../resources/icons/align-horizontal-16.svg 'Align Horizontally')  
+  ![Align Vertically](../../demo-app/icons/align-vertical-16.svg 'Align Vertically')   ![Align Horizontally](../../demo-app/icons/align-horizontal-16.svg 'Align Horizontally')  
   to align these nodes such that their centers coincide.
 - Select several horizontally and/or vertically overlapping nodes and use  
-  ![Distribute Vertically](../../resources/icons/distribute-vertical-16.svg 'Distribute Vertically')   ![Distribute Horizontally](../../resources/icons/distribute-horizontal-16.svg 'Distribute Horizontally')  
+  ![Distribute Vertically](../../demo-app/icons/distribute-vertical-16.svg 'Distribute Vertically')   ![Distribute Horizontally](../../demo-app/icons/distribute-horizontal-16.svg 'Distribute Horizontally')  
   to distribute these nodes along the indicated coordinate axis.

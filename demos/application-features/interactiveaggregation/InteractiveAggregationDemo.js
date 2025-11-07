@@ -32,12 +32,6 @@ import {
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  IEnumerable,
-  IGraph,
-  IList,
-  IModelItem,
-  INode,
-  INodeStyle,
   InteriorNodeLabelModel,
   LabelingScope,
   LabelShape,
@@ -48,7 +42,6 @@ import {
   OrganicLayout,
   Point,
   PolylineEdgeStyle,
-  PopulateItemContextMenuEventArgs,
   Rect,
   ShapeNodeShape,
   ShapeNodeStyle,
@@ -60,9 +53,9 @@ import {
   AggregationGraphWrapper,
   EdgeReplacementPolicy
 } from '@yfiles/demo-utils/AggregationGraphWrapper'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import graphData from './graph-data.json'
 
 LayoutExecutor.ensure()
@@ -97,7 +90,7 @@ const shapeAndFillStyle = (shapeAndFill) =>
   })
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('#graphComponent')
   // initialize the demo styles

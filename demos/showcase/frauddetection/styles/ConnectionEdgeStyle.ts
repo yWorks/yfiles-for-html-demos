@@ -80,11 +80,14 @@ export class ConnectionEdgeStyle extends EdgeStyleBase {
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeRenderVisual extends HtmlCanvasVisual {
+  private readonly edge: IEdge
+
   /**
    * Creates an EdgeRenderVisual for the given edge with the given thickness.
    */
-  constructor(private readonly edge: IEdge) {
+  constructor(edge: IEdge) {
     super()
+    this.edge = edge
     this.edge = edge
   }
 

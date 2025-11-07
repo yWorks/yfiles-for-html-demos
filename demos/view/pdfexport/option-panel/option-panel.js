@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import { toggleExportRectangle } from '../export-rectangle/export-rectangle'
-import { PaperSize } from '../PaperSize'
 
 export function initializeOptionPanel(exportCallback) {
   const useRectInput = document.querySelector('#use-rect')
@@ -69,6 +68,5 @@ export function initializeOptionPanel(exportCallback) {
  * Returns the chosen export paper size.
  */
 function getPaperSize() {
-  const inputPaperSize = document.querySelector('#paperSize')
-  return PaperSize[inputPaperSize.value]
+  return document.querySelector('#paperSize').value
 }

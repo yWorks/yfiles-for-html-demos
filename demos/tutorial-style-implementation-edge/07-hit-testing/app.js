@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, GraphItemTypes, License } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   addHoverEffect,
   createSampleGraphHitTest,
@@ -36,11 +36,11 @@ import {
   initializeTutorialDefaults
 } from '../common'
 
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { CustomEdgeStyle } from './CustomEdgeStyle'
 import { CustomEdgeStyle as OldCustomEdgeStyle } from '../06-data-from-tag/CustomEdgeStyle'
 
-License.value = await fetchLicense()
+License.value = licenseData
 
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)

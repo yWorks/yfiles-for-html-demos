@@ -33,16 +33,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-    <title>Build Graph from Data - Application Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <title>Building Graphs From Data [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
-
-    <style>
-      :root {
-        --description-width: 360px;
-      }
-    </style>
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -66,20 +60,9 @@
     </header>
 
     <div class="demo-page__toolbar">
-      <button data-command="NEW"></button>
-      <span class="demo-separator"></span>
-      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
-      <span class="demo-separator"></span>
-      <button data-command="CUT"></button>
-      <button data-command="COPY"></button>
-      <button data-command="PASTE"></button>
-      <span class="demo-separator"></span>
-      <button data-command="UNDO"></button>
-      <button data-command="REDO"></button>
-      <span class="demo-separator"></span>
-      <button data-command="GROUP_SELECTION"></button>
-      <button data-command="UNGROUP_SELECTION"></button>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -95,51 +78,57 @@
 
       <div class="demo-description__content">
         <h1>Build Graph from Data</h1>
-
         <p>This demo shows how to build a graph using the data stored in JSON-format.</p>
         <p>
-          This demo utilizes the <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" target="_blank">IGraph</a> API to create graph elements, which can be useful
-          for handling special cases. However, for general use cases, we recommend using the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> for creating graphs from data. The GraphBuilder simplifies the
-          process and is the recommended approach for most scenarios.
+          This demo utilizes the <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" class="api" target="_blank">IGraph</a> API to create graph elements, which can
+          be useful for handling special cases.
         </p>
-
+        <p>
+          However, for general use cases, we recommend using the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> for
+          creating graphs from data. It simplifies the process and is the recommended approach for
+          most scenarios.
+        </p>
         <ul>
           <li>Note that some nodes have individual colors or sizes.</li>
           <li>Look at the hierarchy of group nodes.</li>
           <li>See the edges connecting to normal nodes and group nodes.</li>
         </ul>
-
         <p>
           The input data structure itself is arbitrary. It just needs to contain all the necessary
           information to build the graph. This demo uses the following structure:
         </p>
-        <pre>
-{
-  "nodesSource" = [
-    {"id": "0", "label": "Source"},
-    {"id": "1", "group": "group0"},
+        <pre><code>{
+  &quot;nodesSource&quot; = [
+    {&quot;id&quot;: &quot;0&quot;, &quot;label&quot;: &quot;Source&quot;},
+    {&quot;id&quot;: &quot;1&quot;, &quot;group&quot;: &quot;group0&quot;},
     ...
   ],
-  "edgesSource": [
-    {"from": "0", "to": "group0"},
+  &quot;edgesSource&quot;: [
+    {&quot;from&quot;: &quot;0&quot;, &quot;to&quot;: &quot;group0&quot;},
     ...
   ],
-  "groupsSource": [
-    {"id": "group0", "label": "Group 1"},
+  &quot;groupsSource&quot;: [
+    {
+      &quot;id&quot;: &quot;group0&quot;,
+      &quot;label&quot;: &quot;Group 1&quot;
+    },
     ...
   ]
-}</pre
-        >
-
-        <p>See the sources for details.</p>
+}
+</code></pre>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="BuildingGraphFromDataDemo.ts" async></script>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="./BuildingGraphFromDataDemo.ts"
+      async
+    ></script>
   </body>
 </html>

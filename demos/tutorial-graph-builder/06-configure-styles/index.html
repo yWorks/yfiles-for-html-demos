@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>06 Configure Styles - Tutorial: Graph Builder [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -132,7 +132,7 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> supports various approaches for styling the graph
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> supports various approaches for styling the graph
                   elements. They range from simple default visualizations to accessing the business
                   data for defining specific styles.
                 </p>
@@ -147,13 +147,13 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">type <span class="hljs-title class_">EntityData</span> = {
-  <span class="hljs-attr">id</span>: string
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">type</span> <span class="hljs-title class_">EntityData</span> = {
+  <span class="hljs-attr">id</span>: <span class="hljs-built_in">string</span>
   <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;Trust&#x27;</span> | <span class="hljs-string">&#x27;Corporation&#x27;</span> | <span class="hljs-string">&#x27;Branch&#x27;</span> | <span class="hljs-string">&#x27;PE_Risk&#x27;</span>
   <span class="hljs-attr">currency</span>: <span class="hljs-string">&#x27;USD&#x27;</span> | <span class="hljs-string">&#x27;EUR&#x27;</span>
 }
 
-type <span class="hljs-title class_">ConnectionData</span> = { <span class="hljs-attr">sourceId</span>: string; <span class="hljs-attr">targetId</span>: string; <span class="hljs-attr">ownership</span>: number }</code></pre>
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">ConnectionData</span> = { <span class="hljs-attr">sourceId</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">targetId</span>: <span class="hljs-built_in">string</span>; <span class="hljs-attr">ownership</span>: <span class="hljs-built_in">number</span> }</code></pre>
                 </div>
               </div>
             </div>
@@ -166,7 +166,7 @@ type <span class="hljs-title class_">ConnectionData</span> = { <span class="hljs
                   There are basically three ways to style nodes using GraphBuilder: Specifically,
                   you can set <em>default styles</em>, <em>style</em> <em>bindings</em> and
                   <em>style</em> <em>providers</em> on the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator(TDataItem)" target="_blank">NodeCreator</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator" class="api" target="_blank">NodeCreator</a>.
                 </p>
               </div>
               <div class="sect2">
@@ -182,7 +182,7 @@ type <span class="hljs-title class_">ConnectionData</span> = { <span class="hljs
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript">nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">defaults</span>.<span class="hljs-property">size</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(<span class="hljs-number">150</span>, <span class="hljs-number">90</span>)
+                    ><code class="language-typescript" data-lang="typescript">nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">defaults</span>.<span class="hljs-property">size</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Size</span>(<span class="hljs-number">150</span>, <span class="hljs-number">90</span>)
 nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">defaults</span>.<span class="hljs-property">style</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShapeNodeStyle</span>({
   <span class="hljs-attr">shape</span>: <span class="hljs-string">&#x27;ellipse&#x27;</span>,
   <span class="hljs-attr">fill</span>: blue
@@ -196,7 +196,7 @@ nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
                   <p>
                     To style specific attributes of the default style defined above using business
                     data, use <em>style</em> <em>bindings.</em> In this example, we bind the stroke
-                    and thickness of the <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" target="_blank">ShapeNodeStyle</a> to the
+                    and thickness of the <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" class="api" target="_blank">ShapeNodeStyle</a> to the
                     <code>currency</code> property of the displayed data item.
                   </p>
                 </div>
@@ -222,12 +222,12 @@ nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// disable sharing of styles</span>
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// disable sharing of styles</span>
 nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">defaults</span>.<span class="hljs-property">shareStyleInstance</span> = <span class="hljs-literal">false</span>
 
 nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">styleBindings</span>.<span class="hljs-title function_">addBinding</span>(
   <span class="hljs-string">&#x27;stroke&#x27;</span>,
-  <span class="hljs-function">(<span class="hljs-params">entityData: EntityData</span>) =&gt;</span> {
+  <span class="hljs-function">(<span class="hljs-params"><span class="hljs-attr">entityData</span>: <span class="hljs-title class_">EntityData</span></span>) =&gt;</span> {
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Stroke</span>({
       <span class="hljs-attr">fill</span>: entityData.<span class="hljs-property">currency</span> === <span class="hljs-string">&#x27;EUR&#x27;</span> ? darkBlue : red,
       <span class="hljs-attr">thickness</span>: <span class="hljs-number">3</span>
@@ -242,9 +242,9 @@ nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
                 <div class="paragraph">
                   <p>
                     In contrast to a style <em>binding</em>, a <em>style provider</em> returns
-                    complete <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" target="_blank">INodeStyle</a>s, usually involving some calculations with
+                    complete <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" class="api" target="_blank">INodeStyle</a>s, usually involving some calculations with
                     the provided node data. In this example, different
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" target="_blank">ShapeNodeStyle</a>s are returned depending on the
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" class="api" target="_blank">ShapeNodeStyle</a>s are returned depending on the
                     <code>type</code> of entity represented by the node:
                   </p>
                 </div>
@@ -252,7 +252,7 @@ nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript">nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">styleProvider</span> = (
+                    ><code class="language-typescript" data-lang="typescript">nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-property">styleProvider</span> = (
   <span class="hljs-attr">entityData</span>: <span class="hljs-title class_">EntityData</span>
 ): <span class="hljs-title class_">ShapeNodeStyle</span> | <span class="hljs-function"><span class="hljs-params">undefined</span> =&gt;</span> {
   <span class="hljs-keyword">if</span> (entityData.<span class="hljs-property">type</span> === <span class="hljs-string">&#x27;Branch&#x27;</span>) {
@@ -274,14 +274,14 @@ nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
                   For edge styling, default styles, bindings and providers work the same way as for
                   node styling. In this example we only use an edge style <em>provider</em> that
                   styles ownership edges with more than 50% <code>ownership</code> in red and edges
-                  without ownership data in grey with a dashed stroke:
+                  without ownership data in gray with a dashed stroke:
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">edgesSource.<span class="hljs-property">edgeCreator</span>.<span class="hljs-property">styleProvider</span> = (
+                  ><code class="language-typescript" data-lang="typescript">edgesSource.<span class="hljs-property">edgeCreator</span>.<span class="hljs-property">styleProvider</span> = (
   <span class="hljs-attr">connectionData</span>: <span class="hljs-title class_">ConnectionData</span>
 ): <span class="hljs-function"><span class="hljs-params">PolylineEdgeStyle</span> =&gt;</span> {
   <span class="hljs-keyword">if</span> (connectionData.<span class="hljs-property">ownership</span>) {
@@ -333,7 +333,7 @@ nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

@@ -74,6 +74,7 @@ const DummyFoldingView: FoldingViewType = {
  * a checkbox state and CSS selectors. Therefore, the corresponding CSS file is required.
  */
 export class StructureView {
+    private graph: IGraph;
   /**
    * The text for nodes that do not have a label.
    */
@@ -103,8 +104,9 @@ export class StructureView {
    */
   constructor(
     selector: string,
-    private graph: IGraph
+    graph: IGraph
   ) {
+      this.graph = graph;
     this.nodeToElement = new HashMap()
     this.rootListElement = document.createElement('ol')
 

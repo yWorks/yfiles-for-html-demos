@@ -32,8 +32,8 @@ const font = new Font({ fontFamily: 'Arial', fontSize: 12 })
 const padding = 3
 
 export class CustomLabelStyle extends LabelStyleBase {
-  horizontalAlignment
   verticalAlignment
+  horizontalAlignment
   constructor(horizontalAlignment = 'middle', verticalAlignment = 'center') {
     super()
     this.horizontalAlignment = horizontalAlignment

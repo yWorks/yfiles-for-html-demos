@@ -30,11 +30,11 @@ import {
   BaseClass,
   type Constructor,
   FreeLabelModel,
-  ILabel,
+  type ILabel,
   ILabelModel,
   ILabelModelParameter,
-  ILookup,
-  IOrientedRectangle,
+  type ILookup,
+  type IOrientedRectangle,
   OrientedRectangle,
   Point,
   SimpleLabel,
@@ -141,7 +141,6 @@ export class OffsetLabelModelWrapper extends BaseClass(ILabelModel) {
     )
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
   lookup<T>(type: Constructor<T>): T | null {
     return null
   }

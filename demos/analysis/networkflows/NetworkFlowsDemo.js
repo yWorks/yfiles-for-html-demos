@@ -32,18 +32,16 @@ import {
   EdgePathLabelModel,
   EdgeSides,
   EdgeStyleIndicatorRenderer,
+  FreeNodePortLocationModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   HierarchicalLayout,
   HierarchicalLayoutData,
-  ICompoundEdit,
   IEdge,
-  IGraph,
   ILabel,
-  ILabelOwner,
-  IMapper,
   INode,
+  IPortCandidateProvider,
   IUndoUnit,
   LabelEdgeSides,
   LabelStyle,
@@ -52,7 +50,7 @@ import {
   Mapper,
   MaximumFlow,
   MinimumCostFlow,
-  MinimumCostFlowResult,
+  PortCandidate,
   Rect,
   Size,
   SmartEdgeLabelModel
@@ -62,8 +60,8 @@ import { HTMLPopupSupport } from './HTMLPopupSupport'
 import { EmptyReshapeHandleProvider, NetworkFlowInputMode } from './NetworkFlowsHelper'
 import { MinCutLine, NetworkFlowEdgeStyle, NetworkFlowNodeStyle } from './DemoStyles'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * The GraphComponent.
@@ -128,7 +126,7 @@ const flowInput = document.querySelector('#flowValue')
  * Runs the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   initializeGraph()
   initializeGraphComponent()
@@ -162,11 +160,30 @@ function initializeGraph() {
     padding: [3, 5, 3, 5]
   })
 
-  graph.decorator.nodes.reshapeHandleProvider.addConstant(new EmptyReshapeHandleProvider())
-  graph.decorator.edges.selectionRenderer.hide()
-  graph.decorator.labels.selectionRenderer.hide()
-  graph.decorator.labels.focusRenderer.hide()
-  graph.decorator.edges.highlightRenderer.addConstant(
+  const decorator = graph.decorator
+  decorator.nodes.reshapeHandleProvider.addConstant(new EmptyReshapeHandleProvider())
+  decorator.nodes.portCandidateProvider.addFactory((node) => {
+    if (graph.inDegree(node) === 0 && graph.outDegree(node) > 0) {
+      // candidate is the source node - show candidates only the right side
+      return IPortCandidateProvider.fromCandidates(
+        new PortCandidate(node, FreeNodePortLocationModel.RIGHT)
+      )
+    } else if (graph.outDegree(node) === 0 && graph.inDegree(node) > 0) {
+      // candidate is the sink node - show candidates only the left side
+      return IPortCandidateProvider.fromCandidates(
+        new PortCandidate(node, FreeNodePortLocationModel.LEFT)
+      )
+    }
+    // show candidates on left and right side
+    return IPortCandidateProvider.fromCandidates([
+      new PortCandidate(node, FreeNodePortLocationModel.RIGHT),
+      new PortCandidate(node, FreeNodePortLocationModel.LEFT)
+    ])
+  })
+  decorator.edges.selectionRenderer.hide()
+  decorator.labels.selectionRenderer.hide()
+  decorator.labels.focusRenderer.hide()
+  decorator.edges.highlightRenderer.addConstant(
     new EdgeStyleIndicatorRenderer({
       edgeStyle: new NetworkFlowEdgeStyle(Color.DARK_ORANGE),
       zoomPolicy: 'world-coordinates'
@@ -829,6 +846,7 @@ function initializeUI() {
   document.querySelector('#apply').addEventListener(
     'click',
     async () => {
+      edgePopup.currentItem = null
       runFlowAlgorithm()
       await runLayout(true)
     },

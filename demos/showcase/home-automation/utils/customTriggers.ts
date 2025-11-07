@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { runLayout } from '../layout/runLayout'
-import { GraphComponent, GraphEditorInputMode, type GridRenderer } from '@yfiles/yfiles'
+import { type GraphComponent, type GraphEditorInputMode, type GridRenderer } from '@yfiles/yfiles'
 
 export async function runAutoLayout(graphComponent: GraphComponent) {
   const layoutButton = document.querySelector<HTMLButtonElement>('#layoutButton')!

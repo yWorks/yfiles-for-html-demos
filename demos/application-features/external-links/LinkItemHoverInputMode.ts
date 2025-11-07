@@ -28,13 +28,13 @@
  ***************************************************************************/
 import {
   Cursor,
-  HoveredItemChangedEventArgs,
+  type HoveredItemChangedEventArgs,
   IEdge,
   ILabel,
-  IModelItem,
+  type IModelItem,
   INode,
   ItemHoverInputMode,
-  LabelStyle,
+  type LabelStyle,
   ModifierKeys
 } from '@yfiles/yfiles'
 

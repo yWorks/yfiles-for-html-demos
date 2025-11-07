@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphComponent,
-  GraphEditorInputMode,
-  GraphItemTypes,
-  INode,
-  Point,
-  Rect
-} from '@yfiles/yfiles'
+import { GraphItemTypes, INode, Rect } from '@yfiles/yfiles'
 
 /**
  * Sets up simple data binding by storing the creation date in the node tag.

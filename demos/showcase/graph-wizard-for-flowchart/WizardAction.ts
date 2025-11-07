@@ -28,14 +28,14 @@
  ***************************************************************************/
 import {
   Color,
-  EventArgs,
-  EventRecognizers,
+  type EventArgs,
+  type EventRecognizers,
   Fill,
   HorizontalTextAlignment,
   IconLabelStyle,
-  ILabelModelParameter,
-  ILabelStyle,
-  IModelItem,
+  type ILabelModelParameter,
+  type ILabelStyle,
+  type IModelItem,
   InteriorNodeLabelModel,
   KeyEventArgs,
   KeyEventType,
@@ -90,14 +90,7 @@ export type RectButton = { type: 'rect'; outline?: string; fill?: string }
  */
 export type TextButton = { type: 'text'; text: string; iconPath?: string; backgroundFill?: string }
 
-/**
- * The layout style buttons shall be arranged in.
- */
-export enum PickerLayout {
-  Grid,
-  Row,
-  Column
-}
+export type PickerLayout = 'Grid' | 'Row' | 'Column'
 
 /**
  * The configuration options for a {@link Button} used for a {@link WizardAction}.

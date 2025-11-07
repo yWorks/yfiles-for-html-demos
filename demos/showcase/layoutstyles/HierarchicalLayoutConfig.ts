@@ -35,7 +35,7 @@ import {
   FeedbackEdgeSet,
   FromSketchLayerAssigner,
   GenericLabeling,
-  GraphComponent,
+  type GraphComponent,
   GridComponentDescriptor,
   GroupAlignmentPolicy,
   GroupLayeringPolicy,
@@ -46,12 +46,12 @@ import {
   HierarchicalLayoutPortAssignmentMode,
   HierarchicalLayoutRoutingStyle,
   HierarchicalLayoutSubcomponentDescriptor,
-  IEdge,
-  IGraph,
-  ILayoutAlgorithm,
-  INode,
+  type IEdge,
+  type IGraph,
+  type ILayoutAlgorithm,
+  type INode,
   ITable,
-  LayoutData,
+  type LayoutData,
   LayoutOrientation,
   LeftRightSubtreePlacer,
   List,
@@ -75,14 +75,13 @@ import {
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 import { TopLevelGroupToSwimlaneStage } from './TopLevelGroupToSwimlaneStage'
 
 /**
@@ -162,7 +161,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
     ],
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     selectedElementsIncrementallyItem: [
@@ -223,7 +222,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       ),
       new MinMaxAttribute(0, 150),
       new OptionGroupAttribute('GeneralGroup', 50),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     nodeDistanceItem: [
@@ -233,7 +232,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       ),
       new MinMaxAttribute(0, 100),
       new OptionGroupAttribute('DistanceGroup', 10),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     nodeToEdgeDistanceItem: [
@@ -243,7 +242,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       ),
       new MinMaxAttribute(0, 100),
       new OptionGroupAttribute('DistanceGroup', 20),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     edgeDistanceItem: [
@@ -253,7 +252,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       ),
       new MinMaxAttribute(0, 100),
       new OptionGroupAttribute('DistanceGroup', 30),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumLayerDistanceItem: [
@@ -263,7 +262,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       ),
       new MinMaxAttribute(0, 100),
       new OptionGroupAttribute('DistanceGroup', 40),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     edgeRoutingItem: [
@@ -319,7 +318,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 60),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumLastSegmentLengthItem: [
@@ -329,7 +328,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 70),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumEdgeLengthItem: [
@@ -339,7 +338,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 80),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumEdgeDistanceItem: [
@@ -349,7 +348,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 90),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumSlopeItem: [
@@ -359,7 +358,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
         '#/api/HierarchicalLayoutEdgeDescriptor#HierarchicalLayoutEdgeDescriptor-property-minimumSlope'
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     edgeDirectednessItem: [
@@ -406,7 +405,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 160),
       new MinMaxAttribute(0, 1, 0.1),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     curveShortcutsItem: [
@@ -480,7 +479,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
         'Scale',
         '#/api/FromSketchLayerAssigner#FromSketchLayerAssigner-property-nodeScalingFactor'
       ),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     nodeMarginItem: [
@@ -490,7 +489,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
         '#/api/FromSketchLayerAssigner#FromSketchLayerAssigner-property-nodeMargin'
       ),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumSizeItem: [
@@ -500,7 +499,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
         '#/api/FromSketchLayerAssigner#FromSketchLayerAssigner-property-minimumNodeSize'
       ),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     maximumSizeItem: [
@@ -510,7 +509,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
         '#/api/FromSketchLayerAssigner#FromSketchLayerAssigner-property-maximumNodeSize'
       ),
       new MinMaxAttribute(0, 1000),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     nodeLabelingItem: [
@@ -559,10 +558,10 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       new LabelAttribute('Orientation', '#/api/EdgeLabelPreferredPlacement'),
       new OptionGroupAttribute('PreferredPlacementGroup', 10),
       new EnumValuesAttribute([
-        ['Parallel', LabelPlacementOrientation.PARALLEL],
-        ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
-        ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
-        ['Vertical', LabelPlacementOrientation.VERTICAL]
+        ['Parallel', 'parallel'],
+        ['Orthogonal', 'orthogonal'],
+        ['Horizontal', 'horizontal'],
+        ['Vertical', 'vertical']
       ]),
       new TypeAttribute(LabelPlacementOrientation)
     ],
@@ -573,12 +572,12 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 20),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
-        ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
-        ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
-        ['At Target', LabelPlacementAlongEdge.AT_TARGET],
-        ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
-        ['Centered', LabelPlacementAlongEdge.CENTERED]
+        ['Anywhere', 'anywhere'],
+        ['At Source', 'at-source'],
+        ['At Source Port', 'at-source-port'],
+        ['At Target', 'at-target'],
+        ['At Target Port', 'at-target-port'],
+        ['Centered', 'centered']
       ]),
       new TypeAttribute(LabelPlacementAlongEdge)
     ],
@@ -589,11 +588,11 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 30),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
-        ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
-        ['Left', LabelPlacementSideOfEdge.LEFT],
-        ['Right', LabelPlacementSideOfEdge.RIGHT],
-        ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+        ['Anywhere', 'anywhere'],
+        ['On Edge', 'on-edge'],
+        ['Left', 'left'],
+        ['Right', 'right'],
+        ['Left or Right', 'left-or-right']
       ]),
       new TypeAttribute(LabelPlacementSideOfEdge)
     ],
@@ -604,7 +603,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 40),
       new MinMaxAttribute(0, 40),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     groupLayeringPolicyItem: [
@@ -655,7 +654,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
       new OptionGroupAttribute('SwimlanesGroup', 30),
       new LabelAttribute('Lane Spacing'),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     gridEnabledItem: [
@@ -673,7 +672,7 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
         '#/api/HierarchicalLayout#HierarchicalLayout-property-gridSpacing'
       ),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     gridPortAssignmentItem: [
@@ -722,9 +721,9 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
     this.stopDurationItem = 5
     this.edgeLabelingItem = EdgeLabelPlacement.INTEGRATED
     this.compactEdgeLabelPlacementItem = true
-    this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
-    this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
-    this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
+    this.labelPlacementAlongEdgeItem = 'centered'
+    this.labelPlacementSideOfEdgeItem = 'on-edge'
+    this.labelPlacementOrientationItem = 'horizontal'
     this.labelPlacementDistanceItem = 10.0
     this.groupLayeringPolicyItem = GroupLayeringPolicy.RECURSIVE
     this.gridEnabledItem = false
@@ -1197,14 +1196,14 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
   minimumSlopeItem: 0,
 
   /** @type {boolean} */
-  shouldDisableMinimumSlopeItem: <any>{
+  shouldDisableMinimumSlopeItem: {
     get: function (): boolean {
       return (
         this.edgeRoutingItem !== HierarchicalLayoutRoutingStyle.POLYLINE &&
         this.edgeRoutingItem !== HierarchicalLayoutRoutingStyle.CURVED
       )
     }
-  },
+  } as any,
 
   /** @type {boolean} */
   edgeDirectednessItem: false,
@@ -1216,11 +1215,11 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
   straightenEdgesItem: false,
 
   /** @type {boolean} */
-  shouldDisableStraightenEdgesItem: <any>{
+  shouldDisableStraightenEdgesItem: {
     get: function (): boolean {
       return this.symmetricPlacementItem !== SymmetryOptimizationStrategy.NONE
     }
-  },
+  } as any,
 
   /** @type {RecursiveEdgePolicy} */
   recursiveEdgeStyleItem: null,
@@ -1229,21 +1228,21 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
   curveUTurnSymmetryItem: 0,
 
   /** @type {boolean} */
-  shouldDisableCurveUTurnSymmetryItem: <any>{
+  shouldDisableCurveUTurnSymmetryItem: {
     get: function (): boolean {
       return this.edgeRoutingItem !== HierarchicalLayoutRoutingStyle.CURVED
     }
-  },
+  } as any,
 
   /** @type {boolean} */
   curveShortcutsItem: false,
 
   /** @type {boolean} */
-  shouldDisableCurveShortcutsItem: <any>{
+  shouldDisableCurveShortcutsItem: {
     get: function (): boolean {
       return this.edgeRoutingItem !== HierarchicalLayoutRoutingStyle.CURVED
     }
-  },
+  } as any,
 
   /** @type {HierarchicalLayoutLayeringStrategy} */
   rankingPolicyItem: null,
@@ -1266,11 +1265,11 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
   /**
    * @type {boolean}
    */
-  shouldDisableScaleItem: <any>{
+  shouldDisableScaleItem: {
     get: function (): boolean {
       return this.rankingPolicyItem !== HierarchicalLayoutLayeringStrategy.FROM_SKETCH
     }
-  },
+  } as any,
 
   /** @type {number} */
   nodeMarginItem: 0,
@@ -1278,11 +1277,11 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
   /**
    * @type {boolean}
    */
-  shouldDisablenodeMarginItem: <any>{
+  shouldDisablenodeMarginItem: {
     get: function (): boolean {
       return this.rankingPolicyItem !== HierarchicalLayoutLayeringStrategy.FROM_SKETCH
     }
-  },
+  } as any,
 
   /** @type {number} */
   minimumSizeItem: 0,
@@ -1290,11 +1289,11 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
   /**
    * @type {boolean}
    */
-  shouldDisableMinimumSizeItem: <any>{
+  shouldDisableMinimumSizeItem: {
     get: function (): boolean {
       return this.rankingPolicyItem !== HierarchicalLayoutLayeringStrategy.FROM_SKETCH
     }
-  },
+  } as any,
 
   /** @type {number} */
   maximumSizeItem: 0,
@@ -1302,11 +1301,11 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
   /**
    * @type {boolean}
    */
-  shouldDisableMaximumSizeItem: <any>{
+  shouldDisableMaximumSizeItem: {
     get: function (): boolean {
       return this.rankingPolicyItem !== HierarchicalLayoutLayeringStrategy.FROM_SKETCH
     }
-  },
+  } as any,
 
   /** @type {NodeLabelPlacement} */
   nodeLabelingItem: null,
@@ -1318,64 +1317,64 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
   compactEdgeLabelPlacementItem: false,
 
   /** @type {boolean} */
-  shouldDisableCompactEdgeLabelPlacementItem: <any>{
+  shouldDisableCompactEdgeLabelPlacementItem: {
     get: function (): boolean {
       return this.edgeLabelingItem !== EdgeLabelPlacement.INTEGRATED
     }
-  },
+  } as any,
 
   /** @type {boolean} */
   reduceAmbiguityItem: false,
 
   /** @type {boolean} */
-  shouldDisableReduceAmbiguityItem: <any>{
+  shouldDisableReduceAmbiguityItem: {
     get: function (): boolean {
       return this.edgeLabelingItem !== EdgeLabelPlacement.GENERIC
     }
-  },
+  } as any,
 
   /** @type {LabelPlacementOrientation} */
   labelPlacementOrientationItem: null,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementOrientationItem: <any>{
+  shouldDisableLabelPlacementOrientationItem: {
     get: function (): boolean {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
-  },
+  } as any,
 
   /** @type {LabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: null,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementAlongEdgeItem: <any>{
+  shouldDisableLabelPlacementAlongEdgeItem: {
     get: function (): boolean {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
-  },
+  } as any,
 
   /** @type {LabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: null,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementSideOfEdgeItem: <any>{
+  shouldDisableLabelPlacementSideOfEdgeItem: {
     get: function (): boolean {
       return this.edgeLabelingItem === EdgeLabelPlacement.IGNORE
     }
-  },
+  } as any,
 
   /** @type {number} */
   labelPlacementDistanceItem: 0,
 
   /** @type {boolean} */
-  shouldDisableLabelPlacementDistanceItem: <any>{
+  shouldDisableLabelPlacementDistanceItem: {
     get: function (): boolean {
       return (
         this.edgeLabelingItem === EdgeLabelPlacement.IGNORE ||
-        this.labelPlacementSideOfEdgeItem === LabelPlacementSideOfEdge.ON_EDGE
+        this.labelPlacementSideOfEdgeItem === 'on-edge'
       )
     }
-  },
+  } as any,
 
   /** @type {GroupLayeringPolicy} */
   groupLayeringPolicyItem: null,
@@ -1383,11 +1382,11 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
   /**
    * @type {boolean}
    */
-  shouldDisableGroupLayeringPolicyItem: <any>{
+  shouldDisableGroupLayeringPolicyItem: {
     get: function (): boolean {
       return this.useDrawingAsSketchItem
     }
-  },
+  } as any,
 
   /** @type {GroupAlignmentPolicy} */
   groupAlignmentItem: 0,
@@ -1395,11 +1394,11 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
   /**
    * @type {boolean}
    */
-  shouldDisableGroupAlignmentItem: <any>{
+  shouldDisableGroupAlignmentItem: {
     get: function (): boolean {
       return this.groupLayeringPolicyItem === GroupLayeringPolicy.IGNORE_GROUPS
     }
-  },
+  } as any,
 
   /** @type {boolean} */
   groupHorizontalCompactionItem: true,
@@ -1413,11 +1412,11 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
   /**
    * @type {boolean}
    */
-  shouldDisableUseOrderFromSketchItem: <any>{
+  shouldDisableUseOrderFromSketchItem: {
     get: function (): boolean {
       return !this.treatRootGroupAsSwimlanesItem
     }
-  },
+  } as any,
 
   /** @type {number} */
   swimlineSpacingItem: 0,
@@ -1425,11 +1424,11 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
   /**
    * @type {boolean}
    */
-  shouldDisableSwimlineSpacingItem: <any>{
+  shouldDisableSwimlineSpacingItem: {
     get: function (): boolean {
       return !this.treatRootGroupAsSwimlanesItem
     }
-  },
+  } as any,
 
   /** @type {boolean} */
   gridEnabledItem: false,
@@ -1440,11 +1439,11 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
   /**
    * @type {boolean}
    */
-  shouldDisableGridSpacingItem: <any>{
+  shouldDisableGridSpacingItem: {
     get: function (): boolean {
       return !this.gridEnabledItem
     }
-  },
+  } as any,
 
   /** @type {HierarchicalLayoutPortAssignmentMode} */
   gridPortAssignmentItem: null,
@@ -1452,9 +1451,9 @@ export const HierarchicalLayoutConfig = (Class as any)('HierarchicalLayoutConfig
   /**
    * @type {boolean}
    */
-  shouldDisableGridPortAssignmentItem: <any>{
+  shouldDisableGridPortAssignmentItem: {
     get: function (): boolean {
       return !this.gridEnabledItem
     }
-  }
+  } as any
 })

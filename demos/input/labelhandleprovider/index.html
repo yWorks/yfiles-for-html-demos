@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Label Handle Provider Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -81,18 +81,17 @@
         <h1>Label Handle Provider Demo</h1>
 
         <p>
-          This demo shows how to implement custom <a href="https://docs.yworks.com/yfileshtml/#/api/IHandle" target="_blank">IHandle</a> s that allow interactive
+          This demo shows how to implement custom <a href="https://docs.yworks.com/yfileshtml/#/api/IHandle" class="api" target="_blank">IHandle</a> s that allow interactive
           resizing and rotation of labels.
         </p>
         <h2>Things to Try</h2>
         <ul>
           <li>
-            Select a node label or an edge label and change its size by dragging its resize handle
-            (the square).
+            Select a node label or an edge label and change its size by dragging its resize handle.
           </li>
           <li>
             The <em>Free Node Label</em> can also be rotated: Select that label and drag its rotate
-            handle (the dot).
+            handle (the one above the label).
           </li>
           <li>
             Take a look at the source code, especially <em>LabelHandleProvider</em>,

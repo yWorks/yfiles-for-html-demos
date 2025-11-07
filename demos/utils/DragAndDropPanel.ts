@@ -34,9 +34,9 @@ import {
   IEdge,
   IEdgeStyle,
   ILabel,
-  ILabelOwner,
+  type ILabelOwner,
   IListEnumerable,
-  IModelItem,
+  type IModelItem,
   INode,
   INodeStyle,
   IPort,
@@ -62,6 +62,7 @@ export type DragAndDropPanelItem<T extends IModelItem> = T | { modelItem: T; too
  * edges, labels, and ports using {@link populatePanel}.
  */
 export class DragAndDropPanel {
+  div: HTMLElement
   /**
    * The desired maximum width of each item. This value is used to decide whether a
    * visualization must be scaled down.
@@ -76,7 +77,9 @@ export class DragAndDropPanel {
    * Create a new DragAndDropPanel and mount it to the provided div element.
    * @param div The element that will display the palette items.
    */
-  constructor(public div: HTMLElement) {}
+  constructor(div: HTMLElement) {
+    this.div = div
+  }
 
   /**
    * Adds the provided items to this panel.

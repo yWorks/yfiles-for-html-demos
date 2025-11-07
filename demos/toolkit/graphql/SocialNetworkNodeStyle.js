@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, IRenderContext, NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
+import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
 
 /**
  * A simple node style that renders the person's image and possibly an indicator if there are

@@ -21,21 +21,21 @@ This tutorial will guide you through creating your own edge visualizations for y
 
 Note
 
-Implementing a custom edge style from scratch is an advanced concept. In a lot of cases, other approaches like template styles, or decorating built-in styles with custom elements are sufficient. For more information the topic of styling graph items, please have a look at [Edge Styles](https://docs.yworks.com/yfileshtml/#/dguide/styles-edge_styles).
+Implementing a custom edge style from scratch is an advanced concept. In a lot of cases, other approaches like template styles or decorating built-in styles with custom elements are enough. For more information the topic of styling graph items, please have a look at [Edge Styles](https://docs.yworks.com/yfileshtml/#/dguide/styles-edge_styles).
 
 ## Subclassing EdgeStyleBase
 
 yFiles for HTML provides an abstract base class which provides the basic functionality to create a custom edge style. We start with a custom subclass of [EdgeStyleBase](https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase).
 
 ```
-class CustomEdgeStyle extends EdgeStyleBase {
+export class CustomEdgeStyle extends EdgeStyleBase {
   protected createVisual(context: IRenderContext, edge: IEdge): Visual | null {
     return null // TODO - create the SVG element
   }
 }
 ```
 
-This code will not produce anything visible, yet. We first have to implement the `createVisual` method. This method returns an SVG element, wrapped into an [SvgVisual](https://docs.yworks.com/yfileshtml/#/api/SvgVisual). Let’s begin with a polyline, which connects two nodes via multiple line segments running through its bends. We will switch to a more complex visualization later on. We use a SVGPathElement to render the polyline:
+This code will not produce anything visible, yet. We first have to implement the `createVisual` method. This method returns an SVG element, wrapped into an [SvgVisual](https://docs.yworks.com/yfileshtml/#/api/SvgVisual). Let’s begin with a polyline, which connects two nodes via multiple line segments running through its bends. We will switch to a more complex visualization later on. We use an SVGPathElement to render the polyline:
 
 ```
 protected createVisual(context: IRenderContext, edge: IEdge): Visual | null {
@@ -61,8 +61,6 @@ private createPathData(edge: IEdge): string {
 }
 ```
 
-Note
-
-It’s important that SvgVisual contains an SVG element in the 'http://www.w3.org/2000/svg' namespace. HTML elements are not supported.
+Besides [SvgVisual](https://docs.yworks.com/yfileshtml/#/api/SvgVisual), which can contain only an SVG element, there are other visuals as well, for example [HtmlVisual](https://docs.yworks.com/yfileshtml/#/api/HtmlVisual) for HTML elements.
 
 [02 Crop the Polyline](../../tutorial-style-implementation-edge/02-crop-the-polyline/)

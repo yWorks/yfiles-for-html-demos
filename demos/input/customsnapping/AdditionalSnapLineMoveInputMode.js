@@ -26,16 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  IHitTestable,
-  IInputModeContext,
-  InputModeEventArgs,
-  List,
-  MoveInputMode,
-  Point,
-  Rect,
-  Size
-} from '@yfiles/yfiles'
+import { IHitTestable, MoveInputMode, Point, Rect, Size } from '@yfiles/yfiles'
 import { AdditionalSnapLinePositionHandler } from './AdditionalSnapLinePositionHandler'
 
 /**

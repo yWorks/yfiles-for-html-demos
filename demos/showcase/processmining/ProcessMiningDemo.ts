@@ -51,18 +51,17 @@ import {
 } from './process-graph-extraction'
 import {
   installProcessItemVisual,
-  ProcessItemVisual,
+  type ProcessItemVisual,
   updateTime
 } from './process-visualization/ProcessItemVisual'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { checkWebGLSupport, finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { checkWebGLSupport, finishLoading } from '@yfiles/demo-app/demo-page'
 import { prepareProcessVisualization } from './process-visualization/process-visualization'
-import type { CaseList } from './event-log-types'
 import { showItemOverlay } from './item-overlay'
+import eventLog from './data/events.json'
+import caseData from './data/cases.json'
 
 let processItemVisual: ProcessItemVisual
-
-let caseData: CaseList = []
 
 let infiniteLoopEnabled: boolean = false
 
@@ -76,7 +75,7 @@ async function run(): Promise<void> {
     // only a warning is shown in the demo
     return
   }
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // stores the current time value in the animation
   let time = 0
@@ -99,11 +98,6 @@ async function run(): Promise<void> {
   const graph = graphComponent.graph
   initializeDemoStyles(graph, getHeat)
 
-  const eventLogRes = await fetch('./data/events.json')
-  const eventLog = await eventLogRes.json()
-  const caseDataRes = await fetch('./data/cases.json')
-  caseData = await caseDataRes.json()
-
   extractGraph(eventLog, graphComponent)
 
   // add the item visual to be able to render dots for the traversing events
@@ -121,7 +115,7 @@ async function run(): Promise<void> {
   const infiniteLoopButton = document.querySelector<HTMLButtonElement>('#infinite-loop')!
 
   const timeToSliderValue = (time: number) => (time / maxTime) * 100
-  const sliderValueToTime = (value: String) => (Number(value) * maxTime) / 100
+  const sliderValueToTime = (value: string) => (Number(value) * maxTime) / 100
 
   // callback function passed to the animation controller to transfer the animation progress to the visuals and the toolbar slider
   function setProgress(timeStamp: number): void {

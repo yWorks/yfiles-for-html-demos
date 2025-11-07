@@ -28,9 +28,9 @@
  ***************************************************************************/
 import {
   IHitTestable,
-  IInputModeContext,
-  InputModeEventArgs,
-  List,
+  type IInputModeContext,
+  type InputModeEventArgs,
+  type List,
   MoveInputMode,
   Point,
   Rect,

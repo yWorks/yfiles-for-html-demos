@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { toggleExportRectangle } from '../export-rectangle/export-rectangle'
-import { PaperSize } from '../PaperSize'
+import type { PaperSize } from '../PaperSize'
 import type { PdfExportOptions } from '../PdfExportOptions'
 
 export function initializeOptionPanel(exportCallback: (options: PdfExportOptions) => void): void {
@@ -70,6 +70,5 @@ export function initializeOptionPanel(exportCallback: (options: PdfExportOptions
  * Returns the chosen export paper size.
  */
 function getPaperSize(): PaperSize {
-  const inputPaperSize = document.querySelector<HTMLSelectElement>('#paperSize')!
-  return PaperSize[inputPaperSize.value as keyof typeof PaperSize]
+  return document.querySelector<HTMLSelectElement>('#paperSize')!.value as PaperSize
 }

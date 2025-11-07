@@ -28,18 +28,18 @@
  ***************************************************************************/
 import {
   ArrowNodeDirection,
-  ArrowNodeStyle,
+  type ArrowNodeStyle,
   ArrowStyleShape,
   BaseClass,
-  ClickEventArgs,
+  type ClickEventArgs,
   Cursor,
   HandleType,
   IHandle,
-  IInputModeContext,
-  INode,
+  type IInputModeContext,
+  type INode,
   IPoint,
-  IRectangle,
-  IRenderContext,
+  type IRectangle,
+  type IRenderContext,
   type IRenderTreeElement,
   IVisualCreator,
   Point,
@@ -52,6 +52,8 @@ import {
  * {@link ArrowNodeStyle.angle} interactively.
  */
 export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
+    private readonly angleChanged: () => void;
+    private readonly node: INode;
   private readonly handleOffset = 15.0
   private readonly style: ArrowNodeStyle
 
@@ -76,10 +78,12 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
    * @param angleChanged An action that is called when the handle has been moved.
    */
   constructor(
-    private readonly node: INode,
-    private readonly angleChanged: () => void
+    node: INode,
+    angleChanged: () => void
   ) {
     super()
+      this.node = node;
+      this.angleChanged = angleChanged;
     this.style = node.style as ArrowNodeStyle
   }
 

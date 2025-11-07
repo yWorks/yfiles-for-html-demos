@@ -26,23 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, IGraph, INode, License, Rect } from '@yfiles/yfiles'
+import {
+  GraphComponent,
+  GraphEditorInputMode,
+  type IGraph,
+  type INode,
+  License,
+  Rect
+} from '@yfiles/yfiles'
 import { DemoReparentNodeHandler } from './DemoReparentNodeHandler'
-import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
+import type { ColorSetName } from '@yfiles/demo-app/demo-styles'
 import {
   createDemoGroupLabelStyle,
   createDemoGroupStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+} from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Runs the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')

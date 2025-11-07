@@ -34,17 +34,13 @@ import {
   EdgeStyleIndicatorRenderer,
   FoldingManager,
   GraphComponent,
-  GraphEditorInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
   GraphOverviewComponent,
   GraphViewerInputMode,
   IEdge,
   IGraph,
-  IInputModeContext,
-  IModelItem,
   INode,
-  ItemClickedEventArgs,
   License,
   Mapper,
   NodeStyleIndicatorRenderer,
@@ -58,9 +54,9 @@ import {
 
 import { GraphSearch } from '@yfiles/demo-utils/GraphSearch'
 import FastCanvasStyles from './FastCanvasStyles'
-import { DemoStyleOverviewRenderer } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { DemoStyleOverviewRenderer } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML } from '@yfiles/demo-utils/graphml-support'
 import { registerTemplateStyleSerialization } from '@yfiles/demo-utils/template-styles/MarkupExtensions'
 import { StringTemplateNodeStyle } from '@yfiles/demo-utils/template-styles/StringTemplateNodeStyle'
@@ -88,7 +84,7 @@ const nodeInfoUrl = document.querySelector('#node-info-url')
 const searchBox = document.querySelector('#search-box')
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
@@ -358,7 +354,6 @@ function onCurrentItemChanged() {
 
 /**
  * If an item has been clicked, we can execute a custom command.
- * @param event The item clicked event
  */
 function onItemClicked({ item, shiftKey, ctrlKey }) {
   if (item instanceof INode) {

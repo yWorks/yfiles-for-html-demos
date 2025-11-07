@@ -30,7 +30,7 @@ import {
   EdgePathLabelModel,
   EdgeSides,
   ExteriorNodeLabelModel,
-  FoldingEdgeState,
+  type FoldingEdgeState,
   FoldingManager,
   Graph,
   GraphBuilder,
@@ -40,8 +40,8 @@ import {
   GroupNodeStyle,
   HierarchicalLayout,
   type IEdge,
-  IFoldingView,
-  IGraph,
+  type IFoldingView,
+  type IGraph,
   type IListEnumerable,
   LabelStyle,
   LayoutExecutor,
@@ -51,9 +51,9 @@ import {
   Size
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
@@ -63,7 +63,7 @@ let graphComponent: GraphComponent
  * Bootstraps the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()

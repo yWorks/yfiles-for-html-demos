@@ -26,7 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HtmlVisual, ILabel, IRenderContext, LabelStyleBase, Size } from '@yfiles/yfiles'
+import {
+  HtmlVisual,
+  type ILabel,
+  type IRenderContext,
+  LabelStyleBase,
+  type Size
+} from '@yfiles/yfiles'
 import { DataTableRenderSupport, RenderDataCache } from './DataTableRenderSupport'
 import type { UserData } from './UserDataFactory'
 

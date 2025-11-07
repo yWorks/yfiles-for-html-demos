@@ -49,6 +49,7 @@ export class CustomArrow extends BaseClass(
   IVisualCreator,
   IBoundsProvider
 ) {
+    distance: number;
   private anchor: Point
   private direction: Point
   private arrowPath: GeneralPath | null
@@ -56,8 +57,9 @@ export class CustomArrow extends BaseClass(
   /**
    * Initializes a new instance of the {@link CustomArrow} class.
    */
-  constructor(public distance = 1) {
+  constructor(distance = 1) {
     super()
+      this.distance = distance;
     this.anchor = Point.ORIGIN
     this.direction = Point.ORIGIN
     this.arrowPath = null

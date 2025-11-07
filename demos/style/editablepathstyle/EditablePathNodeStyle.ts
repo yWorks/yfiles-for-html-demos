@@ -26,37 +26,36 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable no-dupe-else-if */
 import {
   BaseClass,
-  ClickEventArgs,
+  type ClickEventArgs,
   Cursor,
-  Fill,
+  type Fill,
   type FillConvertible,
   GeneralPath,
   GeneralPathNodeStyle,
-  HandleInputMode,
+  type HandleInputMode,
   HandleType,
-  ICanvasContext,
-  ICompoundEdit,
+  type ICanvasContext,
+  type ICompoundEdit,
   IEnumerable,
-  IGraph,
+  type IGraph,
   IHandle,
-  IInputModeContext,
+  type IInputModeContext,
   IMementoSupport,
   INode,
-  INodeStyle,
-  InputModeEventArgs,
+  type INodeStyle,
+  type InputModeEventArgs,
   IPoint,
-  IRenderContext,
+  type IRenderContext,
   Matrix,
   NodeStyleBase,
   PathType,
   Point,
-  Rect,
-  Stroke,
+  type Rect,
+  type Stroke,
   type StrokeConvertible,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 /**
@@ -666,7 +665,6 @@ export class PathHandle extends BaseClass(IHandle, IPoint) {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   cancelDrag(context: IInputModeContext, originalLocation: Point): void {
     this.$style.$path.clear()
     this.$x = this.$origX

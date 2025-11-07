@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Custom Port Location Model Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -64,13 +64,9 @@
       <button
         id="open-file-button"
         title="Open a GraphML file"
-        class="demo-icon-yIconOpen labeled"
+        class="demo-icon-yIconOpen"
       ></button>
-      <button
-        id="save-button"
-        title="Save a GraphML file"
-        class="demo-icon-yIconSave labeled"
-      ></button>
+      <button id="save-button" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
       <span class="demo-separator"></span>
       <button data-command="INCREASE_ZOOM"></button>
       <button data-command="ZOOM_ORIGINAL"></button>
@@ -91,25 +87,28 @@
 
       <div class="demo-description__content">
         <h1>Custom Port Location Model Demo</h1>
-
-        <p>This demo shows how to create and use a custom <a href="https://docs.yworks.com/yfileshtml/#/api/IPortLocationModel" target="_blank">IPortLocationModel</a>.</p>
-        <h2>Thing to Try</h2>
+        <p>
+          This demo demonstrates how to create and use a custom <a href="https://docs.yworks.com/yfileshtml/#/api/IPortLocationModel" class="api" target="_blank">IPortLocationModel</a>.
+        </p>
+        <h2>Things to Try</h2>
         <ul>
           <li>
-            Create new nodes in the canvas and connect them with new edges. <br />
-            Note that a specialized set of possible port candidates is shown. The candidates use a
-            custom port location model that offers five possible locations on each node.
+            Create a new node by clicking on the canvas and connect it to another node with a new
+            edge. The green dots visualize the possible port candidates, which have been customized
+            in this demo. The port location model defines five discreet locations for each node.
           </li>
           <li>
-            Click on one of the nodes and then drag the handle that depicts a port. Note that you
-            can only drag the handle to the locations that are supported by the model.
+            Select one of the nodes and drag one of the port handles. You will only be able to move
+            the handle to one of the other custom port locations supported by the port location
+            model.
           </li>
-          <li>Try saving and loading the graph.</li>
+          <li>Save and load the graph.</li>
         </ul>
         <h2>Related Demo</h2>
         <ul>
           <li>
-            See the <a href="../../input/customlabelmodel/" target="_blank">Custom Label Model Demo</a> to learn how to customize the models for
+            See the <a href="../../input/border-aligned-label-model/" class="demo" target="_blank">Border-Aligned Label Model Demo</a> or the
+            <a href="../../input/offset-wrapper-label-model/" class="demo" target="_blank">Offset Wrapper Label Model Demo</a> to learn how to customize the models for
             label locations. Note that the code is very similar as the same concepts are being
             applied.
           </li>

@@ -32,16 +32,8 @@ import {
   GeneralPath,
   GraphComponent,
   IArrow,
-  ICanvasContext,
-  IEdge,
-  IInputModeContext,
-  INode,
-  INodeStyle,
-  IRenderContext,
   ISelectionRenderer,
-  Point,
   PolylineEdgeStyle,
-  Rect,
   SvgVisual
 } from '@yfiles/yfiles'
 
@@ -251,10 +243,11 @@ export class Sample1EdgeStyle extends EdgeStyleBase {
 }
 
 class EdgeRenderDataCache {
-  thickness
-  selected
-  color
   path
+  color
+  selected
+  thickness
+
   constructor(thickness, selected, color, path) {
     this.thickness = thickness
     this.selected = selected

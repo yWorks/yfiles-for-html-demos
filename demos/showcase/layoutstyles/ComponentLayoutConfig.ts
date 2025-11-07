@@ -30,22 +30,21 @@ import {
   Class,
   ComponentArrangementStyle,
   ComponentLayout,
-  GraphComponent,
-  ILayoutAlgorithm,
+  type GraphComponent,
+  type ILayoutAlgorithm,
   Size
 } from '@yfiles/yfiles'
 
 import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -61,7 +60,7 @@ export const ComponentLayoutConfig = (Class as any)('ComponentLayoutConfig', {
     ],
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     styleItem: [
@@ -116,7 +115,7 @@ export const ComponentLayoutConfig = (Class as any)('ComponentLayoutConfig', {
       ),
       new OptionGroupAttribute('LayoutGroup', 50),
       new MinMaxAttribute(0.2, 5.0, 0.01),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     componentSpacingItem: [
@@ -126,7 +125,7 @@ export const ComponentLayoutConfig = (Class as any)('ComponentLayoutConfig', {
       ),
       new OptionGroupAttribute('LayoutGroup', 60),
       new MinMaxAttribute(0.0, 400.0),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     gridEnabledItem: [
@@ -144,7 +143,7 @@ export const ComponentLayoutConfig = (Class as any)('ComponentLayoutConfig', {
       ),
       new OptionGroupAttribute('LayoutGroup', 80),
       new MinMaxAttribute(2, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ]
   },
@@ -229,11 +228,11 @@ export const ComponentLayoutConfig = (Class as any)('ComponentLayoutConfig', {
   aspectRatioItem: 0.2,
 
   /** @type {boolean} */
-  shouldDisableAspectRatioItem: <any>{
+  shouldDisableAspectRatioItem: {
     get: function (): boolean {
       return this.useScreenRatioItem
     }
-  },
+  } as any,
 
   /** @type {number} */
   componentSpacingItem: 0,
@@ -245,9 +244,9 @@ export const ComponentLayoutConfig = (Class as any)('ComponentLayoutConfig', {
   gridSpacingItem: 2,
 
   /** @type {boolean} */
-  shouldDisableGridSpacingItem: <any>{
+  shouldDisableGridSpacingItem: {
     get: function (): boolean {
       return !this.gridEnabledItem
     }
-  }
+  } as any
 })

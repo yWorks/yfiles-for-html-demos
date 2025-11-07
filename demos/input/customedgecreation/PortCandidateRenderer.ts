@@ -27,9 +27,9 @@
  **
  ***************************************************************************/
 import {
-  IRenderContext,
+  type IRenderContext,
   ObjectRendererBase,
-  PortCandidateRenderTag,
+  type PortCandidateRenderTag,
   SimplePort,
   SvgVisual
 } from '@yfiles/yfiles'

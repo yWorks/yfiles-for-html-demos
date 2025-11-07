@@ -28,10 +28,10 @@
  ***************************************************************************/
 import {
   Class,
-  GraphComponent,
+  type GraphComponent,
   HierarchicalLayoutData,
-  ILayoutAlgorithm,
-  LayoutData,
+  type ILayoutAlgorithm,
+  type LayoutData,
   LayoutTransformations,
   SubgraphLayoutStage
 } from '@yfiles/yfiles'
@@ -39,14 +39,13 @@ import {
 import { LayoutConfiguration, OperationType } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -77,18 +76,18 @@ export const LayoutTransformationsConfig = (Class as any)('LayoutTransformations
     ],
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     operationItem: [
       new LabelAttribute('Operation', '#/api/LayoutTransformations'),
       new OptionGroupAttribute('GeneralGroup', 10),
       new EnumValuesAttribute([
-        ['Mirror on X axis', OperationType.MIRROR_X_AXIS],
-        ['Mirror on Y axis', OperationType.MIRROR_Y_AXIS],
-        ['Rotate', OperationType.ROTATE],
-        ['Scale', OperationType.SCALE],
-        ['Translate', OperationType.TRANSLATE]
+        ['Mirror on X axis', 'mirror-x-axis'],
+        ['Mirror on Y axis', 'mirror-y-axis'],
+        ['Rotate', 'rotate'],
+        ['Scale', 'scale'],
+        ['Translate', 'translate']
       ]),
       new TypeAttribute(Number)
     ],
@@ -107,7 +106,7 @@ export const LayoutTransformationsConfig = (Class as any)('LayoutTransformations
       ),
       new OptionGroupAttribute('RotateGroup', 10),
       new MinMaxAttribute(-360, 360),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     applyBestFitRotationItem: [
@@ -125,7 +124,7 @@ export const LayoutTransformationsConfig = (Class as any)('LayoutTransformations
       ),
       new OptionGroupAttribute('ScaleGroup', 10),
       new MinMaxAttribute(0.1, 10.0, 0.01),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     scaleNodeSizeItem: [
@@ -160,7 +159,7 @@ export const LayoutTransformationsConfig = (Class as any)('LayoutTransformations
   constructor: function () {
     // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
-    this.operationItem = OperationType.SCALE
+    this.operationItem = 'scale'
     this.actOnSelectionOnlyItem = false
     this.rotationAngleItem = 0
     this.applyBestFitRotationItem = false
@@ -179,25 +178,25 @@ export const LayoutTransformationsConfig = (Class as any)('LayoutTransformations
   createConfiguredLayout: function (_graphComponent: GraphComponent): ILayoutAlgorithm {
     let stage
     switch (this.operationItem) {
-      case OperationType.MIRROR_X_AXIS:
+      case 'mirror-x-axis':
         stage = LayoutTransformations.createMirroringStage(true)
         break
-      case OperationType.MIRROR_Y_AXIS:
+      case 'mirror-y-axis':
         stage = LayoutTransformations.createMirroringStage(false)
         break
-      case OperationType.ROTATE:
+      case 'rotate':
         stage = this.applyBestFitRotationItem
           ? LayoutTransformations.createBestFitRotationStage()
           : LayoutTransformations.createRotationStage(this.rotationAngleItem)
         break
-      case OperationType.SCALE:
+      case 'scale':
         stage = LayoutTransformations.createScalingStage(
           this.scaleFactorItem,
           this.scaleFactorItem,
           this.scaleNodeSizeItem
         )
         break
-      case OperationType.TRANSLATE:
+      case 'translate':
         stage = LayoutTransformations.createTranslationStage(
           this.translateXItem,
           this.translateYItem
@@ -252,59 +251,59 @@ export const LayoutTransformationsConfig = (Class as any)('LayoutTransformations
   rotationAngleItem: 0,
 
   /** @type {boolean} */
-  shouldDisableRotationAngleItem: <any>{
+  shouldDisableRotationAngleItem: {
     get: function (): boolean {
-      return this.operationItem !== OperationType.ROTATE || this.applyBestFitRotationItem
+      return this.operationItem !== 'rotate' || this.applyBestFitRotationItem
     }
-  },
+  } as any,
 
   /** @type {boolean} */
   applyBestFitRotationItem: false,
 
   /** @type {boolean} */
-  shouldDisableApplyBestFitRotationItem: <any>{
+  shouldDisableApplyBestFitRotationItem: {
     get: function (): boolean {
-      return this.operationItem !== OperationType.ROTATE
+      return this.operationItem !== 'rotate'
     }
-  },
+  } as any,
 
   /** @type {number} */
   scaleFactorItem: 0.1,
 
   /** @type {boolean} */
-  shouldDisableScaleFactorItem: <any>{
+  shouldDisableScaleFactorItem: {
     get: function (): boolean {
-      return this.operationItem !== OperationType.SCALE
+      return this.operationItem !== 'scale'
     }
-  },
+  } as any,
 
   /** @type {boolean} */
   scaleNodeSizeItem: false,
 
   /** @type {boolean} */
-  shouldDisableScaleNodeSizeItem: <any>{
+  shouldDisableScaleNodeSizeItem: {
     get: function (): boolean {
-      return this.operationItem !== OperationType.SCALE
+      return this.operationItem !== 'scale'
     }
-  },
+  } as any,
 
   /** @type {number} */
   translateXItem: 0,
 
   /** @type {boolean} */
-  shouldDisableTranslateXItem: <any>{
+  shouldDisableTranslateXItem: {
     get: function (): boolean {
-      return this.operationItem !== OperationType.TRANSLATE
+      return this.operationItem !== 'translate'
     }
-  },
+  } as any,
 
   /** @type {number} */
   translateYItem: 0,
 
   /** @type {boolean} */
-  shouldDisableTranslateYItem: <any>{
+  shouldDisableTranslateYItem: {
     get: function (): boolean {
-      return this.operationItem !== OperationType.TRANSLATE
+      return this.operationItem !== 'translate'
     }
-  }
+  } as any
 })

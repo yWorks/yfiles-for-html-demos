@@ -38,7 +38,6 @@ import {
   GroupNodeStyle,
   HierarchicalLayout,
   HorizontalTextAlignment,
-  IGraph,
   LabelShape,
   LabelStyle,
   LayoutExecutor,
@@ -50,8 +49,8 @@ import {
   VerticalTextAlignment
 } from '@yfiles/yfiles'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import graphData from './graph-data.json'
 
 let graphComponent
@@ -61,7 +60,7 @@ let graphOverviewComponent
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize a graph component with a custom theme
   graphComponent = new GraphComponent('#graphComponent')

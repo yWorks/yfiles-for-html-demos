@@ -29,7 +29,6 @@
 import {
   Animator,
   BaseClass,
-  SmartEdgeLabelModel,
   FreeNodeLabelModel,
   type GraphComponent,
   GraphEditorInputMode,
@@ -55,6 +54,7 @@ import {
   PolylineEdgeStyle,
   type Rect,
   ShapeNodeStyle,
+  SmartEdgeLabelModel,
   SvgVisual,
   type Visual
 } from '@yfiles/yfiles'

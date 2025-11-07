@@ -27,11 +27,11 @@
  **
  ***************************************************************************/
 import { GraphComponent, License, Rect } from '@yfiles/yfiles'
-import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
+import licenseData from '../../../lib/license.json'
 
 async function run() {
-  const response = await fetch(new URL('../../../lib/license.json', import.meta.url).toString())
-  License.value = await response.json()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
 

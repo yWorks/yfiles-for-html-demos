@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-port/05-hit-testing/).
 
-Styles not only provide a visual representation for graph items. They also offer crucial parts for interacting with said items. Hit-testing determines whether a particular item is at a given point in the canvas. It happens all the time during interaction, e.g. when selecting items, moving nodes, or creating edges.
+Styles not only provide a visual representation for graph items. They also offer crucial parts for interacting with said items. Hit-testing determines whether a particular item is at a given point in the canvas. It happens all the time during interaction, e.g., when selecting items, moving nodes, or creating edges.
 
 The default implementation in the `PortStyleBase` class only considers the bounds returned by `getBounds` when hit-testing. When ports have shapes that deviate from the rectangular bounds, hit-testing has to be adjusted by providing a different implementation for the `isHit` method.
 
@@ -40,6 +40,6 @@ protected isHit(
 
 Note
 
-Try this implementation by hovering the ports. Notice that the ports at the red node, which uses the default hit-test, also detects hits outside the visual circle within the bounds. The ports at the blue node use the adjusted hit-test code and detect the hover only in the circle.
+Try this implementation by hovering the ports. Notice that the ports at the red node, which uses the default hit-test, also detect hits outside the visual circle within the bounds. The ports at the blue node use the adjusted hit-test code and detect the hover only in the circle.
 
 [06 Edge Cropping](../../tutorial-style-implementation-port/06-edge-cropping/)

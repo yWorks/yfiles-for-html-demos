@@ -33,15 +33,15 @@ import {
   GraphComponent,
   IGroupBoundsCalculator,
   IGroupPaddingProvider,
-  IInputModeContext,
-  INode,
+  type IInputModeContext,
+  type INode,
   INodeSizeConstraintProvider,
   Insets,
-  IRenderContext,
+  type IRenderContext,
   ITagOwner,
   Matrix,
   NodeStyleBase,
-  Point,
+  type Point,
   Rect,
   Size,
   SvgVisual,
@@ -274,12 +274,17 @@ export class Sample1GroupNodeStyle extends NodeStyleBase<Sample1GroupNodeStyleVi
 }
 
 class NodeRenderDataCache {
-  constructor(
-    public readonly color: string,
-    public readonly width: number,
-    public readonly height: number,
-    public readonly isCollapsed: boolean
-  ) {}
+  readonly isCollapsed: boolean
+  readonly height: number
+  readonly width: number
+  readonly color: string
+
+  constructor(color: string, width: number, height: number, isCollapsed: boolean) {
+    this.color = color
+    this.width = width
+    this.height = height
+    this.isCollapsed = isCollapsed
+  }
 
   equals(other?: NodeRenderDataCache): boolean {
     return (

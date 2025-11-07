@@ -28,20 +28,19 @@
  ***************************************************************************/
 import {
   type Constructor,
-  EdgeStyleBase,
-  ICanvasContext,
-  IInputModeContext,
-  ILabel,
-  ILabelStyle,
-  IOrientedRectangle,
-  IRenderContext,
+  type ICanvasContext,
+  type IInputModeContext,
+  type ILabel,
+  type ILabelStyle,
+  type IOrientedRectangle,
+  type IRenderContext,
   LabelStyleBase,
-  Point,
-  Rect,
-  Size,
+  type Point,
+  type Rect,
+  type Size,
   SvgVisual,
   SvgVisualGroup,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 const SVG_NS = 'http://www.w3.org/2000/svg'
@@ -50,12 +49,15 @@ const SVG_NS = 'http://www.w3.org/2000/svg'
  * This label style decorator shows how to decorate another label style.
  */
 export class LabelStyleDecorator extends LabelStyleBase {
+    private readonly baseStyle: ILabelStyle;
+
   /**
    * Initializes a new instance of this class.
    * @param baseStyle The base style.
    */
-  constructor(private readonly baseStyle: ILabelStyle) {
+  constructor(baseStyle: ILabelStyle) {
     super()
+      this.baseStyle = baseStyle;
   }
 
   /**

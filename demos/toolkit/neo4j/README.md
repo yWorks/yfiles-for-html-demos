@@ -9,7 +9,7 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Neo4j Integration Demo
+# Neo4j Demo
 
 <img src="../../../doc/demo-thumbnails/neo4j.webp" alt="demo-thumbnail" height="320"/>
 

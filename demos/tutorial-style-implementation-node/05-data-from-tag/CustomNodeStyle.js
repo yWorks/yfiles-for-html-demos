@@ -45,7 +45,6 @@ export class CustomNodeStyle extends NodeStyleBase {
     pathElement.setAttribute('fill', fillColor)
     pathElement.setAttribute('stroke', '#333')
 
-
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     SvgVisual.setTranslate(g, x, y)
 
@@ -61,7 +60,6 @@ export class CustomNodeStyle extends NodeStyleBase {
     }
 
     return SvgVisual.from(g, { width, height, fillColor, showBadge })
-
   }
 
   updateVisual(context, oldVisual, node) {

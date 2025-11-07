@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   ArcEdgeStyle,
   GraphBuilder,
@@ -36,7 +36,7 @@ import {
   LayoutExecutor,
   License
 } from '@yfiles/yfiles'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 import { pentosePhosphateData } from './resources/pentose-phosphate-data'
 import { configurePentosePhosphateLayout } from './configure-pentose-layout'
 import { type InputNodeData, nodeTypesMap } from './data-types'
@@ -47,7 +47,7 @@ import { configureKrebsCycleLayout } from './configure-krebs-cycle-layout'
 let graphComponent: GraphComponent
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   // initialize the interaction
   graphComponent.inputMode = new GraphViewerInputMode()

@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 import {
-  GraphComponent,
-  INode,
+  type GraphComponent,
+  type INode,
   NodeStyleIndicatorRenderer,
   ShapeNodeShape,
   ShapeNodeStyle

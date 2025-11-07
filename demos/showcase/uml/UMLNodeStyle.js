@@ -33,26 +33,12 @@ import {
   Fill,
   Font,
   FontStyle,
-  GraphComponent,
-  GraphEditorInputMode,
-  HandleSerializationEventArgs,
   HorizontalTextAlignment,
   IClipboardHelper,
   IEditLabelHelper,
-  IGraphClipboardContext,
-  ILabel,
-  ILabelStyle,
-  ILookup,
-  IModelItem,
   INode,
   INodeSizeConstraintProvider,
-  INodeStyle,
   Insets,
-  IRectangle,
-  IRenderContext,
-  ItemClickedEventArgs,
-  IVisualCreator,
-  LabelEditingEventArgs,
   LabelStyle,
   MarkupExtension,
   NodeStyleBase,
@@ -556,7 +542,7 @@ export class UMLNodeStyle extends NodeStyleBase {
       }
     } else {
       // we add a dummy entry to make space for the label editing
-      // eslint-disable-next-line no-lonely-if
+
       if (categoryHit === 1) {
         data.attributes.push('')
         this.adjustSize(node, editorInputMode)
@@ -597,7 +583,7 @@ export class UMLNodeStyle extends NodeStyleBase {
       }
     } else {
       // canceled, maybe remove the dummy entry
-      // eslint-disable-next-line no-lonely-if
+
       if (adding) {
         if (categoryHit === 1) {
           data.attributes.splice(data.attributes.length - 1, 1)

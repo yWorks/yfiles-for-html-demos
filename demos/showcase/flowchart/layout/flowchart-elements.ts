@@ -42,33 +42,31 @@ import {
  * {@link IMapper} key used to specify the flowchart-specific type of each node.
  * Valid are all node type constants specified below.
  */
-export const NODE_TYPE_DATA_KEY = new NodeDataKey<number>('FlowchartLayout.NODE_TYPE_DATA_KEY')
+export const NODE_TYPE_DATA_KEY = new NodeDataKey<MultiPageNodeType>(
+  'FlowchartLayout.NODE_TYPE_DATA_KEY'
+)
 
 /**
  * {@link IMapper} key used to specify the flowchart-specific type of each edge.
  * Valid are all edge type constants specified below.
  */
-export const EDGE_TYPE_DATA_KEY = new EdgeDataKey<number>('FlowchartLayout.EDGE_TYPE_DATA_KEY')
+export const EDGE_TYPE_DATA_KEY = new EdgeDataKey<MultiPageEdgeType>(
+  'FlowchartLayout.EDGE_TYPE_DATA_KEY'
+)
 
-export enum MultiPageNodeType {
-  Invalid = 0,
-  Event = 1,
-  StartEvent = 7,
-  EndEvent = 9,
-  Decision = 2,
-  Process = 3,
-  Group = 8,
-  Annotation = 10,
-  Pool = 12,
-  Data = 11
-}
+export type MultiPageNodeType =
+  | 'Invalid'
+  | 'Event'
+  | 'StartEvent'
+  | 'EndEvent'
+  | 'Decision'
+  | 'Process'
+  | 'Group'
+  | 'Annotation'
+  | 'Pool'
+  | 'Data'
 
-export enum MultiPageEdgeType {
-  Invalid = 0,
-  SequenceFlow = 4,
-  MessageFlow = 5,
-  Association = 6
-}
+export type MultiPageEdgeType = 'Invalid' | 'SequenceFlow' | 'MessageFlow' | 'Association'
 
 /**
  * Returns true for activity nodes.
@@ -77,11 +75,7 @@ export enum MultiPageEdgeType {
  */
 export function isActivity(graph: LayoutGraph, node: LayoutNode): boolean {
   const type = getNodeType(graph, node)
-  return (
-    type === MultiPageNodeType.Process ||
-    type === MultiPageNodeType.Data ||
-    type === MultiPageNodeType.Group
-  )
+  return type === 'Process' || type === 'Data' || type === 'Group'
 }
 
 /**
@@ -89,14 +83,14 @@ export function isActivity(graph: LayoutGraph, node: LayoutNode): boolean {
  * For BPMN, this is Sub-Process.
  */
 export function isGroup(graph: LayoutGraph, node: LayoutNode): boolean {
-  return getNodeType(graph, node) === MultiPageNodeType.Group
+  return getNodeType(graph, node) === 'Group'
 }
 
 /**
  * Returns true for annotation nodes.
  */
 export function isAnnotation(graph: LayoutGraph, node: LayoutNode): boolean {
-  return getNodeType(graph, node) === MultiPageNodeType.Annotation
+  return getNodeType(graph, node) === 'Annotation'
 }
 
 /**
@@ -106,39 +100,34 @@ export function isAnnotation(graph: LayoutGraph, node: LayoutNode): boolean {
  */
 export function isEvent(graph: LayoutGraph, node: LayoutNode): boolean {
   const type = getNodeType(graph, node)
-  return (
-    type === MultiPageNodeType.StartEvent ||
-    type === MultiPageNodeType.Event ||
-    type === MultiPageNodeType.EndEvent
-  )
+  return type === 'StartEvent' || type === 'Event' || type === 'EndEvent'
 }
 
 /**
  * Returns true for start event nodes.
  */
 export function isStartEvent(graph: LayoutGraph, node: LayoutNode): boolean {
-  return getNodeType(graph, node) === MultiPageNodeType.StartEvent
+  return getNodeType(graph, node) === 'StartEvent'
 }
 
 export function isUndefined(graph: LayoutGraph, edge: LayoutEdge): boolean {
-  const type = getEdgeType(graph, edge)
-  return !type || type === MultiPageEdgeType.Invalid
+  return getEdgeType(graph, edge) === 'Invalid'
 }
 
 export function isRegularEdge(graph: LayoutGraph, edge: LayoutEdge): boolean {
-  return getEdgeType(graph, edge) === MultiPageEdgeType.SequenceFlow
+  return getEdgeType(graph, edge) === 'SequenceFlow'
 }
 
 export function isMessageFlow(graph: LayoutGraph, edge: LayoutEdge): boolean {
-  return getEdgeType(graph, edge) === MultiPageEdgeType.MessageFlow
+  return getEdgeType(graph, edge) === 'MessageFlow'
 }
 
-export function getEdgeType(graph: LayoutGraph, edge: LayoutEdge): number {
+export function getEdgeType(graph: LayoutGraph, edge: LayoutEdge): MultiPageEdgeType {
   const edgeTypeDataMap = graph.context.getItemData(EDGE_TYPE_DATA_KEY)
-  return edgeTypeDataMap === null ? MultiPageEdgeType.Invalid : edgeTypeDataMap.get(edge)!
+  return edgeTypeDataMap === null ? 'Invalid' : edgeTypeDataMap.get(edge)!
 }
 
-function getNodeType(graph: LayoutGraph, node: LayoutNode): number {
+function getNodeType(graph: LayoutGraph, node: LayoutNode): MultiPageNodeType {
   const nodeTypeDataMap = graph.context.getItemData(NODE_TYPE_DATA_KEY)
-  return nodeTypeDataMap === null ? MultiPageNodeType.Invalid : nodeTypeDataMap.get(node)!
+  return nodeTypeDataMap === null ? 'Invalid' : nodeTypeDataMap.get(node)!
 }

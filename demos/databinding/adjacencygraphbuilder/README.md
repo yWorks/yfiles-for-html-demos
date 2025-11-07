@@ -17,7 +17,9 @@
 
 This demo interactively builds and modifies a graph from **JSON** business data using class [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder).
 
-See the the Developer's Guide section on the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-AdjacencyGraphBuilder) for an in-depth explanation of the relevant concepts.
+See the Developer's Guide section on the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-AdjacencyGraphBuilder) for an in-depth explanation of the relevant concepts.
+
+See also the [Step Tutorial: Graph Builder](../../tutorial-graph-builder/01-create-graph/) for a step-by-step guide on configuring the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) class, loading data, and customizing graph visualizations.
 
 The demo allows to define nodes sources and edges bindings using the schema graph component on the right. The schema nodes represent nodes sources. The schema edges represent the edge bindings between the nodes sources. The edge arrows indicate the type of the edge. An arrow pointing away from a node indicates outgoing edges to successor nodes. An arrow pointing towards a node indicates incoming edges from predecessor nodes.
 

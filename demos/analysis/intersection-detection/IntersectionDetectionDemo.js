@@ -28,7 +28,7 @@
  ***************************************************************************/
 import {
   EdgePathCropper,
-  SmartEdgeLabelModel,
+  EdgeStyleIndicatorRenderer,
   FreeNodeLabelModel,
   GraphBuilder,
   GraphComponent,
@@ -37,40 +37,32 @@ import {
   GraphSnapContext,
   HorizontalTextAlignment,
   IEdge,
-  IGraph,
   INode,
-  Intersection,
   IntersectionItemTypes,
   Intersections,
   LabelPositionHandler,
   LabelStyle,
+  LabelStyleIndicatorRenderer,
   License,
+  NodeStyleIndicatorRenderer,
   OrientedRectangle,
   Point,
   PolylineEdgeStyle,
   ShapeNodeStyle,
+  SmartEdgeLabelModel,
   TimeSpan,
   VerticalTextAlignment,
-  Visualization,
-  NodeStyleIndicatorRenderer,
-  LabelStyleIndicatorRenderer,
-  EdgeStyleIndicatorRenderer
+  Visualization
 } from '@yfiles/yfiles'
 import { IntersectionVisualCreator } from './DemoVisuals'
-import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import GraphData from './resources/GraphData'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { colorSets, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import graphData from './graph-data'
+import licenseData from '../../../lib/license.json'
 import { createToolTipContent } from './TooltipHelper'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
-/**
- * The graph component
- */
 let graphComponent
 
-/**
- * The canvas object for the intersection visual.
- */
 let intersectionVisualCreator
 
 const considerSourceTargetIntersectionsBox = document.querySelector(
@@ -96,7 +88,7 @@ let intersectionInfoArray = []
  * This demo shows how to find and highlight intersections and overlaps between graph elements.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   // initialize the input mode
   initializeInputMode()
@@ -237,7 +229,7 @@ function initializeIntersectionVisual() {
 function loadSampleGraph(graph) {
   const builder = new GraphBuilder(graph)
   const ns = builder.createNodesSource({
-    data: GraphData.nodeList.filter((data) => !data.isGroup),
+    data: graphData.nodeList.filter((data) => !data.isGroup),
     id: 'id',
     layout: 'layout',
     parentId: (dataItem) => dataItem.parent
@@ -272,7 +264,7 @@ function loadSampleGraph(graph) {
   })
 
   const groupSource = builder.createGroupNodesSource({
-    data: GraphData.nodeList.filter((data) => data.isGroup),
+    data: graphData.nodeList.filter((data) => data.isGroup),
     id: 'id',
     layout: 'layout'
   })
@@ -282,7 +274,7 @@ function loadSampleGraph(graph) {
   groupLabelCreator.textProvider = (data) => data.text || ''
 
   const es = builder.createEdgesSource({
-    data: GraphData.edgeList,
+    data: graphData.edgeList,
     id: 'id',
     sourceId: 'source',
     targetId: 'target',

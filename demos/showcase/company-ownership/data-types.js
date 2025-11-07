@@ -27,35 +27,6 @@
  **
  ***************************************************************************/
 /**
- * The types of the edges.
- */
-export var EdgeTypeEnum
-;(function (EdgeTypeEnum) {
-  EdgeTypeEnum['Hierarchy'] = 'Hierarchy'
-  EdgeTypeEnum['Relation'] = 'Relation'
-})(EdgeTypeEnum || (EdgeTypeEnum = {}))
-
-/**
- * The types of the nodes.
- */
-export var NodeTypeEnum
-;(function (NodeTypeEnum) {
-  NodeTypeEnum['CORPORATION'] = 'Corporation'
-  NodeTypeEnum['CTB'] = 'CTB'
-  NodeTypeEnum['PARTNERSHIP'] = 'Partnership'
-  NodeTypeEnum['RCTB'] = 'RCTB'
-  NodeTypeEnum['BRANCH'] = 'Branch'
-  NodeTypeEnum['DISREGARDED'] = 'Disregarded'
-  NodeTypeEnum['DUAL_RESIDENT'] = 'Dual Resident'
-  NodeTypeEnum['MULTIPLE'] = 'Multiple'
-  NodeTypeEnum['TRUST'] = 'Trust'
-  NodeTypeEnum['INDIVIDUAL'] = 'Individual'
-  NodeTypeEnum['THIRD_PARTY'] = 'Third Party'
-  NodeTypeEnum['PE_RISK'] = 'PE_Risk'
-  NodeTypeEnum['TRAPEZOID'] = 'Trapezoid'
-})(NodeTypeEnum || (NodeTypeEnum = {}))
-
-/**
  * Returns the data stored in the node's tag.
  */
 export function getCompany(node) {

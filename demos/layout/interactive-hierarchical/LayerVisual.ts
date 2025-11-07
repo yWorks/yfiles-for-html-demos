@@ -28,17 +28,17 @@
  ***************************************************************************/
 import {
   BaseClass,
-  IEnumerable,
-  IGraph,
-  IMapper,
-  INode,
-  IRenderContext,
+  type IEnumerable,
+  type IGraph,
+  type IMapper,
+  type INode,
+  type IRenderContext,
   IVisualCreator,
   List,
-  Point,
+  type Point,
   Rect,
   SvgVisual,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 /**

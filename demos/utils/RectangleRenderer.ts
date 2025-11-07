@@ -29,20 +29,29 @@
 import {
   Insets,
   type IRectangle,
-  IRenderContext,
+  type IRenderContext,
   ObjectRendererBase,
   Rect,
   SvgVisual
 } from '@yfiles/yfiles'
 
 export class RectangleRenderer extends ObjectRendererBase<IRectangle, SvgVisual> {
+  private margins: Insets
+  private useViewCoordinates: boolean
+  private fill: string
+  private stroke: string
+
   constructor(
-    private stroke: string = 'rgba(0,0,0,1)',
-    private fill: string = 'rgba(0,0,0,0.0)',
-    private useViewCoordinates: boolean = true,
-    private margins: Insets = new Insets(0)
+    stroke: string = 'rgba(0,0,0,1)',
+    fill: string = 'rgba(0,0,0,0.0)',
+    useViewCoordinates: boolean = true,
+    margins: Insets = new Insets(0)
   ) {
     super()
+    this.stroke = stroke
+    this.fill = fill
+    this.useViewCoordinates = useViewCoordinates
+    this.margins = margins
   }
 
   protected createVisual(context: IRenderContext, renderTag: IRectangle) {

@@ -33,10 +33,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-    <title>Simple Highlight Decorator - Application Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <title>Simple Highlight Decorator [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -60,18 +60,9 @@
     </header>
 
     <div class="demo-page__toolbar">
-      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
-      <span class="demo-separator"></span>
-      <button data-command="CUT"></button>
-      <button data-command="COPY"></button>
-      <button data-command="PASTE"></button>
-      <span class="demo-separator"></span>
-      <button data-command="UNDO"></button>
-      <button data-command="REDO"></button>
-      <span class="demo-separator"></span>
-      <button data-command="GROUP_SELECTION"></button>
-      <button data-command="UNGROUP_SELECTION"></button>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -86,17 +77,31 @@
       <div class="demo-description__play-button">Start here</div>
 
       <div class="demo-description__content">
-        <div class="tutorial-step">Application Features</div>
-
         <h1>Simple Highlight Decorator</h1>
-
         <p>
-          Shows how to highlight a node or an edge when the mouse hovers over said node or edge.
+          This demo shows how to highlight a node or an edge when the mouse hovers over the said
+          node or edge.
         </p>
-
+        <h2>Highlight Decoration</h2>
+        <p>
+          The demo uses the <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleIndicatorRenderer" class="api" target="_blank">NodeStyleIndicatorRenderer</a> and
+          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleIndicatorRenderer" class="api" target="_blank">EdgeStyleIndicatorRenderer</a> classes to define custom highlight
+          visualizations for nodes and edges.
+        </p>
+        <p>
+          These renderers are registered with the graph&#39;s
+          <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph#decorator" class="api" target="_blank">decorator</a> to customize the appearance of highlighted
+          graph elements.
+        </p>
         <h2>Things to Try</h2>
+        <p>Hover over any node or edge to observe the custom highlight effect.</p>
+        <h2>Documentation</h2>
         <ul>
-          <li>Hover over a node or an edge to see a highlight effect.</li>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_graph-graph_decorator" class="dguide" target="_blank">Decorating graph components</a>
+          </li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleIndicatorRenderer" class="api" target="_blank">NodeStyleIndicatorRenderer</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleIndicatorRenderer" class="api" target="_blank">EdgeStyleIndicatorRenderer</a></li>
         </ul>
       </div>
     </aside>
@@ -104,11 +109,12 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
     <script
       type="module"
       crossorigin="anonymous"
-      src="SimpleHighlightDecoratorDemo.ts"
+      src="./SimpleHighlightDecoratorDemo.ts"
       async
     ></script>
   </body>

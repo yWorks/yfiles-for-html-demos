@@ -36,8 +36,8 @@ import {
 } from '@yfiles/yfiles'
 import { PrintingSupport } from '@yfiles/demo-utils/PrintingSupport'
 import { CollapsibleTree } from './CollapsibleTree'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { initializeGraphSearch } from './OrgChartGraphSearch'
 import { buildGraph, getEmployee } from './model/data-loading'
 import { createOrgChartNodeStyle } from './graph-style/orgchart-node-style'
@@ -46,7 +46,7 @@ import { initializeInputMode, initializeInteractivity } from './input'
 let graphComponent = null
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the graph component and overview
   graphComponent = new GraphComponent('graphComponent')

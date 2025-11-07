@@ -33,8 +33,8 @@ import {
   GraphItemTypes,
   HierarchicalLayout,
   HierarchicalLayoutData,
-  IGraph,
-  IInputModeContext,
+  type IGraph,
+  type IInputModeContext,
   INode,
   LabelStyle,
   LayoutExecutor,
@@ -44,14 +44,14 @@ import {
   Size
 } from '@yfiles/yfiles'
 import { RandomGraphGenerator } from '@yfiles/demo-utils/RandomGraphGenerator'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { constraintNodeStyle } from './style-templates'
 
 type LayerConstraintsData = { value: number; constraints: boolean }
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('graphComponent')
   initializeInputMode(graphComponent)

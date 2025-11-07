@@ -33,20 +33,19 @@ import {
   GraphComponent,
   GraphViewerInputMode,
   HorizontalTextAlignment,
-  LabelStyle,
   License,
   Point,
   Rect
 } from '@yfiles/yfiles'
-import { colorSets, createDemoNodeLabelStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { colorSets, createDemoNodeLabelStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the graph
   const graphComponent = new GraphComponent('graphComponent')

@@ -35,11 +35,13 @@ import { getDate, syncActivityWithNodeLayout, updateNodeColor } from '../gantt-u
  * Controls the move of an activity node.
  */
 export class ActivityNodePositionHandler extends BaseClass(IPositionHandler) {
-  constructor(
-    private readonly node: INode,
-    private readonly wrappedHandler: IPositionHandler | null
-  ) {
+  private readonly wrappedHandler: IPositionHandler | null
+  private readonly node: INode
+
+  constructor(node: INode, wrappedHandler: IPositionHandler | null) {
     super()
+    this.node = node
+    this.wrappedHandler = wrappedHandler
   }
 
   /**

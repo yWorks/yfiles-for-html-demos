@@ -29,8 +29,9 @@
 import { PortStyleBase, Rect, SvgVisual } from '@yfiles/yfiles'
 
 export class CollapseExpandPortStyle extends PortStyleBase {
-  renderSize
   isCollapsed
+  renderSize
+
   constructor(renderSize, isCollapsed) {
     super()
     this.renderSize = renderSize

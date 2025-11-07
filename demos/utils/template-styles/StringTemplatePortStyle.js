@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GeneralPath,
-  IRenderContext,
-  Point,
-  PortStyleBase,
-  Rect,
-  Size,
-  SvgVisual
-} from '@yfiles/yfiles'
+import { Point, PortStyleBase, Rect, Size, SvgVisual } from '@yfiles/yfiles'
 import {
   converters,
   makeObservable,
@@ -63,7 +55,6 @@ class PortTemplateContext extends TemplateContext {
     return this.style.renderSize.height
   }
 
-  // noinspection JSUnusedGlobalSymbols
   get styleTag() {
     return this.style.tag
   }
@@ -112,7 +103,6 @@ export class StringTemplatePortStyle extends PortStyleBase {
 
   /**
    * This mimics the old yFiles 2.x API
-   * @param obj
    */
   static makeObservable(obj) {
     makeObservable(obj)

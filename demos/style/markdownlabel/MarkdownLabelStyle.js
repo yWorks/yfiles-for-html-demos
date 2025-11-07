@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GeneralPath,
-  LabelStyleBase,
-  MarkupLabelStyle,
-  Rect,
-  SimpleLabel,
-  Size,
-  Visual
-} from '@yfiles/yfiles'
+import { LabelStyleBase, SimpleLabel } from '@yfiles/yfiles'
 import MarkdownIt from 'markdown-it'
 
 /**

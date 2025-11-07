@@ -31,21 +31,21 @@ import {
   Color,
   type Constructor,
   EdgeStyleBase,
-  ICanvasContext,
-  IEdge,
-  IInputModeContext,
-  IPortStyle,
-  IRenderContext,
-  ShapePortStyle,
-  Point,
+  type ICanvasContext,
+  type IEdge,
+  type IInputModeContext,
+  type IPortStyle,
+  type IRenderContext,
+  type Point,
   PolylineEdgeStyle,
-  Rect,
+  type Rect,
+  ShapePortStyle,
   SimplePort,
   Size,
   Stroke,
-  SvgVisual,
+  type SvgVisual,
   SvgVisualGroup,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 /**
@@ -58,14 +58,16 @@ import {
  * constructor, is used to render the edge's bend, a
  */
 export class EdgeStyleDecorator extends EdgeStyleBase {
+    private readonly bendStyle: IPortStyle;
   private readonly baseStyle: PolylineEdgeStyle
 
   /**
    * Initializes a new instance of this class.
    * @param bendStyle A port style that is used to draw the bends.
    */
-  constructor(private readonly bendStyle: IPortStyle) {
+  constructor(bendStyle: IPortStyle) {
     super()
+      this.bendStyle = bendStyle;
     const baseStyle = new PolylineEdgeStyle()
     baseStyle.smoothingLength = 5.0
     this.baseStyle = baseStyle
@@ -150,7 +152,7 @@ export class EdgeStyleDecorator extends EdgeStyleBase {
     const portLocationModel = BendAnchoredPortLocationModel.INSTANCE
     for (let i = 0; i < group.children.size; i++) {
       // place the dummy port at the bend's location
-      dummyPort.locationParameter = portLocationModel.createParameterFromSource(i - 1)
+      dummyPort.locationParameter = portLocationModel.createParameterFromSource(i)
 
       // update the dummy port visual
       const visual = bendStyle.renderer

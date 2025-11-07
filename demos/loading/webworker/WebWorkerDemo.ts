@@ -31,7 +31,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HierarchicalLayoutData,
-  IEdge,
+  type IEdge,
   Insets,
   type LayoutDescriptor,
   LayoutExecutorAsync,
@@ -39,8 +39,8 @@ import {
   WaitInputMode
 } from '@yfiles/yfiles'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import {
   createGroupedSampleGraph,
   initializeBasicDemoStyles,
@@ -55,7 +55,7 @@ let executor: LayoutExecutorAsync | null = null
 const worker = new Worker(new URL('./WorkerLayout', import.meta.url), { type: 'module' })
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('#graphComponent')
   // initialize styles as well as graph

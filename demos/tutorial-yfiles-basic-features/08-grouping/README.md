@@ -69,7 +69,7 @@ graph.addLabel(groupNode, 'Group Node')
 const edgeFromGroup = graph.createEdge(groupNode, graph.nodes.at(1)!)
 ```
 
-If the group content is changed in code, i.e. a child node is added or removed programmatically, the group node size is not adjusted automatically. Instead, we have to call [adjustGroupNodeLayout](https://docs.yworks.com/yfileshtml/#/api/IGraph#IGraph-defaultmethod-adjustGroupNodeLayout).
+If the group content is changed in code, i.e. a child node is added or removed programmatically, the group node size is not adjusted automatically. Instead, we have to call [adjustGroupNodeLayout](https://docs.yworks.com/yfileshtml/#/api/IGraph#adjustGroupNodeLayout).
 
 ```
 // Get a group node

@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  IEdge,
-  IGraph,
-  IInputModeContext,
-  IOrthogonalEdgeHelper,
-  IShapeGeometry,
-  OrthogonalEdgeHelper
-} from '@yfiles/yfiles'
+import { IOrthogonalEdgeHelper, IShapeGeometry, OrthogonalEdgeHelper } from '@yfiles/yfiles'
 
 /**
  * An {@link OrthogonalEdgeHelper} that enables moving the

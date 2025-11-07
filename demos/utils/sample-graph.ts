@@ -31,20 +31,20 @@
  * and give it a bit of styling.
  */
 import {
+  Arrow,
   FolderNodeConverter,
   FoldingManager,
-  FreeEdgeLabelModel,
-  GraphComponent,
+  type GraphComponent,
+  GroupNodeLabelModel,
   GroupNodeStyle,
   HorizontalTextAlignment,
-  IGraph,
-  ILabelOwner,
-  IList,
-  InteriorNodeLabelModel,
+  type IGraph,
+  type ILabelOwner,
+  type IList,
+  Insets,
   LabelShape,
   LabelStyle,
   PolylineEdgeStyle,
-  ShapeNodeShape,
   ShapeNodeStyle,
   VerticalTextAlignment
 } from '@yfiles/yfiles'
@@ -647,64 +647,58 @@ export function initializeFolding(graphComponent: GraphComponent) {
 }
 
 export function initializeBasicDemoStyles(graph: IGraph): void {
-  const colorSet = {
-    fill: '#ff6c00',
-    stroke: '#662b00',
-    nodeLabelFill: '#ffc499',
-    edgeLabelFill: '#e0d5cc',
-    text: '#662b00'
-  }
-
-  const colorSet2 = {
-    fill: '#242265',
-    stroke: '#0e0e28',
-    nodeLabelFill: '#a7a7c1',
-    edgeLabelFill: '#cfcfd4',
-    text: '#0e0e28'
-  }
-
-  // set (group-)node defaults
   graph.nodeDefaults.style = new ShapeNodeStyle({
-    shape: ShapeNodeShape.ROUND_RECTANGLE,
-    fill: colorSet.fill,
-    stroke: `1.5px ${colorSet.stroke}`
+    shape: 'round-rectangle',
+    stroke: '1.5px solid',
+    cssClass: 'node'
+  })
+
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    smoothingLength: 8,
+    cssClass: 'edge',
+    stroke: `1.5px solid currentColor`,
+    targetArrow: new Arrow({
+      stroke: null,
+      fill: 'currentColor',
+      type: 'triangle',
+      widthScale: 0.75,
+      lengthScale: 0.75
+    })
+  })
+
+  graph.nodeDefaults.labels.style = new LabelStyle({
+    shape: LabelShape.ROUND_RECTANGLE,
+    backgroundFill: '#000',
+    verticalTextAlignment: VerticalTextAlignment.CENTER,
+    horizontalTextAlignment: HorizontalTextAlignment.CENTER,
+    padding: new Insets(2, 4, 2, 4),
+    cssClass: 'node-label'
+  })
+
+  graph.edgeDefaults.labels.style = new LabelStyle({
+    shape: LabelShape.ROUND_RECTANGLE,
+    backgroundFill: '#000',
+    verticalTextAlignment: VerticalTextAlignment.CENTER,
+    horizontalTextAlignment: HorizontalTextAlignment.CENTER,
+    padding: new Insets(2, 4, 2, 4),
+    cssClass: 'edge-label'
   })
 
   graph.groupNodeDefaults.style = new GroupNodeStyle({
-    groupIcon: 'minus',
-    folderIcon: 'plus',
-    tabFill: colorSet2.nodeLabelFill,
-    stroke: `2px solid ${colorSet2.fill}`,
-    contentAreaPadding: 20,
-    tabBackgroundFill: colorSet2.fill,
     tabPosition: 'top-trailing',
-    tabWidth: 30,
-    tabHeight: 20,
-    tabPadding: 3,
-    iconOffset: 2,
-    iconSize: 14,
-    iconForegroundFill: colorSet2.fill,
-    hitTransparentContentArea: true
+    tabSizePolicy: 'adjust-to-label',
+    stroke: '1.5px solid',
+    cornerRadius: 8,
+    tabWidth: 20,
+    contentAreaPadding: 8,
+    hitTransparentContentArea: true,
+    cssClass: 'group-node'
   })
 
-  // set edge defaults
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke: `1.5px ${colorSet.stroke}`,
-    targetArrow: `${colorSet.stroke} small triangle`
+  graph.groupNodeDefaults.labels.style = new LabelStyle({
+    wrapping: 'wrap-character-ellipsis',
+    cssClass: 'group-node-label'
   })
 
-  // set label defaults
-  const defaultLabelStyle = new LabelStyle({
-    shape: LabelShape.ROUND_RECTANGLE,
-    backgroundFill: colorSet.nodeLabelFill,
-    textFill: colorSet.text,
-    verticalTextAlignment: VerticalTextAlignment.CENTER,
-    horizontalTextAlignment: HorizontalTextAlignment.CENTER,
-    padding: [2, 4, 1, 4]
-  })
-
-  graph.nodeDefaults.labels.style = defaultLabelStyle
-  graph.edgeDefaults.labels.style = defaultLabelStyle
-  graph.nodeDefaults.labels.layoutParameter = InteriorNodeLabelModel.CENTER
-  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createParameter()
+  graph.groupNodeDefaults.labels.layoutParameter = new GroupNodeLabelModel().createTabParameter()
 }

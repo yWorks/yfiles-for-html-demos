@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ICanvasContext, IPort, Point, PortStyleBase, Rect } from '@yfiles/yfiles'
+import { type ICanvasContext, type IPort, Point, PortStyleBase, Rect } from '@yfiles/yfiles'
 import type { FlowNodePortProperties } from './FlowNodePort'
 
 type DummyPortOptions = {

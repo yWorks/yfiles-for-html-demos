@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, INode } from '@yfiles/yfiles'
+import {} from '@yfiles/yfiles'
 import { hiddenProperties, isFlowNode, lockedProperties } from '../FlowNode/FlowNode'
 import { showErrorDialog } from './showErrorDialog'
 

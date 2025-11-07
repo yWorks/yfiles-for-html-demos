@@ -33,13 +33,13 @@ import {
   type IEdge,
   type IEdgeStyle,
   type IGraph,
-  IInputModeContext,
+  type IInputModeContext,
   type IList,
   type INode,
   type INodeStyle,
-  InputModeItemEventArgs,
+  type InputModeItemEventArgs,
   List,
-  Point,
+  type Point,
   SelectionIndicatorManager,
   WebGLGraphModelManager,
   WebGLGraphModelManagerRenderMode,
@@ -72,6 +72,10 @@ export type RenderingTypeChangedListener = (newValue: RenderingType) => void
  * constructor arguments.
  */
 export class RenderingTypesManager {
+  nodeCreator: NodeCreatorProvider | null
+  edgeStyleProvider: EdgeStyleProvider
+  nodeStyleProvider: NodeStyleProvider
+  readonly graphComponent: GraphComponent
   private readonly listeners: IList<RenderingTypeChangedListener>
 
   /**
@@ -104,12 +108,16 @@ export class RenderingTypesManager {
    *   adding a tag) is necessary
    */
   constructor(
-    public readonly graphComponent: GraphComponent,
+    graphComponent: GraphComponent,
     svgThreshold = 0.3,
-    public nodeStyleProvider: NodeStyleProvider,
-    public edgeStyleProvider: EdgeStyleProvider,
-    public nodeCreator: NodeCreatorProvider | null = null
+    nodeStyleProvider: NodeStyleProvider,
+    edgeStyleProvider: EdgeStyleProvider,
+    nodeCreator: NodeCreatorProvider | null = null
   ) {
+    this.graphComponent = graphComponent
+    this.nodeStyleProvider = nodeStyleProvider
+    this.edgeStyleProvider = edgeStyleProvider
+    this.nodeCreator = nodeCreator
     this.listeners = new List()
 
     this.svgThresholdValue = svgThreshold

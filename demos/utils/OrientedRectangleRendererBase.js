@@ -29,24 +29,17 @@
 import {
   BaseClass,
   IBoundsProvider,
-  ICanvasContext,
   IFocusRenderer,
   IHighlightRenderer,
   IHitTestable,
-  IInputModeContext,
-  IOrientedRectangle,
-  IRenderContext,
   ISelectionRenderer,
-  ISize,
   IVisibilityTestable,
   IVisualCreator,
   LabelStyleBase,
   MatrixOrder,
   OrientedRectangle,
   Point,
-  Rect,
-  SvgVisual,
-  Visual
+  SvgVisual
 } from '@yfiles/yfiles'
 
 /**
@@ -65,6 +58,7 @@ export class OrientedRectangleRendererBase extends BaseClass(
   IVisualCreator
 ) {
   useViewCoordinates
+
   /**
    * Creates a new instance.
    * @param useViewCoordinates Gets or sets a value indicating whether the visualization is drawn in

@@ -27,14 +27,14 @@
  **
  ***************************************************************************/
 import { GraphComponent, License, Size } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 import { orgChartData } from './adjacency-data'
 import { configureGraphBuilder } from './adjacency-graph-building'
 import { initializeTutorialDefaults, runLayout } from '../common'
 
-License.value = await fetchLicense()
+License.value = licenseData
 
 const graphComponent = new GraphComponent('#graphComponent')
 initializeTutorialDefaults(graphComponent)

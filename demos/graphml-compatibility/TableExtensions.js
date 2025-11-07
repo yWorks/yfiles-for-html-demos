@@ -30,7 +30,6 @@ import {
   GraphMLMemberVisibility,
   ILabelDefaults,
   IList,
-  ILookup,
   Insets,
   IStripeDefaults,
   IStripeStyle,
@@ -40,9 +39,14 @@ import {
   Point,
   StripeDefaults,
   XmlName,
-  yfiles
+  yfiles as yfilesUnknown
 } from '@yfiles/yfiles'
 import { YfilesCommon_3_0_XamlNS, YfilesCommonXamlNS } from './GraphMLCompatibility'
+
+/**
+ * The usage of yfiles here is only for GraphML compatibility and shouldn't be needed elsewhere.
+ */
+const yfiles = yfilesUnknown
 
 export function configureRenamings(callback) {
   const nameMappings = new Map()
@@ -119,6 +123,7 @@ export function configureExtensions(callback) {
 }
 
 function createMetadata(type, metadata, callback, ns = YfilesCommon_3_0_XamlNS) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   metadata.name = type.name
   metadata.xmlNamespace = ns
   callback(type, metadata)
@@ -180,7 +185,6 @@ class TableExtension extends MarkupExtension {
   }
 
   provideValue(serviceProvider) {
-    //@ts-ignore
     const tableExtension = new yfiles.graphml.TableExtension()
     tableExtension.padding = this._Insets
     tableExtension.relativeLocation = this._RelativeLocation
@@ -256,7 +260,6 @@ class RowExtension extends MarkupExtension {
   }
 
   provideValue(serviceProvider) {
-    //@ts-ignore
     const rowExtension = new yfiles.graphml.RowExtension()
     rowExtension.padding = this._Insets
     rowExtension.size = this._Size
@@ -333,7 +336,6 @@ class ColumnExtension extends MarkupExtension {
   }
 
   provideValue(serviceProvider) {
-    //@ts-ignore
     const columnExtension = new yfiles.graphml.ColumnExtension()
     columnExtension.padding = this._Insets
     columnExtension.size = this._Size
@@ -414,3 +416,4 @@ class StripeDefaultsExtension extends MarkupExtension {
   }
 }
 
+// endregion

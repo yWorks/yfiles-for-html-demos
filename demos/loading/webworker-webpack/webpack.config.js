@@ -54,7 +54,7 @@ const baseConfig = {
   plugins: [
     new MiniCssExtractPlugin({ filename: '[name].css', chunkFilename: '[id].css' }),
     new CopyWebpackPlugin({
-      patterns: [{ from: '../../resources/icons/favicon.ico', noErrorOnMissing: true }]
+      patterns: [{ from: '../../demo-app/icons/favicon.ico', noErrorOnMissing: true }]
     })
   ],
   output: { clean: true, filename: '[name].js', path: path.resolve(__dirname, 'dist') }

@@ -1,0 +1,161 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+import { IEnumerable, IGraph, IModelItem } from '@yfiles/yfiles'
+import { buildGraph } from './build-graph'
+import { readFromGraphML } from './graphml-support'
+import { delay, highlightItems, show } from './presentation-support'
+import { DefaultMenu } from './default-menu'
+
+export * from './demo-app'
+
+/**
+ * The internal implementation of the Demo App.
+ * @internal
+ */
+export class DefaultApp {
+  signal
+  graphComponent
+  messageRoot
+  toolbar
+  sidebar
+
+  constructor(toolbarFactory, sidebarFactory, messageRoot, graphComponent, signal) {
+    this.messageRoot = messageRoot
+    this.graphComponent = graphComponent
+    this.signal = signal
+    this.toolbar = new DefaultMenu(toolbarFactory)
+    this.sidebar = new DefaultMenu(sidebarFactory)
+  }
+
+  createRandomGraph(graph, nodeCount, edgeCount, groupCount, onNodeCreated, onEdgeCreated) {
+    if (!graph) {
+      graph = this.graphComponent.graph
+    }
+
+    if (!(graph instanceof IGraph)) {
+      const options = graph
+      graph = options.graph ?? this.graphComponent.graph
+      nodeCount = options.nodeCount
+      edgeCount = options.edgeCount
+      onNodeCreated = options.onNodeCreated
+      onEdgeCreated = options.onEdgeCreated
+      groupCount = options.groupCount
+    }
+
+    if (!nodeCount) {
+      nodeCount = 10
+    }
+
+    edgeCount = Math.max(0, Math.min(edgeCount ?? nodeCount - 1, nodeCount * (nodeCount - 1)))
+    const rootNode = graph.createNode()
+
+    // Create a random graph with a tree structure
+    const nodes = [rootNode]
+    const edges = []
+    for (let i = 1; i < nodeCount; i++) {
+      nodes.push(graph.createNode())
+
+      if (edgeCount > 0) {
+        edges.push(graph.createEdge(nodes[Math.floor(Math.random() * (i - 1))], nodes[i]))
+      }
+      edgeCount--
+    }
+
+    if (groupCount && groupCount > 0) {
+      const availableNodes = [...nodes]
+      for (let i = 0; i < groupCount; i++) {
+        const group = graph.createGroupNode()
+        const contentCount = Math.max(1, Math.floor(Math.random() * availableNodes.length * 0.3))
+        for (let j = 0; j < contentCount; j++) {
+          const nodeIndex = Math.floor(Math.random() * availableNodes.length)
+          const node = availableNodes[nodeIndex]
+          availableNodes.splice(nodeIndex, 1)
+          graph.setParent(node, group)
+        }
+        availableNodes.push(group)
+        nodes.push(group)
+      }
+    }
+
+    for (let i = 0; i < edgeCount; i++) {
+      let from = nodes[Math.floor(Math.random() * nodeCount)]
+      let to = nodes[Math.floor(Math.random() * nodeCount)]
+      while (from == to || graph.getEdge(from, to)) {
+        from = nodes[Math.floor(Math.random() * nodeCount)]
+        to = nodes[Math.floor(Math.random() * nodeCount)]
+      }
+
+      edges.push(graph.createEdge(from, to))
+    }
+
+    if (onNodeCreated != null) {
+      for (const node of nodes) {
+        onNodeCreated(node, nodes.indexOf(node))
+      }
+    }
+
+    if (onEdgeCreated != null) {
+      for (const edge of edges) {
+        onEdgeCreated(edge, edges.indexOf(edge))
+      }
+    }
+  }
+
+  buildGraphFromJson(graphData, graph) {
+    buildGraph(graph ?? this.graphComponent.graph, graphData)
+  }
+
+  async buildGraphFromGraphML(graphml, graph) {
+    try {
+      graph = graph ?? this.graphComponent.graph
+      graph.clear()
+      await readFromGraphML(graph, graphml)
+    } catch (e) {
+      throw new Error(`Error reading GraphML: ${e.message}`)
+    }
+  }
+
+  highlight(items, duration = 1000, graphComponent) {
+    const allItems = items instanceof IModelItem ? [items] : items
+    return highlightItems(
+      graphComponent ?? this.graphComponent,
+      IEnumerable.from(allItems),
+      duration,
+      this.signal
+    )
+  }
+
+  delay(duration = 1000) {
+    return delay(duration, this.signal)
+  }
+
+  show(content, duration = 1000) {
+    return show(content, duration, this.messageRoot, this.signal)
+  }
+}

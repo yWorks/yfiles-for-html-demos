@@ -29,10 +29,7 @@
 import {
   EdgePathLabelModel,
   ExteriorNodeLabelModel,
-  GraphComponent,
   IEdge,
-  ILabelModelParameter,
-  IModelItem,
   INode,
   Point,
   SimpleLabel,

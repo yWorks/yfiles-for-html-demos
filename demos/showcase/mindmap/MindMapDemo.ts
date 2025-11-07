@@ -33,6 +33,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  GraphMLIOHandler,
   GraphOverviewComponent,
   IEdge,
   type IGraph,
@@ -43,22 +44,27 @@ import {
 } from '@yfiles/yfiles'
 
 import { initializeNodePopups } from './node-popup-toolbar'
-import { MindMapEdgeStyle } from './styles/MindMapEdgeStyle'
+import MindMapEdgesStyle, { MindMapEdgeStyle } from './styles/MindMapEdgeStyle'
+import MindMapNodesStyle from './styles/MindMapNodeStyle'
+import MindMapIconLabelsStyle from './styles/MindMapIconLabelStyle'
+import CollapseDecoratorStyle from './styles/CollapseDecorator'
+
 import { layoutTree } from './mind-map-layout'
 import { initializeCommands } from './interaction/commands'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 import { hobbies } from './resources/hobbies'
 import { getNodeData, isCollapsed, isCrossReference } from './data-types'
 import { initializeStyles, updateStyles } from './styles/styles-support'
-import { adjustNodeBounds, getInEdge, getRoot, initializeSubtrees } from './subtrees'
+import { adjustNodeBounds, getFullGraph, getInEdge, getRoot, initializeSubtrees } from './subtrees'
 import { initializeCrossReferences } from './cross-references'
 import { useSingleSelection } from './interaction/single-selection'
 import { EditOneLabelHelper } from './interaction/EditOneLabelHelper'
 import { MindMapFocusIndicatorManager } from './MindMapFocusIndicatorManager'
 import { MindMapOverviewRenderer } from './styles/MindMapOverviewRenderer'
+import { downloadFile, getFileExtension, openFile } from '@yfiles/demo-utils/file-support'
 
 // This demo shows how to implement a mind map viewer and editor.
 //
@@ -70,6 +76,7 @@ import { MindMapOverviewRenderer } from './styles/MindMapOverviewRenderer'
 // - Decorate nodes with state icons
 // - Edit the color of nodes
 // - Add cross-reference edges between nodes
+// - Load and save mind maps created by this demo
 
 /**
  * The GraphComponent
@@ -82,7 +89,7 @@ let graphComponent: GraphComponent
 let filteredGraph: FilteredGraphWrapper
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
@@ -101,6 +108,9 @@ async function run(): Promise<void> {
 
   // add custom commands to interact with the mind map
   initializeCommands(graphComponent)
+
+  // bind the buttons to their functionality
+  initializeUI()
 
   // limit the viewport so that the graph cannot be panned too far out of view
   graphComponent.viewportLimiter.policy = 'within-margins'
@@ -304,6 +314,103 @@ function initializeNodeData(graph: IGraph): void {
       )
     }
   }
+}
+
+/**
+ * Registers commands for various GUI elements.
+ */
+function initializeUI(): void {
+  const graphMLIOHandler = initializeGraphML()
+
+  const openButton = document.querySelector<HTMLInputElement>('#open-file-button')!
+  openButton.addEventListener('click', async () => {
+    await readGraphML(graphMLIOHandler)
+  })
+  // prevent auto-registering the OPEN command by finishLoading
+  openButton.setAttribute('data-command-registered', 'true')
+
+  const saveButton = document.querySelector<HTMLInputElement>('#save-button')!
+  saveButton.addEventListener('click', async () => {
+    await saveGraphML(graphMLIOHandler)
+  })
+  // prevent auto-registering the SAVE command by finishLoading
+  saveButton.setAttribute('data-command-registered', 'true')
+}
+
+/**
+ * Reads a GraphML file and loads its contents into the graph component.
+ * Since we're using a FilteredGraphWrapper, the GraphML data needs to be loaded
+ * into the wrapped graph (fullGraph) rather than directly into the graphComponent's graph.
+ * This ensures that all graph elements are properly loaded, even those that
+ * might be filtered out in the current view.
+ */
+async function readGraphML(graphMLIOHandler: GraphMLIOHandler): Promise<void> {
+  try {
+    const { content, filename } = await openFile('.graphml')
+    const fileExtension = getFileExtension(filename)
+    switch (fileExtension?.toLowerCase()) {
+      case 'graphml':
+        try {
+          // only graphml files created by this demo can be opened
+          if (
+            content.includes('xmlns:mindmap="http://www.yworks.com/yFilesHTML/demos/MindMap/1.0"')
+          ) {
+            graphComponent.graph.clear()
+            // Since we're using a FilteredGraphWrapper, we need to load the GraphML data
+            // into the wrapped graph (fullGraph).
+            await graphMLIOHandler.readFromGraphMLText(getFullGraph(graphComponent), content)
+            // Trigger a node predicate update to refresh the visibility of the nodes
+            ;(graphComponent.graph as FilteredGraphWrapper).nodePredicateChanged()
+            await graphComponent.fitGraphBounds()
+          } else {
+            alert(`Error reading GraphML. Only files generated by this demo can be loaded.`)
+          }
+        } catch (err) {
+          alert(`Error reading GraphML. Cause: ${(err as Error).message}`)
+        }
+        return
+      default:
+        alert(`This demo cannot open files of type ${fileExtension}.`)
+    }
+  } catch (err) {
+    if (err !== 'canceled') {
+      alert(`Error during opening GraphML. Cause: ${(err as Error).message}`)
+    }
+  }
+}
+
+/**
+ * Exports the current graph to GraphML format and triggers a download.
+ * Since we are using the FilteredGraphWrapper, we need to export the wrapped graph (fullGraph)
+ * rather than the filtered graph.
+ * This ensures that all graph elements are included in the export, even those currently
+ * filtered out from view.
+ */
+async function saveGraphML(graphMLIOHandler: GraphMLIOHandler): Promise<void> {
+  try {
+    // Since we are using the FilteredGraphWrapper, we need to export the wrapped graph (fullGraph)
+    const text = await graphMLIOHandler.write(getFullGraph(graphComponent))
+    downloadFile(text, 'mindmap.graphml')
+  } catch (err) {
+    if (err !== 'canceled') {
+      alert(`Error writing GraphML. Cause: ${(err as Error).message}`)
+    }
+  }
+}
+
+/**
+ * Initialize loading from and saving to graphml-files.
+ */
+function initializeGraphML(): GraphMLIOHandler {
+  const graphMLIOHandler = new GraphMLIOHandler()
+
+  const xmlNamespace = 'http://www.yworks.com/yFilesHTML/demos/MindMap/1.0'
+  graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, CollapseDecoratorStyle)
+  graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, MindMapNodesStyle)
+  graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, MindMapEdgesStyle)
+  graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, MindMapIconLabelsStyle)
+  graphMLIOHandler.addNamespace(xmlNamespace, 'mindmap')
+  return graphMLIOHandler
 }
 
 void run().then(finishLoading)

@@ -55,7 +55,7 @@ Consider the following list of data objects, which represents a basic organizati
 
 ## Building the graph
 
-In the first step, we instantiate the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) and configure an [AdjacencyNodesSource](<https://docs.yworks.com/yfileshtml/#/api/AdjacencyNodesSource(TDataItem)>).
+In the first step, we instantiate the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) and configure an [AdjacencyNodesSource](https://docs.yworks.com/yfileshtml/#/api/AdjacencyNodesSource).
 
 ```
 const adjacencyGraphBuilder = new AdjacencyGraphBuilder(graph)
@@ -66,7 +66,7 @@ const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(
 )
 ```
 
-In the second step, we configure the _colleagues_ or _successors_ on the [AdjacencyNodesSource](<https://docs.yworks.com/yfileshtml/#/api/AdjacencyNodesSource(TDataItem)>). For edge creation, we use an [EdgeCreator](https://docs.yworks.com/yfileshtml/#/api/EdgeCreator) with a default configuration.
+In the second step, we configure the _colleagues_ or _successors_ on the [AdjacencyNodesSource](https://docs.yworks.com/yfileshtml/#/api/AdjacencyNodesSource). For edge creation, we use an [EdgeCreator](https://docs.yworks.com/yfileshtml/#/api/EdgeCreator) with a default configuration.
 
 ```
 adjacencyNodesSource.addSuccessorIds(

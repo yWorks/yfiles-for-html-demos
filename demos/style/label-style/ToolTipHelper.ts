@@ -28,8 +28,8 @@
  ***************************************************************************/
 import type { CssFill, LabelStyle } from '@yfiles/yfiles'
 import {
-  Fill,
-  GraphInputMode,
+  type Fill,
+  type GraphInputMode,
   HorizontalTextAlignment,
   ILabel,
   LabelShape,

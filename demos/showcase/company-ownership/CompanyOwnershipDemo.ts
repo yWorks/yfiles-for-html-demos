@@ -29,10 +29,10 @@
 import { type GraphComponent, GraphOverviewComponent, License } from '@yfiles/yfiles'
 import { CompanyStructureView } from './CompanyStructureView'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { CompanyOwnershipSearch } from './CompanyOwnershipSearch'
 import { PropertiesView } from './PropertiesView'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * The component for the search in the graph
@@ -51,7 +51,7 @@ let companyStructureView: CompanyStructureView
  * Runs this demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   companyStructureView = new CompanyStructureView('#graphComponent')
   const graphComponent = companyStructureView.graphComponent

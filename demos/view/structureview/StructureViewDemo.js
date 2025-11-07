@@ -38,9 +38,9 @@ import {
   StraightLineEdgeRouter
 } from '@yfiles/yfiles'
 import { StructureView } from './StructureView'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { sampleData } from './resources/structure-view-data'
 
 // Ensure that the LayoutExecutor class is not removed by build optimizers
@@ -51,7 +51,7 @@ LayoutExecutor.ensure()
  * Runs the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   const graphComponent = new GraphComponent('graphComponent')
   const graph = new Graph()
   // set demo styles ...

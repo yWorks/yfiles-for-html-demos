@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Template Node Style Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       #graphComponent {
@@ -146,13 +146,9 @@
       <button
         id="open-file-button"
         title="Open a GraphML file"
-        class="demo-icon-yIconOpen labeled"
+        class="demo-icon-yIconOpen"
       ></button>
-      <button
-        id="save-button"
-        title="Save a GraphML file"
-        class="demo-icon-yIconSave labeled"
-      ></button>
+      <button id="save-button" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
       <div class="demo-separator"></div>
       <button data-command="INCREASE_ZOOM"></button>
       <button data-command="ZOOM_ORIGINAL"></button>
@@ -203,26 +199,23 @@
         <h2>Related Documentation</h2>
         <ul>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles" target="_blank">
-              Using Vue.js Templates in Node Styles
+            <a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_data-binding-in-styles" class="dguide" target="_blank">
+              Using Data Binding in Node Styles
             </a>
-          </li>
-          <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_template-styles" target="_blank">Using SVG Templates in Styles</a>
           </li>
         </ul>
 
         <h2>Related Demos</h2>
         <ul>
-          <li><a href="../../style/templatestyles/" target="_blank">Template Styles Demo</a></li>
+          <li><a href="../../style/templatestyles/" class="demo" target="_blank">Template Styles Demo</a></li>
           <li>
-            <a href="../../../demos-ts/style/vue-template-node-style/README.html" target="_blank">Vue Template Node Style Demo</a>
+            <a href="../../../demos-ts/style/vue-component-node-style/README.html" class="demo" target="_blank">Vue Component Node Style Demo</a>
           </li>
           <li>
-            <a href="../../style/react-template-node-style/" target="_blank">React JSX Component Style Demo</a>
+            <a href="../../../demos-ts/style/react-component-node-style/README.html" class="demo" target="_blank">React Component Node Style Demo</a>
           </li>
           <li>
-            <a href="../../style/lit-template-node-style/" target="_blank">Lit Template Node Style Demo</a>
+            <a href="../../style/lit-template-node-style/" class="demo" target="_blank">Lit Template Node Style Demo</a>
           </li>
         </ul>
       </div>

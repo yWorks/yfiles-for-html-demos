@@ -28,33 +28,33 @@
  ***************************************************************************/
 import {
   BaseClass,
-  EventArgs,
+  type EventArgs,
   EventRecognizers,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GroupNodeStyle,
   type IEnumerable,
-  IGraph,
+  type IGraph,
   IGroupPaddingProvider,
   IHitTestable,
   IHitTester,
-  IInputModeContext,
-  INode,
+  type IInputModeContext,
+  type INode,
   Insets,
   InteriorNodeLabelModel,
   LabelStyle,
   License,
-  MoveInputMode,
-  Point,
+  type MoveInputMode,
+  type Point,
   Rect,
   ShowPortCandidates,
   Size
 } from '@yfiles/yfiles'
 
-import { colorSets, createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { colorSets, createDemoEdgeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -67,7 +67,7 @@ const edgeCreationModeSelect = document.querySelector<HTMLSelectElement>('#edge-
 const classicModeButton = document.querySelector<HTMLInputElement>('#toggle-classic-mode')!
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize the GraphComponent
   initializeGraph()
 
@@ -141,13 +141,12 @@ function initializeInputModes(): void {
  */
 function onMoveModeChanged(): void {
   const selectedIndex = moveModeSelect.selectedIndex
-  let geim = graphComponent.inputMode as GraphEditorInputMode
+  const geim = graphComponent.inputMode as GraphEditorInputMode
   if (selectedIndex === 2) {
     // mode 2 (only top region): set a custom hit-testable which detects hits only at the top of
     // the nodes
     moveUnselectedItemsInputMode.hitTestable = new TopPaddingHitTestable(
-      moveUnselectedItemsInputMode.hitTestable,
-      geim
+      moveUnselectedItemsInputMode.hitTestable
     )
   } else if (moveUnselectedItemsInputMode.hitTestable instanceof TopPaddingHitTestable) {
     // all other modes: if a TopPaddingHitTestable is the current hit-testable, restore the original
@@ -233,10 +232,7 @@ class TopPaddingHitTestable extends BaseClass(IHitTestable) {
   /**
    * Creates a new instance of {@link TopPaddingHitTestable}.
    */
-  constructor(
-    original: IHitTestable,
-    private inputMode: GraphEditorInputMode
-  ) {
+  constructor(original: IHitTestable) {
     super()
     this.original = original
   }

@@ -36,9 +36,9 @@
     <title>
       12 Group Node Style Behavior - Tutorial: Node Style Implementation [yFiles for HTML]
     </title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -151,7 +151,7 @@
             <p>
               If you reduce the size of <em>Group 1</em>, you will notice that it shrinks past the
               tab size, which is not desired. We will define a minimum size for the style by
-              implementing the interface <a href="https://docs.yworks.com/yfileshtml/#/api/INodeSizeConstraintProvider" target="_blank">INodeSizeConstraintProvider</a>.
+              implementing the interface <a href="https://docs.yworks.com/yfileshtml/#/api/INodeSizeConstraintProvider" class="api" target="_blank">INodeSizeConstraintProvider</a>.
             </p>
           </div>
           <div class="listingblock">
@@ -179,7 +179,7 @@
           </div>
           <div class="paragraph">
             <p>
-              Next, we will add an <a href="https://docs.yworks.com/yfileshtml/#/api/IGroupBoundsCalculator" target="_blank">IGroupBoundsCalculator</a> implementation, which is
+              Next, we will add an <a href="https://docs.yworks.com/yfileshtml/#/api/IGroupBoundsCalculator" class="api" target="_blank">IGroupBoundsCalculator</a> implementation, which is
               shown with <em>Group 3</em>. Implementations of this interface are used for
               customizing the way the group node layout is calculated when adjusting to the group
               content. By default, only the child node boundaries and the group node padding are
@@ -224,7 +224,7 @@
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

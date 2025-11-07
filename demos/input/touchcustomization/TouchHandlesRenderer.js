@@ -26,13 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  HandlesRenderTag,
-  HandleType,
-  IRenderContext,
-  ObjectRendererBase,
-  SvgVisual
-} from '@yfiles/yfiles'
+import { HandleType, ObjectRendererBase, SvgVisual } from '@yfiles/yfiles'
 
 /**
  * Renders large handles for resize and move as circles.

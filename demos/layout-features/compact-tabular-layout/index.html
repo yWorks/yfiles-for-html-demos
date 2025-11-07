@@ -33,10 +33,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-    <title>Compact Tabular Layout - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <title>Compact Tabular Layout [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -61,21 +61,9 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
-
-      <span class="demo-separator"></span>
-
-      <input
-        type="checkbox"
-        id="use-aspect-ratio"
-        class="demo-toggle-button labeled"
-        title="Use aspect ratio"
-      />
-      <label for="use-aspect-ratio" title="Use aspect ratio">Preserve Aspect Ratio</label>
     </div>
-
     <aside class="demo-page__description">
       <div class="demo-description__header">
         <a
@@ -90,56 +78,51 @@
 
       <div class="demo-description__content">
         <h1>Compact Tabular Layout</h1>
-
         <p>
-          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayout" target="_blank">TabularLayout</a> to create compact
+          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayout" class="api" target="_blank">TabularLayout</a> to create compact
           drawings.
         </p>
         <p>
           The algorithm tries to calculate an arrangement that minimizes edge lengths. Since tabular
-          layout only supports straight-line edges, <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a> is used to calculate
-          the final edge paths.
+          layout only supports straight-line edges, <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a> is used to
+          calculate the final edge paths.
         </p>
-
         <p>
-          If the <em>Preserve Aspect Ratio</em> button in the toolbar is selected, the tabular
-          layout algorithm will use <a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayoutMode" target="_blank">layout mode</a>
-          <code>FIXED_SIZE</code> to arrange the graph with an aspect ratio close to the aspect
-          ratio of the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a>. Otherwise, the algorithm will use layout mode
-          <code>AUTO_SIZE</code> to get a result that is as compact as possible.
+          Selecting the <em>Preserve Aspect Ratio</em> button in the toolbar switches the layout
+          mode to <a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayoutMode#FIXED_SIZE" class="api" target="_blank">FIXED_SIZE</a>, maintaining a layout
+          aspect ratio similar to that of the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a>. In contrast,
+          deselecting it uses <a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayoutMode#AUTO_SIZE" class="api" target="_blank">AUTO_SIZE</a> mode for
+          maximum compactness.
         </p>
-
         <p>
-          If layout mode <code>FIXED_SIZE</code> is used, the tabular layout algorithm requires a
-          <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutGrid" target="_blank">LayoutGrid</a> that defines the columns and rows for the resulting tabular
-          arrangement. A <code>LayoutGrid</code> is not necessary for layout mode
-          <code>AUTO_SIZE</code>. However, an empty grid may be given to the algorithm to specify
-          the distances between the automatically calculated columns and rows.
+          In <code>FIXED_SIZE</code> mode, the layout algorithm requires a
+          <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutGrid" class="api" target="_blank">LayoutGrid</a> to define the layout&#39;s columns and rows. In
+          <code>AUTO_SIZE</code> mode, a grid is optional, though it can be used to specify spacing
+          between auto-calculated columns and rows.
         </p>
-        <h3>Code Snippet</h3>
-
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/compact-tabular-layout/CompactTabularLayout.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Documentation</h3>
-        <p>
-          The Developer's Guide provides more information about the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/tabular_layout" target="_blank">tabular layout algorithm</a>.
-        </p>
+        <h2>Things to Try</h2>
+        <ul>
+          <li>Click the button in the toolbar to observe the effect.</li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/tabular_layout" class="dguide" target="_blank">Tabular layout algorithm</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayout" class="api" target="_blank">TabularLayout</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayoutData" class="api" target="_blank">TabularLayoutData</a> class</li>
+        </ul>
       </div>
     </aside>
-
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="CompactTabularLayoutDemo.ts" async></script>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="./CompactTabularLayoutDemo.ts"
+      async
+    ></script>
   </body>
 </html>

@@ -31,4 +31,4 @@ This demo shows how to use the HTML Drag and Drop support to drag graph items fr
 - [Drag and Drop Demo](../../input/draganddrop/)
 - [Graph Drag and Drop Demo](../../input/graph-drag-and-drop/)
 - [Custom Drag and Drop Demo](../../input/custom-drag-and-drop/)
-- application-features-drag-and-drop
+- [Component Drag and Drop Demo](../../input/componentdraganddrop/)

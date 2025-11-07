@@ -28,16 +28,16 @@
  ***************************************************************************/
 import {
   GraphEditorInputMode,
-  IGraph,
-  IInputMode,
+  type IGraph,
+  type IInputMode,
   License,
   Rect,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 
 import './GraphComponentElement'
-import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
+import { createDemoEdgeStyle } from '@yfiles/demo-app/demo-styles'
 
 // wait for the custom graph-component element to be defined
 window.customElements.whenDefined('graph-component').then(run)
@@ -51,7 +51,7 @@ type GraphComponentElementType = HTMLElement & {
 }
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // create a custom graph component element
   const graphComponent = document.createElement('graph-component') as GraphComponentElementType

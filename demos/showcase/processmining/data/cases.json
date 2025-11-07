@@ -288,10 +288,7 @@
   },
   {
     "caseId": 41,
-    "data": {
-      "description": "Create user behavior analytics module",
-      "assignee": "Agile Avengers"
-    }
+    "data": { "description": "Create user behavior analytics module", "assignee": "Agile Avengers" }
   },
   {
     "caseId": 42,
@@ -428,10 +425,7 @@
   },
   {
     "caseId": 61,
-    "data": {
-      "description": "Create automated UI screenshot testing",
-      "assignee": "Binary Beasts"
-    }
+    "data": { "description": "Create automated UI screenshot testing", "assignee": "Binary Beasts" }
   },
   {
     "caseId": 62,
@@ -533,10 +527,7 @@
   },
   {
     "caseId": 76,
-    "data": {
-      "description": "Implement IoT device integration API",
-      "assignee": "Binary Beasts"
-    }
+    "data": { "description": "Implement IoT device integration API", "assignee": "Binary Beasts" }
   },
   {
     "caseId": 77,

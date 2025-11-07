@@ -32,10 +32,11 @@
      ////////////////////////////////////////////////////////////////////////-->
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <title>Hierarchical Layout with Layer Constraints - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <title>Hierarchical Layout with Layer Constraints [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -60,20 +61,8 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
-
-      <span class="demo-separator"></span>
-
-      <input
-        type="checkbox"
-        id="toggle-feature"
-        class="demo-toggle-button labeled"
-        title="Use Constraints"
-        checked=""
-      />
-      <label for="toggle-feature">Use Constraints</label>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -89,67 +78,70 @@
 
       <div class="demo-description__content">
         <h1>Hierarchical Layout with Layer Constraints</h1>
-
         <p>
           This demo shows how to customize the assignment of nodes to layers (layering) when using
-          the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">Hierarchical Layout</a>.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a>.
         </p>
-        <h3>Layer constraints</h3>
+        <h2>Layer constraints</h2>
+        <ul>
+          <li>
+            <p>
+              Node 9 is placed in the topmost layer with the
+              <a href="https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeAtTop" class="api" target="_blank">placeAtTop</a> method.
+            </p>
+          </li>
+          <li>
+            <p>
+              Node 7 is placed in the bottommost layer with the
+              <a href="https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeAtBottom" class="api" target="_blank">placeAtBottom</a> method.
+            </p>
+          </li>
+          <li>
+            <p>
+              Node 0 is placed at least one layer below node 9 with the
+              <a href="https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeInOrder" class="api" target="_blank">placeInOrder</a> method.
+            </p>
+          </li>
+          <li>
+            <p>
+              Node 2 is placed in the same layer as node 0 with the
+              <a href="https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeInSameLayer" class="api" target="_blank">placeInSameLayer</a> method.
+            </p>
+          </li>
+        </ul>
+        <h2>Things to Try</h2>
         <p>
-          Nodes 9 is placed in the topmost layer with the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeAtTop" target="_blank">placeAtTop</a> method.
+          Click the button in the toolbar to toggle between hierarchical layout with and without
+          configured constraints.
         </p>
-        <p>
-          Nodes 7 is placed in the bottommost layer with the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeAtBottom" target="_blank">placeAtBottom</a> method.
-        </p>
-        <p>
-          Nodes 0 is placed at least one layer below node 9 with the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeBelow" target="_blank">placeBelow</a> method.
-        </p>
-        <p>
-          Nodes 2 is placed in the same layer as node 0 with the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData#placeInSameLayer" target="_blank">placeInSameLayer</a> method.
-        </p>
-        <p>
-          Click the button in the toolbar to toggle between
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">Hierarchical Layout</a> with and without configured
-          constraints.
-        </p>
-
-        <h3>Code Snippet</h3>
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-layer-constraints/HierarchicalLayerConstraints.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Demos</h3>
-        <p>
-          See the <a href="../../layout/layerconstraints/" target="_blank">Layer Constraints Demo</a> for a more elaborate example of the constraints
-          functionality.
-        </p>
-
-        <h3>Documentation</h3>
-        <p>
-          See the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#hierarchical_layout-constrained_layer_assignment" target="_blank">Constrained Node Sequencing</a>
-          section in the Developer's Guide for an in-depth discussion of the relevant concepts.
-        </p>
-        <p>
-          See the <a href="https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData" target="_blank">LayerConstraintData</a> API documentation for detailed information on
-          all available constraints.
-        </p>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../layout/layerconstraints/" class="demo" target="_blank">Layer Constraints Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_layer_assignment" class="dguide" target="_blank">Constrained Layer Assignment</a>
+          </li>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_node_sequencing" class="dguide" target="_blank">Constrained Node Sequencing</a>
+          </li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/LayerConstraintData" class="api" target="_blank">LayerConstraintData</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData" class="api" target="_blank">HierarchicalLayoutData</a></li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="./HierarchicalLayerConstraintsDemo.ts"
+      async
+    ></script>
   </body>
 </html>

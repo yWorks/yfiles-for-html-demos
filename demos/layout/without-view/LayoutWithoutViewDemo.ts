@@ -30,19 +30,19 @@ import {
   HierarchicalLayout,
   type IMapper,
   type IOrientedRectangle,
-  LayoutEdge,
+  type LayoutEdge,
   LayoutGraph,
   LayoutGraphAlgorithms,
   LayoutGrid,
-  LayoutNode,
+  type LayoutNode,
   License,
   OrientedRectangle,
   Point
 } from '@yfiles/yfiles'
+import licenseData from '../../../lib/license.json'
 
 async function run(): Promise<void> {
-  const response = await fetch('./license.json')
-  License.value = await response.json()
+  License.value = licenseData
 
   // create the graph in memory
   const layoutGraph = new LayoutGraph()

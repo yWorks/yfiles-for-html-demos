@@ -30,7 +30,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  IGraph,
+  type IGraph,
   IPositionHandler,
   License,
   MutableRectangle,
@@ -40,10 +40,10 @@ import { LimitingRectangleRenderer } from './LimitingRectangleRenderer'
 import { GreenPositionHandler } from './GreenPositionHandler'
 import { RedPositionHandler } from './RedPositionHandler'
 import { OrangePositionHandler } from './OrangePositionHandler'
-import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
-import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import type { ColorSetName } from '@yfiles/demo-app/demo-styles'
+import { createDemoNodeLabelStyle, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Registers a callback function as decorator that provides a custom
@@ -88,7 +88,7 @@ function registerPositionHandler(graph: IGraph, boundaryRectangle: MutableRectan
 }
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   configureUserInteraction(graphComponent)

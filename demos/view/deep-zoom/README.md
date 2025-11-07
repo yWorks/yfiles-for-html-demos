@@ -23,4 +23,4 @@ The graph component does not display the complete graph but only the nesting lev
 
 - **Zoom into** a group node so that its entire contents fill the current viewport, and observe that the displayed graphic is automatically replaced by the contents of the group.
 - **Zoom out** of a group and observe that its previous nesting layer becomes visible and the content of the group becomes an image again.
-- **Click** on ![Zoom original](../../resources/icons/zoom-original3-16.svg) or ![Fit Content](../../resources/icons/fit-16.svg) to exit all groups and reset the zoom.
+- **Click** on ![Zoom original](../../demo-app/icons/zoom-original3-16.svg) or ![Fit Content](../../demo-app/icons/fit-16.svg) to exit all groups and reset the zoom.

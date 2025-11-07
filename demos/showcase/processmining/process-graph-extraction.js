@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { HeatData } from './process-visualization/HeatData'
-import { GraphComponent, HierarchicalLayout, IEnumerable, LayoutExecutor } from '@yfiles/yfiles'
+import { HierarchicalLayout, IEnumerable, LayoutExecutor } from '@yfiles/yfiles'
 
 // Ensure that the LayoutExecutor class is not removed by build optimizers
 // It is needed for the 'applyLayoutAnimated' method in this demo.

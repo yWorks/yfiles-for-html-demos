@@ -9,26 +9,24 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Incremental Organic Layout - Layout Features
+# Incremental Organic Layout
 
 <img src="../../../doc/demo-thumbnails/layout-organic-incremental.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/organic-incremental/).
 
-This demo shows how to run the [Organic Layout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) algorithm on a predefined subset of nodes in a graph.
+This demo shows how to run the [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) algorithm on a predefined subset of nodes in a graph.
 
 To achieve this, two setup steps are necessary:
 
-First, the algorithm has to be told to work on a subset only. To do so, [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout)'s [scope](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout#scope) property has to be set to one of the subset scopes [MAINLY_SUBSET](https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutScope#MAINLY_SUBSET), [MAINLY_SUBSET_GEOMETRIC](https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutScope#MAINLY_SUBSET_GEOMETRIC), or [SUBSET](https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutScope#SUBSET).
+- The algorithm has to know which set of nodes to work on. Class [OrganicLayoutData](https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData) offers the property [scope](https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#scope), in which the set of [nodes](https://docs.yworks.com/yfileshtml/#/api/OrganicScopeData#nodes) can be specified.
+- The layout algorithm has to be told whether a node and its surrounding nodes could possibly be laid out. To do so, the [scopeModes](https://docs.yworks.com/yfileshtml/#/api/OrganicScopeData#scopeModes) property can be set to the following scope modes: [AFFECTED](https://docs.yworks.com/yfileshtml/#/api/OrganicScope#AFFECTED), [FIXED](https://docs.yworks.com/yfileshtml/#/api/OrganicScope#FIXED), [INCLUDE_CLOSE_NODES](https://docs.yworks.com/yfileshtml/#/api/OrganicScope#INCLUDE_CLOSE_NODES) or [INCLUDE_EXTENDED_NEIGHBORHOOD](https://docs.yworks.com/yfileshtml/#/api/OrganicScope#INCLUDE_EXTENDED_NEIGHBORHOOD).
 
-And second, the algorithm has to be told which set of nodes to rearrange. Class [OrganicLayoutData](https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData) offers the property [affectedNodes](https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#affectedNodes) for this purpose.
+In this demo, the layout algorithm is only applied to the **orange nodes** — for which there is no predefined layout information in the JSON sample data — and their surrounding nodes.
 
-In this demo, the algorithm works on the [SUBSET](https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutScope#SUBSET) of turquoise nodes only.
+## Documentation
 
-### Code Snippet
-
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/organic-incremental/OrganicIncremental.ts).
-
-### Documentation
-
-The Developer's Guide has detailed information about the [organic layout algorithm](https://docs.yworks.com/yfileshtml/#/dguide/organic_layout) in general and about [how to run the algorithm on a subset of nodes](https://docs.yworks.com/yfileshtml/#/dguide/organic_layout#organic_layout-incremental) specifically.
+- [Run organic layout on a subset of nodes](https://docs.yworks.com/yfileshtml/#/dguide/organic_layout#organic_layout-incremental)
+- [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout)
+- [OrganicScopeData](https://docs.yworks.com/yfileshtml/#/api/OrganicScopeData)
+- [OrganicScope](https://docs.yworks.com/yfileshtml/#/api/OrganicScope)

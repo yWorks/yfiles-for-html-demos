@@ -30,7 +30,6 @@ import {
   BaseClass,
   Color,
   Cursor,
-  DendrogramNode,
   EdgePortCandidates,
   ExteriorNodeLabelModel,
   GenericLayoutData,
@@ -38,23 +37,14 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  HierarchicalClusteringResult,
   HierarchicalLayout,
   HierarchicalLayoutEdgeDescriptor,
   HierarchicalLayoutLayeringStrategy,
-  IEdge,
-  IGraph,
   IHitTestable,
-  IInputModeContext,
   ILayoutAlgorithm,
-  IModelItem,
-  IMutableRectangle,
   INode,
   IPositionHandler,
-  IRenderTreeElement,
   LabelStyle,
-  LayoutGraph,
-  LayoutNode,
   Mapper,
   MutablePoint,
   MutableRectangle,
@@ -63,15 +53,13 @@ import {
   Point,
   PolylineEdgeStyle,
   PortSides,
-  Rect,
   ShapeNodeStyle,
   Size,
-  Stroke,
-  StyleIndicatorZoomPolicy
+  Stroke
 } from '@yfiles/yfiles'
 
 import { AxisVisual, CutoffVisual, generateColors } from './DemoVisuals'
-import { colorSets } from '@yfiles/demo-resources/demo-styles'
+import { colorSets } from '@yfiles/demo-app/demo-styles'
 
 const DENDROGRAM_GRADIENT_START = Color.from(colorSets['demo-palette-42'].fill)
 const DENDROGRAM_GRADIENT_END = Color.from(colorSets['demo-palette-44'].fill)
@@ -348,6 +336,9 @@ export class DendrogramComponent {
             // get the node in the hierarchical cluster graph and update its style
             if (parent.dissimilarityValue < cutoff && !this.visited.has(parent)) {
               const hierarchicalParent = this.dendro2hierarchical.get(parent)
+              if (!hierarchicalParent) {
+                break
+              }
               this.updateNodeStyle(hierarchicalParent, color)
 
               // update the style of the out-edges

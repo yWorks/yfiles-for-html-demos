@@ -42,11 +42,16 @@ type CollapseState = { collapsed: boolean }
 type CollapseExpandVisual = TaggedSvgVisual<SVGGElement, CollapseState>
 
 export class CollapseExpandPortStyle extends PortStyleBase<CollapseExpandVisual> {
+    isCollapsed: (port: IPort) => boolean;
+    renderSize: Size;
+
   constructor(
-    public renderSize: Size,
-    public isCollapsed: (port: IPort) => boolean
+    renderSize: Size,
+    isCollapsed: (port: IPort) => boolean
   ) {
     super()
+      this.renderSize = renderSize;
+      this.isCollapsed = isCollapsed;
   }
 
   protected createVisual(_context: IRenderContext, port: IPort): CollapseExpandVisual | null {

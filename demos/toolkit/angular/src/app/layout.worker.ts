@@ -30,13 +30,13 @@
 
 import {
   LayoutExecutorAsyncWorker,
-  LayoutGraph,
+  type LayoutGraph,
   License,
   OrganicEdgeRouter,
   TreeLayout
 } from '@yfiles/yfiles'
 
-import licenseData from '../../../../../lib/license.json'
+import licenseData from '../license.json'
 
 License.value = licenseData
 

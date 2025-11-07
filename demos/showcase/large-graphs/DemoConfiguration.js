@@ -26,17 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphComponent,
-  IEdge,
-  IEdgeStyle,
-  IGraph,
-  IInputModeContext,
-  INode,
-  INodeStyle,
-  Point,
-  Rect
-} from '@yfiles/yfiles'
+import { Point, Rect } from '@yfiles/yfiles'
 
 /**
  * Aggregates providers, configuration, graph generation etc. for one demo configuration

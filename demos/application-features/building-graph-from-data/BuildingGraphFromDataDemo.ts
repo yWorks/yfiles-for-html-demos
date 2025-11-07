@@ -26,146 +26,104 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { graphComponent } from '@yfiles/demo-app/init'
 import {
-  EdgePathLabelModel,
-  EdgeSides,
-  GraphComponent,
   GraphEditorInputMode,
   GroupNodeLabelModel,
   GroupNodeStyle,
-  IEdge,
-  IGraph,
-  INode,
+  type IEdge,
+  type IGraph,
+  type INode,
   LabelStyle,
-  License,
   Point,
-  RectangleNodeStyle,
-  Size
+  RectangleNodeStyle
 } from '@yfiles/yfiles'
-
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
 import graphData from './graph-data.json'
 
-let graphComponent: GraphComponent
+const graph = graphComponent.graph
 
-/**
- * Bootstraps the demo.
- */
-async function run(): Promise<void> {
-  License.value = await fetchLicense()
-  graphComponent = new GraphComponent('#graphComponent')
-  graphComponent.inputMode = new GraphEditorInputMode()
+initializeDefaultStyles(graph)
 
-  // configures default styles for newly created graph elements
-  initializeGraph(graphComponent.graph)
+// Store groups and nodes in order to assign them as parents or connect them with edges afterward
+const groups: { [id: string]: INode } = {}
+const nodes: { [id: string]: INode } = {}
 
-  // then build the graph with the given data set
-  buildGraph(graphComponent.graph, graphData)
+// Iterate the group data and create the corresponding group nodes
+graphData.groupsSource.forEach((groupData: any): void => {
+  groups[groupData.id] = graph.createGroupNode({
+    labels: groupData.label != null ? [groupData.label] : [],
+    layout: groupData.layout,
+    tag: groupData
+  })
+})
 
-  graphComponent.fitGraphBounds()
+// Iterate the node data and create the corresponding nodes
+graphData.nodesSource.forEach((nodeData: any): void => {
+  const node = graph.createNode({
+    labels: nodeData.label != null ? [nodeData.label] : [],
+    layout: nodeData.layout,
+    tag: nodeData
+  })
+  if (nodeData.fill) {
+    // If the node data specifies an individual fill color, adjust the style
+    const nodeStyle = graph.nodeDefaults.style.clone() as RectangleNodeStyle
+    nodeStyle.fill = nodeData.fill
+    graph.setStyle(node, nodeStyle)
+  }
+  nodes[nodeData.id] = node
+})
 
-  // Often, the input data has no layout information at all. In this case, you can apply any of the automatic layout
-  // algorithms to automatically lay out your input data, e.g., with HierarchicalLayout.
+// Set the parent groups after all nodes/groups are created
+graph.nodes.forEach((node: INode): void => {
+  if (node.tag && node.tag.group) {
+    graph.setParent(node, groups[node.tag.group])
+  }
+})
 
-  // Finally, enable the undo engine. This prevents undoing of the graph creation
-  graphComponent.graph.undoEngineEnabled = true
-}
+// Iterate the edge data and create the according edges
+graphData.edgesSource.forEach((edgeData: any): void => {
+  // Note that nodes and groups need to have disjoint sets of ids, otherwise it is impossible to determine
+  // which node is the correct source/target.
+  graph.createEdge({
+    source: nodes[edgeData.from] || groups[edgeData.from],
+    target: nodes[edgeData.to] || groups[edgeData.to],
+    labels: edgeData.label != null ? [edgeData.label] : [],
+    tag: edgeData
+  })
+})
 
-/**
- * Iterates through the given data set and creates nodes and edges according to the given data.
- * How to iterate through the data set and which information are applied to the graph, depends on the structure of
- * the input data. However, the general approach is always the same, i.e. iterating through the data set and
- * calling the graph item factory methods like
- * {@link IGraph.createNode()},
- * {@link IGraph.createGroupNode()},
- * {@link IGraph.createEdge()},
- * {@link IGraph.addLabel()}
- * and other {@link IGraph} functions to apply the given information to the graph model.
- *
- * @param graph The graph.
- * @param graphData The graph data that was loaded from the JSON file.
- * @yjs:keep = groupsSource,nodesSource,edgesSource
- */
-function buildGraph(graph: IGraph, graphData: any): void {
-  // Store groups and nodes to be accessible by their IDs.
-  // It will be easier to assign them as parents or connect them with edges afterwards.
-  const groups: { [id: string]: INode } = {}
-  const nodes: { [id: string]: INode } = {}
-
-  // Iterate the group data and create the according group nodes.
-  graphData.groupsSource.forEach((groupData: any): void => {
-    groups[groupData.id] = graph.createGroupNode({
-      labels: groupData.label != null ? [groupData.label] : [],
-      layout: groupData.layout,
-      tag: groupData
+// If given, apply the edge layout information
+graph.edges.forEach((edge: IEdge): void => {
+  const edgeData = edge.tag
+  if (edgeData.sourcePort) {
+    graph.setPortLocation(edge.sourcePort, Point.from(edgeData.sourcePort))
+  }
+  if (edgeData.targetPort) {
+    graph.setPortLocation(edge.targetPort, Point.from(edgeData.targetPort))
+  }
+  if (edgeData.bends) {
+    edgeData.bends.forEach((bendLocation: Point): void => {
+      graph.addBend(edge, bendLocation)
     })
-  })
+  }
+})
 
-  // Iterate the node data and create the according nodes.
-  graphData.nodesSource.forEach((nodeData: any): void => {
-    const node = graph.createNode({
-      labels: nodeData.label != null ? [nodeData.label] : [],
-      layout: nodeData.layout,
-      tag: nodeData
-    })
-    if (nodeData.fill) {
-      // If the node data specifies an individual fill color, adjust the style.
-      const nodeStyle = graph.nodeDefaults.style.clone() as RectangleNodeStyle
-      nodeStyle.fill = nodeData.fill
-      graph.setStyle(node, nodeStyle)
-    }
-    nodes[nodeData.id] = node
-  })
+// Fit the graph bounds
+graphComponent.fitGraphBounds()
 
-  // Set the parent groups after all nodes/groups are created.
-  graph.nodes.forEach((node: INode): void => {
-    if (node.tag.group) {
-      graph.setParent(node, groups[node.tag.group])
-    }
-  })
+// Enable graph editing
+graphComponent.inputMode = new GraphEditorInputMode()
 
-  // Iterate the edge data and create the according edges.
-  graphData.edgesSource.forEach((edgeData: any): void => {
-    // Note that nodes and groups need to have disjoint sets of ids, otherwise it is impossible to determine
-    // which node is the correct source/target.
-    graph.createEdge({
-      source: nodes[edgeData.from] || groups[edgeData.from],
-      target: nodes[edgeData.to] || groups[edgeData.to],
-      labels: edgeData.label != null ? [edgeData.label] : [],
-      tag: edgeData
-    })
-  })
-
-  // If given, apply the edge layout information
-  graph.edges.forEach((edge: IEdge): void => {
-    const edgeData = edge.tag
-    if (edgeData.sourcePort) {
-      graph.setPortLocation(edge.sourcePort, Point.from(edgeData.sourcePort))
-    }
-    if (edgeData.targetPort) {
-      graph.setPortLocation(edge.targetPort, Point.from(edgeData.targetPort))
-    }
-    if (edgeData.bends) {
-      edgeData.bends.forEach((bendLocation: Point): void => {
-        graph.addBend(edge, bendLocation)
-      })
-    }
-  })
-}
+// Only enable the undo engine after graph creation to prevent undoing of the graph creation
+graph.undoEngineEnabled = true
 
 /**
  * Initializes the defaults for the styling in this demo.
  *
  * @param graph The graph.
  */
-function initializeGraph(graph: IGraph): void {
-  // set styles for this demo
-  initDemoStyles(graph)
-
-  // set the style, label and label parameter for group nodes
+function initializeDefaultStyles(graph: IGraph): void {
+  // Set the style, label and label parameter for group nodes
   graph.groupNodeDefaults.style = new GroupNodeStyle({
     tabFill: '#61a044',
     tabPosition: 'left-trailing',
@@ -178,13 +136,10 @@ function initializeGraph(graph: IGraph): void {
   })
   graph.groupNodeDefaults.labels.layoutParameter = new GroupNodeLabelModel().createTabParameter()
 
-  // set sizes and locations specific for this demo
-  graph.nodeDefaults.size = new Size(40, 40)
-
-  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel({
-    distance: 5,
-    autoRotation: true
-  }).createRatioParameter({ sideOfEdge: EdgeSides.BELOW_EDGE })
+  graph.nodeDefaults.style = new RectangleNodeStyle({
+    fill: '#64a8be',
+    stroke: '1.5px #bddae3',
+    cornerStyle: 'round',
+    cornerSize: 3.5
+  })
 }
-
-run().then(finishLoading)

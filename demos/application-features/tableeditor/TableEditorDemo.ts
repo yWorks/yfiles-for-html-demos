@@ -33,10 +33,10 @@ import {
   GraphItemTypes,
   GraphMLIOHandler,
   HierarchicalLayout,
-  IGraph,
-  IInputModeContext,
+  type IGraph,
+  type IInputModeContext,
   IMarqueeTestable,
-  IModelItem,
+  type IModelItem,
   type INode,
   INodeStyle,
   IPortCandidateProvider,
@@ -44,8 +44,8 @@ import {
   LayoutExecutor,
   License,
   ParentNodeDetectionModes,
-  PopulateItemContextMenuEventArgs,
-  Rect,
+  type PopulateItemContextMenuEventArgs,
+  type Rect,
   ReparentStripeHandler,
   StripeSubregionTypes,
   StripeTypes,
@@ -60,14 +60,10 @@ import {
 } from './DragAndDropSupport'
 import TableStyles, { DemoTableStyle } from './TableStyles'
 import { MyReparentHandler } from './MyReparentHandler'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
-import {
-  disableUIElements,
-  enableUIElements,
-  finishLoading
-} from '@yfiles/demo-resources/demo-page'
+import { disableUIElements, enableUIElements, finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 /**
@@ -89,7 +85,7 @@ let isLayoutRunning = false
  * Bootstraps this demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')

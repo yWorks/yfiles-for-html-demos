@@ -80,7 +80,7 @@ export function setDefaultStyles(graph: IGraph): void {
  * Creates a node, an edge and a label using specific styles,
  * i.e., styles different from the defaults.
  */
-export function createGraphItemsWithStyles(graph: IGraph) {
+export function createGraphItemsWithStyles(graph: IGraph): void {
   const sourceNode = graph.nodes.get(0)
 
   const node = graph.createNodeAt({
@@ -105,7 +105,7 @@ export function createGraphItemsWithStyles(graph: IGraph) {
 /**
  * Changes the styles of some of the graph items.
  */
-export function setStyles(graph: IGraph) {
+export function setStyles(graph: IGraph): void {
   // get some graph items to change the style for
   const node1 = graph.nodes.get(1)
   const node2 = graph.nodes.get(2)

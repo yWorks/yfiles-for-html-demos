@@ -6,6 +6,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./license.json')\" || echo To run this demo, please add a license.json to the src/ folder.",
     "test": "wdio run ./wdio.conf.ts"
   },
   "engineStrict": true,
@@ -13,8 +14,8 @@
     "node": ">=16.16.0"
   },
   "dependencies": {
-    "@yfiles/demo-resources": "../../resources",
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.3+dev.tgz"
+    "@yfiles/demo-app": "../../demo-app",
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.4+dev.tgz"
   },
   "devDependencies": {
     "@wdio/cli": "^9.12.0",
@@ -22,6 +23,6 @@
     "@wdio/mocha-framework": "^9.12.1",
     "@wdio/spec-reporter": "^9.11.0",
     "ts-node": "^10.9.2",
-    "typescript": "~5.7.3"
+    "typescript": "~5.9.0"
   }
 }

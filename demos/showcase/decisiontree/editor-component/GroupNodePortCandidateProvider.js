@@ -38,6 +38,7 @@ import {
  */
 export class GroupNodePortCandidateProvider extends PortCandidateProviderBase {
   node
+
   constructor(node) {
     super()
     this.node = node

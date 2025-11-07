@@ -29,6 +29,10 @@
 import type { IRenderContext } from '@yfiles/yfiles'
 
 export class WebGLBufferData<T extends Float32Array> {
+  private readonly elementSize: GLint
+  private readonly attributeName: string
+  private readonly pointerType: GLenum
+  entryCount: number
   private dirty = true
   private buffer: WebGLBuffer | null = null
   private readonly DataType: { new (size: number): T }
@@ -36,12 +40,16 @@ export class WebGLBufferData<T extends Float32Array> {
   private attributeLocation: GLuint = -1
 
   constructor(
-    public entryCount: number,
-    private readonly pointerType: GLenum,
-    private readonly attributeName: string,
-    private readonly elementSize: GLint,
+    entryCount: number,
+    pointerType: GLenum,
+    attributeName: string,
+    elementSize: GLint,
     dataType: { new (size: number): T }
   ) {
+    this.entryCount = entryCount
+    this.pointerType = pointerType
+    this.attributeName = attributeName
+    this.elementSize = elementSize
     this.DataType = dataType
   }
 
@@ -76,9 +84,11 @@ export class WebGLBufferData<T extends Float32Array> {
 }
 
 export class WebGLProgramInfo {
+  protected entryCount: number
   private readonly buffers: WebGLBufferData<never>[]
 
-  constructor(protected entryCount: number) {
+  constructor(entryCount: number) {
+    this.entryCount = entryCount
     this.buffers = []
   }
 

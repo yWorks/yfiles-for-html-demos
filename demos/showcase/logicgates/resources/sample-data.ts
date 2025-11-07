@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { EdgeData, NodeData } from '../../../databinding/port-aware-graph-builder/GraphBuilder'
+import type { EdgeData, NodeData } from '../port-aware-graph-builder'
 
 export type LogicGateData = { gates: NodeData[]; connections: EdgeData[] }
 

@@ -1,0 +1,32 @@
+{
+  "name": "@yfiles/demo-app",
+  "version": "30.0.4",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
+  "exports": {
+    "./*": "./*.ts",
+    "./*.json": "./*.json",
+    "./*.js": "./*.js",
+    "./*.ts": "./*.ts",
+    "./icons/*": "./icons/*",
+    "./init": "./init-demo-app.ts",
+    "./demo.css": "./style/demo.css",
+    "./demo-option-editor": "./demo-option-editor.js",
+    "./demo-option-editor.d.ts": "./demo-option-editor.d.ts",
+    "./demo-option-editor.css": "./style/demo-option-editor.css",
+    "./loading-demo.css": "./style/loading-demo.css",
+    "./tutorial.css": "./style/tutorial.css"
+  },
+  "dependencies": {
+    "@yfiles/yfiles": "^30.0.4+dev",
+    "@codemirror/legacy-modes": "^6.5.0",
+    "@codemirror/lang-css": "^6.3.0",
+    "@codemirror/lang-javascript": "^6.2.0",
+    "@codemirror/lang-json": "^6.0.0",
+    "@codemirror/lang-xml": "^6.1.0",
+    "codemirror": "^6.0.2",
+    "fast-xml-parser": "^5.2.0",
+    "postcss": "^8.5.0"
+  }
+}

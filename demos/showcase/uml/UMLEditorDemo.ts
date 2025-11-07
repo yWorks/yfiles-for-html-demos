@@ -37,16 +37,16 @@ import {
   GraphMLIOHandler,
   HierarchicalLayout,
   HierarchicalLayoutData,
-  IEdge,
-  IGraph,
+  type IEdge,
+  type IGraph,
   IHitTestable,
-  IInputModeContext,
+  type IInputModeContext,
   INode,
   INodeStyle,
-  IPortCandidate,
+  type IPortCandidate,
   LayoutExecutor,
   License,
-  Point,
+  type Point,
   PolylineEdgeStyle,
   PortCandidate,
   Rect,
@@ -62,18 +62,18 @@ import {
 import * as umlModel from './UMLClassModel'
 import { UMLClassModelExtension } from './UMLClassModel'
 import UMLStyle, { UMLNodeStyle, UMLNodeStyleSerializationListener } from './UMLNodeStyle'
-import { ButtonInputMode, ButtonTrigger } from '../../input/button-input-mode/ButtonInputMode'
+import { ButtonInputMode } from '../../input/button-input-mode/ButtonInputMode'
 import { createEdgeCreationButtons, createExtensibilityButtons } from './UMLContextButtonFactory'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent: GraphComponent
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   // configure the input mode
   graphComponent.inputMode = createInputMode()
@@ -209,7 +209,7 @@ function createInputMode(): GraphEditorInputMode {
   // umlContextButtonsInputMode.priority = mode.clickInputMode.priority - 1
   // mode.add(umlContextButtonsInputMode)
   const bim = new ButtonInputMode()
-  bim.buttonTrigger = ButtonTrigger.CURRENT_ITEM
+  bim.buttonTrigger = 'current-item'
   bim.setQueryButtonsListener((queryEvent, buttonInput) => {
     if (queryEvent.owner instanceof INode) {
       const node = queryEvent.owner

@@ -29,17 +29,12 @@
 import {
   GeneralPath,
   HashMap,
-  IEnumerable,
-  IMapper,
-  LayoutEdge,
   LayoutGraph,
   LayoutGraphAlgorithms,
-  LayoutNode,
   LineSegment,
   List,
   Mapper,
-  Point,
-  Rect
+  Point
 } from '@yfiles/yfiles'
 
 /**

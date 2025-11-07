@@ -27,14 +27,14 @@
  **
  ***************************************************************************/
 import {
-  EdgeSides,
-  ExteriorNodeLabelModelPosition,
+  type EdgeSides,
+  type ExteriorNodeLabelModelPosition,
   type InsetsConvertible,
-  InteriorNodeLabelModelPosition,
+  type InteriorNodeLabelModelPosition,
   type IPointConvertible,
-  NinePositionsEdgeLabelModelPosition,
+  type NinePositionsEdgeLabelModelPosition,
   type PointConvertible,
-  StretchNodeLabelModelPosition
+  type StretchNodeLabelModelPosition
 } from '@yfiles/yfiles'
 
 export type SerializedLabelModelParameter =

@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   EdgeLabelPreferredPlacement,
   EdgePathLabelModel,
@@ -45,17 +44,17 @@ import {
   HierarchicalLayout,
   HierarchicalLayoutData,
   HierarchicalNestingPolicy,
-  IGraph,
+  type IGraph,
   IGroupPaddingProvider,
-  ILayoutAlgorithm,
-  INode,
+  type ILayoutAlgorithm,
+  type INode,
   Insets,
   LabelAngleReferences,
   LabelEdgeSides,
   LabelLayerPolicy,
   LabelSideReferences,
   LabelStyle,
-  LayoutData,
+  type LayoutData,
   LayoutExecutor,
   License,
   Matrix,
@@ -70,9 +69,9 @@ import {
 } from '@yfiles/yfiles'
 import IsometricData from './resources/IsometricData'
 import { HeightHandleProvider } from './HeightHandleProvider'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML } from '@yfiles/demo-utils/graphml-support'
 import { IsometricNodeComparator } from './IsometricNodeComparator'
 import { IsometricNodeStyle } from './IsometricNodeStyle'
@@ -100,7 +99,7 @@ let isometricNodeComparator: IsometricNodeComparator = null!
  * 3-dimensional view.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
 

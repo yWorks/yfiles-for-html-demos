@@ -28,11 +28,11 @@
  ***************************************************************************/
 import {
   Arrow,
-  CreateEdgeInputMode,
+  type CreateEdgeInputMode,
   FreeNodePortLocationModel,
   GraphComponent,
   GraphEditorInputMode,
-  IGraph,
+  type IGraph,
   IHitTestable,
   INode,
   INodeStyle,
@@ -48,11 +48,11 @@ import {
   Size
 } from '@yfiles/yfiles'
 
-import { RoutingCreateEdgeInputMode, RoutingStrategy } from './RoutingCreateEdgeInputMode'
+import { RoutingCreateEdgeInputMode, type RoutingStrategy } from './RoutingCreateEdgeInputMode'
 import { PortCandidateRenderer } from './PortCandidateRenderer'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 const defaultColor = '#F0EBE6'
 const nodeColors = ['#D4B483', '#C1666B', '#48A9A6', '#4357AD']
@@ -61,7 +61,7 @@ const nodeColors = ['#D4B483', '#C1666B', '#48A9A6', '#4357AD']
  * Bootstraps the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   const graphComponent = new GraphComponent('#graphComponent')
   // configures default styles for newly created graph elements
   initDemoStyles(graphComponent.graph, { orthogonalEditing: true })
@@ -79,7 +79,7 @@ async function run(): Promise<void> {
   ;(
     (graphComponent.inputMode as GraphEditorInputMode)
       .createEdgeInputMode as RoutingCreateEdgeInputMode
-  ).routingStrategy = RoutingStrategy.PERFORMANCE_EDGE_ROUTER
+  ).routingStrategy = 'performance-edge-router'
 
   // create an initial sample graph
   createGraph(graphComponent.graph)
@@ -363,13 +363,13 @@ function onCreateEdgeModeChanged(createEdgeInputMode: RoutingCreateEdgeInputMode
 function getRoutingStrategy(): RoutingStrategy {
   switch (document.querySelector<HTMLSelectElement>('#create-edge-mode')!.selectedIndex) {
     case 0:
-      return RoutingStrategy.NONE
+      return 'none'
     case 1:
-      return RoutingStrategy.EDGE_ROUTER
+      return 'edge-router'
     case 2:
-      return RoutingStrategy.PERFORMANCE_EDGE_ROUTER
+      return 'performance-edge-router'
     default:
-      return RoutingStrategy.NONE
+      return 'none'
   }
 }
 

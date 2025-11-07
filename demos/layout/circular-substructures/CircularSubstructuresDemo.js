@@ -34,9 +34,9 @@ import {
   License,
   Size
 } from '@yfiles/yfiles'
-import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, addOptions, finishLoading } from '@yfiles/demo-app/demo-page'
 import { runLayoutCore } from './configure-layout'
 import { initializeTypePanel, nodeTypeColors } from './types-popup'
 import { multipleStars, singleStar } from './resources/SampleData'
@@ -44,7 +44,7 @@ import { multipleStars, singleStar } from './resources/SampleData'
 let graphComponent
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   // enable interactive editing
   graphComponent.inputMode = new GraphEditorInputMode({

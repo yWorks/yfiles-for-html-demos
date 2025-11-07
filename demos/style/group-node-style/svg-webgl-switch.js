@@ -30,11 +30,10 @@ import {
   FocusIndicatorManager,
   SelectionIndicatorManager,
   WebGLFocusIndicatorManager,
-  WebGLGraphModelManager,
   WebGLGraphModelManagerRenderMode,
   WebGLSelectionIndicatorManager
 } from '@yfiles/yfiles'
-import { addNavigationButtons, BrowserDetection } from '@yfiles/demo-resources/demo-page'
+import { addNavigationButtons, BrowserDetection } from '@yfiles/demo-app/demo-page'
 
 let changeListener
 

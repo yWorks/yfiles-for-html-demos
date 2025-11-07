@@ -26,16 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  ClickEventArgs,
-  Cursor,
-  HandleType,
-  IHandle,
-  IInputModeContext,
-  INode,
-  Point
-} from '@yfiles/yfiles'
+import { BaseClass, Cursor, HandleType, IHandle, Point } from '@yfiles/yfiles'
 
 /**
  * An {@link IHandle} implementation that changes the height in a node's tag.

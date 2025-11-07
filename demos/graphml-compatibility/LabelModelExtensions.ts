@@ -29,13 +29,13 @@
 import {
   BaseClass,
   CompositeLabelModel,
-  CompositeLabelModelParameter,
+  type CompositeLabelModelParameter,
   type Constructor,
   EdgePathLabelModel,
   EdgeSegmentLabelModel,
   EdgeSides,
   ExteriorNodeLabelModel,
-  ExteriorNodeLabelModelParameter,
+  type ExteriorNodeLabelModelParameter,
   ExteriorNodeLabelModelPosition,
   FreeLabelModel,
   GraphMLMemberVisibility,
@@ -57,9 +57,14 @@ import {
   StripeLabelModel,
   type TypeMetadata,
   XmlName,
-  yfiles
+  yfiles as yfilesUnknown
 } from '@yfiles/yfiles'
 import { YfilesCommon_3_0_XamlNS, YfilesCommonXamlNS } from './GraphMLCompatibility'
+
+/**
+ * The usage of yfiles here is only for GraphML compatibility and shouldn't be needed elsewhere.
+ */
+const yfiles = yfilesUnknown as any
 
 /**
  * The usage of yfiles.lang.Enum here is only for GraphML compatibility, and shouldn't be needed
@@ -297,6 +302,7 @@ function createMetadata<T>(
   callback: <T>(type: Constructor<T>, metadata: TypeMetadata<T>) => void,
   ns: string = YfilesCommon_3_0_XamlNS
 ): void {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   metadata.name = (type as Function).name
   metadata.xmlNamespace = ns
   callback(type, metadata)
@@ -337,7 +343,7 @@ class ExteriorLabelModelParameterExtension extends MarkupExtension {
   }
 
   provideValue(): any {
-    let model = <ExteriorNodeLabelModel>this._Model
+    let model = this._Model as ExteriorNodeLabelModel
     if (model === null) {
       model = ExteriorNodeLabelModel.TOP.model
     }
@@ -425,6 +431,7 @@ class ExteriorLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for InteriorLabelModel
 
@@ -462,7 +469,7 @@ class InteriorLabelModelParameterExtension extends MarkupExtension {
   }
 
   provideValue(): any {
-    let model = <InteriorNodeLabelModel>this._Model
+    let model = this._Model as InteriorNodeLabelModel
     if (model === null) {
       model = InteriorNodeLabelModel.CENTER.model
     }
@@ -559,6 +566,7 @@ class InteriorLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for InteriorStretchLabelModel
 
@@ -594,7 +602,7 @@ class InteriorStretchLabelModelParameterExtension extends MarkupExtension {
   }
 
   provideValue(): any {
-    let model = <StretchNodeLabelModel>this._Model
+    let model = this._Model as StretchNodeLabelModel
     if (model === null) {
       model = StretchNodeLabelModel.CENTER.model
     }
@@ -679,17 +687,14 @@ class InteriorStretchLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for StripeLabelModel
 
 const StripeLabelModelPosition = (Enum as any)('StripeLabelModelPosition', {
-  //@ts-ignore
   North: yfiles.graph.StripeLabelModelPosition.TOP,
-  //@ts-ignore
   East: yfiles.graph.StripeLabelModelPosition.RIGHT,
-  //@ts-ignore
   South: yfiles.graph.StripeLabelModelPosition.BOTTOM,
-  //@ts-ignore
   West: yfiles.graph.StripeLabelModelPosition.LEFT
 })
 
@@ -715,7 +720,7 @@ class StripeLabelModelParameterExtension extends MarkupExtension {
   }
 
   provideValue(): any {
-    let model = <StripeLabelModel>this._Model
+    let model = this._Model as StripeLabelModel
     if (model === null) {
       model = StripeLabelModel.TOP.model
     }
@@ -765,17 +770,14 @@ class StripeLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for StretchStripeLabelModel
 
 const StretchStripeLabelModelPosition = (Enum as any)('StretchStripeLabelModelPosition', {
-  //@ts-ignore
   North: yfiles.graph.StretchStripeLabelModelPosition.TOP,
-  //@ts-ignore
   East: yfiles.graph.StretchStripeLabelModelPosition.RIGHT,
-  //@ts-ignore
   South: yfiles.graph.StretchStripeLabelModelPosition.BOTTOM,
-  //@ts-ignore
   West: yfiles.graph.StretchStripeLabelModelPosition.LEFT
 })
 
@@ -801,7 +803,7 @@ class StretchStripeLabelModelParameterExtension extends MarkupExtension {
   }
 
   provideValue(): any {
-    let model = <StretchStripeLabelModel>this._Model
+    let model = this._Model as StretchStripeLabelModel
     if (model === null) {
       model = StretchStripeLabelModel.TOP.model
     }
@@ -854,6 +856,7 @@ class StretchStripeLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for CompositeLabelModel
 
@@ -879,7 +882,6 @@ class CompositeLabelModelParameterExtension extends MarkupExtension {
   }
 
   provideValue(serviceProvider: ILookup | null): any {
-    //@ts-ignore
     const ext = new yfiles.graphml.CompositeLabelModelParameterExtension()
     ext.parameter = this._Parameter
     ext.model = this._Model
@@ -901,6 +903,7 @@ class CompositeLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for GenericLabelModel
 
@@ -1010,7 +1013,7 @@ class GenericLabelModelParameterExtension extends MarkupExtension {
     if (!this._Model) {
       return GenericLabelModelExtension.absolute
     }
-    return (<CompositeLabelModel>this._Model).parameters.at(this._Index)
+    return (this._Model as CompositeLabelModel).parameters.at(this._Index)
   }
 }
 
@@ -1060,6 +1063,7 @@ class GenericLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for SandwichLabelModel
 
@@ -1085,12 +1089,12 @@ class SandwichParameterExtension extends MarkupExtension {
   }
 
   provideValue(): any {
-    let model = <CompositeLabelModel>this._Model
+    let model = this._Model as CompositeLabelModel
     if (model === null) {
       model = SandwichLabelModelExtension.South.model as CompositeLabelModel
     }
     return model.parameters.find(
-      (p) => (<ExteriorNodeLabelModelParameter>p.wrappedParameter).position == this.Position
+      (p) => (p.wrappedParameter as ExteriorNodeLabelModelParameter).position == this.Position
     )
   }
 }
@@ -1137,6 +1141,7 @@ class SandwichLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for DescriptorWrapperModel
 
@@ -1192,6 +1197,7 @@ class DescriptorWrapperLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility classes for GroupNodeLabelModel
 
@@ -1211,6 +1217,7 @@ class GroupNodeLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion
 
 // region Compatibility class for rotating edge label models
 
@@ -1363,3 +1370,4 @@ class NinePositionsEdgeLabelModelExtension extends MarkupExtension {
   }
 }
 
+// endregion

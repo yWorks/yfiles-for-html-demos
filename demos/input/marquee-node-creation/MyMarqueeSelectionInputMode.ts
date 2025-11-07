@@ -27,13 +27,13 @@
  **
  ***************************************************************************/
 import {
-  CollectSnapResultsEventArgs,
+  type CollectSnapResultsEventArgs,
   GraphSnapContext,
   HandlePositions,
   InputModeContext,
-  IRenderContext,
-  MarqueeRenderTag,
-  MarqueeSelectionEventArgs,
+  type IRenderContext,
+  type MarqueeRenderTag,
+  type MarqueeSelectionEventArgs,
   MarqueeSelectionInputMode,
   NodeReshapeSnapResultProvider,
   ObjectRendererBase,
@@ -43,7 +43,7 @@ import {
   ReshapeRectangleContext,
   SimpleNode,
   Size,
-  SvgVisual
+  type SvgVisual
 } from '@yfiles/yfiles'
 
 export class MyMarqueeSelectionInputMode extends MarqueeSelectionInputMode {

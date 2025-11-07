@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-node/07-hit-testing/).
 
-Styles not only provide a visual representation for graph items. They also offer crucial parts for interacting with said items. Hit-testing determines whether a particular item is at a given point in the canvas. It happens all the time during interaction, e.g. when selecting items, moving nodes, or creating edges.
+Styles not only provide a visual representation for graph items. They also offer crucial parts for interacting with said items. Hit-testing determines whether a particular item is at a given point in the canvas. It happens all the time during interaction, e.g., when selecting items, moving nodes, or creating edges.
 
 The default implementation in the `NodeStyleBase` class only considers the node layout when hit-testing. When nodes have shapes that deviate from the rectangular node layout, hit-testing has to be adjusted by providing a different implementation for the `isHit` method.
 

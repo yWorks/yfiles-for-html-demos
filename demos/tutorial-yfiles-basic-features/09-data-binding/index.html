@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>09 Data Binding - Tutorial: Basic Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -140,21 +140,21 @@
               <div class="paragraph">
                 <p>
                   This step shows how to
-                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_graph-binding_data" target="_blank">bind data to graph elements</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_graph-binding_data" class="dguide" target="_blank">bind data to graph elements</a>.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   Business data can be stored conveniently in the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IModelItem#ITagOwner-property-tag" target="_blank">tag</a> of a graph item. In this
-                  example, we store the creation date with each node as follows:
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" class="api" target="_blank">tag</a> of a graph item. In this example, we store the
+                  creation date with each node as follows:
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Store the current time as node creation time</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// Store the current time as node creation time</span>
 graph.<span class="hljs-title function_">createNode</span>({ <span class="hljs-attr">layout</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Rect</span>(<span class="hljs-number">0</span>, <span class="hljs-number">80</span>, <span class="hljs-number">30</span>, <span class="hljs-number">30</span>), <span class="hljs-attr">tag</span>: <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>() })</code></pre>
                 </div>
               </div>
@@ -179,7 +179,7 @@ graph.<span class="hljs-title function_">createNode</span>({ <span class="hljs-a
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">graph.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;node-created&#x27;</span>, (evt): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
+                  ><code class="language-typescript" data-lang="typescript">graph.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;node-created&#x27;</span>, (evt): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
   <span class="hljs-comment">// Store the current time as node creation time</span>
   <span class="hljs-keyword">const</span> node = evt.<span class="hljs-property">item</span>
   <span class="hljs-comment">// if there is no tag associated with the node, already, add one</span>
@@ -207,7 +207,7 @@ graph.<span class="hljs-title function_">createNode</span>({ <span class="hljs-a
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">graphEditorInputMode.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;node-created&#x27;</span>, (evt): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
+                  ><code class="language-typescript" data-lang="typescript">graphEditorInputMode.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;node-created&#x27;</span>, (evt): <span class="hljs-function"><span class="hljs-params">void</span> =&gt;</span> {
   <span class="hljs-comment">// Store the current time as node creation time</span>
   <span class="hljs-keyword">const</span> node = evt.<span class="hljs-property">item</span>
   node.<span class="hljs-property">tag</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>()
@@ -217,20 +217,15 @@ graph.<span class="hljs-title function_">createNode</span>({ <span class="hljs-a
               <div class="paragraph">
                 <p>
                   Once we have data stored in the <code>tag</code>, it is conveniently available in
-                  all parts of the API.
-                </p>
-              </div>
-              <div class="paragraph">
-                <p>
-                  E.g., now we can get the data from the tag to display in the tooltip. In the event
-                  handler that handles tooltips, this works like this:
+                  all parts of the API. For example, now we can get the data from the tag to display
+                  in the tooltip. In the event handler that handles tooltips, this works like this:
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// Set the tooltip content</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// Set the tooltip content</span>
 evt.<span class="hljs-property">toolTip</span> =
   <span class="hljs-string">&#x27;Created: &#x27;</span> +
   (node.<span class="hljs-property">tag</span> <span class="hljs-keyword">instanceof</span> <span class="hljs-title class_">Date</span>
@@ -249,9 +244,8 @@ evt.<span class="hljs-property">toolTip</span> =
                     </td>
                     <td class="content">
                       Since this demo focuses on storing the data, the tooltip and context menu code
-                      is not explained in detail. See the
-                      <a href="" target="_blank">application-features-tooltips</a> and the
-                      <a href="../../input/contextmenu/" target="_blank">Context Menu Demo</a> for more information.
+                      is not explained in detail. See the <a href="../../application-features/tooltips/" class="demo" target="_blank">Tooltips Demo</a> and the
+                      <a href="../../input/context-menu/" class="demo" target="_blank">Context Menu Demo</a> for more information.
                     </td>
                   </tr>
                 </table>
@@ -272,7 +266,7 @@ evt.<span class="hljs-property">toolTip</span> =
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

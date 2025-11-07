@@ -40,19 +40,20 @@ import {
   Size,
   SvgExport
 } from '@yfiles/yfiles'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
+import licenseData from '../../../lib/license.json'
 import { HtmlEditableNodeStyle } from './HtmlEditableNodeStyle'
 import { updateTagView } from './util'
 import { defaultData, people } from './data'
 import { downloadFile } from '@yfiles/demo-utils/file-support'
+import styles from './style.css?raw'
 
 // Ensure that the LayoutExecutor class is not removed by build optimizers
 // It is needed for the 'applyLayoutAnimated' method in this demo.
 LayoutExecutor.ensure()
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
   const graph = graphComponent.graph
@@ -143,15 +144,11 @@ function initLayout(graphComponent: GraphComponent): void {
 }
 
 async function initExport(graphComponent: GraphComponent): Promise<void> {
-  // Copy the CSS rules for our HTML node style to the generated SVG
-  const styles = await fetch('./style.css', { headers: { Accept: 'text/css' } }).then((r) =>
-    r.text()
-  )
-
   const exportBtn = document.querySelector<HTMLButtonElement>('#export-btn')!
 
   exportBtn.addEventListener('click', async () => {
     const exporter = new SvgExport({
+      // Copy the CSS rules for our HTML node style to the generated SVG
       cssStyleSheet: styles,
       inlineSvgImages: true,
       strictMode: true,

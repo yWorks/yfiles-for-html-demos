@@ -32,6 +32,7 @@ import type { GraphMLProperty } from './GraphMLProperty'
  * Properties Panel.
  */
 export class PropertiesPanelUI {
+    private div: HTMLElement;
   private graphPropertiesDiv: HTMLDivElement
   private itemPropertiesDiv: HTMLDivElement
   private itemPropertiesPanel: HTMLDivElement
@@ -42,7 +43,8 @@ export class PropertiesPanelUI {
   itemValueChangedCallback: (property: GraphMLProperty, value: string) => void = () => {}
   graphValueChangedCallback: (property: GraphMLProperty, value: string) => void = () => {}
 
-  constructor(private div: HTMLElement) {
+  constructor(div: HTMLElement) {
+      this.div = div;
     this.graphPropertiesDiv = getDiv(div, '#graphPropertiesDiv')
     this.itemPropertiesDiv = getDiv(div, '#itemPropertiesDiv')
     this.itemPropertiesPanel = getDiv(div, '.custom-data-panel.item-data')

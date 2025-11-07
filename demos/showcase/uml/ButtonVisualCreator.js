@@ -29,16 +29,11 @@
 import {
   Animator,
   BaseClass,
-  CanvasComponent,
   Font,
   GraphComponent,
   HierarchicalNestingPolicy,
   IAnimation,
-  IEdgeStyle,
-  INode,
   INodeStyle,
-  IPoint,
-  IRenderContext,
   IVisualCreator,
   Point,
   Rect,
@@ -47,8 +42,7 @@ import {
   SvgExport,
   SvgVisual,
   TextRenderSupport,
-  TimeSpan,
-  Visual
+  TimeSpan
 } from '@yfiles/yfiles'
 
 import {
@@ -276,9 +270,10 @@ export class ButtonVisualCreator extends BaseClass(IVisualCreator) {
  * Executes the button fan out animation.
  */
 class ButtonAnimation extends BaseClass(IAnimation) {
-  rotationElement
-  finishAngle
   translationElement
+  finishAngle
+  rotationElement
+
   constructor(rotationElement, finishAngle, translationElement) {
     super()
     this.rotationElement = rotationElement

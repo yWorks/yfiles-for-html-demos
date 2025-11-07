@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>07 Undo Clipboard Support - Tutorial: Basic Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -138,15 +138,15 @@
               <div class="paragraph">
                 <p>
                   This step shows how to use the
-                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-support#interaction-undo" target="_blank">undo</a> and
-                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_interaction_clipboard" target="_blank">clipboard</a> features.
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-support#interaction-undo" class="dguide" target="_blank">undo</a> and
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_interaction_clipboard" class="dguide" target="_blank">clipboard</a> features.
                 </p>
               </div>
               <div class="sect2">
                 <h3 id="_undo">Undo</h3>
                 <div class="paragraph">
                   <p>
-                    You can enable undo functionality for a <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" target="_blank">graph</a> as
+                    You can enable undo functionality for a <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" class="api" target="_blank">graph</a> as
                     follows:
                   </p>
                 </div>
@@ -154,7 +154,7 @@
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript">graph.<span class="hljs-property">undoEngineEnabled</span> = <span class="hljs-literal">true</span></code></pre>
+                    ><code class="language-typescript" data-lang="typescript">graph.<span class="hljs-property">undoEngineEnabled</span> = <span class="hljs-literal">true</span></code></pre>
                   </div>
                 </div>
                 <div class="paragraph">
@@ -168,7 +168,7 @@
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">if</span> (
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">if</span> (
   graph.<span class="hljs-property">undoEngineEnabled</span> &amp;&amp;
   graph.<span class="hljs-property">undoEngine</span> &amp;&amp;
   graph.<span class="hljs-property">undoEngine</span>.<span class="hljs-title function_">canUndo</span>()
@@ -181,7 +181,7 @@
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">if</span> (
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">if</span> (
   graph.<span class="hljs-property">undoEngineEnabled</span> &amp;&amp;
   graph.<span class="hljs-property">undoEngine</span> &amp;&amp;
   graph.<span class="hljs-property">undoEngine</span>.<span class="hljs-title function_">canRedo</span>()
@@ -194,7 +194,7 @@
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">if</span> (graph.<span class="hljs-property">undoEngineEnabled</span> &amp;&amp; graph.<span class="hljs-property">undoEngine</span>) {
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">if</span> (graph.<span class="hljs-property">undoEngineEnabled</span> &amp;&amp; graph.<span class="hljs-property">undoEngine</span>) {
   graph.<span class="hljs-property">undoEngine</span>.<span class="hljs-title function_">clear</span>()
 }</code></pre>
                   </div>
@@ -241,8 +241,8 @@
                 <div class="paragraph">
                   <p>
                     Clipboard functionality is enabled by default. It is available interactively
-                    with short-cuts via <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a> if
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/GraphInputMode#GraphInputMode-property-allowClipboardOperations" target="_blank">allowClipboardOperations</a>
+                    with short-cuts via <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" class="api" target="_blank">GraphEditorInputMode</a> if
+                    <a href="https://docs.yworks.com/yfileshtml/#/api/GraphInputMode#allowClipboardOperations" class="api" target="_blank">allowClipboardOperations</a>
                     is enabled.
                   </p>
                 </div>
@@ -302,14 +302,14 @@
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript">graphEditorInputMode.<span class="hljs-property">allowClipboardOperations</span> = <span class="hljs-literal">true</span> <span class="hljs-comment">// this is the default, already</span></code></pre>
+                    ><code class="language-typescript" data-lang="typescript">graphEditorInputMode.<span class="hljs-property">allowClipboardOperations</span> = <span class="hljs-literal">true</span> <span class="hljs-comment">// this is the default, already</span></code></pre>
                   </div>
                 </div>
                 <div class="listingblock">
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// programmatically copy the selected graph items</span>
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// programmatically copy the selected graph items</span>
 <span class="hljs-keyword">if</span> (graphComponent.<span class="hljs-property">selection</span>.<span class="hljs-property">nodes</span>.<span class="hljs-property">size</span> &gt; <span class="hljs-number">0</span>) {
   graphEditorInputMode.<span class="hljs-title function_">copy</span>()
 }</code></pre>
@@ -319,7 +319,7 @@
                   <div class="content">
                     <pre
                       class="highlight"
-                    ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// programmatically paste and clear the clipboard content</span>
+                    ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// programmatically paste and clear the clipboard content</span>
 <span class="hljs-keyword">if</span> (!graphComponent.<span class="hljs-property">clipboard</span>.<span class="hljs-property">isEmpty</span>) {
   graphEditorInputMode.<span class="hljs-title function_">paste</span>()
   graphComponent.<span class="hljs-property">clipboard</span>.<span class="hljs-title function_">clear</span>()
@@ -343,7 +343,7 @@
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { CompanyRelationshipEdge } from '../data-types'
-import { EdgeTypeEnum } from '../data-types'
+import type { CompanyRelationshipEdge, EdgeType } from '../data-types'
 import {
   Arrow,
   EdgePathLabelModel,
@@ -39,13 +38,13 @@ import {
 
 // configures the style of the edges based on their type
 const smoothingLength = 5
-const typeMap: Record<EdgeTypeEnum, IEdgeStyle> = {
-  [EdgeTypeEnum.Hierarchy]: new PolylineEdgeStyle({
+const typeMap: Record<EdgeType, IEdgeStyle> = {
+  ['Hierarchy']: new PolylineEdgeStyle({
     stroke: '2px #1a3442',
     targetArrow: new Arrow({ fill: '#1a3442', stroke: '2px #1a3442', type: 'triangle' }),
     smoothingLength
   }),
-  [EdgeTypeEnum.Relation]: new PolylineEdgeStyle({
+  ['Relation']: new PolylineEdgeStyle({
     stroke: '2px dashed #f26419',
     targetArrow: new Arrow({ fill: '#f26419', stroke: '1px #f26419', type: 'triangle' }),
     smoothingLength: 100

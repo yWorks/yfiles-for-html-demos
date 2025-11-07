@@ -21,10 +21,12 @@ First, we add a constructor with properties for both options.
 
 ```
 constructor(
-  public horizontalAlignment: 'start' | 'middle' | 'end' = 'middle',
-  public verticalAlignment: 'top' | 'center' | 'bottom' = 'center'
+  horizontalAlignment: 'start' | 'middle' | 'end' = 'middle',
+  verticalAlignment: 'top' | 'center' | 'bottom' = 'center'
 ) {
   super()
+  this.horizontalAlignment = horizontalAlignment
+  this.verticalAlignment = verticalAlignment
 }
 ```
 

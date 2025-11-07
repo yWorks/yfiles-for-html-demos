@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Organic Substructures Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
     <link rel="stylesheet" href="../../showcase/layoutstyles/resources/styles.css" />
 
     <style>
@@ -67,68 +67,6 @@
 
       .current-type {
         border: thick solid black;
-      }
-
-      .settings-headline {
-        background: #a0a0a0;
-        padding: 8px;
-      }
-
-      .settings-content {
-        background: #ffffff;
-        padding: 8px;
-      }
-
-      .settings-content select {
-        width: 100%;
-      }
-
-      .settings-grid {
-        display: grid;
-        align-items: center;
-      }
-      .settings-label {
-        grid-column: 1;
-      }
-      .settings-editor {
-        grid-column: 2;
-      }
-      input.settings-editor {
-        justify-self: end;
-      }
-      select.settings-editor {
-        width: 100%;
-      }
-
-      .settings-row1 {
-        grid-row: 1;
-      }
-      .settings-row2 {
-        grid-row: 2;
-      }
-      .settings-row3 {
-        grid-row: 3;
-      }
-      .settings-row4 {
-        grid-row: 4;
-      }
-      .settings-row5 {
-        grid-row: 5;
-      }
-      .settings-row6 {
-        grid-row: 6;
-      }
-      .settings-row7 {
-        grid-row: 7;
-      }
-
-      .settings-row2,
-      .settings-row3,
-      .settings-row4,
-      .settings-row5,
-      .settings-row6,
-      .settings-row7 {
-        margin-top: 8px;
       }
     </style>
   </head>
@@ -180,9 +118,9 @@
 
         <p>
           This demo showcases how the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" target="_blank">OrganicLayout</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a>
           algorithm handles substructures and node types, see
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout-substructures" target="_blank">Layout of Regular Substructures</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout-substructures" class="dguide" target="_blank">Layout of Regular Substructures</a>
           for more information.
         </p>
         <p>
@@ -245,104 +183,61 @@
             </div>
           </div>
 
-          <div class="data-editor-header">
-            <h2 style="margin-top: 0">Substructure Layout</h2>
-            <div class="settings-grid">
-              <label for="cycleStyle" class="settings-label settings-row1">Cycles</label>
-              <select
-                class="settings-editor settings-row1"
-                title="Select a style for cycle substructures"
-                id="cycleStyle"
-              >
-                <option value="NONE">Ignore</option>
-                <option value="CIRCULAR">Circular</option>
-              </select>
-              <label for="chainStyle" class="settings-label settings-row2">Chains</label>
-              <select
-                class="settings-editor settings-row2"
-                title="Select a style for chain substructures"
-                id="chainStyle"
-              >
-                <option value="NONE">Ignore</option>
-                <option value="DISK">Disk</option>
-                <option value="RECTANGULAR">Rectangular</option>
-                <option value="STRAIGHT_LINE">Straight-Line</option>
-              </select>
-              <label for="starStyle" class="settings-label settings-row3">Star</label>
-              <select
-                class="settings-editor settings-row3"
-                title="Select a style for star substructures"
-                id="starStyle"
-              >
-                <option value="NONE">Ignore</option>
-                <option value="CIRCULAR">Circular</option>
-                <option value="RADIAL">Radial</option>
-                <option value="SEPARATED_RADIAL">Separated Radial</option>
-              </select>
-              <label for="parallelStyle" class="settings-label settings-row4">Parallel</label>
-              <select
-                class="settings-editor settings-row4"
-                title="Select a style for parallel substructures"
-                id="parallelStyle"
-              >
-                <option value="NONE">Ignore</option>
-                <option value="RADIAL">Radial</option>
-                <option value="RECTANGULAR">Rectangular</option>
-                <option value="STRAIGHT_LINE">Straight-Line</option>
-              </select>
-              <label for="treeStyle" class="settings-label settings-row5">Tree</label>
-              <select
-                class="settings-editor settings-row5"
-                title="Select a style for tree substructures"
-                id="treeStyle"
-              >
-                <option value="NONE">Ignore</option>
-                <option value="RADIAL_TREE">Radial Tree</option>
-                <option value="ORIENTED">Oriented</option>
-                <option value="RADIAL">Radial</option>
-              </select>
-              <label for="groupScope" class="settings-label settings-row6">Groups</label>
-              <select
-                class="settings-editor settings-row6"
-                title="Select a scope for group substructures"
-                id="groupScope"
-              >
-                <option value="NO_GROUPS">Ignore</option>
-                <option value="ALL">All Groups</option>
-                <option value="WITHOUT_EDGES">Groups without edges</option>
-                <option value="WITHOUT_INTER_EDGES">Groups without inter-edges</option>
-              </select>
-              <label for="use-edge-grouping" class="settings-label settings-row7">
-                Use Edge Grouping
-              </label>
-              <input class="settings-editor settings-row7" id="use-edge-grouping" type="checkbox" />
-            </div>
+          <h3>Substructure Layout</h3>
+          <div class="demo-properties__settings">
+            <label for="cycleStyle">Cycles</label>
+            <select title="Select a style for cycle substructures" id="cycleStyle">
+              <option value="NONE">Ignore</option>
+              <option value="CIRCULAR">Circular</option>
+            </select>
+            <label for="chainStyle">Chains</label>
+            <select title="Select a style for chain substructures" id="chainStyle">
+              <option value="NONE">Ignore</option>
+              <option value="DISK">Disk</option>
+              <option value="RECTANGULAR">Rectangular</option>
+              <option value="STRAIGHT_LINE">Straight-Line</option>
+            </select>
+            <label for="starStyle">Star</label>
+            <select title="Select a style for star substructures" id="starStyle">
+              <option value="NONE">Ignore</option>
+              <option value="CIRCULAR">Circular</option>
+              <option value="RADIAL">Radial</option>
+              <option value="SEPARATED_RADIAL">Separated Radial</option>
+            </select>
+            <label for="parallelStyle">Parallel</label>
+            <select title="Select a style for parallel substructures" id="parallelStyle">
+              <option value="NONE">Ignore</option>
+              <option value="RADIAL">Radial</option>
+              <option value="RECTANGULAR">Rectangular</option>
+              <option value="STRAIGHT_LINE">Straight-Line</option>
+            </select>
+            <label for="treeStyle">Tree</label>
+            <select title="Select a style for tree substructures" id="treeStyle">
+              <option value="NONE">Ignore</option>
+              <option value="RADIAL_TREE">Radial Tree</option>
+              <option value="ORIENTED">Oriented</option>
+              <option value="RADIAL">Radial</option>
+            </select>
+            <label for="groupScope">Groups</label>
+            <select title="Select a scope for group substructures" id="groupScope">
+              <option value="NO_GROUPS">Ignore</option>
+              <option value="ALL">All Groups</option>
+              <option value="WITHOUT_EDGES">Groups without edges</option>
+              <option value="WITHOUT_INTER_EDGES">Groups without inter-edges</option>
+            </select>
+            <label for="use-edge-grouping"> Use Edge Grouping </label>
+            <input id="use-edge-grouping" type="checkbox" />
           </div>
 
-          <div class="data-editor-header">
-            <h2 style="margin-top: 0">Node Types</h2>
-            <div class="settings-grid">
-              <label for="consider-node-types" class="settings-label settings-row1">
-                Consider Node Types
-              </label>
-              <input
-                class="settings-editor settings-row1"
-                id="consider-node-types"
-                type="checkbox"
-                checked=""
-              />
-              <label for="separate-parallel" class="settings-label settings-row2">
-                Separate Parallel Structures by Type
-              </label>
-              <input class="settings-editor settings-row2" id="separate-parallel" type="checkbox" />
-              <label for="separate-star" class="settings-label settings-row3">
-                Separate Star Structures by Type
-              </label>
-              <input class="settings-editor settings-row3" id="separate-star" type="checkbox" />
-            </div>
-          </div>
+          <div class="demo-properties__settings">
+            <h3>Node Types</h3>
+            <label for="consider-node-types"> Consider Node Types </label>
+            <input id="consider-node-types" type="checkbox" checked="" />
+            <label for="separate-parallel"> Separate Parallel Structures by Type </label>
+            <input id="separate-parallel" type="checkbox" />
+            <label for="separate-star"> Separate Star Structures by Type </label>
+            <input id="separate-star" type="checkbox" />
 
-          <div id="data-editor-button-container" class="demo-form-block">
             <button id="apply-layout-button" class="flat-button">
               <span>Apply Layout</span>
             </button>

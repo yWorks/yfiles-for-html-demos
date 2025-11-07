@@ -26,41 +26,40 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-export const nodeData =
-  [
-    { id: 'item0', path: '/root/dir1/dir1' },
-    {
-      id: 'item1',
-      path: '/root/dir1/dir2',
-      children: [
-        {
-          id: 'child1',
-          children: [
-            { id: 'child11', children: [{ id: 'child14' }, { id: 'child15' }] },
-            { id: 'child12' }
-          ]
-        },
-        { id: 'child2', children: [{ id: 'child13' }] }
-      ]
-    },
-    { id: 'item2', path: '/root/dir1/dir2' },
-    { id: 'item3', path: '/root/dir2/dir1' },
-    {
-      id: 'item4',
-      path: '/root/dir2/dir1',
-      children: [{ id: 'child3' }, { id: 'child4' }, { id: 'child5' }]
-    },
-    { id: 'item5', path: '/root/dir2/dir2', children: [{ id: 'child6' }] },
-    {
-      id: 'item6',
-      path: '/root/dir2/dir2',
-      children: [{ id: 'child7', children: [{ id: 'child16' }] }, { id: 'child8' }]
-    },
+export const nodeData = [
+  { id: 'item0', path: '/root/dir1/dir1' },
+  {
+    id: 'item1',
+    path: '/root/dir1/dir2',
+    children: [
+      {
+        id: 'child1',
+        children: [
+          { id: 'child11', children: [{ id: 'child14' }, { id: 'child15' }] },
+          { id: 'child12' }
+        ]
+      },
+      { id: 'child2', children: [{ id: 'child13' }] }
+    ]
+  },
+  { id: 'item2', path: '/root/dir1/dir2' },
+  { id: 'item3', path: '/root/dir2/dir1' },
+  {
+    id: 'item4',
+    path: '/root/dir2/dir1',
+    children: [{ id: 'child3' }, { id: 'child4' }, { id: 'child5' }]
+  },
+  { id: 'item5', path: '/root/dir2/dir2', children: [{ id: 'child6' }] },
+  {
+    id: 'item6',
+    path: '/root/dir2/dir2',
+    children: [{ id: 'child7', children: [{ id: 'child16' }] }, { id: 'child8' }]
+  },
 
-    { id: 'item7', path: '/root/dir1', children: [{ id: 'child9' }, { id: 'child10' }] },
+  { id: 'item7', path: '/root/dir1', children: [{ id: 'child9' }, { id: 'child10' }] },
 
-    { id: 'item8', path: '/root/dir1' }
-  ]
+  { id: 'item8', path: '/root/dir1' }
+]
 
 export const edgeData = [
   { from: 'item8', to: 'child16' },
@@ -76,6 +75,6 @@ export const edgeData = [
   { from: 'child16', to: 'child6' },
   { from: 'item3', to: 'child5' },
   { from: 'item3', to: 'child3' },
-  //It's also perfectly valid to have edges between any of the parent or child entitities
+  //It's also perfectly valid to have edges between any of the parent or child entities
   { from: '/root/dir1', to: '/root/dir2' }
 ]

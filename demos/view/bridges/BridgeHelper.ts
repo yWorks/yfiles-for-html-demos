@@ -28,14 +28,14 @@
  ***************************************************************************/
 import {
   BaseClass,
-  BridgeCrossingStyle,
-  BridgeOrientationStyle,
+  type BridgeCrossingStyle,
+  type BridgeOrientationStyle,
   GeneralPath,
   GroupNodeStyle,
   IBridgeCreator,
-  INode,
+  type INode,
   IObstacleProvider,
-  IRenderContext,
+  type IRenderContext,
   Point
 } from '@yfiles/yfiles'
 
@@ -43,11 +43,14 @@ import {
  * A custom delegating callback that implements {@link CustomCallback.createCustomBridge} differently.
  */
 export class CustomCallback extends BaseClass(IBridgeCreator) {
+  private readonly fallback: IBridgeCreator
+
   /**
    * Creates a new instance of {@link CustomCallback}
    */
-  constructor(private readonly fallback: IBridgeCreator) {
+  constructor(fallback: IBridgeCreator) {
     super()
+    this.fallback = fallback
   }
 
   /**
@@ -131,11 +134,14 @@ export class CustomCallback extends BaseClass(IBridgeCreator) {
  * @see {@link IShapeGeometry.getOutline}
  */
 export class GroupNodeObstacleProvider extends BaseClass(IObstacleProvider) {
+  private groupNode: INode
+
   /**
    * Creates a new instance of {@link GroupNodeObstacleProvider}
    */
-  constructor(private groupNode: INode) {
+  constructor(groupNode: INode) {
     super()
+    this.groupNode = groupNode
   }
 
   /**

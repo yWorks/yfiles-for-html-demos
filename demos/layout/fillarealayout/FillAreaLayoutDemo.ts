@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CanvasComponent,
   ComponentAssignmentStrategy,
@@ -36,22 +35,22 @@ import {
   GraphEditorInputMode,
   IBend,
   IEdge,
-  IModelItem,
+  type IModelItem,
   INode,
   type IObservableCollection,
-  ItemsEventArgs,
+  type ItemsEventArgs,
   LayoutExecutor,
   License,
   OrthogonalEdgeEditingPolicy,
   Point,
   Rect,
-  SelectionEventArgs
+  type SelectionEventArgs
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import SampleData from './resources/SampleData'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent: GraphComponent = null!
 
@@ -66,7 +65,7 @@ let selectionRect: Rect | null = null
 let componentAssignmentStrategy: ComponentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   initializeInputModes()
 
@@ -90,7 +89,7 @@ function initializeInputModes(): void {
 
   // registers handlers which are called when selected nodes are deleted
   editMode.addEventListener('deleting-selection', onDeletingSelection)
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+
   editMode.addEventListener('deleted-selection', onDeletedSelection)
 }
 

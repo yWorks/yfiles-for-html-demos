@@ -29,9 +29,9 @@
 import {
   EdgeRouter,
   EdgeRouterData,
-  LayoutGraph,
+  type LayoutGraph,
   LayoutGraphHider,
-  LayoutNode,
+  type LayoutNode,
   LayoutStageBase,
   Point
 } from '@yfiles/yfiles'

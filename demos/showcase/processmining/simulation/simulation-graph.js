@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, IEdge, IGraph, INode } from '@yfiles/yfiles'
+import { GraphBuilder } from '@yfiles/yfiles'
 
 /**
  * Returns the data of the given process step.

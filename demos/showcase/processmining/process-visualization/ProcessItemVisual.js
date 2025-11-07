@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BaseClass,
-  WebGLVisual,
   Color,
   IArrow,
   IBoundsProvider,
@@ -38,7 +37,8 @@ import {
   IVisualCreator,
   PathType,
   PolylineEdgeStyle,
-  SimpleEdge
+  SimpleEdge,
+  WebGLVisual
 } from '@yfiles/yfiles'
 import { WebGLProgramInfo } from './webgl-utils'
 
@@ -262,24 +262,19 @@ void main() {
  * A render visual that draws process items in a canvas using WebGL.
  */
 export class ProcessItemVisual extends WebGLVisual {
-  entryCount
   entries
   dirty
   $time
-  timeDirty
 
   constructor() {
     super()
-    this.timeDirty = true
     this.$time = 0
     this.entries = []
-    this.entryCount = 0
     this.dirty = false
   }
 
   set time(value) {
     this.$time = value
-    this.timeDirty = true
   }
 
   get time() {
@@ -403,7 +398,7 @@ export class ProcessItemVisual extends WebGLVisual {
     gl.getExtension('OES_standard_derivatives')
     const program = renderContext.webGLSupport.useProgram(vertexShader, fragmentShader)
     if (!program.info || this.dirty) {
-      const entryCount = (this.entryCount = this.entries.length)
+      const entryCount = this.entries.length
       const vertexCount = entryCount * 6
       if (program.info) {
         program.info.dispose(gl, program)
@@ -444,7 +439,6 @@ export class ProcessItemVisual extends WebGLVisual {
       }
     })
     this.dirty = false
-    this.timeDirty = false
   }
 }
 

@@ -21,9 +21,9 @@ Sometimes it is necessary to change the render order of graph, e.g. when labels 
 
 ### Hierarchical Nesting
 
-Each item type is assigned to a specific canvas object group. These groups have a default rendering order from back to front. See [The Z-order of Graph Elements](https://docs.yworks.com/yfileshtml/#/dguide/customizing_view-z_order) for more information about the different [IRenderTreeGroup](https://docs.yworks.com/yfileshtml/#/api/IRenderTreeGroup)s and their default rendering order.
+Each item type is assigned to a specific render tree group. These groups have a default rendering order from back to front. See [The Z-order of Graph Elements](https://docs.yworks.com/yfileshtml/#/dguide/customizing_view-z_order) for more information about the different [IRenderTreeGroup](https://docs.yworks.com/yfileshtml/#/api/IRenderTreeGroup)s and their default rendering order.
 
-For grouped graphs, we provide some nesting policies to structure nodes and edges in more complex hierarchies. In these cases, some of the canvas object groups may not be used.
+For grouped graphs, we provide some nesting policies to structure nodes and edges in more complex hierarchies. In these cases, some of the render tree groups may not be used.
 
 ### Demo Configurations
 
@@ -31,4 +31,4 @@ For grouped graphs, we provide some nesting policies to structure nodes and edge
 - _Labels / Ports at Owner:_ The labels and ports are rendered on the same z-order as their owner.
 - _Edges on Top:_ Edges are rendered on top of the nodes. Note in this case, we also enabled the labels and ports at owner configuration.
 - _Group Nodes:_ Maintains the rendering order according to the nesting depth for group nodes while nodes and edges are placed in the separate groups and are not interleaved in the rendering.
-- _None:_ Items are placed in their respective canvas object group without considering the nesting hierarchy of the nodes. Usually, this setting is only used when the z-order is managed by a different mechanism.
+- _None:_ Items are placed in their respective render tree group without considering the nesting hierarchy of the nodes. Usually, this setting is only used when the z-order is managed by a different mechanism.

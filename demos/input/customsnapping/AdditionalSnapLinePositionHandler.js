@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IInputModeContext, IPoint, IPositionHandler, Point } from '@yfiles/yfiles'
+import { BaseClass, IPositionHandler, Point } from '@yfiles/yfiles'
 
 /**
  * An {@link IPositionHandler} used to move {@link AdditionalSnapLineVisualCreator} instances.

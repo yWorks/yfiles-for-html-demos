@@ -30,9 +30,6 @@ import {
   BaseClass,
   CreateBendInputMode,
   IBendCreator,
-  IEdge,
-  IGraph,
-  IInputModeContext,
   List,
   OrthogonalEdgeEditingContext,
   Point,
@@ -45,8 +42,9 @@ import {
  * or last segment.
  */
 export class BlueBendCreator extends BaseClass(IBendCreator) {
-  edge
   originalBendCreator
+  edge
+
   constructor(edge, originalBendCreator) {
     super()
     this.edge = edge

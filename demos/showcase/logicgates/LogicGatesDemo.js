@@ -38,8 +38,8 @@ import {
 } from '@yfiles/yfiles'
 
 import { DragAndDropPanel } from '@yfiles/demo-utils/DragAndDropPanel'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { NotNodeStyle } from './node-styles/NotNodeStyle'
 import { XOrNodeStyle } from './node-styles/XOrNodeStyle'
 import { AndGateNodeStyle } from './node-styles/AndGateNodeStyle'
@@ -48,7 +48,7 @@ import {
   createPortDescriptors,
   DescriptorDependentPortCandidateProvider
 } from './DescriptorDependentPortCandidateProvider'
-import { createPortAwareGraphBuilder } from '../../databinding/port-aware-graph-builder/GraphBuilder'
+import { createPortAwareGraphBuilder } from './port-aware-graph-builder'
 import { sampleData } from './resources/sample-data'
 import { createInputMode } from './input'
 import { runLayout } from './logicgates-layout'
@@ -59,7 +59,7 @@ import { runLayout } from './logicgates-layout'
 let graphComponent
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   // initialize the drag and drop panel
   initializeDragAndDropPanel()

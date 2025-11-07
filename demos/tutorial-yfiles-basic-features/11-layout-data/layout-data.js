@@ -27,11 +27,9 @@
  **
  ***************************************************************************/
 import {
-  GraphComponent,
   HierarchicalLayout,
   HierarchicalLayoutData,
   HierarchicalLayoutNodeDescriptor,
-  INode,
   LayoutExecutor
 } from '@yfiles/yfiles'
 
@@ -63,7 +61,7 @@ export async function runLayout(graphComponent) {
  * Returns the alignment value based on the data stored in the given node's label.
  */
 function getAlignment(node) {
-  const text = node.labels.at(0)?.text?.toLowerCase() ?? 'center'
+  const text = node.labels.at(0)?.text.toLowerCase() ?? 'center'
   switch (text) {
     default:
     case 'center':

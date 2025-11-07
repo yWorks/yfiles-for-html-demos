@@ -28,28 +28,16 @@
  ***************************************************************************/
 import {
   AdjacencyGraphBuilder,
-  AdjacencyNodesSource,
   EdgeCreator,
   FreeNodePortLocationModel,
   FreePortLabelModel,
-  IEdge,
-  IEdgeDefaults,
-  IEdgeStyle,
-  IGraph,
-  ILabelModelParameter,
-  ILabelStyle,
-  INode,
-  INodeStyle,
-  IPort,
-  LabelCreator,
   LabelStyle,
   NodeCreator,
   NodeStylePortStyleAdapter,
   Point,
-  Rect,
   ShapeNodeStyle
 } from '@yfiles/yfiles'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
 
 let adjacencyGraphBuilder
 let nodesSource
@@ -340,6 +328,7 @@ class PortAwareNodeCreator extends NodeCreator {
  */
 class PortAwareEdgeCreator extends EdgeCreator {
   successor
+
   constructor(successor, defaults) {
     super()
     this.successor = successor

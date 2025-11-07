@@ -6,7 +6,7 @@
   "private": true,
   "homepage": ".",
   "scripts": {
-    "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json')\"",
+    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','src/license.json')\"",
     "start": "react-scripts start",
     "start-test": "cross-env REACT_APP_INTEGRATION_TEST=true react-scripts start",
     "build": "react-scripts build",
@@ -30,7 +30,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
-    "@yfiles/yfiles": "../../../lib/yfiles-30.0.3+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.4+dev.tgz"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

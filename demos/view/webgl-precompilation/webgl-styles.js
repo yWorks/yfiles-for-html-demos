@@ -37,7 +37,7 @@ import {
   WebGLPolylineEdgeStyle,
   WebGLShapeNodeStyle
 } from '@yfiles/yfiles'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
 
 export const webGLNodeStyles = [
   new WebGLShapeNodeStyle({ fill: colorSets['demo-palette-21'].fill, shape: 'ellipse' }),

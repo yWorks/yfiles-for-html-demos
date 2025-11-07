@@ -29,8 +29,6 @@
 import {
   GraphComponent,
   GraphViewerInputMode,
-  IGraph,
-  INode,
   License,
   NinePositionsEdgeLabelModel,
   Point,
@@ -41,21 +39,18 @@ import {
   WebGLSelectionIndicatorManager
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import {
-  addNavigationButtons,
-  checkWebGL2Support,
-  finishLoading
-} from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, checkWebGL2Support, finishLoading } from '@yfiles/demo-app/demo-page'
 import { registerLabelFading } from './label-fading'
+import graphData from './resources/hierarchic_2000_2100.json'
 
 async function run() {
   if (!checkWebGL2Support()) {
     return
   }
 
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize a GraphComponent with a view-only input mode
   const graphComponent = new GraphComponent('#graphComponent')
@@ -105,13 +100,9 @@ function initializeUI(graphComponent) {
  * @yjs:keep = edgeList
  */
 async function createGraph(graph) {
-  // get the lists of data items for the nodes and edges
-  const response = await fetch('./resources/hierarchic_2000_2100.json')
-  const graphData = await response.json()
+  graph.clear()
 
   const getRandomInt = (upper) => Math.floor(Math.random() * upper)
-
-  graph.clear()
   // create a map to store the nodes for edge creation
   const nodeMap = new Map()
 

@@ -30,9 +30,9 @@ import {
   Graph,
   GraphComponent,
   IEnumerable,
-  IGraph,
+  type IGraph,
   Matrix,
-  Point,
+  type Point,
   Rect,
   Size,
   SvgExport
@@ -87,7 +87,7 @@ export class PrintingSupport {
   projection = Matrix.IDENTITY
   /**
    * The styles set to the {@link SvgExport.cssStyleSheet} property.
-   * */
+   */
   cssStyleSheet = ''
 
   /**

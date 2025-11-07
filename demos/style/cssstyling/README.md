@@ -17,9 +17,9 @@
 
 This demo shows how to style the built-in templates and UI elements of the _yFiles for HTML_ library with CSS to match your color theme.
 
-There is a separate CSS-stylesheet which contains the more information about this demo.
+In this example, we specify the following set of colors in a separate CSS stylesheet. See the sheet for guidance on how to target certain elements of the graph.
 
-## CSS-Styling for the following Elements
+## CSS styling customized for the following elements
 
 - Viewport rectangle in the Overview
 - Highlight when hovering a graph element
@@ -34,7 +34,7 @@ There is a separate CSS-stylesheet which contains the more information about thi
 - Scroll-bars
 - Label Editor
 
-## CSS-Transitions for the following Elements
+## CSS transitions customized for the following elements
 
 - Node Creation
 - Tooltips

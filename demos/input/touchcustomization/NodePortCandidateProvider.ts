@@ -28,11 +28,11 @@
  ***************************************************************************/
 import {
   FreeNodePortLocationModel,
-  IEnumerable,
-  IInputModeContext,
-  INode,
-  IPortCandidate,
-  IPortLocationModelParameter,
+  type IEnumerable,
+  type IInputModeContext,
+  type INode,
+  type IPortCandidate,
+  type IPortLocationModelParameter,
   List,
   PortCandidate,
   PortCandidateProviderBase
@@ -42,12 +42,15 @@ import {
  * This port candidate provider provides port candidates at each side and in the center of a node.
  */
 export class NodePortCandidateProvider extends PortCandidateProviderBase {
+    private node: INode;
+
   /**
    * Creates a new instance of {@link NodePortCandidateProvider}.
    * @param node The given node.
    */
-  constructor(private node: INode) {
+  constructor(node: INode) {
     super()
+      this.node = node;
   }
 
   /**

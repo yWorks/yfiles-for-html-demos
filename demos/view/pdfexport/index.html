@@ -34,10 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>PDF Export Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
-    <link rel="stylesheet" href="./resources/styles.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
     <style>
       /* Load custom fonts for the custom-fonts sample graph. */
       @font-face {
@@ -140,15 +139,15 @@
           The demo shows two approaches, one that completely runs in the client's browser and a
           server-side export. The client-side export uses the open source
           <a href="https://github.com/yWorks/svg2pdf.js" target="_blank">svg2pdf</a> and
-          <a href="https://github.com/MrRio/jsPDF" target="_blank">jsPDF</a> libraries, to which we
-          contributed major improvements and bug fixes.
+          <a href="https://github.com/parallax/jsPDF" target="_blank">jsPDF</a> libraries, to which
+          we contributed major improvements and bug fixes.
         </p>
 
         <p>
           The client-side PDF export also supports custom fonts which is illustrated by the node
           labels with custom fonts. To make use of custom fonts, they need to be preprocessed and
           registered at the
-          <a href="https://github.com/MrRio/jsPDF" target="_blank">jsPDF</a> instance.
+          <a href="https://github.com/parallax/jsPDF" target="_blank">jsPDF</a> instance.
         </p>
 
         <h3>Server-side export</h3>
@@ -182,51 +181,35 @@
           <h2>Export Options</h2>
 
           <div class="demo-properties__settings">
-            <div class="settings-grid">
-              <label for="use-rect" class="settings-label-row1">Export Rectangle Contents</label>
-              <input id="use-rect" class="settings-editor-row1" type="checkbox" name="useRect" />
-              <label for="paperSize" class="settings-label-row2">Page Size</label>
-              <select id="paperSize" class="settings-editor-row2" name="paperSize">
-                <option value="AUTO">Automatic</option>
-                <option value="A3">A3</option>
-                <option value="A4">A4</option>
-                <option value="A5">A5</option>
-                <option value="A6">A6</option>
-                <option value="LETTER">Letter</option>
-              </select>
-              <label for="scale" class="settings-label-row3">Scale</label>
-              <input
-                id="scale"
-                class="settings-editor-row3"
-                type="number"
-                min="0.1"
-                max="200.0"
-                step="0.1"
-                name="scale"
-                value="1.0"
-              />
-              <label for="margin" class="settings-label-row4">Margin</label>
-              <input
-                id="margin"
-                class="settings-editor-row4"
-                name="margin"
-                type="number"
-                min="0"
-                max="100"
-                value="5"
-              />
+            <label for="use-rect">Export Rectangle Contents</label>
+            <input id="use-rect" type="checkbox" name="useRect" />
+            <label for="paperSize">Page Size</label>
+            <select id="paperSize" name="paperSize">
+              <option value="auto">Automatic</option>
+              <option value="a3">A3</option>
+              <option value="a4">A4</option>
+              <option value="a5">A5</option>
+              <option value="a6">A6</option>
+              <option value="letter">Letter</option>
+            </select>
+            <label for="scale">Scale</label>
+            <input
+              id="scale"
+              type="number"
+              min="0.1"
+              max="200.0"
+              step="0.1"
+              name="scale"
+              value="1.0"
+            />
+            <label for="margin">Margin</label>
+            <input id="margin" name="margin" type="number" min="0" max="100" value="5" />
 
-              <label for="server-export" class="settings-label-row5">Export on Server</label>
-              <input
-                id="server-export"
-                class="settings-editor-row5"
-                type="checkbox"
-                name="serverExport"
-                disabled
-              />
+            <label for="server-export">Export on Server</label>
+            <input id="server-export" type="checkbox" name="serverExport" disabled />
 
-              <button id="export-button" class="settings-editor-row6 flat-button">Export</button>
-            </div>
+            <button id="export-button" class="flat-button">Export</button>
+
             <a
               href="https://www.yworks.com/products/yfiles-for-html/vsdx-export"
               target="_blank"

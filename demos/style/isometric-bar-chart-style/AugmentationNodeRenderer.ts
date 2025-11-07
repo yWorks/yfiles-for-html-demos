@@ -28,14 +28,14 @@
  ***************************************************************************/
 import {
   BaseClass,
-  IBoundsProvider,
-  IHitTestable,
-  INode,
-  INodeStyle,
+  type IBoundsProvider,
+  type IHitTestable,
+  type INode,
+  type INodeStyle,
   IObjectRenderer,
   IVisibilityTestable,
-  IVisualCreator,
-  Rect,
+  type IVisualCreator,
+  type Rect,
   SimpleNode
 } from '@yfiles/yfiles'
 

@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Arrow,
   Cursor,
@@ -42,7 +41,6 @@ import {
   IBend,
   IconLabelStyle,
   IEdge,
-  IGraph,
   ILabel,
   INode,
   InteriorNodeLabelModel,
@@ -57,11 +55,11 @@ import {
   Size
 } from '@yfiles/yfiles'
 
-import { ButtonInputMode, ButtonTrigger, QueryButtonsEvent } from './ButtonInputMode'
+import { ButtonInputMode } from './ButtonInputMode'
 import { OffsetLabelModelWrapper } from './OffsetLabelModelWrapper'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
-import cutIcon from '@yfiles/demo-resources/icons/cut2-16.svg'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
+import cutIcon from '@yfiles/demo-app/icons/cut2-16.svg'
 import graphData from './graph-data.json'
 
 let graphComponent
@@ -279,13 +277,13 @@ function onButtonTriggerChanged() {
   const featureComboBox = document.querySelector('#button-trigger-combo-box')
   switch (featureComboBox.selectedIndex) {
     case 1: // CurrentItem
-      buttonInputMode.buttonTrigger = ButtonTrigger.CURRENT_ITEM
+      buttonInputMode.buttonTrigger = 'current-item'
       break
     case 2: // RightClick
-      buttonInputMode.buttonTrigger = ButtonTrigger.RIGHT_CLICK
+      buttonInputMode.buttonTrigger = 'right-click'
       break
     case 0: // Hover
-      buttonInputMode.buttonTrigger = ButtonTrigger.HOVER
+      buttonInputMode.buttonTrigger = 'hover'
       break
     default:
   }
@@ -295,7 +293,7 @@ function onButtonTriggerChanged() {
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
 
   // initializes the input mode

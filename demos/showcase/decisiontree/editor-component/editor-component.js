@@ -40,7 +40,7 @@ import {
   Size,
   StretchNodeLabelModel
 } from '@yfiles/yfiles'
-import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { colorSets, initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import { configureContextMenu } from './context-menu'
 import { GroupNodePortCandidateProvider } from './GroupNodePortCandidateProvider'
 import { updateButtonState } from '../switch-components-button/switch-components-button'

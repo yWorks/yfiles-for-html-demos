@@ -30,7 +30,6 @@ import {
   Arrow,
   ArrowType,
   Color,
-  FolderNodeConverter,
   FoldingManager,
   FreeNodeLabelModel,
   GraphComponent,
@@ -42,13 +41,10 @@ import {
   GroupNodeStyleIconPosition,
   GroupNodeStyleIconType,
   GroupNodeStyleTabPosition,
-  IGraph,
-  INode,
   Insets,
   LabelStyle,
   License,
   NodeAlignmentPolicy,
-  PolylineEdgeStyle,
   Size,
   WebGLArcEdgeStyle,
   WebGLArrowType,
@@ -68,10 +64,10 @@ import {
 } from '@yfiles/yfiles'
 
 import { createCanvasContext, createFontAwesomeIcon } from '@yfiles/demo-utils/IconCreation'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import { configureEditor, getNumber, getStroke, getValue, updateEditor } from './PropertiesEditor'
 import { configureTwoPointerPanning } from '@yfiles/demo-utils/configure-two-pointer-panning'
-import { checkWebGL2Support, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { checkWebGL2Support, finishLoading } from '@yfiles/demo-app/demo-page'
 
 let fontAwesomeIcons
 let foldingManager
@@ -81,7 +77,7 @@ async function run() {
     return
   }
 
-  License.value = await fetchLicense()
+  License.value = licenseData
   const graphComponent = new GraphComponent('#graphComponent')
 
   enableWebGLRendering(graphComponent)
@@ -90,7 +86,7 @@ async function run() {
   enableFolding(graphComponent)
   configureInteraction(graphComponent)
 
-  fontAwesomeIcons = createFontAwesomeIcons()
+  fontAwesomeIcons = await createFontAwesomeIcons()
 
   // create an initial sample graph
   createGraph(graphComponent)
@@ -261,7 +257,7 @@ function enableWebGLRendering(graphComponent) {
 /**
  * Creates an array of {@link ImageData} from a selection of font awesome classes.
  */
-function createFontAwesomeIcons() {
+async function createFontAwesomeIcons() {
   // the font awesome classes used in this demo
   const faClasses = [
     'fa fa-minus',
@@ -278,7 +274,7 @@ function createFontAwesomeIcons() {
     'fas fa-camera-retro'
   ]
   const ctx = createCanvasContext(128, 128)
-  return faClasses.map((faClass) => createFontAwesomeIcon(ctx, faClass))
+  return await Promise.all(faClasses.map((faClass) => createFontAwesomeIcon(ctx, faClass)))
 }
 
 /**

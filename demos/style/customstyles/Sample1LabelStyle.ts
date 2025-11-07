@@ -27,11 +27,11 @@
  **
  ***************************************************************************/
 import {
-  CanvasComponent,
+  type CanvasComponent,
   Font,
   GraphEditorInputMode,
-  ILabel,
-  IRenderContext,
+  type ILabel,
+  type IRenderContext,
   LabelStyleBase,
   Matrix,
   Size,
@@ -216,11 +216,15 @@ export class Sample1LabelStyle extends LabelStyleBase<Sample1LabelStyleVisual> {
 }
 
 class LabelRenderDataCache {
-  constructor(
-    public readonly text: string,
-    public readonly buttonVisibility: boolean,
-    public readonly font: Font
-  ) {}
+  readonly font: Font
+  readonly buttonVisibility: boolean
+  readonly text: string
+
+  constructor(text: string, buttonVisibility: boolean, font: Font) {
+    this.text = text
+    this.buttonVisibility = buttonVisibility
+    this.font = font
+  }
 
   equals(other?: LabelRenderDataCache): boolean {
     return (

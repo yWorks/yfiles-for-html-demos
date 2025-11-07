@@ -60,9 +60,9 @@ import {
   TreeLayout
 } from '@yfiles/yfiles'
 
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 import { toDegrees, toRadians } from '@yfiles/demo-utils/LegacyGeometryUtilities'
@@ -120,7 +120,7 @@ const add180CheckBox = document.querySelector<HTMLInputElement>('#add-180-checkb
  * with a generic labeling algorithm or a layout algorithm that supports integrated edge labeling.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   graph = graphComponent.graph
 

@@ -26,16 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  HandlePositions,
-  IHandle,
-  IInputModeContext,
-  IPort,
-  IReshapeHandleProvider,
-  ShapePortStyle,
-  Size
-} from '@yfiles/yfiles'
+import { BaseClass, HandlePositions, IReshapeHandleProvider } from '@yfiles/yfiles'
 import { PortReshapeHandle } from './PortReshapeHandle'
 
 /**
@@ -43,9 +34,10 @@ import { PortReshapeHandle } from './PortReshapeHandle'
  * The provided {@link PortReshapeHandle} modifies the {@link ShapePortStyle.renderSize render size}.
  */
 export class PortReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
-  port
-  portStyle
   minimumSize
+  portStyle
+  port
+
   /**
    * Creates a new instance for port and its adapter.
    * @param port The port whose visualization shall be resized.

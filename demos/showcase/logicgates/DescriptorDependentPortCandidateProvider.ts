@@ -45,24 +45,23 @@ import {
   SimplePort
 } from '@yfiles/yfiles'
 import type { GateNodeStyle } from './node-styles/GateNodeStyle'
-import { LogicGateType } from './LogicGateType'
 
-enum EdgeDirection {
-  IN = 0,
-  OUT = 1
-}
+type EdgeDirection = 'in' | 'out'
 
-type PortDescriptor = { x: number; y: number; direction: number }
+type PortDescriptor = { x: number; y: number; direction: EdgeDirection }
 
 /**
  * Provides all available ports of the given graph with the specified edge direction.
  */
 export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCandidateProvider) {
+  private readonly node: INode
+
   /**
    * Creates a new instance of DescriptorDependentPortCandidateProvider.
    */
-  constructor(private readonly node: INode) {
+  constructor(node: INode) {
     super()
+    this.node = node
   }
 
   /**
@@ -74,7 +73,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
     context: IInputModeContext,
     target: IPortCandidate
   ): IEnumerable<IPortCandidate> {
-    return this.getPortCandidatesForDirection(EdgeDirection.OUT)
+    return this.getPortCandidatesForDirection('out')
   }
 
   /**
@@ -86,7 +85,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
     context: IInputModeContext,
     source: IPortCandidate
   ): IEnumerable<IPortCandidate> {
-    return this.getPortCandidatesForDirection(EdgeDirection.IN)
+    return this.getPortCandidatesForDirection('in')
   }
 
   /**
@@ -94,7 +93,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
    * @param context The context for which the candidates should be provided
    */
   getAllSourcePortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
-    return this.getPortCandidatesForDirection(EdgeDirection.OUT)
+    return this.getPortCandidatesForDirection('out')
   }
 
   /**
@@ -102,14 +101,14 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
    * @param context The context for which the candidates should be provided
    */
   getAllTargetPortCandidates(context: IInputModeContext): IEnumerable<IPortCandidate> {
-    return this.getPortCandidatesForDirection(EdgeDirection.IN)
+    return this.getPortCandidatesForDirection('in')
   }
 
   /**
    * Returns the suitable candidates based on the specified edge direction.
    * @param direction The direction of the edge
    */
-  getPortCandidatesForDirection(direction: number): List<IPortCandidate> {
+  getPortCandidatesForDirection(direction: EdgeDirection): List<IPortCandidate> {
     const candidates = new List<IPortCandidate>()
     // iterate over all available ports
     for (const port of this.node.ports) {
@@ -177,20 +176,20 @@ function createPortDescriptorsForNode(node: INode): List<PortDescriptor> {
   const style = node.style as GateNodeStyle
   switch (style.gateType) {
     default:
-    case LogicGateType.AND:
-    case LogicGateType.NAND:
-    case LogicGateType.OR:
-    case LogicGateType.NOR:
-    case LogicGateType.XOR:
-    case LogicGateType.XNOR: {
-      ports.add({ x: width, y: height * 0.5, direction: EdgeDirection.OUT })
-      ports.add({ x: 0, y: height * 0.25, direction: EdgeDirection.IN })
-      ports.add({ x: 0, y: height * 0.75, direction: EdgeDirection.IN })
+    case 'and':
+    case 'nand':
+    case 'or':
+    case 'nor':
+    case 'xor':
+    case 'xnor': {
+      ports.add({ x: width, y: height * 0.5, direction: 'out' })
+      ports.add({ x: 0, y: height * 0.25, direction: 'in' })
+      ports.add({ x: 0, y: height * 0.75, direction: 'in' })
       return ports
     }
-    case LogicGateType.NOT: {
-      ports.add({ x: width, y: height * 0.5, direction: EdgeDirection.OUT })
-      ports.add({ x: 0, y: height * 0.5, direction: EdgeDirection.IN })
+    case 'not': {
+      ports.add({ x: width, y: height * 0.5, direction: 'out' })
+      ports.add({ x: 0, y: height * 0.5, direction: 'in' })
       return ports
     }
   }

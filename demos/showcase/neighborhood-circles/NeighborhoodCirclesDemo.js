@@ -46,15 +46,14 @@ import {
 } from '@yfiles/yfiles'
 import { getApplyLayoutCallback } from './apply-layout-callback'
 import { getBuildGraphCallback } from './build-graph-callback'
-import { NeighborhoodType } from './NeighborhoodType'
 import { NeighborhoodView } from '../neighborhood/NeighborhoodView'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 import graphData from './resources/graph-data.json'
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize a GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
@@ -132,7 +131,7 @@ function createNeighborhoodView(graphComponent) {
   neighborhoodView.applyNeighborhoodLayout = getApplyLayoutCallback((_, circles) => {
     layoutCircleInfo = circles
   })
-  neighborhoodView.buildNeighborhoodGraph = getBuildGraphCallback(NeighborhoodType.NEIGHBORHOOD, 1)
+  neighborhoodView.buildNeighborhoodGraph = getBuildGraphCallback('Neighbors', 1)
   neighborhoodView.graphComponent = graphComponent
   // mirror navigation in the neighborhood view to the demo's main GraphComponent
   neighborhoodView.clickCallback = (node) => {
@@ -270,10 +269,15 @@ function initializeUI(neighborhoodView) {
   // initialize the mode dropdown for the NeighborhoodView
   const neighborhoodTypeSelect = document.querySelector('#neighborhood-type-select')
   neighborhoodTypeSelect.addEventListener('change', () =>
-    changeNeighborhoodType(neighborhoodView, neighborhoodTypeSelect.selectedIndex)
+    changeNeighborhoodType(neighborhoodView, neighborhoodTypeSelect.value)
   )
   addNavigationButtons(neighborhoodTypeSelect)
-  populateSelectElement(neighborhoodTypeSelect, ['Neighbors', 'Predecessors', 'Successors', 'Both'])
+  populateSelectElement(neighborhoodTypeSelect, [
+    'Neighborhood',
+    'Predecessors',
+    'Successors',
+    'Both'
+  ])
 
   // initialize the depth slider for the NeighborhoodView
   const neighborhoodDistanceSlider = document.querySelector('#neighborhood-distance-slider')
@@ -319,7 +323,7 @@ function changeNeighborhoodDistance(neighborhoodView, distance) {
 
   const neighborhoodTypeSelect = document.querySelector('#neighborhood-type-select')
   neighborhoodView.buildNeighborhoodGraph = getBuildGraphCallback(
-    neighborhoodTypeSelect.selectedIndex,
+    neighborhoodTypeSelect.value,
     distance
   )
 

@@ -34,15 +34,12 @@ import {
   GraphMLIOHandler,
   GraphViewerInputMode,
   HierarchicalLayout,
-  HoveredItemChangedEventArgs,
-  IGraph,
   ILabel,
   INode,
   LayoutGraphAdapter,
   License,
   MultiPageLayout,
   MultiPageLayoutData,
-  MultiPageLayoutResult,
   OrganicLayout,
   OrthogonalLayout,
   Point,
@@ -55,11 +52,11 @@ import {
   createDemoNodeLabelStyle,
   createDemoNodeStyle,
   initDemoStyles
-} from '@yfiles/demo-resources/demo-styles'
+} from '@yfiles/demo-app/demo-styles'
 import { MultiPageIGraphBuilder } from './MultiPageIGraphBuilder'
 import { PageBoundsVisualCreator } from './PageBoundsVisualCreator'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading, showLoadingIndicator } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading, showLoadingIndicator } from '@yfiles/demo-app/demo-page'
 
 /**
  * This demo demonstrates how the result of a multi-page layout calculation
@@ -68,7 +65,7 @@ import { finishLoading, showLoadingIndicator } from '@yfiles/demo-resources/demo
  * Each of these pages is displayed by a different graph.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize both graph components
   graphComponent = new GraphComponent('graphComponent')
   modelGraphComponent = new GraphComponent('modelGraphComponent')

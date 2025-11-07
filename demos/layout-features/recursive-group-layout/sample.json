@@ -1,7 +1,7 @@
 {
-  "nodeList": [
+  "nodes": [
     { "id": 0 },
-    { "id": 1, "tag": "Group 1", "labels": [{ "text": "Group 1" }], "isGroup": true },
+    { "id": 1, "tag": "Group 1", "labels": "Group 1", "isGroup": true },
     { "id": 2, "parent": 1 },
     { "id": 3, "parent": 1 },
     { "id": 4, "parent": 1 },
@@ -11,14 +11,14 @@
     { "id": 8, "parent": 1 },
     { "id": 9, "parent": 1 },
     { "id": 10, "parent": 1 },
-    { "id": 11, "tag": "Group 2", "labels": [{ "text": "Group 2" }], "isGroup": true },
+    { "id": 11, "tag": "Group 2", "labels": "Group 2", "isGroup": true },
     { "id": 12, "parent": 11 },
     { "id": 13, "parent": 11 },
     { "id": 14, "parent": 11 },
     { "id": 15, "parent": 11 },
     { "id": 16, "parent": 11 },
     { "id": 17, "parent": 11 },
-    { "id": 18, "tag": "Group 3", "labels": [{ "text": "Group 3" }], "isGroup": true },
+    { "id": 18, "tag": "Group 3", "labels": "Group 3", "isGroup": true },
     { "id": 19, "parent": 18 },
     { "id": 20, "parent": 18 },
     { "id": 21, "parent": 18 },
@@ -31,13 +31,13 @@
     { "id": 28, "parent": 18 },
     { "id": 29, "parent": 18 },
     { "id": 30, "parent": 18 },
-    { "id": 31, "tag": "Group 4", "labels": [{ "text": "Group 4" }], "isGroup": true },
+    { "id": 31, "tag": "Group 4", "labels": "Group 4", "isGroup": true },
     { "id": 32, "parent": 31, "layout": { "x": 200, "y": 200, "width": 30, "height": 30 } },
     { "id": 33, "parent": 31, "layout": { "x": 300, "y": 200, "width": 30, "height": 30 } },
     { "id": 34, "parent": 31, "layout": { "x": 250, "y": 250, "width": 30, "height": 30 } },
     { "id": 35, "parent": 31, "layout": { "x": 300, "y": 300, "width": 30, "height": 30 } }
   ],
-  "edgeList": [
+  "edges": [
     { "id": 0, "source": 0, "target": 2 },
     { "id": 1, "source": 2, "target": 3 },
     { "id": 2, "source": 2, "target": 4 },

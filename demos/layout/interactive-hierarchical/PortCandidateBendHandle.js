@@ -30,20 +30,10 @@ import {
   BaseClass,
   ConstrainedHandle,
   EdgePortCandidates,
-  IBend,
-  IEdge,
-  IHandle,
-  IInputModeContext,
-  INode,
-  IRenderContext,
-  IRenderTreeElement,
   IVisualCreator,
-  Mapper,
   Matrix,
-  Point,
   PortSides,
-  SvgVisual,
-  Visual
+  SvgVisual
 } from '@yfiles/yfiles'
 
 /**
@@ -51,9 +41,9 @@ import {
  * that interactively determines the port candidate.
  */
 export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisualCreator) {
-  sourceEnd
-  bend
   portCandidates
+  bend
+  sourceEnd
   renderTreeElement = null
 
   /**

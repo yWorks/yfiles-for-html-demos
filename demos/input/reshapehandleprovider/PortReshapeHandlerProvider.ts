@@ -29,12 +29,12 @@
 import {
   BaseClass,
   HandlePositions,
-  IHandle,
-  IInputModeContext,
-  IPort,
+  type IHandle,
+  type IInputModeContext,
+  type IPort,
   IReshapeHandleProvider,
-  ShapePortStyle,
-  Size
+  type ShapePortStyle,
+  type Size
 } from '@yfiles/yfiles'
 import { PortReshapeHandle } from './PortReshapeHandle'
 
@@ -43,18 +43,21 @@ import { PortReshapeHandle } from './PortReshapeHandle'
  * The provided {@link PortReshapeHandle} modifies the {@link ShapePortStyle.renderSize render size}.
  */
 export class PortReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
+  private readonly minimumSize: Size
+  private readonly portStyle: ShapePortStyle
+  private readonly port: IPort
+
   /**
    * Creates a new instance for port and its adapter.
    * @param port The port whose visualization shall be resized.
    * @param portStyle The adapter whose render size shall be changed.
    * @param minimumSize The minimum size the {@link ShapePortStyle.renderSize} may have.
    */
-  constructor(
-    private readonly port: IPort,
-    private readonly portStyle: ShapePortStyle,
-    private readonly minimumSize: Size
-  ) {
+  constructor(port: IPort, portStyle: ShapePortStyle, minimumSize: Size) {
     super()
+    this.port = port
+    this.portStyle = portStyle
+    this.minimumSize = minimumSize
   }
 
   /**

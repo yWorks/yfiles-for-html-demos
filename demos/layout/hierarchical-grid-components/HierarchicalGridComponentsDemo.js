@@ -35,19 +35,16 @@ import {
   GridComponentDescriptor,
   HierarchicalLayout,
   HierarchicalLayoutData,
-  IEdge,
-  IGraph,
   LayoutExecutor,
   License,
-  List,
   PolylineEdgeStyle,
   Size
 } from '@yfiles/yfiles'
 
 import SampleData from './resources/SampleData'
-import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import { colorSets, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 const busStructuresToggle = document.querySelector('#grid-components-toggle')
 const beforeBusSlider = document.querySelector('#before-bus-slider')
@@ -88,7 +85,7 @@ const colors = [
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
   configureGraph(graphComponent.graph)
@@ -188,7 +185,6 @@ function getBusSettings(busStylePreset, elementCount) {
       // the default bus structure setting without further configuration
       return null
     case 'squares': {
-      // eslint-disable-next-line no-case-declarations
       const rowLength = Math.ceil(Math.sqrt(elementCount))
       beforeBusValue = Math.floor(rowLength / 2)
       afterBusValue = Math.ceil(rowLength / 2)

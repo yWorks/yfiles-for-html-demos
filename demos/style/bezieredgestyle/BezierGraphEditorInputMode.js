@@ -26,27 +26,12 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BezierEdgeStyle,
-  CreateBendInputMode,
-  GraphEditorInputMode,
-  HandleInputMode,
-  IBend,
-  IEdge,
-  IGraph,
-  IModelItem,
-  InputModeItemEventArgs,
-  Point,
-  SelectionEventArgs
-} from '@yfiles/yfiles'
+import { BezierEdgeStyle, CreateBendInputMode, GraphEditorInputMode, IBend } from '@yfiles/yfiles'
 import { BezierCreateEdgeInputMode } from './BezierCreateEdgeInputMode'
 
 export class BezierGraphEditorInputMode extends GraphEditorInputMode {
-  config
-
   constructor(config) {
     super()
-    this.config = config
     const bezierBendInputMode = new BezierCreateBendInputMode()
     bezierBendInputMode.priority = super.createBendInputMode.priority
     this.createBendInputMode = bezierBendInputMode
@@ -59,7 +44,7 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
 
   /**
    * Overridden to ensure when deleting bezier bends, the correct number is actually removed.
-   * This method doe the following:
+   * This method does the following:
    * - for each middle control point of a bezier control triple, it also selects both other control points
    * - if there are bezier control points selected where the middle control point is NOT selected, they are deselected.
    * So in effect, either a complete triple is removed (when the middle point is selected), or nothing (when ONLY one of the outer points is selected)

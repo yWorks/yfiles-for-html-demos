@@ -30,25 +30,24 @@
  * Enumeration that specifies the supported types of neighborhood graphs to be shown in the
  * demo's {@link NeighborhoodView}.
  */
-export enum NeighborhoodType {
+export type NeighborhoodType =
   /**
    * The neighbors of a given node are all connected nodes. The direction of the edges connecting
    * neighbor nodes to the given node does not matter.
    * The union of all predecessor nodes and all successor nodes.
-   * For a graph distance of 1, mode {@link NEIGHBORHOOD} yields the same result as mode {@link BOTH}.
+   * For a graph distance of 1, mode neighborhood yields the same result as mode both.
    */
-  NEIGHBORHOOD,
+  | 'Neighbors'
   /**
    * The neighbors of a given node are the source nodes of the given node's incoming edges.
    */
-  PREDECESSORS,
+  | 'Predecessors'
   /**
    * The neighbors of a given node are the target nodes of the given node's outgoing edges.
    */
-  SUCCESSORS,
+  | 'Successors'
   /**
    * The union of all predecessor nodes and all successor nodes.
-   * For a graph distance of 1, mode {@link BOTH} yields the same result as mode {@link NEIGHBORHOOD}.
+   * For a graph distance of 1, mode both yields the same result as mode neighborhood.
    */
-  BOTH
-}
+  | 'Both'

@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Rendering Order Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -99,21 +99,21 @@
         <p>
           Sometimes it is necessary to change the render order of graph, e.g. when labels should be
           rendered in front of their owner but behind another item. This demo shows how to use
-          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphModelManager" target="_blank">GraphModelManager</a> to configure the rendering order for grouped graphs as
+          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphModelManager" class="api" target="_blank">GraphModelManager</a> to configure the rendering order for grouped graphs as
           well as layer policies for labels and ports.
         </p>
 
         <h3>Hierarchical Nesting</h3>
         <p>
-          Each item type is assigned to a specific canvas object group. These groups have a default
+          Each item type is assigned to a specific render tree group. These groups have a default
           rendering order from back to front. See
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_view-z_order" target="_blank">The Z-order of Graph Elements</a> for more
-          information about the different <a href="https://docs.yworks.com/yfileshtml/#/api/IRenderTreeGroup" target="_blank">IRenderTreeGroup</a>s and their default
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_view-z_order" class="dguide" target="_blank">The Z-order of Graph Elements</a> for more
+          information about the different <a href="https://docs.yworks.com/yfileshtml/#/api/IRenderTreeGroup" class="api" target="_blank">IRenderTreeGroup</a>s and their default
           rendering order.
         </p>
         <p>
           For grouped graphs, we provide some nesting policies to structure nodes and edges in more
-          complex hierarchies. In these cases, some of the canvas object groups may not be used.
+          complex hierarchies. In these cases, some of the render tree groups may not be used.
         </p>
 
         <h3>Demo Configurations</h3>
@@ -133,7 +133,7 @@
             interleaved in the rendering.
           </li>
           <li>
-            <em>None:</em> Items are placed in their respective canvas object group without
+            <em>None:</em> Items are placed in their respective render tree group without
             considering the nesting hierarchy of the nodes. Usually, this setting is only used when
             the z-order is managed by a different mechanism.
           </li>

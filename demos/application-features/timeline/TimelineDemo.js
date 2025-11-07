@@ -36,9 +36,9 @@ import {
 
 import { timelineData } from './timeline-data'
 import { Timeline } from './timeline-component/Timeline'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-ui/finish-loading'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 
 /**
  * The main graph component that displays the graph.
@@ -49,7 +49,7 @@ let graphComponent
  * Bootstraps the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize the main graph component and graph style
   graphComponent = new GraphComponent('graphComponent')

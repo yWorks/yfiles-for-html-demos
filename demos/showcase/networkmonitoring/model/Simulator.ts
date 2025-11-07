@@ -35,6 +35,8 @@ import type { Connection } from './Connection'
  * A simple simulator that sends packets through the network.
  */
 export class Simulator {
+  readonly network: Network
+
   get paused(): boolean {
     return this._paused
   }
@@ -78,7 +80,8 @@ export class Simulator {
    * Initializes a new instance of the {@link Simulator} class to operate on the given {@link Network}.
    * @param network The network model to simulate.
    */
-  constructor(readonly network: Network) {
+  constructor(network: Network) {
+    this.network = network
     // let the simulation run for a few ticks
     for (let i = 0; i < 30; i++) {
       this.tick()
@@ -326,10 +329,15 @@ function shuffle<T>(array: Array<T>): Array<T> {
  * Simple data structure to model a packet moving through the network.
  */
 class Packet {
-  constructor(
-    public sender: Device,
-    public receiver: Device,
-    public connection: Connection,
-    public time: number
-  ) {}
+  time: number
+  connection: Connection
+  receiver: Device
+  sender: Device
+
+  constructor(sender: Device, receiver: Device, connection: Connection, time: number) {
+    this.sender = sender
+    this.receiver = receiver
+    this.connection = connection
+    this.time = time
+  }
 }

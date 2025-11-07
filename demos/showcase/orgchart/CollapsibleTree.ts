@@ -78,6 +78,8 @@ import {
  * applies a {@link TreeLayout} after each update.
  */
 export class CollapsibleTree {
+    readonly completeGraph: IGraph;
+    private readonly graphComponent: GraphComponent;
   private readonly hiddenNodesSet: Set<INode> = new Set()
   readonly filteredGraph: FilteredGraphWrapper
 
@@ -109,9 +111,11 @@ export class CollapsibleTree {
     | ItemMappingConvertible<INode, (edge1: IEdge, edge2: IEdge) => number> = () => (): number => 0
 
   constructor(
-    private readonly graphComponent: GraphComponent,
-    readonly completeGraph: IGraph = new Graph()
+    graphComponent: GraphComponent,
+    completeGraph: IGraph = new Graph()
   ) {
+      this.graphComponent = graphComponent;
+      this.completeGraph = completeGraph;
     const nodeFilter = (node: INode): boolean => !this.hiddenNodesSet.has(node)
     this.filteredGraph = new FilteredGraphWrapper(completeGraph, nodeFilter)
     this.graphComponent.viewportLimiter.policy = ViewportLimitingPolicy.TOWARDS_LIMIT

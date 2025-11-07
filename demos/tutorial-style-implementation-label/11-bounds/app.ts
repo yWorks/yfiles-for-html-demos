@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, License } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   BoundsVisual,
   createSampleGraphGetBounds,
@@ -40,9 +40,9 @@ import {
 import { CustomLabelStyle } from './CustomLabelStyle'
 import { CustomLabelStyle as OldCustomLabelStyle } from '../09-hit-testing/CustomLabelStyle'
 
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
-License.value = await fetchLicense()
+License.value = licenseData
 
 const graphComponent = new GraphComponent('#graphComponent')
 

@@ -27,21 +27,6 @@
  **
  ***************************************************************************/
 /**
- * Describes the type of nodes used in this demo.
- */
-export var MultiPageNodeType
-;(function (MultiPageNodeType) {
-  /**
-   * The nodes that represent the points on image.
-   */
-  MultiPageNodeType[(MultiPageNodeType['POINT'] = 0)] = 'POINT'
-  /**
-   * The nodes that represent the label associated with the point.
-   */
-  MultiPageNodeType[(MultiPageNodeType['LABEL'] = 1)] = 'LABEL'
-})(MultiPageNodeType || (MultiPageNodeType = {}))
-
-/**
  * Returns the data associated with the given node.
  */
 export function getPointData(node) {
@@ -52,5 +37,5 @@ export function getPointData(node) {
  * Returns whether the given node represents a label node.
  */
 export function isLabel(node) {
-  return getPointData(node).type === MultiPageNodeType.LABEL
+  return getPointData(node).type === 'label'
 }

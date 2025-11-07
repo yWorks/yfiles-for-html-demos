@@ -9,25 +9,28 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Orthogonal Layout - Layout Features
+# Orthogonal Layout
 
 <img src="../../../doc/demo-thumbnails/layout-orthogonal.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/orthogonal/).
 
-This demo shows basic configuration options for the [Orthogonal Layout](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout).
+This demo shows basic configuration options for the [OrthogonalLayout](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout) algorithm.
 
-See the [sources](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/orthogonal/Orthogonal.ts) on how the layout is configured.
+It highlights the configuration of various aspects, including:
 
-- The [grid spacing](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout#gridSpacing) is decreased, which leads to an overall more compact graph.
-- The sources also show how to use the [LayoutData](https://docs.yworks.com/yfileshtml/#/api/LayoutData) to set options for specific edges and nodes in the graph, for example, reserving space around a node (node with 'Insets' text in the sample).
-- [Directed edges](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayoutData#directedEdges) are defined with a flow in a top-to-bottom orientation (blue edges).
-- For [tree substructures](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout#treeStyle), a compact arrangement style with left-to-right orientation is specified. In this example, nodes with text 'Tree' form a subtree. Other supported substructures, not shown in this example, are [chains](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout#chainStyle) and [cycles](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout#cycleStyle).
+- Decreased [grid spacing](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout#gridSpacing) for a more compact graph
+- [node margins](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayoutData#nodeMargins) to reserve space around specific node (with the "Insets" label)
+- [Directed edges](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayoutData#edgeDirectedness) (orange edges) with top-to-bottom orientation
+- [Tree substructures](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout#treeSubstructureStyle) configured with a compact arrangement style and left-to-right orientation
 
-### Code Snippet
+## Demos
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/orthogonal/Orthogonal.ts).
+- [Tree Layout Demo](../../layout/tree/)
+- [Layout Styles: Tree Demo](../../showcase/layoutstyles/index.html?layout=tree&sample=tree)
 
-### Documentation
+## Documentation
 
-See the [Orthogonal Layout](https://docs.yworks.com/yfileshtml/#/dguide/orthogonal_layout) section in the Developer's Guide for an in-depth discussion of the relevant concepts.
+- [Orthogonal layout algorithm](https://docs.yworks.com/yfileshtml/#/dguide/orthogonal_layout)
+- [OrthogonalLayout](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayout)
+- [OrthogonalLayoutData](https://docs.yworks.com/yfileshtml/#/api/OrthogonalLayoutData)

@@ -27,12 +27,11 @@ Change the template of one or more nodes. Bind colors or text to properties in t
 
 ## Related Documentation
 
-- [Using Vue.js Templates in Node Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles)
-- [Using SVG Templates in Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_template-styles)
+- [Using Data Binding in Node Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_data-binding-in-styles)
 
 ## Related Demos
 
 - [Template Styles Demo](../../style/templatestyles/)
-- [Vue Template Node Style Demo](../../../demos-ts/style/vue-template-node-style/README.html)
-- [React JSX Component Style Demo](../../style/react-template-node-style/)
+- [Vue Component Node Style Demo](../../../demos-ts/style/vue-component-node-style/README.html)
+- [React Component Node Style Demo](../../../demos-ts/style/react-component-node-style/README.html)
 - [Lit Template Node Style Demo](../../style/lit-template-node-style/)

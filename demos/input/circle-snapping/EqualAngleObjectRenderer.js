@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, ObjectRendererBase, Point, SnapResult, Stroke, SvgVisual } from '@yfiles/yfiles'
+import { INode, ObjectRendererBase, Point, Stroke, SvgVisual } from '@yfiles/yfiles'
 import { EqualAngleSnapLine } from './SnapReferences'
 
 /**

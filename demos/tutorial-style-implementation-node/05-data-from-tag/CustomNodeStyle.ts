@@ -29,13 +29,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {
-  type INode,
-  type IRenderContext,
-  NodeStyleBase,
-  SvgVisual,
-  type TaggedSvgVisual
-} from '@yfiles/yfiles'
+import { type INode, type IRenderContext, NodeStyleBase, SvgVisual, type TaggedSvgVisual } from '@yfiles/yfiles'
 
 const tabWidth = 50
 const tabHeight = 14

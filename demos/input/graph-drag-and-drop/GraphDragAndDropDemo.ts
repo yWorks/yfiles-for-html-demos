@@ -39,23 +39,24 @@ import {
   GraphEditorInputMode,
   GraphSnapContext,
   GridSnapTypes,
-  IGraph,
-  ILabelModelParameter,
+  type IGraph,
+  type ILabelModelParameter,
   License,
   SnappableItems,
   SvgExport
 } from '@yfiles/yfiles'
 import { GraphDropInputMode } from './GraphDropInputMode'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
+import graphDataList from './resources/graphs.json'
 
 let graphComponent: GraphComponent
 
 let graphDropInputMode: GraphDropInputMode
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('#graphComponent')
   // enable the option to expand and collapse group nodes
@@ -107,17 +108,12 @@ function initializeInputModes(): void {
 async function initializePalette(): Promise<void> {
   const palette = document.getElementById('palette')!
 
-  // load the graphs to drag from a JSON file
-  const response = await fetch('./resources/graphs.json')
-  if (response.ok) {
-    const graphDataList = await response.json()
-    // add for each graph a div element to the palette element
-    graphDataList.forEach((graphData: any) => {
-      const graph = toGraph(graphData)
-      const paletteEntry = createPaletteEntry(graph)
-      palette.appendChild(paletteEntry)
-    })
-  }
+  // add for each graph a div element to the palette element
+  graphDataList.forEach((graphData: any) => {
+    const graph = toGraph(graphData)
+    const paletteEntry = createPaletteEntry(graph)
+    palette.appendChild(paletteEntry)
+  })
 }
 
 /**

@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  CollectSnapResultsEventArgs,
-  GraphComponent,
-  GraphSnapContext,
-  NodeSnapResultProvider,
-  Rect,
-  SnapCircle,
-  SnapLine
-} from '@yfiles/yfiles'
+import { GraphComponent, NodeSnapResultProvider } from '@yfiles/yfiles'
 import { EqualAngleSnapLine, NodeSnapCircle, NodeSnapLine } from './SnapReferences'
 import { EqualAngleObjectRenderer } from './EqualAngleObjectRenderer'
 

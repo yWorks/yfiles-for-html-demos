@@ -33,15 +33,17 @@ import { Simulator } from './Simulator'
  * Represents a connection in the network.
  */
 export class Connection {
+  readonly receiver: Device
+  readonly sender: Device
+
   /**
    * Creates a new instance.
    * @param sender The sending device.
    * @param receiver The receiving device.
    */
-  constructor(
-    readonly sender: Device,
-    readonly receiver: Device
-  ) {
+  constructor(sender: Device, receiver: Device) {
+    this.sender = sender
+    this.receiver = receiver
     this.sender = sender
     this.receiver = receiver
   }

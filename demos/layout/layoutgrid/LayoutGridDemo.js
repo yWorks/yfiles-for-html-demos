@@ -37,20 +37,12 @@ import {
   HierarchicalLayout,
   HierarchicalLayoutData,
   IAnimation,
-  IGraph,
-  ILayoutAlgorithm,
   INode,
-  InputModeEventArgs,
   Insets,
-  IRenderTreeElement,
   LayoutExecutor,
   LayoutGrid,
-  LayoutGridCellDescriptor,
-  LayoutGridColumn,
-  LayoutGridRow,
   License,
   List,
-  MoveInputMode,
   OrganicLayout,
   OrganicLayoutData,
   Point,
@@ -61,9 +53,9 @@ import {
 } from '@yfiles/yfiles'
 import { generateGradientColors, LayoutGridVisualCreator } from './LayoutGridVisualCreator'
 import GraphData from './resources/GraphData'
-import { createDemoGroupStyle } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoGroupStyle } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Holds the GraphComponent.
@@ -129,7 +121,7 @@ let selectedCellId
  * Runs the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   initializeGraph(graphComponent.graph)
 

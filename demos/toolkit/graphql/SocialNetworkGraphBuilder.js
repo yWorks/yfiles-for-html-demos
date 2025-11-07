@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { EdgesSource, GraphBuilder, IGraph, INode, NodesSource } from '@yfiles/yfiles'
+import { GraphBuilder } from '@yfiles/yfiles'
 
 /**
  * A {@link GraphBuilder} that is tailored towards the social network use case in this demo.

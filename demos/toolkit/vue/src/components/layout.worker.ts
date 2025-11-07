@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { HierarchicalLayout, LayoutExecutorAsyncWorker, License } from '@yfiles/yfiles'
-import licenseData from '../../../../../lib/license.json'
+import licenseData from '../license.json'
 
 License.value = licenseData
 

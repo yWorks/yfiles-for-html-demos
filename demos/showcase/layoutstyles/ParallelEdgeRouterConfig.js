@@ -26,33 +26,20 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  Class,
-  GraphComponent,
-  ILayoutAlgorithm,
-  LayoutData,
-  ParallelEdgeRouter,
-  ParallelEdgeRouterData
-} from '@yfiles/yfiles'
+import { Class, ParallelEdgeRouter, ParallelEdgeRouterData } from '@yfiles/yfiles'
 
 import { LayoutConfiguration } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 
-var Scope
-;(function (Scope) {
-  Scope[(Scope['SCOPE_ALL_EDGES'] = 0)] = 'SCOPE_ALL_EDGES'
-  Scope[(Scope['SCOPE_SELECTED_EDGES'] = 1)] = 'SCOPE_SELECTED_EDGES'
-  Scope[(Scope['SCOPE_AT_SELECTED_NODES'] = 2)] = 'SCOPE_AT_SELECTED_NODES'
-})(Scope || (Scope = {}))
+const Scope = { SCOPE_ALL_EDGES: 0, SCOPE_SELECTED_EDGES: 1, SCOPE_AT_SELECTED_NODES: 2 }
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -63,7 +50,7 @@ export const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
   _meta: {
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     LayoutGroup: [
@@ -78,9 +65,9 @@ export const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
       ),
       new OptionGroupAttribute('LayoutGroup', 10),
       new EnumValuesAttribute([
-        ['All Edges', Scope.SCOPE_ALL_EDGES],
-        ['Selected Edges', Scope.SCOPE_SELECTED_EDGES],
-        ['Edges at Selected Nodes', Scope.SCOPE_AT_SELECTED_NODES]
+        ['All Edges', 'scope-all-edges'],
+        ['Selected Edges', 'scope-selected-edges'],
+        ['Edges at Selected Nodes', 'scope-at-selected-nodes']
       ]),
       new TypeAttribute(Scope)
     ],
@@ -115,7 +102,7 @@ export const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
       ),
       new OptionGroupAttribute('LayoutGroup', 50),
       new MinMaxAttribute(0, 50),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     joinEndsItem: [
@@ -133,7 +120,7 @@ export const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
       ),
       new OptionGroupAttribute('LayoutGroup', 70),
       new MinMaxAttribute(0, 50),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ]
   },
@@ -145,7 +132,7 @@ export const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
     // @ts-ignore This is part of the old-school yFiles class definition used here
     LayoutConfiguration.call(this)
     const router = new ParallelEdgeRouter()
-    this.scopeItem = Scope.SCOPE_ALL_EDGES
+    this.scopeItem = 'scope-all-edges'
     this.useSelectedEdgesAsMasterItem = false
     this.considerEdgeDirectionItem = router.directedMode
     this.useAdaptiveEdgeDistanceItem = router.adaptiveEdgeDistances
@@ -181,10 +168,10 @@ export const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
     const layoutData = new ParallelEdgeRouterData()
     const selection = graphComponent.selection
 
-    if (this.scopeItem === Scope.SCOPE_AT_SELECTED_NODES) {
+    if (this.scopeItem === 'scope-at-selected-nodes') {
       layoutData.affectedEdges = (edge) =>
         selection.includes(edge.sourceNode) || selection.includes(edge.targetNode)
-    } else if (this.scopeItem === Scope.SCOPE_SELECTED_EDGES) {
+    } else if (this.scopeItem === 'scope-selected-edges') {
       layoutData.affectedEdges = selection.edges.toList()
     } else {
       layoutData.affectedEdges = () => true

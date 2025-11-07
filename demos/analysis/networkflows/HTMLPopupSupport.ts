@@ -27,11 +27,11 @@
  **
  ***************************************************************************/
 import {
-  GraphComponent,
+  type GraphComponent,
   IEdge,
-  ILabelModelParameter,
-  ILabelOwner,
-  IModelItem,
+  type ILabelModelParameter,
+  type ILabelOwner,
+  type IModelItem,
   Point,
   SimpleLabel,
   Size
@@ -46,6 +46,9 @@ import {
  * parameter} to determine the position of the pop-up.
  */
 export class HTMLPopupSupport {
+    private readonly labelModelParameter: ILabelModelParameter;
+    private readonly div: HTMLElement;
+    private readonly graphComponent: GraphComponent;
   private _currentItem: IModelItem | null
   private dirty: boolean
 
@@ -54,10 +57,13 @@ export class HTMLPopupSupport {
    * to determine the relative position of the popup.
    */
   constructor(
-    private readonly graphComponent: GraphComponent,
-    private readonly div: HTMLElement,
-    private readonly labelModelParameter: ILabelModelParameter
+    graphComponent: GraphComponent,
+    div: HTMLElement,
+    labelModelParameter: ILabelModelParameter
   ) {
+      this.graphComponent = graphComponent;
+      this.div = div;
+      this.labelModelParameter = labelModelParameter;
     this._currentItem = null
     this.dirty = false
 

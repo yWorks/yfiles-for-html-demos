@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>12 Analysis Algorithms - Tutorial: Basic Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -137,7 +137,7 @@
               <div class="paragraph">
                 <p>
                   This step shows how to use the
-                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/analysis" target="_blank">graph analysis algorithms</a> in yFiles for HTML.
+                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/analysis" class="dguide" target="_blank">graph analysis algorithms</a> in yFiles for HTML.
                 </p>
               </div>
               <div class="paragraph">
@@ -148,10 +148,10 @@
                   used as input for layout algorithm configurations. The purpose of this sample is
                   to demonstrate how to build, configure, and execute graph analysis algorithms and
                   how to interpret the results. For a more interactive and complete showcase of the
-                  available algorithms, please see the <a href="../../showcase/graphanalysis/" target="_blank">Graph Analysis Demo</a>, the
-                  <a href="../../analysis/clustering/" target="_blank">Clustering Algorithms Demo</a>, the <a href="../../analysis/networkflows/" target="_blank">Network Flows Demo</a>, the
-                  <a href="../../analysis/criticalpathanalysis/" target="_blank">Critical Path Analysis (CPA) Demo</a>, the
-                  <a href="../../analysis/intersection-detection/" target="_blank">Intersection Detection Demo</a>, and the <a href="../../analysis/transitivity/" target="_blank">Transitivity Demo</a>.
+                  available algorithms, please see the <a href="../../showcase/graphanalysis/" class="demo" target="_blank">Graph Analysis Demo</a>, the
+                  <a href="../../analysis/clustering/" class="demo" target="_blank">Clustering Algorithms Demo</a>, the <a href="../../analysis/networkflows/" class="demo" target="_blank">Network Flows Demo</a>, the
+                  <a href="../../analysis/criticalpathanalysis/" class="demo" target="_blank">Critical Path Analysis (CPA) Demo</a>, the
+                  <a href="../../analysis/intersection-detection/" class="demo" target="_blank">Intersection Detection Demo</a>, and the <a href="../../analysis/transitivity/" class="demo" target="_blank">Transitivity Demo</a>.
                 </p>
               </div>
             </div>
@@ -181,7 +181,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// use the selected nodes as start nodes</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// use the selected nodes as start nodes</span>
 <span class="hljs-keyword">const</span> startNodes = graphComponent.<span class="hljs-property">selection</span>.<span class="hljs-property">nodes</span>
 
 <span class="hljs-keyword">const</span> reachability = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Reachability</span>({
@@ -219,10 +219,10 @@ reachabilityResult.<span class="hljs-property">reachableNodes</span>.<span class
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> shortestPath = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShortestPath</span>({
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> shortestPath = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ShortestPath</span>({
   <span class="hljs-attr">source</span>: sourceNode,
   <span class="hljs-attr">sink</span>: sinkNode,
-  <span class="hljs-attr">directed</span>: <span class="hljs-literal">false</span>, <span class="hljs-comment">// don&#x27;t consider edge direction</span>
+  <span class="hljs-attr">directed</span>: <span class="hljs-literal">false</span>, <span class="hljs-comment">// don&#x27;t consider the edge direction</span>
   <span class="hljs-comment">// calculate the cost per edge as the distance between source and target node</span>
   <span class="hljs-attr">costs</span>: (<span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>): <span class="hljs-function"><span class="hljs-params">number</span> =&gt;</span>
     edge.<span class="hljs-property">sourceNode</span>.<span class="hljs-property">layout</span>.<span class="hljs-property">center</span>.<span class="hljs-title function_">subtract</span>(edge.<span class="hljs-property">targetNode</span>.<span class="hljs-property">layout</span>.<span class="hljs-property">center</span>)
@@ -242,7 +242,7 @@ reachabilityResult.<span class="hljs-property">reachableNodes</span>.<span class
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">const</span> pathDistance = shortestPathResult.<span class="hljs-property">distance</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">const</span> pathDistance = shortestPathResult.<span class="hljs-property">distance</span>
 <span class="hljs-keyword">const</span> pathNodes = shortestPathResult.<span class="hljs-property">path</span>?.<span class="hljs-property">nodes</span> ?? []
 <span class="hljs-keyword">const</span> endNode = shortestPathResult.<span class="hljs-property">path</span>?.<span class="hljs-property">end</span>
 <span class="hljs-keyword">const</span> pathEdges = shortestPathResult.<span class="hljs-property">edges</span></code></pre>
@@ -263,7 +263,7 @@ reachabilityResult.<span class="hljs-property">reachableNodes</span>.<span class
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

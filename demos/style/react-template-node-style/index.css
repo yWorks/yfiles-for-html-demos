@@ -1,0 +1,155 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+@import '@yfiles/demo-app/demo.css';
+
+#graphComponent {
+  background-color: #f7f7f7;
+}
+.editorText {
+  font-family: 'Consolas', 'Courier New', Courier, mono, serif;
+  font-size: 13px;
+}
+.heading-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#templateEditorContainer {
+  flex: 2;
+  min-height: 0;
+}
+
+#tagEditorContainer {
+  flex: 1;
+  min-height: 0;
+}
+.cm-editor {
+  height: 100% !important;
+  background-color: #fff;
+}
+.error {
+  display: none;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  vertical-align: baseline;
+  text-align: center;
+  height: 0;
+  box-sizing: border-box;
+  margin-left: 1ex;
+  transition:
+    height 0.3s ease,
+    display 0.3s ease allow-discrete;
+  &.open-error {
+    display: flex;
+    height: 1.5em;
+    background-color: #f44336;
+    padding: 2px 4px;
+  }
+}
+@starting-style {
+  .error.open-error {
+    height: 0;
+  }
+}
+
+#template-text-area-error {
+  bottom: 250px;
+}
+
+#tag-text-area-error {
+  bottom: 15px;
+}
+.apply-button {
+  margin: 1ex 0 1ex 0;
+  padding: 5px 9px 5px 9px;
+  background-color: #1871bd;
+  color: #f7f7f7;
+  border: none;
+  cursor: pointer;
+}
+.apply-button:hover {
+  background-color: #328ad5;
+}
+.apply-button:disabled {
+  background-color: #a0a0a0;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  user-select: none;
+  cursor: pointer;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+}
+.slider:before {
+  position: absolute;
+  content: '';
+  top: 3px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196f3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+.slider.round {
+  border-radius: 12px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.demo-sidebar__content {
+  display: flex;
+  flex-direction: column;
+}

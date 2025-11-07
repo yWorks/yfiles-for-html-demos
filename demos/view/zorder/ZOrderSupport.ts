@@ -30,40 +30,40 @@ import {
   BaseClass,
   Command,
   EventArgs,
-  GraphComponent,
+  type GraphComponent,
   GraphEditorInputMode,
   GraphMLIOHandler,
   GroupingNodePositionHandler,
-  GroupingSupport,
+  type GroupingSupport,
   HashMap,
   IEnumerable,
-  IFoldingView,
-  IGraph,
-  IGraphSelection,
-  IInputModeContext,
-  IMap,
+  type IFoldingView,
+  type IGraph,
+  type IGraphSelection,
+  type IInputModeContext,
+  type IMap,
   IModelItem,
   INode,
   InputHandlerBase,
-  InputModeEventArgs,
+  type InputModeEventArgs,
   IOutputHandler,
-  IParseContext,
-  IPositionHandler,
-  IRenderTreeElement,
+  type IParseContext,
+  type IPositionHandler,
+  type IRenderTreeElement,
   IRenderTreeGroup,
   IReparentNodeHandler,
-  ItemEventArgs,
-  ItemsEventArgs,
+  type ItemEventArgs,
+  type ItemsEventArgs,
   IUndoUnit,
-  IWriteContext,
+  type IWriteContext,
   KeyScope,
   KeyType,
   LabelLayerPolicy,
   List,
-  NodeEventArgs,
+  type NodeEventArgs,
   OutputHandlerBase,
-  Point,
-  SelectionEventArgs,
+  type Point,
+  type SelectionEventArgs,
   WritePrecedence
 } from '@yfiles/yfiles'
 import { ZOrderGraphClipboard } from './ZOrderGraphClipboard'
@@ -306,7 +306,7 @@ export class ZOrderSupport {
 
   /**
    * Sets new ascending z-orders for `viewNodes` starting from `zOrder` and sorts their
-   * {@link GraphModelManager.getMainRenderTreeElement canvas objects} as well.
+   * {@link GraphModelManager.getMainRenderTreeElement render tree element} as well.
    */
   public arrangeNodes(viewNodes: IEnumerable<INode>, zOrder: number): void {
     let prev: IRenderTreeElement | null = null
@@ -632,7 +632,7 @@ export class ZOrderSupport {
 
   private beforeGrouping(e: SelectionEventArgs<IModelItem>): void {
     // get all selected nodes and sort by their current z-order
-    const nodes = (<IGraphSelection>e.selection).nodes.toList()
+    const nodes = (e.selection as IGraphSelection).nodes.toList()
     nodes.sort(this.nodeComparison)
 
     // set increasing z-orders
@@ -644,7 +644,7 @@ export class ZOrderSupport {
   private beforeUngrouping(e: SelectionEventArgs<IModelItem>): void {
     const graph = this.$graphComponent.graph
     // store all selected nodes that have a parent group
-    const nodes = (<IGraphSelection>e.selection).nodes
+    const nodes = (e.selection as IGraphSelection).nodes
       .filter((node: INode) => {
         return graph.getParent(node) !== null
       })
@@ -957,11 +957,11 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
 /**
  * An {@link InputHandlerBase input handler} that reads the z-order of nodes, edges and ports.
  */
-class ZOrderInputHandler extends InputHandlerBase<INode, Number> {
+class ZOrderInputHandler extends InputHandlerBase<INode, number> {
   private readonly zOrderSupport: ZOrderSupport
 
   constructor(zOrderSupport: ZOrderSupport) {
-    super(INode, Number)
+    super(INode, Number as any)
     this.zOrderSupport = zOrderSupport
   }
 
@@ -985,7 +985,7 @@ class ZOrderInputHandler extends InputHandlerBase<INode, Number> {
 /**
  * An {@link IOutputHandler} that writes the z-order of nodes, edges and ports.
  */
-class ZOrderOutputHandler extends OutputHandlerBase<INode, Number> {
+class ZOrderOutputHandler extends OutputHandlerBase<INode, number> {
   private readonly zOrderSupport: ZOrderSupport
 
   public static get Z_ORDER_KEY_NAME(): string {
@@ -1001,7 +1001,7 @@ class ZOrderOutputHandler extends OutputHandlerBase<INode, Number> {
   }
 
   constructor(zOrderSupport: ZOrderSupport) {
-    super(INode, Number, KeyScope.NODE, ZOrderOutputHandler.Z_ORDER_KEY_NAME, KeyType.INT)
+    super(INode, Number as any, KeyScope.NODE, ZOrderOutputHandler.Z_ORDER_KEY_NAME, KeyType.INT)
     this.zOrderSupport = zOrderSupport
     this.writeKeyDefault = false
     this.precedence = WritePrecedence.BEFORE_CHILDREN
@@ -1028,11 +1028,13 @@ class ZOrderOutputHandler extends OutputHandlerBase<INode, Number> {
  * the reparent handler that is passed to the callback function.
  */
 class ZOrderReparentHandler extends BaseClass(IReparentNodeHandler) {
-  constructor(
-    private readonly handler: IReparentNodeHandler,
-    private readonly zOrderSupport: ZOrderSupport
-  ) {
+  private readonly zOrderSupport: ZOrderSupport
+  private readonly handler: IReparentNodeHandler
+
+  constructor(handler: IReparentNodeHandler, zOrderSupport: ZOrderSupport) {
     super()
+    this.handler = handler
+    this.zOrderSupport = zOrderSupport
   }
 
   isReparentGesture(context: IInputModeContext, node: INode): boolean {

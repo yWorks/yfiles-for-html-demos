@@ -56,8 +56,8 @@ import { Network } from './model/Network'
 import { initializeDeviceDetailsPopup, updateBarChart } from './device-popup'
 import { initializeToolTips } from './tooltips'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 import {
   addFailureHighlight,
@@ -76,7 +76,7 @@ LayoutExecutor.ensure()
 let edgeAnimator
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('graphComponent')
   // we don't want to show the labels for the nodes, initially,

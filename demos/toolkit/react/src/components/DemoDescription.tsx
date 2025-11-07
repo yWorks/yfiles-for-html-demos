@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import reloadIcon from '@yfiles/demo-resources/icons/reload-16.svg'
-import yLogo from '@yfiles/demo-resources/icons/ylogo-text.svg'
+import reloadIcon from '@yfiles/demo-app/icons/reload-16.svg'
+import yLogo from '@yfiles/demo-app/icons/ylogo-text.svg'
 import './DemoDescription.css'
 
 export default function DemoDescription() {

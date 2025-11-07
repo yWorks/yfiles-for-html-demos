@@ -28,13 +28,13 @@
  ***************************************************************************/
 import {
   Color,
-  INode,
-  IRectangle,
-  IRenderContext,
-  Matrix,
+  type INode,
+  type IRectangle,
+  type IRenderContext,
+  type Matrix,
   NodeStyleBase,
   Point,
-  Rect,
+  type Rect,
   SvgVisual,
   type TaggedSvgVisual
 } from '@yfiles/yfiles'
@@ -117,7 +117,7 @@ export class IsometricNodeStyle extends NodeStyleBase<MyVisual> {
    * Calculates a vector in world coordinates whose transformation by the projection results
    * in the vector (0, -1).
    * @param projection The projection to consider.
-   * @return The vector in world coordinates that gets transformed to the vector (0, -1).
+   * @returns The vector in world coordinates that gets transformed to the vector (0, -1).
    */
   static calculateHeightVector(projection: Matrix): Point {
     const matrix = projection.clone()
@@ -130,12 +130,21 @@ export class IsometricNodeStyle extends NodeStyleBase<MyVisual> {
  * Stores the geometry data necessary to update the visual representation of a node.
  */
 class RenderDataCache {
+    readonly color: MyColor;
+    readonly upVector: Point;
+    readonly height: number;
+    readonly layout: Rect;
+
   constructor(
-    public readonly layout: Rect,
-    public readonly height: number,
-    public readonly upVector: Point,
-    public readonly color: MyColor
-  ) {}
+    layout: Rect,
+    height: number,
+    upVector: Point,
+    color: MyColor
+  ) {
+      this.layout = layout;
+      this.height = height;
+      this.upVector = upVector;
+      this.color = color;}
 
   equalGeometries(other: RenderDataCache): boolean {
     const height = this.height

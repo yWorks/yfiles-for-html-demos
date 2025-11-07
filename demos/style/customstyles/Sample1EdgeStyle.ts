@@ -33,16 +33,16 @@ import {
   GeneralPath,
   GraphComponent,
   IArrow,
-  ICanvasContext,
-  IEdge,
-  IInputModeContext,
-  INode,
-  INodeStyle,
-  IRenderContext,
+  type ICanvasContext,
+  type IEdge,
+  type IInputModeContext,
+  type INode,
+  type INodeStyle,
+  type IRenderContext,
   ISelectionRenderer,
-  Point,
+  type Point,
   PolylineEdgeStyle,
-  Rect,
+  type Rect,
   SvgVisual,
   type TaggedSvgVisual
 } from '@yfiles/yfiles'
@@ -269,12 +269,17 @@ export class Sample1EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
 }
 
 class EdgeRenderDataCache {
-  constructor(
-    public readonly thickness: number,
-    public readonly selected: boolean,
-    public readonly color: string,
-    public readonly path: GeneralPath | null
-  ) {}
+  readonly path: GeneralPath | null
+  readonly color: string
+  readonly selected: boolean
+  readonly thickness: number
+
+  constructor(thickness: number, selected: boolean, color: string, path: GeneralPath | null) {
+    this.thickness = thickness
+    this.selected = selected
+    this.color = color
+    this.path = path
+  }
 
   stateEquals(other?: EdgeRenderDataCache): boolean {
     return (

@@ -31,10 +31,10 @@ import {
   ArrowStyleShape,
   BaseClass,
   IEnumerable,
-  IHandle,
+  type IHandle,
   IHandleProvider,
-  IInputModeContext,
-  INode
+  type IInputModeContext,
+  type INode
 } from '@yfiles/yfiles'
 import { ArrowNodeStyleAngleHandle } from './ArrowNodeStyleAngleHandle'
 import { ArrowNodeStyleShaftRatioHandle } from './ArrowNodeStyleShaftRatioHandle'
@@ -48,6 +48,10 @@ import { ArrowNodeStyleShaftRatioHandle } from './ArrowNodeStyleShaftRatioHandle
  * {@link ArrowStyleShape.DOUBLE_ARROW}, and {@link ArrowStyleShape.NOTCHED_ARROW}.
  */
 export class ArrowNodeStyleHandleProvider extends BaseClass(IHandleProvider) {
+  private readonly delegateProvider: IHandleProvider | null
+  private readonly stylePropertyChanged: () => void
+  private readonly node: INode
+
   /**
    * Creates a new instance of {@link ArrowNodeStyleHandleProvider} with the given
    * {@link stylePropertyChanged} action and an optional {@link delegateProvider} whose handles are
@@ -57,11 +61,14 @@ export class ArrowNodeStyleHandleProvider extends BaseClass(IHandleProvider) {
    * @param delegateProvider The wrapped {@link IHandleProvider implementation}.
    */
   constructor(
-    private readonly node: INode,
-    private readonly stylePropertyChanged: () => void,
-    private readonly delegateProvider: IHandleProvider | null = null
+    node: INode,
+    stylePropertyChanged: () => void,
+    delegateProvider: IHandleProvider | null = null
   ) {
     super()
+    this.node = node
+    this.stylePropertyChanged = stylePropertyChanged
+    this.delegateProvider = delegateProvider
   }
 
   getHandles(context: IInputModeContext): IEnumerable<IHandle> {

@@ -26,16 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  ICanvasContext,
-  IInputModeContext,
-  INode,
-  IRenderContext,
-  NodeStyleBase,
-  Point,
-  Rect,
-  SvgVisual
-} from '@yfiles/yfiles'
+import { NodeStyleBase, Point, Rect, SvgVisual } from '@yfiles/yfiles'
 import { ChordDiagramLayout } from './ChordDiagramLayout'
 
 const SVG_NS = 'http://www.w3.org/2000/svg'
@@ -183,7 +174,6 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
    * characteristics of the node have changed
    */
   updateVisual(context, oldVisual, node) {
-    const container = oldVisual.svgElement
     // get the data with which the oldvisual was created
     const oldData = oldVisual.tag
     // get the data for the new visual
@@ -203,8 +193,7 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
       return false
     }
 
-    const { nodeCenter, nodeRadiusY, circleCenter, startAngle, endAngle, nodeDist } =
-      circleData(node)
+    const { nodeRadiusY, circleCenter, startAngle, endAngle, nodeDist } = circleData(node)
 
     // check whether the given point lies inside the node's height
     const locationDist = location.distanceTo(circleCenter)
@@ -226,8 +215,7 @@ export class CircleSegmentNodeStyle extends NodeStyleBase {
    * @param node the node whose bounding box is calculated.
    */
   getBounds(context, node) {
-    const { nodeCenter, nodeRadiusY, circleCenter, startAngle, endAngle, nodeDist } =
-      circleData(node)
+    const { nodeRadiusY, circleCenter, startAngle, endAngle, nodeDist } = circleData(node)
 
     // handle the start and end points of the upper and lower arc segments
     const corner1 = polarToCartesian(circleCenter, nodeDist + nodeRadiusY, endAngle)
@@ -325,8 +313,9 @@ function circleData(node) {
 }
 
 class NodeRenderDataCache {
-  nodeData
   showStyleHints
+  nodeData
+
   constructor(nodeData, showStyleHints) {
     this.nodeData = nodeData
     this.showStyleHints = showStyleHints

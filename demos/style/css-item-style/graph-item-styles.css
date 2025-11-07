@@ -29,7 +29,8 @@
 .node,
 .edge,
 .edge > *,
-.label {
+.label,
+.group-node {
   --hover-elevation: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.3));
   transition-duration: 0.3s;
   transition-timing-function: ease-in-out;
@@ -39,11 +40,13 @@
 .node {
   transition-property: opacity, stroke, fill, filter, stroke-width;
 }
-.node.type-0 {
+.node.type-0,
+.group-node.type-0 .yfiles-group-node-tab {
   fill: #17bebb;
   stroke: #094c4b;
 }
-.node.type-1 {
+.node.type-1,
+.group-node.type-1 .yfiles-group-node-tab {
   fill: #ffc914;
   stroke: #665008;
 }
@@ -51,7 +54,8 @@
   fill: #ff6c00;
   stroke: #662b00;
 }
-.node.hovering {
+.node.hovering,
+.group-node.hovering {
   stroke-width: 4px;
   filter: var(--hover-elevation);
   opacity: 1 !important;
@@ -60,6 +64,9 @@
 .node.connected {
   fill: #c1c1c1;
   stroke: #4d4d4d;
+}
+.group-node .yfiles-group-node-content {
+  fill: #ffffff;
 }
 
 /* Edges */
@@ -100,6 +107,7 @@
 
 /* Fade-out items that are neither selected nor connected */
 #graphComponent.focus-selection .node:not(.selected, .connected),
+#graphComponent.focus-selection .group-node:not(.selected, .connected),
 #graphComponent.focus-selection .edge:not(.selected, .connected) {
   opacity: 0.2;
 }

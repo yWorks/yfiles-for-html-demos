@@ -31,17 +31,13 @@ import {
   GeneralPath,
   IArrow,
   IBoundsProvider,
-  IEdge,
-  ILookup,
-  IRenderContext,
   IVisualCreator,
   MarkupExtension,
   Point,
   Rect,
-  SvgVisual,
-  Visual
+  SvgVisual
 } from '@yfiles/yfiles'
-import { isColorSetName } from '@yfiles/demo-resources/demo-styles'
+import { isColorSetName } from '@yfiles/demo-app/demo-styles'
 
 /**
  * A custom demo arrow style whose colors match the given well-known CSS rule.
@@ -109,7 +105,7 @@ export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
    * This method is called by the framework to create a visual
    * that will be included into the {@link IRenderContext}.
    * @param ctx The context that describes where the visual will be used.
-   * The arrow visual to include in the canvas object visual tree./>.
+   * The arrow visual to include in the render tree./>.
    * @see {@link Sample2Arrow.updateVisual}
    * @see Specified by {@link IVisualCreator.createVisual}.
    */
@@ -155,7 +151,7 @@ export class Sample2Arrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvi
    * @param oldVisual The visual instance that had been returned the last time the
    *   {@link Sample2Arrow.createVisual} method was called on this instance.
    *  `oldVisual`, if this instance modified the visual, or a new visual that should replace the
-   * existing one in the canvas object visual tree.
+   * existing one in the render tree.
    * @see {@link Sample2Arrow.createVisual}
    * @see {@link IObjectRenderer}
    * @see {@link CanvasComponent}

@@ -36,9 +36,9 @@
     <title>
       05 Making the Style Configurable - Tutorial: Edge Style Implementation [yFiles for HTML]
     </title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -144,8 +144,8 @@
             <p>
               Frequently, the visualized edges differ in visual properties like color, dash-style,
               or thickness, while looking generally the same. In this case, the style can define
-              properties that let you configure certain details of the visualization, while using
-              the same edge style class.
+              properties that let you configure certain details of the visualization while using the
+              same edge style class.
             </p>
           </div>
           <div class="paragraph">
@@ -159,8 +159,9 @@
             <div class="content">
               <pre
                 class="highlight"
-              ><code class="language-typescript" data-lang="typescript"><span class="hljs-title function_">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">public</span> distance = <span class="hljs-number">1</span></span>) {
+              ><code class="language-typescript" data-lang="typescript"><span class="hljs-title function_">constructor</span>(<span class="hljs-params">distance = <span class="hljs-number">1</span></span>) {
   <span class="hljs-variable language_">super</span>()
+  <span class="hljs-variable language_">this</span>.<span class="hljs-property">distance</span> = distance
 }</code></pre>
             </div>
           </div>
@@ -182,7 +183,7 @@ thinPath.<span class="hljs-title function_">setAttribute</span>(<span class="hlj
           <div class="paragraph">
             <p>
               Now, we can create edges with different distances. The distance can either be passed
-              into the constructor, or specified later using the <code>distance</code> property. The
+              into the constructor or specified later using the <code>distance</code> property. The
               distance can also be changed dynamically during runtime.
             </p>
           </div>
@@ -247,7 +248,8 @@ style2.<span class="hljs-property">distance</span> = <span class="hljs-number">3
         <div id="graphComponent"></div>
       </div>
     </div>
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

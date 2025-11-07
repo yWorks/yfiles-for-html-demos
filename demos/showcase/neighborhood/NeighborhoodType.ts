@@ -26,34 +26,4 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * Enumeration that specifies the supported types of neighborhood graphs to be shown in the
- * demo's {@link NeighborhoodView}.
- */
-export enum NeighborhoodType {
-  /**
-   * The neighbors of a given node are all connected nodes. The direction of the edges connecting
-   * neighbor nodes to the given node does not matter.
-   * The union of all predecessor nodes and all successor nodes.
-   * For a graph distance of 1, mode NEIGHBORHOOD yields the same result as mode {@link BOTH}.
-   */
-  NEIGHBORHOOD,
-  /**
-   * The neighbors of a given node are the source nodes of the given node's incoming edges.
-   */
-  PREDECESSORS,
-  /**
-   * The neighbors of a given node are the target nodes of the given node's outgoing edges.
-   */
-  SUCCESSORS,
-  /**
-   * The union of all predecessor nodes and all successor nodes.
-   * For a graph distance of 1, mode BOTH yields the same result as mode {@link NEIGHBORHOOD}.
-   */
-  BOTH,
-  /**
-   * The neighbors of a given node are the node's child nodes.
-   * Thus only group and folder nodes (i.e. collapsed group nodes) can have this type of neighbors.
-   */
-  FOLDER_CONTENTS
-}
+export type NeighborhoodType = 'neighborhood' | 'predecessors' | 'successors' | 'both' | 'folder-contents'

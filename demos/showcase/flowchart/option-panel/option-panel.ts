@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { addNavigationButtons } from '@yfiles/demo-resources/demo-page'
+import { addNavigationButtons } from '@yfiles/demo-app/demo-page'
 import { BranchDirection } from '../layout/FlowchartLayout'
 import type { InEdgeGrouping } from '../layout/FlowchartLayoutData'
 import type { LayoutOptions } from '../layout/layout-flowchart'

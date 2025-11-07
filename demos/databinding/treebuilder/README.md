@@ -17,7 +17,9 @@
 
 This demo interactively builds and modifies a graph from **JSON** business data using class [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder).
 
-See the the Developer's Guide section on the [TreeBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-TreeBuilder) for an in-depth explanation of the involved concepts.
+See the Developer's Guide section on the [TreeBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-TreeBuilder) for an in-depth explanation of the involved concepts.
+
+See also the [Step Tutorial: Graph Builder](../../tutorial-graph-builder/01-create-graph/) for a step-by-step guide on configuring the [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) class, loading data, and customizing graph visualizations.
 
 The demo allows to define nodes sources and edges bindings using the schema graph component on the right.
 

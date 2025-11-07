@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IArrow, IBoundsProvider, IEdge, IVisualCreator, Point } from '@yfiles/yfiles'
+import { BaseClass, IArrow, Point } from '@yfiles/yfiles'
 
 /**
  * A simple wrapper around an {@link IArrow} that rotates the arrow by 180 degrees.

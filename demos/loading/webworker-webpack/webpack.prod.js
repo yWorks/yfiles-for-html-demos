@@ -49,9 +49,11 @@ module.exports = {
         'upY'
       ],
       shouldOptimize(module) {
+        // Make sure not to exclude the demo-app and demo-utils projects which are
+        // installed as dependencies and use yFiles API.
         return (
           !/node_modules/.test(module.resource) ||
-          /node_modules[\\/]@yfiles[\\/](demo-resources|utils)/.test(module.resource)
+          /node_modules\/@yfiles\/(demo-app|demo-utils)/.test(module.resource)
         )
       }
     }),

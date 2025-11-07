@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 import {
-  IEdge,
-  IInputModeContext,
+  type IEdge,
+  type IInputModeContext,
   IOrthogonalEdgeHelper,
   OrthogonalEdgeHelper,
   SegmentOrientation

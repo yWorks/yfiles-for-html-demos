@@ -29,13 +29,13 @@
 import {
   BaseClass,
   FreeNodePortLocationModel,
-  IEnumerable,
+  type IEnumerable,
   IHandle,
-  IInputModeContext,
-  INode,
-  IPoint,
-  IPort,
-  IPortLocationModelParameter,
+  type IInputModeContext,
+  type INode,
+  type IPoint,
+  type IPort,
+  type IPortLocationModelParameter,
   IPositionHandler,
   Point
 } from '@yfiles/yfiles'
@@ -48,15 +48,16 @@ import type { NodeInfo, RowInfo } from './ListNodeDemo'
  * It uses the port's {@link IHandle}s to keep the adjacent edges orthogonal.
  */
 export class RowPositionHandler extends BaseClass(IPositionHandler) {
+  private index: number
+  private node: INode
   private currentIndex = -1
   private originalState: RowMoveInfo[] = []
   private portHandle: Map<IPort, RowMoveInfo> = new Map<IPort, RowMoveInfo>()
 
-  constructor(
-    private node: INode,
-    private index: number
-  ) {
+  constructor(node: INode, index: number) {
     super()
+    this.node = node
+    this.index = index
   }
 
   /**

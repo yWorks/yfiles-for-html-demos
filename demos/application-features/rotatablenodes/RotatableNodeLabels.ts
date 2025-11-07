@@ -31,8 +31,8 @@ import {
   type Constructor,
   FreeNodeLabelModel,
   Graph,
-  IEnumerable,
-  ILabel,
+  type IEnumerable,
+  type ILabel,
   ILabelModel,
   ILabelModelParameter,
   ILabelModelParameterFinder,
@@ -40,8 +40,8 @@ import {
   ILookup,
   IMarkupExtensionConverter,
   INode,
-  IOrientedRectangle,
-  IWriteContext,
+  type IOrientedRectangle,
+  type IWriteContext,
   List,
   MarkupExtension,
   OrientedRectangle
@@ -59,14 +59,16 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
   ILabelModel,
   IMarkupExtensionConverter
 ) {
+  useNodeRotation: boolean
+  wrapped: ILabelModel
+
   /**
    * Creates a new instance of {@link RotatableNodeLabelModelDecorator}.
    */
-  constructor(
-    public wrapped: ILabelModel,
-    public useNodeRotation = true
-  ) {
+  constructor(wrapped: ILabelModel, useNodeRotation = true) {
     super()
+    this.wrapped = wrapped
+    this.useNodeRotation = useNodeRotation
     this.wrapped = wrapped || FreeNodeLabelModel.INSTANCE
     this.useNodeRotation = useNodeRotation
   }
@@ -153,11 +155,13 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
 }
 
 class RotatableNodeLabelModelLookup extends BaseClass(ILookup) {
-  constructor(
-    private readonly label: ILabel,
-    private readonly model: RotatableNodeLabelModelDecorator
-  ) {
+  private readonly model: RotatableNodeLabelModelDecorator
+  private readonly label: ILabel
+
+  constructor(label: ILabel, model: RotatableNodeLabelModelDecorator) {
     super()
+    this.label = label
+    this.model = model
   }
 
   /**
@@ -165,7 +169,7 @@ class RotatableNodeLabelModelLookup extends BaseClass(ILookup) {
    * {@link ILabelModelParameterFinder} that consider the nodes' rotation.
    * Wraps the default implementations in a special wrapper which supports rotation.
    */
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
+
   lookup<T>(type: Constructor<any>): T | null {
     if (type === ILabelModelParameterProvider) {
       const provider = this.model.wrapped
@@ -248,14 +252,19 @@ export class RotatableNodeLabelModelDecoratorParameter extends BaseClass(ILabelM
  * Provides candidate parameters for rotated label models.
  */
 class RotatedNodeLabelModelParameterProvider extends BaseClass(ILabelModelParameterProvider) {
+  wrappedProvider: ILabelModelParameterProvider
+  decorator: RotatableNodeLabelModelDecorator
+
   /**
    * Creates a new instance using the given parameter provider.
    */
   constructor(
-    public decorator: RotatableNodeLabelModelDecorator,
-    public wrappedProvider: ILabelModelParameterProvider
+    decorator: RotatableNodeLabelModelDecorator,
+    wrappedProvider: ILabelModelParameterProvider
   ) {
     super()
+    this.decorator = decorator
+    this.wrappedProvider = wrappedProvider
     this.decorator = decorator
     this.wrappedProvider = wrappedProvider
   }
@@ -277,15 +286,22 @@ class RotatedNodeLabelModelParameterProvider extends BaseClass(ILabelModelParame
  * Finds the best {@link ILabelModelParameter} to approximate a specific rotated layout.
  */
 class RotatedNodeLabelModelParameterFinder extends BaseClass(ILabelModelParameterFinder) {
+  private decorator: RotatableNodeLabelModelDecorator
+  private wrappedFinder: ILabelModelParameterFinder
+  private label: ILabel
+
   /**
    * Creates a new instance using the given parameter finder.
    */
   constructor(
-    private label: ILabel,
-    private wrappedFinder: ILabelModelParameterFinder,
-    private decorator: RotatableNodeLabelModelDecorator
+    label: ILabel,
+    wrappedFinder: ILabelModelParameterFinder,
+    decorator: RotatableNodeLabelModelDecorator
   ) {
     super()
+    this.label = label
+    this.wrappedFinder = wrappedFinder
+    this.decorator = decorator
     if (!Graph.hasOwner(label)) {
       throw new Error(`The label has no valid owner: ${label.text}`)
     }

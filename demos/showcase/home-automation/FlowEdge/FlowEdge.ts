@@ -28,10 +28,10 @@
  ***************************************************************************/
 import {
   BezierEdgeStyle,
-  CreateEdgeInputMode,
-  GraphComponent,
-  IGraph,
-  INode,
+  type CreateEdgeInputMode,
+  type GraphComponent,
+  type IGraph,
+  type INode,
   Point
 } from '@yfiles/yfiles'
 import './flowEdge.css'

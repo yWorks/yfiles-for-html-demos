@@ -26,15 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/unbound-method */
 import {
+  Arrow,
   GraphComponent,
   GraphEditorInputMode,
   GraphMLIOHandler,
-  IGraph,
-  INode,
+  type IGraph,
+  type INode,
   IPortCandidateProvider,
   License,
+  PolylineEdgeStyle,
   PortCandidate,
   PortsHandleProvider,
   Rect,
@@ -46,9 +47,9 @@ import {
   CustomNodePortLocationModelParameter,
   PortLocation
 } from './CustomNodePortLocationModel'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { createDemoNodeStyle, initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
 
 let graphComponent: GraphComponent = null!
@@ -57,7 +58,7 @@ let graphComponent: GraphComponent = null!
  * This demo shows how to create and use a custom port model.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize graph component
   graphComponent = new GraphComponent('graphComponent')
   // initialize the input mode
@@ -86,7 +87,6 @@ async function run(): Promise<void> {
  */
 function getPortCandidateProvider(forNode: INode): IPortCandidateProvider {
   const model = new CustomNodePortLocationModel(10)
-  // noinspection JSCheckFunctionSignatures
   return IPortCandidateProvider.fromCandidates([
     new PortCandidate(forNode, model.createCustomParameter(PortLocation.CENTER)),
     new PortCandidate(forNode, model.createCustomParameter(PortLocation.TOP)),
@@ -122,23 +122,31 @@ function enableGraphML(): void {
 
 /**
  * Sets a custom node port model parameter instance for newly created node ports in the graph,
- * creates example nodes with ports using the the custom model and an edge to connect the ports.
+ * creates example nodes with ports using the custom model and an edge to connect the ports.
  */
 function initializeGraph(graph: IGraph): void {
   // set the defaults for nodes
   initDemoStyles(graph)
+  graph.nodeDefaults.style = createDemoNodeStyle('demo-palette-58')
+
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: '3px #4E4E4E',
+    targetArrow: new Arrow({ fill: '#4E4E4E', type: 'triangle' })
+  })
 
   // set the default port location parameter (and thus implicitly the model as well)
-  graph.nodeDefaults.ports.locationParameter =
-    new CustomNodePortLocationModel().createCustomParameter(PortLocation.CENTER)
+  graph.nodeDefaults.ports.locationParameter = new CustomNodePortLocationModel(
+    10
+  ).createCustomParameter(PortLocation.CENTER)
 
   // set the default port style and size for this demo
   graph.nodeDefaults.ports.style = new ShapePortStyle({
     shape: 'ellipse',
-    fill: '#224556',
+    fill: '#ff6c00',
     stroke: null,
     renderSize: [10, 10]
   })
+
   graph.nodeDefaults.size = new Size(100, 100)
 
   const source = graph.createNode(new Rect(90, 90, 100, 100))

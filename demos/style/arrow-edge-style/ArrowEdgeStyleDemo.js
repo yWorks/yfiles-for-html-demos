@@ -34,13 +34,12 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   IEdge,
-  IGraph,
   License
 } from '@yfiles/yfiles'
-import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { colorSets, initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import { SampleGraph } from './resources/SampleGraph'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 const basicShape = document.querySelector('#basic-shape')
 const thicknessRange = document.querySelector('#thickness-range')
@@ -55,7 +54,7 @@ const propertiesPanel = document.querySelector('.demo-form-block')
 const infoMessage = document.querySelector('.info-message')
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
   const graph = graphComponent.graph

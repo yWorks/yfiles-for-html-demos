@@ -29,10 +29,10 @@
 import {
   ContextModificationStage,
   GenericLabeling,
-  ILayoutAlgorithm,
+  type ILayoutAlgorithm,
   type IMapper,
   LayoutEdge,
-  LayoutGraph,
+  type LayoutGraph,
   LayoutGraphGrouping,
   LayoutGraphHider,
   LayoutKeys,
@@ -58,6 +58,9 @@ import {
  * {@link markedEdgeRouter edge routing algorithm} for those edges.
  */
 export class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
+    markedEdgeRouter: ILayoutAlgorithm | null;
+    considerEdgeLabels: boolean;
+
   /**
    * Creates an instance of HandleEdgesBetweenGroupsStage.
    * @param considerEdgeLabels whether or not the stage should place the labels of the edges that
@@ -65,10 +68,12 @@ export class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
    * @param markedEdgeRouter the edge routing algorithm that is applied to the set of marked edges
    */
   constructor(
-    public considerEdgeLabels: boolean,
-    public markedEdgeRouter: ILayoutAlgorithm | null = null
+    considerEdgeLabels: boolean,
+    markedEdgeRouter: ILayoutAlgorithm | null = null
   ) {
     super()
+      this.considerEdgeLabels = considerEdgeLabels;
+      this.markedEdgeRouter = markedEdgeRouter;
   }
 
   /**

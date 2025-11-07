@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title id="title">Organization Chart Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
     <link rel="stylesheet" href="resources/orgchart-style.css" />
   </head>
 
@@ -108,7 +108,7 @@
           <p>This demo shows how to create an interactive organization chart from JSON data.</p>
           <p>
             The source data is easily converted to a yFiles graph using class
-            <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a>.
+            <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" class="api" target="_blank">TreeBuilder</a>.
           </p>
           <p>
             The visualization of the employee is defined by an svg-template which is interpreted by
@@ -116,14 +116,14 @@
             <a href="https://vuejs.org/v2/guide/index.html" target="_blank">Vue 2 framework</a>.
           </p>
           <p>
-            The demo also shows how a <a href="https://docs.yworks.com/yfileshtml/#/api/FilteredGraphWrapper" target="_blank">FilteredGraphWrapper</a> can be used to display a
+            The demo also shows how a <a href="https://docs.yworks.com/yfileshtml/#/api/FilteredGraphWrapper" class="api" target="_blank">FilteredGraphWrapper</a> can be used to display a
             subgraph of the model graph.
           </p>
 
           <h2>Automatic Layout</h2>
           <p>
-            The organization chart is arranged automatically with the <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">TreeLayout</a> and
-            the <a href="https://docs.yworks.com/yfileshtml/#/api/CompactSubtreePlacer" target="_blank">CompactSubtreePlacer</a>
+            The organization chart is arranged automatically with the <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" class="api" target="_blank">TreeLayout</a> and
+            the <a href="https://docs.yworks.com/yfileshtml/#/api/CompactSubtreePlacer" class="api" target="_blank">CompactSubtreePlacer</a>
             which determines the best arrangement strategy for each node in order to achieve a
             compact and clear layout.
           </p>
@@ -171,7 +171,7 @@
             </li>
             <li>
               In the Toolbar, you can <strong>Show All</strong> nodes by clicking on
-              <img src="../../resources/icons/star-16.svg" alt="show all" />.
+              <img src="../../demo-app/icons/star-16.svg" alt="show all" />.
             </li>
           </ul>
 

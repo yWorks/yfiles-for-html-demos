@@ -26,55 +26,54 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/unbound-method */
 import {
   BaseClass,
-  ClickEventArgs,
-  CollectSnapResultsEventArgs,
-  ConcurrencyController,
-  Cursor,
+  type ClickEventArgs,
+  type CollectSnapResultsEventArgs,
+  type ConcurrencyController,
+  type Cursor,
   delegate,
-  EventArgs,
-  GraphComponent,
-  GraphEditorInputMode,
+  type EventArgs,
+  type GraphComponent,
+  type GraphEditorInputMode,
   GraphSnapContext,
   HandleInputMode,
   HandlePositions,
-  HandleType,
-  ICompoundEdit,
+  type HandleType,
+  type ICompoundEdit,
   IDragHandler,
-  IEnumerable,
-  IGraph,
-  IGraphSelection,
+  type IEnumerable,
+  type IGraph,
+  type IGraphSelection,
   IHandle,
   IInputMode,
-  IInputModeContext,
-  IList,
-  IModelItem,
-  INode,
+  type IInputModeContext,
+  type IList,
+  type IModelItem,
+  type INode,
   INodeReshapeSnapResultProvider,
   INodeSizeConstraintProvider,
   InputModeBase,
-  InputModeEventArgs,
+  type InputModeEventArgs,
   Insets,
   IPoint,
   IRectangle,
-  IRenderTreeElement,
+  type IRenderTreeElement,
   IReshapeHandler,
-  ISize,
-  ItemEventArgs,
+  type ISize,
+  type ItemEventArgs,
   List,
   MutableRectangle,
   MutableSize,
   ObservableCollection,
-  OrthogonalEdgeDragHandler,
+  type OrthogonalEdgeDragHandler,
   OrthogonalEdgeEditingContext,
   Point,
   Rect,
   ReshapeHandlerHandle,
   ReshapePolicy,
   ReshapeRectangleContext,
-  SelectionEventArgs,
+  type SelectionEventArgs,
   Size
 } from '@yfiles/yfiles'
 import { RectangleRenderer } from '@yfiles/demo-utils/RectangleRenderer'
@@ -1211,12 +1210,10 @@ class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
     this.reshapeHandlerHandle.minimumSize = value
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   centerReshapeRecognizer(evt: EventArgs, eventSource: any): boolean {
     return this.reshapeHandlerHandle.centerReshapeRecognizer(evt, eventSource)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ratioReshapeRecognizer(evt: EventArgs, eventSource: any): boolean {
     return this.reshapeHandlerHandle.ratioReshapeRecognizer!(evt, eventSource)
   }

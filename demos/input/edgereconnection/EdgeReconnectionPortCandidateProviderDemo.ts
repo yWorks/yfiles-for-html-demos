@@ -32,8 +32,8 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   IEdgeReconnectionPortCandidateProvider,
-  IGraph,
-  INode,
+  type IGraph,
+  type INode,
   IPortCandidateProvider,
   License,
   Point,
@@ -41,14 +41,14 @@ import {
   Rect,
   ShapePortStyle
 } from '@yfiles/yfiles'
-import type { ColorSetName } from '@yfiles/demo-resources/demo-styles'
-import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import type { ColorSetName } from '@yfiles/demo-app/demo-styles'
+import { createDemoEdgeStyle, createDemoNodeStyle } from '@yfiles/demo-app/demo-styles'
 import { GreenEdgePortCandidateProvider } from './GreenEdgePortCandidateProvider'
 import { BlueEdgePortCandidateProvider } from './BlueEdgePortCandidateProvider'
 import { OrangeEdgePortCandidateProvider } from './OrangeEdgePortCandidateProvider'
 import { RedEdgePortCandidateProvider } from './RedEdgePortCandidateProvider'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 /**
  * Registers a callback function as decorator that provides a custom
@@ -85,7 +85,7 @@ function registerEdgePortCandidateProvider(graph: IGraph): void {
  * Called after this application has been set up by the demo framework.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph

@@ -885,8 +885,8 @@ export default {
       color: 'rgb(0, 151, 204)'
     },
     {
-      groupTag: 'yFiles-for-HTML/demos/input/singleselection',
-      label: 'singleselection',
+      groupTag: 'yFiles-for-HTML/demos/input/single-selection',
+      label: 'single-selection',
       parentGroupRef: 'yFiles-for-HTML/demos/input',
       isGroup: true,
       size: 13509,
@@ -1053,25 +1053,25 @@ export default {
       color: 'rgb(0, 127, 167)'
     },
     {
-      groupTag: 'yFiles-for-HTML/demos/resources/icons',
+      groupTag: 'yFiles-for-HTML/demos/demo-app/icons',
       label: 'icons',
-      parentGroupRef: 'yFiles-for-HTML/demos/resources',
+      parentGroupRef: 'yFiles-for-HTML/demos/demo-app',
       isGroup: true,
       size: 36222,
       color: 'rgb(0, 170, 223)'
     },
     {
-      groupTag: 'yFiles-for-HTML/demos/resources/image',
+      groupTag: 'yFiles-for-HTML/demos/demo-app/image',
       label: 'image',
-      parentGroupRef: 'yFiles-for-HTML/demos/resources',
+      parentGroupRef: 'yFiles-for-HTML/demos/demo-app',
       isGroup: true,
       size: 2179384,
       color: 'rgb(0, 170, 223)'
     },
     {
-      groupTag: 'yFiles-for-HTML/demos/resources/style',
+      groupTag: 'yFiles-for-HTML/demos/demo-app/style',
       label: 'style',
-      parentGroupRef: 'yFiles-for-HTML/demos/resources',
+      parentGroupRef: 'yFiles-for-HTML/demos/demo-app',
       isGroup: true,
       size: 34184,
       color: 'rgb(0, 170, 223)'
@@ -1680,8 +1680,8 @@ export default {
       color: 'rgb(0, 179, 189)'
     },
     {
-      groupTag: 'yFiles-for-HTML/demos/resources',
-      label: 'resources',
+      groupTag: 'yFiles-for-HTML/demos/demo-app',
+      label: 'demo-app',
       parentGroupRef: 'yFiles-for-HTML/demos',
       isGroup: true,
       size: 2476490,
@@ -4623,16 +4623,16 @@ export default {
       color: 'rgb(0, 227, 220)'
     },
     {
-      id: 'yFiles-for-HTML/demos/input/singleselection/SingleSelectionDemo.js',
+      id: 'yFiles-for-HTML/demos/input/single-selection/SingleSelectionDemo.js',
       label: 'SingleSelectionDemo.js\n(8.70kb)',
-      groupRef: 'yFiles-for-HTML/demos/input/singleselection',
+      groupRef: 'yFiles-for-HTML/demos/input/single-selection',
       size: '8701',
       color: 'rgb(0, 161, 181)'
     },
     {
-      id: 'yFiles-for-HTML/demos/input/singleselection/index.html',
+      id: 'yFiles-for-HTML/demos/input/single-selection/index.html',
       label: 'index.html\n(4.81kb)',
-      groupRef: 'yFiles-for-HTML/demos/input/singleselection',
+      groupRef: 'yFiles-for-HTML/demos/input/single-selection',
       size: '4808',
       color: 'rgb(0, 161, 181)'
     },
@@ -5225,954 +5225,954 @@ export default {
       color: 'rgb(0, 191, 195)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/arrow-down-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/arrow-down-16.svg',
       label: 'arrow-down-16.svg\n(492byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '492',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/arrow-left-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/arrow-left-16.svg',
       label: 'arrow-left-16.svg\n(495byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '495',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/arrow-right-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/arrow-right-16.svg',
       label: 'arrow-right-16.svg\n(516byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '516',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/arrow-up-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/arrow-up-16.svg',
       label: 'arrow-up-16.svg\n(495byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '495',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/arrowheadDownWhite.png',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/arrowheadDownWhite.png',
       label: 'arrowheadDownWhite.png\n(258byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '258',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/arrowheadRightWhite.png',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/arrowheadRightWhite.png',
       label: 'arrowheadRightWhite.png\n(272byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '272',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/cancel-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/cancel-16.svg',
       label: 'cancel-16.svg\n(681byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '681',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/copy-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/copy-16.svg',
       label: 'copy-16.svg\n(600byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '600',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/cut2-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/cut2-16.svg',
       label: 'cut2-16.svg\n(1.02kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '1017',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/delete2-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/delete2-16.svg',
       label: 'delete2-16.svg\n(677byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '677',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/delete3-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/delete3-16.svg',
       label: 'delete3-16.svg\n(661byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '661',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/demagnify-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/demagnify-16.svg',
       label: 'demagnify-16.svg\n(630byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '630',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/download-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/download-16.svg',
       label: 'download-16.svg\n(554byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '554',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/edgelabel-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/edgelabel-16.svg',
       label: 'edgelabel-16.svg\n(1.77kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '1767',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/enter-group-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/enter-group-16.svg',
       label: 'enter-group-16.svg\n(669byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '669',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/exit-group-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/exit-group-16.svg',
       label: 'exit-group-16.svg\n(668byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '668',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/export-image-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/export-image-16.svg',
       label: 'export-image-16.svg\n(563byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '563',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/export-image2-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/export-image2-16.svg',
       label: 'export-image2-16.svg\n(529byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '529',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/fit-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/fit-16.svg',
       label: 'fit-16.svg\n(676byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '676',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/grid-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/grid-16.svg',
       label: 'grid-16.svg\n(877byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '877',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/group-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/group-16.svg',
       label: 'group-16.svg\n(667byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '667',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/layout-circular-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/layout-circular-16.svg',
       label: 'layout-circular-16.svg\n(1.24kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '1244',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/layout-organic-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/layout-organic-16.svg',
       label: 'layout-organic-16.svg\n(1.02kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '1020',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/magnify-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/magnify-16.svg',
       label: 'magnify-16.svg\n(655byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '655',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/minus-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/minus-16.svg',
       label: 'minus-16.svg\n(460byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '460',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/minus2-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/minus2-16.svg',
       label: 'minus2-16.svg\n(541byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '541',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/new-document-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/new-document-16.svg',
       label: 'new-document-16.svg\n(524byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '524',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/nodelabel-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/nodelabel-16.svg',
       label: 'nodelabel-16.svg\n(1.98kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '1982',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/ok-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/ok-16.svg',
       label: 'ok-16.svg\n(548byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '548',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/ok2-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/ok2-16.svg',
       label: 'ok2-16.svg\n(491byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '491',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/open-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/open-16.svg',
       label: 'open-16.svg\n(577byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '577',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/orthogonal-editing-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/orthogonal-editing-16.svg',
       label: 'orthogonal-editing-16.svg\n(768byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '768',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/paste-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/paste-16.svg',
       label: 'paste-16.svg\n(921byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '921',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/play-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/play-16.svg',
       label: 'play-16.svg\n(541byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '541',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/play2-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/play2-16.svg',
       label: 'play2-16.svg\n(435byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '435',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/plus-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/plus-16.svg',
       label: 'plus-16.svg\n(527byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '527',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/plus2-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/plus2-16.svg',
       label: 'plus2-16.svg\n(559byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '559',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/print-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/print-16.svg',
       label: 'print-16.svg\n(665byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '665',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/redo-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/redo-16.svg',
       label: 'redo-16.svg\n(707byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '707',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/reload-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/reload-16.svg',
       label: 'reload-16.svg\n(771byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '771',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/save-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/save-16.svg',
       label: 'save-16.svg\n(530byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '530',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/search-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/search-16.svg',
       label: 'search-16.svg\n(735byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '735',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/settings-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/settings-16.svg',
       label: 'settings-16.svg\n(1.63kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '1629',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/settings2-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/settings2-16.svg',
       label: 'settings2-16.svg\n(687byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '687',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/snap-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/snap-16.svg',
       label: 'snap-16.svg\n(557byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '557',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/star-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/star-16.svg',
       label: 'star-16.svg\n(868byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '868',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/top.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/top.svg',
       label: 'top.svg\n(670byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '670',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/undo-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/undo-16.svg',
       label: 'undo-16.svg\n(782byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '782',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/ungroup-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/ungroup-16.svg',
       label: 'ungroup-16.svg\n(668byte)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '668',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/icons/zoom-original3-16.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/icons/zoom-original3-16.svg',
       label: 'zoom-original3-16.svg\n(1.40kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/icons',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/icons',
       size: '1396',
       color: 'rgb(0, 135, 106)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/demo-context-menu.js',
+      id: 'yFiles-for-HTML/demos/demo-app/demo-context-menu.js',
       label: 'demo-context-menu.js\n(7.96kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources',
+      groupRef: 'yFiles-for-HTML/demos/demo-app',
       size: '7961',
       color: 'rgb(0, 170, 223)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/demo-dndpanel.js',
+      id: 'yFiles-for-HTML/demos/demo-app/demo-dndpanel.js',
       label: 'demo-dndpanel.js\n(8.16kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources',
+      groupRef: 'yFiles-for-HTML/demos/demo-app',
       size: '8160',
       color: 'rgb(0, 170, 223)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/demo-error.js',
+      id: 'yFiles-for-HTML/demos/demo-app/demo-error.js',
       label: 'demo-error.js\n(13.03kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources',
+      groupRef: 'yFiles-for-HTML/demos/demo-app',
       size: '13034',
       color: 'rgb(0, 170, 223)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/FileSaveSupport.js',
+      id: 'yFiles-for-HTML/demos/demo-app/FileSaveSupport.js',
       label: 'FileSaveSupport.js\n(5.47kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources',
+      groupRef: 'yFiles-for-HTML/demos/demo-app',
       size: '5474',
       color: 'rgb(0, 170, 223)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/demo-option-editor.js',
+      id: 'yFiles-for-HTML/demos/demo-app/demo-option-editor.js',
       label: 'demo-option-editor.js\n(65.66kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources',
+      groupRef: 'yFiles-for-HTML/demos/demo-app',
       size: '65660',
       color: 'rgb(0, 170, 223)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/demo-styles.js',
+      id: 'yFiles-for-HTML/demos/demo-app/demo-styles.js',
       label: 'demo-styles.js\n(59.36kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources',
+      groupRef: 'yFiles-for-HTML/demos/demo-app',
       size: '59360',
       color: 'rgb(0, 170, 223)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/demo-util.js',
+      id: 'yFiles-for-HTML/demos/demo-app/demo-util.js',
       label: 'demo-util.js\n(14.65kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources',
+      groupRef: 'yFiles-for-HTML/demos/demo-app',
       size: '14648',
       color: 'rgb(0, 170, 223)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/CustomSnapping.gif',
+      id: 'yFiles-for-HTML/demos/demo-app/image/CustomSnapping.gif',
       label: 'CustomSnapping.gif\n(47.72kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '47715',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/InteractiveLayout.gif',
+      id: 'yFiles-for-HTML/demos/demo-app/image/InteractiveLayout.gif',
       label: 'InteractiveLayout.gif\n(62.29kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '62288',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/OrthogonalEdges.gif',
+      id: 'yFiles-for-HTML/demos/demo-app/image/OrthogonalEdges.gif',
       label: 'OrthogonalEdges.gif\n(26.17kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '26170',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/PositionHandler.gif',
+      id: 'yFiles-for-HTML/demos/demo-app/image/PositionHandler.gif',
       label: 'PositionHandler.gif\n(32.21kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '32210',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/ReshapeHandle.gif',
+      id: 'yFiles-for-HTML/demos/demo-app/image/ReshapeHandle.gif',
       label: 'ReshapeHandle.gif\n(53.25kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '53247',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/SizeConstraint.gif',
+      id: 'yFiles-for-HTML/demos/demo-app/image/SizeConstraint.gif',
       label: 'SizeConstraint.gif\n(48.69kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '48685',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/adjacentnodesgraphbuilder.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/adjacentnodesgraphbuilder.png',
       label: 'adjacentnodesgraphbuilder.png\n(36.36kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '36361',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/amdloading.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/amdloading.png',
       label: 'amdloading.png\n(3.62kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '3617',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/angularjs.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/angularjs.png',
       label: 'angularjs.png\n(48.33kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '48332',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/angularjs1x.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/angularjs1x.png',
       label: 'angularjs1x.png\n(43.24kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '43242',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/angularjs2x.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/angularjs2x.png',
       label: 'angularjs2x.png\n(59.07kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '59066',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/basiclayout.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/basiclayout.png',
       label: 'basiclayout.png\n(10.00kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '9997',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/bpmneditor.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/bpmneditor.png',
       label: 'bpmneditor.png\n(33.66kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '33661',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/bridges.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/bridges.png',
       label: 'bridges.png\n(13.91kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '13910',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/browserify.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/browserify.png',
       label: 'browserify.png\n(36.32kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '36323',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/clipboard.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/clipboard.png',
       label: 'clipboard.png\n(15.93kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '15930',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/collapsibletree.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/collapsibletree.png',
       label: 'collapsibletree.png\n(14.31kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '14312',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/contextmenu.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/contextmenu.png',
       label: 'contextmenu.png\n(25.82kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '25825',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/customstyles.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/customstyles.png',
       label: 'customstyles.png\n(68.23kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '68229',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/datatable.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/datatable.png',
       label: 'datatable.png\n(37.32kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '37316',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/demo.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/demo.png',
       label: 'demo.png\n(40.43kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '40427',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/draganddrop.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/draganddrop.png',
       label: 'draganddrop.png\n(16.58kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '16577',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/edgereconnection.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/edgereconnection.png',
       label: 'edgereconnection.png\n(4.20kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '4203',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/events.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/events.png',
       label: 'events.png\n(49.07kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '49069',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/export.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/export.png',
       label: 'export.png\n(24.94kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '24940',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/fileoperations.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/fileoperations.png',
       label: 'fileoperations.png\n(12.52kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '12523',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/graphanalysis.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/graphanalysis.png',
       label: 'graphanalysis.png\n(30.68kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '30682',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/graphbuilder.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/graphbuilder.png',
       label: 'graphbuilder.png\n(29.38kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '29377',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/graphml.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/graphml.png',
       label: 'graphml.png\n(72.87kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '72869',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/graphmlcompatibility.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/graphmlcompatibility.png',
       label: 'graphmlcompatibility.png\n(43.39kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '43393',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/graphviewer.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/graphviewer.png',
       label: 'graphviewer.png\n(43.36kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '43359',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/header-angle.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/image/header-angle.svg',
       label: 'header-angle.svg\n(1.99kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '1994',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/header-slogan.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/header-slogan.png',
       label: 'header-slogan.png\n(1.07kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '1072',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/hierarchicgrouping.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/hierarchicgrouping.png',
       label: 'hierarchicgrouping.png\n(16.76kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '16762',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/htmllabel.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/htmllabel.png',
       label: 'htmllabel.png\n(19.24kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '19239',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/htmlpopup.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/htmlpopup.png',
       label: 'htmlpopup.png\n(82.97kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '82971',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/imageexport.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/imageexport.png',
       label: 'imageexport.png\n(30.85kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '30851',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/incrementalhierarchic.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/incrementalhierarchic.png',
       label: 'incrementalhierarchic.png\n(4.08kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '4084',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/largegraphs.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/largegraphs.png',
       label: 'largegraphs.png\n(22.99kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '22991',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/layoutstyles.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/layoutstyles.png',
       label: 'layoutstyles.png\n(13.67kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '13674',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/loading.gif',
+      id: 'yFiles-for-HTML/demos/demo-app/image/loading.gif',
       label: 'loading.gif\n(5.64kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '5643',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/mindmap.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/mindmap.png',
       label: 'mindmap.png\n(38.74kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '38741',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/multipage.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/multipage.png',
       label: 'multipage.png\n(10.95kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '10953',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/neighborhoodview.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/neighborhoodview.png',
       label: 'neighborhoodview.png\n(99.98kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '99977',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/networkflows.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/networkflows.png',
       label: 'networkflows.png\n(23.01kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '23012',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/networkmonitoring.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/networkmonitoring.png',
       label: 'networkmonitoring.png\n(83.36kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '83362',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/nodejs.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/nodejs.png',
       label: 'nodejs.png\n(30.84kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '30842',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/interactiveorgchart.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/interactiveorgchart.png',
       label: 'orgchart.png\n(48.20kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '48198',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/pdfexport.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/pdfexport.png',
       label: 'pdfexport.png\n(30.73kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '30725',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/portcandidateprovider.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/portcandidateprovider.png',
       label: 'portcandidateprovider.png\n(11.46kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '11458',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/preferredlabelplacement.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/preferredlabelplacement.png',
       label: 'preferredlabelplacement.png\n(18.30kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '18300',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/printing.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/printing.png',
       label: 'printing.png\n(7.26kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '7258',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/react.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/react.png',
       label: 'react.png\n(138.48kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '138482',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/reparenthandler.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/reparenthandler.png',
       label: 'reparenthandler.png\n(9.13kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '9129',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/scriptloading.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/scriptloading.png',
       label: 'scriptloading.png\n(3.98kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '3978',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/selectionstyling.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/selectionstyling.png',
       label: 'selectionstyling.png\n(15.67kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '15666',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/sidebar-left.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/image/sidebar-left.svg',
       label: 'sidebar-left.svg\n(2.26kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '2257',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/sidebar-left_white.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/image/sidebar-left_white.svg',
       label: 'sidebar-left_white.svg\n(2.26kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '2257',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/simpleeditor.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/simpleeditor.png',
       label: 'simpleeditor.png\n(15.02kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '15023',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/simplegraphbuilder.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/simplegraphbuilder.png',
       label: 'simplegraphbuilder.png\n(55.72kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '55720',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/singleselection.png',
-      label: 'singleselection.png\n(12.48kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      id: 'yFiles-for-HTML/demos/demo-app/image/single-selection.png',
+      label: 'single-selection.png\n(12.48kb)',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '12484',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/sparklines.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/sparklines.png',
       label: 'sparklines.png\n(13.45kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '13448',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/styledecorators.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/styledecorators.png',
       label: 'styledecorators.png\n(18.72kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '18716',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/svgexport.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/svgexport.png',
       label: 'svgexport.png\n(31.11kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '31106',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/tableeditor.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/tableeditor.png',
       label: 'tableeditor.png\n(13.36kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '13356',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/transitivity.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/transitivity.png',
       label: 'transitivity.png\n(30.08kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '30081',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/tutorial01.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/tutorial01.png',
       label: 'tutorial01.png\n(19.04kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '19038',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/tutorial02.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/tutorial02.png',
       label: 'tutorial02.png\n(30.59kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '30589',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/typescript.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/typescript.png',
       label: 'typescript.png\n(11.08kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '11082',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/webpack.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/webpack.png',
       label: 'webpack.png\n(33.65kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '33647',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/webworker.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/webworker.png',
       label: 'webworker.png\n(31.42kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '31421',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/yFilesHtml.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/yFilesHtml.png',
       label: 'yFilesHtml.png\n(1.14kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '1144',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/ylogo.png',
+      id: 'yFiles-for-HTML/demos/demo-app/image/ylogo.png',
       label: 'ylogo.png\n(1.88kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '1878',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/image/ylogo.svg',
+      id: 'yFiles-for-HTML/demos/demo-app/image/ylogo.svg',
       label: 'ylogo.svg\n(2.92kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/image',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/image',
       size: '2920',
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/readme-demo-data.js',
+      id: 'yFiles-for-HTML/demos/demo-app/readme-demo-data.js',
       label: 'readme-demo-data.js\n(29.33kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources',
+      groupRef: 'yFiles-for-HTML/demos/demo-app',
       size: '29334',
       color: 'rgb(0, 170, 223)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/readme-demo-support.js',
+      id: 'yFiles-for-HTML/demos/demo-app/readme-demo-support.js',
       label: 'readme-demo-support.js\n(3.37kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources',
+      groupRef: 'yFiles-for-HTML/demos/demo-app',
       size: '3366',
       color: 'rgb(0, 170, 223)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/require.js',
+      id: 'yFiles-for-HTML/demos/demo-app/require.js',
       label: 'require.js\n(18.89kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources',
+      groupRef: 'yFiles-for-HTML/demos/demo-app',
       size: '18893',
       color: 'rgb(0, 170, 223)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/style/demo-option-editor.css',
+      id: 'yFiles-for-HTML/demos/demo-app/style/demo-option-editor.css',
       label: 'demo-option-editor.css\n(13.30kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/style',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/style',
       size: '13297',
       color: 'rgb(0, 188, 216)'
     },
     {
-      id: 'yFiles-for-HTML/demos/resources/style/demo.css',
+      id: 'yFiles-for-HTML/demos/demo-app/style/demo.css',
       label: 'demo.css\n(20.89kb)',
-      groupRef: 'yFiles-for-HTML/demos/resources/style',
+      groupRef: 'yFiles-for-HTML/demos/demo-app/style',
       size: '20887',
       color: 'rgb(0, 188, 216)'
     },

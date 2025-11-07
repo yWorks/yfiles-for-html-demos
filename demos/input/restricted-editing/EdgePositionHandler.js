@@ -96,8 +96,8 @@ export class EdgePositionHandler extends BaseClass(IPositionHandler) {
    * @param context The context to retrieve information about the drag from
    */
   initializeDrag(context) {
-    for (let bend of this.edge.bends) {
-      let handle = bend?.lookup(IHandle)
+    for (const bend of this.edge.bends) {
+      const handle = bend?.lookup(IHandle)
       if (handle) {
         this.handles.push(new HandleStructure(handle, handle.location.toPoint()))
       }

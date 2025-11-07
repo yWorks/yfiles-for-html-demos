@@ -36,8 +36,6 @@ import {
   GroupNodeLabelModel,
   GroupNodeStyle,
   HierarchicalLayout,
-  IGraph,
-  IRenderTreeElement,
   LabelStyle,
   LayoutExecutor,
   License,
@@ -46,27 +44,21 @@ import {
 
 import { RectangleVisualCreator } from './RectangleVisualCreator'
 import { ImageVisualCreator } from './ImageVisualCreator'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import graphData from './graph-data.json'
 
 // Ensure that the LayoutExecutor class is not removed by build optimizers
 // It is needed for the 'applyLayoutAnimated' method in this demo.
 LayoutExecutor.ensure()
 
-/**
- * Application Features - Add an image or colored rectangle to the background of the graph
- */
 let graphComponent = null
 
-/**
- * The canvas object that stores the background visualization. This can be used to remove the background image.
- */
 let background = null
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode()
 

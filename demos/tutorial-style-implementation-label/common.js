@@ -30,7 +30,6 @@ import {
   Animator,
   BaseClass,
   ExteriorNodeLabelModel,
-  SmartEdgeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -50,6 +49,7 @@ import {
   PolylineEdgeStyle,
   ScrollBarVisibility,
   ShapeNodeStyle,
+  SmartEdgeLabelModel,
   SvgVisual
 } from '@yfiles/yfiles'
 import { createBackgroundShapeData } from './09-hit-testing/CustomLabelStyle'

@@ -1,0 +1,99 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.example-node-container {
+  zoom: 0.8;
+  margin: auto;
+}
+.example-node-container.highlight-first-prop .node-property-container:hover .node-button {
+  opacity: 0 !important;
+}
+.example-node-container.highlight-first-prop .node-property-container {
+  overflow: visible !important;
+  position: relative;
+}
+.example-node-container.highlight-first-prop .node-property-container::before,
+.example-node-container.highlight-first-prop .node-property-container::after {
+  content: '';
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+.example-node-container.highlight-first-prop .node-property-container::after {
+  inset: -12px -12px -8px -14px;
+  border: solid var(--magenta-pink);
+  border-width: 3px 3px 5px 5px;
+  border-radius: 4% 95% 6% 95%/95% 4% 92% 5%;
+  transform: rotate(-2deg);
+}
+.example-node-container.highlight-first-prop .node-property-container::before {
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%);
+  margin-right: 20px;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 15px solid var(--magenta-pink);
+}
+.example-node-container.highlight-first-prop-and-show-button .node-property-container {
+  overflow: visible !important;
+  position: relative;
+}
+.example-node-container.highlight-first-prop-and-show-button .node-property-container .node-button {
+  opacity: 1;
+}
+.example-node-container.highlight-first-prop-and-show-button .node-property-container .node-stock {
+  display: none;
+}
+.example-node-container.highlight-first-prop-and-show-button .node-property-container::before,
+.example-node-container.highlight-first-prop-and-show-button .node-property-container::after {
+  content: '';
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+.example-node-container.highlight-first-prop-and-show-button .node-property-container::after {
+  inset: -12px -12px -8px -14px;
+  border: solid var(--yworks-orange);
+  border-width: 5px 3px 4px 2px;
+  border-radius: 6% 95% 2% 97%/95% 1% 92% 5%;
+  transform: rotate(181deg);
+}
+.example-node-container.highlight-first-prop-and-show-button .node-property-container::before {
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%);
+  margin-right: 20px;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 15px solid var(--yworks-orange);
+}
+
+.example-node-container.disable-hover {
+  pointer-events: none;
+}

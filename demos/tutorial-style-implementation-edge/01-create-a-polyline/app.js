@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, License } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
+import licenseData from '../../../lib/license.json'
 import {
   createSimpleGraph,
   enableGraphEditing,
@@ -36,10 +36,10 @@ import {
   initializeTutorialDefaults
 } from '../common'
 
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { CustomEdgeStyle } from './CustomEdgeStyle'
 
-License.value = await fetchLicense()
+License.value = licenseData
 
 const graphComponent = new GraphComponent('#graphComponent')
 

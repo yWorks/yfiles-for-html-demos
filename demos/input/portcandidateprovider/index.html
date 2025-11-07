@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Port Candidate Provider Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       path.firebrick {
@@ -110,7 +110,7 @@
 
         <p>
           This demo shows how edge creation can be customized by implementing the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/IPortCandidateProvider" target="_blank">IPortCandidateProvider</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/IPortCandidateProvider" class="api" target="_blank">IPortCandidateProvider</a>
           interface.
         </p>
 
@@ -121,9 +121,8 @@
         <h2>Things to Try</h2>
 
         <p>
-          Initiate edge creation by dragging from an unselected node (with the left mouse button
-          pressed). Releasing the button finishes edge creation if the mouse is on a valid target
-          and creates a bend otherwise.
+          Start edge creation and observe which target port candidates are valid depending on the
+          start port candidate.
         </p>
 
         <h2>Node Types</h2>

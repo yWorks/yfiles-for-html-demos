@@ -9,19 +9,30 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Folding - Application Features
+# Folding
 
 <img src="../../../doc/demo-thumbnails/folding.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/folding/).
 
-This step shows how to enable [collapsing and expanding of group nodes](https://docs.yworks.com/yfileshtml/#/dguide/folding). This is provided through class [FoldingManager](https://docs.yworks.com/yfileshtml/#/api/FoldingManager) and its support classes.
+This demo shows how to enable collapsing and expanding of group nodes, the so-called [Folding](https://docs.yworks.com/yfileshtml/#/dguide/folding) feature. This is provided through the [FoldingManager](https://docs.yworks.com/yfileshtml/#/api/FoldingManager) class and its support classes.
 
-[GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) provides the following default gestures for collapse/expand:
+The [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) class provides the following interactive gestures for collapsing and expanding groups:
 
-- Press Alt + LeftArrow or click the expand-button on the node's top left corner to close (collapse) an open group node.
-- Press Alt + RightArrow or click the collapse-button on the node's top left corner to open (expand) a closed group node.
-- Press Alt + DownArrow to enter (navigate into) a group node.
-- Press Alt + UpArrow to exit (navigate out of) a group node.
+- Close (collapse) a selected open group node by pressing Alt + ← or clicking the expand icon in the group's top left corner.
+- Open (expand) a selected closed group node by pressing Alt + → or clicking the collapse icon in the node's top left corner.
+- Enter (navigate into) a selected group node by pressing Alt + ↓.
+- Exit (navigate out of) a selected group node by pressing Alt + ↑.
 
-See the sources for details.
+## Demos
+
+- [Folding With Merged Edges Demo](../../application-features/folding-with-merged-edges/)
+- [Folding With Layout Demo](../../layout/foldingwithlayout/)
+- [Filtering With Folding Demo](../../application-features/filtering-with-folding/)
+- [Hierarchical Nesting Demo](../../layout/hierarchical-nesting/)
+- [Hierarchical Nesting (Incremental) Demo](../../layout/hierarchical-nesting-incremental/)
+
+## Documentation
+
+- [Folding](https://docs.yworks.com/yfileshtml/#/dguide/folding)
+- [FoldingManager](https://docs.yworks.com/yfileshtml/#/api/FoldingManager) class

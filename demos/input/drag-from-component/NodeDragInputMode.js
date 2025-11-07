@@ -27,19 +27,13 @@
  **
  ***************************************************************************/
 import {
-  ConcurrencyController,
   Cursor,
   GraphComponent,
   GraphItemTypes,
-  IGraph,
   IHitTester,
-  IInputModeContext,
   INode,
   InputModeBase,
   ModifierKeys,
-  NodeEventArgs,
-  Point,
-  PointerEventArgs,
   SvgExport
 } from '@yfiles/yfiles'
 import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'

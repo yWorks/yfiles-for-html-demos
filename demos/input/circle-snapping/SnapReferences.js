@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphItemTypes,
-  INode,
-  Point,
-  SnapCircle,
-  SnapLine,
-  SnapReferenceVisualizationType
-} from '@yfiles/yfiles'
+import { GraphItemTypes, SnapCircle, SnapLine } from '@yfiles/yfiles'
 
 /**
  * A circular snap reference around a given node with a given radius.

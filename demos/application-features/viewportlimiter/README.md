@@ -17,7 +17,7 @@
 
 The [ViewportLimiter](https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter) limits the interactive movement of the viewport. This helps to navigate the canvas without losing the content.
 
-The [ViewportLimiter#bounds](https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter#bounds) (or effective viewport limiter area) are calculated as the union of two rectangles: The [ViewportLimiter#viewportContentMargins](https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter#viewportContentMargins), which act like insets on the graph component, and the ViewportLimiter.minimumViewportContentRatio, which defines which percentage of the viewport is used for limiting.
+The [ViewportLimiter.bounds](https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter#bounds) (or effective viewport limiter area) are calculated as the union of two rectangles: The [ViewportLimiter.viewportContentMargins](https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter#viewportContentMargins), which act like insets on the graph component, and the ViewportLimiter.minimumViewportContentRatio, which defines which percentage of the viewport is used for limiting.
 
 ## Things to Try
 

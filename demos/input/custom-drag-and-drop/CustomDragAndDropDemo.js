@@ -31,7 +31,6 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  IGraph,
   License,
   PolylineEdgeStyle,
   ShapeNodeShape,
@@ -40,13 +39,13 @@ import {
 } from '@yfiles/yfiles'
 import { ColorDropInputMode } from './ColorDropInputMode'
 import SampleData from './resources/SampleData'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 const PALETTE_SIZE = 15
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
   initializeInputModes(graphComponent)

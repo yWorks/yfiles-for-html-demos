@@ -125,11 +125,11 @@ export class ShapeNodeStyles {
     const y = 0
     const width = 1
     const height = 1
-    let maxX = x + width
-    let maxY = y + height
-    let xLeftRatio = x + xRatio * width
-    let xRightRatio = maxX - xRatio * width
-    let slope = height / (width * xRatio)
+    const maxX = x + width
+    const maxY = y + height
+    const xLeftRatio = x + xRatio * width
+    const xRightRatio = maxX - xRatio * width
+    const slope = height / (width * xRatio)
 
     const topLeftX = useXRatioTopLeft ? xLeftRatio : x
     const topRightX = useXRatioTopRight ? xRightRatio : maxX
@@ -205,4 +205,5 @@ export class ShapeNodeStyles {
       ? GeneralPathNodeStyle.createAspectRatioInstance(path).path
       : path
   }
+  // endregion
 }

@@ -9,30 +9,28 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# Hierarchical Layout with Sequence Constraints - Layout Features
+# Hierarchical Layout with Sequence Constraints
 
 <img src="../../../doc/demo-thumbnails/layout-sequence-constraints.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-sequence-constraints/).
 
-This demo shows how to customize the order of the nodes in a layer (sequencing) when using [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
+This demo shows how to customize the order of the nodes within a layer (sequencing) when using [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
 
-### Sequence constraints
+## Sequence constraints
 
-Nodes 2, 6 and 11 are configured to be placed at the beginning (or head) of the sequence with the [placeAtHead](https://docs.yworks.com/yfileshtml/#/api/SequenceConstraintData#placeAtHead) method.
+**Nodes 2, 6 and 11** are configured to be placed at the beginning (or head) of the sequence with the [placeNodeAtHead](https://docs.yworks.com/yfileshtml/#/api/SequenceConstraintData#placeNodeAtHead) method.
 
-Click the button in the toolbar to toggle between [Hierarchical Layout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) with and without configured constraints.
+## Things to Try
 
-### Code Snippet
+Click the button in the toolbar to toggle between hierarchical layout with and without configured constraints.
 
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-sequence-constraints/HierarchicalSequenceConstraints.ts).
+## Demos
 
-### Demos
+- [Sequence Constraints Demo](../../layout/sequenceconstraints/)
 
-See the [Sequence Constraints Demo](../../layout/sequenceconstraints/) for more elaborate examples of the constraints functionality.
+## Documentation
 
-### Documentation
-
-See the [Constrained Node Sequencing](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_node_sequencing) section in the Developer's Guide for an in-depth discussion of the relevant concepts.
-
-See the [SequenceConstraintData](https://docs.yworks.com/yfileshtml/#/api/SequenceConstraintData) API documentation for detailed information on all available constraints.
+- [Constrained Node Sequencing](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_node_sequencing)
+- [SequenceConstraintData](https://docs.yworks.com/yfileshtml/#/api/SequenceConstraintData)
+- [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout)

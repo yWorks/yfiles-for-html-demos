@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ItemEventArgs, Rect } from '@yfiles/yfiles'
+import { Rect } from '@yfiles/yfiles'
 
 /**
  * Two instances of this class synchronize two graphs across threads.
@@ -38,8 +38,8 @@ import { ItemEventArgs, Rect } from '@yfiles/yfiles'
  * or styles.
  */
 export class GraphSynchronizer {
-  graph
   messageHandler
+  graph
   item2Id = new Map()
   id2Item = new Map()
   lastId = 0

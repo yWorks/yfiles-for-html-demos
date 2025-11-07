@@ -27,17 +27,19 @@
  **
  ***************************************************************************/
 import type { Company, OwnershipEdge, RelationshipEdge } from './data-types'
-import { EdgeTypeEnum } from './data-types'
 
 /**
  * Creates the properties view panel to display the properties of the clicked elements.
  */
 export class PropertiesView {
+    private element: Element;
+
   /**
    * Creates the PropertiesView.
    * @param element The DOM element that will be filled with the properties.
    */
-  constructor(private element: Element) {
+  constructor(element: Element) {
+      this.element = element;
     this.element = element
   }
 
@@ -113,7 +115,7 @@ export class PropertiesView {
     tr.appendChild(createElement('td', 'Type'))
     tr.appendChild(createElement('td', item.type))
 
-    if (item.type === EdgeTypeEnum.Hierarchy) {
+    if (item.type === 'Hierarchy') {
       tr = document.createElement('tr')
       table.appendChild(tr)
       tr.appendChild(createElement('td', 'Ownership'))

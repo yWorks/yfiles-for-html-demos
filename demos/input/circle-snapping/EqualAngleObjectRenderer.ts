@@ -31,7 +31,7 @@ import {
   type IRenderContext,
   ObjectRendererBase,
   Point,
-  SnapResult,
+  type SnapResult,
   Stroke,
   SvgVisual
 } from '@yfiles/yfiles'

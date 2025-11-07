@@ -27,19 +27,19 @@
  **
  ***************************************************************************/
 import {
-  ApplicationRef,
-  ComponentRef,
+  type ApplicationRef,
+  type ComponentRef,
   createComponent,
-  EnvironmentInjector,
-  Type
+  type EnvironmentInjector,
+  type Type
 } from '@angular/core'
 import {
   HtmlVisual,
-  INode,
-  IRenderContext,
+  type INode,
+  type IRenderContext,
   NodeStyleBase,
   type TaggedHtmlVisual,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
 
 type InputProvider<P extends object> = (context: IRenderContext, node: INode) => P

@@ -26,9 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Arrow, GraphComponent, ILabelStyle, PolylineEdgeStyle, Rect, Size } from '@yfiles/yfiles'
+import {
+  Arrow,
+  type GraphComponent,
+  ILabelStyle,
+  PolylineEdgeStyle,
+  Rect,
+  Size
+} from '@yfiles/yfiles'
 import { SolidComponentSvgNodeStyle } from '../utils/SolidComponentSvgNodeStyle'
-import { SolidNodeTemplate, SolidNodeTemplateProps } from '../components/SolidNodeTemplate'
+import { SolidNodeTemplate, type SolidNodeTemplateProps } from '../components/SolidNodeTemplate'
 
 export function createDefaultGraph(graphComponent: GraphComponent): () => void {
   const graph = graphComponent.graph

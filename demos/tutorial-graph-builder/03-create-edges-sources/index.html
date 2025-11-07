@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>03 Create Edges Sources - Tutorial: Graph Builder [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -145,7 +145,7 @@
                   In this example, we have added the properties <code>sourceId</code> and
                   <code>targetId</code> to the business data. Of course, you can use different names
                   in the data and use a different
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-property-idProvider" target="_blank">id provider</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider" class="api" target="_blank">id provider</a>.
                 </p>
               </div>
             </div>
@@ -157,12 +157,12 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  As for <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" target="_blank">NodesSource</a>s, <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> supports
-                  different data collections for <a href="https://docs.yworks.com/yfileshtml/#/api/EdgesSource" target="_blank">EdgesSource</a>s. Here, we will only
-                  discuss importing the edges data from a JSArray. For other options, please go back
+                  As for <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a>s, <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> supports
+                  different data collections for <a href="https://docs.yworks.com/yfileshtml/#/api/EdgesSource" class="api" target="_blank">EdgesSource</a>s. Here, we will only
+                  discuss importing the edge data from an array. For other options, please go back
                   to the <a href="../02-create-nodes-sources/">Create Nodes Sources</a> or have a
                   look at the API documentation of
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder#GraphBuilder-method-createEdgesSource" target="_blank">GraphBuilder.createEdgesSource</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder#createEdgesSource" class="api" target="_blank">GraphBuilder.createEdgesSource</a>.
                 </p>
               </div>
               <div class="paragraph">
@@ -176,7 +176,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// add node data including ids</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// add node data including ids</span>
 <span class="hljs-keyword">const</span> nodeData = [{ <span class="hljs-attr">id</span>: <span class="hljs-number">0</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-number">1</span> }, { <span class="hljs-attr">id</span>: <span class="hljs-number">2</span> }]
 graphBuilder.<span class="hljs-title function_">createNodesSource</span>(nodeData, <span class="hljs-string">&#x27;id&#x27;</span>)
 
@@ -229,7 +229,7 @@ graphBuilder.<span class="hljs-title function_">createNodesSource</span>(nodeDat
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

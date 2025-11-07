@@ -28,14 +28,10 @@
  ***************************************************************************/
 import {
   BaseClass,
-  BridgeCrossingStyle,
-  BridgeOrientationStyle,
   GeneralPath,
   GroupNodeStyle,
   IBridgeCreator,
-  INode,
   IObstacleProvider,
-  IRenderContext,
   Point
 } from '@yfiles/yfiles'
 
@@ -44,6 +40,7 @@ import {
  */
 export class CustomCallback extends BaseClass(IBridgeCreator) {
   fallback
+
   /**
    * Creates a new instance of {@link CustomCallback}
    */
@@ -128,6 +125,7 @@ export class CustomCallback extends BaseClass(IBridgeCreator) {
  */
 export class GroupNodeObstacleProvider extends BaseClass(IObstacleProvider) {
   groupNode
+
   /**
    * Creates a new instance of {@link GroupNodeObstacleProvider}
    */

@@ -30,16 +30,10 @@ import {
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  IGraph,
-  IModelItem,
   INode,
-  INodeStyle,
-  ItemClickedEventArgs,
-  ItemEventArgs,
   Mapper,
   MouseWheelBehaviors,
   NodeStyleIndicatorRenderer,
-  Rect,
   ShapeNodeStyle,
   StyleIndicatorZoomPolicy
 } from '@yfiles/yfiles'

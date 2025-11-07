@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphMLIOHandler, ILookup, MarkupExtension } from '@yfiles/yfiles'
+import { MarkupExtension } from '@yfiles/yfiles'
 
 import { Vue2NodeStyle } from './Vue2NodeStyle'
 

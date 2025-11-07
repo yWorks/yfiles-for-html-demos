@@ -32,17 +32,17 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  IGraph,
+  type IGraph,
   LabelStyle,
   LayoutExecutor,
   License,
   ShapeNodeStyle,
   Size
 } from '@yfiles/yfiles'
-import { ArcDiagramLayout, NodeOrder } from './ArcDiagramLayout'
+import { ArcDiagramLayout, type NodeOrder } from './ArcDiagramLayout'
 import SampleData from './resources/SampleData'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { addNavigationButtons, finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { addNavigationButtons, finishLoading } from '@yfiles/demo-app/demo-page'
 
 const chooser = document.querySelector<HTMLSelectElement>('#node-order')!
 
@@ -50,7 +50,7 @@ const chooser = document.querySelector<HTMLSelectElement>('#node-order')!
  * Bootstraps this demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // create the demo's graph component
   const graphComponent = new GraphComponent('#graphComponent')
@@ -146,8 +146,7 @@ async function arrange(graphComponent: GraphComponent): Promise<void> {
  * Determines the currently chosen node order policy.
  */
 function getNodeOrder(): NodeOrder {
-  const nodeOrder = chooser.options[chooser.selectedIndex].value
-  return NodeOrder[nodeOrder as keyof typeof NodeOrder]
+  return chooser.options[chooser.selectedIndex].value as NodeOrder
 }
 
 /**
@@ -164,5 +163,4 @@ function initializeUI(graphComponent: GraphComponent): void {
     .addEventListener('click', () => arrange(graphComponent))
 }
 
-// noinspection JSIgnoredPromiseFromCall
 run()

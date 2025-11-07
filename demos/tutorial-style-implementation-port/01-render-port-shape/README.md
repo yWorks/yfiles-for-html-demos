@@ -15,20 +15,20 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-port/01-render-port-shape/).
 
-yFiles for HTML comes with a lot of predefined item visualizations and lots of different shapes for nodes, which can also be used to visualize ports using [NodeStylePortStyleAdapter](https://docs.yworks.com/yfileshtml/#/api/NodeStylePortStyleAdapter) and [ShapePortStyle](https://docs.yworks.com/yfileshtml/#/api/ShapePortStyle). However, in some cases, it is required to create fully custom visualizations based on SVG. This might be the case if you need shapes that are not available out-of-the-box, because they are domain-specific. Also, the rendering of custom visualizations can be optimized for performance-critical applications.
+yFiles for HTML comes with a lot of predefined item visualizations and lots of different shapes for nodes, which can also be used to visualize ports using [NodeStylePortStyleAdapter](https://docs.yworks.com/yfileshtml/#/api/NodeStylePortStyleAdapter) and [ShapePortStyle](https://docs.yworks.com/yfileshtml/#/api/ShapePortStyle). However, in some cases, it is required to create fully custom visualizations based on SVG. This might be the case if you need shapes that are not available out-of-the-box because they are domain-specific. Also, the rendering of custom visualizations can be optimized for performance-critical applications.
 
 This tutorial will guide you through creating your own port visualizations for yFiles for HTML with SVG.
 
 Note
 
-Implementing a custom port style from scratch is an advanced concept. In a lot of cases, other approaches like template styles, or decorating built-in styles with custom elements are sufficient. For more information on the topic of styling graph items, please have a look at [Port Styles](https://docs.yworks.com/yfileshtml/#/dguide/styles-port_styles).
+Implementing a custom port style from scratch is an advanced concept. In a lot of cases, other approaches like template styles or decorating built-in styles with custom elements are enough. For more information on the topic of styling graph items, please have a look at [Port Styles](https://docs.yworks.com/yfileshtml/#/dguide/styles-port_styles).
 
 ## Subclassing PortStyleBase
 
 yFiles for HTML comes with an abstract base class which provides the basic functionality to create a custom port style. We start with a custom subclass of [PortStyleBase](https://docs.yworks.com/yfileshtml/#/api/PortStyleBase).
 
 ```
-class CustomPortStyle extends PortStyleBase {
+export class CustomPortStyle extends PortStyleBase {
   protected createVisual(context: IRenderContext, port: IPort): Visual | null {
     return null // TODO - create the SVG element
   }
@@ -63,9 +63,7 @@ Note
 
 The SVG element returned in `createVisual` does not necessarily have to be created using the JavaScript DOM API. You could also create it using any JavaScript UI framework or API like React, Vue, etc.
 
-Note
-
-It’s important that SvgVisual contains an SVG element in the 'http://www.w3.org/2000/svg' namespace. HTML elements are not supported.
+Besides [SvgVisual](https://docs.yworks.com/yfileshtml/#/api/SvgVisual), which can contain only an SVG element, there are other visuals as well, for example [HtmlVisual](https://docs.yworks.com/yfileshtml/#/api/HtmlVisual) for HTML elements.
 
 In `getBounds`, we return a rectangle that defines the area in which the port visualization is rendered. This information is crucial for various functionalities related to the viewport, such as calculating the bounds of a graph during content fitting or displaying scrollbars.
 

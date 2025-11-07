@@ -34,4 +34,4 @@ This demo contains a custom implementation of a [DropInputMode](https://docs.ywo
 - [Drag and Drop Demo](../../input/draganddrop/)
 - [Drag From Component Demo](../../input/drag-from-component/)
 - [Custom Drag and Drop Demo](../../input/custom-drag-and-drop/)
-- application-features-drag-and-drop
+- [Component Drag and Drop Demo](../../input/componentdraganddrop/)

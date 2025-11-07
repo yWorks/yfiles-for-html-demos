@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Decision Tree Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       .inline-image {
@@ -113,7 +113,7 @@
             Click the <em>edit button</em>
             <img
               class="inline-image"
-              src="../../resources/icons/settings-16.svg"
+              src="../../demo-app/icons/settings-16.svg"
               alt="edit button"
             />
             to edit the current sample and view the complete graph.
@@ -130,7 +130,7 @@
           </li>
           <li>
             Click the <em>start button</em>
-            <img class="inline-image" src="../../resources/icons/play2-16.svg" alt="start button" />
+            <img class="inline-image" src="../../demo-app/icons/play2-16.svg" alt="start button" />
             to start the decision tree with the current graph.
           </li>
         </ul>
@@ -168,13 +168,9 @@
       <button
         id="open-file-button"
         title="Open a GraphML file"
-        class="demo-icon-yIconOpen labeled"
+        class="demo-icon-yIconOpen"
       ></button>
-      <button
-        id="save-button"
-        title="Save a GraphML file"
-        class="demo-icon-yIconSave labeled"
-      ></button>
+      <button id="save-button" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
 
       <span class="demo-separator"></span>
 

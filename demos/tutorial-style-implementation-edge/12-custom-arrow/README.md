@@ -15,13 +15,13 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-edge/12-custom-arrow/).
 
-This step shows how to implement a visualization of a custom arrow that fits the "parallel line" edge style.
+This step shows how to implement a visualization of a custom arrow that fits the "parallel line"-edge style.
 
 Custom arrow implementations are based on the [IArrow](https://docs.yworks.com/yfileshtml/#/api/IArrow) interface. [IArrow](https://docs.yworks.com/yfileshtml/#/api/IArrow) defines the two methods `getVisualCreator` and `getBoundsProvider`, which return the implementations that create the visualization and specify the bounds of the arrow. In this sample, we implement all three interfaces in a single class.
 
 ## Implementing IArrow
 
-In the `getVisualCreator` method, we store the anchor and direction of the arrow. Then, we simply return `this`, since out class itself will implement the \`IVisualCreator\`interface.
+In the `getVisualCreator` method, we store the anchor and direction of the arrow. Then, we simply return `this`, since our class itself will implement the \`IVisualCreator\`interface.
 
 ```
 getVisualCreator(
@@ -65,7 +65,7 @@ get cropLength(): number {
 
 ## Implementing IVisualCreator
 
-In order to create an arrow visualization, we have to implement the [IVisualCreator](https://docs.yworks.com/yfileshtml/#/api/IVisualCreator) interface.
+To create an arrow visualization, we have to implement the [IVisualCreator](https://docs.yworks.com/yfileshtml/#/api/IVisualCreator) interface.
 
 We create the visualization for the arrow in `createVisual`. If it is called for the first time, we generate a path for the arrowhead. This path must point from the right side to the origin (0/0).
 
@@ -142,7 +142,7 @@ updateVisual(context: IRenderContext, oldVisual: Visual): SvgVisual {
 
 ## Implementing IBoundsProvider
 
-In order to calculate the arrow bounds, we have to implement the [IBoundsProvider](https://docs.yworks.com/yfileshtml/#/api/IBoundsProvider) interface.
+To calculate the arrow bounds, we have to implement the [IBoundsProvider](https://docs.yworks.com/yfileshtml/#/api/IBoundsProvider) interface.
 
 Note
 

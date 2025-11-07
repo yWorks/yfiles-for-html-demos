@@ -32,7 +32,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HorizontalTextAlignment,
-  IGraph,
+  type IGraph,
   LayoutExecutor,
   License,
   MarkupLabelStyle,
@@ -45,8 +45,8 @@ import {
 } from '@yfiles/yfiles'
 
 import { MarkdownLabelStyle } from './MarkdownLabelStyle'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import type { JSONGraph } from '@yfiles/demo-utils/json-model'
 import graphData from './graph-data.json'
 
@@ -59,7 +59,7 @@ import graphData from './graph-data.json'
  * and the label text will be wrapped at word boundaries.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // initialize graph component
   const graphComponent = new GraphComponent('graphComponent')

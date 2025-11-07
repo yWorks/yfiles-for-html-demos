@@ -31,11 +31,11 @@ import {
   FreeNodePortLocationModel,
   GeneralPath,
   GeometryUtilities,
-  ICanvasContext,
-  IInputModeContext,
-  INode,
+  type ICanvasContext,
+  type IInputModeContext,
+  type INode,
   INodeStyle,
-  IRenderContext,
+  type IRenderContext,
   ISvgDefsCreator,
   ITagOwner,
   MutablePoint,
@@ -45,7 +45,7 @@ import {
   SimpleEdge,
   SimpleNode,
   SimplePort,
-  Size,
+  type Size,
   SvgVisual,
   type TaggedSvgVisual
 } from '@yfiles/yfiles'
@@ -428,11 +428,15 @@ export class Sample1NodeStyle extends NodeStyleBase<Sample1NodeStyleVisual> {
 }
 
 class NodeRenderDataCache {
-  constructor(
-    public readonly color: string,
-    public readonly size: Size,
-    public readonly labelLocations: Point[]
-  ) {}
+  readonly labelLocations: Point[]
+  readonly size: Size
+  readonly color: string
+
+  constructor(color: string, size: Size, labelLocations: Point[]) {
+    this.color = color
+    this.size = size
+    this.labelLocations = labelLocations
+  }
 
   equals(other?: NodeRenderDataCache): boolean {
     return (

@@ -51,7 +51,7 @@ A default placement will apply to all labels of the [LabelsSource](https://docs.
 typeLabelCreator.defaults.layoutParameter = InteriorNodeLabelModel.CENTER
 ```
 
-In the case where you want to determine the label position based on specific properties of the data, you can use a [layout parameter provider](https://docs.yworks.com/yfileshtml/#/api/LabelCreator#LabelCreator-property-layoutParameterProvider) which will provide the information about the desired label placement.
+In the case where you want to determine the label position based on specific properties of the data, you can use a [layout parameter provider](https://docs.yworks.com/yfileshtml/#/api/LabelCreator#layoutParameterProvider) which will provide the information about the desired label placement.
 
 In this example, we want to create two labels for each node. The first label will be bound to the `type` property of our dataset and will use the `default` placement, i.e., at the center of the node. The second label will be bound to the `name` property and will be placed at the top side of the node, stretched over the node’s width. To achieve the desired placement, we create the layout provider as follows:
 
@@ -110,7 +110,7 @@ nameLabelCreator.styleProvider = (data): ILabelStyle => {
 
 ### Label size
 
-Using the same approach, the label size can be configured either using [size bindings](https://docs.yworks.com/yfileshtml/#/api/LabelCreator#LabelCreator-property-preferredSizeBindings) or using a [size provider](https://docs.yworks.com/yfileshtml/#/api/LabelCreator#LabelCreator-property-preferredSizeProvider). The following code shows how to set a different size to the labels of type `Trust`.
+Using the same approach, the label size can be configured either using [size bindings](https://docs.yworks.com/yfileshtml/#/api/LabelCreator#preferredSizeBindings) or using a [size provider](https://docs.yworks.com/yfileshtml/#/api/LabelCreator#preferredSizeProvider). The following code shows how to set a different size to the labels of type `Trust`.
 
 ```
 // set a new size for the labels with type 'Trust'

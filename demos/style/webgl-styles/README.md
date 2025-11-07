@@ -25,7 +25,3 @@ The side panel shows the various configuration options for the graph items.
 
 - Click on a node, edge, or label to open the corresponding configuration options in the sidebar. Change the settings and observe how the selected graph items change.
 - Create new nodes, edges, or labels. New items will use the current values from the corresponding configuration options in the sidebar.
-
-### Note on Firefox
-
-Firefox currently has a problem generating images from the Font Awesome glyphs used as image labels for the nodes. Please reload the demo to properly show the image labels.

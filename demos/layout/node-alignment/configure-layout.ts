@@ -26,11 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  AlignmentStage,
-  type AlignmentStageAlignmentPolicy,
-  type ILayoutAlgorithm
-} from '@yfiles/yfiles'
+import { AlignmentStage, type AlignmentStageAlignmentPolicy, type ILayoutAlgorithm } from '@yfiles/yfiles'
 
 /**
  * Represents the set of configuration settings available for the {@link AlignmentStage}

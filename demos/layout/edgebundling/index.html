@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Edge Bundling Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       .gc-busy {
@@ -98,18 +98,20 @@
 
       <span>Sample</span>
       <select title="Select a sample graph" id="sample-combo-box">
-        <option>Single Cycle Layout</option>
-        <option>Circular Layout</option>
-        <option>Radial Layout</option>
-        <option>Radial Tree Layout</option>
-        <option>Tree Layout</option>
-        <option>Bundled Routing</option>
+        <option value="single-cycle-layout">Single Cycle Layout</option>
+        <option value="circular-layout">Circular Layout</option>
+        <option value="radial-layout">Radial Layout</option>
+        <option value="radial-tree-layout">Radial Tree Layout</option>
+        <option value="tree-layout">Tree Layout</option>
+        <option value="bundled-routing">Bundled Routing</option>
       </select>
 
       <span class="demo-separator"></span>
 
-      <label>
-        Bundling Strength:
+      <label for="bundling-strength-slider" class="yplay__menu--select-label option-label"
+        >Bundling Strength:</label
+      >
+      <div class="yplay__menu--slider-container option-element">
         <input
           type="range"
           min="0"
@@ -117,9 +119,10 @@
           value="0.98"
           step="0.01"
           id="bundling-strength-slider"
+          class="yplay__menu--slider option-element"
         />
-        <span id="bundling-strength-label">0.98</span>
-      </label>
+        <span class="yplay__menu--slider-value" id="bundling-strength-label">0.98</span>
+      </div>
     </div>
     <aside class="demo-page__description">
       <div class="demo-description__header">
@@ -144,7 +147,7 @@
           The edge curves are drawn using piecewise cubic bezier curves with gradient colors from
           dark-blue (that starts from the source node) to light-blue (that leads to the target node
           of the edge). For the approximation of the edge curves, a
-          <a href="https://docs.yworks.com/yfileshtml/#/api/CurveFittingLayoutStage" target="_blank">CurveFittingLayoutStage</a>
+          <a href="https://docs.yworks.com/yfileshtml/#/api/CurveFittingStage" class="api" target="_blank">CurveFittingStage</a>
           is applied.
         </p>
         <p>

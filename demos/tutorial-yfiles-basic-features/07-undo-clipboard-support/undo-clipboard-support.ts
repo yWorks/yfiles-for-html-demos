@@ -26,11 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphComponent,
-  GraphEditorInputMode,
-  type IGraph
-} from '@yfiles/yfiles'
+import type { GraphComponent, GraphEditorInputMode, IGraph } from '@yfiles/yfiles'
 
 /**
  * Enables undo functionality.
@@ -77,7 +73,7 @@ export function clearUndoQueue(graph: IGraph): void {
 /**
  * Demonstrates clipboard low-level functionality.
  */
-function enableClipboard(graphComponent: GraphComponent): void {
+export function enableClipboard(graphComponent: GraphComponent): void {
   const graphEditorInputMode = graphComponent.inputMode as GraphEditorInputMode
   graphEditorInputMode.allowClipboardOperations = true // this is the default, already
 

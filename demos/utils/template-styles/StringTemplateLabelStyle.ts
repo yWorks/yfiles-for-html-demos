@@ -27,9 +27,9 @@
  **
  ***************************************************************************/
 import {
-  GeneralPath,
-  ILabel,
-  IRenderContext,
+  type GeneralPath,
+  type ILabel,
+  type IRenderContext,
   LabelStyleBase,
   Size,
   type SizeConvertible,
@@ -93,7 +93,6 @@ class LabelTemplateContext extends TemplateContext<ILabel> {
     return this.isUpsideDown && this.style.autoFlip
   }
 
-  // noinspection JSUnusedGlobalSymbols
   get styleTag() {
     return this.style.tag
   }
@@ -150,7 +149,6 @@ export class StringTemplateLabelStyle extends LabelStyleBase<TemplateLabelStyleV
 
   /**
    * This mimics the old yFiles 2.x API
-   * @param obj
    */
   static makeObservable<T>(
     obj: T

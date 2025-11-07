@@ -40,8 +40,11 @@ import {
  * A port candidate provider that returns just a single port candidate at the top of the node.
  */
 export class GroupNodePortCandidateProvider extends PortCandidateProviderBase {
-  constructor(private readonly node: INode) {
+  private readonly node: INode
+
+  constructor(node: INode) {
     super()
+    this.node = node
   }
 
   /**

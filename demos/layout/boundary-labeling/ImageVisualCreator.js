@@ -33,6 +33,7 @@ import { BaseClass, IVisualCreator, SvgVisual } from '@yfiles/yfiles'
  */
 export class ImageVisualCreator extends BaseClass(IVisualCreator) {
   imageRect
+
   /**
    * Initializes a new instance of <code>ImageVisualCreator</code>.
    * @param imageRect The rectangle that defines the location and the size of the image.

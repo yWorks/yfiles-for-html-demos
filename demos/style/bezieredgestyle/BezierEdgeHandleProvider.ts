@@ -28,11 +28,11 @@
  ***************************************************************************/
 import {
   BaseClass,
-  IEdge,
-  IEnumerable,
+  type IEdge,
+  type IEnumerable,
   IHandle,
   IHandleProvider,
-  IInputModeContext
+  type IInputModeContext
 } from '@yfiles/yfiles'
 
 /**

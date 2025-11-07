@@ -31,8 +31,8 @@ import {
   Color,
   GraphComponent,
   GraphEditorInputMode,
-  INode,
-  IRenderContext,
+  type INode,
+  type IRenderContext,
   IVisualCreator,
   LayoutExecutor,
   License,
@@ -43,8 +43,8 @@ import {
 } from '@yfiles/yfiles'
 import { WebglBlobVisual } from './WebglBlobVisual'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { checkWebGLSupport, finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { checkWebGLSupport, finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent: GraphComponent
 
@@ -57,7 +57,7 @@ async function run(): Promise<void> {
   if (!checkWebGLSupport()) {
     return
   }
-  License.value = await fetchLicense()
+  License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   // initialize the input mode
   graphComponent.inputMode = new GraphEditorInputMode({

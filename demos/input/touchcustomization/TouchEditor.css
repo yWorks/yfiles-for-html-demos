@@ -186,7 +186,7 @@
 }
 
 .panning-options-box {
-  background: url('../../resources/icons/arrowheadDownWhite.png') no-repeat 99px 7px;
+  background: url('../../demo-app/icons/arrowheadDownWhite.png') no-repeat 99px 7px;
   height: 29px;
   overflow: hidden;
   width: 120px;

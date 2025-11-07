@@ -39,11 +39,11 @@ import {
 
 import { DeepZoomGroupNodeStyle } from './DeepZoomGroupNodeStyle'
 import { fitContent, initializeDeepZoom, zoomToOriginal } from './deep-zoom-update'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { loadSampleGraph } from './model/load-sample-graph'
 import { applyDeepZoomLayout } from './deep-zoom-layout'
-import { createDemoShapeNodeStyle } from '@yfiles/demo-resources/demo-styles'
+import { createDemoShapeNodeStyle } from '@yfiles/demo-app/demo-styles'
 
 // Ensure that the LayoutExecutor class is not removed by build optimizers
 // It is needed for the 'applyLayoutAnimated' method in this demo.
@@ -53,7 +53,7 @@ LayoutExecutor.ensure()
  * Bootstraps the demo.
  */
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
   const graphComponent = new GraphComponent('graphComponent')
 
   // hide the scrollbars

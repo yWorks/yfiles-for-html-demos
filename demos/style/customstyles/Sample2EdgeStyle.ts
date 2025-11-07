@@ -35,21 +35,21 @@ import {
   EdgeStyleBase,
   GeneralPath,
   IArrow,
-  ICanvasContext,
-  IEdge,
-  IInputModeContext,
-  ILookup,
+  type ICanvasContext,
+  type IEdge,
+  type IInputModeContext,
+  type ILookup,
   INode,
   IObstacleProvider,
-  IRenderContext,
+  type IRenderContext,
   ISvgDefsCreator,
   MarkupExtension,
   Point,
-  Rect,
+  type Rect,
   SvgVisual,
   type TaggedSvgVisual
 } from '@yfiles/yfiles'
-import { type ColorSetName, isColorSetName } from '@yfiles/demo-resources/demo-styles'
+import { type ColorSetName, isColorSetName } from '@yfiles/demo-app/demo-styles'
 import { Sample2Arrow } from './Sample2Arrow'
 import { SVGNS } from './Namespaces'
 
@@ -64,14 +64,16 @@ type Sample1EdgeStyleVisual = TaggedSvgVisual<SVGGElement | SVGPathElement, Edge
  * A custom demo edge style whose colors match the given well-known CSS style.
  */
 export class Sample2EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
+  cssClass?: string | ColorSetName
   private hiddenArrow: Arrow = new Arrow({ type: ArrowType.NONE, cropLength: 6 })
   private fallbackArrow: Sample2Arrow = new Sample2Arrow()
   private markerDefsSupport: MarkerDefsSupport | null = null
   showTargetArrows = true
   useMarkerArrows = true
 
-  constructor(public cssClass?: string | ColorSetName) {
+  constructor(cssClass?: string | ColorSetName) {
     super()
+    this.cssClass = cssClass
   }
 
   /**
@@ -120,11 +122,12 @@ export class Sample2EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
     }
 
     if (this.useMarkerArrows) {
-      this.showTargetArrows &&
+      if (this.showTargetArrows) {
         path.setAttribute(
           'marker-end',
           'url(#' + renderContext.getDefsId(this.createMarker()) + ')'
         )
+      }
 
       return SvgVisual.from(path, {
         path: renderPath,
@@ -135,9 +138,9 @@ export class Sample2EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
     // use yFiles arrows instead of markers
     const container = document.createElementNS(SVGNS, 'g')
     container.appendChild(path)
-    this.showTargetArrows &&
+    if (this.showTargetArrows) {
       super.addArrows(renderContext, container, edge, gp, IArrow.NONE, this.fallbackArrow)
-
+    }
     return SvgVisual.from(container, {
       path: renderPath,
       obstacleHash: this.getObstacleHash(renderContext)
@@ -186,8 +189,9 @@ export class Sample2EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
         while (container.childElementCount > 1) {
           container.removeChild(container.lastChild!)
         }
-        this.showTargetArrows &&
+        if (this.showTargetArrows) {
           super.addArrows(renderContext, container, edge, gp, IArrow.NONE, this.fallbackArrow)
+        }
       }
     }
     return oldVisual
@@ -384,8 +388,11 @@ export class Sample2EdgeStyle extends EdgeStyleBase<Sample1EdgeStyleVisual> {
  * Manages the arrow markers as SVG definitions.
  */
 export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
-  constructor(public cssClass?: string | ColorSetName) {
+  cssClass?: string | ColorSetName
+
+  constructor(cssClass?: string | ColorSetName) {
     super()
+    this.cssClass = cssClass
   }
 
   /**
@@ -436,8 +443,11 @@ export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
  * A custom {@link IObstacleProvider} implementation for {@link Sample2EdgeStyle}.
  */
 class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
-  constructor(private edge: IEdge) {
+  private edge: IEdge
+
+  constructor(edge: IEdge) {
     super()
+    this.edge = edge
   }
 
   /**

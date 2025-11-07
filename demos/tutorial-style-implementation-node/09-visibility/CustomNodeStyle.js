@@ -59,14 +59,12 @@ export class CustomNodeStyle extends NodeStyleBase {
     return new SvgVisual(g)
   }
 
-
   isVisible(context, rectangle, node) {
     // consider the circle, which is twice the size of the node
     const circleDiameter = Math.max(node.layout.height, node.layout.width) * 2
     const bounds = Rect.fromCenter(node.layout.center, new Size(circleDiameter, circleDiameter))
     return rectangle.intersects(bounds)
   }
-
 
   isHit(context, location, node) {
     // Check for bounding box

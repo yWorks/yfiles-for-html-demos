@@ -26,11 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import '@yfiles/demo-resources/style/loading-demo.css'
+import '@yfiles/demo-app/loading-demo.css'
 import { GraphComponent, GraphEditorInputMode, License, Rect } from '@yfiles/yfiles'
-import licenseValue from './license.json'
+import licenseData from './license.json'
 
-License.value = licenseValue
+License.value = licenseData
 
 function run() {
   const graphComponent = new GraphComponent('#graphComponent')

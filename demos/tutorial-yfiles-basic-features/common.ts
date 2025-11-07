@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   EdgeStyleIndicatorRenderer,
   ExteriorNodeLabelModel,
@@ -37,10 +36,9 @@ import {
   GroupNodeLabelModel,
   GroupNodeStyle,
   HorizontalTextAlignment,
-  IGraph,
+  type IGraph,
   InteriorNodeLabelModel,
   LabelStyle,
-  type NodesSource,
   NodeStyleIndicatorRenderer,
   Point,
   PolylineEdgeStyle,
@@ -53,35 +51,6 @@ import {
   graphDataLayout,
   graphDataLayoutData
 } from './graph-data'
-
-/**
- * Configures colors for styling the nodes retrieved from the given data sources.
- */
-export function configureStyles(nodesSources: NodesSource<any>[]): void {
-  const nodeFills = ['#0b7189', '#111d4a', '#ff6c00', '#ab2346', '#621b00']
-  const nodeStrokes = ['#042d37', '#070c1e', '#662b00', '#440e1c', '#270b00']
-  const labelTextColors = [
-    '#042d37',
-    '#070c1e',
-    '#662b00',
-    '#440e1c',
-    '#270b00'
-  ]
-  const labelFills = ['#9dc6d0', '#a0a5b7', '#ffc499', '#dda7b5', '#c0a499']
-  nodesSources.forEach((nodesSource, index) => {
-    nodesSource.nodeCreator.defaults.style = new ShapeNodeStyle({
-      shape: 'round-rectangle',
-      fill: nodeFills[index % nodeFills.length],
-      stroke: nodeStrokes[index % nodeStrokes.length]
-    })
-    nodesSource.nodeCreator.defaults.labels.style = new LabelStyle({
-      shape: 'round-rectangle',
-      textFill: labelTextColors[index % labelTextColors.length],
-      backgroundFill: labelFills[index % labelFills.length],
-      padding: 2
-    })
-  })
-}
 
 /**
  * Initializes the default styles for nodes, edges, and labels.
@@ -126,12 +95,12 @@ export function initializeTutorialDefaults(
  * Fits the graph into the graph component with a minimum zoom value.
  * The graph will be slightly zoomed in to avoid that small graphs are displayed too small.
  */
-export function fitGraphBounds(
+export async function fitGraphBounds(
   graphComponent: GraphComponent,
   minimumZoom = 3
-): void {
+): Promise<void> {
   graphComponent.limitFitContentZoom = false
-  graphComponent.fitGraphBounds()
+  await graphComponent.fitGraphBounds()
   graphComponent.zoom = Math.min(graphComponent.zoom, minimumZoom)
 }
 
@@ -139,7 +108,7 @@ export function fitGraphBounds(
  * Creates a sample graph and introduces all important graph elements present in
  * yFiles for HTML. Additionally, this method now overrides the label placement for some specific labels.
  */
-export function createSampleGraph(graph: IGraph) {
+export function createSampleGraph(graph: IGraph): void {
   const node1 = graph.createNodeAt(new Point(30, 30))
   const node2 = graph.createNodeAt(new Point(170, 30))
   const node3 = graph.createNode(new Rect(230, 200, 60, 30))
@@ -161,11 +130,11 @@ export function createSampleGraph(graph: IGraph) {
   // Adds labels to several graph elements
   graph.addLabel(node1, 'n1')
   graph.addLabel(node2, 'n2')
-  const n3Label = graph.addLabel(node3, 'n3')
+  graph.addLabel(node3, 'n3')
   graph.addLabel(edgeAtPorts, 'Edge at Ports')
 }
 
-export function createSampleGraphLabelPlacement(graph: IGraph) {
+export function createSampleGraphLabelPlacement(graph: IGraph): void {
   const node1 = graph.createNodeAt(new Point(30, 30))
   const node2 = graph.createNode(new Rect(120, 10, 60, 40))
   const node3 = graph.createNode(new Rect(230, 200, 60, 30))
@@ -187,7 +156,7 @@ export function createSampleGraphLabelPlacement(graph: IGraph) {
   // Adds labels to several graph elements
   graph.addLabel(node1, 'n1')
   graph.addLabel(node2, 'n2')
-  const n3Label = graph.addLabel(node3, 'n3')
+  graph.addLabel(node3, 'n3')
   graph.addLabel(edgeAtPorts, 'Edge at Ports')
 }
 
@@ -195,7 +164,7 @@ export function createSampleGraphLabelPlacement(graph: IGraph) {
  * Creates a sample graph and introduces all important graph elements present in
  * yFiles for HTML. Additionally, this method now overrides the label placement for some specific labels.
  */
-export function createSampleGraphViewport(graph: IGraph) {
+export function createSampleGraphViewport(graph: IGraph): void {
   const node1 = graph.createNodeAt(new Point(30, 30))
   const node2 = graph.createNodeAt(new Point(150, 30))
 
@@ -294,7 +263,7 @@ export function createSampleGraphAnalysis(graph: IGraph): void {
 }
 
 export function setDefaultLabelLayoutParameters(graph: IGraph): void {
-  // For node labels, the default is a label position at the node center
+  // For node labels, the default is a label position at the node center.
   // Let's keep the default.  Here is how to set it manually
 
   // Place node labels in the node center

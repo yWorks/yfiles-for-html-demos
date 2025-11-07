@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>01 Create a Polyline - Tutorial: Edge Style Implementation [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -160,10 +160,10 @@
                     </td>
                     <td class="content">
                       Implementing a custom edge style from scratch is an advanced concept. In a lot
-                      of cases, other approaches like template styles, or decorating built-in styles
-                      with custom elements are sufficient. For more information the topic of styling
+                      of cases, other approaches like template styles or decorating built-in styles
+                      with custom elements are enough. For more information the topic of styling
                       graph items, please have a look at
-                      <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-edge_styles" target="_blank">Edge Styles</a>.
+                      <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-edge_styles" class="dguide" target="_blank">Edge Styles</a>.
                     </td>
                   </tr>
                 </table>
@@ -177,15 +177,15 @@
                 <p>
                   yFiles for HTML provides an abstract base class which provides the basic functionality
                   to create a custom edge style. We start with a custom subclass of
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase" target="_blank">EdgeStyleBase</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase" class="api" target="_blank">EdgeStyleBase</a>.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomEdgeStyle</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">EdgeStyleBase</span> {
-  protected <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomEdgeStyle</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_ inherited__">EdgeStyleBase</span> {
+  <span class="hljs-keyword">protected</span> <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
     <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span> <span class="hljs-comment">// TODO - create the SVG element</span>
   }
 }</code></pre>
@@ -195,9 +195,9 @@
                 <p>
                   This code will not produce anything visible, yet. We first have to implement the
                   <code>createVisual</code> method. This method returns an SVG element, wrapped into
-                  an <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" target="_blank">SvgVisual</a>. Let&#8217;s begin with a polyline, which connects
+                  an <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" class="api" target="_blank">SvgVisual</a>. Let&#8217;s begin with a polyline, which connects
                   two nodes via multiple line segments running through its bends. We will switch to
-                  a more complex visualization later on. We use a SVGPathElement to render the
+                  a more complex visualization later on. We use an SVGPathElement to render the
                   polyline:
                 </p>
               </div>
@@ -205,7 +205,7 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">protected <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">protected</span> <span class="hljs-title function_">createVisual</span>(<span class="hljs-attr">context</span>: <span class="hljs-title class_">IRenderContext</span>, <span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>): <span class="hljs-title class_">Visual</span> | <span class="hljs-literal">null</span> {
   <span class="hljs-keyword">const</span> path = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElementNS</span>(<span class="hljs-string">&#x27;http://www.w3.org/2000/svg&#x27;</span>, <span class="hljs-string">&#x27;path&#x27;</span>)
   path.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;d&#x27;</span>, <span class="hljs-variable language_">this</span>.<span class="hljs-title function_">createPathData</span>(edge))
   path.<span class="hljs-title function_">setAttribute</span>(<span class="hljs-string">&#x27;fill&#x27;</span>, <span class="hljs-string">&#x27;none&#x27;</span>)
@@ -239,24 +239,18 @@
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">private <span class="hljs-title function_">createPathData</span>(<span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>): string {
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-keyword">private</span> <span class="hljs-title function_">createPathData</span>(<span class="hljs-attr">edge</span>: <span class="hljs-title class_">IEdge</span>): <span class="hljs-built_in">string</span> {
   <span class="hljs-keyword">const</span> points = <span class="hljs-title class_">IEdge</span>.<span class="hljs-title function_">getPathPoints</span>(edge).<span class="hljs-title function_">toArray</span>()
   <span class="hljs-keyword">return</span> <span class="hljs-string">&#x27;M &#x27;</span> + points.<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">point</span>) =&gt;</span> <span class="hljs-string">`<span class="hljs-subst">${point.x}</span> <span class="hljs-subst">${point.y}</span>`</span>).<span class="hljs-title function_">join</span>(<span class="hljs-string">&#x27; L &#x27;</span>)
 }</code></pre>
                 </div>
               </div>
-              <div class="admonitionblock note">
-                <table>
-                  <tr>
-                    <td class="icon">
-                      <div class="title">Note</div>
-                    </td>
-                    <td class="content">
-                      It&#8217;s important that SvgVisual contains an SVG element in the
-                      'http://www.w3.org/2000/svg' namespace. HTML elements are not supported.
-                    </td>
-                  </tr>
-                </table>
+              <div class="paragraph">
+                <p>
+                  Besides <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" class="api" target="_blank">SvgVisual</a>, which can contain only an SVG element, there
+                  are other visuals as well, for example <a href="https://docs.yworks.com/yfileshtml/#/api/HtmlVisual" class="api" target="_blank">HtmlVisual</a> for HTML
+                  elements.
+                </p>
               </div>
             </div>
           </div>
@@ -273,7 +267,8 @@
         <div id="graphComponent"></div>
       </div>
     </div>
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-edge/07-hit-testing/).
 
-Styles not only provide a visual representation for graph items. They also offer crucial parts for interacting with said items. Hit-testing determines whether a particular item is at a given point in the canvas. It happens all the time during interaction, e.g. when selecting items, moving nodes, or creating edges.
+Styles not only provide a visual representation for graph items. They also offer crucial parts for interacting with said items. Hit-testing determines whether a particular item is at a given point in the canvas. It happens all the time during interaction, e.g., when selecting items, moving nodes, or creating edges.
 
 The default implementation in the `EdgeStyleBase` class only considers the polyline with thickness 1 when hit-testing. When edges have shapes that deviate from the polyline, hit-testing has to be adjusted by providing a different implementation for the `isHit` method.
 

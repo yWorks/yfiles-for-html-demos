@@ -28,10 +28,8 @@
  ***************************************************************************/
 import {
   AdjacencyGraphBuilder,
-  AdjacencyNodesSource,
   Arrow,
   ArrowType,
-  CreateEdgeInputMode,
   Cursor,
   EdgeCreator,
   EdgePortCandidates,
@@ -46,9 +44,7 @@ import {
   HierarchicalLayoutEdgeDescriptor,
   HierarchicalLayoutRoutingStyle,
   IEdge,
-  IGraph,
   IHitTestable,
-  IInputMode,
   ILabel,
   INode,
   INodeStyle,
@@ -75,11 +71,8 @@ import {
 } from './ModelClasses'
 import { EditAdjacencyNodesSourceDialog } from './EditAdjacencyNodeSourceDialog'
 import { FlippedArrow } from './FlippedArrow'
-import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
+import { createDemoEdgeStyle } from '@yfiles/demo-app/demo-styles'
 import { LitNodeStyle } from '@yfiles/demo-utils/LitNodeStyle'
-
-// @ts-ignore Import via URL
-// eslint-disable-next-line import/no-unresolved
 import { nothing, svg } from 'lit-html'
 
 const arrow = new Arrow({
@@ -201,16 +194,13 @@ export class SchemaComponent {
         graphComponent.selection.edges.add(edge)
 
         if (edge.labels.size === 0) {
-          // noinspection JSIgnoredPromiseFromCall
           inputMode.editLabelInputMode.startLabelAddition(edge)
         } else {
-          // noinspection JSIgnoredPromiseFromCall
           inputMode.editLabelInputMode.startLabelEditing(edge.labels.get(0))
         }
       } else if (evt.item instanceof ILabel && evt.item.owner instanceof IEdge) {
         evt.handled = true
         graphComponent.selection.add(evt.item.owner)
-        // noinspection JSIgnoredPromiseFromCall
         inputMode.editLabelInputMode.startLabelEditing(evt.item)
       }
     })
@@ -226,14 +216,12 @@ export class SchemaComponent {
     // create a new nodes source and layout the graph
     inputMode.addEventListener('node-created', (evt) => {
       this.createNewAdjacencyNodesSource(evt.item)
-      // noinspection JSIgnoredPromiseFromCall
       this.applySchemaLayout()
     })
 
     // create the relationship in the AdjacencyGraphBuilder and layout the graph
     inputMode.createEdgeInputMode.addEventListener('edge-created', (evt) => {
       this.createNeighborRelationship('successors', evt.item, 'successor')
-      // noinspection JSIgnoredPromiseFromCall
       this.applySchemaLayout()
     })
 
@@ -543,7 +531,6 @@ export class SchemaComponent {
    */
   openEditNodeSourceDialog(schemaNode) {
     const sourceDefinitionConnector = schemaNode.tag
-    // noinspection JSIgnoredPromiseFromCall
     new EditAdjacencyNodesSourceDialog(sourceDefinitionConnector, () => {
       this.schemaGraphComponent.graph.setLabelText(
         schemaNode.labels.first(),

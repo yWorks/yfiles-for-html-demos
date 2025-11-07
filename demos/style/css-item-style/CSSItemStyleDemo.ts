@@ -29,8 +29,8 @@
 // eslint-disable @typescript-eslint/explicit-function-return-type
 
 import { GraphComponent, GraphViewerInputMode, License } from '@yfiles/yfiles'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import {
   addStylesheet,
   createStylesheetView,
@@ -42,7 +42,7 @@ import { configureSelectionHighlight } from './configure-selection-highlight'
 import { configureHoverHighlight } from './configure-hover-highlight'
 
 async function run(): Promise<void> {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
   // do not allow structural changes in this demo

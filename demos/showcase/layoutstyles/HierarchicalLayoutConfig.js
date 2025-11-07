@@ -35,7 +35,6 @@ import {
   FeedbackEdgeSet,
   FromSketchLayerAssigner,
   GenericLabeling,
-  GraphComponent,
   GridComponentDescriptor,
   GroupAlignmentPolicy,
   GroupLayeringPolicy,
@@ -46,12 +45,7 @@ import {
   HierarchicalLayoutPortAssignmentMode,
   HierarchicalLayoutRoutingStyle,
   HierarchicalLayoutSubcomponentDescriptor,
-  IEdge,
-  IGraph,
-  ILayoutAlgorithm,
-  INode,
   ITable,
-  LayoutData,
   LayoutOrientation,
   LeftRightSubtreePlacer,
   List,
@@ -75,14 +69,13 @@ import {
 } from './LayoutConfiguration'
 import {
   ComponentAttribute,
-  Components,
   EnumValuesAttribute,
   LabelAttribute,
   MinMaxAttribute,
   OptionGroup,
   OptionGroupAttribute,
   TypeAttribute
-} from '@yfiles/demo-resources/demo-option-editor'
+} from '@yfiles/demo-app/demo-option-editor'
 import { TopLevelGroupToSwimlaneStage } from './TopLevelGroupToSwimlaneStage'
 
 /**
@@ -162,7 +155,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
     ],
     descriptionText: [
       new OptionGroupAttribute('DescriptionGroup', 10),
-      new ComponentAttribute(Components.HTML_BLOCK),
+      new ComponentAttribute('html-block'),
       new TypeAttribute(String)
     ],
     selectedElementsIncrementallyItem: [
@@ -223,7 +216,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       ),
       new MinMaxAttribute(0, 150),
       new OptionGroupAttribute('GeneralGroup', 50),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     nodeDistanceItem: [
@@ -233,7 +226,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       ),
       new MinMaxAttribute(0, 100),
       new OptionGroupAttribute('DistanceGroup', 10),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     nodeToEdgeDistanceItem: [
@@ -243,7 +236,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       ),
       new MinMaxAttribute(0, 100),
       new OptionGroupAttribute('DistanceGroup', 20),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     edgeDistanceItem: [
@@ -253,7 +246,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       ),
       new MinMaxAttribute(0, 100),
       new OptionGroupAttribute('DistanceGroup', 30),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumLayerDistanceItem: [
@@ -263,7 +256,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       ),
       new MinMaxAttribute(0, 100),
       new OptionGroupAttribute('DistanceGroup', 40),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     edgeRoutingItem: [
@@ -319,7 +312,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 60),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumLastSegmentLengthItem: [
@@ -329,7 +322,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 70),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumEdgeLengthItem: [
@@ -339,7 +332,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 80),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumEdgeDistanceItem: [
@@ -349,7 +342,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 90),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumSlopeItem: [
@@ -359,7 +352,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
         '#/api/HierarchicalLayoutEdgeDescriptor#HierarchicalLayoutEdgeDescriptor-property-minimumSlope'
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     edgeDirectednessItem: [
@@ -406,7 +399,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       ),
       new OptionGroupAttribute('EdgeSettingsGroup', 160),
       new MinMaxAttribute(0, 1, 0.1),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     curveShortcutsItem: [
@@ -480,7 +473,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
         'Scale',
         '#/api/FromSketchLayerAssigner#FromSketchLayerAssigner-property-nodeScalingFactor'
       ),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     nodeMarginItem: [
@@ -490,7 +483,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
         '#/api/FromSketchLayerAssigner#FromSketchLayerAssigner-property-nodeMargin'
       ),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     minimumSizeItem: [
@@ -500,7 +493,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
         '#/api/FromSketchLayerAssigner#FromSketchLayerAssigner-property-minimumNodeSize'
       ),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     maximumSizeItem: [
@@ -510,7 +503,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
         '#/api/FromSketchLayerAssigner#FromSketchLayerAssigner-property-maximumNodeSize'
       ),
       new MinMaxAttribute(0, 1000),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     nodeLabelingItem: [
@@ -559,10 +552,10 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       new LabelAttribute('Orientation', '#/api/EdgeLabelPreferredPlacement'),
       new OptionGroupAttribute('PreferredPlacementGroup', 10),
       new EnumValuesAttribute([
-        ['Parallel', LabelPlacementOrientation.PARALLEL],
-        ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
-        ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
-        ['Vertical', LabelPlacementOrientation.VERTICAL]
+        ['Parallel', 'parallel'],
+        ['Orthogonal', 'orthogonal'],
+        ['Horizontal', 'horizontal'],
+        ['Vertical', 'vertical']
       ]),
       new TypeAttribute(LabelPlacementOrientation)
     ],
@@ -573,12 +566,12 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 20),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
-        ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
-        ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
-        ['At Target', LabelPlacementAlongEdge.AT_TARGET],
-        ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
-        ['Centered', LabelPlacementAlongEdge.CENTERED]
+        ['Anywhere', 'anywhere'],
+        ['At Source', 'at-source'],
+        ['At Source Port', 'at-source-port'],
+        ['At Target', 'at-target'],
+        ['At Target Port', 'at-target-port'],
+        ['Centered', 'centered']
       ]),
       new TypeAttribute(LabelPlacementAlongEdge)
     ],
@@ -589,11 +582,11 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 30),
       new EnumValuesAttribute([
-        ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
-        ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
-        ['Left', LabelPlacementSideOfEdge.LEFT],
-        ['Right', LabelPlacementSideOfEdge.RIGHT],
-        ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+        ['Anywhere', 'anywhere'],
+        ['On Edge', 'on-edge'],
+        ['Left', 'left'],
+        ['Right', 'right'],
+        ['Left or Right', 'left-or-right']
       ]),
       new TypeAttribute(LabelPlacementSideOfEdge)
     ],
@@ -604,7 +597,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       ),
       new OptionGroupAttribute('PreferredPlacementGroup', 40),
       new MinMaxAttribute(0, 40),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     groupLayeringPolicyItem: [
@@ -655,7 +648,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
       new OptionGroupAttribute('SwimlanesGroup', 30),
       new LabelAttribute('Lane Spacing'),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     gridEnabledItem: [
@@ -673,7 +666,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
         '#/api/HierarchicalLayout#HierarchicalLayout-property-gridSpacing'
       ),
       new MinMaxAttribute(0, 100),
-      new ComponentAttribute(Components.SLIDER),
+      new ComponentAttribute('slider'),
       new TypeAttribute(Number)
     ],
     gridPortAssignmentItem: [
@@ -722,9 +715,9 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
     this.stopDurationItem = 5
     this.edgeLabelingItem = EdgeLabelPlacement.INTEGRATED
     this.compactEdgeLabelPlacementItem = true
-    this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
-    this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
-    this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
+    this.labelPlacementAlongEdgeItem = 'centered'
+    this.labelPlacementSideOfEdgeItem = 'on-edge'
+    this.labelPlacementOrientationItem = 'horizontal'
     this.labelPlacementDistanceItem = 10.0
     this.groupLayeringPolicyItem = GroupLayeringPolicy.RECURSIVE
     this.gridEnabledItem = false
@@ -1364,7 +1357,7 @@ export const HierarchicalLayoutConfig = Class('HierarchicalLayoutConfig', {
     get: function () {
       return (
         this.edgeLabelingItem === EdgeLabelPlacement.IGNORE ||
-        this.labelPlacementSideOfEdgeItem === LabelPlacementSideOfEdge.ON_EDGE
+        this.labelPlacementSideOfEdgeItem === 'on-edge'
       )
     }
   },

@@ -27,10 +27,10 @@
  **
  ***************************************************************************/
 import { BezierEdgeStyle, type IEdgeStyle, Neighborhood, TraversalDirection } from '@yfiles/yfiles'
-import { NeighborhoodType } from './NeighborhoodType'
+import type { NeighborhoodType } from './NeighborhoodType'
 import { getBuildNeighborhoodCallback } from '../neighborhood/build-graph-callback'
 import type { BuildGraphCallback } from '../neighborhood/NeighborhoodView'
-import { createDemoEdgeStyle } from '@yfiles/demo-resources/demo-styles'
+import { createDemoEdgeStyle } from '@yfiles/demo-app/demo-styles'
 
 /**
  * Returns the "build neighborhood graph" callback that is able to create neighborhood graphs
@@ -59,13 +59,13 @@ export function getBuildGraphCallback(
  */
 function getTraversalDirection(mode: NeighborhoodType): TraversalDirection {
   switch (mode) {
-    case NeighborhoodType.PREDECESSORS:
+    case 'Predecessors':
       return TraversalDirection.PREDECESSOR
-    case NeighborhoodType.SUCCESSORS:
+    case 'Successors':
       return TraversalDirection.SUCCESSOR
-    case NeighborhoodType.BOTH:
+    case 'Both':
       return TraversalDirection.BOTH
-    default: // NeighborhoodMode.NEIGHBORHOOD
+    default: // "Neighbors"
       return TraversalDirection.UNDIRECTED
   }
 }

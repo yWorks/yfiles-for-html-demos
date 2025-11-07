@@ -27,19 +27,6 @@
  **
  ***************************************************************************/
 /**
- * Represents the type of nodes in the demo's pathway samples.
- */
-export var NodeTypes
-;(function (NodeTypes) {
-  NodeTypes[(NodeTypes['ENZYME'] = 0)] = 'ENZYME'
-  NodeTypes[(NodeTypes['REACTION'] = 1)] = 'REACTION'
-  NodeTypes[(NodeTypes['REACTANT'] = 2)] = 'REACTANT'
-  NodeTypes[(NodeTypes['CO_REACTANT'] = 3)] = 'CO_REACTANT'
-  NodeTypes[(NodeTypes['PRODUCT'] = 4)] = 'PRODUCT'
-  NodeTypes[(NodeTypes['OTHER'] = 5)] = 'OTHER'
-})(NodeTypes || (NodeTypes = {}))
-
-/**
  * Returns the type of the given node.
  */
 export function getType(node) {
@@ -71,10 +58,10 @@ export function isOnCircle(node) {
  * A mapping between the string values of the node types in the data-set and the NodeTypes enum.
  */
 export const nodeTypesMap = new Map([
-  ['ENZYME', NodeTypes.ENZYME],
-  ['REACTION', NodeTypes.REACTION],
-  ['CO_REACTANT', NodeTypes.CO_REACTANT],
-  ['PRODUCT', NodeTypes.PRODUCT],
-  ['REACTANT', NodeTypes.REACTANT],
-  ['OTHER', NodeTypes.OTHER]
+  ['ENZYME', 'enzyme'],
+  ['REACTION', 'reaction'],
+  ['CO_REACTANT', 'co-reactant'],
+  ['PRODUCT', 'product'],
+  ['REACTANT', 'reactant'],
+  ['OTHER', 'other']
 ])

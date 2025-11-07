@@ -36,7 +36,7 @@ import {
   InteractiveOrganicLayout,
   InteractiveOrganicLayoutData,
   type InteractiveOrganicNodeHandle,
-  IPortOwner,
+  type IPortOwner,
   LayoutExecutor,
   LayoutGraphAdapter,
   TimeSpan
@@ -63,6 +63,8 @@ export type InteractiveOrganicLayoutConfig = {
 }
 
 export class InteractiveOrganicLayoutHelper {
+  private config: InteractiveOrganicLayoutConfig
+  private readonly graph: IGraph
   private needsStructureUpdate = true
   private layout?: InteractiveOrganicLayout | null
   private layoutData?: InteractiveOrganicLayoutData
@@ -79,10 +81,9 @@ export class InteractiveOrganicLayoutHelper {
    * @param graph - the given graph
    * @param config - the configuration options for the {@link InteractiveOrganicLayoutHelper}.
    */
-  constructor(
-    private readonly graph: IGraph,
-    private config: InteractiveOrganicLayoutConfig
-  ) {
+  constructor(graph: IGraph, config: InteractiveOrganicLayoutConfig) {
+    this.graph = graph
+    this.config = config
     this.duration = this.config.duration ?? 20
   }
 

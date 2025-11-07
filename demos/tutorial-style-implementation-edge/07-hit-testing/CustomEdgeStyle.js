@@ -31,6 +31,7 @@ import { EdgeStyleBase, IArrow, SvgVisual } from '@yfiles/yfiles'
 
 export class CustomEdgeStyle extends EdgeStyleBase {
   distance
+
   /**
    * Creates a new instance of this style using the given distance.
    * @param distance The distance between the paths. The default value is 1.
@@ -101,7 +102,6 @@ export class CustomEdgeStyle extends EdgeStyleBase {
     const edgePath = super.getPath(edge)
     return edgePath.pathContains(location, context.hitTestRadius + thickness * 0.5)
   }
-
 
   /**
    * Returns the color of an edge based on the load property of its tag object.

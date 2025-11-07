@@ -29,26 +29,18 @@
 import {
   ExteriorNodeLabelModel,
   GeneralPath,
-  IEdge,
-  IEdgeStyle,
-  IGraph,
-  IInputModeContext,
   ImageNodeStyle,
-  INode,
-  INodeStyle,
   LabelStyle,
-  Point,
   Rect,
   Size,
   WebGLEffect,
   WebGLImageNodeStyle,
   WebGLNodeStyleDecorator,
-  WebGLShapeNodeShape,
-  WebGLShapeNodeStyle
+  WebGLShapeNodeShape
 } from '@yfiles/yfiles'
 import { getSVGDataURL } from './SVGDataURLFetch'
 import { DemoConfiguration } from './DemoConfiguration'
-import { createDemoGroupStyle } from '@yfiles/demo-resources/demo-styles'
+import { createDemoGroupStyle } from '@yfiles/demo-app/demo-styles'
 
 class LargeGraphDemoConfiguration extends DemoConfiguration {
   svgThreshold = 0.5

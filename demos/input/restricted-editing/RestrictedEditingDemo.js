@@ -31,21 +31,19 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  IEdge,
-  IGraph,
   License
 } from '@yfiles/yfiles'
-import { initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import SampleData from './resources/SampleData'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { EdgePositionHandler } from './EdgePositionHandler'
 
 /**
  * Bootstraps this demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   // create the demo's graph component
   const graphComponent = new GraphComponent('#graphComponent')

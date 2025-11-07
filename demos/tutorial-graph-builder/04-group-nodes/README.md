@@ -35,18 +35,18 @@ const nodeData = [
 ]
 ```
 
-As an alternative to having the type encoded in the `id`, you can also add another property which identifies the group items. In both cases, it is not necessary to mark the group items unless you want to treat them differently from other items, e.g. visualize them differently.
+As an alternative to having the type encoded in the `id`, you can also add another property which identifies the group items. In both cases, it is not necessary to mark the group items unless you want to treat them differently from other items, e.g., visualize them differently.
 
 You can use `GraphBuilder.createGroupNodes` to import the group nodes data. Then, these nodes are automatically visualized with the default group node style.
 
 ```
-const nodesSource = graphBuilder.createNodesSource({
+graphBuilder.createNodesSource({
   data: nodeData.filter((item) => item.id.startsWith('item')),
   id: (item) => item.id,
   parentId: (item) => item.parentId
 })
 
-const groupNodesSource = graphBuilder.createGroupNodesSource({
+graphBuilder.createGroupNodesSource({
   data: nodeData.filter((item) => item.id.startsWith('group')),
   id: (item) => item.id,
   parentId: (item) => item.parentId
@@ -55,7 +55,7 @@ const groupNodesSource = graphBuilder.createGroupNodesSource({
 
 If no parent `id` is assigned to a node, it will appear top-level on the graph component.
 
-Edges work the same way for group nodes as for other nodes. They can connect to the group node if its `id` is referenced in the source or target [id provider](https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-property-idProvider).
+Edges work the same way for group nodes as for other nodes. They can connect to the group node if its `id` is referenced in the source or target [id provider](https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider).
 
 Note
 

@@ -32,7 +32,6 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
-  IGraph,
   ImageNodeStyle,
   License,
   PolylineEdgeStyle,
@@ -42,16 +41,16 @@ import {
 } from '@yfiles/yfiles'
 
 import { LensInputMode } from './LensInputMode'
-import { colorSets, initDemoStyles } from '@yfiles/demo-resources/demo-styles'
+import { colorSets, initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import { deviceIcons, networkData } from './resources/network-sample'
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 let graphComponent = null
 let lensInputMode = null
 
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
 
   graphComponent = new GraphComponent('#graphComponent')
   const graphEditorInputMode = new GraphEditorInputMode({

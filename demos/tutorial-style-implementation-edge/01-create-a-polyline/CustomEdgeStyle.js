@@ -29,7 +29,6 @@
 import { EdgeStyleBase, IEdge, SvgVisual } from '@yfiles/yfiles'
 
 export class CustomEdgeStyle extends EdgeStyleBase {
-
   createVisual(context, edge) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path.setAttribute('d', this.createPathData(edge))
@@ -38,8 +37,6 @@ export class CustomEdgeStyle extends EdgeStyleBase {
     path.setAttribute('stroke-width', '1')
     return new SvgVisual(path)
   }
-
-
 
   createPathData(edge) {
     const points = IEdge.getPathPoints(edge).toArray()

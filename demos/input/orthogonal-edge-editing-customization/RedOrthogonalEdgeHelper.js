@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  BaseClass,
-  IEdge,
-  IGraph,
-  IInputModeContext,
-  IOrthogonalEdgeHelper,
-  SegmentOrientation
-} from '@yfiles/yfiles'
+import { BaseClass, IOrthogonalEdgeHelper, SegmentOrientation } from '@yfiles/yfiles'
 
 /**
  * An {@link IOrthogonalEdgeHelper} for edges that don't have

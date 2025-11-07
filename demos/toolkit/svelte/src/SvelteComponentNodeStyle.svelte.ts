@@ -28,9 +28,9 @@
  ***************************************************************************/
 import type { GraphComponent, INode, IRenderContext, Visual } from '@yfiles/yfiles'
 import { NodeStyleBase, SvgVisual } from '@yfiles/yfiles'
-import { type Component, mount, unmount } from 'svelte'
+import { mount, unmount } from 'svelte'
 import type { Person } from './types'
-import SvgNodeComponent from './SvgNodeComponent.svelte'
+import type SvgNodeComponent from './SvgNodeComponent.svelte'
 
 declare type Props = {
   item: Person

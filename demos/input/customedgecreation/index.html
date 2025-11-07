@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Custom Edge Creation Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -109,18 +109,18 @@
         <h1>Custom Edge Creation Demo</h1>
 
         <p>
-          This demo shows how to provide directional <a href="https://docs.yworks.com/yfileshtml/#/api/IPort" target="_blank">IPort</a>s and
-          <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" target="_blank">PortCandidate</a>s and demonstrates several customizations for the edge
+          This demo shows how to provide directional <a href="https://docs.yworks.com/yfileshtml/#/api/IPort" class="api" target="_blank">IPort</a>s and
+          <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" class="api" target="_blank">PortCandidate</a>s and demonstrates several customizations for the edge
           creation gesture.
         </p>
 
         <h2>Ports and PortCandidates</h2>
         <p>
           Each node provides directional ports that are visualized with a circular
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ShapePortStyle" target="_blank">ShapePortStyle</a>.
+          <a href="https://docs.yworks.com/yfileshtml/#/api/ShapePortStyle" class="api" target="_blank">ShapePortStyle</a>.
         </p>
         <p>
-          This demo restricts edge creation to the provided <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" target="_blank">PortCandidate</a>s.
+          This demo restricts edge creation to the provided <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" class="api" target="_blank">PortCandidate</a>s.
           Therefore, the PortCandidates are also shown on the source on hover to indicate that edge
           creation may start there.
         </p>
@@ -147,18 +147,18 @@
         </p>
         <ul>
           <li>
-            <b>Default Orthogonal</b>: Utilizes the <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalEdgeEditingContext" target="_blank">OrthogonalEdgeEditingContext</a> by
-            enabling <a href="https://docs.yworks.com/yfileshtml/#/api/PolylineEdgeStyle#orthogonalEditing" target="_blank">orthogonal editing</a> on the
+            <b>Default Orthogonal</b>: Utilizes the <a href="https://docs.yworks.com/yfileshtml/#/api/OrthogonalEdgeEditingContext" class="api" target="_blank">OrthogonalEdgeEditingContext</a> by
+            enabling <a href="https://docs.yworks.com/yfileshtml/#/api/PolylineEdgeStyle#orthogonalEditing" class="api" target="_blank">orthogonal editing</a> on the
             edge style which does not require a dedicated layout algorithm. It is the fastest
             approach but does not consider port directions or other nodes.
           </li>
           <li>
-            <b>Edge Router (Quality)</b>: Applies the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a> with each move
+            <b>Edge Router (Quality)</b>: Applies the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a> with each move
             during the edge creation gesture. This is the most expensive approach but yields nicely
             routed edges.
           </li>
           <li>
-            <b>Edge Router (Performance)</b>: Applies the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" target="_blank">EdgeRouter</a> as well but
+            <b>Edge Router (Performance)</b>: Applies the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a> as well but
             sets its <code>stopDuration</code> to <code>0</code> such that a less performance heavy
             approach is used. This still routes around other nodes but sometimes yields less
             appealing results.

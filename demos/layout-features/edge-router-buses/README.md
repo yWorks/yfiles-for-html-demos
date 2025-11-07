@@ -9,36 +9,31 @@
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
-# EdgeRouter with Bus-style Routing - Layout Features
+# Bus-Style Edge Routing
 
 <img src="../../../doc/demo-thumbnails/layout-edge-router-buses.webp" alt="demo-thumbnail" height="320"/>
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/edge-router-buses/).
 
-This demo shows how to configure the EdgeRouter to generate orthogonal bus-style routes. A bus is a segment shared by multiple edges. The actual nodes are attached to the bus with shorter segments.
+This demo shows how to configure the [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter) to generate orthogonal bus-style routes. A bus is a shared segment among multiple edges, with nodes connecting to it via shorter segments.
 
-A bus is defined via the _add_ method of the [buses](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#buses) property. The method yields an object on which the set of edges can conveniently be defined, e.g., via a delegate.
+Buses are defined using the `add` method of the [buses](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#buses) property, which returns a [configurable object](https://docs.yworks.com/yfileshtml/#/api/ItemCollection) for edge assignment.
 
-The [EdgeRouterBusDescriptor](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterBusDescriptor) class provided to the _add_ method offers settings related to a bus.
+The [EdgeRouterBusDescriptor](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterBusDescriptor) used in the `add` method offers customizable bus parameters.
 
-This example showcases two buses which are defined differently.
+## Automatic Backbone Computation
 
-### First Bus - Automatic Backbone
+In this demo, a default bus descriptor automatically determines the backbone segments for optimal route efficiency.
 
-The first bus (orange graph) is defined using a default descriptor and with no further settings. This means that the algorithm automatically chooses backbone segments.
+## Demos
 
-### Second Bus - Given Points
+- [Bus Routing Demo](../../layout/busrouting/)
+- [Bus-Style Edge Routing (Custom) Demo](../../layout-features/edge-router-buses-custom/)
+- [Layout Styles: Edge Router Demo](../../showcase/layoutstyles/index.html?layout=edge-router&sample=edge-router)
 
-The second bus (blue graph) is defined by [manually providing](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterBusDescriptor#busPoints) the location of the backbone segments. The manually defined backbone consists of a vertical segment to the left of the nodes and two horizontal segments in-between the node rows.
+## Documentation
 
-### Code Snippet
-
-You can copy the code snippet to configure the layout from [GitHub](https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/edge-router-buses/EdgeRouterBuses.ts).
-
-### Demos
-
-The busrouting is a more complex demo that shows the bus-style routing feature. More features offered by the EdgeRouter algorithm are shown by the [Layout Styles Demo](../../showcase/layoutstyles/).
-
-### Documentation
-
-The Developer's Guide provides more information about the concepts of the [Bus-style routing](https://docs.yworks.com/yfileshtml/#/dguide/polyline_router_bus_routing) feature of the EdgeRouter.
+- [Bus-style routing](https://docs.yworks.com/yfileshtml/#/dguide/polyline_router_bus_routing)
+- [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter)
+- [EdgeRouterData](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData)
+- [EdgeRouterBusDescriptor](https://docs.yworks.com/yfileshtml/#/api/EdgeRouterBusDescriptor)

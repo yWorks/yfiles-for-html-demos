@@ -26,7 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IInputModeContext, IPoint, IPositionHandler, Point } from '@yfiles/yfiles'
+import {
+  BaseClass,
+  type IInputModeContext,
+  type IPoint,
+  IPositionHandler,
+  Point
+} from '@yfiles/yfiles'
 import type { AdditionalSnapLineVisualCreator } from './AdditionalSnapLineVisualCreator'
 
 /**

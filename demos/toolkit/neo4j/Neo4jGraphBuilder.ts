@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, GraphComponent, INodeStyle, ShapeNodeStyle } from '@yfiles/yfiles'
+import { GraphBuilder, type GraphComponent, type INodeStyle, ShapeNodeStyle } from '@yfiles/yfiles'
 import type { Integer, Node, Relationship } from './Neo4jUtil'
 
 /**

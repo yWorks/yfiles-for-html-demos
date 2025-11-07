@@ -33,10 +33,10 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
-    <title>Hierarchical Layout with Given Layering - Layout Features [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <title>Hierarchical Layout with Given Layering [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
   </head>
   <body>
     <header class="demo-header">
@@ -61,7 +61,6 @@
 
     <div class="demo-page__toolbar">
       <button data-command="INCREASE_ZOOM"></button>
-      <button data-command="ZOOM_ORIGINAL"></button>
       <button data-command="DECREASE_ZOOM"></button>
       <button data-command="FIT_GRAPH_BOUNDS"></button>
     </div>
@@ -79,67 +78,53 @@
 
       <div class="demo-description__content">
         <h1>Hierarchical Layout with Given Layering</h1>
-
-        <h2>Hierarchical Layout with Given Layering</h2>
-
         <p>
-          This demo shows how to configure the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" target="_blank">Hierarchical Layout</a>
-          so that the nodes are placed in a layer which is defined by the user.
+          This demo shows how to customize the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> to place nodes
+          in a predefined layer.
         </p>
-
+        <h2>Given Layering</h2>
         <p>
-          To achieve this, the user has to specify a layer index (number) for each node based on
-          which the nodes will be sorted in layers. The smaller index represents the topmost layer.
-          Nodes with the same index will be placed in the same layer.
+          The layout is configured such that nodes with the same layer index are placed in the same
+          layer.
         </p>
-
         <p>
-          The layer indices can be passed to the hierarchical layout algorithm through the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#givenLayersLayererIds" target="_blank">givenLayersLayererIds</a>
-          property. Also, the user has to set the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#fromScratchLayeringStrategy" target="_blank">fromScratchLayeringStrategy</a>
-          property to
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutLayeringStrategy#USER_DEFINED" target="_blank">USER_DEFINED</a>.
+          In this demo, the layer indices are stored in the nodes&#39; tags and also presented in
+          the labels of the nodes.
         </p>
-
+        <h2>Things to Try</h2>
         <p>
-          In this demo, the layer indices are stored in the nodes' tags and also presented in the
-          labels of the nodes.
+          Click the button in the toolbar to toggle between hierarchical layout with and without
+          given layering.
         </p>
-
-        <h3>Code Snippet</h3>
-
-        <p>
-          You can copy the code snippet to configure the layout from
-          <a
-            href="https://github.com/yWorks/yfiles-for-html-demos/blob/master/demos/layout-features/hierarchical-given-layering/HierarchicalGivenLayering.ts"
-            target="_blank"
-            >GitHub</a
-          >.
-        </p>
-
-        <h3>Demos</h3>
-
-        <p>
-          You can also take a look at the <a href="../../layout/interactive-hierarchical/" target="_blank">Interactive Hierarchical Layout Demo</a>
-          demo in which the user can drag and move the nodes from one layer to another.
-        </p>
-
-        <h3>Documentation</h3>
-
-        <p>
-          The Developer's Guide provides more information about the concepts of the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout" target="_blank">hierarchical layout</a> in general and especially
-          about <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-layer_assignment" target="_blank">assigning nodes to layers</a>.
-        </p>
+        <h2>Demos</h2>
+        <ul>
+          <li><a href="../../layout/interactive-hierarchical/" class="demo" target="_blank">Interactive Hierarchical Layout Demo</a></li>
+        </ul>
+        <h2>Documentation</h2>
+        <ul>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-layer_assignment" class="dguide" target="_blank">Assigning Nodes to Layers</a>
+          </li>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#givenLayersIndices" class="api" target="_blank">givenLayersLayererIndices</a>
+          </li>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#fromScratchLayeringStrategy" class="api" target="_blank">fromScratchLayeringStrategy</a>
+          </li>
+        </ul>
       </div>
     </aside>
     <div class="demo-page__main">
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
+      <div id="demo-message" class="demo-message"></div>
     </div>
-    <script type="module" crossorigin="anonymous" src="SampleApplication.ts" async></script>
+    <script
+      type="module"
+      crossorigin="anonymous"
+      src="./HierarchicalGivenLayeringDemo.ts"
+      async
+    ></script>
   </body>
 </html>

@@ -26,13 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  GraphComponent,
-  INode,
-  NodeStyleIndicatorRenderer,
-  ShapeNodeShape,
-  ShapeNodeStyle
-} from '@yfiles/yfiles'
+import { NodeStyleIndicatorRenderer, ShapeNodeShape, ShapeNodeStyle } from '@yfiles/yfiles'
 import { GraphSearch } from '@yfiles/demo-utils/GraphSearch'
 
 let graphSearch

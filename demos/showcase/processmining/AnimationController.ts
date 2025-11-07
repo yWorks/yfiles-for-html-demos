@@ -26,13 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Animator, GraphComponent, TimeSpan } from '@yfiles/yfiles'
+import { Animator, type GraphComponent, TimeSpan } from '@yfiles/yfiles'
 
 /**
  * This controller manages the animation of the heatmap and process items.
  * It handles the state of the animation and updates the progress via a callback function.
  */
 export class AnimationController {
+    maxTime: TimeSpan;
+    graphComponent: GraphComponent;
   private readonly animator: Animator
   running: boolean
   setProgress: (value: number) => void
@@ -44,10 +46,12 @@ export class AnimationController {
    * @param progressCallback a callback function to report the progress back
    */
   constructor(
-    public graphComponent: GraphComponent,
-    public maxTime: TimeSpan,
+    graphComponent: GraphComponent,
+    maxTime: TimeSpan,
     progressCallback: (value: number) => void
   ) {
+      this.graphComponent = graphComponent;
+      this.maxTime = maxTime;
     this.running = false
     this.setProgress = progressCallback
     this.animator = new Animator({

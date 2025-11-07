@@ -35,18 +35,18 @@ import {
   FromSketchLayerAssigner,
   GenericLabeling,
   HierarchicalLayout,
-  HierarchicalLayoutContext,
-  IEnumerable,
+  type HierarchicalLayoutContext,
+  type IEnumerable,
   ILayoutAlgorithm,
   type IMapper,
   type IPortCandidateSelector,
-  LabelCandidate,
-  LayoutEdge,
-  LayoutGraph,
+  type LabelCandidate,
+  type LayoutEdge,
+  type LayoutGraph,
   LayoutGraphHider,
   LayoutGrid,
-  LayoutNode,
-  LayoutNodeLabel,
+  type LayoutNode,
+  type LayoutNodeLabel,
   LayoutPortCandidate,
   LineSegment,
   List,
@@ -56,7 +56,7 @@ import {
   NodeLabelPlacement,
   Point,
   PortCandidateSelector,
-  PortCandidateSelectorSameLayerData,
+  type PortCandidateSelectorSameLayerData,
   PortSides,
   TopologicalLayerAssigner,
   YList
@@ -373,7 +373,7 @@ class BackLoopLayerer extends ConstraintIncrementalLayerAssigner {
         let targetLayer = 0
         for (const edge of node.outEdges) {
           const targetNodeIndex = edge.target.index
-          if (this.nodeStates[targetNodeIndex] === NodeState.FIXED) {
+          if (this.nodeStates[targetNodeIndex] === 'fixed') {
             targetLayer = Math.max(targetLayer, this.currentLayers[targetNodeIndex] + 1)
           }
         }
@@ -386,7 +386,7 @@ class BackLoopLayerer extends ConstraintIncrementalLayerAssigner {
           layers.get(currentLayer)!.remove(node)
           layers.get(targetLayer)!.add(node)
           this.currentLayers[node.index] = targetLayer
-          this.nodeStates[node.index] = NodeState.FIXED
+          this.nodeStates[node.index] = 'fixed'
         }
       }
       backLoopNodes.clear()
@@ -416,10 +416,10 @@ class BackLoopLayerer extends ConstraintIncrementalLayerAssigner {
     for (const node of nodes) {
       const nodeState = this.getNodeState(node)
       switch (nodeState) {
-        case NodeState.BACK_LOOPING:
+        case 'back-looping':
           backLoopNodes.addFirst(node)
           break
-        case NodeState.BACK_LOOPING_CANDIDATE:
+        case 'back-looping-candidate':
           candidates.addFirst(node)
           break
         default:
@@ -433,42 +433,34 @@ class BackLoopLayerer extends ConstraintIncrementalLayerAssigner {
     const nodeLayer = this.currentLayers![node.index]
     if (nodeLayer === 0) {
       // nodes in the first layer can't have any back edges
-      return NodeState.FIXED
+      return 'fixed'
     }
-    let nodeState = NodeState.FIXED
+    let nodeState: NodeState = 'fixed'
     for (const edge of node.outEdges) {
       const targetIndex = edge.target.index
       if (this.currentLayers![targetIndex] >= nodeLayer) {
         // no back-looping edge...
         if (
-          this.nodeStates![targetIndex] === NodeState.BACK_LOOPING ||
-          this.nodeStates![targetIndex] === NodeState.BACK_LOOPING_CANDIDATE
+          this.nodeStates![targetIndex] === 'back-looping' ||
+          this.nodeStates![targetIndex] === 'back-looping-candidate'
         ) {
           // ...but target is back-looping, so this one might be as well
-          nodeState = NodeState.BACK_LOOPING_CANDIDATE
+          nodeState = 'back-looping-candidate'
         } else {
           // ... and target is fixed -> this node is fixed as well.
-          nodeState = NodeState.FIXED
+          nodeState = 'fixed'
           break
         }
-      } else if (nodeState === NodeState.FIXED) {
+      } else if (nodeState === 'fixed') {
         // no back looping candidate -> back-looping
-        nodeState = NodeState.BACK_LOOPING
+        nodeState = 'back-looping'
       }
     }
     return nodeState
   }
 }
 
-/**
- * The state of a node while calculating those nodes on a back loop that might be pulled
- * to a lower layer.
- */
-enum NodeState {
-  FIXED = 0,
-  BACK_LOOPING = 1,
-  BACK_LOOPING_CANDIDATE = 2
-}
+type NodeState = 'fixed' | 'back-looping' | 'back-looping-candidate'
 
 /**
  * This port selection tries to balance the edges on each node, and distribute them to the four node sides.
@@ -478,6 +470,7 @@ enum NodeState {
  * on the non-flow sides of the nodes.
  */
 class BalancingPortSelection extends PortCandidateSelector {
+  private coreSelection: IPortCandidateSelector
   private static _portCandidateLeft = LayoutPortCandidate.createFree(PortSides.LEFT)
   private static _portCandidateRight = LayoutPortCandidate.createFree(PortSides.RIGHT)
 
@@ -485,8 +478,9 @@ class BalancingPortSelection extends PortCandidateSelector {
   private edge2LaneCrossing: IMapper<LayoutEdge, LaneCrossing> | null = null
   private node2LaneAlignment: IMapper<LayoutNode, LaneAlignment> | null = null
 
-  constructor(private coreSelection: IPortCandidateSelector) {
+  constructor(coreSelection: IPortCandidateSelector) {
     super()
+    this.coreSelection = coreSelection
   }
 
   selectAfterLayering(graph: LayoutGraph, layoutContext: HierarchicalLayoutContext): void {
@@ -537,14 +531,14 @@ class BalancingPortSelection extends PortCandidateSelector {
       // now we have a 'real' edge with valid source and target nodes
       const originalSourceId = getLaneId(originalEdge.source, layoutContext)
       const originalTargetId = getLaneId(originalEdge.target, layoutContext)
-      let crossing = LaneCrossing.NONE
+      let crossing: LaneCrossing = 'none'
       if (originalSourceId !== originalTargetId) {
         // check if we need to flip the sides because edge and original edge have different directions
         const flipSides = edge.source !== originalEdge.source
         const sourceId = flipSides ? originalTargetId : originalSourceId
         const targetId = flipSides ? originalSourceId : originalTargetId
 
-        crossing = sourceId > targetId ? LaneCrossing.TO_LEFT : LaneCrossing.TO_RIGHT
+        crossing = sourceId > targetId ? 'to-left' : 'to-right'
       }
       this.edge2LaneCrossing!.set(edge, crossing)
     })
@@ -585,7 +579,7 @@ class BalancingPortSelection extends PortCandidateSelector {
           const firstInEdge = inEdges.first()!
           const lastInEdge = inEdges.last()!
           if (
-            this.getLaneCrossing(firstInEdge) === LaneCrossing.TO_RIGHT &&
+            this.getLaneCrossing(firstInEdge) === 'to-right' &&
             (n.inDegree > 1 || this.isSameLayerEdge(firstInEdge, layoutContext))
           ) {
             // the first in-edge comes from the left and is either a same layer edge or there are other in-edges
@@ -595,7 +589,7 @@ class BalancingPortSelection extends PortCandidateSelector {
           if (!leftTakenByInEdge || n.outDegree < 2) {
             // don't use left and right side for in-edges if there are at least 2 out-edges
             if (
-              this.getLaneCrossing(lastInEdge) === LaneCrossing.TO_LEFT &&
+              this.getLaneCrossing(lastInEdge) === 'to-left' &&
               (n.inDegree > 1 || this.isSameLayerEdge(lastInEdge, layoutContext))
             ) {
               // the last in-edge comes from right and is either
@@ -614,7 +608,7 @@ class BalancingPortSelection extends PortCandidateSelector {
             // the left side is still free
             if (
               BpmnLayout.isBoundaryInterrupting(firstOutEdge, graph) ||
-              (this.getLaneCrossing(firstOutEdge) === LaneCrossing.TO_LEFT &&
+              (this.getLaneCrossing(firstOutEdge) === 'to-left' &&
                 (n.outDegree > 1 || this.isSameLayerEdge(firstOutEdge, layoutContext)))
             ) {
               // the first out-edge is either boundary interrupting or goes to left and
@@ -636,7 +630,7 @@ class BalancingPortSelection extends PortCandidateSelector {
           if (!rightTakenByInEdge) {
             // the right side is still free
             if (
-              this.getLaneCrossing(lastOutEdge) === LaneCrossing.TO_RIGHT &&
+              this.getLaneCrossing(lastOutEdge) === 'to-right' &&
               (n.outDegree > 1 || this.isSameLayerEdge(lastOutEdge, layoutContext))
             ) {
               // the last out-edge goes to the right and
@@ -763,7 +757,7 @@ class BalancingPortSelection extends PortCandidateSelector {
       {
         const originalEdge = this.getOriginalEdge(edge, layoutContext)
         if (
-          this.edge2LaneCrossing!.get(edge) !== LaneCrossing.NONE ||
+          this.edge2LaneCrossing!.get(edge) !== 'none' ||
           BpmnLayout.isBoundaryInterrupting(originalEdge, graph) ||
           this.isSameLayerEdge(originalEdge, layoutContext) ||
           edge.selfLoop
@@ -816,7 +810,7 @@ class BalancingPortSelection extends PortCandidateSelector {
     if (sourceLA === targetLA) {
       return 2
     }
-    return sourceLA === LaneAlignment.NONE || targetLA === LaneAlignment.NONE ? 1 : 0
+    return sourceLA === 'none' || targetLA === 'none' ? 1 : 0
   }
 
   /**
@@ -844,23 +838,23 @@ class BalancingPortSelection extends PortCandidateSelector {
     n.edges.forEach((edge) => {
       const crossing = this.edge2LaneCrossing!.get(edge)
       if (n === edge.source) {
-        if (crossing === LaneCrossing.TO_RIGHT) {
+        if (crossing === 'to-right') {
           toRightCount++
-        } else if (crossing === LaneCrossing.TO_LEFT) {
+        } else if (crossing === 'to-left') {
           toLeftCount++
         }
-      } else if (crossing === LaneCrossing.TO_RIGHT) {
+      } else if (crossing === 'to-right') {
         toLeftCount++
-      } else if (crossing === LaneCrossing.TO_LEFT) {
+      } else if (crossing === 'to-left') {
         toRightCount++
       }
     })
     if (toLeftCount > toRightCount) {
-      return LaneAlignment.LEFT
+      return 'left'
     } else if (toLeftCount < toRightCount) {
-      return LaneAlignment.RIGHT
+      return 'right'
     }
-    return LaneAlignment.NONE
+    return 'none'
   }
 
   /**
@@ -884,43 +878,9 @@ class BalancingPortSelection extends PortCandidateSelector {
   }
 }
 
-/**
- * Specifies the alignment of a node in its swim-lane.
- */
-enum LaneAlignment {
-  /**
-   * The node has no special alignment.
-   */
-  NONE = 0,
-  /**
-   * The node is aligned to the left side.
-   */
-  LEFT = 1,
-  /**
-   * The node is aligned to the right side.
-   */
-  RIGHT = 2
-}
+type LaneAlignment = 'none' | 'left' | 'right'
 
-/**
- * Specifies in which direction an edge crosses swim-lane borders.
- */
-enum LaneCrossing {
-  /**
-   * The edge doesn't cross a swim-lane border.
-   */
-  NONE = 0,
-  /**
-   * The edge crosses column borders to the right, so its source node is in a column with a lower
-   * {@link LayoutGridColumn.index}.
-   */
-  TO_RIGHT = 1,
-  /**
-   * The edge crosses column borders to the left, so its source node is in a swim-lane with a lower
-   * {@link LayoutGridColumn.index}.
-   */
-  TO_LEFT = 2
-}
+type LaneCrossing = 'none' | 'to-right' | 'to-left'
 
 /**
  * Sets a {@link ItemFactory.setSelectedPortCandidate right port candidate}

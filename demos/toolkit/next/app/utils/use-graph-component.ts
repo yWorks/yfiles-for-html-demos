@@ -33,7 +33,7 @@ import {
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
-  IGraph,
+  type IGraph,
   License,
   PolylineEdgeStyle,
   Size
@@ -41,7 +41,7 @@ import {
 import { ReactComponentNodeStyle } from '../utils/ReactComponentNodeStyle'
 import NodeTemplate from '../components/NodeTemplate'
 import { useLayoutEffect, useMemo, useRef } from 'react'
-import yFilesLicense from '../../../../../lib/license.json'
+import yFilesLicense from '../license.json'
 import LabelTemplate from '../components/LabelTemplate'
 import { ReactComponentLabelStyle } from './ReactComponentLabelStyle'
 

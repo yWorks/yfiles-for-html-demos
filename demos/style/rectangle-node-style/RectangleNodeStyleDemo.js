@@ -29,8 +29,6 @@
 import {
   GraphComponent,
   GraphEditorInputMode,
-  IGraph,
-  INode,
   IReshapeHandler,
   LabelStyle,
   License,
@@ -45,9 +43,9 @@ import {
 import { CornerSizeHandleProvider } from './CornerSizeHandleProvider'
 import { enableSingleSelection } from './SingleSelectionHelper'
 
-import { fetchLicense } from '@yfiles/demo-resources/fetch-license'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
-import { finishLoading } from '@yfiles/demo-resources/demo-page'
+import licenseData from '../../../lib/license.json'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
+import { finishLoading } from '@yfiles/demo-app/demo-page'
 
 const [yellow, orange, green, blue, gray] = [
   colorSets['demo-palette-71'],
@@ -61,7 +59,7 @@ const [yellow, orange, green, blue, gray] = [
  * Runs the demo.
  */
 async function run() {
-  License.value = await fetchLicense()
+  License.value = licenseData
   const graphComponent = new GraphComponent('#graphComponent')
   initializeGraph(graphComponent.graph)
 

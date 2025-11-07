@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { createCodemirrorEditor, type EditorView } from '@yfiles/demo-resources/codemirror-editor'
+import { createCodemirrorEditor, type EditorView } from '@yfiles/demo-app/codemirror-editor'
 
 let editor: EditorView
 

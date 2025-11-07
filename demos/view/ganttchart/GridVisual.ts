@@ -37,11 +37,14 @@ import { ganttTaskSpacing, getCompleteTaskHeight, getTaskY } from './sweepline-l
  * Manages and renders the background grid of the main component.
  */
 export class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
+  private readonly dataModel: ChartData
+
   /**
    * Creates a new grid for the given data model.
    */
-  constructor(private readonly dataModel: ChartData) {
+  constructor(dataModel: ChartData) {
     super()
+    this.dataModel = dataModel
   }
 
   /**

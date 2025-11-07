@@ -31,15 +31,15 @@ import {
   Color,
   IEdge,
   INode,
-  Intersection,
+  type Intersection,
   Intersections,
-  IRenderContext,
+  type IRenderContext,
   IVisualCreator,
-  Point,
+  type Point,
   SvgVisual,
-  Visual
+  type Visual
 } from '@yfiles/yfiles'
-import { colorSets } from '@yfiles/demo-resources/demo-styles'
+import { colorSets } from '@yfiles/demo-app/demo-styles'
 
 const EDGE_EDGE_INTERSECTION_COLOR = Color.from(colorSets['demo-palette-13'].fill)
 const NODE_EDGE_INTERSECTION_COLOR = Color.from(colorSets['demo-red'].fill)

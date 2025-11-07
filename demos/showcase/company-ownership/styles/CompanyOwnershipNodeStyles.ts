@@ -26,8 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import type { Company } from '../data-types'
-import { NodeTypeEnum } from '../data-types'
+import type { Company, NodeType } from '../data-types'
 import {
   Fill,
   type INodeStyle,
@@ -39,25 +38,25 @@ import {
   Stroke
 } from '@yfiles/yfiles'
 import { CustomShapeNodeStyle } from './CustomShapeNodeStyle'
-import type { ColorSetName } from '@yfiles/demo-resources/demo-colors'
-import { colorSets } from '@yfiles/demo-resources/demo-colors'
+import type { ColorSetName } from '@yfiles/demo-app/demo-colors'
+import { colorSets } from '@yfiles/demo-app/demo-colors'
 import { tableNodeStyle } from './TableNodeStyle'
 
 // maps each node type with an enum value
-const nodeTypeMap: Record<string, NodeTypeEnum> = {
-  Corporation: NodeTypeEnum.CORPORATION,
-  CTB: NodeTypeEnum.CTB,
-  Partnership: NodeTypeEnum.PARTNERSHIP,
-  RCTB: NodeTypeEnum.RCTB,
-  Branch: NodeTypeEnum.BRANCH,
-  Disregarded: NodeTypeEnum.DISREGARDED,
-  'Dual Resident': NodeTypeEnum.DUAL_RESIDENT,
-  Multiple: NodeTypeEnum.MULTIPLE,
-  Trust: NodeTypeEnum.TRUST,
-  Individual: NodeTypeEnum.INDIVIDUAL,
-  'Third Party': NodeTypeEnum.THIRD_PARTY,
-  PE_Risk: NodeTypeEnum.PE_RISK,
-  Trapezoid: NodeTypeEnum.TRAPEZOID
+const nodeTypeMap: Record<string, NodeType> = {
+  Corporation: 'corporation',
+  CTB: 'ctb',
+  Partnership: 'partnership',
+  RCTB: 'rctb',
+  Branch: 'branch',
+  Disregarded: 'disregarded',
+  'Dual Resident': 'dual-resident',
+  Multiple: 'multiple',
+  Trust: 'trust',
+  Individual: 'individual',
+  'Third Party': 'third-party',
+  PE_Risk: 'pe-risk',
+  Trapezoid: 'trapezoid'
 }
 
 // maps each node type with a color palette

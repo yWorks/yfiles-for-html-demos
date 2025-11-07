@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>Adjacency Graph Builder Demo [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/demo.css" />
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
 
     <style>
       #schemaGraphComponent {
@@ -172,13 +172,19 @@
 
         <p>
           This demo interactively builds and modifies a graph from <b>JSON</b> business data using
-          class <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a>.
+          class <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" class="api" target="_blank">AdjacencyGraphBuilder</a>.
         </p>
 
         <p>
-          See the the Developer's Guide section on the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a>
+          See the Developer's Guide section on the
+          <a href="https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-AdjacencyGraphBuilder" class="dguide" target="_blank">AdjacencyGraphBuilder</a>
           for an in-depth explanation of the relevant concepts.
+        </p>
+
+        <p>
+          See also the <a href="../../tutorial-graph-builder/01-create-graph/" class="demo" target="_blank">Step Tutorial: Graph Builder</a> for a step-by-step guide on
+          configuring the <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" class="api" target="_blank">AdjacencyGraphBuilder</a> class, loading data, and customizing
+          graph visualizations.
         </p>
 
         <p>
@@ -220,7 +226,7 @@
         </ul>
 
         <p>
-          <b>Note:</b> This demo shows only parts of the <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a> API.
+          <b>Note:</b> This demo shows only parts of the <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" class="api" target="_blank">AdjacencyGraphBuilder</a> API.
           In addition to the functionality available in this demo, the AdjacencyGraphBuilder allows
           to reference nodes by their ids and edges may be defined by their own edge data items.
         </p>
@@ -229,7 +235,7 @@
           Since this demo evaluates the complete data source texts every time a source is edited,
           <em>Update Graph</em> works as expected only for node data items of primitive type or if
           the node id binding resolves to primitive ids. Note that this restriction applies only to
-          the demo, not the class <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a>.
+          the demo, not the class <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" class="api" target="_blank">AdjacencyGraphBuilder</a>.
         </p>
       </div>
     </aside>
@@ -238,7 +244,7 @@
         <div id="graphComponent"></div>
       </div>
       <aside class="demo-main__sidebar">
-        <div class="demo-properties__settings" style="margin: 10px; height: 100%">
+        <div class="demo-sidebar__content">
           <h2>Graph Builder Settings</h2>
 
           <div class="demo-form-block">

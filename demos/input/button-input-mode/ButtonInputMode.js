@@ -29,57 +29,38 @@
 /* eslint-disable jsdoc/check-param-names */
 import {
   BaseClass,
-  BendEventArgs,
-  CanvasComponent,
   CollectionModelManager,
-  ConcurrencyController,
   Cursor,
   delegate,
-  EdgeEventArgs,
   FreeLabelModel,
   FreeNodePortLocationModel,
-  GraphComponent,
   GraphItemTypes,
   IBend,
   IBoundsProvider,
-  ICanvasContext,
   IconLabelStyle,
   IEdge,
-  IGraph,
   IHitTestable,
   IHitTester,
   IInputMode,
-  IInputModeContext,
   ILabel,
-  ILabelModelParameter,
   ILabelOwner,
-  ILabelStyle,
   IListEnumerable,
-  IModelItem,
   INode,
   InputModeBase,
   IObjectRenderer,
-  IObservableCollection,
-  IOrientedRectangle,
   IPort,
   IRenderContext,
-  ISvgDefsCreator,
   IVisibilityTestable,
   IVisualCreator,
-  KeyEventArgs,
-  LabelEventArgs,
   LabelStyle,
   LabelStyleBase,
   Matrix,
   MatrixOrder,
-  NodeEventArgs,
   ObservableCollection,
   OrientedRectangle,
   Point,
   PointerButtons,
-  PointerEventArgs,
   PointerType,
-  PortEventArgs,
   PropertyChangedEventArgs,
   Rect,
   SimpleBend,
@@ -93,43 +74,8 @@ import {
   SvgVisual,
   SvgVisualGroup,
   TimeSpan,
-  ToolTipInputMode,
-  Visual,
-  WebGLSupport
+  ToolTipInputMode
 } from '@yfiles/yfiles'
-
-/**
- * The gesture or state {@link ButtonInputMode} uses to decide for which {@link IModelItem}
- * {@link Button}s should be displayed.
- */
-export var ButtonTrigger
-;(function (ButtonTrigger) {
-  /**
-   * There is no implicit trigger to show {@link Button}s.
-   * Instead the {@link ButtonInputMode.showButtons showButtons} and
-   * {@link ButtonInputMode.hideButtons hideButtons} have to be called programmatically.
-   */
-  ButtonTrigger[(ButtonTrigger['NONE'] = 0)] = 'NONE'
-
-  /**
-   * {@link Button}s are displayed for an {@link IModelItem} when hovering over it for at least
-   * {@link ButtonInputMode.hoverTime hoverTime}.
-   * When hovering over another item long enough or when {@link ButtonInputMode.hideTime hideTime}
-   * has passed, the buttons are removed again.
-   */
-  ButtonTrigger[(ButtonTrigger['HOVER'] = 1)] = 'HOVER'
-
-  /**
-   * {@link Button}s are displayed for the {@link GraphComponent.currentItem currentItem}.
-   */
-  ButtonTrigger[(ButtonTrigger['CURRENT_ITEM'] = 2)] = 'CURRENT_ITEM'
-
-  /**
-   * {@link Button}s are displayed for an {@link IModelItem} when right-clicking the item and
-   * are removed on the next right-click.
-   */
-  ButtonTrigger[(ButtonTrigger['RIGHT_CLICK'] = 3)] = 'RIGHT_CLICK'
-})(ButtonTrigger || (ButtonTrigger = {}))
 
 /**
  * An {@link IInputMode} that can be used to display several {@link Button buttons} at an owning
@@ -168,7 +114,7 @@ export class ButtonInputMode extends InputModeBase {
   _hoverTime = 750
   _hideTime = 2000
   _hoverTooltipTime = 100
-  _buttonTrigger = ButtonTrigger.HOVER
+  _buttonTrigger = 'hover'
   _validOwnerTypes = GraphItemTypes.ALL
   _lastTimeout = undefined
   buttonOwner = null
@@ -267,14 +213,14 @@ export class ButtonInputMode extends InputModeBase {
     this.hideButtons()
     this._buttonTrigger = value
     switch (value) {
-      case ButtonTrigger.HOVER:
+      case 'hover':
         if (this.graphComponent) {
           this.updateHoveredItem(
             this.graphComponent.canvasContext.canvasComponent.lastEventLocation
           )
         }
         break
-      case ButtonTrigger.CURRENT_ITEM:
+      case 'current-item':
         if (this.graphComponent) {
           this.onCurrentItemChanged(new PropertyChangedEventArgs(''), this.graphComponent)
         }
@@ -509,7 +455,7 @@ export class ButtonInputMode extends InputModeBase {
   onPointerMove(evt) {
     const newButton = this.getFirstHitButton(evt.location)
     this.updateHoveredButton(newButton)
-    if (!newButton && this.buttonTrigger === ButtonTrigger.HOVER) {
+    if (!newButton && this.buttonTrigger === 'hover') {
       this.updateHoveredItem(evt.location)
     }
   }
@@ -689,7 +635,7 @@ export class ButtonInputMode extends InputModeBase {
         evt.preventDefault()
         this.triggerAction(hitButton)
       }
-    } else if (rightClick && this.buttonTrigger === ButtonTrigger.RIGHT_CLICK) {
+    } else if (rightClick && this.buttonTrigger === 'right-click') {
       const hitItem = this.getHitItem(evt.location)
       if (hitItem && hitItem != this.buttonOwner) {
         this.showButtons(hitItem)
@@ -757,7 +703,7 @@ export class ButtonInputMode extends InputModeBase {
   }
 
   onCurrentItemChanged(evt, component) {
-    if (this.buttonTrigger === ButtonTrigger.CURRENT_ITEM) {
+    if (this.buttonTrigger === 'current-item') {
       if (component.currentItem === null || !this.isValidItem(component.currentItem)) {
         this.hideButtons()
       } else {
@@ -1497,6 +1443,7 @@ class DummyContext extends BaseClass(IRenderContext) {
  */
 class FocusLabelStyle extends LabelStyleBase {
   stroke
+
   constructor(stroke) {
     super()
     this.stroke = stroke

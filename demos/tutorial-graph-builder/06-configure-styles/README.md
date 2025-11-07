@@ -31,7 +31,7 @@ type ConnectionData = { sourceId: string; targetId: string; ownership: number }
 
 ## Node styling
 
-There are basically three ways to style nodes using GraphBuilder: Specifically, you can set _default styles_, _style_ _bindings_ and _style_ _providers_ on the [NodeCreator](<https://docs.yworks.com/yfileshtml/#/api/NodeCreator(TDataItem)>).
+There are basically three ways to style nodes using GraphBuilder: Specifically, you can set _default styles_, _style_ _bindings_ and _style_ _providers_ on the [NodeCreator](https://docs.yworks.com/yfileshtml/#/api/NodeCreator).
 
 ### Default styles
 
@@ -86,7 +86,7 @@ nodesSource.nodeCreator.styleProvider = (
 
 ## Edge styling
 
-For edge styling, default styles, bindings and providers work the same way as for node styling. In this example we only use an edge style _provider_ that styles ownership edges with more than 50% `ownership` in red and edges without ownership data in grey with a dashed stroke:
+For edge styling, default styles, bindings and providers work the same way as for node styling. In this example we only use an edge style _provider_ that styles ownership edges with more than 50% `ownership` in red and edges without ownership data in gray with a dashed stroke:
 
 ```
 edgesSource.edgeCreator.styleProvider = (

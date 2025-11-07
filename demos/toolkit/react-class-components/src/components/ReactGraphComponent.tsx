@@ -40,7 +40,7 @@ import {
   Size
 } from '@yfiles/yfiles'
 import './ReactGraphComponent.css'
-import yFilesLicense from '../license.json'
+import licenseData from '../license.json'
 import { ReactComponentNodeStyle } from '../ReactComponentNodeStyle'
 import NodeTemplate from './NodeTemplate'
 
@@ -53,7 +53,7 @@ export default class ReactGraphComponent extends Component {
     this.div = createRef<HTMLDivElement>()
 
     // include the yFiles License
-    License.value = yFilesLicense
+    License.value = licenseData
 
     // initialize the GraphComponent
     this.graphComponent = new GraphComponent()

@@ -34,9 +34,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
 
     <title>11 Update Graph - Tutorial: Graph Builder [yFiles for HTML]</title>
-    <script type="module" src="../../resources/demo-page-init.ts" async></script>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
 
-    <link rel="stylesheet" href="../../resources/style/tutorial.css" />
+    <link rel="stylesheet" href="../../demo-app/style/tutorial.css" />
   </head>
   <body class="demo-tutorial theme-light">
     <header class="demo-header">
@@ -155,15 +155,15 @@
                 <p>
                   After the business data has changed, you can assign the new data to one or more
                   nodes and/or edges sources. Then, it&#8217;s only a matter of calling
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder#GraphBuilder-method-updateGraph" target="_blank">updateGraph</a> to
-                  update the graph structure to the new data.
+                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder#updateGraph" class="api" target="_blank">updateGraph</a> to update the graph
+                  structure to the new data.
                 </p>
               </div>
               <div class="listingblock">
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// assign the new data to the nodesSource</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// assign the new data to the nodesSource</span>
 graphBuilder.<span class="hljs-title function_">setData</span>(nodesSource, newData)
 <span class="hljs-comment">// tell GraphBuilder to update the graph structure</span>
 graphBuilder.<span class="hljs-title function_">updateGraph</span>()</code></pre>
@@ -179,11 +179,10 @@ graphBuilder.<span class="hljs-title function_">updateGraph</span>()</code></pre
                       <div class="paragraph">
                         <p>
                           When a new data item has the same <code>id</code> as an existing item as
-                          defined by the
-                          <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#NodesSource-property-idProvider" target="_blank">id provider</a>,
-                          it is interpreted as being the same and the node or edge in the graph is
+                          defined by the <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider" class="api" target="_blank">id provider</a>, it is
+                          interpreted as being the same and the node or edge in the graph is
                           re-used. Only the visualization and the data in the
-                          <a href="https://docs.yworks.com/yfileshtml/#/api/IModelItem#ITagOwner-property-tag" target="_blank">tag</a> are updated.
+                          <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" class="api" target="_blank">tag</a> are updated.
                         </p>
                       </div>
                     </td>
@@ -206,9 +205,9 @@ graphBuilder.<span class="hljs-title function_">updateGraph</span>()</code></pre
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript">nodeTypes = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>([<span class="hljs-string">&#x27;Corporation&#x27;</span>, <span class="hljs-string">&#x27;Trust&#x27;</span>])
+                  ><code class="language-typescript" data-lang="typescript">nodeTypes = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Set</span>([<span class="hljs-string">&#x27;Corporation&#x27;</span>, <span class="hljs-string">&#x27;Trust&#x27;</span>])
 
-<span class="hljs-keyword">function</span>* <span class="hljs-title function_">nodes</span>(): <span class="hljs-title class_">Generator</span>&lt;<span class="hljs-title class_">EntityData</span>, <span class="hljs-keyword">void</span>, unknown&gt; {
+<span class="hljs-keyword">function</span>* <span class="hljs-title function_">nodes</span>(): <span class="hljs-title class_">Generator</span>&lt;<span class="hljs-title class_">EntityData</span>, <span class="hljs-built_in">void</span>, <span class="hljs-built_in">unknown</span>&gt; {
   <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> entity <span class="hljs-keyword">of</span> data.<span class="hljs-property">nodesSource</span>) {
     <span class="hljs-keyword">if</span> (entity.<span class="hljs-property">type</span> &amp;&amp; nodeTypes.<span class="hljs-title function_">has</span>(entity.<span class="hljs-property">type</span>)) {
       <span class="hljs-keyword">yield</span> entity <span class="hljs-keyword">as</span> <span class="hljs-title class_">EntityData</span>
@@ -231,7 +230,7 @@ graphBuilder.<span class="hljs-title function_">updateGraph</span>()</code></pre
                 <div class="content">
                   <pre
                     class="highlight"
-                  ><code class="language-javascript" data-lang="javascript"><span class="hljs-comment">// update displayed node types</span>
+                  ><code class="language-typescript" data-lang="typescript"><span class="hljs-comment">// update displayed node types</span>
 nodeTypes.<span class="hljs-title function_">delete</span>(<span class="hljs-string">&#x27;Corporation&#x27;</span>)
 nodeTypes.<span class="hljs-title function_">add</span>(<span class="hljs-string">&#x27;Branch&#x27;</span>)
 nodeTypes.<span class="hljs-title function_">add</span>(<span class="hljs-string">&#x27;PE_Risk&#x27;</span>)
@@ -290,7 +289,7 @@ graphBuilder.<span class="hljs-title function_">updateGraph</span>()</code></pre
       </div>
     </div>
 
-    <script src="../../resources/apply-local-storage-variables.js"></script>
+    <script src="../../demo-app/apply-local-storage-variables.js"></script>
     <script type="module" crossorigin="anonymous" src="app.ts" async></script>
   </body>
 </html>

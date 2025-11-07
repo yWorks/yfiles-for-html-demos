@@ -26,17 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  Color,
-  INode,
-  IRectangle,
-  IRenderContext,
-  Matrix,
-  NodeStyleBase,
-  Point,
-  Rect,
-  SvgVisual
-} from '@yfiles/yfiles'
+import { Color, NodeStyleBase, Point, SvgVisual } from '@yfiles/yfiles'
 
 // Indices for the corners of the bounding box.
 const LOW_TOP_LEFT_X = 0
@@ -109,7 +99,7 @@ export class IsometricNodeStyle extends NodeStyleBase {
    * Calculates a vector in world coordinates whose transformation by the projection results
    * in the vector (0, -1).
    * @param projection The projection to consider.
-   * @return The vector in world coordinates that gets transformed to the vector (0, -1).
+   * @returns The vector in world coordinates that gets transformed to the vector (0, -1).
    */
   static calculateHeightVector(projection) {
     const matrix = projection.clone()
@@ -122,10 +112,11 @@ export class IsometricNodeStyle extends NodeStyleBase {
  * Stores the geometry data necessary to update the visual representation of a node.
  */
 class RenderDataCache {
-  layout
-  height
-  upVector
   color
+  upVector
+  height
+  layout
+
   constructor(layout, height, upVector, color) {
     this.layout = layout
     this.height = height

@@ -29,7 +29,7 @@
 /*
 Helper types and functions that are common to all implementations of the string template styles
  */
-import { GeneralPath, GraphComponent, IRenderContext, Rect, SvgVisual } from '@yfiles/yfiles'
+import { GraphComponent, Rect, SvgVisual } from '@yfiles/yfiles'
 import { registerConverter } from './template-engine/template-engine'
 import { convertTextToWrappedSVG } from './text-wrapping-converter'
 
