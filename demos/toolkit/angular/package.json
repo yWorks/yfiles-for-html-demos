@@ -11,7 +11,7 @@
     "build": "ng build --base-href ./"
   },
   "dependencies": {
-    "@angular/common": "~20.1.4",
+    "@angular/common": "~20.3.14",
     "@angular/compiler": "~20.1.4",
     "@angular/core": "~20.1.4",
     "@angular/forms": "~20.1.4",
