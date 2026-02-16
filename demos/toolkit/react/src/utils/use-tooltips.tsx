@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -77,6 +77,7 @@ export function useTooltips(graphComponent: GraphComponent) {
     const inputMode = graphComponent.inputMode as GraphViewerInputMode
 
     // show tooltips only for nodes, edges and labels
+    // eslint-disable-next-line react-hooks/immutability
     inputMode.toolTipItems = GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL
 
     // Customize the tooltip's behavior to our liking.

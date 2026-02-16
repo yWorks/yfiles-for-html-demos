@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,9 +15,9 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/webgl-image-node/).
 
-This demo shows how to display images in nodes rendered with [WebGL](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) using [WebGLImageNodeStyle](https://docs.yworks.com/yfileshtml/#/api/WebGLImageNodeStyle).
+This demo shows how to display images in nodes rendered with [WebGL](https://docs.yworks.com/yfileshtml/dguide/webgl2) using [WebGLImageNodeStyle](https://docs.yworks.com/yfileshtml/api/WebGLImageNodeStyle).
 
-The images are pre-rendered and passed to the node style as [ImageData](https://developer.mozilla.org/docs/Web/API/ImageData) objects. This enables the developer to load images from arbitrary sources.
+The images are pre-rendered and passed to the node style as [ImageData](https://developer.mozilla.org/docs/Web/api/ImageData) objects. This enables the developer to load images from arbitrary sources.
 
 This demo shows how to use images from files (SVG, PNG) and data URIs. Also, it is demonstrated how to render an icon font ([FontAwesome](https://fontawesome.com/) in this case) and use it as a node image.
 

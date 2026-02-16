@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ Change the template of one or more nodes. Bind colors or text to properties in t
 
 ## Related Documentation
 
-- [Using Data Binding in Node Styles](https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_data-binding-in-styles)
+- [Using Data Binding in Node Styles](https://docs.yworks.com/yfileshtml/dguide/custom-styles_data-binding-in-styles)
 
 ## Related Demos
 

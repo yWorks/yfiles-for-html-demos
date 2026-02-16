@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,6 +37,7 @@ import {
   GraphMLIOHandler,
   LayoutExecutor,
   License,
+  NodeAlignmentPolicy,
   Size
 } from '@yfiles/yfiles'
 import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
@@ -106,6 +107,9 @@ function createInputMode() {
   mode.navigationInputMode.addEventListener('group-collapsed', () => reRouteEdges())
   mode.navigationInputMode.addEventListener('group-expanded', () => reRouteEdges())
   mode.addEventListener('items-pasted', () => reRouteEdges())
+
+  // Fix the top right location of a group node when toggling collapse/expand
+  mode.navigationInputMode.autoGroupNodeAlignmentPolicy = NodeAlignmentPolicy.TOP_RIGHT
   return mode
 }
 

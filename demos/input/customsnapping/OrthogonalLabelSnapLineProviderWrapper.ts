@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -46,21 +46,18 @@ import {
  * {@link OrthogonalSnapLine}s added for its top, bottom, left, and right side.
  */
 export class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapReferenceProvider) {
-    private wrapped: ISnapReferenceProvider;
-    private item: IModelItem;
+  private wrapped: ISnapReferenceProvider
+  private item: IModelItem
 
   /**
    * Creates a new instance that wraps the given snap line provider.
    * @param item The owner of the label
    * @param wrapped The snap line provider that will be wrapped.
    */
-  constructor(
-    item: IModelItem,
-    wrapped: ISnapReferenceProvider
-  ) {
+  constructor(item: IModelItem, wrapped: ISnapReferenceProvider) {
     super()
-      this.item = item;
-      this.wrapped = wrapped;
+    this.item = item
+    this.wrapped = wrapped
   }
 
   /**

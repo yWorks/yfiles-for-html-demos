@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -135,7 +135,7 @@
               </div>
               <div class="paragraph">
                 <p>
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> can import data from multiple sources. All node
+                  <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> can import data from multiple sources. All node
                   sources that are presented in this step are combined in the graph on the right.
                   Nodes that are retrieved from the same data source have the same color.
                 </p>
@@ -152,8 +152,8 @@
                           Give data items a unique identifier. It will ensure the correct connection
                           of edges as well as updating the graph correctly after changes in the
                           business data. If <code>null</code> is set for an
-                          <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider" class="api" target="_blank">id provider</a>, the item itself will
-                          be used as identifier.
+                          <a href="https://docs.yworks.com/yfileshtml/api/NodesSource#idProvider" class="api" target="_blank">idProvider</a>, the item itself will be used as
+                          identifier.
                         </p>
                       </div>
                       <div class="paragraph">
@@ -173,9 +173,8 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> accepts different types of data collections. The most
-                  commonly used collection is probably the
-                  <strong><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array" target="_blank">Array</a></strong
+                  <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> accepts different types of data collections. The most
+                  commonly used collection is probably the <strong><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array" target="_blank">Array</a></strong
                   >.
                 </p>
               </div>
@@ -194,18 +193,16 @@
               </div>
               <div class="paragraph">
                 <p>
-                  Another one is the
-                  <strong><a href="https://docs.yworks.com/yfileshtml/#/api/IEnumerable" class="api" target="_blank">IEnumerable&lt;T&gt;</a></strong
-                  >. The <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider" class="api" target="_blank">id provider</a> function retrieves the
-                  identifiers for the nodes.
+                  Another one is the <strong><a href="https://docs.yworks.com/yfileshtml/api/IEnumerable" class="api" target="_blank">IEnumerable</a></strong
+                  >. The <a href="https://docs.yworks.com/yfileshtml/api/NodesSource#idProvider" class="api" target="_blank">idProvider</a> function retrieves the identifiers
+                  for the nodes.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IEnumerable" class="api" target="_blank">IEnumerable&lt;T&gt;</a> implements the iterable
-                  protocol, and therefore all yFiles for HTML collections are accepted, as well.
-                  Since they are live collections, they become useful when updating the graph with
-                  changing data.
+                  <a href="https://docs.yworks.com/yfileshtml/api/IEnumerable" class="api" target="_blank">IEnumerable</a> implements the iterable protocol, and therefore all
+                  yFiles for HTML collections are accepted, as well. Since they are live
+                  collections, they become useful when updating the graph with changing data.
                 </p>
               </div>
               <div class="listingblock">
@@ -223,12 +220,11 @@
               </div>
               <div class="paragraph">
                 <p>
-                  If you have organized the data in a
-                  <strong><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map" target="_blank">Map</a></strong> for
+                  If you have organized the data in a <strong><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map" target="_blank">Map</a></strong> for
                   easy and fast access by a <code>key</code>, you can pass it to
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> as is. The map key of an item is passed to the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider" class="api" target="_blank">id provider</a> function as a second
-                  parameter and can be used as the identifier or a part of it.
+                  <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> as is. The map key of an item is passed to the
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodesSource#idProvider" class="api" target="_blank">idProvider</a> function as a second parameter and can be
+                  used as the identifier or a part of it.
                 </p>
               </div>
               <div class="listingblock">
@@ -250,12 +246,9 @@ nodeData.<span class="hljs-title function_">set</span>(<span class="hljs-string"
               <div class="paragraph">
                 <p>
                   Passing data in a
-                  <strong
-                    ><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object" target="_blank">Object</a></strong
-                  >
-                  is handled similar to using a
-                  <strong><a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map" target="_blank">Map</a></strong
-                  >. Instead of the key, the property name is available in this case.
+                  <strong><a href="https://developer.mozilla.org/docs/Web/JavaScript/Guide/Working_with_objects" target="_blank">object</a></strong> is
+                  handled similar to using a <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map" target="_blank">Map</a>. Instead of the key, the
+                  property name is available in this case.
                 </p>
               </div>
               <div class="listingblock">
@@ -285,11 +278,11 @@ nodeData.<span class="hljs-title function_">set</span>(<span class="hljs-string"
               <div class="paragraph">
                 <p>
                   Especially with dynamic data, generator functions can be very useful. If a
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a> is created from a generator function, it is very easy
-                  to update the data as it is described in the tutorial step about
-                  <a href="../11-update-graph/">updating the graph</a>. In the following example the
-                  limit might be variable and the <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a> will provide the data
-                  accordingly.
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodesSource" class="api" target="_blank">NodesSource</a> is created from a generator function, it is
+                  straightforward to update the data as it is described in the tutorial step about
+                  <a href="../../tutorial-graph-builder/11-update-graph/" class="demo" target="_blank">updating the graph</a>. In the
+                  following example the limit might be variable and the
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodesSource" class="api" target="_blank">NodesSource</a> will provide the data accordingly.
                 </p>
               </div>
               <div class="listingblock">

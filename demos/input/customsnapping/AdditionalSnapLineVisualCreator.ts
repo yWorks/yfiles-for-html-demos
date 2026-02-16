@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -45,21 +45,18 @@ import {
  * A visual creator for orthogonal snap lines.
  */
 export class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
-    to: Point;
-    from: Point;
+  to: Point
+  from: Point
 
   /**
    * Creates a new instance of {@link AdditionalSnapLineVisualCreator}.
    * @param from The start point
    * @param to The end point
    */
-  constructor(
-    from: Point,
-    to: Point
-  ) {
+  constructor(from: Point, to: Point) {
     super()
-      this.from = from;
-      this.to = to;
+    this.from = from
+    this.to = to
   }
 
   /**

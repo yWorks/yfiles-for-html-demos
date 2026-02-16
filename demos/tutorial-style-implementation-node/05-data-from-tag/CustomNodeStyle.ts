@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { type INode, type IRenderContext, NodeStyleBase, SvgVisual, type TaggedSvgVisual } from '@yfiles/yfiles'
+import {
+  type INode,
+  type IRenderContext,
+  NodeStyleBase,
+  SvgVisual,
+  type TaggedSvgVisual
+} from '@yfiles/yfiles'
 
 const tabWidth = 50
 const tabHeight = 14

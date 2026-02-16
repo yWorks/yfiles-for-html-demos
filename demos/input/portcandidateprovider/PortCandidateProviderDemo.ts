@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,6 +38,8 @@ import {
   License,
   PortCandidateValidity,
   Rect,
+  ShapeNodeShape,
+  ShapeNodeStyle,
   ShapePortStyle
 } from '@yfiles/yfiles'
 
@@ -45,14 +47,16 @@ import { OrangePortCandidateProvider } from './OrangePortCandidateProvider'
 import { GreenPortCandidateProvider } from './GreenPortCandidateProvider'
 import { BluePortCandidateProvider } from './BluePortCandidateProvider'
 import { RedPortCandidateProvider } from './RedPortCandidateProvider'
-import type { ColorSetName } from '@yfiles/demo-app/demo-styles'
 import {
+  type ColorSetName,
+  colorSets,
   createDemoNodeLabelStyle,
   createDemoNodeStyle,
   initDemoStyles
 } from '@yfiles/demo-app/demo-styles'
 import licenseData from '../../../lib/license.json'
 import { finishLoading } from '@yfiles/demo-app/demo-page'
+import { PurplePortCandidateProvider } from './PurplePortCandidateProvider'
 
 async function run(): Promise<void> {
   License.value = licenseData
@@ -120,6 +124,8 @@ function registerPortCandidateProvider(graph: IGraph): void {
       return new GreenPortCandidateProvider(node)
     } else if (nodeTag === 'orange') {
       return new OrangePortCandidateProvider(node)
+    } else if (nodeTag === 'purple') {
+      return new PurplePortCandidateProvider(node)
     }
     // otherwise revert to default behavior
     return null
@@ -137,6 +143,21 @@ function createSampleGraph(graphComponent: GraphComponent): void {
   createNode(graph, 350, 200, 80, 30, 'demo-red', 'red', 'No Edge')
   createNode(graph, 350, 100, 80, 30, 'demo-green', 'green', 'Green Only')
   createNode(graph, 100, 200, 80, 30, 'demo-green', 'green', 'Green Only')
+
+  const purpleNode = graph.createNode({
+    layout: new Rect(350, 470, 110, 110),
+    style: new ShapeNodeStyle({
+      shape: ShapeNodeShape.OCTAGON,
+      fill: colorSets['demo-purple'].fill,
+      stroke: `1.5px ${colorSets['demo-purple'].stroke}`
+    }),
+    tag: 'purple'
+  })
+  graph.addLabel({
+    owner: purpleNode,
+    text: 'Dynamic Ports on\nShape Boundary',
+    style: createDemoNodeLabelStyle('demo-purple')
+  })
 
   const blue1 = createNode(graph, 100, 300, 80, 30, 'demo-lightblue', 'blue', 'One   Port')
   graph.addPortAt(blue1, blue1.layout.center)

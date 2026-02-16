@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -145,9 +145,9 @@
           </div>
           <div class="paragraph">
             <p>
-              yFiles for HTML provides a <code>tag</code> property for all graph items, which is
-              frequently used to bind business objects to nodes and edges. The style can make use of
-              this data and translate it to a visual representation.
+              yFiles for HTML provides a <a href="https://docs.yworks.com/yfileshtml/api/ITagOwner#tag" class="api" target="_blank">tag</a> property for all graph items, which
+              is frequently used to bind business objects to nodes and edges. The style can make use
+              of this data and translate it to a visual representation.
             </p>
           </div>
           <div class="paragraph">
@@ -191,7 +191,7 @@ edge3.<span class="hljs-property">tag</span> = { <span class="hljs-attr">load</s
             </div>
           </div>
           <div class="paragraph">
-            <p>Lastly, we need to set the color in <code>createVisual</code></p>
+            <p>Lastly, we need to set the color in <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#createVisual" class="api" target="_blank">createVisual</a></p>
           </div>
           <div class="listingblock">
             <div class="content">
@@ -202,7 +202,7 @@ thinPath.<span class="hljs-title function_">setAttribute</span>(<span class="hlj
             </div>
           </div>
           <div class="paragraph">
-            <p>and update it in <code>updateVisual</code> if necessary.</p>
+            <p>and update it in <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#updateVisual" class="api" target="_blank">updateVisual</a> if necessary.</p>
           </div>
           <div class="listingblock">
             <div class="content">
@@ -222,9 +222,10 @@ thinPath.<span class="hljs-title function_">setAttribute</span>(<span class="hlj
                   <div class="title">Note</div>
                 </td>
                 <td class="content">
-                  It is important to store the load in the cache in <code>createVisual</code> and
-                  check in <code>updateVisual</code> whether its value has been changed in the
-                  meantime. If so, you should update the old visual before returning it.
+                  It is important to store the load in the cache in
+                  <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#createVisual" class="api" target="_blank">createVisual</a> and check in
+                  <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#updateVisual" class="api" target="_blank">updateVisual</a> whether its value has been changed in
+                  the meantime. If so, you should update the old visual before returning it.
                 </td>
               </tr>
             </table>

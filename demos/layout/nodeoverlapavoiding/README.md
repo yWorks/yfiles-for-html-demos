@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 A demo that shows how to interactively edit graphs without creating overlaps.
 
-Every time a node is added, moved or resized interactively, [ClearAreaLayout](https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout) will push away the other elements so there is enough space for the changed node.
+Every time a node is added, moved or resized interactively, [ClearAreaLayout](https://docs.yworks.com/yfileshtml/api/ClearAreaLayout) will push away the other elements so there is enough space for the changed node.
 
 ## Things to Try
 

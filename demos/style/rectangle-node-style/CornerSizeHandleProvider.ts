@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -53,8 +53,8 @@ import {
  * {@link RectangleNodeStyle.cornerSize} of the node style interactively.
  */
 export class CornerSizeHandleProvider extends BaseClass(IHandleProvider) {
-    private readonly delegateProvider: IHandleProvider | null;
-    private readonly node: INode;
+  private readonly delegateProvider: IHandleProvider | null
+  private readonly node: INode
 
   /**
    * Initializes a new instance of the provider with an optional `delegateProvider`
@@ -63,13 +63,10 @@ export class CornerSizeHandleProvider extends BaseClass(IHandleProvider) {
    * @param node The node to provide handles for
    * @param delegateProvider The wrapped {@link IHandleProvider} implementation
    */
-  constructor(
-    node: INode,
-    delegateProvider: IHandleProvider | null = null
-  ) {
+  constructor(node: INode, delegateProvider: IHandleProvider | null = null) {
     super()
-      this.node = node;
-      this.delegateProvider = delegateProvider;
+    this.node = node
+    this.delegateProvider = delegateProvider
   }
 
   /**
@@ -93,7 +90,7 @@ export class CornerSizeHandleProvider extends BaseClass(IHandleProvider) {
  * {@link RectangleNodeStyle.cornerSize} interactively.
  */
 class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
-    private readonly node: INode;
+  private readonly node: INode
   private readonly style: RectangleNodeStyle
   private initialCornerSize = 0
   private currentCornerSize = 0
@@ -106,7 +103,7 @@ class CornerSizeHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
    */
   constructor(node: INode) {
     super()
-      this.node = node;
+    this.node = node
     this.style = node.style as RectangleNodeStyle
   }
 

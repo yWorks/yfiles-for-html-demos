@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -1506,11 +1506,11 @@ type FocusLabelStyleVisual = TaggedSvgVisual<SVGRectElement, Cache>
  * A style implementation that draws nothing but a border for its associated label.
  */
 class FocusLabelStyle extends LabelStyleBase<FocusLabelStyleVisual> {
-    private stroke: Stroke;
+  private stroke: Stroke
 
   constructor(stroke: Stroke) {
     super()
-      this.stroke = stroke;
+    this.stroke = stroke
   }
 
   protected createVisual(context: IRenderContext, label: ILabel): FocusLabelStyleVisual {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -124,6 +124,7 @@ export class Timeline {
     this.showTimeframeRectangle = showTimeframeRectangle
     this.showPlayButton = showPlayButton
     this.graphComponent = new GraphComponent(selector)
+    this.graphComponent.htmlElement.classList.add('timeline-component')
     this.initializeUserInteraction()
     this.initializeFolding()
     this.initializeGraphBuilder(this.graphComponent.graph.foldingView.manager.masterGraph)
@@ -145,8 +146,10 @@ export class Timeline {
             this.minZoom,
             this.maxZoom
           )
-          this.updateViewPort()
-          this.centerTimeFrame(this.buckets.toArray())
+          // center the viewport on the current timeframe
+          this.updateViewPort(
+            this.timeframeRect.bounds.centerX - this.graphComponent.viewport.width * 0.5
+          )
         }, 500)
       }
     })
@@ -287,15 +290,19 @@ export class Timeline {
     })
 
     // install a tooltip on the timeline items that reports the content of the possibly aggregated entry
-    initializeToolTips(inputMode, (item) => {
-      if (item instanceof INode) {
-        const bucket = getBucket(item)
-        if (bucket.label !== undefined) {
-          return this.createTooltipContent(bucket)
+    initializeToolTips(
+      inputMode,
+      (item) => {
+        if (item instanceof INode) {
+          const bucket = getBucket(item)
+          if (bucket.label !== undefined) {
+            return this.createTooltipContent(bucket)
+          }
         }
-      }
-      return null
-    })
+        return null
+      },
+      this.graphComponent.htmlElement
+    )
 
     // installs the event handlers
     this.initializeEvents(inputMode)
@@ -747,7 +754,6 @@ export class Timeline {
     this.updateGraph(allBuckets)
     this.zoomTo(this.zoom)
     applyTimelineLayout(this.graphComponent, this.styling, this.zoom, this.minZoom, this.maxZoom)
-    // this.applyLayout()
     this.updateViewPort()
     this.centerTimeFrame(allBuckets)
 

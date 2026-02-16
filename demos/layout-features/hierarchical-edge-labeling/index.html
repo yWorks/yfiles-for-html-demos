@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -79,26 +79,26 @@
       <div class="demo-description__content">
         <h1>Hierarchical Layout with Edge Labeling</h1>
         <p>
-          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> for automatic
+          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> for automatic
           edge label placements.
         </p>
         <h2>Label Placement</h2>
         <p>
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModel" class="api" target="_blank">Label models</a> and their
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModelParameter" class="api" target="_blank">parameters</a> control where labels appear. For manual
+          <a href="https://docs.yworks.com/yfileshtml/api/ILabelModel" class="api" target="_blank">Label models</a> and their
+          <a href="https://docs.yworks.com/yfileshtml/api/ILabelModelParameter" class="api" target="_blank">parameters</a> control where labels appear. For manual
           placement, it&#39;s common to use models that limit possible positions. However, for
           automatic layout, it&#39;s best to use unrestricted models like
-          <a href="https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel" class="api" target="_blank">FreeEdgeLabelModel</a> for maximum flexibility.
+          <a href="https://docs.yworks.com/yfileshtml/api/FreeEdgeLabelModel" class="api" target="_blank">FreeEdgeLabelModel</a> for maximum flexibility.
         </p>
         <p>
           You can further guide label placement using
-          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeLabelPreferredPlacement" class="api" target="_blank">EdgeLabelPreferredPlacement</a>, which specifies preferences such as
+          <a href="https://docs.yworks.com/yfileshtml/api/EdgeLabelPreferredPlacement" class="api" target="_blank">EdgeLabelPreferredPlacement</a>, which specifies preferences such as
           placing labels near the edge&#39;s source or target, on a particular side, or with a
           specific rotation.
         </p>
         <p>
           In this demo, each label is placed according to its text. Note that the default
-          <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyle#autoFlip" class="api" target="_blank">prevention of upside-down labels</a> is turned off to
+          <a href="https://docs.yworks.com/yfileshtml/api/LabelStyle#autoFlip" class="api" target="_blank">prevention of upside-down labels</a> is turned off to
           enable rotation of <em>Upside down</em> and <em>Upwards</em> labels.
         </p>
         <h2>Things to Try</h2>
@@ -118,11 +118,11 @@
         </ul>
         <h2>Documentation</h2>
         <ul>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#_labeling_2" class="dguide" target="_blank">Labeling</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/label_placement" class="dguide" target="_blank">Automatic Label Placement</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeLabelPreferredPlacement" class="api" target="_blank">EdgeLabelPreferredPlacement</a> class</li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel" class="api" target="_blank">FreeEdgeLabelModel</a> class</li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyle#autoFlip" class="api" target="_blank">LabelStyle.autoFlip</a> property</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/dguide/hierarchical_layout#_labeling_2" class="dguide" target="_blank">Labeling</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/dguide/label_placement" class="dguide" target="_blank">Automatic Label Placement</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/EdgeLabelPreferredPlacement" class="api" target="_blank">EdgeLabelPreferredPlacement</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/FreeEdgeLabelModel" class="api" target="_blank">FreeEdgeLabelModel</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/LabelStyle#autoFlip" class="api" target="_blank">autoFlip</a> property</li>
         </ul>
       </div>
     </aside>
@@ -130,7 +130,7 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-      <div id="demo-message" class="demo-message"></div>
+      <div class="yplay__message-host"></div>
     </div>
     <script
       type="module"

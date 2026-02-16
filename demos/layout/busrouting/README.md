@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/busrouting/).
 
-This demo shows how to create bus structures using [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter).
+This demo shows how to create bus structures using [EdgeRouter](https://docs.yworks.com/yfileshtml/api/EdgeRouter).
 
 ## Things to Try
 

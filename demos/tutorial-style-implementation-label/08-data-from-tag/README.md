@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ We add an `iconSize` variable to our style that defines how big the icon should 
 const iconSize = 16
 ```
 
-Since we want to display the icon next to the text, we have to adjust the `getPreferredSize` to include the icon size, if necessary.
+Since we want to display the icon next to the text, we have to adjust the [getPreferredSize](https://docs.yworks.com/yfileshtml/api/LabelStyleBase#getPreferredSize) to include the icon size, if necessary.
 
 ```
 if (label.tag?.iconUrl) {
@@ -48,7 +48,7 @@ if (label.tag?.iconUrl) {
 }
 ```
 
-Then, we can modify `createVisual` to add an SVG `<image>` to the visualization, that displays the icon referenced in the tag.
+Then, we can modify [createVisual](https://docs.yworks.com/yfileshtml/api/LabelStyleBase#createVisual) to add an SVG `<image>` to the visualization, that displays the icon referenced in the tag.
 
 ```
 const iconUrl = label.tag?.iconUrl

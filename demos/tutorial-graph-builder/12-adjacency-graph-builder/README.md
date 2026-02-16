@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/12-adjacency-graph-builder/).
 
-In this tutorial step we show how to use [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) to build a graph from data, where the relationship information between the nodes is part of the node data entry.
+In this tutorial step we show how to use [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder) to build a graph from data, where the relationship information between the nodes is part of the node data entry.
 
 ## The data
 
@@ -55,7 +55,7 @@ Consider the following list of data objects, which represents a basic organizati
 
 ## Building the graph
 
-In the first step, we instantiate the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) and configure an [AdjacencyNodesSource](https://docs.yworks.com/yfileshtml/#/api/AdjacencyNodesSource).
+In the first step, we instantiate the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder) and configure an instance of [AdjacencyNodesSource](https://docs.yworks.com/yfileshtml/api/AdjacencyNodesSource).
 
 ```
 const adjacencyGraphBuilder = new AdjacencyGraphBuilder(graph)
@@ -66,7 +66,7 @@ const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(
 )
 ```
 
-In the second step, we configure the _colleagues_ or _successors_ on the [AdjacencyNodesSource](https://docs.yworks.com/yfileshtml/#/api/AdjacencyNodesSource). For edge creation, we use an [EdgeCreator](https://docs.yworks.com/yfileshtml/#/api/EdgeCreator) with a default configuration.
+In the second step, we configure the _colleagues_ or _successors_ on the [AdjacencyNodesSource](https://docs.yworks.com/yfileshtml/api/AdjacencyNodesSource). For edge creation, we use an [EdgeCreator](https://docs.yworks.com/yfileshtml/api/EdgeCreator) with a default configuration.
 
 ```
 adjacencyNodesSource.addSuccessorIds(
@@ -75,7 +75,7 @@ adjacencyNodesSource.addSuccessorIds(
 )
 ```
 
-Finally, we add labels to the graph building process by providing a label binding for the [NodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource)'s [NodeCreator](https://docs.yworks.com/yfileshtml/#/api/NodeCreator).
+Finally, we add labels to the graph building process by providing a label binding for the [NodesSource](https://docs.yworks.com/yfileshtml/api/NodesSource)'s [NodeCreator](https://docs.yworks.com/yfileshtml/api/NodeCreator).
 
 ```
 adjacencyNodesSource.nodeCreator.createLabelBinding({
@@ -85,11 +85,11 @@ adjacencyNodesSource.nodeCreator.createLabelBinding({
 
 Note
 
-[AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) supports the same labeling functionality as the [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder).
+[AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder) supports the same labeling functionality as the [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder).
 
-In this tutorial step, we built a graph with [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) using the `id`s provided by the data entries for the calculation of _successors._ Of course, it is also possible to define _predecessors_ in a similar manner.
+In this tutorial step, we built a graph with [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder) using the `id`s provided by the data entries for the calculation of _successors._ Of course, it is also possible to define _predecessors_ similarly.
 
-Yet another functionality of [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) is to use predecessor/successor _sources_. See the [AdjacencyGraphBuilder Developer’s Guide](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-AdjacencyGraphBuilder) for an in-depth discussion.
+Yet another functionality of [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder) is to use predecessor/successor _sources_. See the [Developer’s Guide section about AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/dguide/graph_builder-AdjacencyGraphBuilder) for an in-depth discussion.
 
 Note
 

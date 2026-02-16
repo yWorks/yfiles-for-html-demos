@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -79,7 +79,7 @@
       <div class="demo-description__content">
         <h1>Incremental Hierarchical Layout</h1>
         <p>
-          This demo shows how to run the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> algorithm on a
+          This demo shows how to run the <a href="https://docs.yworks.com/yfileshtml/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> algorithm on a
           predefined subset of nodes in a graph.
         </p>
         <p>To achieve this, two setup steps are necessary:</p>
@@ -88,21 +88,21 @@
             <p>
               The algorithm has to be told to work on a subset only. To do so, hierarchical
               layout&#39;s
-              <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#fromSketchMode" class="api" target="_blank">from sketch mode</a> property has to
+              <a href="https://docs.yworks.com/yfileshtml/api/HierarchicalLayout#fromSketchMode" class="api" target="_blank">from sketch mode</a> property has to
               be set to <code>true</code>.
             </p>
           </li>
           <li>
             <p>
               The algorithm has to know which set of nodes (and edges) to rearrange. The class
-              <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData" class="api" target="_blank">HierarchicalLayoutData</a> offers the
-              <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#incrementalNodes" class="api" target="_blank">incrementalNodes</a>
+              <a href="https://docs.yworks.com/yfileshtml/api/HierarchicalLayoutData" class="api" target="_blank">HierarchicalLayoutData</a> offers the
+              <a href="https://docs.yworks.com/yfileshtml/api/HierarchicalLayoutData#incrementalNodes" class="api" target="_blank">incrementalNodes</a>
             </p>
           </li>
           <li>
             <p>
               and
-              <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData#incrementalEdges" class="api" target="_blank">incrementalEdges</a> properties
+              <a href="https://docs.yworks.com/yfileshtml/api/HierarchicalLayoutData#incrementalEdges" class="api" target="_blank">incrementalEdges</a> properties
               for this purpose.
             </p>
           </li>
@@ -127,11 +127,11 @@
         <h2>Documentation</h2>
         <ul>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-incremental_layout" class="dguide" target="_blank">Run hierarchical layout on a subset of nodes</a>
+            <a href="https://docs.yworks.com/yfileshtml/dguide/hierarchical_layout-incremental_layout" class="dguide" target="_blank">Run hierarchical layout on a subset of nodes</a>
           </li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout" class="dguide" target="_blank">Hierarchical layout algorithm</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> class</li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData" class="api" target="_blank">HierarchicalLayoutData</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/dguide/hierarchical_layout" class="dguide" target="_blank">Hierarchical layout algorithm</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/HierarchicalLayoutData" class="api" target="_blank">HierarchicalLayoutData</a> class</li>
         </ul>
       </div>
     </aside>
@@ -139,7 +139,7 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-      <div id="demo-message" class="demo-message"></div>
+      <div class="yplay__message-host"></div>
     </div>
     <script
       type="module"

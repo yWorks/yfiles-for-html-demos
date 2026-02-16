@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -50,11 +50,11 @@ type CustomPortStyleVisual = TaggedSvgVisual<SVGEllipseElement, Cache>
  * A basic port style that renders a circle.
  */
 export class CustomPortStyle extends PortStyleBase<CustomPortStyleVisual> {
-    size: number;
+  size: number
 
   constructor(size: number = 6) {
     super()
-      this.size = size;
+    this.size = size
   }
 
   protected createVisual(

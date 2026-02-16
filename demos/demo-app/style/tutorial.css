@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -2084,7 +2084,9 @@ body:not(.loaded) .demo-page__main:after {
 .tutorial-dropdown::-webkit-scrollbar-thumb:hover {
   background-color: #444;
 }
-.demo-message {
+.yplay__message-host {
+  --foreground-color: #0b1014;
+  --background-color: rgba(255, 255, 255, 0.95);
   pointer-events: none;
   left: 0;
   width: 100%;
@@ -2094,13 +2096,13 @@ body:not(.loaded) .demo-page__main:after {
   place-items: start center;
   z-index: 10;
 }
-.demo-message > * {
+.yplay__message-host > * {
   pointer-events: auto;
-  color: #0b1014;
-  background: rgba(255, 255, 255, 0.95);
+  color: var(--foreground-color);
+  background: var(--background-color);
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   padding: 10px 14px;
   font-size: 13px;
   line-height: 1.4;
@@ -2108,9 +2110,25 @@ body:not(.loaded) .demo-page__main:after {
   transform: translateY(-8px) scale(0.98);
   transition: opacity 0.18s ease, transform 0.18s ease;
 }
-.demo-message > *.demo-message--visible {
+.yplay__message-host > *.yplay__message--visible {
   opacity: 1;
   transform: translateY(0) scale(1);
+}
+.yplay__message-host .yplay__message--close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: var(--foreground-color);
+  cursor: pointer;
+  background: none;
+  font-size: 20px;
+  border: none;
+  transition: all 0.2s ease;
+  opacity: 0.8;
+}
+.yplay__message-host .yplay__message--close-button:hover {
+  opacity: 1;
+  transform: scale(1.1);
 }
 .demo-header {
   grid-area: header;
@@ -2617,7 +2635,7 @@ body:not(.loaded) .demo-page__toolbar:after {
   top: 0;
   height: 100%;
   width: 100%;
-  line-height: 140%;
+  line-height: 145%;
   min-width: clamp(var(--description-min-width), var(--description-width), var(--description-max-width));
   background-color: var(--description-color);
   z-index: 16;
@@ -2671,7 +2689,7 @@ body:not(.loaded) .demo-page__toolbar:after {
 .demo-description__content code,
 .demo-description__content a.api {
   background: var(--description-code-color);
-  padding: 1px 2px;
+  padding: 1px 2px 0;
   border-radius: 2px;
   font-family: monospace;
 }
@@ -3109,6 +3127,60 @@ body:not(.loaded) .demo-page__toolbar:after {
 .demo-complex-properties label:focus,
 .demo-complex-properties input:focus {
   outline: none;
+}
+.yplay__graph-sidebar {
+  display: flex;
+  transition: margin-right 0.3s ease;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.yplay__graph-sidebar > * {
+  width: 100%;
+}
+.yplay__graph-sidebar .yplay__menu--button {
+  cursor: pointer;
+  min-height: 30px;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+.yplay__graph-sidebar .yplay__menu--button,
+.yplay__graph-sidebar .yplay__menu--toggle-button,
+.yplay__graph-sidebar .yplay__menu--select {
+  padding: 3px 0;
+  margin: 3px 0;
+  width: 100%;
+}
+.yplay__graph-sidebar .yplay__menu--toggle-button {
+  background-color: buttonface;
+  border-width: 1px;
+  border-style: outset;
+  border-color: buttonborder;
+  border-radius: 2px;
+}
+.yplay__graph-sidebar .yplay__menu--toggle-button.active {
+  background-color: #c6c6c6;
+}
+.yplay__graph-sidebar .yplay__menu--toggle-button-input {
+  display: none;
+}
+.yplay__graph-sidebar .yplay__menu--slider-container {
+  position: relative;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: hidden;
+}
+.yplay__graph-sidebar .yplay__menu--slider-container > input {
+  flex: 1 1 auto;
 }
 .demo-dnd-panel {
   display: flex;

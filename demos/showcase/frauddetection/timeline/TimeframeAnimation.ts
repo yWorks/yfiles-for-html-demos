@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -43,8 +43,8 @@ type AnimationEndedListener = () => void
  * Creates the animation of the timeline.
  */
 export class TimeframeAnimation {
-    readonly timelineComponent: GraphComponent;
-    readonly timeframeRect: MutableRectangle;
+  readonly timelineComponent: GraphComponent
+  readonly timeframeRect: MutableRectangle
   private animator: Animator | null = null
   private timeframeListener: TimeframeListener | null = null
   private animationEndedListener: AnimationEndedListener | null = null
@@ -55,12 +55,10 @@ export class TimeframeAnimation {
    * @param timeframeRect The rectangle used in the {@link TimeframeRectangle}
    * @param timelineComponent The graph component presenting the timeline
    */
-  constructor(
-    timeframeRect: MutableRectangle,
-    timelineComponent: GraphComponent
-  ) {
-      this.timeframeRect = timeframeRect;
-      this.timelineComponent = timelineComponent;}
+  constructor(timeframeRect: MutableRectangle, timelineComponent: GraphComponent) {
+    this.timeframeRect = timeframeRect
+    this.timelineComponent = timelineComponent
+  }
 
   /**
    * Moves the time frame rightwards along the timeline until it reaches the right border.

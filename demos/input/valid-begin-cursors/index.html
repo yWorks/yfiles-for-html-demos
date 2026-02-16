@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -80,7 +80,7 @@
         <h1>Valid Begin Cursor Demo</h1>
         <p>
           This demo illustrates how the mouse cursor dynamically changes within a
-          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a> to signal which interactive action (e.g., move, select,
+          <a href="https://docs.yworks.com/yfileshtml/api/GraphComponent" class="api" target="_blank">GraphComponent</a> to signal which interactive action (e.g., move, select,
           create) can be initiated at the current pointer location.
         </p>
         <h2>Things to Try</h2>
@@ -88,7 +88,7 @@
           <li>
             <p>
               <strong>Move the Viewport:</strong> Press <kbd>Ctrl</kbd> while hovering over an empty
-              canvas area. The cursor changes to <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#GRAB" class="api" target="_blank">Cursor.GRAB</a>.
+              canvas area. The cursor changes to <a href="https://docs.yworks.com/yfileshtml/api/Cursor#GRAB" class="api" target="_blank">GRAB</a>.
             </p>
           </li>
           <li>
@@ -103,7 +103,7 @@
             <p>
               <strong>Marquee Select:</strong> Perform a rectangular selection by dragging over an
               empty area <em>without</em> <kbd>Ctrl</kbd> or <kbd>Alt</kbd> held. The cursor
-              displays as <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#CROSSHAIR" class="api" target="_blank">Cursor.CROSSHAIR</a>. Similar to lasso,
+              displays as <a href="https://docs.yworks.com/yfileshtml/api/Cursor#CROSSHAIR" class="api" target="_blank">CROSSHAIR</a>. Similar to lasso,
               <kbd>Shift</kbd> and <kbd>Ctrl</kbd> modify the cursor for <kbd>+</kbd> (add) or
               <kbd>-</kbd> (subtract) selection.
             </p>
@@ -117,14 +117,14 @@
           <li>
             <p>
               <strong>Move Node:</strong> Hover over any node <em>without</em>
-              <kbd>Ctrl</kbd> pressed. The cursor changes to <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#MOVE" class="api" target="_blank">Cursor.MOVE</a>,
+              <kbd>Ctrl</kbd> pressed. The cursor changes to <a href="https://docs.yworks.com/yfileshtml/api/Cursor#MOVE" class="api" target="_blank">MOVE</a>,
               indicating you can drag the node.
             </p>
           </li>
           <li>
             <p>
               <strong>Show Tooltip:</strong> Hover over an edge for a second. The cursor changes to
-              <a href="https://docs.yworks.com/yfileshtml/#/api/Cursor#HELP" class="api" target="_blank">Cursor.HELP</a> to indicate that a tooltip can be displayed.
+              <a href="https://docs.yworks.com/yfileshtml/api/Cursor#HELP" class="api" target="_blank">HELP</a> to indicate that a tooltip can be displayed.
             </p>
           </li>
         </ul>
@@ -134,7 +134,7 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-      <div id="demo-message" class="demo-message"></div>
+      <div class="yplay__message-host"></div>
     </div>
     <script type="module" crossorigin="anonymous" src="./ValidBeginCursorsDemo.ts" async></script>
   </body>

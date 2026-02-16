@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/sequenceconstraints/).
 
-Shows how to use sequence constraints to restrict the node sequencing in [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
+Shows how to use sequence constraints to restrict the node sequencing in [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout).
 
 The sequence is determined by the model data.
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,13 +26,20 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, type IRenderContext, IVisualCreator, type Rect, SvgVisual, type Visual } from '@yfiles/yfiles'
+import {
+  BaseClass,
+  type IRenderContext,
+  IVisualCreator,
+  type Rect,
+  SvgVisual,
+  type Visual
+} from '@yfiles/yfiles'
 
 /**
  * Creates a visual for the demo's background image.
  */
 export class ImageVisualCreator extends BaseClass(IVisualCreator) {
-    private imageRect: Rect;
+  private imageRect: Rect
 
   /**
    * Initializes a new instance of <code>ImageVisualCreator</code>.
@@ -40,7 +47,7 @@ export class ImageVisualCreator extends BaseClass(IVisualCreator) {
    */
   constructor(imageRect: Rect) {
     super()
-      this.imageRect = imageRect;
+    this.imageRect = imageRect
   }
 
   /**

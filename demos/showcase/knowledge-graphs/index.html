@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML.
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     //
+     ////////////////////////////////////////////////////////////////////////-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+
+    <title>Interactive Knowledge Graph Demo [yFiles for HTML]</title>
+    <script type="module" src="../../demo-app/demo-page-init.ts" async></script>
+
+    <link rel="stylesheet" href="../../demo-app/style/demo.css" />
+    <link rel="stylesheet" href="./styles/style.css" />
+  </head>
+  <body>
+    <header class="demo-header">
+      <a
+        href="https://www.yfiles.com"
+        class="demo-header__y-logo"
+        title="yFiles homepage"
+        target="_blank"
+      ></a>
+      <div class="demo-header__breadcrumb-wrapper">
+        <a href="https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html">yFiles for HTML</a>
+        <a href="../../README.html">Demos</a>
+
+        <span>Interactive Knowledge Graph</span>
+        <a href="../../README.html" class="demo-header__mobile-back">yFiles Demos</a>
+      </div>
+      <div class="demo-header__right">
+        <show-source-button></show-source-button>
+        <fullscreen-button></fullscreen-button>
+      </div>
+    </header>
+
+    <div class="demo-page__toolbar">
+      <button data-command="INCREASE_ZOOM"></button>
+      <button data-command="ZOOM_ORIGINAL"></button>
+      <button data-command="DECREASE_ZOOM"></button>
+      <button data-command="FIT_GRAPH_BOUNDS"></button>
+      <span class="demo-separator"></span>
+      <input
+        type="checkbox"
+        id="teams-view"
+        title="Organizes the graph in teams"
+        class="demo-toggle-button labeled"
+      />
+      <label
+        for="teams-view"
+        title="Rearrange the graph so teammates are positioned near each other"
+      >
+        Group By Teams
+      </label>
+      <span class="demo-separator"></span>
+      <span>
+        <label for="searchBox">Search:</label>
+        <input type="search" id="searchBox" />
+      </span>
+    </div>
+    <aside class="demo-page__description">
+      <div class="demo-description__header">
+        <a
+          href="https://www.yfiles.com"
+          class="demo-description__logo"
+          title="yFiles homepage"
+          target="_blank"
+        ></a>
+      </div>
+      <div class="demo-description__toggle-button" title="Toggle description"></div>
+      <div class="demo-description__play-button">Start here</div>
+
+      <div class="demo-description__content">
+        <h1>Interactive Knowledge Graph Demo</h1>
+        <p>
+          This demo visualizes a knowledge graph and highlights potential data issues, offering
+          interactive tools to inspect and fix them.
+        </p>
+        <p>
+          Knowledge graph data are typically stored as triples (subject–predicate–object). Because
+          triples can come from different sources and formats, common problems include duplicated
+          nodes, edges connected to the wrong endpoints, and isolated nodes.
+        </p>
+        <p>
+          Use the right panel to locate detected problems and apply fixes directly. Alternatively,
+          select nodes or edges in the graph and use the context menu (right‑click) to repair them.
+        </p>
+
+        <h2>Things to try</h2>
+        <ul>
+          <li>
+            Open the right sidebar to see a list of detected problems. For each problem, you can
+            either zoom to the affected node(s) or apply an automatic fix.
+          </li>
+          <li>
+            Enable 'Spotlight all issues' to mark all problematic elements using a beacon animation
+            (available only if the browser supports WebGL).
+          </li>
+          <li>
+            Merge duplicated nodes (<span class="material-icon small">copy_all</span>) to
+            consolidate identical entities into a single node.
+          </li>
+          <li>
+            Remove isolated nodes (<span class="material-icon small">error</span>) that are not
+            connected to the rest of the graph.
+          </li>
+          <li>
+            Fix edges with incorrect endpoints (<span class="material-icon small">warning</span>) by
+            selecting the edge and reconnecting its ports to the correct node(s).
+          </li>
+          <li>
+            Double-click on a node to open the neighborhood view panel showing all its direct
+            neighbors.
+          </li>
+          <li>
+            Switch layout with the <strong>Group By Teams</strong> toolbar button: This groups nodes
+            that belong to the same team next to each other for easier inspection.
+          </li>
+          <li>
+            Use the <strong>Triplet Filtering</strong> panel to filter-out or fade-out parts of the
+            graph based on selected triples (subject, predicate, or object). Note that 'fade-out'
+            operation is only available if the browser supports WebGL.
+          </li>
+        </ul>
+      </div>
+    </aside>
+    <div class="demo-page__main">
+      <div class="demo-main__graph-component">
+        <div id="graphComponent"></div>
+        <div id="neighborhood-backdrop"></div>
+        <div id="neighborhood-panel">
+          <button
+            id="neighborhood-close"
+            title="Close Neighborhood View"
+            aria-label="Close"
+          ></button>
+          <div id="neighborhood-graphComponent"></div>
+        </div>
+      </div>
+
+      <aside class="demo-main__sidebar">
+        <div class="demo-sidebar__content">
+          <h2>Triplet Filtering</h2>
+
+          <div id="graph-overlay" class="graph-overlay">
+            <div class="filter-dropdowns">
+              <select id="subject-combo"></select>
+              <span class="down-arrow">↓</span>
+              <select id="predicate-combo"></select>
+              <span class="down-arrow">↓</span>
+              <select id="object-combo"></select>
+            </div>
+            <div class="filter-buttons">
+              <button
+                id="apply-filtering"
+                class="labeled main-interaction-button"
+                title="Filter all elements from the graph that don't match the selected triplet"
+              >
+                Filter
+              </button>
+              <button
+                data-tip="Available only when WebGL is supported"
+                id="apply-fade-out"
+                title="Highlight all elements that match the selected triplet"
+                class="labeled main-interaction-button"
+              >
+                Highlight
+              </button>
+              <button
+                id="reset-filtering"
+                class="labeled main-interaction-button"
+                title="Reset the triplet filtering and highlighting"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+
+          <h2>Graph Information</h2>
+          <div class="graph-information-container">
+            <span>
+              <b>Matching nodes:</b> <span id="graph-nodes"></span><span class="footnote">*</span> /
+              <span id="all-graph-nodes"></span>
+            </span>
+            <br />
+            <span>
+              <b>Matching edges:</b> <span id="graph-edges"></span><span class="footnote">*</span> /
+              <span id="all-graph-edges"></span>
+            </span>
+            <p class="footnote">* Depending on the current triplet filtering</p>
+          </div>
+
+          <h2>Data problems</h2>
+          <p><span id="data-problems-text">The data set contains the following errors:</span></p>
+          <p id="error-animation">
+            <label title="Toggle highlighting of issues in the graph">
+              <input type="checkbox" id="error-beacon-animation" class="demo-checkbox" />
+              Spotlight all issues
+            </label>
+          </p>
+          <div id="data-problems-list"></div>
+        </div>
+      </aside>
+
+      <div id="loading-indicator">Loading the graph. This may take a while...</div>
+    </div>
+    <script type="module" crossorigin="anonymous" src="KnowledgeGraphsDemo.ts" async></script>
+  </body>
+</html>

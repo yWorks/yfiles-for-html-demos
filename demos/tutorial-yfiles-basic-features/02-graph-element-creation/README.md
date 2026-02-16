@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@
 
 ## How to create a graph programmatically
 
-This step shows how to [create the basic graph elements](https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-creating_graph_elements) using the core [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph). Note that depending on your specific use-case, you will let the user create the elements, interactively, or you might be using [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) to populate your graph. The latter is covered in the **[Graph Builder Tutorial](../../README.html#tutorial-graph-builder)**. Also consider using the **[App Generator](https://www.yworks.com/app-generator)** which can help you load your graphs from a convenient low-code interface.
+This step shows how to [create the basic graph elements](https://docs.yworks.com/yfileshtml/dguide/getting_started-application#getting_started-creating_graph_elements) using the core [IGraph](https://docs.yworks.com/yfileshtml/api/IGraph) API. Note that depending on your specific use-case, you will let the user create the elements, interactively, or you might be using [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) to populate your graph. The latter is covered in the **[Graph Builder Tutorial](../../README.html#tutorial-graph-builder)**. Also consider using the **[App Generator](https://www.yworks.com/app-generator)** which can help you load your graphs from a convenient low-code interface.
 
-In this example, we use the low-level [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph) to first create the nodes. The size is determined by [the default size](https://docs.yworks.com/yfileshtml/#/api/INodeDefaults#size).
+In this example, we use the [IGraph](https://docs.yworks.com/yfileshtml/api/IGraph) type to first create the nodes. The size is determined by [the default size](https://docs.yworks.com/yfileshtml/api/INodeDefaults#size).
 
 ```
 const node1 = graph.createNode()

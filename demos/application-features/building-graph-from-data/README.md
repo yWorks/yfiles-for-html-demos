@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@
 
 This demo shows how to build a graph using the data stored in JSON-format.
 
-This demo utilizes the [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph) API to create graph elements, which can be useful for handling special cases.
+This demo utilizes the [IGraph](https://docs.yworks.com/yfileshtml/api/IGraph) API to create graph elements, which can be useful for handling special cases.
 
-However, for general use cases, we recommend using the [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) for creating graphs from data. It simplifies the process and is the recommended approach for most scenarios.
+However, for general use cases, we recommend using the [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) for creating graphs from data. It simplifies the process and is the recommended approach for most scenarios.
 
 - Note that some nodes have individual colors or sizes.
 - Look at the hierarchy of group nodes.

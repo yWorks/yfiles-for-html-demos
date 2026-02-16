@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -387,8 +387,8 @@ export class TopLevelGroupToSwimlaneStage extends LayoutStageBase {
 }
 
 class TopLevelColumn {
-    private index?: number;
-    topLevelGroup?: LayoutNode | null;
+  private index?: number
+  topLevelGroup?: LayoutNode | null
   public group: LayoutNode | null
   public actualGridLayoutGridColumn: LayoutGridColumn | null = null
   public originalLeftInset: number = 0
@@ -398,12 +398,9 @@ class TopLevelColumn {
   public minimumWidth: number = 0
   public indexFixed: boolean = false
 
-  constructor(
-    topLevelGroup?: LayoutNode | null,
-    index?: number
-  ) {
-      this.topLevelGroup = topLevelGroup;
-      this.index = index;
+  constructor(topLevelGroup?: LayoutNode | null, index?: number) {
+    this.topLevelGroup = topLevelGroup
+    this.index = index
     this.group = topLevelGroup ?? null
     this.index = index ?? -1
   }

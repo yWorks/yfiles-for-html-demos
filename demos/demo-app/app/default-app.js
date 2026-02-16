@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -156,6 +156,13 @@ export class DefaultApp {
   }
 
   show(content, duration = 1000) {
+    // create a message container if none was given
+    if (!this.messageRoot && this.graphComponent.htmlElement.parentElement) {
+      this.messageRoot = document.createElement('div')
+      this.messageRoot.className = 'yplay__message-host'
+      this.graphComponent.htmlElement.parentElement.appendChild(this.messageRoot)
+    }
+
     return show(content, duration, this.messageRoot, this.signal)
   }
 }

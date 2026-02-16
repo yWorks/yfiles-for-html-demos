@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -79,7 +79,7 @@
       <div class="demo-description__content">
         <h1>Incremental Organic Layout</h1>
         <p>
-          This demo shows how to run the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a> algorithm on a predefined
+          This demo shows how to run the <a href="https://docs.yworks.com/yfileshtml/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a> algorithm on a predefined
           subset of nodes in a graph.
         </p>
         <p>To achieve this, two setup steps are necessary:</p>
@@ -87,20 +87,20 @@
           <li>
             <p>
               The algorithm has to know which set of nodes to work on. Class
-              <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData" class="api" target="_blank">OrganicLayoutData</a> offers the property
-              <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#scope" class="api" target="_blank">scope</a>, in which the set of
-              <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicScopeData#nodes" class="api" target="_blank">nodes</a> can be specified.
+              <a href="https://docs.yworks.com/yfileshtml/api/OrganicLayoutData" class="api" target="_blank">OrganicLayoutData</a> offers the property
+              <a href="https://docs.yworks.com/yfileshtml/api/OrganicLayoutData#scope" class="api" target="_blank">scope</a>, in which the set of
+              <a href="https://docs.yworks.com/yfileshtml/api/OrganicScopeData#nodes" class="api" target="_blank">nodes</a> can be specified.
             </p>
           </li>
           <li>
             <p>
               The layout algorithm has to be told whether a node and its surrounding nodes could
               possibly be laid out. To do so, the
-              <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicScopeData#scopeModes" class="api" target="_blank">scopeModes</a> property can be set to the
-              following scope modes: <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicScope#AFFECTED" class="api" target="_blank">AFFECTED</a>,
-              <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicScope#FIXED" class="api" target="_blank">FIXED</a>,
-              <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicScope#INCLUDE_CLOSE_NODES" class="api" target="_blank">INCLUDE_CLOSE_NODES</a> or
-              <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicScope#INCLUDE_EXTENDED_NEIGHBORHOOD" class="api" target="_blank">INCLUDE_EXTENDED_NEIGHBORHOOD</a>.
+              <a href="https://docs.yworks.com/yfileshtml/api/OrganicScopeData#scopeModes" class="api" target="_blank">scopeModes</a> property can be set to the
+              following scope modes: <a href="https://docs.yworks.com/yfileshtml/api/OrganicScope#AFFECTED" class="api" target="_blank">AFFECTED</a>,
+              <a href="https://docs.yworks.com/yfileshtml/api/OrganicScope#FIXED" class="api" target="_blank">FIXED</a>,
+              <a href="https://docs.yworks.com/yfileshtml/api/OrganicScope#INCLUDE_CLOSE_NODES" class="api" target="_blank">INCLUDE_CLOSE_NODES</a> or
+              <a href="https://docs.yworks.com/yfileshtml/api/OrganicScope#INCLUDE_EXTENDED_NEIGHBORHOOD" class="api" target="_blank">INCLUDE_EXTENDED_NEIGHBORHOOD</a>.
             </p>
           </li>
         </ul>
@@ -112,11 +112,11 @@
         <h2>Documentation</h2>
         <ul>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout#organic_layout-incremental" class="dguide" target="_blank">Run organic layout on a subset of nodes</a>
+            <a href="https://docs.yworks.com/yfileshtml/dguide/organic_layout#organic_layout-incremental" class="dguide" target="_blank">Run organic layout on a subset of nodes</a>
           </li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/OrganicScopeData" class="api" target="_blank">OrganicScopeData</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/OrganicScope" class="api" target="_blank">OrganicScope</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/OrganicScopeData" class="api" target="_blank">OrganicScopeData</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/OrganicScope" class="api" target="_blank">OrganicScope</a></li>
         </ul>
       </div>
     </aside>
@@ -124,7 +124,7 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-      <div id="demo-message" class="demo-message"></div>
+      <div class="yplay__message-host"></div>
     </div>
     <script type="module" crossorigin="anonymous" src="./OrganicIncrementalDemo.ts" async></script>
   </body>

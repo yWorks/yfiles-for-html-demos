@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -42,11 +42,11 @@ import {
 } from '@yfiles/yfiles'
 
 export class PortReshapeHandle extends BaseClass(IHandle) {
-    private readonly minimumSize: Size;
-    private readonly position: HandlePositions;
-    private readonly portStyle: ShapePortStyle;
-    private readonly port: IPort;
-    private readonly context: IInputModeContext;
+  private readonly minimumSize: Size
+  private readonly position: HandlePositions
+  private readonly portStyle: ShapePortStyle
+  private readonly port: IPort
+  private readonly context: IInputModeContext
   /**
    * The margins the handle is placed form the port visualization bounds.
    * The margins are applied in view coordinates. Default is `4`.
@@ -74,11 +74,11 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
     minimumSize: Size
   ) {
     super()
-      this.context = context;
-      this.port = port;
-      this.portStyle = portStyle;
-      this.position = position;
-      this.minimumSize = minimumSize;
+    this.context = context
+    this.port = port
+    this.portStyle = portStyle
+    this.position = position
+    this.minimumSize = minimumSize
     this.margins = 4
   }
 

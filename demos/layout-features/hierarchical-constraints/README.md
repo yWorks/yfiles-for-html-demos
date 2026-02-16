@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-constraints/).
 
-This demo shows how to customize the assignment of the nodes to the layers (layering) and the order of the nodes in a layer (sequencing) when using [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout).
+This demo shows how to customize the assignment of the nodes to the layers (layering) and the order of the nodes in a layer (sequencing) when using [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout).
 
 ## Layer Constraints
 
@@ -38,6 +38,6 @@ Click the button in the toolbar to toggle between hierarchical layout with and w
 
 ## Documentation
 
-- [Constrained Layer Assignment](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_layer_assignment)
-- [Constrained Node Sequencing](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout-constrained_node_sequencing)
-- [HierarchicalLayoutData](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayoutData)
+- [Constrained Layer Assignment](https://docs.yworks.com/yfileshtml/dguide/hierarchical_layout-constrained_layer_assignment)
+- [Constrained Node Sequencing](https://docs.yworks.com/yfileshtml/dguide/hierarchical_layout-constrained_node_sequencing)
+- [HierarchicalLayoutData](https://docs.yworks.com/yfileshtml/api/HierarchicalLayoutData)

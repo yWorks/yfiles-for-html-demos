@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@
 
 ## How to add basic interaction.
 
-This step shows the [default interaction gestures](https://docs.yworks.com/yfileshtml/#/dguide/interaction) that are provided by class [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode).
+This step shows the [default interaction gestures](https://docs.yworks.com/yfileshtml/dguide/interaction) that are provided by class [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode).
 
-Interaction is handled by interface [IInputMode](https://docs.yworks.com/yfileshtml/#/api/IInputMode). [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) is the main input mode that already provides a large number of user interaction features, such as moving, deleting, creating, and resizing graph elements. See the [API documentation](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) for the various configuration options.
+Interaction is handled by interface [IInputMode](https://docs.yworks.com/yfileshtml/api/IInputMode). [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode) is the main input mode that already provides a large number of user interaction features, such as moving, deleting, creating, and resizing graph elements. See the [API documentation](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode) for the various configuration options.
 
 ```
 graphComponent.inputMode = new GraphEditorInputMode()

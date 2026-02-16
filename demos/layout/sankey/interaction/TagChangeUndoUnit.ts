@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,10 +34,10 @@ import { BaseClass, type IModelItem, IUndoUnit } from '@yfiles/yfiles'
  * important to undo these changes along with the changes in style and layout.
  */
 export class TagChangeUndoUnit extends BaseClass(IUndoUnit) {
-    private readonly undoRedoCallback?: () => void | null;
-    private readonly item: IModelItem;
-    private readonly newTag: object;
-    private readonly oldTag: object;
+  private readonly undoRedoCallback?: () => void | null
+  private readonly item: IModelItem
+  private readonly newTag: object
+  private readonly oldTag: object
   private readonly _undoName: string
   private readonly _redoName: string
 
@@ -59,10 +59,10 @@ export class TagChangeUndoUnit extends BaseClass(IUndoUnit) {
     undoRedoCallback?: () => void | null
   ) {
     super()
-      this.oldTag = oldTag;
-      this.newTag = newTag;
-      this.item = item;
-      this.undoRedoCallback = undoRedoCallback;
+    this.oldTag = oldTag
+    this.newTag = newTag
+    this.item = item
+    this.undoRedoCallback = undoRedoCallback
     this._undoName = undoName
     this._redoName = redoName
   }

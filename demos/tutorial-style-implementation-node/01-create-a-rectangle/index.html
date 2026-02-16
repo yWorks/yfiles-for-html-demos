@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -164,7 +164,7 @@
                       of cases, other approaches like template styles or decorating built-in styles
                       with custom elements are enough. For more information on the topic of styling
                       graph items, please have a look at
-                      <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-node_styles" class="dguide" target="_blank">Node Styles</a>.
+                      <a href="https://docs.yworks.com/yfileshtml/dguide/styles-node_styles" class="dguide" target="_blank">Node Styles</a>.
                     </td>
                   </tr>
                 </table>
@@ -178,7 +178,7 @@
                 <p>
                   yFiles for HTML provides an abstract base class which provides the basic functionality
                   to create a custom node style. We start with a custom subclass of
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase" class="api" target="_blank">NodeStyleBase</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodeStyleBase" class="api" target="_blank">NodeStyleBase</a>.
                 </p>
               </div>
               <div class="listingblock">
@@ -195,9 +195,10 @@
               <div class="paragraph">
                 <p>
                   This code will not produce anything visible, yet. We first have to implement the
-                  <code>createVisual</code> method. This method returns an SVG element, wrapped into
-                  an <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" class="api" target="_blank">SvgVisual</a>. Let&#8217;s start with a simple rectangle for now to
-                  keep things simple. We will switch to a more complex visualization later on.
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodeStyleBase#createVisual" class="api" target="_blank">createVisual</a> method. This method returns an SVG
+                  element, wrapped into an <a href="https://docs.yworks.com/yfileshtml/api/SvgVisual" class="api" target="_blank">SvgVisual</a>. Let&#8217;s start with a
+                  simple rectangle for now to keep things simple. We will switch to a more complex
+                  visualization later on.
                 </p>
               </div>
               <div class="listingblock">
@@ -224,9 +225,9 @@
                       <div class="title">Note</div>
                     </td>
                     <td class="content">
-                      The SVG element returned in <code>createVisual</code> does not necessarily
-                      have to be created using the JavaScript DOM API. You could also create it
-                      using any JavaScript UI framework or API like React, Vue, etc.
+                      The SVG element returned in <a href="https://docs.yworks.com/yfileshtml/api/NodeStyleBase#createVisual" class="api" target="_blank">createVisual</a> does
+                      not necessarily have to be created using the JavaScript DOM API. You could
+                      also create it using any JavaScript UI framework or API like React, Vue, etc.
                     </td>
                   </tr>
                 </table>
@@ -234,11 +235,11 @@
               <div class="paragraph">
                 <p>
                   Creating a visualization in SVG often includes a lot of SVG DOM manipulation. The
-                  code above uses <a href="https://developer.mozilla.org/docs/Web/API/Element/setAttribute" target="_blank">setAttribute</a> to move
-                  and resize the visualization according to the position and the size of the node.
-                  There are alternatives, such as modifying those values directly via the JavaScript
-                  API for certain SVG elements. Not all attributes can be set that way and, e.g.,
-                  colors will still require <code>setAttribute</code> calls:
+                  code above uses the <a href="https://developer.mozilla.org/docs/Web/api/Element/setAttribute" target="_blank">Element.setAttribute</a> method to move and
+                  resize the visualization according to the position and the size of the node. There
+                  are alternatives, such as modifying those values directly via the JavaScript API
+                  for certain SVG elements. Not all attributes can be set that way and, e.g., colors
+                  will still require <code>setAttribute</code> calls:
                 </p>
               </div>
               <div class="listingblock">
@@ -253,8 +254,8 @@ rect.<span class="hljs-property">height</span>.<span class="hljs-property">baseV
               </div>
               <div class="paragraph">
                 <p>
-                  Besides <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" class="api" target="_blank">SvgVisual</a>, which can contain only an SVG element, there
-                  are other visuals as well, for example <a href="https://docs.yworks.com/yfileshtml/#/api/HtmlVisual" class="api" target="_blank">HtmlVisual</a> for HTML
+                  Besides <a href="https://docs.yworks.com/yfileshtml/api/SvgVisual" class="api" target="_blank">SvgVisual</a>, which can contain only an SVG element, there
+                  are other visuals as well, for example <a href="https://docs.yworks.com/yfileshtml/api/HtmlVisual" class="api" target="_blank">HtmlVisual</a> for HTML
                   elements.
                 </p>
               </div>

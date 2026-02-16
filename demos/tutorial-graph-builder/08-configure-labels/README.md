@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,11 +15,11 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/08-configure-labels/).
 
-In this tutorial step, you will learn how to configure [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) to place the labels of the graph elements at a desired position and configure their style.
+In this tutorial step, you will learn how to configure [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) to place the labels of the graph elements at a desired position and configure their style.
 
 Note
 
-This step is optional when building a graph with [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder). If you do not want to add labels to your graph, you can proceed with the next step.
+This step is optional when building a graph with [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder). If you do not want to add labels to your graph, you can proceed with the next step.
 
 In this step, we will use a simple company ownership diagram.
 
@@ -43,15 +43,15 @@ const data = {
 
 ### Label placement
 
-The label placement can be defined either using a _default_ configuration or using a _layout provider_ on the [LabelCreator](https://docs.yworks.com/yfileshtml/#/api/LabelCreator).
+The label placement can be defined either using a _default_ configuration or using a _layout provider_ on the [LabelCreator](https://docs.yworks.com/yfileshtml/api/LabelCreator).
 
-A default placement will apply to all labels of the [LabelsSource](https://docs.yworks.com/yfileshtml/#/api/LabelsSource) for which no other placement is specified. In this example, as a default, we place the labels at the center of the node as follows:
+A default placement will apply to all labels of the [LabelsSource](https://docs.yworks.com/yfileshtml/api/LabelsSource) for which no other placement is specified. In this example, as a default, we place the labels at the center of the node as follows:
 
 ```
 typeLabelCreator.defaults.layoutParameter = InteriorNodeLabelModel.CENTER
 ```
 
-In the case where you want to determine the label position based on specific properties of the data, you can use a [layout parameter provider](https://docs.yworks.com/yfileshtml/#/api/LabelCreator#layoutParameterProvider) which will provide the information about the desired label placement.
+In the case where you want to determine the label position based on specific properties of the data, you can use a [layoutParameterProvider](https://docs.yworks.com/yfileshtml/api/LabelCreator#layoutParameterProvider) which will provide the information about the desired label placement.
 
 In this example, we want to create two labels for each node. The first label will be bound to the `type` property of our dataset and will use the `default` placement, i.e., at the center of the node. The second label will be bound to the `name` property and will be placed at the top side of the node, stretched over the node’s width. To achieve the desired placement, we create the layout provider as follows:
 
@@ -63,9 +63,9 @@ nameLabelCreator.layoutParameterProvider = (): ILabelModelParameter =>
 
 ### Label styles
 
-Similar to node/edge styling, there exist three ways to style labels. Specifically, you can set _defaults_, _style_ _bindings_ and _style_ _providers_ on the [LabelCreator](https://docs.yworks.com/yfileshtml/#/api/LabelCreator).
+Similar to node/edge styling, there exist three ways to style labels. Specifically, you can set _defaults_, _style_ _bindings_ and _style_ _providers_ on the [LabelCreator](https://docs.yworks.com/yfileshtml/api/LabelCreator).
 
-In our example, we will first create a default style for all labels for which we will not set a specific style. More precisely, we use the [LabelStyle](https://docs.yworks.com/yfileshtml/#/api/LabelStyle) and align the text to the `center` of the node.
+In our example, we will first create a default style for all labels for which we will not set a specific style. More precisely, we use the [LabelStyle](https://docs.yworks.com/yfileshtml/api/LabelStyle) and align the text to the [center](https://docs.yworks.com/yfileshtml/api/HorizontalTextAlignment#CENTER) of the node.
 
 ```
 nameLabelCreator.defaults.style = new LabelStyle({
@@ -82,7 +82,7 @@ typeLabelCreator.defaults.shareStyleInstance = false
 typeLabelCreator.styleBindings.addBinding('font', () => 'bold 12px Roboto')
 ```
 
-For the labels bound to the `name` property, we want to use a different background color based on the `type` of the associated node. For these of type `Trust`, we will also add an icon using the [IconLabelStyle](https://docs.yworks.com/yfileshtml/#/api/IconLabelStyle).
+For the labels bound to the `name` property, we want to use a different background color based on the `type` of the associated node. For these of type `Trust`, we will also add an icon using the [IconLabelStyle](https://docs.yworks.com/yfileshtml/api/IconLabelStyle).
 
 ```
 // disable the sharing of the label style
@@ -110,7 +110,7 @@ nameLabelCreator.styleProvider = (data): ILabelStyle => {
 
 ### Label size
 
-Using the same approach, the label size can be configured either using [size bindings](https://docs.yworks.com/yfileshtml/#/api/LabelCreator#preferredSizeBindings) or using a [size provider](https://docs.yworks.com/yfileshtml/#/api/LabelCreator#preferredSizeProvider). The following code shows how to set a different size to the labels of type `Trust`.
+Using the same approach, the label size can be configured either using [preferredSizeBindings](https://docs.yworks.com/yfileshtml/api/LabelCreator#preferredSizeBindings) or using a [preferredSizeProvider](https://docs.yworks.com/yfileshtml/api/LabelCreator#preferredSizeProvider). The following code shows how to set a different size to the labels of type `Trust`.
 
 ```
 // set a new size for the labels with type 'Trust'

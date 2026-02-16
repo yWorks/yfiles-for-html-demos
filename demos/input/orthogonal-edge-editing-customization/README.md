@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 This demo shows how to customize orthogonal edge editing.
 
-Using the [GraphDecorator](https://docs.yworks.com/yfileshtml/#/api/GraphDecorator), the edge is decorated with custom implementations of the [IOrthogonalEdgeHelper](https://docs.yworks.com/yfileshtml/#/api/IOrthogonalEdgeHelper) interface.
+Using the [GraphDecorator](https://docs.yworks.com/yfileshtml/api/GraphDecorator), the edge is decorated with custom implementations of the [IOrthogonalEdgeHelper](https://docs.yworks.com/yfileshtml/api/IOrthogonalEdgeHelper) interface.
 
 ## Things to Try
 

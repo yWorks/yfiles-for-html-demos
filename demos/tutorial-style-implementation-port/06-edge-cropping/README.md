@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@
 
 In this tutorial step, we will add support for edge cropping at the port. Since in this example, the ports protrude from their owner node’s bounds, the edge’s arrow can be hidden behind the port.
 
-To define the port shape, we first define an [IShapeGeometry](https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry) for the style. This interface is later used by the [IEdgePathCropper](https://docs.yworks.com/yfileshtml/#/api/IEdgePathCropper) to crop the edge at the port outline.
+To define the port shape, we first define an [IShapeGeometry](https://docs.yworks.com/yfileshtml/api/IShapeGeometry) for the style. This interface is later used by the [IEdgePathCropper](https://docs.yworks.com/yfileshtml/api/IEdgePathCropper) to crop the edge at the port outline.
 
-We override the [lookup](https://docs.yworks.com/yfileshtml/#/dguide/customizing_concepts_lookup) method to return the [IShapeGeometry](https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry) to the port style. The [IShapeGeometry](https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry) gets the port’s bounds and uses the convenience class [GeometryUtilities](https://docs.yworks.com/yfileshtml/#/api/GeometryUtilities) to consider the elliptic port shape.
+We override the [lookup](https://docs.yworks.com/yfileshtml/dguide/customizing_concepts_lookup) method to return the [IShapeGeometry](https://docs.yworks.com/yfileshtml/api/IShapeGeometry) to the port style. The [IShapeGeometry](https://docs.yworks.com/yfileshtml/api/IShapeGeometry) gets the port’s bounds and uses the convenience class [GeometryUtilities](https://docs.yworks.com/yfileshtml/api/GeometryUtilities) to consider the elliptic port shape.
 
 ```
 protected lookup(port: IPort, type: Constructor<any>): any {
@@ -50,7 +50,7 @@ protected lookup(port: IPort, type: Constructor<any>): any {
   }
 ```
 
-Now, we have to provide an [IEdgePathCropper](https://docs.yworks.com/yfileshtml/#/api/IEdgePathCropper) instance in the `lookup` method that yFiles for HTML can use it for edge cropping. We subclass [EdgePathCropper](https://docs.yworks.com/yfileshtml/#/api/EdgePathCropper) and override [getPortGeometry](https://docs.yworks.com/yfileshtml/#/api/EdgePathCropper#getPortGeometry). In this method, we use the port’s `lookup` to get the [IShapeGeometry](https://docs.yworks.com/yfileshtml/#/api/IShapeGeometry) we defined above. We enable [cropAtPort](https://docs.yworks.com/yfileshtml/#/api/EdgePathCropper#cropAtPort) in the constructor.
+Now, we have to provide an [IEdgePathCropper](https://docs.yworks.com/yfileshtml/api/IEdgePathCropper) instance in the [lookup](https://docs.yworks.com/yfileshtml/api/PortStyleBase#lookup) method that yFiles for HTML can use it for edge cropping. We subclass [EdgePathCropper](https://docs.yworks.com/yfileshtml/api/EdgePathCropper) and override [getPortGeometry](https://docs.yworks.com/yfileshtml/api/EdgePathCropper#getPortGeometry). In this method, we use the port’s [lookup](https://docs.yworks.com/yfileshtml/api/PortStyleBase#lookup) to get the [IShapeGeometry](https://docs.yworks.com/yfileshtml/api/IShapeGeometry) we defined above. We enable [cropAtPort](https://docs.yworks.com/yfileshtml/api/EdgePathCropper#cropAtPort) in the constructor.
 
 ```
 if (type === IEdgePathCropper) {

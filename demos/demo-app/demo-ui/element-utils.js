@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -184,10 +184,7 @@ export function checkWebGL2Support() {
   if (!BrowserDetection.webGL2) {
     const message =
       'Your browser or device does not support WebGL2.<br />\n' +
-      'This demo only works if WebGL2 is available.<br />\n' +
-      'Please use a modern browser like Chrome, Edge, Firefox, or Opera.<br />\n' +
-      'In older versions of Safari and older Apple devices, WebGL2 is an experimental feature\n' +
-      'that needs to be activated explicitly.'
+      'This demo only works if WebGL2 is available.'
     createWebGLSupportWarningMessage(message)
     return false
   }
@@ -292,7 +289,7 @@ export async function showLoadingIndicator(visible, message) {
   const loadingIndicator = document.querySelector('#loading-indicator')
   loadingIndicator.style.display = visible ? 'block' : 'none'
   if (message) {
-    loadingIndicator.innerText = message
+    loadingIndicator.innerHTML = message
   }
   return new Promise((resolve) => setTimeout(resolve, 0))
 }

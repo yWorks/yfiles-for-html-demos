@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -21,11 +21,11 @@ This tutorial will guide you through creating your own node visualizations for y
 
 Note
 
-Implementing a custom node style from scratch is an advanced concept. In a lot of cases, other approaches like template styles or decorating built-in styles with custom elements are enough. For more information on the topic of styling graph items, please have a look at [Node Styles](https://docs.yworks.com/yfileshtml/#/dguide/styles-node_styles).
+Implementing a custom node style from scratch is an advanced concept. In a lot of cases, other approaches like template styles or decorating built-in styles with custom elements are enough. For more information on the topic of styling graph items, please have a look at [Node Styles](https://docs.yworks.com/yfileshtml/dguide/styles-node_styles).
 
 ## Subclassing NodeStyleBase
 
-yFiles for HTML provides an abstract base class which provides the basic functionality to create a custom node style. We start with a custom subclass of [NodeStyleBase](https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase).
+yFiles for HTML provides an abstract base class which provides the basic functionality to create a custom node style. We start with a custom subclass of [NodeStyleBase](https://docs.yworks.com/yfileshtml/api/NodeStyleBase).
 
 ```
 export class CustomNodeStyle extends NodeStyleBase {
@@ -35,7 +35,7 @@ export class CustomNodeStyle extends NodeStyleBase {
 }
 ```
 
-This code will not produce anything visible, yet. We first have to implement the `createVisual` method. This method returns an SVG element, wrapped into an [SvgVisual](https://docs.yworks.com/yfileshtml/#/api/SvgVisual). Let’s start with a simple rectangle for now to keep things simple. We will switch to a more complex visualization later on.
+This code will not produce anything visible, yet. We first have to implement the [createVisual](https://docs.yworks.com/yfileshtml/api/NodeStyleBase#createVisual) method. This method returns an SVG element, wrapped into an [SvgVisual](https://docs.yworks.com/yfileshtml/api/SvgVisual). Let’s start with a simple rectangle for now to keep things simple. We will switch to a more complex visualization later on.
 
 ```
 protected createVisual(context: IRenderContext, node: INode): Visual | null {
@@ -53,9 +53,9 @@ protected createVisual(context: IRenderContext, node: INode): Visual | null {
 
 Note
 
-The SVG element returned in `createVisual` does not necessarily have to be created using the JavaScript DOM API. You could also create it using any JavaScript UI framework or API like React, Vue, etc.
+The SVG element returned in [createVisual](https://docs.yworks.com/yfileshtml/api/NodeStyleBase#createVisual) does not necessarily have to be created using the JavaScript DOM API. You could also create it using any JavaScript UI framework or API like React, Vue, etc.
 
-Creating a visualization in SVG often includes a lot of SVG DOM manipulation. The code above uses [setAttribute](https://developer.mozilla.org/docs/Web/API/Element/setAttribute) to move and resize the visualization according to the position and the size of the node. There are alternatives, such as modifying those values directly via the JavaScript API for certain SVG elements. Not all attributes can be set that way and, e.g., colors will still require `setAttribute` calls:
+Creating a visualization in SVG often includes a lot of SVG DOM manipulation. The code above uses the [Element.setAttribute](https://developer.mozilla.org/docs/Web/api/Element/setAttribute) method to move and resize the visualization according to the position and the size of the node. There are alternatives, such as modifying those values directly via the JavaScript API for certain SVG elements. Not all attributes can be set that way and, e.g., colors will still require `setAttribute` calls:
 
 ```
 rect.x.baseVal.value = x
@@ -64,6 +64,6 @@ rect.width.baseVal.value = width
 rect.height.baseVal.value = height
 ```
 
-Besides [SvgVisual](https://docs.yworks.com/yfileshtml/#/api/SvgVisual), which can contain only an SVG element, there are other visuals as well, for example [HtmlVisual](https://docs.yworks.com/yfileshtml/#/api/HtmlVisual) for HTML elements.
+Besides [SvgVisual](https://docs.yworks.com/yfileshtml/api/SvgVisual), which can contain only an SVG element, there are other visuals as well, for example [HtmlVisual](https://docs.yworks.com/yfileshtml/api/HtmlVisual) for HTML elements.
 
 [02 Create A Custom Shape](../../tutorial-style-implementation-node/02-create-a-custom-shape/)

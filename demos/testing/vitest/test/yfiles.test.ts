@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -51,7 +51,12 @@ afterAll(async () => {
 })
 
 test('Edge count should change when button is clicked.', async () => {
-  await page.goto('http://localhost:3000')
+  const url = new URL(
+    'testing/application-under-test/index.html',
+    process.env.TEST_SERVER_URL || 'http://localhost:4241/demos-ts/'
+  ).href
+
+  await page.goto(url)
 
   const graphComponentHandle = await page.evaluateHandle(() => (window as any).graphComponent)
   await expect(graphComponentHandle).toBeTruthy()

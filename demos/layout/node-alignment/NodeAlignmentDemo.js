@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -154,21 +154,26 @@ function configureInteraction(graphComponent) {
   nodeDropInputMode.enabled = true
 
   // display the same visual hints when moving an existing node
-  const mim = inputMode.moveSelectedItemsInputMode
-  mim.addEventListener('drag-started', (evt, inputMove) => {
-    initializeHints(evt.context, inputMove, snapDistanceRenderTreeElement)
+  const moveInputModes = [
+    inputMode.moveSelectedItemsInputMode,
+    inputMode.moveUnselectedItemsInputMode
+  ]
+  moveInputModes.forEach((moveInputMode) => {
+    moveInputMode.addEventListener('drag-started', (evt, inputMove) => {
+      initializeHints(evt.context, inputMove, snapDistanceRenderTreeElement)
 
-    // force the graph component to render the initial state of the hints visualization
-    getGraphComponent(evt.context).updateVisual()
-  })
-  mim.addEventListener('dragged', (_, inputMove) =>
-    updateHints(inputMove, snapDistanceRenderTreeElement)
-  )
-  mim.addEventListener('drag-finished', async (evt) => {
-    disposeHints(snapDistanceRenderTreeElement)
+      // force the graph component to render the initial state of the hints visualization
+      getGraphComponent(evt.context).updateVisual()
+    })
+    moveInputMode.addEventListener('dragged', (_, inputMove) =>
+      updateHints(inputMove, snapDistanceRenderTreeElement)
+    )
+    moveInputMode.addEventListener('drag-finished', async (evt) => {
+      disposeHints(snapDistanceRenderTreeElement)
 
-    // run the alignment layout calculation after a node has been moved
-    return await alignNodes(getGraphComponent(evt.context))
+      // run the alignment layout calculation after a node has been moved
+      return await alignNodes(getGraphComponent(evt.context))
+    })
   })
 
   graphComponent.inputMode = inputMode

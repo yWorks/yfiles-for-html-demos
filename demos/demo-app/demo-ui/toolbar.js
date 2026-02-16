@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,6 +27,10 @@
  **
  ***************************************************************************/
 export function initToolbars() {
+  if (document.body.classList.contains('demo-modern')) {
+    return
+  }
+
   const observer = new ResizeObserver(toolbarSizeChanged)
   for (const toolbar of document.querySelectorAll('.demo-page__toolbar')) {
     if (!toolbar.classList.contains('no-overflow')) {
@@ -41,6 +45,10 @@ export function initToolbars() {
 }
 
 export function forceToolbarOverflowUpdate() {
+  if (document.body.classList.contains('demo-modern')) {
+    return
+  }
+
   for (const toolbar of document.querySelectorAll('.demo-page__toolbar')) {
     if (!toolbar.classList.contains('no-overflow')) {
       const padding = parseFloat(getComputedStyle(toolbar).paddingRight)

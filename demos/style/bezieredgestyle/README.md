@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/bezieredgestyle/).
 
-[BezierEdgeStyle](https://docs.yworks.com/yfileshtml/#/api/BezierEdgeStyle) allows for smooth curved edge routes. This demo shows how to use this style and interactively edit the bezier curves.
+[BezierEdgeStyle](https://docs.yworks.com/yfileshtml/api/BezierEdgeStyle) allows for smooth curved edge routes. This demo shows how to use this style and interactively edit the bezier curves.
 
 ### Creating Edges
 

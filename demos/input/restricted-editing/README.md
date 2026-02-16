@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/restricted-editing/).
 
-This demos shows how to restrict interactive editing while still using [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) for its non-editing features like, e.g., click-selecting items.
+This demos shows how to restrict interactive editing while still using [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode) for its non-editing features like, e.g., click-selecting items.
 
 More precisely, this demo shows how to
 
@@ -23,7 +23,7 @@ More precisely, this demo shows how to
 - disable interactive editing operations except for moving items,
 - enable all interactive editing operations.
 
-While the above editing schemes are fairly coarse-grained, GraphEditorInputMode actually provides properties to enable or disable individual editing operations. Please see the [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) API documentation for a complete list of configuration options.
+While the above editing schemes are fairly coarse-grained, GraphEditorInputMode actually provides properties to enable or disable individual editing operations. Please see the [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode) API documentation for a complete list of configuration options.
 
 ## Editing Operations
 

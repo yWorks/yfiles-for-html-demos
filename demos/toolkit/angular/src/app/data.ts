@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -179,8 +179,8 @@ export const NODE_DATA = [
   },
   {
     position: 'Maintenance Supervisor',
-    name: 'Carmen Shortened',
-    email: 'cshortened@yoyodyne.com',
+    name: 'Carmen Short',
+    email: 'cshort@yoyodyne.com',
     phone: '555-0142',
     fax: '555-0143',
     businessUnit: 'Production',
@@ -487,7 +487,7 @@ export const EDGE_DATA = [
   { from: 'Valerie Burnett', to: 'Martin Cornett' },
   { from: 'Edward Monge', to: 'Lisa Jensen' },
   { from: 'Edward Monge', to: 'Howard Meyer' },
-  { from: 'Timothy Jackson', to: 'Carmen Shortened' },
+  { from: 'Timothy Jackson', to: 'Carmen Short' },
   { from: 'Timothy Jackson', to: 'Thomas Stark' },
   { from: 'Edward Lewis', to: 'Mildred Bean' },
   { from: 'Edward Lewis', to: 'Raymond Lindley' }

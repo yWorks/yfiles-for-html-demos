@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -162,7 +162,7 @@
                       lot of cases, other approaches like template styles or decorating built-in
                       styles with custom elements are enough. For more information on the topic of
                       styling graph items, please have a look at
-                      <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-label_styles" class="dguide" target="_blank">Label Styles</a>.
+                      <a href="https://docs.yworks.com/yfileshtml/dguide/styles-label_styles" class="dguide" target="_blank">Label Styles</a>.
                     </td>
                   </tr>
                 </table>
@@ -176,7 +176,7 @@
                 <p>
                   yFiles for HTML provides an abstract base class which provides the basic functionality
                   to create a custom label style. We start with a custom subclass of
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase" class="api" target="_blank">LabelStyleBase</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase" class="api" target="_blank">LabelStyleBase</a>.
                 </p>
               </div>
               <div class="listingblock">
@@ -200,9 +200,10 @@
               <div class="paragraph">
                 <p>
                   This code will not produce anything visible, yet. We first have to implement the
-                  <code>createVisual</code> method. This method returns an SVG element, wrapped into
-                  an <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" class="api" target="_blank">SvgVisual</a>. Let&#8217;s start with only a text for now to keep
-                  things simple. We will switch to a more complex visualization later on.
+                  <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#createVisual" class="api" target="_blank">createVisual</a> method. This method returns an SVG
+                  element, wrapped into an <a href="https://docs.yworks.com/yfileshtml/api/SvgVisual" class="api" target="_blank">SvgVisual</a>. Let&#8217;s start with only a
+                  text for now to keep things simple. We will switch to a more complex visualization
+                  later on.
                 </p>
               </div>
               <div class="listingblock">
@@ -242,9 +243,9 @@
                       <div class="title">Note</div>
                     </td>
                     <td class="content">
-                      The SVG element returned in <code>createVisual</code> does not necessarily
-                      have to be created using the JavaScript DOM API. You could also create it
-                      using any JavaScript UI framework or API like React, Vue, etc.
+                      The SVG element returned in <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#createVisual" class="api" target="_blank">createVisual</a> does
+                      not necessarily have to be created using the JavaScript DOM API. You could
+                      also create it using any JavaScript UI framework or API like React, Vue, etc.
                     </td>
                   </tr>
                 </table>
@@ -254,8 +255,9 @@
                   As you can see in the sample graph, the label style works for both, node and edge
                   labels. It also supports rotation without any further adjustment. This is handled
                   by the layout transform that is created and assigned in the following two lines.
-                  The last parameter in <code>createLayoutTransform</code> specifies whether the
-                  label should be flipped if it is upside-down.
+                  The last parameter in
+                  <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#createLayoutTransform" class="api" target="_blank">createLayoutTransform</a> specifies whether the label
+                  should be flipped if it is upside-down.
                 </p>
               </div>
               <div class="listingblock">

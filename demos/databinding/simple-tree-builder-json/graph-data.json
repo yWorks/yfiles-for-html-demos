@@ -13,14 +13,22 @@
               "position": "Senior Executive Assistant",
               "name": "Alexander Burns"
             },
-            "0_0_1": { "id": "0_0_1", "position": "Junior Executive Assistant", "name": "Linda Newland" }
+            "0_0_1": {
+              "id": "0_0_1",
+              "position": "Junior Executive Assistant",
+              "name": "Linda Newland"
+            }
           }
         },
         "0_1": {
           "position": "Vice President of Production",
           "name": "Amy Kain",
           "children": {
-            "0_1_0": { "id": "0_1_0", "position": "Production Supervisor", "name": "Kathy Maxwell" },
+            "0_1_0": {
+              "id": "0_1_0",
+              "position": "Production Supervisor",
+              "name": "Kathy Maxwell"
+            },
             "0_1_1": {
               "position": "Shipping and Receiving Supervisor",
               "name": "Ray Hammond",

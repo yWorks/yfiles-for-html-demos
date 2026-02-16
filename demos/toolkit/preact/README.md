@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ This demo shows how to integrate yFiles in a [Preact](https://preactjs.com/) app
 
 The sample application shows how a collection of data items and connections can be automatically synced with both a Preact view and a yFiles view.
 
-To keep the yFiles view in sync with the application data, the yFiles [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) API is used.
+To keep the yFiles view in sync with the application data, the yFiles [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) API is used.
 
 The nodes are rendered via the `NodeTemplate` preact component.
 

@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -30,6 +30,11 @@ The following neighborhood types are available:
 - Change the depth parameter to change the scope of the neighborhood.
 - Navigate the graph by clicking nodes in the neighborhood view.
 
+## Demos
+
+- [Neighborhood View Demo](../../showcase/neighborhood/)
+- [Flow Filtering Demo](../../application-features/flow-filtering/)
+
 ## Remarks
 
-- The neighborhood view is using [RadialLayout](https://docs.yworks.com/yfileshtml/#/api/RadialLayout) to arrange the neighbor nodes on concentric circles.
+- The neighborhood view is using [RadialLayout](https://docs.yworks.com/yfileshtml/api/RadialLayout) to arrange the neighbor nodes on concentric circles.

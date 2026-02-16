@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -136,20 +136,18 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  Until now, we have only implemented
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#createVisual" class="api" target="_blank">createVisual</a>, which creates a new
-                  DOM element for each render frame. This is not an efficient approach and will
-                  result in performance issues for large graphs.
+                  Until now, we have only implemented <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#createVisual" class="api" target="_blank">createVisual</a>,
+                  which creates a new DOM element for each render frame. This is not an efficient
+                  approach and will result in performance issues for large graphs.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
-                  By overriding <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#updateVisual" class="api" target="_blank">updateVisual</a>, we can
-                  optimize the rendering performance in case no visualization-relevant data of the
-                  node has changed. If the label text or size changes, we have to update the text
-                  and the background path data. This approach will greatly improve the rendering
-                  performance for gestures such as panning and zooming the viewport as well as
-                  moving nodes.
+                  By overriding <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#updateVisual" class="api" target="_blank">updateVisual</a>, we can optimize the
+                  rendering performance in case no visualization-relevant data of the node has
+                  changed. If the label text or size changes, we have to update the text and the
+                  background path data. This approach will greatly improve the rendering performance
+                  for gestures such as panning and zooming the viewport as well as moving nodes.
                 </p>
               </div>
             </div>
@@ -160,11 +158,11 @@
               <div class="paragraph">
                 <p>
                   To be able to update the visualization in
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#updateVisual" class="api" target="_blank">updateVisual</a>, we have to store the
-                  values with which the initial visualization was created. In this case, this is the
-                  label text and size. To get proper type-checking, we first declare the type of the
-                  data cache. This is where the yFiles' utility type
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/TaggedSvgVisual" class="api" target="_blank">TaggedSvgVisual</a> comes in handy:
+                  <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#updateVisual" class="api" target="_blank">updateVisual</a>, we have to store the values with
+                  which the initial visualization was created. In this case, this is the label text
+                  and size. To get proper type-checking, we first declare the type of the data
+                  cache. This is where the yFiles' utility type
+                  <a href="https://docs.yworks.com/yfileshtml/api/TaggedSvgVisual" class="api" target="_blank">TaggedSvgVisual</a> comes in handy:
                 </p>
               </div>
               <div class="listingblock">
@@ -181,11 +179,12 @@
               <div class="paragraph">
                 <p>
                   With this type declaration, we can augment the class declaration for our label
-                  style. <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase" class="api" target="_blank">LabelStyleBase</a> comes with an optional type argument which
-                  specifies the exact type for the visual returned by <code>createVisual</code>.
-                  This type argument ensures that <code>updateVisual</code> expects the type of
-                  visual that is created in <code>createVisual</code>. Although this is not strictly
-                  necessary, it helps with the TypeScript implementation:
+                  style. <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase" class="api" target="_blank">LabelStyleBase</a> comes with an optional type argument which
+                  specifies the exact type for the visual returned by
+                  <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#createVisual" class="api" target="_blank">createVisual</a>. This type argument ensures that
+                  <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#updateVisual" class="api" target="_blank">updateVisual</a> expects the type of visual that is
+                  created in <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#createVisual" class="api" target="_blank">createVisual</a>. Although this is not
+                  strictly necessary, it helps with the TypeScript implementation:
                 </p>
               </div>
               <div class="listingblock">
@@ -198,7 +197,7 @@
               <div class="paragraph">
                 <p>
                   To properly implement the interface and store the cache value with the visual, we
-                  adjust the <code>createVisual</code> method, first.
+                  adjust the <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#createVisual" class="api" target="_blank">createVisual</a> method, first.
                 </p>
               </div>
               <div class="listingblock">
@@ -260,11 +259,12 @@
               <div class="paragraph">
                 <p>
                   Now, we are ready to add the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#updateVisual" class="api" target="_blank">updateVisual</a> implementation. Thanks
-                  to type parameter, we can let our IDE create the matching signature for the
-                  <code>updateVisual</code> method. In case the label text or size has changed, we
-                  update the text content and the background path data and the cache data. Finally,
-                  we update the label transform to move the label to the correct location.
+                  <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#updateVisual" class="api" target="_blank">updateVisual</a> implementation. Thanks to type
+                  parameter, we can let our IDE create the matching signature for the
+                  <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#updateVisual" class="api" target="_blank">updateVisual</a> method. In case the label text or size
+                  has changed, we update the text content and the background path data and the cache
+                  data. Finally, we update the label transform to move the label to the correct
+                  location.
                 </p>
               </div>
               <div class="listingblock">
@@ -328,8 +328,8 @@
                 <p>
                   When the style gets more complex, there may be a point where some updates are
                   difficult to implement or are not worth the effort. It is perfectly valid to give
-                  up at some point and call <code>createVisual</code> again if there are too many
-                  changes or the update code gets too complex.
+                  up at some point and call <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#createVisual" class="api" target="_blank">createVisual</a> again if
+                  there are too many changes or the update code gets too complex.
                 </p>
               </div>
               <div class="admonitionblock note">
@@ -339,11 +339,10 @@
                       <div class="title">Note</div>
                     </td>
                     <td class="content">
-                      Although implementing
-                      <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#updateVisual" class="api" target="_blank">updateVisual</a> is technically
-                      optional, it is highly recommended for larger graphs. Refraining from an
-                      efficient implementation may result in low frame-rates during animations and
-                      interactive gestures.
+                      Although implementing <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#updateVisual" class="api" target="_blank">updateVisual</a> is
+                      technically optional, it is highly recommended for larger graphs. Refraining
+                      from an efficient implementation may result in low frame-rates during
+                      animations and interactive gestures.
                     </td>
                   </tr>
                 </table>

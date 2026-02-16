@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,9 +15,9 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/viewportlimiter/).
 
-The [ViewportLimiter](https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter) limits the interactive movement of the viewport. This helps to navigate the canvas without losing the content.
+The [ViewportLimiter](https://docs.yworks.com/yfileshtml/api/ViewportLimiter) limits the interactive movement of the viewport. This helps to navigate the canvas without losing the content.
 
-The [ViewportLimiter.bounds](https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter#bounds) (or effective viewport limiter area) are calculated as the union of two rectangles: The [ViewportLimiter.viewportContentMargins](https://docs.yworks.com/yfileshtml/#/api/ViewportLimiter#viewportContentMargins), which act like insets on the graph component, and the ViewportLimiter.minimumViewportContentRatio, which defines which percentage of the viewport is used for limiting.
+The effective viewport limiter area, or [bounds](https://docs.yworks.com/yfileshtml/api/ViewportLimiter#bounds), are calculated from the [viewportContentMargins](https://docs.yworks.com/yfileshtml/api/ViewportLimiter#viewportContentMargins) and the [minimumViewportContentRatio](https://docs.yworks.com/yfileshtml/api/ViewportLimiter#minimumViewportContentRatio) properties.
 
 ## Things to Try
 

@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 This demo shows how reparenting of nodes can be customized.
 
-This is done with a custom implementation of the interface [IReparentNodeHandler](https://docs.yworks.com/yfileshtml/#/api/IReparentNodeHandler) that is set as default reparent handler of the input mode of the graph component.
+This is done with a custom implementation of the interface [IReparentNodeHandler](https://docs.yworks.com/yfileshtml/api/IReparentNodeHandler) that is set as default reparent handler of the input mode of the graph component.
 
 ## Things to Try
 

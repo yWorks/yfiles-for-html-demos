@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,8 +33,8 @@ import { Animator, type GraphComponent, TimeSpan } from '@yfiles/yfiles'
  * It handles the state of the animation and updates the progress via a callback function.
  */
 export class AnimationController {
-    maxTime: TimeSpan;
-    graphComponent: GraphComponent;
+  maxTime: TimeSpan
+  graphComponent: GraphComponent
   private readonly animator: Animator
   running: boolean
   setProgress: (value: number) => void
@@ -50,8 +50,8 @@ export class AnimationController {
     maxTime: TimeSpan,
     progressCallback: (value: number) => void
   ) {
-      this.graphComponent = graphComponent;
-      this.maxTime = maxTime;
+    this.graphComponent = graphComponent
+    this.maxTime = maxTime
     this.running = false
     this.setProgress = progressCallback
     this.animator = new Animator({

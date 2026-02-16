@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@
 
 ## How to bind arbitrary data to elements.
 
-This step shows how to [bind data to graph elements](https://docs.yworks.com/yfileshtml/#/dguide/customizing_graph-binding_data).
+This step shows how to [bind data to graph elements](https://docs.yworks.com/yfileshtml/dguide/customizing_graph-binding_data).
 
-Business data can be stored conveniently in the [tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag) of a graph item. In this example, we store the creation date with each node as follows:
+Business data can be stored conveniently in the [tag](https://docs.yworks.com/yfileshtml/api/ITagOwner#tag) of a graph item. In this example, we store the creation date with each node as follows:
 
 ```
 // Store the current time as node creation time
@@ -54,7 +54,7 @@ graphEditorInputMode.addEventListener('node-created', (evt): void => {
 })
 ```
 
-Once we have data stored in the `tag`, it is conveniently available in all parts of the API. For example, now we can get the data from the tag to display in the tooltip. In the event handler that handles tooltips, this works like this:
+Once we have data stored in the [tag](https://docs.yworks.com/yfileshtml/api/ITagOwner#tag), it is conveniently available in all parts of the API. For example, now we can get the data from the tag to display in the tooltip. In the event handler that handles tooltips, this works like this:
 
 ```
 // Set the tooltip content

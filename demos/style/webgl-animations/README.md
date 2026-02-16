@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ In this demo you can try out the different WebGL animations and their settings. 
 
 In particular, this demo highlights the currently hovered or selected connected component with an animation of the chosen type and settings. Recall that a connected component consists of all nodes that can reach each other.
 
-Note that the animated items all share the same [WebGLAnimation](https://docs.yworks.com/yfileshtml/#/api/WebGLAnimation) object.
+Note that the animated items all share the same [WebGLAnimation](https://docs.yworks.com/yfileshtml/api/WebGLAnimation) object.
 
 ## Things to Try
 

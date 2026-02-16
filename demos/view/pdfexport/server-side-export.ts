@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -62,8 +62,8 @@ export function initializeServerSideExport(url: string): void {
 async function isServerAlive(url: string, timeout = 5000): Promise<Response> {
   const initObject: RequestInit = {
     method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-    body: 'isAlive',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'check=isAlive',
     mode: 'no-cors'
   }
 

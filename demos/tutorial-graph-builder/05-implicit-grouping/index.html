@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -146,7 +146,7 @@
                       <div class="paragraph">
                         <p>
                           This step is optional when building a graph with
-                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. If you do not have hierarchy information in
+                          <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. If you do not have hierarchy information in
                           your data, you can proceed with the next step.
                         </p>
                       </div>
@@ -156,16 +156,15 @@
               </div>
               <div class="paragraph">
                 <p>
-                  In a previous step, we have demonstrated how to use
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder#createGroupNodesSource" class="api" target="_blank">createGroupNodesSource</a> to
-                  build the hierarchy.
+                  In a previous step, we have demonstrated how to use the
+                  <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder#createGroupNodesSource" class="api" target="_blank">createGroupNodesSource</a> method to build the hierarchy.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   The downside of this approach is that the objects representing the group nodes
                   need to be known in advance. While this is fine for many scenarios, sometimes the
-                  information is only provided implicitly in the data, and it can be difficult or
+                  information is only provided implicitly in the data, and it can be challenging or
                   very inefficient to extract all objects representing the group nodes. This is
                   especially true for dynamic scenarios where a lot of information is just provided
                   as part of a query.
@@ -182,7 +181,7 @@
               </div>
               <div class="paragraph">
                 <p>
-                  To address these use cases, the <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a> provides two closely
+                  To address these use cases, the <a href="https://docs.yworks.com/yfileshtml/api/NodesSource" class="api" target="_blank">NodesSource</a> provides two closely
                   related APIs that allow you to
                   <a href="#graph-builder-tutorial-05-createParentNodesSource"
                     >Create group nodes from implicit node data</a
@@ -202,7 +201,7 @@
               <div class="paragraph">
                 <p>
                   In the example data, we start from an initial set of entities. Each one has a
-                  property <code>children</code> that can contain a (potentially empty) list of
+                  <code>children</code> property that can contain a (potentially empty) list of
                   child entities and a <code>path</code> property that describes a hierarchical path
                   structure how this entity can be reached, similar to a file system path.
                 </p>
@@ -260,31 +259,32 @@
               <div class="paragraph">
                 <p>
                   If you want to create group nodes automatically from data that is present in the
-                  items in your node source, you can use
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#createParentNodesSource" class="api" target="_blank">NodesSource.createParentNodesSource</a>. This method uses the existing NodesSource to group its items from scratch. The
-                  mandatory <code>parentDataProvider</code> parameter describes how to retrieve a
-                  parent object for each item in the NodesSource. The optional
+                  items in your node source, you can use the
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodesSource#createParentNodesSource" class="api" target="_blank">createParentNodesSource</a> method. This method uses the
+                  existing NodesSource to group its items from scratch. The mandatory
+                  <code>parentDataProvider</code> parameter describes how to retrieve a parent
+                  object for each item in the NodesSource. The optional
                   <code>idProvider</code> parameter can be used to uniquely identify parent objects
                   even if they are not referentially equal.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
-                  This method creates a new <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a> which can then be configured
+                  This method creates a new <a href="https://docs.yworks.com/yfileshtml/api/NodesSource" class="api" target="_blank">NodesSource</a> which can then be configured
                   as usual, e.g., by providing label bindings or custom styles.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   You can additionally <strong>augment</strong> the newly created parent node source
-                  with additional data with
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#addParentNodesSource" class="api" target="_blank">NodesSource.addParentNodesSource</a>, e.g., to recursively process parent data for that same source and thereby
-                  building a whole hierarchy.
+                  with additional data with the
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodesSource#addParentNodesSource" class="api" target="_blank">addParentNodesSource</a> method, e.g., to recursively
+                  process parent data for that same source and thereby building a whole hierarchy.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
-                  We start by defining the initial set of nodes via a <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a>:
+                  We start by defining the initial set of nodes via a <a href="https://docs.yworks.com/yfileshtml/api/NodesSource" class="api" target="_blank">NodesSource</a>:
                 </p>
               </div>
               <div class="listingblock">
@@ -342,8 +342,9 @@ ancestorSource.<span class="hljs-title function_">addParentNodesSource</span>(pa
               <div class="paragraph">
                 <p>
                   If you want to create the content of group nodes automatically from data that is
-                  present in the items in your node source, you can use
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#createChildNodesSource" class="api" target="_blank">NodesSource.createChildNodesSource</a>. This method uses the existing NodesSource to populate its nodes. The mandatory
+                  present in the items in your node source, you can use the
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodesSource#createChildNodesSource" class="api" target="_blank">createChildNodesSource</a> method. This method uses the
+                  existing <a href="https://docs.yworks.com/yfileshtml/api/NodesSource" class="api" target="_blank">NodesSource</a> to populate its nodes. The mandatory
                   <code>childDataProvider</code> parameter describes how to retrieve a collection of
                   child objects for each item in the NodesSource. The optional
                   <code>idProvider</code> parameter can be used to uniquely identify child objects
@@ -352,17 +353,17 @@ ancestorSource.<span class="hljs-title function_">addParentNodesSource</span>(pa
               </div>
               <div class="paragraph">
                 <p>
-                  This method creates a new <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a> which can then be configured
+                  This method creates a new <a href="https://docs.yworks.com/yfileshtml/api/NodesSource" class="api" target="_blank">NodesSource</a> which can then be configured
                   as usual, e.g., by providing label bindings or custom styles.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   You can additionally <strong>augment</strong> the newly created child node source
-                  with additional data with
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#addChildNodesSource" class="api" target="_blank">NodesSource.addChildNodesSource</a>,
-                  e.g., to recursively process descendant data for that same source and thereby
-                  building a whole hierarchy.
+                  with additional data with the
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodesSource#addChildNodesSource" class="api" target="_blank">addChildNodesSource</a> method, e.g., to recursively
+                  process descendant data for that same source and thereby building a whole
+                  hierarchy.
                 </p>
               </div>
               <div class="admonitionblock note">
@@ -416,7 +417,7 @@ descendantsSource.<span class="hljs-title function_">addChildNodesSource</span>(
                 <p>
                   Edges can connect to any of the nodes, whether they are in the "core" nodes source
                   or any of the derived ones, as long as their <code>id</code> is referenced in the
-                  source or target <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider" class="api" target="_blank">id provider</a>.
+                  source or target <a href="https://docs.yworks.com/yfileshtml/api/NodesSource#idProvider" class="api" target="_blank">idProvider</a>.
                 </p>
               </div>
               <div class="admonitionblock note">

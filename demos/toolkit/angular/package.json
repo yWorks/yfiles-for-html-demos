@@ -5,29 +5,29 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
-    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",
+    "postinstall": "node -e \"require('node:fs').cpSync('../../../lib/license.json','./src/license.json');\"",
     "start": "ng serve",
     "watch": "ng build --watch --configuration development",
     "build": "ng build --base-href ./"
   },
   "dependencies": {
-    "@angular/common": "~20.1.4",
-    "@angular/compiler": "~20.1.4",
-    "@angular/core": "~20.1.4",
-    "@angular/forms": "~20.1.4",
-    "@angular/platform-browser": "~20.1.4",
+    "@angular/common": "~20.3.15",
+    "@angular/compiler": "~20.3.15",
+    "@angular/core": "~20.3.15",
+    "@angular/forms": "~20.3.15",
+    "@angular/platform-browser": "~20.3.15",
     "@yfiles/demo-app": "../../demo-app",
-    "rxjs": "~7.8.1",
-    "tslib": "^2.8.0",
+    "rxjs": "~7.8.2",
+    "tslib": "^2.8.1",
     "zone.js": "~0.15.1",
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.4+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.5+dev.tgz"
   },
   "devDependencies": {
     "@angular-builders/custom-webpack": "^20.0.0",
-    "@angular/build": "^20.1.4",
-    "@angular/cli": "~20.1.4",
-    "@angular/compiler-cli": "~20.1.4",
-    "@yworks/optimizer": "^1.8.6",
-    "typescript": "~5.8.3"
+    "@angular/build": "^20.3.13",
+    "@angular/cli": "~20.3.13",
+    "@angular/compiler-cli": "~20.3.15",
+    "@yworks/optimizer": "^1.8.8",
+    "typescript": "~5.9.3"
   }
 }

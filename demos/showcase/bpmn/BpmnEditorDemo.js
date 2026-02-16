@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,7 +31,10 @@ import {
   EditLabelHelper,
   EventRecognizers,
   ExteriorNodeLabelModel,
+  FolderNodeConverter,
+  FoldingEdgeConverter,
   FoldingManager,
+  FoldingSynchronizationOptions,
   FreeNodeLabelModel,
   FreeNodePortLocationModel,
   Graph,
@@ -55,6 +58,7 @@ import {
   ITable,
   LayoutExecutor,
   License,
+  NodeAlignmentPolicy,
   NodeDropInputMode,
   ParentNodeDetectionModes,
   Point,
@@ -270,6 +274,10 @@ function initializeInputMode() {
   // preferred if both gestures are possible
   graphEditorInputMode.add(tableEditorInputMode)
 
+  // Fix the lowermost center of a group node when toggling collapse/expand
+  graphEditorInputMode.navigationInputMode.autoGroupNodeAlignmentPolicy =
+    NodeAlignmentPolicy.BOTTOM_CENTER
+
   // assign input mode to graph component
   graphComponent.inputMode = graphEditorInputMode
 
@@ -293,6 +301,23 @@ function enableFolding() {
 
   // ports should not be removed when an attached edge is deleted
   manager.masterGraph.nodeDefaults.ports.autoCleanUp = false
+
+  // avoid creating duplicate ports when collapsing/expanding group nodes
+  manager.foldingEdgeConverter = new FoldingEdgeConverter({
+    reuseMasterPorts: true,
+    reuseFolderNodePorts: true
+  })
+
+  // keep port styles synced
+  manager.folderNodeConverter = new FolderNodeConverter({
+    folderNodeDefaults: {
+      ports: {
+        updateFoldingOptions:
+          FoldingSynchronizationOptions.TAG | FoldingSynchronizationOptions.STYLE,
+        updateMasterOptions: FoldingSynchronizationOptions.TAG | FoldingSynchronizationOptions.STYLE
+      }
+    }
+  })
 
   // set default styles and label model parameter
   foldedGraph.graph.groupNodeDefaults.style = new BpmnGroupNodeStyle()

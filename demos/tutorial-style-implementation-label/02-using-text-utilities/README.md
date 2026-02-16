@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,19 +15,19 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-label/02-using-text-utilities/).
 
-In the previous step, we’ve learned how to render the label text with the DOM api. In this step, we’ll use the utility class [TextRenderSupport](https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport) to place text more conveniently.
+In the previous step, we’ve learned how to render the label text with the DOM api. In this step, we’ll use the utility class [TextRenderSupport](https://docs.yworks.com/yfileshtml/api/TextRenderSupport) to place text more conveniently.
 
 Note
 
-[TextRenderSupport](https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport) adds important features that the SVG does not support out-of-the-box, like text measuring, wrapping and trimming. We’ll use more of these features later in this tutorial.
+[TextRenderSupport](https://docs.yworks.com/yfileshtml/api/TextRenderSupport) adds important features that the SVG does not support out-of-the-box, like text measuring, wrapping and trimming. We’ll use more of these features later in this tutorial.
 
-To be able to work with TextRenderSupport, we need a [Font](https://docs.yworks.com/yfileshtml/#/api/Font). We add a default font to the label style.
+To be able to work with TextRenderSupport, we need a [Font](https://docs.yworks.com/yfileshtml/api/Font). We add a default font to the label style.
 
 ```
 const font: Font = new Font({ fontFamily: 'Arial', fontSize: 12 })
 ```
 
-We can then use [TextRenderSupport.addText](https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport#addText) to place the label text in the `<text>` element.
+We can then use [TextRenderSupport.addText](https://docs.yworks.com/yfileshtml/api/TextRenderSupport#addText) to place the label text in the `<text>` element.
 
 ```
 TextRenderSupport.addText(textElement, label.text, font)

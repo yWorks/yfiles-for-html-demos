@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ constructor(
 }
 ```
 
-We’ll introduce an `updateText` method that updates the text element’s text content and alignment and can be used in `createVisual` and `updateVisual`.
+We’ll introduce an `updateText` method that updates the text element’s text content and alignment and can be used in [createVisual](https://docs.yworks.com/yfileshtml/api/LabelStyleBase#createVisual) and [updateVisual](https://docs.yworks.com/yfileshtml/api/LabelStyleBase#updateVisual).
 
 ```
 private updateText(
@@ -40,7 +40,7 @@ private updateText(
 ): void {
 ```
 
-To horizontally align the text, we use the SVG [text-anchor](https://developer.mozilla.org/docs/Web/SVG/Attribute/text-anchor) property. After setting the anchor point of the text, we set the x-value of the translation according to the left, middle or right position of the label layout. This way, we don’t have to measure the text.
+To horizontally align the text, we use the SVG [text-anchor](https://developer.mozilla.org/docs/Web/SVG/Reference/Attribute/text-anchor) attribute. After setting the anchor point of the text, we set the x-value of the translation according to the left, middle or right position of the label layout. This way, we don’t have to measure the text.
 
 ```
 textElement.setAttribute('text-anchor', this.horizontalAlignment)

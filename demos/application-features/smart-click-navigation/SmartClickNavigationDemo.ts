@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -123,9 +123,8 @@ function initHighlightingStyle(graphComponent: GraphComponent): void {
  */
 function initializeInputMode(): void {
   const inputMode = new GraphViewerInputMode({
-    clickableItems: GraphItemTypes.NODE || GraphItemTypes.EDGE
+    clickableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE
   })
-  inputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE || GraphItemTypes.EDGE
   // Implements the smart click navigation
   inputMode.addEventListener('item-left-clicked', async (evt): Promise<void> => {
     // Zooms to the suitable point

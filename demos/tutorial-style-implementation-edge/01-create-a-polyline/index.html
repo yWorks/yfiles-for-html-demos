@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -163,7 +163,7 @@
                       of cases, other approaches like template styles or decorating built-in styles
                       with custom elements are enough. For more information the topic of styling
                       graph items, please have a look at
-                      <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-edge_styles" class="dguide" target="_blank">Edge Styles</a>.
+                      <a href="https://docs.yworks.com/yfileshtml/dguide/styles-edge_styles" class="dguide" target="_blank">Edge Styles</a>.
                     </td>
                   </tr>
                 </table>
@@ -177,7 +177,7 @@
                 <p>
                   yFiles for HTML provides an abstract base class which provides the basic functionality
                   to create a custom edge style. We start with a custom subclass of
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase" class="api" target="_blank">EdgeStyleBase</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase" class="api" target="_blank">EdgeStyleBase</a>.
                 </p>
               </div>
               <div class="listingblock">
@@ -194,11 +194,11 @@
               <div class="paragraph">
                 <p>
                   This code will not produce anything visible, yet. We first have to implement the
-                  <code>createVisual</code> method. This method returns an SVG element, wrapped into
-                  an <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" class="api" target="_blank">SvgVisual</a>. Let&#8217;s begin with a polyline, which connects
-                  two nodes via multiple line segments running through its bends. We will switch to
-                  a more complex visualization later on. We use an SVGPathElement to render the
-                  polyline:
+                  <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#createVisual" class="api" target="_blank">createVisual</a> method. This method returns an SVG
+                  element, wrapped into an <a href="https://docs.yworks.com/yfileshtml/api/SvgVisual" class="api" target="_blank">SvgVisual</a>. Let&#8217;s begin with a
+                  polyline, which connects two nodes via multiple line segments running through its
+                  bends. We will switch to a more complex visualization later on. We use an
+                  SVGPathElement to render the polyline:
                 </p>
               </div>
               <div class="listingblock">
@@ -222,9 +222,9 @@
                       <div class="title">Note</div>
                     </td>
                     <td class="content">
-                      The SVG element returned in <code>createVisual</code> does not necessarily
-                      have to be created using the JavaScript DOM API. You could also create it
-                      using any JavaScript UI framework or API like React, Vue, etc.
+                      The SVG element returned in <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#createVisual" class="api" target="_blank">createVisual</a> does
+                      not necessarily have to be created using the JavaScript DOM API. You could
+                      also create it using any JavaScript UI framework or API like React, Vue, etc.
                     </td>
                   </tr>
                 </table>
@@ -247,8 +247,8 @@
               </div>
               <div class="paragraph">
                 <p>
-                  Besides <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" class="api" target="_blank">SvgVisual</a>, which can contain only an SVG element, there
-                  are other visuals as well, for example <a href="https://docs.yworks.com/yfileshtml/#/api/HtmlVisual" class="api" target="_blank">HtmlVisual</a> for HTML
+                  Besides <a href="https://docs.yworks.com/yfileshtml/api/SvgVisual" class="api" target="_blank">SvgVisual</a>, which can contain only an SVG element, there
+                  are other visuals as well, for example <a href="https://docs.yworks.com/yfileshtml/api/HtmlVisual" class="api" target="_blank">HtmlVisual</a> for HTML
                   elements.
                 </p>
               </div>

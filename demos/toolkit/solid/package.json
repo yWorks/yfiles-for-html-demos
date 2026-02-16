@@ -6,7 +6,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",
+    "postinstall": "node -e \"require('node:fs').cpSync('../../../lib/license.json','./src/license.json');\"",
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
@@ -14,14 +14,14 @@
   },
   "dependencies": {
     "@yfiles/demo-app": "../../demo-app",
-    "solid-js": "^1.9.9",
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.4+dev.tgz"
+    "solid-js": "^1.9.10",
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.5+dev.tgz"
   },
   "devDependencies": {
     "solid-devtools": "^0.34.4",
-    "typescript": "~5.9.0",
-    "vite": "^7.1.0",
-    "vite-plugin-solid": "~2.11.9",
-    "@yworks/optimizer": "^1.8.6"
+    "typescript": "~5.9.3",
+    "vite": "^7.3.0",
+    "vite-plugin-solid": "~2.11.10",
+    "@yworks/optimizer": "^1.8.8"
   }
 }

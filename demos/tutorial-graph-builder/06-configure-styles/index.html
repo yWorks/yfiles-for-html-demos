@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -132,7 +132,7 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> supports various approaches for styling the graph
+                  <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> supports various approaches for styling the graph
                   elements. They range from simple default visualizations to accessing the business
                   data for defining specific styles.
                 </p>
@@ -165,8 +165,8 @@
                 <p>
                   There are basically three ways to style nodes using GraphBuilder: Specifically,
                   you can set <em>default styles</em>, <em>style</em> <em>bindings</em> and
-                  <em>style</em> <em>providers</em> on the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator" class="api" target="_blank">NodeCreator</a>.
+                  <em>style</em> <em>providers</em> via the
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodesSource#nodeCreator" class="api" target="_blank">NodesSource.nodeCreator</a> property.
                 </p>
               </div>
               <div class="sect2">
@@ -196,7 +196,7 @@ nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
                   <p>
                     To style specific attributes of the default style defined above using business
                     data, use <em>style</em> <em>bindings.</em> In this example, we bind the stroke
-                    and thickness of the <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" class="api" target="_blank">ShapeNodeStyle</a> to the
+                    and thickness of the <a href="https://docs.yworks.com/yfileshtml/api/ShapeNodeStyle" class="api" target="_blank">ShapeNodeStyle</a> to the
                     <code>currency</code> property of the displayed data item.
                   </p>
                 </div>
@@ -242,9 +242,9 @@ nodesSource.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
                 <div class="paragraph">
                   <p>
                     In contrast to a style <em>binding</em>, a <em>style provider</em> returns
-                    complete <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" class="api" target="_blank">INodeStyle</a>s, usually involving some calculations with
+                    complete <a href="https://docs.yworks.com/yfileshtml/api/INodeStyle" class="api" target="_blank">INodeStyle</a>s, usually involving some calculations with
                     the provided node data. In this example, different
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle" class="api" target="_blank">ShapeNodeStyle</a>s are returned depending on the
+                    <a href="https://docs.yworks.com/yfileshtml/api/ShapeNodeStyle" class="api" target="_blank">ShapeNodeStyle</a>s are returned depending on the
                     <code>type</code> of entity represented by the node:
                   </p>
                 </div>

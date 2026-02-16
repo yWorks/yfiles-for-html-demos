@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -43,9 +43,9 @@ import {
  * the ones given in the constructor. This makes it possible to use a different handle template.
  */
 export class WrappingHandle extends BaseClass(IHandle) {
-    private handleCursor: Cursor | null;
-    private handleType: HandleType | null;
-    private wrappedHandle: IHandle;
+  private handleCursor: Cursor | null
+  private handleType: HandleType | null
+  private wrappedHandle: IHandle
 
   /**
    * Initializes a new WrappingHandle instance.
@@ -53,15 +53,11 @@ export class WrappingHandle extends BaseClass(IHandle) {
    * @param handleType The handle type to use for this handle.
    * @param handleCursor The cursor to use for this handle.
    */
-  constructor(
-    wrappedHandle: IHandle,
-    handleType: HandleType | null,
-    handleCursor: Cursor | null
-  ) {
+  constructor(wrappedHandle: IHandle, handleType: HandleType | null, handleCursor: Cursor | null) {
     super()
-      this.wrappedHandle = wrappedHandle;
-      this.handleType = handleType;
-      this.handleCursor = handleCursor;
+    this.wrappedHandle = wrappedHandle
+    this.handleType = handleType
+    this.handleCursor = handleCursor
   }
 
   /**

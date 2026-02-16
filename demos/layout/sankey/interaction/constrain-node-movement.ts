@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -57,12 +57,12 @@ export function allowOnlyVerticalNodeMovement(graph: IGraph): void {
  * This implementation wraps the default position handler and delegates most of the work to it.
  */
 class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
-    private readonly handler: IPositionHandler | null;
+  private readonly handler: IPositionHandler | null
   private lastLocation = Point.ORIGIN
 
   constructor(handler: IPositionHandler | null) {
     super()
-      this.handler = handler;
+    this.handler = handler
   }
 
   get location(): IPoint {

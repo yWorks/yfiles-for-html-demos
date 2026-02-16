@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -44,7 +44,9 @@ import type {
   DragFinishedMessage,
   DraggedMessage,
   DragStartedMessage,
-  InteractionMessage
+  EdgeChangedMessage,
+  InteractionMessage,
+  NodeChangedMessage
 } from './initializeWorkerLayout'
 
 // register the yFiles license in the worker as well
@@ -84,6 +86,14 @@ self.addEventListener('message', (event: MessageEvent) => {
     case 'drag-finished':
       handleDragFinished(message)
       break
+    case 'node-changed':
+      handleNodeChanged(message)
+      graphSynchronizer.acceptMessage(message)
+      break
+    case 'edge-changed':
+      handleEdgeChanged(message)
+      graphSynchronizer.acceptMessage(message)
+      break
     default:
       graphSynchronizer.acceptMessage(message)
       break
@@ -119,6 +129,19 @@ function handleDragFinished(message: DragFinishedMessage) {
   const draggedNode = graphSynchronizer.getItem(message.nodeId) as INode
   const draggedComponent = getNodesForIds(message.componentIds)
   layoutHelper.finishDrag(draggedNode, draggedComponent)
+}
+
+function handleNodeChanged(message: NodeChangedMessage) {
+  const changedNode = graphSynchronizer.getItem(message.nodeId) as INode
+  const closeNeighbors = getNodesForIds(message.neighborsIds)
+  layoutHelper.updateLayoutAfterStructuralChange([changedNode], closeNeighbors)
+}
+
+function handleEdgeChanged(message: EdgeChangedMessage) {
+  const sourceNode = graphSynchronizer.getItem(message.sourceId) as INode
+  const targetNode = graphSynchronizer.getItem(message.targetId) as INode
+  const closeNeighbors = getNodesForIds(message.neighborsIds)
+  layoutHelper.updateLayoutAfterStructuralChange([sourceNode, targetNode], closeNeighbors)
 }
 
 function getNodesForIds(ids: number[]): INode[] {

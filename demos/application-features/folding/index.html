@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -80,11 +80,11 @@
         <h1>Folding</h1>
         <p>
           This demo shows how to enable collapsing and expanding of group nodes, the so-called
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/folding" class="dguide" target="_blank">Folding</a> feature. This is provided through the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/FoldingManager" class="api" target="_blank">FoldingManager</a> class and its support classes.
+          <a href="https://docs.yworks.com/yfileshtml/dguide/folding" class="dguide" target="_blank">Folding</a> feature. This is provided through the
+          <a href="https://docs.yworks.com/yfileshtml/api/FoldingManager" class="api" target="_blank">FoldingManager</a> class and its support classes.
         </p>
         <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" class="api" target="_blank">GraphEditorInputMode</a> class provides the following interactive
+          The <a href="https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode" class="api" target="_blank">GraphEditorInputMode</a> class provides the following interactive
           gestures for collapsing and expanding groups:
         </p>
         <ul>
@@ -105,6 +105,12 @@
             <kbd>&#x2191;</kbd>.
           </li>
         </ul>
+        <p>
+          The
+          <a href="https://docs.yworks.com/yfileshtml/api/NavigationInputMode#autoGroupNodeAlignmentPolicy" class="api" target="_blank">autoGroupNodeAlignmentPolicy</a>
+          property specifies whether and which point of a group node remains fixed during
+          expand/collapse actions. Use the toggle button in the toolbar to enable or disable it.
+        </p>
         <h2>Demos</h2>
         <ul>
           <li><a href="../../application-features/folding-with-merged-edges/" class="demo" target="_blank">Folding With Merged Edges Demo</a></li>
@@ -115,8 +121,11 @@
         </ul>
         <h2>Documentation</h2>
         <ul>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/folding" class="dguide" target="_blank">Folding</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/FoldingManager" class="api" target="_blank">FoldingManager</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/dguide/folding" class="dguide" target="_blank">Folding</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/FoldingManager" class="api" target="_blank">FoldingManager</a> class</li>
+          <li>
+            <a href="https://docs.yworks.com/yfileshtml/api/NavigationInputMode#autoGroupNodeAlignmentPolicy" class="api" target="_blank">autoGroupNodeAlignmentPolicy</a>
+          </li>
         </ul>
       </div>
     </aside>
@@ -124,7 +133,7 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-      <div id="demo-message" class="demo-message"></div>
+      <div class="yplay__message-host"></div>
     </div>
     <script type="module" crossorigin="anonymous" src="./FoldingDemo.ts" async></script>
   </body>

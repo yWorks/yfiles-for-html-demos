@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/graphml/).
 
-This demo provides a live view of the graph's [GraphML](https://docs.yworks.com/yfileshtml/#/dguide/customizing_io_graphml#customizing_io_graphml) representation. GraphML is the default serialization format for yFiles graphs.
+This demo provides a live view of the graph's [GraphML](https://docs.yworks.com/yfileshtml/dguide/customizing_io_graphml#customizing_io_graphml) representation. GraphML is the default serialization format for yFiles graphs.
 
 ## Things to Try
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -352,14 +352,14 @@ export class NetworkFlowNodeStyle extends NodeStyleBase<NetworkFlowNodeStyleVisu
  * The equals method detects if the cache has changed.
  */
 class NodeRenderDataCache {
-    private outDegree: number;
-    private inDegree: number;
-    private sink: boolean;
-    private source: boolean;
-    private bounds: Rect;
-    private adjustableSupply: number;
-    private flow: number;
-    private supply: number;
+  private outDegree: number
+  private inDegree: number
+  private sink: boolean
+  private source: boolean
+  private bounds: Rect
+  private adjustableSupply: number
+  private flow: number
+  private supply: number
 
   constructor(
     supply: number,
@@ -371,14 +371,15 @@ class NodeRenderDataCache {
     inDegree: number,
     outDegree: number
   ) {
-      this.supply = supply;
-      this.flow = flow;
-      this.adjustableSupply = adjustableSupply;
-      this.bounds = bounds;
-      this.source = source;
-      this.sink = sink;
-      this.inDegree = inDegree;
-      this.outDegree = outDegree;}
+    this.supply = supply
+    this.flow = flow
+    this.adjustableSupply = adjustableSupply
+    this.bounds = bounds
+    this.source = source
+    this.sink = sink
+    this.inDegree = inDegree
+    this.outDegree = outDegree
+  }
 
   /**
    * Checks if the data stored in the given cache is equal to data in this cache.
@@ -673,12 +674,12 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase<NetworkFlowEdgeStyleVisu
  * The equals method detects if the cache has changed.
  */
 class EdgeRenderDataCache {
-    public readonly selected: boolean;
-    public readonly color: Color | null;
-    public readonly path: GeneralPath;
-    public readonly edgeFlow: number;
-    public readonly capacity: number;
-    public id: string;
+  public readonly selected: boolean
+  public readonly color: Color | null
+  public readonly path: GeneralPath
+  public readonly edgeFlow: number
+  public readonly capacity: number
+  public id: string
 
   /**
    * Creates a new RenderDataCache object.
@@ -697,12 +698,13 @@ class EdgeRenderDataCache {
     color: Color | null,
     selected: boolean
   ) {
-      this.id = id;
-      this.capacity = capacity;
-      this.edgeFlow = edgeFlow;
-      this.path = path;
-      this.color = color;
-      this.selected = selected;}
+    this.id = id
+    this.capacity = capacity
+    this.edgeFlow = edgeFlow
+    this.path = path
+    this.color = color
+    this.selected = selected
+  }
 
   /**
    * Checks if the data stored in the given cache is equal to data in this cache.
@@ -913,15 +915,13 @@ export class MinCutLine extends BaseClass(IVisualCreator) {
  * The equals method detects if the cache has changed.
  */
 class MclRenderDataCache {
-    private visible: boolean;
-    private bounds: Rect;
+  private visible: boolean
+  private bounds: Rect
 
-  constructor(
-    bounds: Rect,
-    visible: boolean
-  ) {
-      this.bounds = bounds;
-      this.visible = visible;}
+  constructor(bounds: Rect, visible: boolean) {
+    this.bounds = bounds
+    this.visible = visible
+  }
 
   /**
    * Checks if the data stored in the given cache is equal to data in this cache.

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -41,9 +41,9 @@ import {
  * Extends the functionality of the {@link DelegatingNodeStyle} by applying a scaling transformation.
  */
 export class ScalingNodeStyle extends DelegatingNodeStyle {
-    private readonly sy: number;
-    private readonly sx: number;
-    private readonly style: INodeStyle;
+  private readonly sy: number
+  private readonly sx: number
+  private readonly style: INodeStyle
   private readonly scaledNode = new SimpleNode()
 
   /**
@@ -52,15 +52,11 @@ export class ScalingNodeStyle extends DelegatingNodeStyle {
    * @param sx The horizontal scaling factor. Defaults to 1.
    * @param sy The vertical scaling factor. Defaults to 1.
    */
-  constructor(
-    style: INodeStyle,
-    sx = 1,
-    sy = 1
-  ) {
+  constructor(style: INodeStyle, sx = 1, sy = 1) {
     super()
-      this.style = style;
-      this.sx = sx;
-      this.sy = sy;
+    this.style = style
+    this.sx = sx
+    this.sy = sy
   }
 
   /**

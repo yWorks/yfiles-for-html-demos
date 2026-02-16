@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -133,7 +133,7 @@
               <div class="paragraph">
                 <p>
                   In this tutorial step we will learn how to configure
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> to arrange the graph elements and/or adjust their
+                  <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> to arrange the graph elements and/or adjust their
                   size using the information stored in the dataset.
                 </p>
               </div>
@@ -147,7 +147,7 @@
                       <div class="paragraph">
                         <p>
                           This step is optional when building a graph with
-                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. If your data does not contain layout
+                          <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. If your data does not contain layout
                           information, you can proceed with the next step.
                         </p>
                       </div>
@@ -180,16 +180,16 @@
               </div>
               <div class="paragraph">
                 <p>
-                  A <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator#layoutProvider" class="api" target="_blank">layout provider</a> will use this
-                  information to create a rectangle at a specific location for each node. These
-                  rectangles will be set as the nodes' <a href="https://docs.yworks.com/yfileshtml/#/api/INode#layout" class="api" target="_blank">layout</a>.
+                  A <a href="https://docs.yworks.com/yfileshtml/api/NodeCreator#layoutProvider" class="api" target="_blank">layoutProvider</a> will use this information to create a
+                  rectangle at a specific location for each node. These rectangles will be set as
+                  the nodes' <a href="https://docs.yworks.com/yfileshtml/api/INode#layout" class="api" target="_blank">layout</a>.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   If no layout information is provided, the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeDefaults#size" class="api" target="_blank">default size</a> will be used and the node will be
-                  located at the origin.
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodeDefaults#size" class="api" target="_blank">NodeDefaults.size</a> will be used and the node will be located
+                  at the origin.
                 </p>
               </div>
               <div class="listingblock">
@@ -280,9 +280,8 @@ nodeSources.<span class="hljs-property">nodeCreator</span>.<span class="hljs-pro
               </div>
               <div class="paragraph">
                 <p>
-                  Transfer the bend information to the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IEdge#bends" class="api" target="_blank">edge layout</a> using a
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeCreator#bendsProvider" class="api" target="_blank">bend provider</a>.
+                  Transfer the bend information to <a href="https://docs.yworks.com/yfileshtml/api/IEdge#bends" class="api" target="_blank">IEdge.bends</a> using a
+                  <a href="https://docs.yworks.com/yfileshtml/api/EdgeCreator#bendsProvider" class="api" target="_blank">bendsProvider</a>.
                 </p>
               </div>
               <div class="listingblock">

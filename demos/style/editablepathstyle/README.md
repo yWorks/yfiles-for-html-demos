@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/editablepathstyle/).
 
-This demo shows how to use [GeneralPathNodeStyle](https://docs.yworks.com/yfileshtml/#/api/GeneralPathNodeStyle) and provide interactive editing handles for the control points of the path.
+This demo shows how to use [GeneralPathNodeStyle](https://docs.yworks.com/yfileshtml/api/GeneralPathNodeStyle) and provide interactive editing handles for the control points of the path.
 
 ## Things to Try
 

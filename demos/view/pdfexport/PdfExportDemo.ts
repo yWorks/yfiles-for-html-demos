@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, License } from '@yfiles/yfiles'
+import { GraphComponent, GraphEditorInputMode, License, Size } from '@yfiles/yfiles'
 import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import licenseData from '../../../lib/license.json'
 import { finishLoading } from '@yfiles/demo-app/demo-page'
@@ -63,9 +63,22 @@ async function run(): Promise<void> {
   const exportRect = initializeExportRectangle(graphComponent)
 
   let pdf = ''
+  // the maximum supported page size of a pdf
+  const maxPageSize = 14400
 
   initializeOptionPanel(async (options) => {
     const rect = options.useExportRectangle ? exportRect.toRect() : undefined
+
+    // check if exported size is too large
+    const exportedBounds = rect ?? graphComponent.contentBounds
+    const pageSize = new Size(
+      exportedBounds.width * options.scale + options.margin + options.margin,
+      exportedBounds.height * options.scale + options.margin + options.margin
+    )
+
+    if (pageSize.width > maxPageSize || pageSize.height > maxPageSize) {
+      return Promise.reject(`A PDF page can not be wider or taller than ${maxPageSize} UserUnits.`)
+    }
 
     if (options.serverExport) {
       await exportPdfServerSide(graphComponent, options.scale, options.margin, rect, () =>

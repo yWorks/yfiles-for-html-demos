@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ This demo shows the multi-page layout that divides a large graph into several sm
 
 ## About Multi-page Layout
 
-[MultiPageLayout](https://docs.yworks.com/yfileshtml/#/api/MultiPageLayout) subdivides a large graph (called model graph) into a set of smaller graphs (called page graphs) such that the layout of each page graph fits a specified maximum page size. To guarantee that no information is lost when distributing the elements of the model over several pages, the algorithm introduces the following three kinds of auxiliary nodes.
+[MultiPageLayout](https://docs.yworks.com/yfileshtml/api/MultiPageLayout) subdivides a large graph (called model graph) into a set of smaller graphs (called page graphs) such that the layout of each page graph fits a specified maximum page size. To guarantee that no information is lost when distributing the elements of the model over several pages, the algorithm introduces the following three kinds of auxiliary nodes.
 
 ## Auxiliary Nodes
 

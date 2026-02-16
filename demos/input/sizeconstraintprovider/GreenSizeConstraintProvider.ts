@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,18 +26,25 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, type INode, INodeSizeConstraintProvider, InteriorNodeLabelModel, Rect, Size } from '@yfiles/yfiles'
+import {
+  BaseClass,
+  type INode,
+  INodeSizeConstraintProvider,
+  InteriorNodeLabelModel,
+  Rect,
+  Size
+} from '@yfiles/yfiles'
 
 /**
  * An {@link INodeSizeConstraintProvider} that returns the size of the
  * first label as minimum size. The maximum size is not limited.
  */
 export class GreenSizeConstraintProvider extends BaseClass(INodeSizeConstraintProvider) {
-    private readonly node: INode;
+  private readonly node: INode
 
   constructor(node: INode) {
     super()
-      this.node = node;
+    this.node = node
   }
 
   /**

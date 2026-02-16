@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,11 +32,11 @@ import { BaseClass, type GraphComponent, IAnimation, Matrix, TimeSpan } from '@y
  * Animates the projection between two alpha and scale values.
  */
 export class ProjectionAnimation extends BaseClass(IAnimation) {
-    private toScale: number;
-    private fromScale: number;
-    private toAlpha: number;
-    private fromAlpha: number;
-    private graphComponent: GraphComponent;
+  private toScale: number
+  private fromScale: number
+  private toAlpha: number
+  private fromAlpha: number
+  private graphComponent: GraphComponent
 
   constructor(
     graphComponent: GraphComponent,
@@ -46,11 +46,11 @@ export class ProjectionAnimation extends BaseClass(IAnimation) {
     toScale: number
   ) {
     super()
-      this.graphComponent = graphComponent;
-      this.fromAlpha = fromAlpha;
-      this.toAlpha = toAlpha;
-      this.fromScale = fromScale;
-      this.toScale = toScale;
+    this.graphComponent = graphComponent
+    this.fromAlpha = fromAlpha
+    this.toAlpha = toAlpha
+    this.fromScale = fromScale
+    this.toScale = toScale
   }
 
   cleanUp(): void {

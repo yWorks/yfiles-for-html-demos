@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 ## How to consider graph data in automatic layout
 
-This step shows how to [configure a layout algorithm](https://docs.yworks.com/yfileshtml/#/dguide/layout-applying_a_layout#layout-layout_data) using the information stored in the first label of each node.
+This step shows how to [configure a layout algorithm](https://docs.yworks.com/yfileshtml/dguide/layout-applying_a_layout#layout-layout_data) using the information stored in the first label of each node.
 
 In this demo, the preferred alignment for each node within its layer (top, center or bottom) is defined by its label. We use this value to configure the layout algorithm.
 
@@ -30,7 +30,7 @@ Note
 
 Nodes with label text other than 'Top', 'Center' or 'Bottom' will be center-aligned.
 
-We create a [LayoutData](https://docs.yworks.com/yfileshtml/#/api/LayoutData) instance that defines how each node should be aligned.
+We create a [LayoutData](https://docs.yworks.com/yfileshtml/api/LayoutData) instance that defines how each node should be aligned.
 
 ```
 // Configure the layout data using the information from the node labels
@@ -60,7 +60,7 @@ function getAlignment(node: INode): number {
 }
 ```
 
-The layout data is used as a parameter for [applyLayoutAnimated](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#applyLayoutAnimated) to pass the information to the layout algorithm.
+The layout data is used as a parameter for [applyLayoutAnimated](https://docs.yworks.com/yfileshtml/api/GraphComponent#applyLayoutAnimated) to pass the information to the layout algorithm.
 
 ```
 await graphComponent.applyLayoutAnimated({

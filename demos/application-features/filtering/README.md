@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/filtering/).
 
-This demo shows how to dynamically **hide and show graph items** (nodes and edges) without modifying the underlying graph data structure. It uses the [FilteredGraphWrapper](https://docs.yworks.com/yfileshtml/#/api/FilteredGraphWrapper) to provide a temporary, filtered view of your graph.
+This demo shows how to dynamically **hide and show graph items** (nodes and edges) without modifying the underlying graph data structure. It uses the [FilteredGraphWrapper](https://docs.yworks.com/yfileshtml/api/FilteredGraphWrapper) to provide a temporary, filtered view of your graph.
 
 ## Things to Try
 
@@ -26,8 +26,9 @@ This demo shows how to dynamically **hide and show graph items** (nodes and edge
 ## Demos
 
 - [Filtering With Folding Demo](../../application-features/filtering-with-folding/)
+- [Flow Filtering Demo](../../application-features/flow-filtering/)
 
 ## Documentation
 
-- [Filtering](https://docs.yworks.com/yfileshtml/#/dguide/filtering)
-- [FilteredGraphWrapper](https://docs.yworks.com/yfileshtml/#/api/FilteredGraphWrapper) class
+- [Filtering](https://docs.yworks.com/yfileshtml/dguide/filtering)
+- [FilteredGraphWrapper](https://docs.yworks.com/yfileshtml/api/FilteredGraphWrapper) class

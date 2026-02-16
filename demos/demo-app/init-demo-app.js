@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -50,10 +50,8 @@ const sidebarFactory = () => {
   sidebarDiv.appendChild(sidebarContent)
 
   const propertyPanel = document.createElement('div')
-  propertyPanel.className = 'demo-properties__settings'
-  const panelHeader = document.createElement('h2')
-  panelHeader.textContent = 'Properties & Settings'
-  sidebarContent.append(panelHeader, propertyPanel)
+  propertyPanel.className = 'yplay__graph-sidebar'
+  sidebarContent.append(propertyPanel)
 
   return propertyPanel
 }
@@ -61,7 +59,7 @@ const sidebarFactory = () => {
 const demoApp = new DefaultApp(
   toolbarFactory,
   sidebarFactory,
-  document.querySelector('.demo-message'),
+  document.querySelector('.yplay__message-host'),
   graphComponent
 )
 

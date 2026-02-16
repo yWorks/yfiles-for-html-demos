@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,13 +15,13 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-port/03-render-performance/).
 
-Until now, we have only implemented [createVisual](https://docs.yworks.com/yfileshtml/#/api/PortStyleBase#createVisual), which creates a new DOM element for each render frame. This is not an efficient approach and will result in performance issues for large graphs.
+Until now, we have only implemented [createVisual](https://docs.yworks.com/yfileshtml/api/PortStyleBase#createVisual), which creates a new DOM element for each render frame. This is not an efficient approach and will result in performance issues for large graphs.
 
-By overriding [updateVisual](https://docs.yworks.com/yfileshtml/#/api/PortStyleBase#updateVisual), we can optimize the rendering performance in case no visualization-relevant data of the port has changed. In our case, this means that we only update the location and radius of the circle if necessary. This approach will greatly improve the rendering performance for gestures such as panning and zooming the viewport as well as moving items.
+By overriding [updateVisual](https://docs.yworks.com/yfileshtml/api/PortStyleBase#updateVisual), we can optimize the rendering performance in case no visualization-relevant data of the port has changed. In our case, this means that we only update the location and radius of the circle if necessary. This approach will greatly improve the rendering performance for gestures such as panning and zooming the viewport as well as moving items.
 
 ## Adjusting createVisual
 
-As a first step, we modify the [createVisual](https://docs.yworks.com/yfileshtml/#/api/PortStyleBase#createVisual) implementation. To be able to update the visualization in [updateVisual](https://docs.yworks.com/yfileshtml/#/api/PortStyleBase#updateVisual), we have to store the values that we needed for the construction of the port with the visual. In this case, this is just the port size. To get proper type-checking, we first declare the type of the data cache. This is where the yFiles' utility type [TaggedSvgVisual](https://docs.yworks.com/yfileshtml/#/api/TaggedSvgVisual) comes in handy:
+As a first step, we modify the [createVisual](https://docs.yworks.com/yfileshtml/api/PortStyleBase#createVisual) implementation. To be able to update the visualization in [updateVisual](https://docs.yworks.com/yfileshtml/api/PortStyleBase#updateVisual), we have to store the values that we needed for the construction of the port with the visual. In this case, this is just the port size. To get proper type-checking, we first declare the type of the data cache. This is where the yFiles' utility type [TaggedSvgVisual](https://docs.yworks.com/yfileshtml/api/TaggedSvgVisual) comes in handy:
 
 ```
 // the values we use to render the graphics
@@ -31,14 +31,14 @@ type Cache = { size: number }
 type CustomPortStyleVisual = TaggedSvgVisual<SVGEllipseElement, Cache>
 ```
 
-With this type declaration, we can augment the class declaration for our port style. [PortStyleBase](https://docs.yworks.com/yfileshtml/#/api/PortStyleBase) comes with an optional type argument which specifies the exact type for the visual returned by `createVisual`. This type argument ensures that `updateVisual` expects the type of visual that is created in `createVisual`. Although this is not strictly necessary, it helps with the TypeScript implementation:
+With this type declaration, we can augment the class declaration for our port style. [PortStyleBase](https://docs.yworks.com/yfileshtml/api/PortStyleBase) comes with an optional type argument which specifies the exact type for the visual returned by [createVisual](https://docs.yworks.com/yfileshtml/api/PortStyleBase#createVisual). This type argument ensures that [updateVisual](https://docs.yworks.com/yfileshtml/api/PortStyleBase#updateVisual) expects the type of visual that is created in [createVisual](https://docs.yworks.com/yfileshtml/api/PortStyleBase#createVisual). Although this is not strictly necessary, it helps with the TypeScript implementation:
 
 ```
 export class CustomPortStyle extends PortStyleBase<CustomPortStyleVisual> {
   size: number
 ```
 
-To properly implement the interface and store the cache value with the visual, we adjust the `createVisual` method, first.
+To properly implement the interface and store the cache value with the visual, we adjust the [createVisual](https://docs.yworks.com/yfileshtml/api/PortStyleBase#createVisual) method, first.
 
 ```
 protected createVisual(
@@ -67,7 +67,7 @@ protected createVisual(
 
 ## Implementing updateVisual
 
-Now we are ready to add the [updateVisual](https://docs.yworks.com/yfileshtml/#/api/PortStyleBase#updateVisual) implementation. In case the size property has changed, we update the `rx` and `ry` attributes of the ellipse element. Also, we set the `cx` and `cy` attributes to update the location.
+Now we are ready to add the [updateVisual](https://docs.yworks.com/yfileshtml/api/PortStyleBase#updateVisual) implementation. In case the size property has changed, we update the `rx` and `ry` attributes of the ellipse element. Also, we set the `cx` and `cy` attributes to update the location.
 
 ```
 protected updateVisual(
@@ -98,10 +98,10 @@ protected updateVisual(
 
 This code re-uses the initial SVG element and only updates the necessary attributes.
 
-When the style gets more complex, there may be a point where some updates are difficult to implement, or are not worth the effort. It is perfectly valid to give up at some point and call `createVisual` again if there are too many changes or the update code gets too complex.
+When the style gets more complex, there may be a point where some updates are difficult to implement, or are not worth the effort. It is perfectly valid to give up at some point and call [createVisual](https://docs.yworks.com/yfileshtml/api/PortStyleBase#createVisual) again if there are too many changes or the update code gets too complex.
 
 Note
 
-Although implementing [updateVisual](https://docs.yworks.com/yfileshtml/#/api/PortStyleBase#updateVisual) is technically optional, it is highly recommended for larger graphs. Refraining from an efficient implementation may result in low frame rates during animations and interactive gestures.
+Although implementing [updateVisual](https://docs.yworks.com/yfileshtml/api/PortStyleBase#updateVisual) is technically optional, it is highly recommended for larger graphs. Refraining from an efficient implementation may result in low frame rates during animations and interactive gestures.
 
 [04 Conditional Port Coloring](../../tutorial-style-implementation-port/04-conditional-coloring/)

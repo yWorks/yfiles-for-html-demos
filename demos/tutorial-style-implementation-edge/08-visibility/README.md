@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ circleElement.setAttribute('fill-opacity', '0.3')
 group.append(circleElement)
 ```
 
-Observe the animation of the red edges, which flicker when they reach the right or left border of the viewport. To prevent this, we have to implement `isVisible`. The blue edges use an adjusted style and leave/enter the viewport smoothly.
+Observe the animation of the red edges, which flicker when they reach the right or left border of the viewport. To prevent this, we have to override the [isVisible](https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#isVisible) method. The blue edges use an adjusted style and leave/enter the viewport smoothly.
 
 ```
 protected isVisible(
@@ -61,10 +61,10 @@ protected isVisible(
 }
 ```
 
-Implementations for `isVisible` often delegate to `getBounds` since both concepts are related in that they act on the visible boundaries of the item.
+Implementations of [isVisible](https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#isVisible) often delegate to the [getBounds](https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#getBounds) method since both concepts are related in that they act on the visible boundaries of the item.
 
 Note
 
-Since `isVisible` is called once for each item on every rendered frame, the implementation should be fast, even if this means to be inexact. If in doubt, prefer making the item visible.
+Since [isVisible](https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#isVisible) is called once for each item on every rendered frame, the implementation should be fast, even if this means to be inexact. If in doubt, prefer making the item visible.
 
 [09 Render Boundaries](../../tutorial-style-implementation-edge/09-bounds/)

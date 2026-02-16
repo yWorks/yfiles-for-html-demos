@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ This demo shows various ways to open and save a graph.
 
 ## Open
 
-Open a graph from file with a file chooser dialog. This is based on the [FileReader](https://developer.mozilla.org/docs/Web/API/FileReader) API.
+Open a graph from file with a file chooser dialog. This is based on the [FileReader](https://developer.mozilla.org/docs/Web/api/FileReader) API.
 
 ## Save
 
@@ -38,7 +38,7 @@ Show the file content in a new browser window.
 
 ## Local Storage
 
-Open and save the graph using the [Storage](https://developer.mozilla.org/docs/Web/API/Storage) API.
+Open and save the graph using the [Storage](https://developer.mozilla.org/docs/Web/api/Storage) API.
 
 ## JSON data model
 

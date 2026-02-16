@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/edgelabelplacement/).
 
-This demo shows how to place edge labels at the preferred location with a labeling algorithm and the [EdgeLabelPreferredPlacement](https://docs.yworks.com/yfileshtml/#/api/EdgeLabelPreferredPlacement) type.
+This demo shows how to place edge labels at the preferred location with a labeling algorithm and the [EdgeLabelPreferredPlacement](https://docs.yworks.com/yfileshtml/api/EdgeLabelPreferredPlacement) type.
 
 ## Usage
 

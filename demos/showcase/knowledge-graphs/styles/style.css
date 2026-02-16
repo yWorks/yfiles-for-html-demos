@@ -1,0 +1,277 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML.
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+@import '@fontsource/material-icons-outlined';
+
+.yfiles-rendertreepanel {
+  background: radial-gradient(#39434f, #1e232b);
+}
+
+.demo-main__graph-component {
+  background: radial-gradient(#39434f, #1e232b);
+}
+
+.graph-overlay {
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid rgb(209, 209, 209);
+}
+
+.graph-overlay h3 {
+  margin: 10px 0;
+  font-weight: normal;
+}
+
+.graph-overlay .filter-dropdowns {
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.graph-overlay .filter-dropdowns .down-arrow {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 5px 0;
+  text-align: center;
+}
+
+#subject-combo,
+#predicate-combo,
+#object-combo {
+  width: 100%;
+  border: 2px solid rgb(209, 209, 209);
+  border-radius: 5px;
+  padding: 5px 7px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23313638' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 3px center;
+  background-size: 16px;
+}
+
+.graph-overlay .filter-buttons {
+  align-self: center;
+  margin: 20px 0 5px 0;
+}
+
+.graph-overlay .filter-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.main-interaction-button {
+  border: none;
+  background: linear-gradient(to right, #29323c 0%, #38434f 100%);
+  padding: 5px 10px;
+  color: white;
+  border-radius: 999px;
+  line-height: 1;
+  cursor: pointer;
+  transition: box-shadow 160ms ease;
+  margin-left: 5px;
+}
+
+.main-interaction-button:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  opacity: 0.8;
+}
+
+.main-interaction-button[aria-disabled='true'] {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.data-problem-container {
+  display: flex;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  align-items: start;
+  padding: 5px;
+}
+
+.data-problem-container.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.material-icon {
+  font-family: 'Material Icons Outlined', sans-serif;
+  font-size: 2rem;
+  margin-right: 10px;
+  height: 30px;
+  width: 30px;
+  color: #ff4400;
+  display: inline-block;
+  line-height: 1;
+}
+
+.material-icon.small {
+  font-size: 20px;
+  width: 10px;
+  vertical-align: sub;
+}
+
+.data-problem-container p {
+  margin: 0;
+}
+
+.data-problem-container .main-interaction-button {
+  margin: 10px 0 0 0;
+}
+
+.data-problem-container.selected {
+  animation: highlight-fade 2s ease-in-out forwards;
+  border-radius: 5px;
+}
+
+.footnote {
+  font-size: 12px;
+  opacity: 0.9;
+  &.error {
+    color: #ff4400;
+  }
+}
+
+p.footnote {
+  margin: 0.3em;
+}
+
+@keyframes highlight-fade {
+  0% {
+    background-color: rgba(255, 0, 0, 0);
+  }
+  10% {
+    background-color: #f9be93;
+  }
+  70% {
+    background-color: #f9be93;
+  }
+  100% {
+    background-color: rgba(255, 0, 0, 0);
+  }
+}
+
+.group-separator {
+  display: flex;
+  align-items: center;
+  margin: 12px 0;
+  pointer-events: none;
+}
+
+.group-separator::before,
+.group-separator::after {
+  content: '';
+  height: 1px;
+  background: rgba(0, 0, 0, 0.2);
+  flex: 1;
+}
+
+#neighborhood-panel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80%;
+  height: 80%;
+  transform: translate(-50%, -50%);
+  z-index: 200000;
+  background: radial-gradient(#39434f, #1e232b);
+  border: none;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.2s ease-in;
+}
+
+#neighborhood-graphComponent {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+#neighborhood-panel.open {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#neighborhood-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 199999;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  transition: background 0.3s ease;
+}
+
+#neighborhood-backdrop.open {
+  display: block;
+}
+
+#neighborhood-close {
+  position: absolute;
+  top: 5px;
+  right: 20px;
+  width: 20px;
+  height: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  color: #999;
+  font-size: 22px;
+  transition: color 0.2s;
+  z-index: 1;
+}
+
+#neighborhood-close:hover {
+  color: #fff;
+}
+
+#neighborhood-close::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+
+#neighborhood-close::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+  transform: rotate(-45deg);
+}

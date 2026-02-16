@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -102,7 +102,7 @@
             <p class="first-paragraph">
               The
               <a href="https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html"
-                >yFiles for HTML 3.0.0.4</a
+                >yFiles for HTML 3.0.0.5</a
               >
               demo applications are available in both JavaScript and TypeScript.
               <span class="js-only"
@@ -322,36 +322,7 @@
 
     <!-- populated by readme-style.js -->
     <div id="footer-detailed"></div>
-    <template id="grid-item-template">
-      <div class="thumbnail">
-        <a href="{{demoPath}}">
-          <img src="{{thumbnailPath}}" loading="lazy" />
-        </a>
-      </div>
-      <div class="description">
-        <h2 class="title"><a href="{{demoPath}}" tabindex="{{index}}">{{name}}</a></h2>
-        <p class="details">{{summary}}</p>
-        <div class="tags"></div>
-        <div class="gradient-overlay"></div>
-      </div>
-      <div class="actions">
-        <a href="{{demoPath}}" class="action-run"></a>
-      </div>
-    </template>
-    <template id="accordion-template">
-      <div class="accordion-pane">
-        <h5 class="accordion-title">
-          {{title}}
-          <i class="accordion-icon"></i>
-        </h5>
-        <div class="accordion-content demo-items demo-items-{{identifier}}"></div>
-      </div>
-    </template>
-    <template id="demo-header-template">
-      <div class="demo-header hidden" id="{{identifier}}-demo-header">{{title}} Demos</div>
-    </template>
-    <script src="./demo-app/readme-demo-data.js"></script>
-    <script src="./demo-app/readme-demo-support.js" async></script>
+    <script src="./demo-app/demo-overview-page.ts" type="module" async></script>
     <script src="../doc/resources/readme-style.js"></script>
   </body>
 </html>

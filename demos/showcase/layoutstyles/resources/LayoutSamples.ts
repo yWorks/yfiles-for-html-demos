@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -514,10 +514,7 @@ export const Presets: Record<string, Preset> = {
       '<p>Uses a single-cycle style and edge bundling to bundle together edges and ' +
       'thus increase the readability in diagrams with a large number of connections.</p>',
     label: 'Single-Cycle Bundled',
-    settings: {
-      partitioningPolicyItem: 'single-cycle',
-      edgeBundlingItem: true
-    }
+    settings: { partitioningPolicyItem: 'single-cycle', edgeBundlingItem: true }
   },
 
   'circular-with-substructures': {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,57 +27,39 @@
  **
  ***************************************************************************/
 /* global page, y, beforeEach, describe, it */
+
 function getZoom() {
-  return page.$eval('.yfiles-canvascomponent', (e) => y.CanvasComponent.getComponent(e).zoom)
+  return page.evaluate(() => window.graphComponent.zoom)
 }
 
 function getNodeCount() {
-  return page.$eval(
-    '.yfiles-canvascomponent',
-    (e) => y.CanvasComponent.getComponent(e).graph.nodes.size
-  )
+  return page.evaluate(() => window.graphComponent.graph.nodes.size)
 }
 
 function getEdgeCount() {
-  return page.$eval(
-    '.yfiles-canvascomponent',
-    (e) => y.CanvasComponent.getComponent(e).graph.edges.size
-  )
+  return page.evaluate(() => window.graphComponent.graph.edges.size)
 }
 
 function getBendCount() {
-  return page.$eval(
-    '.yfiles-canvascomponent',
-    (e) => y.CanvasComponent.getComponent(e).graph.bends.size
-  )
+  return page.evaluate(() => window.graphComponent.graph.bends.size)
 }
-async function getGraphComponentBox() {
-  const gc = await page.$('.yfiles-canvascomponent')
+
+async function getGraphComponentBoundingClientRect() {
+  const gc = await page.$('#graphComponent')
   return gc.boundingBox()
 }
 
 async function clickGraphComponentAt(x, y) {
-  const box = await getGraphComponentBox()
-  await page.mouse.click(box.x + x, box.y + y)
-}
-
-function isNodeAtLocation(px, py) {
-  return page.$eval(
-    '.yfiles-canvascomponent',
-    (e, px, py) => {
-      const graphComponent = y.CanvasComponent.getComponent(e)
-      const hits = graphComponent.graphModelManager.hitElementsAt([px, py])
-      const item = hits.at(0)
-      return y.INode.isInstance(item)
-    },
-    px,
-    py
-  )
+  const rect = await getGraphComponentBoundingClientRect()
+  await page.mouse.click(rect.x + x, rect.y + y)
 }
 
 describe('app', () => {
   beforeEach(async () => {
-    const url = process.env.JEST_PUPPETEER_TEST_SERVER_URL || 'http://localhost:3000'
+    const url = new URL(
+      'testing/application-under-test/index.html',
+      process.env.TEST_SERVER_URL || 'http://localhost:4241/demos-ts/'
+    ).href
     console.log(`Navigating to ${url}`)
     await page.goto(url)
     await page.waitForSelector('.yfiles-canvascomponent')
@@ -85,16 +67,16 @@ describe('app', () => {
 
   // Make sure that we can access the yFiles API
   it('should have yfiles', async () => {
-    const hasYFiles = await page.evaluate(() => typeof window.y !== 'undefined')
+    const hasYFiles = await page.evaluate(() => typeof window.graphComponent !== 'undefined')
     expect(hasYFiles).toBe(true)
   })
 
   it('should zoom', async function () {
     let zoom = await getZoom()
     expect(zoom).toBe(1.0)
-    await expect(page).toClick('.demo-icon-yIconZoomIn')
+    await expect(page).toClick('#zoom-in')
 
-    // zooming is animated, thus wait a before checking the value
+    // zooming is animated, thus wait a second before checking the value
     const checkZoomPromise = new Promise((resolve) => {
       setTimeout(() => {
         resolve(getZoom())
@@ -105,23 +87,24 @@ describe('app', () => {
   })
 
   it('should create a node', async () => {
-    const location = { x: 110, y: 120 }
-    await clickGraphComponentAt(location.x, location.y)
-    const isNodeAt = await isNodeAtLocation(location.x, location.y)
-    expect(isNodeAt).toBe(true)
+    const location1 = { x: 100, y: 200 }
+    const location2 = { x: 200, y: 100 }
+    await clickGraphComponentAt(location1.x, location1.y)
+    await clickGraphComponentAt(location2.x, location2.y)
+    expect(await getNodeCount()).toBe(4)
   })
 
   it('should create an edge', async () => {
-    const node1Loc = { x: 110, y: 120 }
-    const node2Loc = { x: 210, y: 120 }
-    expect(await getNodeCount()).toBe(0)
+    const node1Loc = { x: 100, y: 200 }
+    const node2Loc = { x: 200, y: 100 }
+    expect(await getNodeCount()).toBe(2)
     expect(await getEdgeCount()).toBe(0)
 
     await clickGraphComponentAt(node1Loc.x, node1Loc.y)
     await clickGraphComponentAt(node2Loc.x, node2Loc.y)
-    expect(await getNodeCount()).toBe(2)
+    expect(await getNodeCount()).toBe(4)
 
-    const box = await getGraphComponentBox()
+    const box = await getGraphComponentBoundingClientRect()
 
     await page.mouse.move(box.x + node1Loc.x, box.y + node1Loc.y)
     await page.mouse.down()
@@ -131,6 +114,8 @@ describe('app', () => {
   })
 
   it('should create bends', async () => {
+    await page.evaluate(() => window.graphComponent.graph.clear())
+
     const node1Loc = { x: 110, y: 120 }
     const node2Loc = { x: 210, y: 100 }
     const bend1Loc = { x: 160, y: 25 }
@@ -143,7 +128,7 @@ describe('app', () => {
     await clickGraphComponentAt(node2Loc.x, node2Loc.y)
     expect(await getNodeCount()).toBe(2)
 
-    const box = await getGraphComponentBox()
+    const box = await getGraphComponentBoundingClientRect()
     await page.mouse.move(box.x + node1Loc.x, box.y + node1Loc.y)
     await page.mouse.down()
     // // move to first bend location

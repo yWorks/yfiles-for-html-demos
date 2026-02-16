@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/large-graphs/).
 
-This demo shows how to display large graphs with both good performance and high quality. For this, the demo uses _[WebGL](https://docs.yworks.com/yfileshtml/#/dguide/webgl2)_ rendering on small zoom levels and switches to high quality _SVG_ rendering when the user zoomed-in above a certain threshold.
+This demo shows how to display large graphs with both good performance and high quality. For this, the demo uses _[WebGL](https://docs.yworks.com/yfileshtml/dguide/webgl2)_ rendering on small zoom levels and switches to high quality _SVG_ rendering when the user zoomed-in above a certain threshold.
 
 Due to its vector graphics, SVG is very well suited for high-quality rendering with lots of details and crisp text. If a large number of graphical elements needs to be displayed at the same time, the browser's rendering engine reaches its limits and the rendering starts to lag.
 
@@ -56,4 +56,4 @@ Zoom level: **%**
 
 ## Troubleshooting
 
-When encountering rendering issues or low frame rates, please refer to the _[WebGL Troubleshooting](https://docs.yworks.com/yfileshtml/#/dguide/webgl2_troubleshooting)_ section in the Developer's guide.
+When encountering rendering issues or low frame rates, please refer to the _[WebGL Troubleshooting](https://docs.yworks.com/yfileshtml/dguide/webgl_troubleshooting)_ section in the Developer's guide.

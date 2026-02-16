@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/layoutgrid/).
 
-This demo application lets you experience the usage of a [LayoutGrid](https://docs.yworks.com/yfileshtml/#/api/LayoutGrid) for hierarchical and organic layout calculations.
+This demo application lets you experience the usage of a [LayoutGrid](https://docs.yworks.com/yfileshtml/api/LayoutGrid) for hierarchical and organic layout calculations.
 
 Nodes are assigned to columns/rows by their fill color (gray nodes are unassigned) and the calculated layout grid is visualized after a layout run to show the effect of the node assignment to the layout.
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IClipboardHelper, type IGraphClipboardContext, type IModelItem, INode } from '@yfiles/yfiles'
+import {
+  BaseClass,
+  IClipboardHelper,
+  type IGraphClipboardContext,
+  type IModelItem,
+  INode
+} from '@yfiles/yfiles'
 
 /**
  * This class is used to assign custom labels to pasted nodes.
@@ -123,13 +129,14 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
  * of pasted elements.
  */
 class CopyItem {
-    text: string;
+  text: string
 
   /**
    * Creates a new instance of {@link CopyItem}.
    */
   constructor(text: string) {
-      this.text = text;}
+    this.text = text
+  }
 
   public pasteCount = 0
 

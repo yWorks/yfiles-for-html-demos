@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,11 +15,11 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/10-configure-layout/).
 
-In this tutorial step we will learn how to configure [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) to arrange the graph elements and/or adjust their size using the information stored in the dataset.
+In this tutorial step we will learn how to configure [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) to arrange the graph elements and/or adjust their size using the information stored in the dataset.
 
 Note
 
-This step is optional when building a graph with [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder). If your data does not contain layout information, you can proceed with the next step.
+This step is optional when building a graph with [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder). If your data does not contain layout information, you can proceed with the next step.
 
 ## Loading node layout information
 
@@ -33,9 +33,9 @@ const nodeData: NodeLayoutData[] = [
 ]
 ```
 
-A [layout provider](https://docs.yworks.com/yfileshtml/#/api/NodeCreator#layoutProvider) will use this information to create a rectangle at a specific location for each node. These rectangles will be set as the nodes' [layout](https://docs.yworks.com/yfileshtml/#/api/INode#layout).
+A [layoutProvider](https://docs.yworks.com/yfileshtml/api/NodeCreator#layoutProvider) will use this information to create a rectangle at a specific location for each node. These rectangles will be set as the nodes' [layout](https://docs.yworks.com/yfileshtml/api/INode#layout).
 
-If no layout information is provided, the [default size](https://docs.yworks.com/yfileshtml/#/api/NodeDefaults#size) will be used and the node will be located at the origin.
+If no layout information is provided, the [NodeDefaults.size](https://docs.yworks.com/yfileshtml/api/NodeDefaults#size) will be used and the node will be located at the origin.
 
 ```
 // configure the layout provider that returns the layout information
@@ -91,7 +91,7 @@ const edgeData: EdgeLayoutData[] = [
 ]
 ```
 
-Transfer the bend information to the [edge layout](https://docs.yworks.com/yfileshtml/#/api/IEdge#bends) using a [bend provider](https://docs.yworks.com/yfileshtml/#/api/EdgeCreator#bendsProvider).
+Transfer the bend information to [IEdge.bends](https://docs.yworks.com/yfileshtml/api/IEdge#bends) using a [bendsProvider](https://docs.yworks.com/yfileshtml/api/EdgeCreator#bendsProvider).
 
 ```
 // configure the bend provider to return the location of each bend point

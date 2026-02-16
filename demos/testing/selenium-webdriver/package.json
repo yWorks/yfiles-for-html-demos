@@ -7,9 +7,9 @@
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "devDependencies": {
-    "chai": "^4.5.0",
-    "mocha": "^10.7.3",
-    "selenium-webdriver": "^4.25.0"
+    "chai": "^6.2.2",
+    "mocha": "^11.7.5",
+    "selenium-webdriver": "^4.40.0"
   },
   "type": "module"
 }

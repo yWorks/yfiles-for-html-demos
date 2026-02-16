@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/edgeroutergrouping/).
 
-This demo shows the possibilities of edge and port grouping using the [EdgeRouter](https://docs.yworks.com/yfileshtml/#/api/EdgeRouter). Edge groups lead to edges sharing some segments while port groups will combine the edges only in their first segment.
+This demo shows the possibilities of edge and port grouping using the [EdgeRouter](https://docs.yworks.com/yfileshtml/api/EdgeRouter). Edge groups lead to edges sharing some segments while port groups will combine the edges only in their first segment.
 
 ## Things to Try
 

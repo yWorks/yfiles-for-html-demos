@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -143,15 +143,15 @@
             <p>
               In this step, we will set a minimum size for the node style and customize how the
               group size is calculated when adjusting to its content. Similar to
-              <code>IGroupPaddingProvider</code> in the previous step, we return implementations for
-              both customizations in the <code>lookup</code> method.
+              <a href="https://docs.yworks.com/yfileshtml/api/IGroupPaddingProvider" class="api" target="_blank">IGroupPaddingProvider</a> in the previous step, we return implementations
+              for both customizations in the <a href="https://docs.yworks.com/yfileshtml/api/NodeStyleBase#lookup" class="api" target="_blank">lookup</a> method.
             </p>
           </div>
           <div class="paragraph">
             <p>
               If you reduce the size of <em>Group 1</em>, you will notice that it shrinks past the
               tab size, which is not desired. We will define a minimum size for the style by
-              implementing the interface <a href="https://docs.yworks.com/yfileshtml/#/api/INodeSizeConstraintProvider" class="api" target="_blank">INodeSizeConstraintProvider</a>.
+              implementing the interface <a href="https://docs.yworks.com/yfileshtml/api/INodeSizeConstraintProvider" class="api" target="_blank">INodeSizeConstraintProvider</a>.
             </p>
           </div>
           <div class="listingblock">
@@ -179,7 +179,7 @@
           </div>
           <div class="paragraph">
             <p>
-              Next, we will add an <a href="https://docs.yworks.com/yfileshtml/#/api/IGroupBoundsCalculator" class="api" target="_blank">IGroupBoundsCalculator</a> implementation, which is
+              Next, we will add an <a href="https://docs.yworks.com/yfileshtml/api/IGroupBoundsCalculator" class="api" target="_blank">IGroupBoundsCalculator</a> implementation, which is
               shown with <em>Group 3</em>. Implementations of this interface are used for
               customizing the way the group node layout is calculated when adjusting to the group
               content. By default, only the child node boundaries and the group node padding are

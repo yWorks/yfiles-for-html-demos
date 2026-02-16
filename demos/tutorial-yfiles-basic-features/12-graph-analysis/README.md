@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 ## How to analyze the graph structure.
 
-This step shows how to use the [graph analysis algorithms](https://docs.yworks.com/yfileshtml/#/dguide/analysis) in yFiles for HTML.
+This step shows how to use the [graph analysis algorithms](https://docs.yworks.com/yfileshtml/dguide/analysis) in yFiles for HTML.
 
 yFiles provides a wide range of graph analysis algorithms that can be used for all kinds of purposes. The result of an analysis run can be shown directly to the user, or the results can be used to drive third party systems. They can also be used as input for layout algorithm configurations. The purpose of this sample is to demonstrate how to build, configure, and execute graph analysis algorithms and how to interpret the results. For a more interactive and complete showcase of the available algorithms, please see the [Graph Analysis Demo](../../showcase/graphanalysis/), the [Clustering Algorithms Demo](../../analysis/clustering/), the [Network Flows Demo](../../analysis/networkflows/), the [Critical Path Analysis (CPA) Demo](../../analysis/criticalpathanalysis/), the [Intersection Detection Demo](../../analysis/intersection-detection/), and the [Transitivity Demo](../../analysis/transitivity/).
 
@@ -60,7 +60,7 @@ const shortestPath = new ShortestPath({
 const shortestPathResult = shortestPath.run(graph)
 ```
 
-The shortest path result contains the distance, nodes and edges of the calculated path. We use this information to highlight the respective nodes and edges and to show a tooltip with the distance.
+The [ShortestPathResult](https://docs.yworks.com/yfileshtml/api/ShortestPathResult) contains the [distance](https://docs.yworks.com/yfileshtml/api/ShortestPathResult#distance), [nodes](https://docs.yworks.com/yfileshtml/api/ShortestPathResult#nodes) and [edges](https://docs.yworks.com/yfileshtml/api/ShortestPathResult#edges) of the calculated path. We use this information to highlight the respective nodes and edges and to show a tooltip with the distance.
 
 ```
 const pathDistance = shortestPathResult.distance

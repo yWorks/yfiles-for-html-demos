@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -57,8 +57,7 @@ async function run() {
   graphComponent.inputMode = graphEditorInputMode
 
   // initialize the interactive organic layout running in a web worker
-  const moveInputMode = graphEditorInputMode.moveSelectedItemsInputMode
-  const layout = await initializeWorkerLayout(graphComponent, moveInputMode)
+  const layout = await initializeWorkerLayout(graphComponent, graphEditorInputMode)
 
   const graph = graphComponent.graph
 

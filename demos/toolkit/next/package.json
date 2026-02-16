@@ -5,22 +5,22 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
-    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','app/license.json');\"",
+    "postinstall": "node -e \"require('node:fs').cpSync('../../../lib/license.json','app/license.json');\"",
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
-    "@types/node": "^22.18.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/node": "^24.10.4",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "@yfiles/demo-app": "../../demo-app",
-    "next": "^15.2.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.4+dev.tgz"
+    "next": "^16.0.10",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.5+dev.tgz"
   },
   "devDependencies": {
-    "typescript": "~5.9.0"
+    "typescript": "~5.9.3"
   }
 }

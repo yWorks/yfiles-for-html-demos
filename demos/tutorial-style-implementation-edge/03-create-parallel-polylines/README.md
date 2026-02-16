@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-edge/03-create-parallel-polylines/).
 
-Currently, the custom edge style renders a simple polyline. This is something yFiles for HTML already offers out-of-the box with [PolylineEdgeStyle](https://docs.yworks.com/yfileshtml/#/api/PolylineEdgeStyle). So let’s use something more interesting, for example, two polylines running in parallel.
+Currently, the custom edge style renders a simple polyline. This is something yFiles for HTML already offers out-of-the box with [PolylineEdgeStyle](https://docs.yworks.com/yfileshtml/api/PolylineEdgeStyle). So let’s use something more interesting, for example, two polylines running in parallel.
 
 Since calculating the offset path of the parallel lines is complex, we imitate this look by rendering a white line on top of a wider black line. We start by rendering a black path of wide width along the edge.
 

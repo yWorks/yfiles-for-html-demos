@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ constructor(size: number = 6) {
 }
 ```
 
-Now we can use this value in `createVisual` to configure the size of the circle.
+Now we can use this value in [createVisual](https://docs.yworks.com/yfileshtml/api/PortStyleBase#createVisual) to configure the size of the circle.
 
 ```
 const radius = this.size * 0.5
@@ -34,7 +34,7 @@ ellipseElement.setAttribute('rx', String(radius))
 ellipseElement.setAttribute('ry', String(radius))
 ```
 
-We also adjust `getBounds` to consider the size property.
+We also adjust [getBounds](https://docs.yworks.com/yfileshtml/api/PortStyleBase#getBounds) to consider the size property.
 
 ```
 protected getBounds(context: ICanvasContext, port: IPort): Rect {

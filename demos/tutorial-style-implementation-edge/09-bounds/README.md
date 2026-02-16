@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ Some functions of yFiles for HTML require the exact boundaries of the edge visua
 
 In most cases, the edge path suffices, but some styles may extend past their edge boundaries. Again, we add a circle to the edge, which lies partly outside the edge path. The red rectangle around the edge below highlights the default visualization boundaries of the edge. As you can see, the badge exceeds the boundaries.
 
-To include the badge in the boundaries, we have to override `getBounds` and enlarge the bounds accordingly.
+To include the badge in the boundaries, we have to override [getBounds](https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#getBounds) and enlarge the bounds accordingly.
 
 ```
 protected getBounds(context: ICanvasContext, edge: IEdge): Rect {

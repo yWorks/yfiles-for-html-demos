@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -189,6 +189,18 @@
                   Item Hover Events
                 </label>
               </li>
+              <li
+                data-tooltip="Events dispatched by an EditLabelInputMode when adding/editing labels."
+              >
+                <label>
+                  <input
+                    type="checkbox"
+                    data-action="ToggleEvents"
+                    data-event-kind="EditLabelInputMode"
+                  />
+                  Edit Label Events
+                </label>
+              </li>
               <li data-tooltip="Events dispatched by TextEditorInputMode during Label Editing.">
                 <label>
                   <input
@@ -239,18 +251,6 @@
                     data-event-kind="ItemDropInputMode"
                   />
                   Drag and Drop Events
-                </label>
-              </li>
-              <li
-                data-tooltip="Events dispatched by an EditLabelInputMode when adding/editing labels."
-              >
-                <label>
-                  <input
-                    type="checkbox"
-                    data-action="ToggleEvents"
-                    data-event-kind="EditLabelInputMode"
-                  />
-                  Label Edit Events
                 </label>
               </li>
             </ul>
@@ -411,8 +411,8 @@
       <div data-header="Description" class="demo-description__content">
         <h1>Events Demo</h1>
         <p>
-          This demo shows the multitude of events provided by the classes <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" class="api" target="_blank">IGraph</a> and
-          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a> and the <em>Input Modes</em>.
+          This demo shows the multitude of events provided by the classes <a href="https://docs.yworks.com/yfileshtml/api/IGraph" class="api" target="_blank">IGraph</a> and
+          <a href="https://docs.yworks.com/yfileshtml/api/GraphComponent" class="api" target="_blank">GraphComponent</a> and the <em>Input Modes</em>.
         </p>
         <p>
           The events are logged to the <em>Event Log</em> panel. Logging can be switched on and off

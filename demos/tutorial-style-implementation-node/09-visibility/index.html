@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -155,8 +155,8 @@
               To make this more evident, the node visualization in this step has been augmented with
               a large circle that exceeds the node bounds. Observe the animation of the red nodes,
               which flicker when they reach the right or left border of the viewport. To prevent
-              this, we have to implement <code>isVisible</code>. The blue nodes use an adjusted
-              style and leave/enter the viewport smoothly.
+              this, we have to implement <a href="https://docs.yworks.com/yfileshtml/api/NodeStyleBase#isVisible" class="api" target="_blank">isVisible</a>. The blue nodes use
+              an adjusted style and leave/enter the viewport smoothly.
             </p>
           </div>
           <div class="listingblock">
@@ -180,9 +180,9 @@
           </div>
           <div class="paragraph">
             <p>
-              Implementations for <code>isVisible</code> often delegate to
-              <code>getBounds</code> since both concepts are related in that they act on the visible
-              boundaries of the item.
+              Implementations for <a href="https://docs.yworks.com/yfileshtml/api/NodeStyleBase#isVisible" class="api" target="_blank">isVisible</a> often delegate to
+              <a href="https://docs.yworks.com/yfileshtml/api/NodeStyleBase#getBounds" class="api" target="_blank">getBounds</a> since both concepts are related in that they
+              act on the visible boundaries of the item.
             </p>
           </div>
           <div class="admonitionblock note">
@@ -192,9 +192,9 @@
                   <div class="title">Note</div>
                 </td>
                 <td class="content">
-                  Since <code>isVisible</code> is called once for each item on every rendered frame,
-                  the implementation should be fast, even if this means to be inexact. If in doubt,
-                  prefer making the item visible.
+                  Since <a href="https://docs.yworks.com/yfileshtml/api/NodeStyleBase#isVisible" class="api" target="_blank">isVisible</a> is called once for each item on
+                  every rendered frame, the implementation should be fast, even if this means to be
+                  inexact. If in doubt, prefer making the item visible.
                 </td>
               </tr>
             </table>

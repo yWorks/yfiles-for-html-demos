@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -51,8 +51,8 @@ export type CellId = { rowIndex: number; columnIndex: number }
  * two layout calculations.
  */
 export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimation) {
-    private readonly columnCount: number;
-    private readonly rowCount: number;
+  private readonly columnCount: number
+  private readonly rowCount: number
   private rows: IMutableRectangle[] = []
   private rowStarts: IRectangle[] = []
   private rowEnds: IRectangle[] = []
@@ -74,13 +74,10 @@ export class LayoutGridVisualCreator extends BaseClass(IVisualCreator, IAnimatio
    * @param rowCount The number of columns of the grid
    * @param columnCount The number of columns of the grid
    */
-  constructor(
-    rowCount: number,
-    columnCount: number
-  ) {
+  constructor(rowCount: number, columnCount: number) {
     super()
-      this.rowCount = rowCount;
-      this.columnCount = columnCount;
+    this.rowCount = rowCount
+    this.columnCount = columnCount
     this.rowCount = rowCount
     this.columnCount = columnCount
     for (let i = 0; i < rowCount; i++) {

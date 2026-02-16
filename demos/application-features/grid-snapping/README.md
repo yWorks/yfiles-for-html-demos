@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/grid-snapping/).
 
-This demo shows the [grid snapping](https://docs.yworks.com/yfileshtml/#/dguide/interaction-grid_snapping) feature which enables snapping graph items to grid points. Grid snapping not only works for moving or resizing nodes, but also for creating edges and adding and moving bends.
+This demo shows the [grid snapping](https://docs.yworks.com/yfileshtml/dguide/interaction-grid_snapping) feature which enables snapping graph items to grid points. Grid snapping not only works for moving or resizing nodes, but also for creating edges and adding and moving bends.
 
 ### Things to Try
 

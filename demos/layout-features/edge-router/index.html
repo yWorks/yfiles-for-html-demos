@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -80,35 +80,35 @@
         <h1>Edge Router</h1>
         <p>
           This demo shows common configuration options for the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a> algorithm.
+          <a href="https://docs.yworks.com/yfileshtml/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a> algorithm.
         </p>
         <p>It highlights the configuration of various aspects, including:</p>
         <ul>
           <li>
             Minimum distance settings like the
-            <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeDescriptor#minimumEdgeDistance" class="api" target="_blank">edge distance</a> and the
-            <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#minimumNodeToEdgeDistance" class="api" target="_blank">node-to-edge distance</a>.
+            <a href="https://docs.yworks.com/yfileshtml/api/EdgeRouterEdgeDescriptor#minimumEdgeDistance" class="api" target="_blank">edge distance</a> and the
+            <a href="https://docs.yworks.com/yfileshtml/api/EdgeRouter#minimumNodeToEdgeDistance" class="api" target="_blank">node-to-edge distance</a>.
           </li>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#scope" class="api" target="_blank">Scope</a>: the
+            <a href="https://docs.yworks.com/yfileshtml/api/EdgeRouterData#scope" class="api" target="_blank">Scope</a>: the
             <strong><span style="color: #f26419">orange edges</span></strong> (fixed edges) are
             <em>not</em> routed by the algorithm. All other edges (affected edges) are routed.
           </li>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterEdgeDescriptor#routingStyle" class="api" target="_blank">Routing style</a>: the
+            <a href="https://docs.yworks.com/yfileshtml/api/EdgeRouterEdgeDescriptor#routingStyle" class="api" target="_blank">Routing style</a>: the
             <strong><span style="color: #01baff">blue edges</span></strong> are routed using the
             octilinear style, the others routed orthogonally.
           </li>
           <li>
             Grouping: the <strong><span style="color: #e011a4">pink edges</span></strong> are
-            grouped at their <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#targetGroupIds" class="api" target="_blank">target side</a>.
+            grouped at their <a href="https://docs.yworks.com/yfileshtml/api/EdgeRouterData#targetGroupIds" class="api" target="_blank">target side</a>.
           </li>
           <li>
-            Restricting ports via <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" class="api" target="_blank">port candidates</a>: at nodes
+            Restricting ports via <a href="https://docs.yworks.com/yfileshtml/api/PortCandidate" class="api" target="_blank">port candidates</a>: at nodes
             &#39;5&#39; and &#39;7&#39;, ports are restricted to be on their left or right side.
           </li>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter#gridSpacing" class="api" target="_blank">Grid routing</a>: edges are routed on a 10x10 grid.
+            <a href="https://docs.yworks.com/yfileshtml/api/EdgeRouter#gridSpacing" class="api" target="_blank">Grid routing</a>: edges are routed on a 10x10 grid.
           </li>
         </ul>
         <h2>Demos</h2>
@@ -118,10 +118,10 @@
         <h2>Documentation</h2>
         <ul>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router#polyline_router_edge_grouping" class="dguide" target="_blank">Polyline Edge Routing</a>
+            <a href="https://docs.yworks.com/yfileshtml/dguide/polyline_router#polyline_router_edge_grouping" class="dguide" target="_blank">Polyline Edge Routing</a>
           </li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData" class="api" target="_blank">EdgeRouterData</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/EdgeRouterData" class="api" target="_blank">EdgeRouterData</a></li>
         </ul>
       </div>
     </aside>
@@ -129,7 +129,7 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-      <div id="demo-message" class="demo-message"></div>
+      <div class="yplay__message-host"></div>
     </div>
     <script type="module" crossorigin="anonymous" src="./EdgeRouterDemo.ts" async></script>
   </body>

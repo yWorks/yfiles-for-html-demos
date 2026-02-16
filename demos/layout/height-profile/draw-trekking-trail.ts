@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -51,11 +51,11 @@ export function drawTrekkingTrail(graphComponent: GraphComponent, scaledTrail: P
  * Creates the trail based on a given set of points.
  */
 class TrailVisual extends BaseClass(IVisualCreator) {
-    private trailPoints: Point[];
+  private trailPoints: Point[]
 
   constructor(trailPoints: Point[]) {
     super()
-      this.trailPoints = trailPoints;
+    this.trailPoints = trailPoints
   }
 
   /**

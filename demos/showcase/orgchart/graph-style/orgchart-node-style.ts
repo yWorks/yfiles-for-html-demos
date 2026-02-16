@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -69,7 +69,7 @@ const nodeStyleTemplate = `({ layout, tag, selected, zoom }) => {
     <rect fill="#FFFFFF" stroke="#C0C0C0" width="$\{layout.width}" height="$\{layout.height}"></rect>
     <rect
       width="$\{layout.width}"
-      height="\${zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'}"
+      height="\${zoom < 0.5 ? layout.height : zoom < 1 ? '10' : '5'}"
       fill='$\{tag.status === "present" ? "#76b041" :
     tag.status === "busy" ? "#ab2346" :
       tag.status === "travel" ? "#a367dc" : "#c1c1c1"}'
@@ -78,7 +78,7 @@ const nodeStyleTemplate = `({ layout, tag, selected, zoom }) => {
       fill='none' stroke-width='3'
       width='\${layout.width + 3}' height='\${layout.height + 3}' x='-1.5' y='-1.5'></rect>
     <!-- Detail View -->
-    \${zoom >= 0.7 ? svg\`
+    \${zoom >= 1 ? svg\`
       <image href="./resources/\${tag.icon}.svg" x='15' y='10' width='63.75' height='63.75'></image>
       <image href="./resources/\${tag.status}_icon.svg" x='25' y='80' height='15' width='60'></image>
       <g style='font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444'>
@@ -88,7 +88,7 @@ const nodeStyleTemplate = `({ layout, tag, selected, zoom }) => {
         <text transform='translate(100 88)'>\${tag.phone}</text>
         <text transform='translate(170 88)'>\${tag.fax}</text>
       </g>
-    \` :  zoom >= 0.4 ? svg\`
+    \` :  zoom >= 0.5 ? svg\`
       <!-- Intermediate View -->
       <image href="./resources/\${tag.icon}.svg" x='15' y='20' width='56.25' height='56.25'/>
       <g style='font-size:15px; font-family:Roboto,sans-serif; fill:#444' width='185'>

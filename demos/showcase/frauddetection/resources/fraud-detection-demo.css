@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -297,4 +297,22 @@
 span.video-button.play {
   background-repeat: no-repeat;
   padding-left: 20px;
+}
+
+.yfiles-tooltip {
+  background-color: #ffffff;
+  color: #0e0e28;
+  border: none;
+  box-shadow:
+    0 1px 2px 0 rgb(0 0 0 / 30%),
+    0 1px 3px 1px rgb(0 0 0 / 15%);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-family: Tahoma, Arial, Helvetica, sans-serif;
+  line-height: 20px;
+  h3 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+  }
 }

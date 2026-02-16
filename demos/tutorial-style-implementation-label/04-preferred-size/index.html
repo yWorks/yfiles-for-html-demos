@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -134,9 +134,9 @@
           <h1>Preferred Label Size</h1>
           <div class="paragraph">
             <p>
-              <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase" class="api" target="_blank">LabelStyleBase</a> provides the abstract method
-              <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#getPreferredSize" class="api" target="_blank">getPreferredSize</a> that needs to be
-              implemented to tell the framework how large the label prefers to be.
+              <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase" class="api" target="_blank">LabelStyleBase</a> provides the abstract method
+              <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#getPreferredSize" class="api" target="_blank">getPreferredSize</a> that needs to be implemented to tell
+              the framework how large the label prefers to be.
             </p>
           </div>
           <div class="paragraph">
@@ -149,11 +149,10 @@
           <div id="old-state" class="inline-graph-component"></div>
           <div class="paragraph">
             <p>
-              We adjust the implementation of
-              <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#getPreferredSize" class="api" target="_blank">getPreferredSize</a> to measure the
-              label text and return the measured size.
-              <a href="https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport#measureText" class="api" target="_blank">TextRenderSupport.measureText</a> helps us
-              to get the desired size. We add a small padding of 3 for each side.
+              We adjust the implementation of <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#getPreferredSize" class="api" target="_blank">getPreferredSize</a> to
+              measure the label text and return the measured size.
+              <a href="https://docs.yworks.com/yfileshtml/api/TextRenderSupport#measureText" class="api" target="_blank">TextRenderSupport.measureText</a> helps us to get the desired size.
+              We add a small padding of 3 for each side.
             </p>
           </div>
           <div class="listingblock">
@@ -178,7 +177,7 @@
           <div class="paragraph">
             <p>
               We also adjust the translate transform of the text element in
-              <code>createVisual</code> to consider the padding vertically.
+              <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#createVisual" class="api" target="_blank">createVisual</a> to consider the padding vertically.
             </p>
           </div>
           <div class="listingblock">
@@ -195,12 +194,12 @@
                   <div class="title">Note</div>
                 </td>
                 <td class="content">
-                  The <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModel" class="api" target="_blank">ILabelModel</a> may or may not take the preferred size into
+                  The <a href="https://docs.yworks.com/yfileshtml/api/ILabelModel" class="api" target="_blank">ILabelModel</a> may or may not take the preferred size into
                   account. Therefore, it is not guaranteed that the label will become as large as
                   the preferred size. Most label models, like
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/ExteriorNodeLabelModel" class="api" target="_blank">ExteriorNodeLabelModel</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/InteriorNodeLabelModel" class="api" target="_blank">InteriorNodeLabelModel</a>,
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/FreeLabelModel" class="api" target="_blank">FreeLabelModel</a> etc. will respect the value, though. Usually, only
-                  stretch label models like <a href="https://docs.yworks.com/yfileshtml/#/api/StretchNodeLabelModel" class="api" target="_blank">StretchNodeLabelModel</a>, that fit the
+                  <a href="https://docs.yworks.com/yfileshtml/api/ExteriorNodeLabelModel" class="api" target="_blank">ExteriorNodeLabelModel</a>, <a href="https://docs.yworks.com/yfileshtml/api/InteriorNodeLabelModel" class="api" target="_blank">InteriorNodeLabelModel</a>,
+                  <a href="https://docs.yworks.com/yfileshtml/api/FreeLabelModel" class="api" target="_blank">FreeLabelModel</a> etc. will respect the value, though. Usually, only
+                  stretch label models like <a href="https://docs.yworks.com/yfileshtml/api/StretchNodeLabelModel" class="api" target="_blank">StretchNodeLabelModel</a>, that fit the
                   content into the owner node, will result in a different size.
                 </td>
               </tr>

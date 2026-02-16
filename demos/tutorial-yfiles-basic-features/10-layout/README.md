@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 ## How to arrange the graph automatically
 
-This step shows how to use the [layout algorithms](https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-layout) in yFiles for HTML to automatically place the graph elements.
+This step shows how to use the [layout algorithms](https://docs.yworks.com/yfileshtml/dguide/getting_started-application#getting_started-layout) in yFiles for HTML to automatically place the graph elements.
 
 Automatic layout is one of the main features of the yFiles products. The layout library provides a large set of ready-to-use, highly customizable algorithms for most scenarios. The purpose of this sample is to demonstrate how to run an arbitrary layout algorithm. For an overview of the available layout styles, please see the [Layout Styles Demo](../../showcase/layoutstyles/).
 
@@ -37,7 +37,7 @@ await graphComponent.fitGraphBounds()
 
 ### Running a layout animation
 
-An automatic layout can also be applied with an animation. In this sample, we use [applyLayoutAnimated](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#applyLayoutAnimated) to perform the layout, animate it, manage undo and adjust the content rectangle in one call. [applyLayoutAnimated](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#applyLayoutAnimated) runs asynchronously and returns immediately yielding a Promise that we can await or use to catch errors.
+An automatic layout can also be applied with an animation. In this sample, we use [applyLayoutAnimated](https://docs.yworks.com/yfileshtml/api/GraphComponent#applyLayoutAnimated) to perform the layout, animate it, manage undo and adjust the content rectangle in one call. [applyLayoutAnimated](https://docs.yworks.com/yfileshtml/api/GraphComponent#applyLayoutAnimated) runs asynchronously and returns immediately yielding a Promise that we can await or use to catch errors.
 
 Animate Organic Layout
 
@@ -54,6 +54,6 @@ await graphComponent.applyLayoutAnimated({
 
 Note
 
-applyLayoutAnimated is a convenience method that comes with a lot of parameters that can be used to adjust various aspects of the layout animation. For more customized scenarios, use class [LayoutExecutor](https://docs.yworks.com/yfileshtml/#/api/LayoutExecutor).
+[applyLayoutAnimated](https://docs.yworks.com/yfileshtml/api/GraphComponent#applyLayoutAnimated) is a convenience method that comes with a lot of parameters that can be used to adjust various aspects of the layout animation. For more customized scenarios, use class [LayoutExecutor](https://docs.yworks.com/yfileshtml/api/LayoutExecutor).
 
 [11 Layout Data](../../tutorial-yfiles-basic-features/11-layout-data/)

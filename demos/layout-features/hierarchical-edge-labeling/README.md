@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,15 +15,15 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-edge-labeling/).
 
-This demo shows how to configure the [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) for automatic edge label placements.
+This demo shows how to configure the [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout) for automatic edge label placements.
 
 ## Label Placement
 
-[Label models](https://docs.yworks.com/yfileshtml/#/api/ILabelModel) and their [parameters](https://docs.yworks.com/yfileshtml/#/api/ILabelModelParameter) control where labels appear. For manual placement, it's common to use models that limit possible positions. However, for automatic layout, it's best to use unrestricted models like [FreeEdgeLabelModel](https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel) for maximum flexibility.
+[Label models](https://docs.yworks.com/yfileshtml/api/ILabelModel) and their [parameters](https://docs.yworks.com/yfileshtml/api/ILabelModelParameter) control where labels appear. For manual placement, it's common to use models that limit possible positions. However, for automatic layout, it's best to use unrestricted models like [FreeEdgeLabelModel](https://docs.yworks.com/yfileshtml/api/FreeEdgeLabelModel) for maximum flexibility.
 
-You can further guide label placement using [EdgeLabelPreferredPlacement](https://docs.yworks.com/yfileshtml/#/api/EdgeLabelPreferredPlacement), which specifies preferences such as placing labels near the edge's source or target, on a particular side, or with a specific rotation.
+You can further guide label placement using [EdgeLabelPreferredPlacement](https://docs.yworks.com/yfileshtml/api/EdgeLabelPreferredPlacement), which specifies preferences such as placing labels near the edge's source or target, on a particular side, or with a specific rotation.
 
-In this demo, each label is placed according to its text. Note that the default [prevention of upside-down labels](https://docs.yworks.com/yfileshtml/#/api/LabelStyle#autoFlip) is turned off to enable rotation of _Upside down_ and _Upwards_ labels.
+In this demo, each label is placed according to its text. Note that the default [prevention of upside-down labels](https://docs.yworks.com/yfileshtml/api/LabelStyle#autoFlip) is turned off to enable rotation of _Upside down_ and _Upwards_ labels.
 
 ## Things to Try
 
@@ -39,8 +39,8 @@ In this demo, each label is placed according to its text. Note that the default 
 
 ## Documentation
 
-- [Labeling](https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#_labeling_2)
-- [Automatic Label Placement](https://docs.yworks.com/yfileshtml/#/dguide/label_placement)
-- [EdgeLabelPreferredPlacement](https://docs.yworks.com/yfileshtml/#/api/EdgeLabelPreferredPlacement) class
-- [FreeEdgeLabelModel](https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel) class
-- [LabelStyle.autoFlip](https://docs.yworks.com/yfileshtml/#/api/LabelStyle#autoFlip) property
+- [Labeling](https://docs.yworks.com/yfileshtml/dguide/hierarchical_layout#_labeling_2)
+- [Automatic Label Placement](https://docs.yworks.com/yfileshtml/dguide/label_placement)
+- [EdgeLabelPreferredPlacement](https://docs.yworks.com/yfileshtml/api/EdgeLabelPreferredPlacement) class
+- [FreeEdgeLabelModel](https://docs.yworks.com/yfileshtml/api/FreeEdgeLabelModel) class
+- [autoFlip](https://docs.yworks.com/yfileshtml/api/LabelStyle#autoFlip) property

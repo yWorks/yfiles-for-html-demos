@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,8 +27,10 @@
  **
  ***************************************************************************/
 import {
+  ExteriorNodeLabelModel,
   GraphBuilder,
   GraphComponent,
+  GraphItemTypes,
   GraphMLIOHandler,
   GraphViewerInputMode,
   IArrow,
@@ -39,7 +41,6 @@ import {
 } from '@yfiles/yfiles'
 import SampleData from './resources/sample'
 import { createLitNodeStyleFromSource, LitNodeStyle } from './LitNodeStyle'
-import { registerLitNodeStyleSerialization } from './LitNodeStyleMarkupExtension'
 import licenseData from '../../../lib/license.json'
 import { finishLoading } from '@yfiles/demo-app/demo-page'
 import { openGraphML, saveGraphML } from '@yfiles/demo-utils/graphml-support'
@@ -49,11 +50,29 @@ import {
   StateEffect,
   StateField
 } from '@yfiles/demo-app/codemirror-editor'
+import { createLitLabelStyleFromSource, LitLabelStyle } from './LitLabelStyle'
+import { createLitHtmlNodeStyleFromSource, LitHtmlNodeStyle } from './LitHtmlNodeStyle'
+import { createLitHtmlLabelStyleFromSource, LitHtmlLabelStyle } from './LitHtmlLabelStyle'
+import {
+  demoHtmlLabelStyleLitSources,
+  demoHtmlNodeStyleLitSources,
+  demoSvgLabelStyleLitSources,
+  demoSvgNodeStyleLitSources
+} from './lit-style-sources'
+import { registerLitStyleSerialization } from './markup-extensions'
 
 let graphComponent
 
 let renderFunctionSourceTextArea
 let tagTextArea
+let setRenderFunctionSourceTextAreaEditable
+let setTagTextAreaEditable
+
+const defaultLabelSize = [150, 14]
+
+const htmlTemplateToggle = document.querySelector('#html-template')
+const applyTemplateButton = document.querySelector('#apply-template-button')
+const applyTagButton = document.querySelector('#apply-tag-button')
 
 /**
  * Runs the demo.
@@ -62,7 +81,9 @@ async function run() {
   License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
-  graphComponent.inputMode = new GraphViewerInputMode()
+  graphComponent.inputMode = new GraphViewerInputMode({
+    selectableItems: GraphItemTypes.NODE | GraphItemTypes.NODE_LABEL
+  })
 
   // initialize demo
   initializeTextAreas()
@@ -76,7 +97,7 @@ async function run() {
  * changed.
  */
 function initializeTextAreas() {
-  const setRenderFunctionSourceTextAreaEditable = StateEffect.define()
+  setRenderFunctionSourceTextAreaEditable = StateEffect.define()
   const renderFunctionSourceTextAreaEditable = StateField.define({
     create: () => true,
     update: (value, transaction) => {
@@ -90,14 +111,14 @@ function initializeTextAreas() {
   })
 
   renderFunctionSourceTextArea = createCodemirrorEditor(
-    'xml',
+    'js',
     document.querySelector('#templateEditorContainer'),
     [
       renderFunctionSourceTextAreaEditable,
       EditorView.editable.from(renderFunctionSourceTextAreaEditable)
     ]
   )
-  const setTagTextAreaEditable = StateEffect.define()
+  setTagTextAreaEditable = StateEffect.define()
   const tagTextAreaEditable = StateField.define({
     create: () => true,
     update: (value, transaction) => {
@@ -118,46 +139,57 @@ function initializeTextAreas() {
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
 
-  graphComponent.selection.addEventListener('item-added', () => {
-    const selectedNode = graphComponent.selection.nodes.at(0)
-    if (selectedNode.style instanceof LitNodeStyle) {
+  graphComponent.selection.addEventListener('item-added', onSelectionChanged)
+  graphComponent.selection.addEventListener('item-removed', onSelectionChanged)
+}
+
+function onSelectionChanged() {
+  const selectedItem = graphComponent.selection.nodes.at(0) ?? graphComponent.selection.labels.at(0)
+
+  if (selectedItem) {
+    if (isLitStyle(selectedItem)) {
+      htmlTemplateToggle.disabled = false
+      htmlTemplateToggle.checked = isHtmlLitStyle(selectedItem)
       renderFunctionSourceTextArea.dispatch({
         effects: setRenderFunctionSourceTextAreaEditable.of(true),
         changes: {
           from: 0,
           to: renderFunctionSourceTextArea.state.doc.length,
-          insert: selectedNode.style.renderFunction.toString()
+          insert: selectedItem.style.renderFunction.toString()
         }
       })
+
+      tagTextArea.dispatch({
+        effects: setTagTextAreaEditable.of(true),
+        changes: {
+          from: 0,
+          to: tagTextArea.state.doc.length,
+          insert: selectedItem.tag ? JSON.stringify(selectedItem.tag, null, 2) : '{}'
+        }
+      })
+      applyTemplateButton.disabled = false
+      applyTagButton.disabled = false
     } else {
+      htmlTemplateToggle.disabled = true
       renderFunctionSourceTextArea.dispatch({
         effects: setRenderFunctionSourceTextAreaEditable.of(false),
         changes: {
           from: 0,
           to: renderFunctionSourceTextArea.state.doc.length,
-          insert: 'Style is not an instance of LitNodeStyle with attached sources.'
+          insert: 'Style is not an instance of a lit style with attached sources.'
         }
       })
+      applyTemplateButton.disabled = true
+      applyTagButton.disabled = true
     }
-    tagTextArea.dispatch({
-      effects: setTagTextAreaEditable.of(true),
-      changes: {
-        from: 0,
-        to: tagTextArea.state.doc.length,
-        insert: selectedNode.tag ? JSON.stringify(selectedNode.tag, null, 2) : '{}'
-      }
-    })
-    document.querySelector('#apply-template-button').disabled = false
-    document.querySelector('#apply-tag-button').disabled = false
-  })
-
-  graphComponent.selection.addEventListener('item-removed', () => {
+  } else {
+    htmlTemplateToggle.disabled = true
     renderFunctionSourceTextArea.dispatch({
       effects: setRenderFunctionSourceTextAreaEditable.of(false),
       changes: {
         from: 0,
         to: renderFunctionSourceTextArea.state.doc.length,
-        insert: 'Select a node to edit its template.'
+        insert: 'Select a node or label to edit its template.'
       }
     })
     tagTextArea.dispatch({
@@ -165,12 +197,72 @@ function initializeTextAreas() {
       changes: {
         from: 0,
         to: tagTextArea.state.doc.length,
-        insert: 'Select a node to edit its tag.'
+        insert: 'Select a node or label to edit its tag.'
       }
     })
-    document.querySelector('#apply-template-button').disabled = true
-    document.querySelector('#apply-tag-button').disabled = true
-  })
+    applyTemplateButton.disabled = true
+    applyTagButton.disabled = true
+  }
+
+  graphComponent.invalidate()
+}
+
+/**
+ * Determines if the given selected item uses an HTML-based lit style.
+ */
+function isHtmlLitStyle(selectedItem) {
+  return (
+    selectedItem.style instanceof LitHtmlNodeStyle ||
+    selectedItem.style instanceof LitHtmlLabelStyle
+  )
+}
+
+/**
+ * Determines if the given selected item uses any lit-based style.
+ */
+function isLitStyle(selectedItem) {
+  return (
+    isHtmlLitStyle(selectedItem) ||
+    selectedItem.style instanceof LitNodeStyle ||
+    selectedItem.style instanceof LitLabelStyle
+  )
+}
+
+function toggleHtmlSvgTemplate(event) {
+  const isHtml = event.target.checked
+  if (
+    graphComponent.selection.nodes.some(
+      (label) => label.style instanceof LitNodeStyle || label.style instanceof LitHtmlNodeStyle
+    )
+  ) {
+    renderFunctionSourceTextArea.dispatch({
+      changes: {
+        from: 0,
+        to: renderFunctionSourceTextArea.state.doc.length,
+        insert: isHtml ? demoHtmlNodeStyleLitSources : demoSvgNodeStyleLitSources
+      }
+    })
+  } else if (
+    graphComponent.selection.labels.some(
+      (label) => label.style instanceof LitLabelStyle || label.style instanceof LitHtmlLabelStyle
+    )
+  ) {
+    renderFunctionSourceTextArea.dispatch({
+      changes: {
+        from: 0,
+        to: renderFunctionSourceTextArea.state.doc.length,
+        insert: isHtml ? demoHtmlLabelStyleLitSources : demoSvgLabelStyleLitSources
+      }
+    })
+  } else {
+    renderFunctionSourceTextArea.dispatch({
+      changes: {
+        from: 0,
+        to: renderFunctionSourceTextArea.state.doc.length,
+        insert: 'Style is not an instance with attached JSX sources.'
+      }
+    })
+  }
 }
 
 /**
@@ -178,33 +270,19 @@ function initializeTextAreas() {
  */
 function initializeStyles() {
   const graph = graphComponent.graph
-  graph.nodeDefaults.style = createLitNodeStyleFromSource(`({layout, tag, selected, zoom}) => svg\`
-<g>
-<rect fill="#c0c0c0" width=$\{layout.width} height=$\{layout.height} x="2" y="2"></rect>
-<rect fill="white" stroke="#C0C0C0" width=$\{layout.width} height=$\{layout.height}></rect>
-<rect width=$\{layout.width} height="2" fill=$\{{present:'#55B757', busy:'#E7527C',travel:'#9945E9', unavailable:'#8D8F91'}[tag.status]}></rect>
-<rect fill="transparent" stroke=$\{selected ? '#FF6C00' : 'transparent'} stroke-width="3" width=$\{layout.width-3} height=$\{layout.height-3} x="1.5" y="1.5"></rect>
-$\{zoom >= 0.5 ? svg\`
-  <image href=$\{'./resources/' + tag.icon + '.svg'} x="15" y="10" width="63.75" height="63.75"></image>
-  <image href=$\{'./resources/' + tag.status + '_icon.svg'} x="25" y="80" height="15" width="60"></image>
-  <g style="font-family: Roboto,sans-serif; fill: #444" width="185">
-    <text transform="translate(90 25)" style="font-size: 16px; fill: #336699">$\{tag.name}</text>
-    <text transform="translate(90 45)" style="font-size: 9px; text-transform: uppercase">$\{tag.position}</text>
-    <text transform="translate(90 72)">$\{tag.email}</text>
-    <text transform="translate(90 88)">$\{tag.phone}</text>
-    <text transform="translate(170 88)">$\{tag.fax}</text>
-  </g>
-  \`: svg\`
-  <image href=$\{'./resources/' + tag.icon + '.svg'} x="15" y="20" width="56.25" height="56.25"></image>
-  <g style="font-size: 15px; font-family: Roboto,sans-serif; fill: #444" width="185">
-    <text transform="translate(85 60)" style="font-size: 26px; fill: #336699">$\{tag.name}</text>
-  </g>
-  \`}
-</g>
-\``)
+  graph.nodeDefaults.style = createLitNodeStyleFromSource(demoSvgNodeStyleLitSources)
 
   graph.nodeDefaults.size = new Size(290, 100)
   graph.nodeDefaults.shareStyleInstance = false
+
+  graph.nodeDefaults.labels.style = createLitLabelStyleFromSource(
+    demoSvgLabelStyleLitSources,
+    defaultLabelSize
+  )
+
+  graph.nodeDefaults.labels.layoutParameter = new ExteriorNodeLabelModel({
+    margins: 2
+  }).createParameter('top')
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '2px rgb(170, 170, 170)',
@@ -219,7 +297,7 @@ function initializeIO() {
   const graphmlHandler = new GraphMLIOHandler()
 
   // we want to be able to write and store LitNodeStyles in GraphML
-  registerLitNodeStyleSerialization(graphmlHandler)
+  registerLitStyleSerialization(graphmlHandler)
   return graphmlHandler
 }
 
@@ -230,14 +308,16 @@ function loadSampleGraph() {
   graphComponent.graph.clear()
   const defaultNodeSize = graphComponent.graph.nodeDefaults.size
   const graphBuilder = new GraphBuilder(graphComponent.graph)
-  graphBuilder.createNodesSource({
+  const nodesSource = graphBuilder.createNodesSource({
     data: SampleData.nodes,
     id: 'id',
-    // This example uses hard coded locations. If no predefined layout data is given, an automatic layout could have
+    // This example uses hard-coded locations. If no predefined layout data is given, an automatic layout could have
     // been applied to the graph after buildGraph, which is a common use case. For example, see the Organization Chart Demo
     layout: (data) =>
       new Rect(data.layout.x, data.layout.y, defaultNodeSize.width, defaultNodeSize.height)
   })
+  nodesSource.nodeCreator.createLabelBinding((dataItem) => dataItem.name)
+
   graphBuilder.createEdgesSource(SampleData.edges, 'src', 'tgt').edgeCreator.bendsProvider = (e) =>
     e.bends
 
@@ -248,6 +328,35 @@ function loadSampleGraph() {
   graphComponent.selection.add(graph.nodes.last())
 }
 
+function applyTemplateToSelectedNodes(source, svg) {
+  const style = svg
+    ? createLitNodeStyleFromSource(source)
+    : createLitHtmlNodeStyleFromSource(source)
+  // check if the style is valid
+  style.renderer
+    .getVisualCreator(graphComponent.selection.nodes.first(), style)
+    .createVisual(graphComponent.createRenderContext())
+
+  graphComponent.selection.nodes.forEach((node) => {
+    graphComponent.graph.setStyle(node, style)
+  })
+}
+
+function applyTemplateToSelectedLabels(source, svg) {
+  const style = svg
+    ? createLitLabelStyleFromSource(source, defaultLabelSize)
+    : createLitHtmlLabelStyleFromSource(source, defaultLabelSize)
+
+  // check if the style is valid
+  style.renderer
+    .getVisualCreator(graphComponent.selection.labels.first(), style)
+    .createVisual(graphComponent.createRenderContext())
+
+  graphComponent.selection.labels.forEach((label) => {
+    graphComponent.graph.setStyle(label, style)
+  })
+}
+
 /**
  * Wires up the UI. Buttons are linked with their respective actions.
  */
@@ -256,7 +365,7 @@ function initializeUI() {
   document.querySelector('#open-file-button').addEventListener('click', async () => {
     try {
       await openGraphML(graphComponent, graphMLIOHandler)
-      graphComponent.fitGraphBounds()
+      void graphComponent.fitGraphBounds()
     } catch (ignored) {
       alert(
         'The graph contains styles that are not supported by this demo. This demo works best when nodes have LitNodeStyle created by this demo or "Node Template Designer".'
@@ -265,23 +374,24 @@ function initializeUI() {
     }
   })
   document.querySelector('#save-button').addEventListener('click', async () => {
-    saveGraphML(graphComponent, 'litTemplateNodeStyle.graphml', graphMLIOHandler)
+    void saveGraphML(graphComponent, 'litTemplateNodeStyle.graphml', graphMLIOHandler)
   })
+
+  htmlTemplateToggle.addEventListener('change', toggleHtmlSvgTemplate)
   document.querySelector('#apply-template-button').addEventListener('click', () => {
-    if (graphComponent.selection.nodes.size === 0) {
+    if (graphComponent.selection.nodes.size === 0 && graphComponent.selection.labels.size === 0) {
       return
     }
     const renderFunctionSource = renderFunctionSourceTextArea.state.doc.toString()
     try {
-      // check if style is valid
-      const style = createLitNodeStyleFromSource(renderFunctionSource)
-      style.renderer
-        .getVisualCreator(graphComponent.selection.nodes.first(), style)
-        .createVisual(graphComponent.createRenderContext())
+      const svg = !htmlTemplateToggle.checked
+      const source = renderFunctionSourceTextArea.state.doc.toString()
 
-      graphComponent.selection.nodes.forEach((node) => {
-        graphComponent.graph.setStyle(node, style)
-      })
+      if (graphComponent.selection.nodes.size > 0) {
+        applyTemplateToSelectedNodes(source, svg)
+      } else if (graphComponent.selection.labels.size > 0) {
+        applyTemplateToSelectedLabels(source, svg)
+      }
 
       document.getElementById('template-text-area-error').classList.remove('open-error')
     } catch (err) {

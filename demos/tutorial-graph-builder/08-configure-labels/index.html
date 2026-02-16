@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -133,7 +133,7 @@
               <div class="paragraph">
                 <p>
                   In this tutorial step, you will learn how to configure
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> to place the labels of the graph elements at a
+                  <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> to place the labels of the graph elements at a
                   desired position and configure their style.
                 </p>
               </div>
@@ -147,7 +147,7 @@
                       <div class="paragraph">
                         <p>
                           This step is optional when building a graph with
-                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. If you do not want to add labels to your
+                          <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. If you do not want to add labels to your
                           graph, you can proceed with the next step.
                         </p>
                       </div>
@@ -187,13 +187,13 @@
                 <div class="paragraph">
                   <p>
                     The label placement can be defined either using a <em>default</em> configuration
-                    or using a <em>layout provider</em> on the <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator" class="api" target="_blank">LabelCreator</a>.
+                    or using a <em>layout provider</em> on the <a href="https://docs.yworks.com/yfileshtml/api/LabelCreator" class="api" target="_blank">LabelCreator</a>.
                   </p>
                 </div>
                 <div class="paragraph">
                   <p>
                     A default placement will apply to all labels of the
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelsSource" class="api" target="_blank">LabelsSource</a> for which no other placement is specified. In this
+                    <a href="https://docs.yworks.com/yfileshtml/api/LabelsSource" class="api" target="_blank">LabelsSource</a> for which no other placement is specified. In this
                     example, as a default, we place the labels at the center of the node as follows:
                   </p>
                 </div>
@@ -208,8 +208,8 @@
                   <p>
                     In the case where you want to determine the label position based on specific
                     properties of the data, you can use a
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#layoutParameterProvider" class="api" target="_blank">layout parameter provider</a>
-                    which will provide the information about the desired label placement.
+                    <a href="https://docs.yworks.com/yfileshtml/api/LabelCreator#layoutParameterProvider" class="api" target="_blank">layoutParameterProvider</a> which will provide the
+                    information about the desired label placement.
                   </p>
                 </div>
                 <div class="paragraph">
@@ -239,15 +239,15 @@ nameLabelCreator.<span class="hljs-property">layoutParameterProvider</span> = ()
                     Similar to node/edge styling, there exist three ways to style labels.
                     Specifically, you can set <em>defaults</em>, <em>style</em>
                     <em>bindings</em> and <em>style</em> <em>providers</em> on the
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator" class="api" target="_blank">LabelCreator</a>.
+                    <a href="https://docs.yworks.com/yfileshtml/api/LabelCreator" class="api" target="_blank">LabelCreator</a>.
                   </p>
                 </div>
                 <div class="paragraph">
                   <p>
                     In our example, we will first create a default style for all labels for which we
                     will not set a specific style. More precisely, we use the
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyle" class="api" target="_blank">LabelStyle</a> and align the text to the <code>center</code> of the
-                    node.
+                    <a href="https://docs.yworks.com/yfileshtml/api/LabelStyle" class="api" target="_blank">LabelStyle</a> and align the text to the
+                    <a href="https://docs.yworks.com/yfileshtml/api/HorizontalTextAlignment#CENTER" class="api" target="_blank">center</a> of the node.
                   </p>
                 </div>
                 <div class="listingblock">
@@ -281,7 +281,7 @@ typeLabelCreator.<span class="hljs-property">styleBindings</span>.<span class="h
                     For the labels bound to the <code>name</code> property, we want to use a
                     different background color based on the <code>type</code> of the associated
                     node. For these of type <code>Trust</code>, we will also add an icon using the
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/IconLabelStyle" class="api" target="_blank">IconLabelStyle</a>.
+                    <a href="https://docs.yworks.com/yfileshtml/api/IconLabelStyle" class="api" target="_blank">IconLabelStyle</a>.
                   </p>
                 </div>
                 <div class="listingblock">
@@ -317,10 +317,9 @@ nameLabelCreator.<span class="hljs-property">styleProvider</span> = (data): <spa
                 <div class="paragraph">
                   <p>
                     Using the same approach, the label size can be configured either using
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#preferredSizeBindings" class="api" target="_blank">size bindings</a> or using a
-                    <a href="https://docs.yworks.com/yfileshtml/#/api/LabelCreator#preferredSizeProvider" class="api" target="_blank">size provider</a>. The
-                    following code shows how to set a different size to the labels of type
-                    <code>Trust</code>.
+                    <a href="https://docs.yworks.com/yfileshtml/api/LabelCreator#preferredSizeBindings" class="api" target="_blank">preferredSizeBindings</a> or using a
+                    <a href="https://docs.yworks.com/yfileshtml/api/LabelCreator#preferredSizeProvider" class="api" target="_blank">preferredSizeProvider</a>. The following code shows how
+                    to set a different size to the labels of type <code>Trust</code>.
                   </p>
                 </div>
                 <div class="listingblock">

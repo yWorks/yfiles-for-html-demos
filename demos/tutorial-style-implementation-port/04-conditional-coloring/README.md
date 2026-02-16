@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
 
 In this example, we will fill the port shape with a color that is determined by the number of connected edges. Ports with no connections will be filled green, ports with 10 or more connections will be filled red. Values between 0 and 10 will result in the hue blended between green and red. Alternatively, the color from the port’s tag is used, if defined.
 
-We introduce two methods that get the port color from the tag, or calculate the hue based on the port’s degree. For this purpose, we get the [graph](https://docs.yworks.com/yfileshtml/#/api/IGraph) from the [render context](https://docs.yworks.com/yfileshtml/#/api/IRenderContext).
+We introduce two methods that get the port color from the tag, or calculate the hue based on the port’s degree. For this purpose, we get the [IGraph](https://docs.yworks.com/yfileshtml/api/IGraph) from the [IRenderContext](https://docs.yworks.com/yfileshtml/api/IRenderContext).
 
 ```
 private getColor(graph: IGraph, port: IPort): string {
@@ -37,7 +37,7 @@ private calculateColorByDegree(graph: IGraph, port: IPort): string {
 }
 ```
 
-Now, we can assign the color to the ellipse element in `createVisual`.
+Now, we can assign the color to the ellipse element in [createVisual](https://docs.yworks.com/yfileshtml/api/PortStyleBase#createVisual).
 
 ```
 const color = this.getColor(graph, port)
@@ -48,7 +48,7 @@ Note
 
 Remove or create edges to observe how the color of the port changes dynamically. The nodes in the corners have the color defined in the tag and therefore do not change dynamically.
 
-The color also has to be considered in `updateVisual`. We add the color in the cache and update the `fill` property if the color has changed.
+The color also has to be considered in [updateVisual](https://docs.yworks.com/yfileshtml/api/PortStyleBase#updateVisual). We add the color in the cache and update the `fill` property if the color has changed.
 
 ```
 // get the graph from the render context
@@ -62,6 +62,6 @@ if (cache.color !== color) {
 
 Note
 
-You can also use business data that’s stored in the port’s [tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag) for conditional styling. This way, a single style instance that’s shared between all ports can produce varying visualizations.
+You can also use business data that’s stored in the port’s [tag](https://docs.yworks.com/yfileshtml/api/ITagOwner#tag) for conditional styling. This way, a single style instance that’s shared between all ports can produce varying visualizations.
 
 [05 Hit-Testing](../../tutorial-style-implementation-port/05-hit-testing/)

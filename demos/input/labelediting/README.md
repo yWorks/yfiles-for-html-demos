@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 
 This demo shows customizations of the interactive label editing. In particular, it shows:
 
-- The related properties of [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode).
-- A [IEditLabelHelper](https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper) that customizes label editing for individual labels and label owners.
+- The related properties of [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode).
+- A [IEditLabelHelper](https://docs.yworks.com/yfileshtml/api/IEditLabelHelper) that customizes label editing for individual labels and label owners.
 - Input validation.
 - The Instant Typing feature that allows users to start typing immediately.
 
@@ -44,7 +44,7 @@ If enabled, label text editing starts automatically when typing, without the nee
 
 Custom Label Helper
 
-Enables a custom [IEditLabelHelper](https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper) for node labels. This helper has the following features:
+Enables a custom [IEditLabelHelper](https://docs.yworks.com/yfileshtml/api/IEditLabelHelper) for node labels. This helper has the following features:
 
 - Each node can have at most two labels.
 - The first label gets a special style and is placed on top of the node. In addition, it cannot be edited once it was created. Instead, a second label is created.

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Component, createRef, RefObject } from 'react'
+import { CSSProperties, Component, createRef, RefObject } from 'react'
 import { Font, Size, TextRenderSupport, TextWrapping } from '@yfiles/yfiles'
 
 type SvgTextProps = {
@@ -38,7 +38,7 @@ type SvgTextProps = {
   maxHeight?: number
   className?: string
   fill?: string
-  style?: React.CSSProperties
+  style?: CSSProperties
 }
 
 export default class SvgText extends Component<SvgTextProps> {

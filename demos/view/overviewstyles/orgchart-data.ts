@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -201,8 +201,8 @@ export const orgChartData = [
                 subordinates: [
                   {
                     position: 'Maintenance Supervisor',
-                    name: 'Carmen Shortened',
-                    email: 'cshortened@yoyodyne.com',
+                    name: 'Carmen Short',
+                    email: 'cshort@yoyodyne.com',
                     phone: '555-0142',
                     fax: '555-0143',
                     businessUnit: 'Production',
@@ -306,6 +306,56 @@ export const orgChartData = [
                 businessUnit: 'Sales',
                 status: 'present',
                 icon: 'usericon_female1'
+              },
+              {
+                position: 'Sales Representative',
+                name: 'Chris Jones',
+                email: 'cjones@yoyodyne.com',
+                phone: '555-0144',
+                fax: '555-0145',
+                businessUnit: 'Sales',
+                status: 'travel',
+                icon: 'usericon_male2'
+              },
+              {
+                position: 'Sales Representative',
+                name: 'Olivia Taylor',
+                email: 'otaylor@yoyodyne.com',
+                phone: '555-0278',
+                fax: '555-0278',
+                businessUnit: 'Sales',
+                status: 'present',
+                icon: 'usericon_female2'
+              },
+              {
+                position: 'Sales Representative',
+                name: 'Alexander White',
+                email: 'awhite@yoyodyne.com',
+                phone: '555-0162',
+                fax: '555-0163',
+                businessUnit: 'Sales',
+                status: 'present',
+                icon: 'usericon_male4'
+              },
+              {
+                position: 'Sales Representative',
+                name: 'Sophia Harris',
+                email: 'sharris@yoyodyne.com',
+                phone: '555-0562',
+                fax: '555-0563',
+                businessUnit: 'Sales',
+                status: 'present',
+                icon: 'usericon_female3'
+              },
+              {
+                position: 'Sales Representative',
+                name: 'David Martinez',
+                email: 'dmartinez@yoyodyne.com',
+                phone: '555-0492',
+                fax: '555-0493',
+                businessUnit: 'Sales',
+                status: 'unavailable',
+                icon: 'usericon_male1'
               }
             ]
           },
@@ -338,6 +388,66 @@ export const orgChartData = [
                 businessUnit: 'Sales',
                 status: 'travel',
                 icon: 'usericon_male1'
+              },
+              {
+                position: 'Sales Representative',
+                name: 'John Smith',
+                email: 'jsmith@yoyodyne.com',
+                phone: '555-0830',
+                fax: '555-0831',
+                businessUnit: 'Sales',
+                status: 'present',
+                icon: 'usericon_male4'
+              },
+              {
+                position: 'Sales Representative',
+                name: 'Emma Johnson',
+                email: 'ejohnson@yoyodyne.com',
+                phone: '555-0356',
+                fax: '555-0357',
+                businessUnit: 'Sales',
+                status: 'present',
+                icon: 'usericon_female1'
+              },
+              {
+                position: 'Sales Representative',
+                name: 'Daniel Brown',
+                email: 'dbrown@yoyodyne.com',
+                phone: '555-0614',
+                fax: '555-0615',
+                businessUnit: 'Sales',
+                status: 'busy',
+                icon: 'usericon_male2'
+              },
+              {
+                position: 'Sales Representative',
+                name: 'Megan Davis',
+                email: 'mdavis@yoyodyne.com',
+                phone: '555-0728',
+                fax: '555-0729',
+                businessUnit: 'Sales',
+                status: 'unavailable',
+                icon: 'usericon_female2'
+              },
+              {
+                position: 'Sales Representative',
+                name: 'Matthew Miller',
+                email: 'mmiller@yoyodyne.com',
+                phone: '555-0486',
+                fax: '555-0487',
+                businessUnit: 'Sales',
+                status: 'travel',
+                icon: 'usericon_male3'
+              },
+              {
+                position: 'Sales Representative',
+                name: 'Lauren Wilson',
+                email: 'lwilson@yoyodyne.com',
+                phone: '555-0904',
+                fax: '555-0905',
+                businessUnit: 'Sales',
+                status: 'travel',
+                icon: 'usericon_female3'
               }
             ]
           }
@@ -644,39 +754,6 @@ export const orgChartData = [
         ]
       },
       {
-        position: 'Marketing Manager',
-        name: 'Angela Haase',
-        email: 'ahaase@yoyodyne.com',
-        phone: '555-0170',
-        fax: '555-0171',
-        businessUnit: 'Marketing',
-        status: 'present',
-        icon: 'usericon_female1',
-        subordinates: [
-          {
-            position: 'Marketing Specialist',
-            name: 'Jermaine Stewart',
-            email: 'jstewart@yoyodyne.com',
-            phone: '555-0172',
-            fax: '555-0173',
-            businessUnit: 'Marketing',
-            status: 'present',
-            icon: 'usericon_male2'
-          },
-          {
-            position: 'Marketing Assistant',
-            name: 'Lorraine Deaton',
-            email: 'ldeaton@yoyodyne.com',
-            phone: '555-0174',
-            fax: '555-0175',
-            businessUnit: 'Marketing',
-            status: 'present',
-            icon: 'usericon_female3',
-            assistant: true
-          }
-        ]
-      },
-      {
         position: 'Chief Financial Officer',
         name: 'David Kerry',
         email: 'dkerry@yoyodyne.com',
@@ -725,6 +802,66 @@ export const orgChartData = [
                 businessUnit: 'Accounting',
                 status: 'present',
                 icon: 'usericon_female2'
+              },
+              {
+                position: 'Financial Analyst',
+                name: 'Andrew Lee',
+                email: 'alee@yoyodyne.com',
+                phone: '555-0182',
+                fax: '555-0183',
+                businessUnit: 'Accounting',
+                status: 'present',
+                icon: 'usericon_male2'
+              },
+              {
+                position: 'Senior Accountant',
+                name: 'Brittany Garcia',
+                email: 'bgarcia@yoyodyne.com',
+                phone: '555-0256',
+                fax: '555-0257',
+                businessUnit: 'Accounting',
+                status: 'present',
+                icon: 'usericon_female1'
+              },
+              {
+                position: 'Controller',
+                name: 'Charles Nguyen',
+                email: 'cnguyen@yoyodyne.com',
+                phone: '555-0478',
+                fax: '555-0479',
+                businessUnit: 'Accounting',
+                status: 'present',
+                icon: 'usericon_male3'
+              },
+              {
+                position: 'Controller',
+                name: 'Danielle Cooper',
+                email: 'dcooper@yoyodyne.com',
+                phone: '555-0502',
+                fax: '555-0503',
+                businessUnit: 'Accounting',
+                status: 'present',
+                icon: 'usericon_female4'
+              },
+              {
+                position: 'Senior Accountant',
+                name: 'Ethan Perez',
+                email: 'eperez@yoyodyne.com',
+                phone: '555-0648',
+                fax: '555-0649',
+                businessUnit: 'Accounting',
+                status: 'busy',
+                icon: 'usericon_male4'
+              },
+              {
+                position: 'Senior Accountant',
+                name: 'Fiona Ross',
+                email: 'fross@yoyodyne.com',
+                phone: '555-0734',
+                fax: '555-0735',
+                businessUnit: 'Accounting',
+                status: 'present',
+                icon: 'usericon_female2'
               }
             ]
           },
@@ -768,6 +905,36 @@ export const orgChartData = [
                 businessUnit: 'Accounting',
                 status: 'present',
                 icon: 'usericon_male3'
+              },
+              {
+                position: 'Financial Controller',
+                name: 'Julia Foster',
+                email: 'jfoster@yoyodyne.com',
+                phone: '555-0820',
+                fax: '555-0821',
+                businessUnit: 'Accounting',
+                status: 'present',
+                icon: 'usericon_female4'
+              },
+              {
+                position: 'Financial Controller',
+                name: 'George Young',
+                email: 'gyoung@yoyodyne.com',
+                phone: '555-0396',
+                fax: '555-0397',
+                businessUnit: 'Accounting',
+                status: 'present',
+                icon: 'usericon_male5'
+              },
+              {
+                position: 'Financial Controller',
+                name: 'Hannah Scott',
+                email: 'hscott@yoyodyne.com',
+                phone: '555-0568',
+                fax: '555-0569',
+                businessUnit: 'Accounting',
+                status: 'busy',
+                icon: 'usericon_female5'
               }
             ]
           },

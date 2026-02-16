@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ Some functions of yFiles for HTML require the exact boundaries of the label visu
 
 In most cases, the label layout suffices, but some styles may extend past their node boundaries. In our case, the speech balloon "tail" exceeds the label layout. The red rectangle around the labels below highlights the default visualization boundaries of the labels. As you can see, the tail exceeds the boundaries.
 
-To include the "tail" in the boundaries, we have to override `getBounds` and enlarge the bounds accordingly. We use the same method `getTailArea` to calculate the tail area [IOrientedRectangle](https://docs.yworks.com/yfileshtml/#/api/IOrientedRectangle).
+To include the "tail" in the boundaries, we have to override [getBounds](https://docs.yworks.com/yfileshtml/api/LabelStyleBase#getBounds) and enlarge the bounds accordingly. We use the same method `getTailArea` to calculate the tail area [IOrientedRectangle](https://docs.yworks.com/yfileshtml/api/IOrientedRectangle).
 
 ```
 protected getBounds(context: ICanvasContext, label: ILabel): Rect {

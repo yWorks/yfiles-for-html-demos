@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/organic-substructures/).
 
-This demo showcases how the [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) algorithm handles substructures and node types, see [Layout of Regular Substructures](https://docs.yworks.com/yfileshtml/#/dguide/organic_layout-substructures) for more information.
+This demo showcases how the [OrganicLayout](https://docs.yworks.com/yfileshtml/api/OrganicLayout) algorithm handles substructures and node types, see [Layout of Regular Substructures](https://docs.yworks.com/yfileshtml/dguide/organic_layout-substructures) for more information.
 
 The organic layout algorithm is able to identify regular substructures in a graph, like, e.g., chains, stars, cycles, trees, and parallel structures and arrange them in an optimized manner depending on the kind of substructure and user preference. This makes them easily recognizable in the resulting layout. Furthermore, specified node types may influence both substructure detection and placement of elements within the structure.
 

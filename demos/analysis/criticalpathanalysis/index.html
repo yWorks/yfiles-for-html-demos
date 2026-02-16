@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -121,12 +121,12 @@
 
         <p>
           For the critical path calculation, we apply the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/RankAssignment" class="api" target="_blank">RankAssignment</a> algorithm, assign to each node a number that represents its
+          <a href="https://docs.yworks.com/yfileshtml/api/RankAssignment" class="api" target="_blank">RankAssignment</a> algorithm, assign to each node a number that represents its
           rank and to each edge a number that represents its slack. Afterwards, we calculate the
           shortest path between the first/last ranked nodes while taking into consideration the
           slack values of each edge, i.e. the paths with higher slack are longer. At the end, we
           apply a
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a>
+          <a href="https://docs.yworks.com/yfileshtml/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a>
           such that nodes are placed in layers based on their ranking, while the edges that belong
           to the critical path gain priority so that the corresponding nodes incident to them are
           horizontally-aligned.

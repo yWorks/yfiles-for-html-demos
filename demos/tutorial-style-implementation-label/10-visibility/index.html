@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -151,8 +151,8 @@
               To make this more evident, the "tail" of the speech balloon has been made larger in
               this sample. Observe the animation of the red labels, which flicker when they reach
               the top border of the viewport. To prevent this, we have to implement
-              <code>isVisible</code>. The yellow labels use an adjusted style and leave/enter the
-              viewport smoothly.
+              <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#isVisible" class="api" target="_blank">isVisible</a>. The yellow labels use an adjusted style and
+              leave/enter the viewport smoothly.
             </p>
           </div>
           <div class="listingblock">
@@ -178,7 +178,7 @@
           <div class="paragraph">
             <p>
               In order to check the tail for visibility, we have to create an
-              <a href="https://docs.yworks.com/yfileshtml/#/api/IOrientedRectangle" class="api" target="_blank">IOrientedRectangle</a> that contains the tail triangle.
+              <a href="https://docs.yworks.com/yfileshtml/api/IOrientedRectangle" class="api" target="_blank">IOrientedRectangle</a> that contains the tail triangle.
             </p>
           </div>
           <div class="listingblock">
@@ -206,9 +206,9 @@
           </div>
           <div class="paragraph">
             <p>
-              Implementations for <code>isVisible</code> often delegate to
-              <code>getBounds</code> since both concepts are related in that they act on the visible
-              boundaries of the item.
+              Implementations for <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#isVisible" class="api" target="_blank">isVisible</a> often delegate to
+              <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#getBounds" class="api" target="_blank">getBounds</a> since both concepts are related in that they
+              act on the visible boundaries of the item.
             </p>
           </div>
           <div class="admonitionblock note">
@@ -218,10 +218,10 @@
                   <div class="title">Note</div>
                 </td>
                 <td class="content">
-                  Since <code>isVisible</code> is called once for each item on every rendered frame,
-                  the implementation should be fast, even if this means to be inexact. If in doubt,
-                  prefer making the item visible. In this sample, we check the complete rectangular
-                  tail area, instead of making an exact check for the triangle.
+                  Since <a href="https://docs.yworks.com/yfileshtml/api/LabelStyleBase#isVisible" class="api" target="_blank">isVisible</a> is called once for each item on
+                  every rendered frame, the implementation should be fast, even if this means to be
+                  inexact. If in doubt, prefer making the item visible. In this sample, we check the
+                  complete rectangular tail area, instead of making an exact check for the triangle.
                 </td>
               </tr>
             </table>

@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/13-tree-builder/).
 
-In this tutorial step we show how to use [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) to build a graph from data, where nodes and their children are already available in a tree-like format.
+In this tutorial step we show how to use [TreeBuilder](https://docs.yworks.com/yfileshtml/api/TreeBuilder) to build a graph from data, where nodes and their children are already available in a tree-like format.
 
 ## The data
 
@@ -57,7 +57,7 @@ export type OrgChartEntry = {
 
 ## Building the graph
 
-In the first step, we instantiate [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) and configure a [TreeNodesSource](https://docs.yworks.com/yfileshtml/#/api/TreeNodesSource):
+In the first step, we instantiate [TreeBuilder](https://docs.yworks.com/yfileshtml/api/TreeBuilder) and configure a [TreeNodesSource](https://docs.yworks.com/yfileshtml/api/TreeNodesSource):
 
 ```
 const treeBuilder = new TreeBuilder(graph)
@@ -65,7 +65,7 @@ const treeBuilder = new TreeBuilder(graph)
 const rootNodesSource = treeBuilder.createRootNodesSource(nodesData, null)
 ```
 
-In the second step, we configure a child [NodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource) on the [TreeNodesSource](https://docs.yworks.com/yfileshtml/#/api/TreeNodesSource):
+In the second step, we configure a child [NodesSource](https://docs.yworks.com/yfileshtml/api/NodesSource) on the [TreeNodesSource](https://docs.yworks.com/yfileshtml/api/TreeNodesSource):
 
 ```
 // the childDataProvider identifies the property of a node object that contains its child nodes
@@ -75,9 +75,9 @@ rootNodesSource.addChildNodesSource(
 )
 ```
 
-Note that we have used the `rootNodesSource` as the source for the colleagues _recursively._ The [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) makes sure no nodes or edges with the same `id` are created twice.
+Note that we have used the `rootNodesSource` as the source for the colleagues _recursively._ The [TreeBuilder](https://docs.yworks.com/yfileshtml/api/TreeBuilder) makes sure no nodes or edges with the same `id` are created twice.
 
-Finally, we add labels to the graph building process by providing a label binding for the [NodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource)'s [NodeCreator](https://docs.yworks.com/yfileshtml/#/api/NodeCreator).
+Finally, we add labels to the graph building process by providing a label binding for the [NodesSource](https://docs.yworks.com/yfileshtml/api/NodesSource)'s [NodeCreator](https://docs.yworks.com/yfileshtml/api/NodeCreator).
 
 ```
 rootNodesSource.nodeCreator.createLabelBinding({
@@ -87,9 +87,9 @@ rootNodesSource.nodeCreator.createLabelBinding({
 
 Note
 
-[TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) supports the same labeling functionality as the [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder).
+[TreeBuilder](https://docs.yworks.com/yfileshtml/api/TreeBuilder) supports the same labeling functionality as the [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder).
 
-See the [TreeBuilder Developer’s Guide](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-TreeBuilder) for a deeper discussion of the [TreeBuilder’s](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) functionalities.
+See the [Developer’s Guide section about TreeBuilder](https://docs.yworks.com/yfileshtml/dguide/graph_builder-TreeBuilder) for a deeper discussion of the [TreeBuilder](https://docs.yworks.com/yfileshtml/api/TreeBuilder) type.
 
 Note
 

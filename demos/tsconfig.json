@@ -27,6 +27,8 @@
     "**/*.ts"
   ],
   "exclude": [
+    "**/build.ts",
+    "**/spec.ts",
     "loading/vite",
     "loading/vite-lazy-yfiles",
     "loading/webpack",

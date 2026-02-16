@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { type GraphComponent, type INode, type MoveInputMode, Reachability } from '@yfiles/yfiles'
+import {
+  type GraphComponent,
+  type GraphEditorInputMode,
+  IEdge,
+  INode,
+  type MoveInputMode,
+  Reachability
+} from '@yfiles/yfiles'
 import { GraphSynchronizer } from './GraphSynchronizer'
 
 export type StartLayoutMessage = { type: 'start-layout' }
@@ -34,19 +41,29 @@ export type DragStartedMessage = { type: 'drag-started'; nodeId: number; compone
 export type DraggedMessage = { type: 'dragged'; nodeId: number; componentIds: number[] }
 export type DragCanceledMessage = { type: 'drag-canceled'; nodeId: number; componentIds: number[] }
 export type DragFinishedMessage = { type: 'drag-finished'; nodeId: number; componentIds: number[] }
+export type NodeChangedMessage = { type: 'node-changed'; nodeId: number; neighborsIds: number[] }
+export type EdgeChangedMessage = {
+  type: 'edge-changed'
+  edgeId: number
+  sourceId: number
+  targetId: number
+  neighborsIds: number[]
+}
 export type InteractionMessage =
   | StartLayoutMessage
   | DragStartedMessage
   | DraggedMessage
   | DragCanceledMessage
   | DragFinishedMessage
+  | NodeChangedMessage
+  | EdgeChangedMessage
 
 /**
  * Initializes the web worker for the interactive layout and configures it for the input gestures.
  */
 export async function initializeWorkerLayout(
   graphComponent: GraphComponent,
-  moveInputMode: MoveInputMode
+  graphEditorInputMode: GraphEditorInputMode
 ): Promise<{ startLayout: () => void }> {
   // load worker immediately on startup
   const worker = new Worker(new URL('./WorkerLayout', import.meta.url), { type: 'module' })
@@ -78,7 +95,7 @@ export async function initializeWorkerLayout(
   function startLayout() {
     sendMessage({ type: 'start-layout' })
 
-    prepareInteraction(moveInputMode, graphSynchronizer)
+    prepareInteraction(graphEditorInputMode, graphSynchronizer)
   }
 
   /**
@@ -86,12 +103,13 @@ export async function initializeWorkerLayout(
    * to respect the drag position.
    */
   function prepareInteraction(
-    moveInputMode: MoveInputMode,
+    graphEditorInputMode: GraphEditorInputMode,
     graphSynchronizer: GraphSynchronizer
   ): void {
     let draggedNodeId: number | undefined
     let draggedComponentIds: number[] | undefined
 
+    const moveInputMode = graphEditorInputMode.moveSelectedItemsInputMode
     function getDraggedNode(moveInputMode: MoveInputMode): INode {
       return moveInputMode.affectedItems.at(0) as INode
     }
@@ -136,6 +154,63 @@ export async function initializeWorkerLayout(
       draggedNodeId = undefined
       draggedComponentIds = undefined
     })
+
+    graphEditorInputMode.addEventListener('node-created', (evt) => {
+      createNodeChangedMessage(evt.item)
+    })
+
+    graphEditorInputMode.createEdgeInputMode.addEventListener('edge-created', (evt) => {
+      createEdgeChangedMessage(evt.item)
+    })
+
+    graphEditorInputMode.addEventListener('deleting-selection', (evt) => {
+      evt.selection.forEach((item) => {
+        if (item instanceof INode) {
+          createNodeChangedMessage(item)
+        } else if (item instanceof IEdge) {
+          createEdgeChangedMessage(item)
+        }
+      })
+    })
+  }
+
+  /**
+   * Sends a message to the worker when a node has been created/deleted.
+   */
+  function createNodeChangedMessage(node: INode) {
+    const neighborsIds = getClosestNodesIds(node)
+    sendMessage({
+      type: 'node-changed',
+      nodeId: graphSynchronizer.getId(node),
+      neighborsIds: neighborsIds
+    })
+  }
+
+  /**
+   * Sends a message to the worker when an edge has been created/deleted.
+   */
+  function createEdgeChangedMessage(edge: IEdge) {
+    const source = edge.sourceNode
+    const target = edge.targetNode
+    if (source && target) {
+      sendMessage({
+        type: 'edge-changed',
+        edgeId: graphSynchronizer.getId(edge),
+        sourceId: graphSynchronizer.getId(source),
+        targetId: graphSynchronizer.getId(target),
+        neighborsIds: getClosestNodesIds(source).concat(getClosestNodesIds(target))
+      })
+    }
+  }
+
+  /**
+   * Returns the IDs of nodes whose centers lie within the specified distance of the given node.
+   */
+  function getClosestNodesIds(node: INode, distance = 150) {
+    const closestNodes = graphComponent.graph.nodes
+      .filter((n) => n !== node && n.layout.center.distanceTo(node.layout.center) < distance)
+      .toArray()
+    return closestNodes.map((neighbor) => graphSynchronizer.getId(neighbor))
   }
 
   function sendMessage(message: InteractionMessage) {

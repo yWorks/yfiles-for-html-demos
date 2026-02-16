@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -145,11 +145,12 @@
               </div>
               <div class="paragraph">
                 <p>
-                  Custom arrow implementations are based on the <a href="https://docs.yworks.com/yfileshtml/#/api/IArrow" class="api" target="_blank">IArrow</a> interface.
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IArrow" class="api" target="_blank">IArrow</a> defines the two methods <code>getVisualCreator</code> and
-                  <code>getBoundsProvider</code>, which return the implementations that create the
-                  visualization and specify the bounds of the arrow. In this sample, we implement
-                  all three interfaces in a single class.
+                  Custom arrow implementations are based on the <a href="https://docs.yworks.com/yfileshtml/api/IArrow" class="api" target="_blank">IArrow</a> interface.
+                  <a href="https://docs.yworks.com/yfileshtml/api/IArrow" class="api" target="_blank">IArrow</a> defines the two methods
+                  <a href="https://docs.yworks.com/yfileshtml/api/IArrow#getVisualCreator" class="api" target="_blank">getVisualCreator</a> and
+                  <a href="https://docs.yworks.com/yfileshtml/api/IArrow#getBoundsProvider" class="api" target="_blank">getBoundsProvider</a>, which return the implementations that
+                  create the visualization and specify the bounds of the arrow. In this sample, we
+                  implement all three interfaces in a single class.
                 </p>
               </div>
             </div>
@@ -159,9 +160,9 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  In the <code>getVisualCreator</code> method, we store the anchor and direction of
-                  the arrow. Then, we simply return <code>this</code>, since our class itself will
-                  implement the `IVisualCreator`interface.
+                  In the <a href="https://docs.yworks.com/yfileshtml/api/IArrow#getVisualCreator" class="api" target="_blank">getVisualCreator</a> method, we store the anchor and
+                  direction of the arrow. Then, we simply return <code>this</code>, since our class
+                  itself will implement the <a href="https://docs.yworks.com/yfileshtml/api/IVisualCreator" class="api" target="_blank">IVisualCreator</a> interface.
                 </p>
               </div>
               <div class="listingblock">
@@ -182,8 +183,8 @@
               </div>
               <div class="paragraph">
                 <p>
-                  In the <code>getBoundsProvider</code> method, we do the same before we return
-                  <code>this</code>.
+                  In the <a href="https://docs.yworks.com/yfileshtml/api/IArrow#getBoundsProvider" class="api" target="_blank">getBoundsProvider</a> method, we do the same before we
+                  return <code>this</code>.
                 </p>
               </div>
               <div class="listingblock">
@@ -204,12 +205,13 @@
               </div>
               <div class="paragraph">
                 <p>
-                  In the last tutorial step, we used the methods <code>addArrows</code> and
-                  <code>updateArrows</code> to add the arrow visualizations to the edge
-                  visualization. These methods need the length of the arrow to shorten the edge path
-                  accordingly and the crop length to position the arrow exactly at the node. To
+                  In the last tutorial step, we used the methods
+                  <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#addArrows" class="api" target="_blank">addArrows</a> and
+                  <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#updateArrows" class="api" target="_blank">updateArrows</a> to add the arrow visualizations to the
+                  edge visualization. These methods need the length of the arrow to shorten the edge
+                  path accordingly and the crop length to position the arrow exactly at the node. To
                   achieve this, we implement the according properties in the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IArrow" class="api" target="_blank">IArrow</a> interface.
+                  <a href="https://docs.yworks.com/yfileshtml/api/IArrow" class="api" target="_blank">IArrow</a> interface.
                 </p>
               </div>
               <div class="listingblock">
@@ -233,14 +235,15 @@
               <div class="paragraph">
                 <p>
                   To create an arrow visualization, we have to implement the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IVisualCreator" class="api" target="_blank">IVisualCreator</a> interface.
+                  <a href="https://docs.yworks.com/yfileshtml/api/IVisualCreator" class="api" target="_blank">IVisualCreator</a> interface.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
-                  We create the visualization for the arrow in <code>createVisual</code>. If it is
-                  called for the first time, we generate a path for the arrowhead. This path must
-                  point from the right side to the origin (0/0).
+                  We create the visualization for the arrow in the
+                  <a href="https://docs.yworks.com/yfileshtml/api/IVisualCreator#createVisual" class="api" target="_blank">createVisual</a> method. If it is called for the first
+                  time, we generate a path for the arrowhead. This path must point from the right
+                  side to the origin (0/0).
                 </p>
               </div>
               <div class="listingblock">
@@ -297,8 +300,8 @@
               </div>
               <div class="paragraph">
                 <p>
-                  We update the visualization in <code>updateVisual</code> by applying the current
-                  anchor, direction and distance, if modified.
+                  We update the visualization in <a href="https://docs.yworks.com/yfileshtml/api/IVisualCreator#updateVisual" class="api" target="_blank">updateVisual</a> by
+                  applying the current anchor, direction and distance, if modified.
                 </p>
               </div>
               <div class="listingblock">
@@ -339,7 +342,7 @@
               <div class="paragraph">
                 <p>
                   To calculate the arrow bounds, we have to implement the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IBoundsProvider" class="api" target="_blank">IBoundsProvider</a> interface.
+                  <a href="https://docs.yworks.com/yfileshtml/api/IBoundsProvider" class="api" target="_blank">IBoundsProvider</a> interface.
                 </p>
               </div>
               <div class="admonitionblock note">
@@ -350,16 +353,16 @@
                     </td>
                     <td class="content">
                       The edge style can consider the arrow bounds in its own bounds calculation.
-                      You could adjust the <code>getBounds</code> method of the edge style
-                      accordingly. However, this is outside the scope of this tutorial.
+                      You can adjust the <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#getBounds" class="api" target="_blank">getBounds</a> method of the edge
+                      style accordingly. However, this is outside the scope of this tutorial.
                     </td>
                   </tr>
                 </table>
               </div>
               <div class="paragraph">
                 <p>
-                  In <code>getBounds</code> we use the stored values to calculate the arrow&#8217;s
-                  bounds.
+                  In the <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#getBounds" class="api" target="_blank">getBounds</a> method, we use the stored values to
+                  calculate the arrow&#8217;s bounds.
                 </p>
               </div>
               <div class="listingblock">

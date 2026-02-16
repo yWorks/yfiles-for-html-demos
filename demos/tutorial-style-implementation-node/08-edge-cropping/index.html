@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -148,9 +148,9 @@
               <div id="old-state" class="inline-graph-component"></div>
               <div class="paragraph">
                 <p>
-                  To crop edges correctly at the node outline, we override <code>getOutline</code>,
-                  which returns a suitable <a href="https://docs.yworks.com/yfileshtml/#/api/GeneralPath" class="api" target="_blank">GeneralPath</a> representing the node
-                  outline.
+                  To crop edges correctly at the node outline, we override
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodeStyleBase#getOutline" class="api" target="_blank">getOutline</a>, which returns a suitable
+                  <a href="https://docs.yworks.com/yfileshtml/api/GeneralPath" class="api" target="_blank">GeneralPath</a> representing the node outline.
                 </p>
               </div>
               <div class="listingblock">
@@ -184,14 +184,16 @@
                   Note that this outline path is not cached and instead re-created multiple times
                   for every single edge, which can be wasteful. If the node shape is simple enough
                   so that it&#8217;s easy to check whether a point is inside or outside the shape,
-                  consider overriding <code>isInside</code> and <code>getIntersection</code> as an
-                  optimization. For this shape an implementation could look as follows.
+                  consider overriding <a href="https://docs.yworks.com/yfileshtml/api/NodeStyleBase#isInside" class="api" target="_blank">isInside</a> and
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodeStyleBase#getIntersection" class="api" target="_blank">getIntersection</a> as an optimization. For this shape
+                  an implementation could look as follows.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
-                  <code>isInside</code> determines whether a given point lies inside the node shape.
-                  This is used for finding an edge segment that crosses the node outline.
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodeStyleBase#isInside" class="api" target="_blank">isInside</a> determines whether a given point lies
+                  inside the node shape. This is used for finding an edge segment that crosses the
+                  node outline.
                 </p>
               </div>
               <div class="listingblock">
@@ -218,8 +220,9 @@
               </div>
               <div class="paragraph">
                 <p>
-                  <code>getIntersection</code> calculates the intersection point between the node
-                  and the given line segment. This method is used to crop edges at the node outline.
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodeStyleBase#getIntersection" class="api" target="_blank">getIntersection</a> calculates the intersection point
+                  between the node and the given line segment. This method is used to crop edges at
+                  the node outline.
                 </p>
               </div>
               <div class="listingblock">

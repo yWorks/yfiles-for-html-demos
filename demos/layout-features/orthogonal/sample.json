@@ -484,67 +484,25 @@
   "edges": [
     { "id": 0, "source": 0, "target": 11, "tag": 0 },
     { "id": 1, "source": 0, "target": 8, "tag": 1 },
-    {
-      "id": 2,
-      "source": 0,
-      "target": 2,
-      "cssClass": "highlight",
-      "tag": "directed"
-    },
+    { "id": 2, "source": 0, "target": 2, "cssClass": "highlight", "tag": "directed" },
     { "id": 3, "source": 11, "target": 4, "tag": 3 },
     { "id": 4, "source": 11, "target": 18, "tag": 4 },
     { "id": 5, "source": 8, "target": 7, "tag": 5 },
-    {
-      "id": 6,
-      "source": 19,
-      "target": 13,
-      "cssClass": "highlight",
-      "tag": "directed"
-    },
+    { "id": 6, "source": 19, "target": 13, "cssClass": "highlight", "tag": "directed" },
     { "id": 7, "source": 19, "target": 15, "tag": 7 },
     { "id": 8, "source": 13, "target": 7, "tag": 8 },
-    {
-      "id": 9,
-      "source": 13,
-      "target": 17,
-      "cssClass": "highlight",
-      "tag": "directed"
-    },
-    {
-      "id": 10,
-      "source": 2,
-      "target": 15,
-      "cssClass": "highlight",
-      "tag": "directed"
-    },
+    { "id": 9, "source": 13, "target": 17, "cssClass": "highlight", "tag": "directed" },
+    { "id": 10, "source": 2, "target": 15, "cssClass": "highlight", "tag": "directed" },
     { "id": 11, "source": 2, "target": 1, "tag": 11 },
     { "id": 12, "source": 4, "target": 18, "tag": 12 },
     { "id": 13, "source": 16, "target": 6, "tag": 13 },
     { "id": 14, "source": 7, "target": 14, "tag": 14 },
-    {
-      "id": 15,
-      "source": 17,
-      "target": 5,
-      "cssClass": "highlight",
-      "tag": "directed"
-    },
+    { "id": 15, "source": 17, "target": 5, "cssClass": "highlight", "tag": "directed" },
     { "id": 16, "source": 15, "target": 10, "tag": 16 },
     { "id": 17, "source": 15, "target": 12, "tag": 17 },
     { "id": 18, "source": 6, "target": 9, "tag": 18 },
-    {
-      "id": 19,
-      "source": 5,
-      "target": 9,
-      "cssClass": "highlight",
-      "tag": "directed"
-    },
-    {
-      "id": 20,
-      "source": 9,
-      "target": 0,
-      "cssClass": "highlight",
-      "tag": "directed"
-    },
+    { "id": 19, "source": 5, "target": 9, "cssClass": "highlight", "tag": "directed" },
+    { "id": 20, "source": 9, "target": 0, "cssClass": "highlight", "tag": "directed" },
     { "id": 21, "source": 16, "target": 10, "tag": 21 },
     { "id": 22, "source": 16, "target": 4, "tag": 22 },
     { "id": 23, "source": 4, "target": 6, "tag": 23 },

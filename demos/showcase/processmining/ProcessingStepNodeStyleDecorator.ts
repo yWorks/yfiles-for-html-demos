@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -52,7 +52,7 @@ function getIntensityColor(value: number): string {
  * A decorator style which augments the wrapped style with a circular visualization of its workload.
  */
 export class ProcessingStepNodeStyleDecorator extends NodeStyleBase {
-    private readonly wrappedStyle: INodeStyle;
+  private readonly wrappedStyle: INodeStyle
   private readonly valueGetter: (node: INode) => number
 
   /**
@@ -60,12 +60,9 @@ export class ProcessingStepNodeStyleDecorator extends NodeStyleBase {
    * @param wrappedStyle the style that is augmented with the workload visualization
    * @param valueGetter a function that provides the current amount of workload for a node
    */
-  constructor(
-    wrappedStyle: INodeStyle,
-    valueGetter?: (node: INode) => number
-  ) {
+  constructor(wrappedStyle: INodeStyle, valueGetter?: (node: INode) => number) {
     super()
-      this.wrappedStyle = wrappedStyle;
+    this.wrappedStyle = wrappedStyle
     this.valueGetter = valueGetter || ((node) => node?.tag?.value ?? 0)
   }
 

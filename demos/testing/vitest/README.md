@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -22,4 +22,4 @@ To run the test:
 
 The test is run in Chromium in headless mode.
 
-You can also just start the app and interact with it by running `npm run dev`.
+The application under test is the [Simple Testable App](../application-under-test/index.html). To access yFiles in Vitest, the GraphComponent is set as a global variable in that application.

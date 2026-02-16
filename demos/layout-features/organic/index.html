@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -79,33 +79,33 @@
       <div class="demo-description__content">
         <h1>Organic Layout</h1>
         <p>
-          This demo shows basic configuration options for the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a>. The
+          This demo shows basic configuration options for the <a href="https://docs.yworks.com/yfileshtml/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a>. The
           default behavior is modified in various ways, some of which are described below:
         </p>
         <ul>
           <li>
             The layout is configured to be
-            <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout#deterministic" class="api" target="_blank">deterministic</a>, which causes the layout
+            <a href="https://docs.yworks.com/yfileshtml/api/OrganicLayout#deterministic" class="api" target="_blank">deterministic</a>, which causes the layout
             algorithm to produce identical results for identical input graph and settings.
           </li>
           <li>
-            The <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#preferredEdgeLengths" class="api" target="_blank">preferred edge length</a> is
+            The <a href="https://docs.yworks.com/yfileshtml/api/OrganicLayoutData#preferredEdgeLengths" class="api" target="_blank">preferred edge length</a> is
             increased.
           </li>
           <li>
-            The <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout#compactnessFactor" class="api" target="_blank">compactness factor</a> has been
+            The <a href="https://docs.yworks.com/yfileshtml/api/OrganicLayout#compactnessFactor" class="api" target="_blank">compactness factor</a> has been
             increased to yield a more compact layout. For small values, the resulting layout will
             use a lot of space and nodes tend to be far away from each other. Whereas values near
             1.0 produce highly compact layouts.
           </li>
           <li>
-            The <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout#allowNodeOverlaps" class="api" target="_blank">automatic overlap avoidance</a> is
+            The <a href="https://docs.yworks.com/yfileshtml/api/OrganicLayout#allowNodeOverlaps" class="api" target="_blank">automatic overlap avoidance</a> is
             disabled, so a manually chosen
-            <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData#minimumNodeDistances" class="api" target="_blank">minimum distances between nodes</a>
+            <a href="https://docs.yworks.com/yfileshtml/api/OrganicLayoutData#minimumNodeDistances" class="api" target="_blank">minimum distances between nodes</a>
             is applied.
           </li>
           <li>
-            A <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout#shapeConstraint" class="api" target="_blank">shape restriction</a> is applied to
+            A <a href="https://docs.yworks.com/yfileshtml/api/OrganicLayout#shapeConstraint" class="api" target="_blank">shape restriction</a> is applied to
             constrain the result to be wider than tall.
           </li>
         </ul>
@@ -115,9 +115,9 @@
         </ul>
         <h2>Documentation</h2>
         <ul>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout" class="dguide" target="_blank">Organic Layout Algorithm</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a> class</li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayoutData" class="api" target="_blank">OrganicLayoutData</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/dguide/organic_layout" class="dguide" target="_blank">Organic Layout Algorithm</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/OrganicLayoutData" class="api" target="_blank">OrganicLayoutData</a> class</li>
         </ul>
       </div>
     </aside>
@@ -125,7 +125,7 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-      <div id="demo-message" class="demo-message"></div>
+      <div class="yplay__message-host"></div>
     </div>
     <script type="module" crossorigin="anonymous" src="./OrganicDemo.ts" async></script>
   </body>

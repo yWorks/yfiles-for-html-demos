@@ -7,10 +7,9 @@
     "": {
       "name": "@yfiles/demo-utils",
       "version": "30.0.0",
-      "hasInstallScript": true,
       "license": "https://www.yworks.com/products/yfiles-for-html/sla",
       "dependencies": {
-        "@yfiles/yfiles": "^30.0.0",
+        "@yfiles/yfiles": "^30.0.5+dev",
         "lit-html": "~3.3.0"
       }
     },
@@ -20,19 +19,19 @@
       "integrity": "sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==",
       "license": "MIT"
     },
-    "node_modules/@yfiles/yfiles": {
-      "version": "30.0.4+dev",
-      "integrity": "sha512-GtDSYKg25rXfGPmAa+zFaNKcZ/YO7cdh5S6NA+d/B+hplRliNDmUdM3qqNsDN1knY6KSTIdlrt24if0ARcVxLA==",
-      "resolved": "file:../../lib-dev/yfiles-30.0.4+dev.tgz"
-    },
     "node_modules/lit-html": {
-      "version": "3.3.1",
-      "resolved": "https://registry.npmjs.org/lit-html/-/lit-html-3.3.1.tgz",
-      "integrity": "sha512-S9hbyDu/vs1qNrithiNyeyv64c9yqiW9l+DBgI18fL+MTvOtWoFR0FWiyq1TxaYef5wNlpEmzlXoBlZEO+WjoA==",
+      "version": "3.3.2",
+      "resolved": "https://registry.npmjs.org/lit-html/-/lit-html-3.3.2.tgz",
+      "integrity": "sha512-Qy9hU88zcmaxBXcc10ZpdK7cOLXvXpRoBxERdtqV9QOrfpMZZ6pSYP91LhpPtap3sFMUiL7Tw2RImbe0Al2/kw==",
       "license": "BSD-3-Clause",
       "dependencies": {
         "@types/trusted-types": "^2.0.2"
       }
+    },
+    "node_modules/@yfiles/yfiles": {
+      "version": "30.0.5+dev",
+      "integrity": "sha512-DmFWoAJsDTbOt7MOxAsI0mnWbIxh58l4nzkC7nSTSFTq6qDgP3wGS94N4uIEXfieFuJVdRI4l4/qI2npMunbyw==",
+      "resolved": "file:../../lib-dev/yfiles-30.0.5+dev.tgz"
     }
   }
 }

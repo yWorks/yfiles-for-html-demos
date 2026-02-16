@@ -5,6 +5,7 @@
     "composite": true,
     "baseUrl": ".",
     "paths": { "@/*": ["./src/*"] },
-    "preserveSymlinks": true
+    "preserveSymlinks": true,
+    "resolveJsonModule": true
   }
 }

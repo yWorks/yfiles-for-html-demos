@@ -1,0 +1,772 @@
+{
+  "nodes": [
+    {
+      "id": "yfiles",
+      "name": "yfiles",
+      "namespaces": [
+        {
+          "id": "yfiles.circular",
+          "name": "circular",
+          "types": [
+            { "id": "yfiles.circular.CircularLayout", "name": "CircularLayout" },
+            { "id": "yfiles.circular.CircularLayoutData", "name": "CircularLayoutData" },
+            {
+              "id": "yfiles.circular.CircularLayoutEdgeDescriptor",
+              "name": "CircularLayoutEdgeDescriptor"
+            },
+            {
+              "id": "yfiles.circular.CircularLayoutEdgeRoutingPolicy",
+              "name": "CircularLayoutEdgeRoutingPolicy"
+            },
+            {
+              "id": "yfiles.circular.CircularLayoutExteriorEdgeDescriptor",
+              "name": "CircularLayoutExteriorEdgeDescriptor"
+            },
+            {
+              "id": "yfiles.circular.CircularLayoutOnCircleRoutingStyle",
+              "name": "CircularLayoutOnCircleRoutingStyle"
+            },
+            {
+              "id": "yfiles.circular.CircularLayoutPartitionStyle",
+              "name": "CircularLayoutPartitionStyle"
+            },
+            {
+              "id": "yfiles.circular.CircularLayoutPartitioningPolicy",
+              "name": "CircularLayoutPartitioningPolicy"
+            },
+            {
+              "id": "yfiles.circular.CircularLayoutRoutingStyle",
+              "name": "CircularLayoutRoutingStyle"
+            },
+            {
+              "id": "yfiles.circular.CircularLayoutStarSubstructureStyle",
+              "name": "CircularLayoutStarSubstructureStyle"
+            },
+            { "id": "yfiles.circular.CompactDiskLayout", "name": "CompactDiskLayout" },
+            { "id": "yfiles.circular.CompactDiskLayoutData", "name": "CompactDiskLayoutData" },
+            { "id": "yfiles.circular.PartitionDescriptor", "name": "PartitionDescriptor" }
+          ]
+        },
+        {
+          "id": "yfiles.geometry",
+          "name": "geometry",
+          "types": [
+            { "id": "yfiles.geometry.GeneralPath", "name": "GeneralPath" },
+            { "id": "yfiles.geometry.GeneralPathCursor", "name": "GeneralPathCursor" },
+            { "id": "yfiles.geometry.GeometryUtilities", "name": "GeometryUtilities" },
+            { "id": "yfiles.geometry.IMutablePoint", "name": "IMutablePoint" },
+            { "id": "yfiles.geometry.IMutableRectangle", "name": "IMutableRectangle" },
+            { "id": "yfiles.geometry.IMutableSize", "name": "IMutableSize" },
+            { "id": "yfiles.geometry.IOrientedRectangle", "name": "IOrientedRectangle" },
+            { "id": "yfiles.geometry.IPlaneObject", "name": "IPlaneObject" },
+            { "id": "yfiles.geometry.IPoint", "name": "IPoint" },
+            { "id": "yfiles.geometry.IRectangle", "name": "IRectangle" },
+            { "id": "yfiles.geometry.ISize", "name": "ISize" },
+            { "id": "yfiles.geometry.Insets", "name": "Insets" },
+            { "id": "yfiles.geometry.LineSegment", "name": "LineSegment" },
+            { "id": "yfiles.geometry.Matrix", "name": "Matrix" },
+            { "id": "yfiles.geometry.MatrixOrder", "name": "MatrixOrder" },
+            { "id": "yfiles.geometry.MutablePoint", "name": "MutablePoint" },
+            { "id": "yfiles.geometry.MutableRectangle", "name": "MutableRectangle" },
+            { "id": "yfiles.geometry.MutableSize", "name": "MutableSize" },
+            { "id": "yfiles.geometry.OrientedRectangle", "name": "OrientedRectangle" },
+            { "id": "yfiles.geometry.PathType", "name": "PathType" },
+            { "id": "yfiles.geometry.Point", "name": "Point" },
+            { "id": "yfiles.geometry.Rect", "name": "Rect" },
+            { "id": "yfiles.geometry.Size", "name": "Size" },
+            { "id": "yfiles.geometry.SmoothingPolicy", "name": "SmoothingPolicy" },
+            { "id": "yfiles.geometry.Tangent", "name": "Tangent" }
+          ]
+        },
+        {
+          "id": "yfiles.hierarchic",
+          "name": "hierarchic",
+          "types": [
+            {
+              "id": "yfiles.hierarchic.AspectRatioComponentLayerAssigner",
+              "name": "AspectRatioComponentLayerAssigner"
+            },
+            { "id": "yfiles.hierarchic.BfsLayerAssigner", "name": "BfsLayerAssigner" },
+            {
+              "id": "yfiles.hierarchic.ComponentArrangementPolicy",
+              "name": "ComponentArrangementPolicy"
+            },
+            {
+              "id": "yfiles.hierarchic.ConstraintIncrementalLayerAssigner",
+              "name": "ConstraintIncrementalLayerAssigner"
+            },
+            { "id": "yfiles.hierarchic.CoordinateAssigner", "name": "CoordinateAssigner" },
+            { "id": "yfiles.hierarchic.DefaultSequencer", "name": "DefaultSequencer" },
+            {
+              "id": "yfiles.hierarchic.DrawingDistanceCalculator",
+              "name": "DrawingDistanceCalculator"
+            },
+            {
+              "id": "yfiles.hierarchic.FromSketchLayerAssigner",
+              "name": "FromSketchLayerAssigner"
+            },
+            { "id": "yfiles.hierarchic.FromSketchSequencer", "name": "FromSketchSequencer" },
+            { "id": "yfiles.hierarchic.GivenLayersAssigner", "name": "GivenLayersAssigner" },
+            { "id": "yfiles.hierarchic.GivenSequenceSequencer", "name": "GivenSequenceSequencer" },
+            {
+              "id": "yfiles.hierarchic.GridComponentDescriptor",
+              "name": "GridComponentDescriptor"
+            },
+            { "id": "yfiles.hierarchic.GroupAlignmentPolicy", "name": "GroupAlignmentPolicy" },
+            { "id": "yfiles.hierarchic.GroupLayeringPolicy", "name": "GroupLayeringPolicy" },
+            { "id": "yfiles.hierarchic.HierarchicalLayout", "name": "HierarchicalLayout" },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutContext",
+              "name": "HierarchicalLayoutContext"
+            },
+            { "id": "yfiles.hierarchic.HierarchicalLayoutCore", "name": "HierarchicalLayoutCore" },
+            { "id": "yfiles.hierarchic.HierarchicalLayoutData", "name": "HierarchicalLayoutData" },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutEdgeContext",
+              "name": "HierarchicalLayoutEdgeContext"
+            },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutEdgeDescriptor",
+              "name": "HierarchicalLayoutEdgeDescriptor"
+            },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutEdgeType",
+              "name": "HierarchicalLayoutEdgeType"
+            },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutLayer",
+              "name": "HierarchicalLayoutLayer"
+            },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutLayerType",
+              "name": "HierarchicalLayoutLayerType"
+            },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutLayeringStrategy",
+              "name": "HierarchicalLayoutLayeringStrategy"
+            },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutNodeContext",
+              "name": "HierarchicalLayoutNodeContext"
+            },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutNodeDescriptor",
+              "name": "HierarchicalLayoutNodeDescriptor"
+            },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutNodeType",
+              "name": "HierarchicalLayoutNodeType"
+            },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutPortAssigner",
+              "name": "HierarchicalLayoutPortAssigner"
+            },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutPortAssignmentMode",
+              "name": "HierarchicalLayoutPortAssignmentMode"
+            },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutRoutingStyle",
+              "name": "HierarchicalLayoutRoutingStyle"
+            },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutSubcomponentDescriptor",
+              "name": "HierarchicalLayoutSubcomponentDescriptor"
+            },
+            {
+              "id": "yfiles.hierarchic.HierarchicalLayoutSubcomponentPlacementPolicy",
+              "name": "HierarchicalLayoutSubcomponentPlacementPolicy"
+            },
+            { "id": "yfiles.hierarchic.ICoordinateAssigner", "name": "ICoordinateAssigner" },
+            {
+              "id": "yfiles.hierarchic.IDrawingDistanceCalculator",
+              "name": "IDrawingDistanceCalculator"
+            },
+            {
+              "id": "yfiles.hierarchic.IHierarchicalLayoutPortAssigner",
+              "name": "IHierarchicalLayoutPortAssigner"
+            },
+            { "id": "yfiles.hierarchic.ILayerAssigner", "name": "ILayerAssigner" },
+            { "id": "yfiles.hierarchic.IPortCandidateSelector", "name": "IPortCandidateSelector" },
+            { "id": "yfiles.hierarchic.ISequencer", "name": "ISequencer" },
+            { "id": "yfiles.hierarchic.IncrementalEdgeHint", "name": "IncrementalEdgeHint" },
+            { "id": "yfiles.hierarchic.IncrementalNodeHint", "name": "IncrementalNodeHint" },
+            { "id": "yfiles.hierarchic.ItemFactory", "name": "ItemFactory" },
+            { "id": "yfiles.hierarchic.LayerConstraintData", "name": "LayerConstraintData" },
+            { "id": "yfiles.hierarchic.LayerMergingPolicy", "name": "LayerMergingPolicy" },
+            { "id": "yfiles.hierarchic.LayerRerankingPolicy", "name": "LayerRerankingPolicy" },
+            {
+              "id": "yfiles.hierarchic.LayoutGraphLayerConstraints",
+              "name": "LayoutGraphLayerConstraints"
+            },
+            {
+              "id": "yfiles.hierarchic.LayoutGraphSequenceConstraints",
+              "name": "LayoutGraphSequenceConstraints"
+            },
+            {
+              "id": "yfiles.hierarchic.MultiComponentLayerAssigner",
+              "name": "MultiComponentLayerAssigner"
+            },
+            { "id": "yfiles.hierarchic.OrderingConstraint", "name": "OrderingConstraint" },
+            { "id": "yfiles.hierarchic.OrderingConstraintType", "name": "OrderingConstraintType" },
+            { "id": "yfiles.hierarchic.PortCandidateSelector", "name": "PortCandidateSelector" },
+            {
+              "id": "yfiles.hierarchic.PortCandidateSelectorSameLayerData",
+              "name": "PortCandidateSelectorSameLayerData"
+            },
+            { "id": "yfiles.hierarchic.RecursiveEdgePolicy", "name": "RecursiveEdgePolicy" },
+            { "id": "yfiles.hierarchic.RoutingStyleDescriptor", "name": "RoutingStyleDescriptor" },
+            { "id": "yfiles.hierarchic.SequenceConstraintData", "name": "SequenceConstraintData" },
+            {
+              "id": "yfiles.hierarchic.SequencerWeightHeuristic",
+              "name": "SequencerWeightHeuristic"
+            },
+            {
+              "id": "yfiles.hierarchic.SymmetryOptimizationStrategy",
+              "name": "SymmetryOptimizationStrategy"
+            },
+            {
+              "id": "yfiles.hierarchic.TopologicalLayerAssigner",
+              "name": "TopologicalLayerAssigner"
+            },
+            { "id": "yfiles.hierarchic.WeightedLayerAssigner", "name": "WeightedLayerAssigner" }
+          ]
+        },
+        {
+          "id": "yfiles.labeling",
+          "name": "labeling",
+          "types": [
+            {
+              "id": "yfiles.labeling.DiscreteEdgeLabelPositions",
+              "name": "DiscreteEdgeLabelPositions"
+            },
+            {
+              "id": "yfiles.labeling.DiscreteNodeLabelPositions",
+              "name": "DiscreteNodeLabelPositions"
+            },
+            { "id": "yfiles.labeling.EdgeLabelCandidates", "name": "EdgeLabelCandidates" },
+            { "id": "yfiles.labeling.EdgeLabelSliderMode", "name": "EdgeLabelSliderMode" },
+            { "id": "yfiles.labeling.GenericLabeling", "name": "GenericLabeling" },
+            { "id": "yfiles.labeling.GenericLabelingData", "name": "GenericLabelingData" },
+            { "id": "yfiles.labeling.LabelCandidate", "name": "LabelCandidate" },
+            { "id": "yfiles.labeling.LabelScopeData", "name": "LabelScopeData" },
+            { "id": "yfiles.labeling.LabelingCosts", "name": "LabelingCosts" },
+            {
+              "id": "yfiles.labeling.LabelingOptimizationStrategy",
+              "name": "LabelingOptimizationStrategy"
+            },
+            { "id": "yfiles.labeling.LabelingScope", "name": "LabelingScope" },
+            { "id": "yfiles.labeling.NodeLabelCandidates", "name": "NodeLabelCandidates" }
+          ]
+        },
+        {
+          "id": "yfiles.layout",
+          "name": "layout",
+          "types": [
+            { "id": "yfiles.layout.AlignmentStage", "name": "AlignmentStage" },
+            {
+              "id": "yfiles.layout.AlignmentStageAlignmentPolicy",
+              "name": "AlignmentStageAlignmentPolicy"
+            },
+            { "id": "yfiles.layout.AlignmentStageData", "name": "AlignmentStageData" },
+            { "id": "yfiles.layout.BasicEdgeLabelPlacement", "name": "BasicEdgeLabelPlacement" },
+            { "id": "yfiles.layout.BasicNodeLabelPlacement", "name": "BasicNodeLabelPlacement" },
+            { "id": "yfiles.layout.BasicPortData", "name": "BasicPortData" },
+            { "id": "yfiles.layout.BendSubstitutionStage", "name": "BendSubstitutionStage" },
+            { "id": "yfiles.layout.BorderLine", "name": "BorderLine" },
+            { "id": "yfiles.layout.BorderLineSegment", "name": "BorderLineSegment" },
+            { "id": "yfiles.layout.ChildOrderData", "name": "ChildOrderData" },
+            {
+              "id": "yfiles.layout.ComponentArrangementStyle",
+              "name": "ComponentArrangementStyle"
+            },
+            { "id": "yfiles.layout.ComponentLayout", "name": "ComponentLayout" },
+            { "id": "yfiles.layout.ComponentLayoutData", "name": "ComponentLayoutData" },
+            { "id": "yfiles.layout.CompositeLayoutData", "name": "CompositeLayoutData" },
+            { "id": "yfiles.layout.ConstraintOrientation", "name": "ConstraintOrientation" },
+            { "id": "yfiles.layout.ContextModificationStage", "name": "ContextModificationStage" },
+            { "id": "yfiles.layout.CurveConnectionStyle", "name": "CurveConnectionStyle" },
+            { "id": "yfiles.layout.CurveFittingStage", "name": "CurveFittingStage" },
+            { "id": "yfiles.layout.DataKey", "name": "DataKey" },
+            { "id": "yfiles.layout.Direction", "name": "Direction" },
+            { "id": "yfiles.layout.EdgeBundleDescriptor", "name": "EdgeBundleDescriptor" },
+            { "id": "yfiles.layout.EdgeBundling", "name": "EdgeBundling" },
+            { "id": "yfiles.layout.EdgeDataKey", "name": "EdgeDataKey" },
+            { "id": "yfiles.layout.EdgeLabelDataKey", "name": "EdgeLabelDataKey" },
+            { "id": "yfiles.layout.EdgeLabelPlacement", "name": "EdgeLabelPlacement" },
+            {
+              "id": "yfiles.layout.EdgeLabelPreferredPlacement",
+              "name": "EdgeLabelPreferredPlacement"
+            },
+            { "id": "yfiles.layout.EdgePathPoint", "name": "EdgePathPoint" },
+            { "id": "yfiles.layout.EdgePortCandidates", "name": "EdgePortCandidates" },
+            {
+              "id": "yfiles.layout.ExtendedEdgeLabelCandidate",
+              "name": "ExtendedEdgeLabelCandidate"
+            },
+            {
+              "id": "yfiles.layout.ExtendedNodeLabelCandidate",
+              "name": "ExtendedNodeLabelCandidate"
+            },
+            { "id": "yfiles.layout.GenericLayoutData", "name": "GenericLayoutData" },
+            { "id": "yfiles.layout.GenericLayoutGridStage", "name": "GenericLayoutGridStage" },
+            {
+              "id": "yfiles.layout.GenericLayoutGridStageData",
+              "name": "GenericLayoutGridStageData"
+            },
+            { "id": "yfiles.layout.GivenCoordinatesLayout", "name": "GivenCoordinatesLayout" },
+            {
+              "id": "yfiles.layout.GivenCoordinatesLayoutData",
+              "name": "GivenCoordinatesLayoutData"
+            },
+            { "id": "yfiles.layout.GroupBoundsCalculator", "name": "GroupBoundsCalculator" },
+            { "id": "yfiles.layout.GroupHidingStage", "name": "GroupHidingStage" },
+            { "id": "yfiles.layout.GroupSizePolicy", "name": "GroupSizePolicy" },
+            {
+              "id": "yfiles.layout.HorizontalOverlapCriterion",
+              "name": "HorizontalOverlapCriterion"
+            },
+            { "id": "yfiles.layout.ILayoutAlgorithm", "name": "ILayoutAlgorithm" },
+            {
+              "id": "yfiles.layout.ILayoutGroupBoundsCalculator",
+              "name": "ILayoutGroupBoundsCalculator"
+            },
+            { "id": "yfiles.layout.ILayoutStage", "name": "ILayoutStage" },
+            { "id": "yfiles.layout.LabelAlongEdgePlacements", "name": "LabelAlongEdgePlacements" },
+            {
+              "id": "yfiles.layout.LabelAngleOnRightSideRotations",
+              "name": "LabelAngleOnRightSideRotations"
+            },
+            { "id": "yfiles.layout.LabelAngleReferences", "name": "LabelAngleReferences" },
+            { "id": "yfiles.layout.LabelEdgeSides", "name": "LabelEdgeSides" },
+            { "id": "yfiles.layout.LabelPlacementPolicy", "name": "LabelPlacementPolicy" },
+            { "id": "yfiles.layout.LabelSideReferences", "name": "LabelSideReferences" },
+            { "id": "yfiles.layout.LayoutAbortController", "name": "LayoutAbortController" },
+            { "id": "yfiles.layout.LayoutAnchoringPolicy", "name": "LayoutAnchoringPolicy" },
+            { "id": "yfiles.layout.LayoutAnchoringStage", "name": "LayoutAnchoringStage" },
+            { "id": "yfiles.layout.LayoutAnchoringStageData", "name": "LayoutAnchoringStageData" },
+            { "id": "yfiles.layout.LayoutBend", "name": "LayoutBend" },
+            { "id": "yfiles.layout.LayoutData", "name": "LayoutData" },
+            { "id": "yfiles.layout.LayoutEdge", "name": "LayoutEdge" },
+            { "id": "yfiles.layout.LayoutEdgeLabel", "name": "LayoutEdgeLabel" },
+            { "id": "yfiles.layout.LayoutExecutor", "name": "LayoutExecutor" },
+            { "id": "yfiles.layout.LayoutExecutorAsync", "name": "LayoutExecutorAsync" },
+            {
+              "id": "yfiles.layout.LayoutExecutorAsyncWorker",
+              "name": "LayoutExecutorAsyncWorker"
+            },
+            { "id": "yfiles.layout.LayoutGraph", "name": "LayoutGraph" },
+            { "id": "yfiles.layout.LayoutGraphAdapter", "name": "LayoutGraphAdapter" },
+            { "id": "yfiles.layout.LayoutGraphContext", "name": "LayoutGraphContext" },
+            { "id": "yfiles.layout.LayoutGraphCopyData", "name": "LayoutGraphCopyData" },
+            { "id": "yfiles.layout.LayoutGraphGrouping", "name": "LayoutGraphGrouping" },
+            { "id": "yfiles.layout.LayoutGraphHider", "name": "LayoutGraphHider" },
+            { "id": "yfiles.layout.LayoutGraphItem", "name": "LayoutGraphItem" },
+            { "id": "yfiles.layout.LayoutGrid", "name": "LayoutGrid" },
+            { "id": "yfiles.layout.LayoutGridCell", "name": "LayoutGridCell" },
+            { "id": "yfiles.layout.LayoutGridCellDescriptor", "name": "LayoutGridCellDescriptor" },
+            { "id": "yfiles.layout.LayoutGridColumn", "name": "LayoutGridColumn" },
+            { "id": "yfiles.layout.LayoutGridData", "name": "LayoutGridData" },
+            { "id": "yfiles.layout.LayoutGridRow", "name": "LayoutGridRow" },
+            { "id": "yfiles.layout.LayoutKeys", "name": "LayoutKeys" },
+            { "id": "yfiles.layout.LayoutNode", "name": "LayoutNode" },
+            { "id": "yfiles.layout.LayoutNodeLabel", "name": "LayoutNodeLabel" },
+            { "id": "yfiles.layout.LayoutOrientation", "name": "LayoutOrientation" },
+            { "id": "yfiles.layout.LayoutPortCandidate", "name": "LayoutPortCandidate" },
+            { "id": "yfiles.layout.LayoutStageBase", "name": "LayoutStageBase" },
+            { "id": "yfiles.layout.LayoutStageStack", "name": "LayoutStageStack" },
+            { "id": "yfiles.layout.LayoutTransformations", "name": "LayoutTransformations" },
+            { "id": "yfiles.layout.LineWrappingStage", "name": "LineWrappingStage" },
+            { "id": "yfiles.layout.MinimumNodeSizeStage", "name": "MinimumNodeSizeStage" },
+            { "id": "yfiles.layout.MirroredOrientations", "name": "MirroredOrientations" },
+            { "id": "yfiles.layout.NodeDataKey", "name": "NodeDataKey" },
+            { "id": "yfiles.layout.NodeLabelDataKey", "name": "NodeLabelDataKey" },
+            { "id": "yfiles.layout.NodeLabelPlacement", "name": "NodeLabelPlacement" },
+            { "id": "yfiles.layout.NodeLayout", "name": "NodeLayout" },
+            { "id": "yfiles.layout.NodePortCandidates", "name": "NodePortCandidates" },
+            { "id": "yfiles.layout.OrientationStage", "name": "OrientationStage" },
+            {
+              "id": "yfiles.layout.OrientationStageEdgeLabelPlacement",
+              "name": "OrientationStageEdgeLabelPlacement"
+            },
+            { "id": "yfiles.layout.OverlapRemovalPolicy", "name": "OverlapRemovalPolicy" },
+            {
+              "id": "yfiles.layout.PartialLayoutRoutingStyle",
+              "name": "PartialLayoutRoutingStyle"
+            },
+            {
+              "id": "yfiles.layout.PlaceNodesAtBarycenterStage",
+              "name": "PlaceNodesAtBarycenterStage"
+            },
+            {
+              "id": "yfiles.layout.PlaceNodesAtBarycenterStageData",
+              "name": "PlaceNodesAtBarycenterStageData"
+            },
+            { "id": "yfiles.layout.PortAdjustmentPolicy", "name": "PortAdjustmentPolicy" },
+            { "id": "yfiles.layout.PortCandidateType", "name": "PortCandidateType" },
+            { "id": "yfiles.layout.PortData", "name": "PortData" },
+            { "id": "yfiles.layout.PortLabelPolicy", "name": "PortLabelPolicy" },
+            { "id": "yfiles.layout.PortPlacementPolicy", "name": "PortPlacementPolicy" },
+            { "id": "yfiles.layout.PortPlacementStage", "name": "PortPlacementStage" },
+            { "id": "yfiles.layout.PortSides", "name": "PortSides" },
+            { "id": "yfiles.layout.RadialEdgeLabelPlacement", "name": "RadialEdgeLabelPlacement" },
+            { "id": "yfiles.layout.RadialGroupLayout", "name": "RadialGroupLayout" },
+            { "id": "yfiles.layout.RadialGroupLayoutData", "name": "RadialGroupLayoutData" },
+            { "id": "yfiles.layout.RadialNodeLabelPlacement", "name": "RadialNodeLabelPlacement" },
+            { "id": "yfiles.layout.RecursiveGroupLayout", "name": "RecursiveGroupLayout" },
+            { "id": "yfiles.layout.RecursiveGroupLayoutData", "name": "RecursiveGroupLayoutData" },
+            { "id": "yfiles.layout.RelativePosition", "name": "RelativePosition" },
+            {
+              "id": "yfiles.layout.RemoveCollinearBendsStage",
+              "name": "RemoveCollinearBendsStage"
+            },
+            { "id": "yfiles.layout.RemoveOverlapsStage", "name": "RemoveOverlapsStage" },
+            { "id": "yfiles.layout.RemoveOverlapsStageData", "name": "RemoveOverlapsStageData" },
+            { "id": "yfiles.layout.RestoreToken", "name": "RestoreToken" },
+            { "id": "yfiles.layout.ReverseEdgesStage", "name": "ReverseEdgesStage" },
+            { "id": "yfiles.layout.ReverseEdgesStageData", "name": "ReverseEdgesStageData" },
+            { "id": "yfiles.layout.RouteCorrectionPolicy", "name": "RouteCorrectionPolicy" },
+            { "id": "yfiles.layout.SequentialLayout", "name": "SequentialLayout" },
+            { "id": "yfiles.layout.Side", "name": "Side" },
+            { "id": "yfiles.layout.StructureGraphAdapter", "name": "StructureGraphAdapter" },
+            { "id": "yfiles.layout.SubgraphComponent", "name": "SubgraphComponent" },
+            { "id": "yfiles.layout.SubgraphLayoutStage", "name": "SubgraphLayoutStage" },
+            { "id": "yfiles.layout.SubgraphLayoutStageData", "name": "SubgraphLayoutStageData" },
+            { "id": "yfiles.layout.TableLayoutConfigurator", "name": "TableLayoutConfigurator" },
+            { "id": "yfiles.layout.TabularLayout", "name": "TabularLayout" },
+            { "id": "yfiles.layout.TabularLayoutData", "name": "TabularLayoutData" },
+            {
+              "id": "yfiles.layout.TabularLayoutEdgeLabelPlacement",
+              "name": "TabularLayoutEdgeLabelPlacement"
+            },
+            { "id": "yfiles.layout.TabularLayoutMode", "name": "TabularLayoutMode" },
+            {
+              "id": "yfiles.layout.TabularLayoutNodeDescriptor",
+              "name": "TabularLayoutNodeDescriptor"
+            },
+            { "id": "yfiles.layout.TemporaryGroupDescriptor", "name": "TemporaryGroupDescriptor" },
+            {
+              "id": "yfiles.layout.TemporaryGroupInsertionData",
+              "name": "TemporaryGroupInsertionData"
+            },
+            {
+              "id": "yfiles.layout.TemporaryGroupInsertionStage",
+              "name": "TemporaryGroupInsertionStage"
+            },
+            { "id": "yfiles.layout.ValueDataKey", "name": "ValueDataKey" }
+          ]
+        },
+        {
+          "id": "yfiles.multipage",
+          "name": "multipage",
+          "types": [
+            {
+              "id": "yfiles.multipage.MultiEdgeConnectorPolicy",
+              "name": "MultiEdgeConnectorPolicy"
+            },
+            { "id": "yfiles.multipage.MultiPageEdgeType", "name": "MultiPageEdgeType" },
+            { "id": "yfiles.multipage.MultiPageElementFactory", "name": "MultiPageElementFactory" },
+            { "id": "yfiles.multipage.MultiPageGroupingPolicy", "name": "MultiPageGroupingPolicy" },
+            { "id": "yfiles.multipage.MultiPageLayout", "name": "MultiPageLayout" },
+            { "id": "yfiles.multipage.MultiPageLayoutContext", "name": "MultiPageLayoutContext" },
+            { "id": "yfiles.multipage.MultiPageLayoutData", "name": "MultiPageLayoutData" },
+            { "id": "yfiles.multipage.MultiPageLayoutResult", "name": "MultiPageLayoutResult" },
+            { "id": "yfiles.multipage.MultiPageNodeType", "name": "MultiPageNodeType" }
+          ]
+        },
+        {
+          "id": "yfiles.organic",
+          "name": "organic",
+          "types": [
+            { "id": "yfiles.organic.GroupNodeHandlingPolicy", "name": "GroupNodeHandlingPolicy" },
+            { "id": "yfiles.organic.GroupSubstructureStyle", "name": "GroupSubstructureStyle" },
+            {
+              "id": "yfiles.organic.InteractiveOrganicEdgeHandle",
+              "name": "InteractiveOrganicEdgeHandle"
+            },
+            { "id": "yfiles.organic.InteractiveOrganicLayout", "name": "InteractiveOrganicLayout" },
+            {
+              "id": "yfiles.organic.InteractiveOrganicLayoutData",
+              "name": "InteractiveOrganicLayoutData"
+            },
+            {
+              "id": "yfiles.organic.InteractiveOrganicNodeHandle",
+              "name": "InteractiveOrganicNodeHandle"
+            },
+            { "id": "yfiles.organic.OrganicConstraintData", "name": "OrganicConstraintData" },
+            { "id": "yfiles.organic.OrganicLayout", "name": "OrganicLayout" },
+            {
+              "id": "yfiles.organic.OrganicLayoutChainSubstructureStyle",
+              "name": "OrganicLayoutChainSubstructureStyle"
+            },
+            {
+              "id": "yfiles.organic.OrganicLayoutClusteringPolicy",
+              "name": "OrganicLayoutClusteringPolicy"
+            },
+            {
+              "id": "yfiles.organic.OrganicLayoutCycleSubstructureStyle",
+              "name": "OrganicLayoutCycleSubstructureStyle"
+            },
+            { "id": "yfiles.organic.OrganicLayoutData", "name": "OrganicLayoutData" },
+            {
+              "id": "yfiles.organic.OrganicLayoutGroupSubstructureScope",
+              "name": "OrganicLayoutGroupSubstructureScope"
+            },
+            {
+              "id": "yfiles.organic.OrganicLayoutParallelSubstructureStyle",
+              "name": "OrganicLayoutParallelSubstructureStyle"
+            },
+            {
+              "id": "yfiles.organic.OrganicLayoutSeparationConstraint",
+              "name": "OrganicLayoutSeparationConstraint"
+            },
+            {
+              "id": "yfiles.organic.OrganicLayoutStarSubstructureStyle",
+              "name": "OrganicLayoutStarSubstructureStyle"
+            },
+            {
+              "id": "yfiles.organic.OrganicLayoutTreeSubstructureStyle",
+              "name": "OrganicLayoutTreeSubstructureStyle"
+            },
+            { "id": "yfiles.organic.OrganicScope", "name": "OrganicScope" },
+            { "id": "yfiles.organic.OrganicScopeData", "name": "OrganicScopeData" },
+            { "id": "yfiles.organic.ShapeConstraint", "name": "ShapeConstraint" }
+          ]
+        },
+        {
+          "id": "yfiles.orthogonal",
+          "name": "orthogonal",
+          "types": [
+            { "id": "yfiles.orthogonal.OrthogonalLayout", "name": "OrthogonalLayout" },
+            {
+              "id": "yfiles.orthogonal.OrthogonalLayoutChainSubstructureStyle",
+              "name": "OrthogonalLayoutChainSubstructureStyle"
+            },
+            {
+              "id": "yfiles.orthogonal.OrthogonalLayoutCycleSubstructureStyle",
+              "name": "OrthogonalLayoutCycleSubstructureStyle"
+            },
+            { "id": "yfiles.orthogonal.OrthogonalLayoutData", "name": "OrthogonalLayoutData" },
+            {
+              "id": "yfiles.orthogonal.OrthogonalLayoutEdgeDescriptor",
+              "name": "OrthogonalLayoutEdgeDescriptor"
+            },
+            { "id": "yfiles.orthogonal.OrthogonalLayoutMode", "name": "OrthogonalLayoutMode" },
+            {
+              "id": "yfiles.orthogonal.OrthogonalLayoutTreeSubstructureStyle",
+              "name": "OrthogonalLayoutTreeSubstructureStyle"
+            },
+            { "id": "yfiles.orthogonal.SubstructureOrientation", "name": "SubstructureOrientation" }
+          ]
+        },
+        {
+          "id": "yfiles.partial",
+          "name": "partial",
+          "types": [
+            { "id": "yfiles.partial.ClearAreaLayout", "name": "ClearAreaLayout" },
+            { "id": "yfiles.partial.ClearAreaLayoutData", "name": "ClearAreaLayoutData" },
+            {
+              "id": "yfiles.partial.ClearAreaLayoutEdgeLabelPlacement",
+              "name": "ClearAreaLayoutEdgeLabelPlacement"
+            },
+            { "id": "yfiles.partial.ClearAreaStrategy", "name": "ClearAreaStrategy" },
+            {
+              "id": "yfiles.partial.ComponentAssignmentStrategy",
+              "name": "ComponentAssignmentStrategy"
+            },
+            { "id": "yfiles.partial.FillAreaLayout", "name": "FillAreaLayout" },
+            { "id": "yfiles.partial.FillAreaLayoutData", "name": "FillAreaLayoutData" },
+            {
+              "id": "yfiles.partial.FillAreaLayoutEdgeLabelPlacement",
+              "name": "FillAreaLayoutEdgeLabelPlacement"
+            },
+            { "id": "yfiles.partial.PartialLayout", "name": "PartialLayout" },
+            { "id": "yfiles.partial.PartialLayoutData", "name": "PartialLayoutData" },
+            { "id": "yfiles.partial.PartialLayoutOrientation", "name": "PartialLayoutOrientation" },
+            { "id": "yfiles.partial.PartialLayoutScopeData", "name": "PartialLayoutScopeData" },
+            { "id": "yfiles.partial.SubgraphPlacement", "name": "SubgraphPlacement" }
+          ]
+        },
+        {
+          "id": "yfiles.radial",
+          "name": "radial",
+          "types": [
+            { "id": "yfiles.radial.CenterNodesPolicy", "name": "CenterNodesPolicy" },
+            { "id": "yfiles.radial.RadialLayeringStrategy", "name": "RadialLayeringStrategy" },
+            { "id": "yfiles.radial.RadialLayout", "name": "RadialLayout" },
+            { "id": "yfiles.radial.RadialLayoutData", "name": "RadialLayoutData" },
+            {
+              "id": "yfiles.radial.RadialLayoutNodePlacementResult",
+              "name": "RadialLayoutNodePlacementResult"
+            },
+            { "id": "yfiles.radial.RadialLayoutRoutingStyle", "name": "RadialLayoutRoutingStyle" }
+          ]
+        },
+        {
+          "id": "yfiles.router",
+          "name": "router",
+          "types": [
+            { "id": "yfiles.router.BundledEdgeRouter", "name": "BundledEdgeRouter" },
+            { "id": "yfiles.router.BundledEdgeRouterData", "name": "BundledEdgeRouterData" },
+            { "id": "yfiles.router.CellEntrance", "name": "CellEntrance" },
+            { "id": "yfiles.router.ChannelOrientation", "name": "ChannelOrientation" },
+            { "id": "yfiles.router.ChannelRoutingTool", "name": "ChannelRoutingTool" },
+            {
+              "id": "yfiles.router.CurveRoutingEdgeDescriptor",
+              "name": "CurveRoutingEdgeDescriptor"
+            },
+            { "id": "yfiles.router.CurveRoutingStage", "name": "CurveRoutingStage" },
+            { "id": "yfiles.router.CurveRoutingStageData", "name": "CurveRoutingStageData" },
+            { "id": "yfiles.router.EdgeCellInfo", "name": "EdgeCellInfo" },
+            { "id": "yfiles.router.EdgeRouter", "name": "EdgeRouter" },
+            { "id": "yfiles.router.EdgeRouterBusDescriptor", "name": "EdgeRouterBusDescriptor" },
+            { "id": "yfiles.router.EdgeRouterCosts", "name": "EdgeRouterCosts" },
+            { "id": "yfiles.router.EdgeRouterData", "name": "EdgeRouterData" },
+            { "id": "yfiles.router.EdgeRouterEdgeDescriptor", "name": "EdgeRouterEdgeDescriptor" },
+            {
+              "id": "yfiles.router.EdgeRouterEdgeLabelPlacement",
+              "name": "EdgeRouterEdgeLabelPlacement"
+            },
+            {
+              "id": "yfiles.router.EdgeRouterNodeLabelPlacement",
+              "name": "EdgeRouterNodeLabelPlacement"
+            },
+            { "id": "yfiles.router.EdgeRouterRoutingStyle", "name": "EdgeRouterRoutingStyle" },
+            { "id": "yfiles.router.EdgeRouterScope", "name": "EdgeRouterScope" },
+            { "id": "yfiles.router.EdgeRouterScopeData", "name": "EdgeRouterScopeData" },
+            { "id": "yfiles.router.EdgeScopeData", "name": "EdgeScopeData" },
+            { "id": "yfiles.router.IRouterPartition", "name": "IRouterPartition" },
+            { "id": "yfiles.router.Interval", "name": "Interval" },
+            {
+              "id": "yfiles.router.MonotonicPathRestrictions",
+              "name": "MonotonicPathRestrictions"
+            },
+            { "id": "yfiles.router.OctilinearRoutingStage", "name": "OctilinearRoutingStage" },
+            { "id": "yfiles.router.OrganicEdgeRouter", "name": "OrganicEdgeRouter" },
+            { "id": "yfiles.router.OrganicEdgeRouterData", "name": "OrganicEdgeRouterData" },
+            { "id": "yfiles.router.OrthogonalInterval", "name": "OrthogonalInterval" },
+            { "id": "yfiles.router.ParallelEdgeRouter", "name": "ParallelEdgeRouter" },
+            { "id": "yfiles.router.ParallelEdgeRouterData", "name": "ParallelEdgeRouterData" },
+            { "id": "yfiles.router.PartitionCell", "name": "PartitionCell" },
+            { "id": "yfiles.router.PartitionExtension", "name": "PartitionExtension" },
+            { "id": "yfiles.router.PathSearchConfiguration", "name": "PathSearchConfiguration" },
+            { "id": "yfiles.router.PathSearchContext", "name": "PathSearchContext" },
+            { "id": "yfiles.router.PathSearchExtension", "name": "PathSearchExtension" },
+            { "id": "yfiles.router.PathSearchRequest", "name": "PathSearchRequest" },
+            { "id": "yfiles.router.PathSearchResult", "name": "PathSearchResult" },
+            { "id": "yfiles.router.RoutingObstacle", "name": "RoutingObstacle" },
+            { "id": "yfiles.router.RoutingType", "name": "RoutingType" },
+            { "id": "yfiles.router.SelfLoopRouter", "name": "SelfLoopRouter" },
+            { "id": "yfiles.router.SelfLoopRoutingStyle", "name": "SelfLoopRoutingStyle" },
+            { "id": "yfiles.router.StraightLineEdgeRouter", "name": "StraightLineEdgeRouter" },
+            {
+              "id": "yfiles.router.StraightLineEdgeRouterData",
+              "name": "StraightLineEdgeRouterData"
+            }
+          ]
+        },
+        {
+          "id": "yfiles.seriesparallel",
+          "name": "seriesparallel",
+          "types": [
+            {
+              "id": "yfiles.seriesparallel.ISeriesParallelLayoutPortAssigner",
+              "name": "ISeriesParallelLayoutPortAssigner"
+            },
+            { "id": "yfiles.seriesparallel.SeriesParallelLayout", "name": "SeriesParallelLayout" },
+            {
+              "id": "yfiles.seriesparallel.SeriesParallelLayoutData",
+              "name": "SeriesParallelLayoutData"
+            },
+            {
+              "id": "yfiles.seriesparallel.SeriesParallelLayoutEdgeDescriptor",
+              "name": "SeriesParallelLayoutEdgeDescriptor"
+            },
+            {
+              "id": "yfiles.seriesparallel.SeriesParallelLayoutPortAssigner",
+              "name": "SeriesParallelLayoutPortAssigner"
+            },
+            {
+              "id": "yfiles.seriesparallel.SeriesParallelLayoutPortAssignmentMode",
+              "name": "SeriesParallelLayoutPortAssignmentMode"
+            },
+            {
+              "id": "yfiles.seriesparallel.SeriesParallelLayoutRoutingStyle",
+              "name": "SeriesParallelLayoutRoutingStyle"
+            }
+          ]
+        },
+        {
+          "id": "yfiles.tree",
+          "name": "tree",
+          "types": [
+            {
+              "id": "yfiles.tree.AspectRatioChildAlignmentPolicy",
+              "name": "AspectRatioChildAlignmentPolicy"
+            },
+            { "id": "yfiles.tree.AspectRatioSubtreePlacer", "name": "AspectRatioSubtreePlacer" },
+            { "id": "yfiles.tree.AssistantSubtreePlacer", "name": "AssistantSubtreePlacer" },
+            { "id": "yfiles.tree.BusPlacement", "name": "BusPlacement" },
+            { "id": "yfiles.tree.BusSubtreePlacer", "name": "BusSubtreePlacer" },
+            { "id": "yfiles.tree.ChildAlignmentPolicy", "name": "ChildAlignmentPolicy" },
+            { "id": "yfiles.tree.ChildArrangementPolicy", "name": "ChildArrangementPolicy" },
+            { "id": "yfiles.tree.ChildOrderingPolicy", "name": "ChildOrderingPolicy" },
+            { "id": "yfiles.tree.CompactSubtreePlacer", "name": "CompactSubtreePlacer" },
+            { "id": "yfiles.tree.DendrogramSubtreePlacer", "name": "DendrogramSubtreePlacer" },
+            { "id": "yfiles.tree.DoubleLayerSubtreePlacer", "name": "DoubleLayerSubtreePlacer" },
+            { "id": "yfiles.tree.FixedSubtreePlacer", "name": "FixedSubtreePlacer" },
+            { "id": "yfiles.tree.IFromSketchSubtreePlacer", "name": "IFromSketchSubtreePlacer" },
+            { "id": "yfiles.tree.ISubtreePlacer", "name": "ISubtreePlacer" },
+            { "id": "yfiles.tree.ISubtreePlacerProcessor", "name": "ISubtreePlacerProcessor" },
+            { "id": "yfiles.tree.ITreeLayoutPortAssigner", "name": "ITreeLayoutPortAssigner" },
+            { "id": "yfiles.tree.LeftRightSubtreePlacer", "name": "LeftRightSubtreePlacer" },
+            { "id": "yfiles.tree.LevelAlignedSubtreePlacer", "name": "LevelAlignedSubtreePlacer" },
+            {
+              "id": "yfiles.tree.LevelAlignedSubtreePlacerRoutingStyle",
+              "name": "LevelAlignedSubtreePlacerRoutingStyle"
+            },
+            { "id": "yfiles.tree.MultiLayerSubtreePlacer", "name": "MultiLayerSubtreePlacer" },
+            {
+              "id": "yfiles.tree.MultiLayerSubtreePlacerRootAlignment",
+              "name": "MultiLayerSubtreePlacerRootAlignment"
+            },
+            { "id": "yfiles.tree.MultiParentDescriptor", "name": "MultiParentDescriptor" },
+            { "id": "yfiles.tree.MultiParentRoutingStyle", "name": "MultiParentRoutingStyle" },
+            { "id": "yfiles.tree.MultiSplitSubtreePlacer", "name": "MultiSplitSubtreePlacer" },
+            { "id": "yfiles.tree.ParentConnectorDirection", "name": "ParentConnectorDirection" },
+            { "id": "yfiles.tree.RadialTreeLayout", "name": "RadialTreeLayout" },
+            { "id": "yfiles.tree.RadialTreeLayoutData", "name": "RadialTreeLayoutData" },
+            { "id": "yfiles.tree.RootPlacementPolicy", "name": "RootPlacementPolicy" },
+            { "id": "yfiles.tree.RootSelectionPolicy", "name": "RootSelectionPolicy" },
+            { "id": "yfiles.tree.SingleLayerSubtreePlacer", "name": "SingleLayerSubtreePlacer" },
+            {
+              "id": "yfiles.tree.SingleLayerSubtreePlacerRootAlignment",
+              "name": "SingleLayerSubtreePlacerRootAlignment"
+            },
+            {
+              "id": "yfiles.tree.SingleLayerSubtreePlacerRoutingStyle",
+              "name": "SingleLayerSubtreePlacerRoutingStyle"
+            },
+            { "id": "yfiles.tree.SingleSplitSubtreePlacer", "name": "SingleSplitSubtreePlacer" },
+            { "id": "yfiles.tree.SubtreeConnectorDirection", "name": "SubtreeConnectorDirection" },
+            { "id": "yfiles.tree.SubtreeRootAlignment", "name": "SubtreeRootAlignment" },
+            { "id": "yfiles.tree.SubtreeShape", "name": "SubtreeShape" },
+            { "id": "yfiles.tree.SubtreeTransform", "name": "SubtreeTransform" },
+            { "id": "yfiles.tree.TilingStrategy", "name": "TilingStrategy" },
+            { "id": "yfiles.tree.TreeLayout", "name": "TreeLayout" },
+            { "id": "yfiles.tree.TreeLayoutData", "name": "TreeLayoutData" },
+            { "id": "yfiles.tree.TreeLayoutPortAssigner", "name": "TreeLayoutPortAssigner" },
+            {
+              "id": "yfiles.tree.TreeLayoutPortAssignmentMode",
+              "name": "TreeLayoutPortAssignmentMode"
+            },
+            { "id": "yfiles.tree.TreeMapLayout", "name": "TreeMapLayout" },
+            { "id": "yfiles.tree.TreeMapLayoutData", "name": "TreeMapLayoutData" },
+            { "id": "yfiles.tree.TreeReductionStage", "name": "TreeReductionStage" },
+            { "id": "yfiles.tree.TreeReductionStageData", "name": "TreeReductionStageData" }
+          ]
+        }
+      ]
+    }
+  ]
+}

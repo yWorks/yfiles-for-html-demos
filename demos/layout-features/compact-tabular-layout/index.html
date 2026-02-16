@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -79,24 +79,24 @@
       <div class="demo-description__content">
         <h1>Compact Tabular Layout</h1>
         <p>
-          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayout" class="api" target="_blank">TabularLayout</a> to create compact
+          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/api/TabularLayout" class="api" target="_blank">TabularLayout</a> to create compact
           drawings.
         </p>
         <p>
           The algorithm tries to calculate an arrangement that minimizes edge lengths. Since tabular
-          layout only supports straight-line edges, <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a> is used to
+          layout only supports straight-line edges, <a href="https://docs.yworks.com/yfileshtml/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a> is used to
           calculate the final edge paths.
         </p>
         <p>
           Selecting the <em>Preserve Aspect Ratio</em> button in the toolbar switches the layout
-          mode to <a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayoutMode#FIXED_SIZE" class="api" target="_blank">FIXED_SIZE</a>, maintaining a layout
-          aspect ratio similar to that of the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a>. In contrast,
-          deselecting it uses <a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayoutMode#AUTO_SIZE" class="api" target="_blank">AUTO_SIZE</a> mode for
+          mode to <a href="https://docs.yworks.com/yfileshtml/api/TabularLayoutMode#FIXED_SIZE" class="api" target="_blank">FIXED_SIZE</a>, maintaining a layout
+          aspect ratio similar to that of the <a href="https://docs.yworks.com/yfileshtml/api/GraphComponent" class="api" target="_blank">GraphComponent</a>. In contrast,
+          deselecting it uses <a href="https://docs.yworks.com/yfileshtml/api/TabularLayoutMode#AUTO_SIZE" class="api" target="_blank">AUTO_SIZE</a> mode for
           maximum compactness.
         </p>
         <p>
           In <code>FIXED_SIZE</code> mode, the layout algorithm requires a
-          <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutGrid" class="api" target="_blank">LayoutGrid</a> to define the layout&#39;s columns and rows. In
+          <a href="https://docs.yworks.com/yfileshtml/api/LayoutGrid" class="api" target="_blank">LayoutGrid</a> to define the layout&#39;s columns and rows. In
           <code>AUTO_SIZE</code> mode, a grid is optional, though it can be used to specify spacing
           between auto-calculated columns and rows.
         </p>
@@ -106,9 +106,9 @@
         </ul>
         <h2>Documentation</h2>
         <ul>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/tabular_layout" class="dguide" target="_blank">Tabular layout algorithm</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayout" class="api" target="_blank">TabularLayout</a> class</li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/TabularLayoutData" class="api" target="_blank">TabularLayoutData</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/dguide/tabular_layout" class="dguide" target="_blank">Tabular layout algorithm</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/TabularLayout" class="api" target="_blank">TabularLayout</a> class</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/TabularLayoutData" class="api" target="_blank">TabularLayoutData</a> class</li>
         </ul>
       </div>
     </aside>
@@ -116,7 +116,7 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-      <div id="demo-message" class="demo-message"></div>
+      <div class="yplay__message-host"></div>
     </div>
     <script
       type="module"

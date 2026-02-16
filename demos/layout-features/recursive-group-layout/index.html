@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -79,23 +79,23 @@
       <div class="demo-description__content">
         <h1>Recursive Group Layout</h1>
         <p>
-          This demo shows how to use the <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" class="api" target="_blank">RecursiveGroupLayout</a> algorithm to apply
+          This demo shows how to use the <a href="https://docs.yworks.com/yfileshtml/api/RecursiveGroupLayout" class="api" target="_blank">RecursiveGroupLayout</a> algorithm to apply
           a specific layout algorithm to the contents (direct children) of each group node.
         </p>
         <p>
           In this demo,
-          <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayoutData#groupNodeLayouts" class="api" target="_blank">a different layout algorithm</a>
+          <a href="https://docs.yworks.com/yfileshtml/api/RecursiveGroupLayoutData#groupNodeLayouts" class="api" target="_blank">a different layout algorithm</a>
           is used for each group node:
         </p>
         <ul>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> for group 1</li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a> for group 2</li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/RadialLayout" class="api" target="_blank">RadialLayout</a> for group 3</li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout#FIX_CONTENT_LAYOUT" class="api" target="_blank">No layout</a> for group 4</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> for group 1</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a> for group 2</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/RadialLayout" class="api" target="_blank">RadialLayout</a> for group 3</li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/RecursiveGroupLayout#FIX_CONTENT_LAYOUT" class="api" target="_blank">No layout</a> for group 4</li>
         </ul>
         <p>
           As the child nodes of group node 4 already have predefined layout values in the graph
-          data, <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout#FIX_CONTENT_LAYOUT" class="api" target="_blank">FIX_CONTENT_LAYOUT</a> is used,
+          data, <a href="https://docs.yworks.com/yfileshtml/api/RecursiveGroupLayout#FIX_CONTENT_LAYOUT" class="api" target="_blank">FIX_CONTENT_LAYOUT</a> is used,
           which only calculates the size of the group node itself and does not alter the layout of
           its children.
         </p>
@@ -105,10 +105,9 @@
         </p>
         <h2>Documentation</h2>
         <ul>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/recursive_group_layout" class="dguide" target="_blank">Recursive group layout</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayoutData#groupNodeLayouts" class="api" target="_blank">groupNodeLayouts</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" class="api" target="_blank">RecursiveGroupLayout</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayoutData" class="api" target="_blank">RecursiveGroupLayoutData</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/RecursiveGroupLayoutData#groupNodeLayouts" class="api" target="_blank">groupNodeLayouts</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/RecursiveGroupLayout" class="api" target="_blank">RecursiveGroupLayout</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/RecursiveGroupLayoutData" class="api" target="_blank">RecursiveGroupLayoutData</a></li>
         </ul>
       </div>
     </aside>
@@ -116,7 +115,7 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-      <div id="demo-message" class="demo-message"></div>
+      <div class="yplay__message-host"></div>
     </div>
     <script
       type="module"

@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 This demo shows how edge bundling can be applied for reducing visual cluttering in dense graphs.
 
-The edge curves are drawn using piecewise cubic bezier curves with gradient colors from dark-blue (that starts from the source node) to light-blue (that leads to the target node of the edge). For the approximation of the edge curves, a [CurveFittingStage](https://docs.yworks.com/yfileshtml/#/api/CurveFittingStage) is applied.
+The edge curves are drawn using piecewise cubic bezier curves with gradient colors from dark-blue (that starts from the source node) to light-blue (that leads to the target node of the edge). For the approximation of the edge curves, a [CurveFittingStage](https://docs.yworks.com/yfileshtml/api/CurveFittingStage) is applied.
 
 For circular layouts, a circular-sector style is used for the visualization of the nodes.
 

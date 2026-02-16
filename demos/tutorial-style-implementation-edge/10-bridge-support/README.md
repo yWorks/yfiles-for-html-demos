@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ When there are a lot of crossing edges, especially when they are orthogonal, it 
 
 Bridges, or line jumps, are a means to resolve the visual ambiguity induced by intersecting edge paths. Each segment of an edge path that intersects with at least one other segment (from either the same or another edge path) can be augmented with a bridge in one of a variety of different styles like gap, arc, and rectangle.
 
-Bridge rendering is handled by the [BridgeManager](https://docs.yworks.com/yfileshtml/#/api/BridgeManager) class. It can be enabled by assigning the GraphComponent to BridgeManager’s canvasComponent property. To determine obstacles, the BridgeManager instance uses an implementation of the [IObstacleProvider](https://docs.yworks.com/yfileshtml/#/api/IObstacleProvider) interface. We use the [GraphObstacleProvider](https://docs.yworks.com/yfileshtml/#/api/GraphObstacleProvider) that by default incorporates the obstacle definitions returned by all edges from the current graph.
+Bridge rendering is handled by the [BridgeManager](https://docs.yworks.com/yfileshtml/api/BridgeManager) class. It can be enabled by assigning the GraphComponent to [BridgeManager.canvasComponent](https://docs.yworks.com/yfileshtml/api/BridgeManager#canvasComponent) property. To determine obstacles, the BridgeManager instance uses an implementation of the [IObstacleProvider](https://docs.yworks.com/yfileshtml/api/IObstacleProvider) interface. We use the [GraphObstacleProvider](https://docs.yworks.com/yfileshtml/api/GraphObstacleProvider) that by default incorporates the obstacle definitions returned by all edges from the current graph.
 
 ```
 const bridgeManager = new BridgeManager()
@@ -55,7 +55,7 @@ private createPathWithBridges(
 }
 ```
 
-The BridgeManager provides a [hash code](https://docs.yworks.com/yfileshtml/#/api/BridgeManager#getObstacleHash) that describes the current obstacle locations.
+The [BridgeManager.getObstacleHash](https://docs.yworks.com/yfileshtml/api/BridgeManager#getObstacleHash) provides a hash code that describes the current obstacle locations.
 
 ```
 private getObstacleHash(context: IRenderContext): number {
@@ -64,7 +64,7 @@ private getObstacleHash(context: IRenderContext): number {
 }
 ```
 
-We cache that hash code in `createVisual` and use it in `updateVisual` to check for changes, and if so we update the data of the paths.
+We cache that hash code in the [createVisual](https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#createVisual) method and use it in the [updateVisual](https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#updateVisual) method to check for changes, and if so we update the data of the paths.
 
 ```
 const newGeneralPath = super.getPath(edge)!

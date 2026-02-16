@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@
 
 This demo shows different ways to render and style the overview:
 
-- With HTML Canvas by extending [GraphOverviewRenderer](https://docs.yworks.com/yfileshtml/#/api/GraphOverviewRenderer).
-- With SVG using a custom [IObjectRenderer](https://docs.yworks.com/yfileshtml/#/api/IObjectRenderer).
-- With a [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) that uses the [OverviewInputMode](https://docs.yworks.com/yfileshtml/#/api/OverviewInputMode).
+- With HTML Canvas by extending [GraphOverviewRenderer](https://docs.yworks.com/yfileshtml/api/GraphOverviewRenderer).
+- With SVG using a custom [IObjectRenderer](https://docs.yworks.com/yfileshtml/api/IObjectRenderer).
+- With a [GraphComponent](https://docs.yworks.com/yfileshtml/api/GraphComponent) that uses the [OverviewInputMode](https://docs.yworks.com/yfileshtml/api/OverviewInputMode).
 
 ## Things to Try
 

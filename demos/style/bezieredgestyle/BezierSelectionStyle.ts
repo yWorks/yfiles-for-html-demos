@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -57,11 +57,11 @@ import {
  * Custom selection style that renders a line segment for collinear control point triples
  */
 class SelectionEdgeStyle extends DelegatingEdgeStyle {
-    private delegatingStyle: IEdgeStyle;
+  private delegatingStyle: IEdgeStyle
 
   constructor(delegatingStyle: IEdgeStyle) {
     super()
-      this.delegatingStyle = delegatingStyle;
+    this.delegatingStyle = delegatingStyle
   }
 
   protected getStyle(edge: IEdge): IEdgeStyle {
@@ -147,17 +147,14 @@ class CompositeRenderer extends BaseClass(
   IVisibilityTestable,
   IHitTestable
 ) {
-    second: IObjectRenderer;
-    first: IObjectRenderer;
+  second: IObjectRenderer
+  first: IObjectRenderer
   public renderTag: object | null = null
 
-  constructor(
-    first: IObjectRenderer,
-    second: IObjectRenderer
-  ) {
+  constructor(first: IObjectRenderer, second: IObjectRenderer) {
     super()
-      this.first = first;
-      this.second = second;
+    this.first = first
+    this.second = second
   }
 
   configure(renderTag: object) {

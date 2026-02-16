@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@
 
 This demo shows how to change the color of nodes and edges using drag and drop operations.
 
-yFiles for HTML comes with predefined drag and drop support to create [nodes](https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode), [labels](https://docs.yworks.com/yfileshtml/#/api/LabelDropInputMode) and [ports](https://docs.yworks.com/yfileshtml/#/api/PortDropInputMode). Instead of creating new elements, this demo shows how you can modify existing elements using a drag and drop operation.
+yFiles for HTML comes with predefined drag and drop support to create [nodes](https://docs.yworks.com/yfileshtml/api/NodeDropInputMode), [labels](https://docs.yworks.com/yfileshtml/api/LabelDropInputMode) and [ports](https://docs.yworks.com/yfileshtml/api/PortDropInputMode). Instead of creating new elements, this demo shows how you can modify existing elements using a drag and drop operation.
 
-As an example, the demo uses an implementation of the [DropInputMode](https://docs.yworks.com/yfileshtml/#/api/DropInputMode), which changes the color of nodes and edges when dropping on them.
+As an example, the demo uses an implementation of the [DropInputMode](https://docs.yworks.com/yfileshtml/api/DropInputMode), which changes the color of nodes and edges when dropping on them.
 
 ## Things to Try
 

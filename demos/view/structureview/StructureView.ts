@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -74,7 +74,7 @@ const DummyFoldingView: FoldingViewType = {
  * a checkbox state and CSS selectors. Therefore, the corresponding CSS file is required.
  */
 export class StructureView {
-    private graph: IGraph;
+  private graph: IGraph
   /**
    * The text for nodes that do not have a label.
    */
@@ -102,11 +102,8 @@ export class StructureView {
    * @param selector The selector for the container in which the structure view should be created.
    * @param graph The graph which is represented by the structure view
    */
-  constructor(
-    selector: string,
-    graph: IGraph
-  ) {
-      this.graph = graph;
+  constructor(selector: string, graph: IGraph) {
+    this.graph = graph
     this.nodeToElement = new HashMap()
     this.rootListElement = document.createElement('ol')
 

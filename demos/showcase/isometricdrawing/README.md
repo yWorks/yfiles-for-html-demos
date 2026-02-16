@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,11 +17,11 @@
 
 This demo displays graphs isometrically, adding an additional dimension to the visualization. This can be used to represent characteristics of the business data as height, or just because of the beautiful looks.
 
-In this demo, WebGL is used for the rendering but the [projection](https://docs.yworks.com/yfileshtml/#/dguide/projections-main) feature of yFiles for HTML supports SVG and HTML Canvas rendering, too.
+In this demo, WebGL is used for the rendering but the [projection](https://docs.yworks.com/yfileshtml/dguide/projections-main) feature of yFiles for HTML supports SVG and HTML Canvas rendering, too.
 
 ## Interaction
 
-This demo features the full range of interactions [supported by yFiles](https://docs.yworks.com/yfileshtml/#/dguide/interaction-support). In addition, each node has an special handle at its top to change the height of the node.
+This demo features the full range of interactions [supported by yFiles](https://docs.yworks.com/yfileshtml/dguide/interaction-support). In addition, each node has an special handle at its top to change the height of the node.
 
 ## Things to Try
 

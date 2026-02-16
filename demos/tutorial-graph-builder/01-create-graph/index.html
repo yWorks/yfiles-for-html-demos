@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -133,14 +133,14 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  This tutorial will guide you through configuring <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> to
+                  This tutorial will guide you through configuring <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> to
                   conveniently transfer business data into a graph that you can display, manage and
                   explore.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> is a class which supports loading data from
+                  <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> is a class which supports loading data from
                   different&#8201;&#8212;&#8201;and even multiple&#8201;&#8212;&#8201;sources. It
                   uses the data to construct the graph structure and provides multiple options to
                   assign visualizations to the graph elements and add labels.
@@ -148,7 +148,7 @@
               </div>
               <div class="paragraph">
                 <p>
-                  Another feature of <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> is the possibility to update the
+                  Another feature of <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> is the possibility to update the
                   graph when the business data changes. It allows for specific changes without
                   rebuilding the graph from scratch.
                 </p>
@@ -160,7 +160,7 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  Before starting with <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>, let&#8217;s have a look at some
+                  Before starting with <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>, let&#8217;s have a look at some
                   sample data. It describes two entities representing two persons and a connection
                   between them.
                 </p>
@@ -187,13 +187,13 @@
               </div>
               <div class="paragraph">
                 <p>
-                  Now, we are using <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> to create a graph containing two
+                  Now, we are using <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> to create a graph containing two
                   nodes that are connected. First, we create an instance of
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> and associate it with an
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" class="api" target="_blank">IGraph</a> instance. Most often the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#graph" class="api" target="_blank">GraphComponent&#8217;s graph</a> property is
-                  used for this purpose. Then, data sources are added for nodes and for edges.
-                  Finally, <code>buildGraph()</code> creates the graph.
+                  <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> and associate it with an
+                  <a href="https://docs.yworks.com/yfileshtml/api/IGraph" class="api" target="_blank">IGraph</a> instance. Most often the
+                  <a href="https://docs.yworks.com/yfileshtml/api/GraphComponent#graph" class="api" target="_blank">GraphComponent.graph</a> property is used for this purpose. Then,
+                  data sources are added for nodes and for edges. Finally, calling the
+                  <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder#buildGraph" class="api" target="_blank">buildGraph</a> method creates the graph.
                 </p>
               </div>
               <div class="listingblock">
@@ -247,31 +247,31 @@ graphBuilder.<span class="hljs-title function_">buildGraph</span>()</code></pre>
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  This tutorial focuses on the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> class which is used when
+                  This tutorial focuses on the <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> class which is used when
                   the data describes a general graph with information about nodes and edges.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   There are two other graph builder classes that are better suited for specific
-                  scenarios: <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" class="api" target="_blank">TreeBuilder</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" class="api" target="_blank">AdjacencyGraphBuilder</a>.
-                  In principle, they work the same as <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. They only differ
+                  scenarios: <a href="https://docs.yworks.com/yfileshtml/api/TreeBuilder" class="api" target="_blank">TreeBuilder</a> and <a href="https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder" class="api" target="_blank">AdjacencyGraphBuilder</a>.
+                  In principle, they work the same as <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. They only differ
                   in the way the node and edge sources are configured.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" class="api" target="_blank">TreeBuilder</a> is designed to create a graph from data that has a
-                  tree structure and <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" class="api" target="_blank">AdjacencyGraphBuilder</a> applies when the
+                  <a href="https://docs.yworks.com/yfileshtml/api/TreeBuilder" class="api" target="_blank">TreeBuilder</a> is designed to create a graph from data that has a
+                  tree structure and <a href="https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder" class="api" target="_blank">AdjacencyGraphBuilder</a> applies when the
                   connections between the elements are not separately specified in the data.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   See the steps about
-                  <a href="../12-adjacency-graph-builder/">AdjacencyGraphBuilder</a> and
-                  <a href="../13-tree-builder/">TreeBuilder</a> of this tutorial for an explanation
-                  on how these classes work.
+                  <a href="../../tutorial-graph-builder/12-adjacency-graph-builder/" class="demo" target="_blank">Adjacency Graph Builder</a> and
+                  <a href="../../tutorial-graph-builder/13-tree-builder/" class="demo" target="_blank">Tree Builder</a> of this tutorial for an
+                  explanation on how these classes work.
                 </p>
               </div>
             </div>

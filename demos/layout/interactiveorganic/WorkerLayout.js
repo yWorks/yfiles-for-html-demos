@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -75,6 +75,14 @@ self.addEventListener('message', (event) => {
     case 'drag-finished':
       handleDragFinished(message)
       break
+    case 'node-changed':
+      handleNodeChanged(message)
+      graphSynchronizer.acceptMessage(message)
+      break
+    case 'edge-changed':
+      handleEdgeChanged(message)
+      graphSynchronizer.acceptMessage(message)
+      break
     default:
       graphSynchronizer.acceptMessage(message)
       break
@@ -110,6 +118,19 @@ function handleDragFinished(message) {
   const draggedNode = graphSynchronizer.getItem(message.nodeId)
   const draggedComponent = getNodesForIds(message.componentIds)
   layoutHelper.finishDrag(draggedNode, draggedComponent)
+}
+
+function handleNodeChanged(message) {
+  const changedNode = graphSynchronizer.getItem(message.nodeId)
+  const closeNeighbors = getNodesForIds(message.neighborsIds)
+  layoutHelper.updateLayoutAfterStructuralChange([changedNode], closeNeighbors)
+}
+
+function handleEdgeChanged(message) {
+  const sourceNode = graphSynchronizer.getItem(message.sourceId)
+  const targetNode = graphSynchronizer.getItem(message.targetId)
+  const closeNeighbors = getNodesForIds(message.neighborsIds)
+  layoutHelper.updateLayoutAfterStructuralChange([sourceNode, targetNode], closeNeighbors)
 }
 
 function getNodesForIds(ids) {

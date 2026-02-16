@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,15 +15,15 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/07-create-labels-sources/).
 
-In this tutorial step, you will learn how to configure [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) in order to add labels to the visualization.
+In this tutorial step, you will learn how to configure [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) in order to add labels to the visualization.
 
 Note
 
-This step is optional when building a graph with [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder). If you do not want to add labels to your graph, you can proceed with the next step.
+This step is optional when building a graph with [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder). If you do not want to add labels to your graph, you can proceed with the next step.
 
 ## Loading node label information
 
-There are three ways to add labels to the visualization using [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder). You can use _bindings_ or load the labels from their own _sources_ on the [NodeCreator](https://docs.yworks.com/yfileshtml/#/api/NodeCreator).
+There are three ways to add labels to the visualization using [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder). You can use _bindings_ or load the labels from their own _sources_ on the [NodeCreator](https://docs.yworks.com/yfileshtml/api/NodeCreator).
 
 For this step, we will use a simple company ownership diagram.
 
@@ -42,7 +42,7 @@ const nodesSource = graphBuilder.createNodesSource(nodeData, 'id')
 nodesSource.nodeCreator.createLabelBinding((data) => data.name)
 ```
 
-The label binding can also be set explicitly using the [text provider](https://docs.yworks.com/yfileshtml/#/api/LabelCreator#textProvider) property. In this example, the label text is converted to upper-case to show that text can be augmented.
+The label binding can also be set explicitly using the [textProvider](https://docs.yworks.com/yfileshtml/api/LabelCreator#textProvider) property. In this example, the label text is converted to upper-case to show that text can be augmented.
 
 ```
 const nodeData = [{ id: '2', name: 'Monster Inc' }]
@@ -55,7 +55,7 @@ labelCreator.textProvider = (data): string => data.name.toUpperCase()
 
 ### Creating labels from their own sources
 
-If the node data contains a varying number of label data, you can use a [LabelsSource](https://docs.yworks.com/yfileshtml/#/api/LabelsSource) to create the labels. For instance, take a look at the dataset below where the label information is stored in the `owners` property.
+If the node data contains a varying number of label data, you can use a [LabelsSource](https://docs.yworks.com/yfileshtml/api/LabelsSource) to create the labels. For instance, take a look at the dataset below where the label information is stored in the `owners` property.
 
 ```
 const nodeData = [

@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/06-configure-styles/).
 
-[GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) supports various approaches for styling the graph elements. They range from simple default visualizations to accessing the business data for defining specific styles.
+[GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) supports various approaches for styling the graph elements. They range from simple default visualizations to accessing the business data for defining specific styles.
 
 We will now style the nodes and edges in the graph using a simple company ownership diagram with the following types.
 
@@ -31,7 +31,7 @@ type ConnectionData = { sourceId: string; targetId: string; ownership: number }
 
 ## Node styling
 
-There are basically three ways to style nodes using GraphBuilder: Specifically, you can set _default styles_, _style_ _bindings_ and _style_ _providers_ on the [NodeCreator](https://docs.yworks.com/yfileshtml/#/api/NodeCreator).
+There are basically three ways to style nodes using GraphBuilder: Specifically, you can set _default styles_, _style_ _bindings_ and _style_ _providers_ via the [NodesSource.nodeCreator](https://docs.yworks.com/yfileshtml/api/NodesSource#nodeCreator) property.
 
 ### Default styles
 
@@ -47,7 +47,7 @@ nodesSource.nodeCreator.defaults.style = new ShapeNodeStyle({
 
 ### Style bindings
 
-To style specific attributes of the default style defined above using business data, use _style_ _bindings._ In this example, we bind the stroke and thickness of the [ShapeNodeStyle](https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle) to the `currency` property of the displayed data item.
+To style specific attributes of the default style defined above using business data, use _style_ _bindings._ In this example, we bind the stroke and thickness of the [ShapeNodeStyle](https://docs.yworks.com/yfileshtml/api/ShapeNodeStyle) to the `currency` property of the displayed data item.
 
 Note
 
@@ -70,7 +70,7 @@ nodesSource.nodeCreator.styleBindings.addBinding(
 
 ### Style providers
 
-In contrast to a style _binding_, a _style provider_ returns complete [INodeStyle](https://docs.yworks.com/yfileshtml/#/api/INodeStyle)s, usually involving some calculations with the provided node data. In this example, different [ShapeNodeStyle](https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle)s are returned depending on the `type` of entity represented by the node:
+In contrast to a style _binding_, a _style provider_ returns complete [INodeStyle](https://docs.yworks.com/yfileshtml/api/INodeStyle)s, usually involving some calculations with the provided node data. In this example, different [ShapeNodeStyle](https://docs.yworks.com/yfileshtml/api/ShapeNodeStyle)s are returned depending on the `type` of entity represented by the node:
 
 ```
 nodesSource.nodeCreator.styleProvider = (

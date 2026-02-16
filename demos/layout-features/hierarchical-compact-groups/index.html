@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -79,14 +79,14 @@
       <div class="demo-description__content">
         <h1>Hierarchical Layout with Compact Groups</h1>
         <p>
-          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> and the
-          corresponding <a href="https://docs.yworks.com/yfileshtml/#/api/CoordinateAssigner" class="api" target="_blank">CoordinateAssigner</a> to draw compacter group nodes than
+          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> and the
+          corresponding <a href="https://docs.yworks.com/yfileshtml/api/CoordinateAssigner" class="api" target="_blank">CoordinateAssigner</a> to draw compacter group nodes than
           default.
         </p>
         <h2>Layer Compaction</h2>
         <p>
           The width of group nodes (for left-to-right layouts) can be reduced by enabling
-          <a href="https://docs.yworks.com/yfileshtml/#/api/GroupLayeringPolicy#RECURSIVE_COMPACT" class="api" target="_blank">recursive group layering with compaction</a>. This minimizes the number of layers a group spans.
+          <a href="https://docs.yworks.com/yfileshtml/api/GroupLayeringPolicy#RECURSIVE_COMPACT" class="api" target="_blank">recursive group layering with compaction</a>. This minimizes the number of layers a group spans.
         </p>
         <p>
           In this demo, you can observe the effect on &#39;Group 3&#39;, which shares its first
@@ -98,9 +98,9 @@
           height for left-to-right layouts), adjust these properties:
         </p>
         <ul>
-          <li>Enable <a href="https://docs.yworks.com/yfileshtml/#/api/CoordinateAssigner#groupCompaction" class="api" target="_blank">groupCompaction</a>.</li>
+          <li>Enable <a href="https://docs.yworks.com/yfileshtml/api/CoordinateAssigner#groupCompaction" class="api" target="_blank">groupCompaction</a>.</li>
           <li>
-            Disable <a href="https://docs.yworks.com/yfileshtml/#/api/CoordinateAssigner#bendReduction" class="api" target="_blank">bendReduction</a> to prioritize
+            Disable <a href="https://docs.yworks.com/yfileshtml/api/CoordinateAssigner#bendReduction" class="api" target="_blank">bendReduction</a> to prioritize
             compaction over reducing bends.
           </li>
         </ul>
@@ -111,11 +111,11 @@
         </p>
         <h2>Documentation</h2>
         <ul>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout" class="dguide" target="_blank">Hierarchical Layout</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/dguide/hierarchical_layout" class="dguide" target="_blank">Hierarchical Layout</a></li>
           <li>
-            <a href="https://docs.yworks.com/yfileshtml/#/dguide/hierarchical_layout#hierarchical_layout-grouping" class="dguide" target="_blank">Hierarchical Layout with Groups</a>
+            <a href="https://docs.yworks.com/yfileshtml/dguide/hierarchical_layout#hierarchical_layout-grouping" class="dguide" target="_blank">Hierarchical Layout with Groups</a>
           </li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a></li>
         </ul>
       </div>
     </aside>
@@ -123,7 +123,7 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-      <div id="demo-message" class="demo-message"></div>
+      <div class="yplay__message-host"></div>
     </div>
     <script
       type="module"

@@ -6,9 +6,9 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "body-parser": "^1.20.2",
-    "data-uri-to-buffer": "^3.0.1",
-    "express": "^5.1.0",
-    "puppeteer": "^24.25.0"
+    "body-parser": "^2.2.1",
+    "data-uri-to-buffer": "^6.0.2",
+    "express": "^5.2.1",
+    "puppeteer": "^24.34.0"
   }
 }

@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,11 +17,11 @@
 
 This step shows how to implement a visualization of a custom arrow that fits the "parallel line"-edge style.
 
-Custom arrow implementations are based on the [IArrow](https://docs.yworks.com/yfileshtml/#/api/IArrow) interface. [IArrow](https://docs.yworks.com/yfileshtml/#/api/IArrow) defines the two methods `getVisualCreator` and `getBoundsProvider`, which return the implementations that create the visualization and specify the bounds of the arrow. In this sample, we implement all three interfaces in a single class.
+Custom arrow implementations are based on the [IArrow](https://docs.yworks.com/yfileshtml/api/IArrow) interface. [IArrow](https://docs.yworks.com/yfileshtml/api/IArrow) defines the two methods [getVisualCreator](https://docs.yworks.com/yfileshtml/api/IArrow#getVisualCreator) and [getBoundsProvider](https://docs.yworks.com/yfileshtml/api/IArrow#getBoundsProvider), which return the implementations that create the visualization and specify the bounds of the arrow. In this sample, we implement all three interfaces in a single class.
 
 ## Implementing IArrow
 
-In the `getVisualCreator` method, we store the anchor and direction of the arrow. Then, we simply return `this`, since our class itself will implement the \`IVisualCreator\`interface.
+In the [getVisualCreator](https://docs.yworks.com/yfileshtml/api/IArrow#getVisualCreator) method, we store the anchor and direction of the arrow. Then, we simply return `this`, since our class itself will implement the [IVisualCreator](https://docs.yworks.com/yfileshtml/api/IVisualCreator) interface.
 
 ```
 getVisualCreator(
@@ -36,7 +36,7 @@ getVisualCreator(
 }
 ```
 
-In the `getBoundsProvider` method, we do the same before we return `this`.
+In the [getBoundsProvider](https://docs.yworks.com/yfileshtml/api/IArrow#getBoundsProvider) method, we do the same before we return `this`.
 
 ```
 getBoundsProvider(
@@ -51,7 +51,7 @@ getBoundsProvider(
 }
 ```
 
-In the last tutorial step, we used the methods `addArrows` and `updateArrows` to add the arrow visualizations to the edge visualization. These methods need the length of the arrow to shorten the edge path accordingly and the crop length to position the arrow exactly at the node. To achieve this, we implement the according properties in the [IArrow](https://docs.yworks.com/yfileshtml/#/api/IArrow) interface.
+In the last tutorial step, we used the methods [addArrows](https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#addArrows) and [updateArrows](https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#updateArrows) to add the arrow visualizations to the edge visualization. These methods need the length of the arrow to shorten the edge path accordingly and the crop length to position the arrow exactly at the node. To achieve this, we implement the according properties in the [IArrow](https://docs.yworks.com/yfileshtml/api/IArrow) interface.
 
 ```
 get length(): number {
@@ -65,9 +65,9 @@ get cropLength(): number {
 
 ## Implementing IVisualCreator
 
-To create an arrow visualization, we have to implement the [IVisualCreator](https://docs.yworks.com/yfileshtml/#/api/IVisualCreator) interface.
+To create an arrow visualization, we have to implement the [IVisualCreator](https://docs.yworks.com/yfileshtml/api/IVisualCreator) interface.
 
-We create the visualization for the arrow in `createVisual`. If it is called for the first time, we generate a path for the arrowhead. This path must point from the right side to the origin (0/0).
+We create the visualization for the arrow in the [createVisual](https://docs.yworks.com/yfileshtml/api/IVisualCreator#createVisual) method. If it is called for the first time, we generate a path for the arrowhead. This path must point from the right side to the origin (0/0).
 
 ```
 createArrowPath(dist: number): GeneralPath {
@@ -111,7 +111,7 @@ createVisual(context: IRenderContext): SvgVisual {
 }
 ```
 
-We update the visualization in `updateVisual` by applying the current anchor, direction and distance, if modified.
+We update the visualization in [updateVisual](https://docs.yworks.com/yfileshtml/api/IVisualCreator#updateVisual) by applying the current anchor, direction and distance, if modified.
 
 ```
 updateVisual(context: IRenderContext, oldVisual: Visual): SvgVisual {
@@ -142,13 +142,13 @@ updateVisual(context: IRenderContext, oldVisual: Visual): SvgVisual {
 
 ## Implementing IBoundsProvider
 
-To calculate the arrow bounds, we have to implement the [IBoundsProvider](https://docs.yworks.com/yfileshtml/#/api/IBoundsProvider) interface.
+To calculate the arrow bounds, we have to implement the [IBoundsProvider](https://docs.yworks.com/yfileshtml/api/IBoundsProvider) interface.
 
 Note
 
-The edge style can consider the arrow bounds in its own bounds calculation. You could adjust the `getBounds` method of the edge style accordingly. However, this is outside the scope of this tutorial.
+The edge style can consider the arrow bounds in its own bounds calculation. You can adjust the [getBounds](https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#getBounds) method of the edge style accordingly. However, this is outside the scope of this tutorial.
 
-In `getBounds` we use the stored values to calculate the arrow’s bounds.
+In the [getBounds](https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#getBounds) method, we use the stored values to calculate the arrow’s bounds.
 
 ```
 getBounds(context: ICanvasContext): Rect {

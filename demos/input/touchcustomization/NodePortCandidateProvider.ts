@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -42,7 +42,7 @@ import {
  * This port candidate provider provides port candidates at each side and in the center of a node.
  */
 export class NodePortCandidateProvider extends PortCandidateProviderBase {
-    private node: INode;
+  private node: INode
 
   /**
    * Creates a new instance of {@link NodePortCandidateProvider}.
@@ -50,7 +50,7 @@ export class NodePortCandidateProvider extends PortCandidateProviderBase {
    */
   constructor(node: INode) {
     super()
-      this.node = node;
+    this.node = node
   }
 
   /**

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -52,14 +52,14 @@ export * from './demo-app'
 export class DefaultApp implements DemoApp {
   private readonly signal?: AbortSignal | undefined
   private readonly graphComponent: GraphComponent
-  private readonly messageRoot: HTMLDivElement
+  private messageRoot: HTMLDivElement | null
   readonly toolbar: Menu
   readonly sidebar: Menu
 
   constructor(
     toolbarFactory: () => HTMLDivElement,
     sidebarFactory: () => HTMLDivElement,
-    messageRoot: HTMLDivElement,
+    messageRoot: HTMLDivElement | null,
     graphComponent: GraphComponent,
     signal?: AbortSignal | undefined
   ) {
@@ -196,6 +196,13 @@ export class DefaultApp implements DemoApp {
     content: string | HTMLElement,
     duration: TimeSpan | TimeSpanConvertible = 1000
   ): Promise<void> {
+    // create a message container if none was given
+    if (!this.messageRoot && this.graphComponent.htmlElement.parentElement) {
+      this.messageRoot = document.createElement('div')
+      this.messageRoot.className = 'yplay__message-host'
+      this.graphComponent.htmlElement.parentElement.appendChild(this.messageRoot)
+    }
+
     return show(content, duration, this.messageRoot, this.signal)
   }
 }

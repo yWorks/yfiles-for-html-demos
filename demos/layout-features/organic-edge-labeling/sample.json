@@ -22,173 +22,33 @@
     { "id": 19, "layout": { "x": 645, "y": 422, "width": 30, "height": 30 } }
   ],
   "edges": [
-    {
-      "id": 0,
-      "source": 0,
-      "target": 11,
-      "labels": "Source"
-    },
-    {
-      "id": 1,
-      "source": 0,
-      "target": 8,
-      "labels": "Source"
-    },
-    {
-      "id": 2,
-      "source": 0,
-      "target": 19,
-      "labels": "Center"
-    },
-    {
-      "id": 3,
-      "source": 0,
-      "target": 2,
-      "labels": "Target"
-    },
-    {
-      "id": 4,
-      "source": 11,
-      "target": 4,
-      "labels": "Target"
-    },
-    {
-      "id": 5,
-      "source": 11,
-      "target": 18,
-      "labels": "Center"
-    },
-    {
-      "id": 6,
-      "source": 8,
-      "target": 7,
-      "labels": "Center"
-    },
-    {
-      "id": 7,
-      "source": 19,
-      "target": 13,
-      "labels": "Target"
-    },
-    {
-      "id": 8,
-      "source": 19,
-      "target": 2,
-      "labels": "Center"
-    },
-    {
-      "id": 9,
-      "source": 19,
-      "target": 17,
-      "labels": "Target"
-    },
-    {
-      "id": 10,
-      "source": 19,
-      "target": 15,
-      "labels": "Source"
-    },
-    {
-      "id": 11,
-      "source": 19,
-      "target": 10,
-      "labels": "Source"
-    },
-    {
-      "id": 12,
-      "source": 13,
-      "target": 7,
-      "labels": "Target"
-    },
-    {
-      "id": 13,
-      "source": 13,
-      "target": 17,
-      "labels": "Source"
-    },
-    {
-      "id": 14,
-      "source": 2,
-      "target": 15,
-      "labels": "Target"
-    },
-    {
-      "id": 15,
-      "source": 2,
-      "target": 1,
-      "labels": "Source"
-    },
-    {
-      "id": 16,
-      "source": 4,
-      "target": 18,
-      "labels": "Source"
-    },
-    {
-      "id": 17,
-      "source": 16,
-      "target": 6,
-      "labels": "Center"
-    },
-    {
-      "id": 18,
-      "source": 7,
-      "target": 14,
-      "labels": "Center"
-    },
-    {
-      "id": 19,
-      "source": 17,
-      "target": 5,
-      "labels": "Source"
-    },
-    {
-      "id": 20,
-      "source": 15,
-      "target": 10,
-      "labels": "Source"
-    },
-    {
-      "id": 21,
-      "source": 15,
-      "target": 12,
-      "labels": "Target"
-    },
-    {
-      "id": 22,
-      "source": 6,
-      "target": 9,
-      "labels": "Center"
-    },
-    {
-      "id": 23,
-      "source": 5,
-      "target": 3,
-      "labels": "Center"
-    },
-    {
-      "id": 24,
-      "source": 10,
-      "target": 9,
-      "labels": "Parallel"
-    },
-    {
-      "id": 25,
-      "source": 10,
-      "target": 9,
-      "labels": "Parallel Target"
-    },
-    {
-      "id": 26,
-      "source": 10,
-      "target": 9,
-      "labels": "Parallel Source"
-    },
-    {
-      "id": 27,
-      "source": 3,
-      "target": 3,
-      "labels": "Self-loop"
-    }
+    { "id": 0, "source": 0, "target": 11, "labels": "Source" },
+    { "id": 1, "source": 0, "target": 8, "labels": "Source" },
+    { "id": 2, "source": 0, "target": 19, "labels": "Center" },
+    { "id": 3, "source": 0, "target": 2, "labels": "Target" },
+    { "id": 4, "source": 11, "target": 4, "labels": "Target" },
+    { "id": 5, "source": 11, "target": 18, "labels": "Center" },
+    { "id": 6, "source": 8, "target": 7, "labels": "Center" },
+    { "id": 7, "source": 19, "target": 13, "labels": "Target" },
+    { "id": 8, "source": 19, "target": 2, "labels": "Center" },
+    { "id": 9, "source": 19, "target": 17, "labels": "Target" },
+    { "id": 10, "source": 19, "target": 15, "labels": "Source" },
+    { "id": 11, "source": 19, "target": 10, "labels": "Source" },
+    { "id": 12, "source": 13, "target": 7, "labels": "Target" },
+    { "id": 13, "source": 13, "target": 17, "labels": "Source" },
+    { "id": 14, "source": 2, "target": 15, "labels": "Target" },
+    { "id": 15, "source": 2, "target": 1, "labels": "Source" },
+    { "id": 16, "source": 4, "target": 18, "labels": "Source" },
+    { "id": 17, "source": 16, "target": 6, "labels": "Center" },
+    { "id": 18, "source": 7, "target": 14, "labels": "Center" },
+    { "id": 19, "source": 17, "target": 5, "labels": "Source" },
+    { "id": 20, "source": 15, "target": 10, "labels": "Source" },
+    { "id": 21, "source": 15, "target": 12, "labels": "Target" },
+    { "id": 22, "source": 6, "target": 9, "labels": "Center" },
+    { "id": 23, "source": 5, "target": 3, "labels": "Center" },
+    { "id": 24, "source": 10, "target": 9, "labels": "Parallel" },
+    { "id": 25, "source": 10, "target": 9, "labels": "Parallel Target" },
+    { "id": 26, "source": 10, "target": 9, "labels": "Parallel Source" },
+    { "id": 27, "source": 3, "target": 3, "labels": "Self-loop" }
   ]
 }

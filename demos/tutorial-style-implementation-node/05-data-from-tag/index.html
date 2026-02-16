@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -150,9 +150,9 @@
                   <div class="title">Note</div>
                 </td>
                 <td class="content">
-                  yFiles for HTML provides a <code>tag</code> property for all graph items, which is
-                  frequently used to bind business objects to nodes and edges. The style can make
-                  use of this data and translate it to a visual representation.
+                  yFiles for HTML provides a <a href="https://docs.yworks.com/yfileshtml/api/ITagOwner#tag" class="api" target="_blank">tag</a> property for all graph items,
+                  which is frequently used to bind business objects to nodes and edges. The style
+                  can make use of this data and translate it to a visual representation.
                 </td>
               </tr>
             </table>
@@ -160,9 +160,9 @@
           <div class="paragraph">
             <p>
               In this example, we adjust the style implementation to use the
-              <code>color</code> stored in the node&#8217;s <code>tag</code> instead of using the
-              color from a style property. First, we add two nodes with different
-              <code>tag</code> objects.
+              <code>color</code> stored in the node&#8217;s <a href="https://docs.yworks.com/yfileshtml/api/ITagOwner#tag" class="api" target="_blank">tag</a> instead of
+              using the color from a style property. First, we add two nodes with different
+              <a href="https://docs.yworks.com/yfileshtml/api/ITagOwner#tag" class="api" target="_blank">tag</a> objects.
             </p>
           </div>
           <div class="listingblock">
@@ -206,8 +206,8 @@ pathElement.<span class="hljs-title function_">setAttribute</span>(<span class="
             <p>
               Since there are now two SVG elements, we can no longer just return the path. Instead,
               we have to wrap both the path and the badge in a <code>&lt;g&gt;</code> element to
-              group them together. We will also move the <code>setTranslate</code> call to translate
-              the group instead of just the path:
+              group them together. We will also move the <a href="https://docs.yworks.com/yfileshtml/api/SvgVisual#setTranslate" class="api" target="_blank">setTranslate</a> call
+              to translate the group instead of just the path:
             </p>
           </div>
           <div class="listingblock">

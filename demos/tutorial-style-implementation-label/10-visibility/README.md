@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ yFiles for HTML will only render items that are considered visible in the viewpo
 
 If the label visualization exceeds the label layout, it is considered invisible, even if the overflowing part of the visualization is in the viewport. yFiles for HTML will cause the item to disappear prematurely as it nears the borders of the viewport.
 
-To make this more evident, the "tail" of the speech balloon has been made larger in this sample. Observe the animation of the red labels, which flicker when they reach the top border of the viewport. To prevent this, we have to implement `isVisible`. The yellow labels use an adjusted style and leave/enter the viewport smoothly.
+To make this more evident, the "tail" of the speech balloon has been made larger in this sample. Observe the animation of the red labels, which flicker when they reach the top border of the viewport. To prevent this, we have to implement [isVisible](https://docs.yworks.com/yfileshtml/api/LabelStyleBase#isVisible). The yellow labels use an adjusted style and leave/enter the viewport smoothly.
 
 ```
 protected isVisible(
@@ -38,7 +38,7 @@ protected isVisible(
 }
 ```
 
-In order to check the tail for visibility, we have to create an [IOrientedRectangle](https://docs.yworks.com/yfileshtml/#/api/IOrientedRectangle) that contains the tail triangle.
+In order to check the tail for visibility, we have to create an [IOrientedRectangle](https://docs.yworks.com/yfileshtml/api/IOrientedRectangle) that contains the tail triangle.
 
 ```
 private getTailArea(labelLayout: IOrientedRectangle): IOrientedRectangle {
@@ -60,10 +60,10 @@ private getTailArea(labelLayout: IOrientedRectangle): IOrientedRectangle {
 }
 ```
 
-Implementations for `isVisible` often delegate to `getBounds` since both concepts are related in that they act on the visible boundaries of the item.
+Implementations for [isVisible](https://docs.yworks.com/yfileshtml/api/LabelStyleBase#isVisible) often delegate to [getBounds](https://docs.yworks.com/yfileshtml/api/LabelStyleBase#getBounds) since both concepts are related in that they act on the visible boundaries of the item.
 
 Note
 
-Since `isVisible` is called once for each item on every rendered frame, the implementation should be fast, even if this means to be inexact. If in doubt, prefer making the item visible. In this sample, we check the complete rectangular tail area, instead of making an exact check for the triangle.
+Since [isVisible](https://docs.yworks.com/yfileshtml/api/LabelStyleBase#isVisible) is called once for each item on every rendered frame, the implementation should be fast, even if this means to be inexact. If in doubt, prefer making the item visible. In this sample, we check the complete rectangular tail area, instead of making an exact check for the triangle.
 
 [11 Bounds](../../tutorial-style-implementation-label/11-bounds/)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -59,7 +59,7 @@ export function createHierarchicalLayoutConfiguration(): {
   // try to reduce the number of bends in edges that connect nodes in subsequent layers
   // this produces more readable results in this demo scenario
   layout.coordinateAssigner.straightenEdges = true
-  // disable the barycenter node placer mode for straightenEdges option to take effect
+  // disable symmetric placement for the straightenEdges option to take effect
   layout.coordinateAssigner.symmetryOptimizationStrategy = 'none'
   // reflects our standard spacing so that nodes end up aligned with the snap grid
   layout.gridSpacing = 15

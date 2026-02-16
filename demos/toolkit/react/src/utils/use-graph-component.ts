@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -64,6 +64,7 @@ export function useGraphComponent() {
 
   const graphComponent = useMemo(() => {
     // include the yFiles License
+    // eslint-disable-next-line react-hooks/immutability
     License.value = licenseData
     // initialize the GraphComponent
     const gc = new GraphComponent()
@@ -79,6 +80,7 @@ export function useGraphComponent() {
 
   useLayoutEffect(() => {
     const gcContainer = graphComponentContainer.current!
+    // eslint-disable-next-line react-hooks/immutability
     graphComponent.htmlElement.style.width = '100%'
     graphComponent.htmlElement.style.height = '100%'
     gcContainer.appendChild(graphComponent.htmlElement)

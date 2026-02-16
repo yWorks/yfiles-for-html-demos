@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,9 +15,9 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-node/06-render-text/).
 
-Not all visualizations consist of shapes and colors. Frequently, the business data stored in the `tag` property also contains textual content that should be rendered. Although yFiles for HTML offers labels for that purpose, text can also be rendered as part of the node visualization. This can be useful when users don’t need to interact with the text, or when the text should be integrated into the node visualization.
+Not all visualizations consist of shapes and colors. Frequently, the business data stored in the [tag](https://docs.yworks.com/yfileshtml/api/ITagOwner#tag) property also contains textual content that should be rendered. Although yFiles for HTML offers labels for that purpose, text can also be rendered as part of the node visualization. This can be useful when users don’t need to interact with the text, or when the text should be integrated into the node visualization.
 
-We add another property to the node `tag`s that contains the node title.
+We add another property to the node [tag](https://docs.yworks.com/yfileshtml/api/ITagOwner#tag)s that contains the node title.
 
 ```
 graph.createNode({
@@ -30,7 +30,7 @@ graph.createNode({
 })
 ```
 
-yFiles for HTML offers the [TextRenderSupport](https://docs.yworks.com/yfileshtml/#/api/TextRenderSupport) utility class to measure and render text. Compared with just a plain SVG `<text>` element it supports wrapping and trimming text based on a specified maximum size. In this example, we add text to the “tab” in a way that the text is cut off with an ellipsis if it doesn’t fit.
+yFiles for HTML offers the [TextRenderSupport](https://docs.yworks.com/yfileshtml/api/TextRenderSupport) utility class to measure and render text. Compared with just a plain SVG `<text>` element it supports wrapping and trimming text based on a specified maximum size. In this example, we add text to the “tab” in a way that the text is cut off with an ellipsis if it doesn’t fit.
 
 ```
 const title = node.tag?.title

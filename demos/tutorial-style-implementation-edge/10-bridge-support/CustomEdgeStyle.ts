@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -58,7 +58,7 @@ type Cache = {
 type CustomEdgeStyleVisual = TaggedSvgVisual<SVGGElement, Cache>
 
 export class CustomEdgeStyle extends EdgeStyleBase<CustomEdgeStyleVisual> {
-    distance: number;
+  distance: number
 
   /**
    * Creates a new instance of this style using the given distance.
@@ -66,7 +66,7 @@ export class CustomEdgeStyle extends EdgeStyleBase<CustomEdgeStyleVisual> {
    */
   constructor(distance = 1) {
     super()
-      this.distance = distance;
+    this.distance = distance
   }
 
   protected createVisual(

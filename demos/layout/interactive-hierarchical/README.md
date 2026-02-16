@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/interactive-hierarchical/).
 
-This demo shows the [from sketch mode](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout#fromSketchMode) of the hierarchical layout. Each user action triggers a run of this layout style to ensure that the current state of the graph is always well-organized but remains still similar to the previous arrangement.
+This demo shows the [from-sketch mode](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout#fromSketchMode) of the hierarchical layout. Each user action triggers a run of this layout style to ensure that the current state of the graph is always well-organized but remains still similar to the previous arrangement.
 
 The layers of the layout are visualized in the background of the graph.
 

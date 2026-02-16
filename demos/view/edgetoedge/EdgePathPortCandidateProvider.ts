@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -41,14 +41,14 @@ import {
  * to provide a number of port candidates along the path of the edge.
  */
 export class EdgePathPortCandidateProvider extends PortCandidateProviderBase {
-    private readonly edge: IEdge;
+  private readonly edge: IEdge
 
   /**
    * Create a new instance of this type.
    */
   constructor(edge: IEdge) {
     super()
-      this.edge = edge;
+    this.edge = edge
   }
 
   /**

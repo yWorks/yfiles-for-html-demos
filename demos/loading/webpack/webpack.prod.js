@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -40,7 +40,7 @@ module.exports = {
         // installed as dependencies and use yFiles API.
         return (
           !/node_modules/.test(module.resource) ||
-          /node_modules\/@yfiles\/(demo-app|demo-utils)/.test(module.resource)
+          /node_modules[\\/]+@yfiles[\\/]+(demo-app|demo-utils)/.test(module.resource)
         )
       }
     })

@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -91,13 +91,13 @@
       <button data-action="RunStage1" id="runLayout1" class="demo-icon-yIconLayout labeled">
         Move nodes aside
       </button>
-      <button data-action="RunStage2" class="demo-icon-yIconLayout labeled">
+      <button data-action="RunStage2" id="runLayout2" class="demo-icon-yIconLayout labeled">
         Align green nodes
       </button>
-      <button data-action="RunStage3" class="demo-icon-yIconLayout labeled">
+      <button data-action="RunStage3" id="runLayout3" class="demo-icon-yIconLayout labeled">
         Make zig-zag edges
       </button>
-      <button data-action="RunAllStages" class="demo-icon-yIconLayout labeled">
+      <button data-action="RunAllStages" id="runLayout4" class="demo-icon-yIconLayout labeled">
         Everything at once
       </button>
     </div>
@@ -117,7 +117,7 @@
         <h1>Custom Layout Stage Demo</h1>
 
         <p>
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout-layout_stages" class="dguide" target="_blank">Layout Stages</a> provide a way of separating a
+          <a href="https://docs.yworks.com/yfileshtml/dguide/layout-layout_stages" class="dguide" target="_blank">Layout Stages</a> provide a way of separating a
           complete layout into different parts. This often involves changing the graph in certain
           ways before another stage acts on it, post-processing the graph after another stage, or
           even both. Layout stages are designed to be chained, in that they each have a so-called
@@ -125,10 +125,10 @@
         </p>
         <p>
           yFiles for HTML ships with a large variety of layout stages, all sharing the interface
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ILayoutStage" class="api" target="_blank">ILayoutStage</a>. If a specific use case is not covered by existing stages, it
-          is easy to write own custom stages by extending class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutStageBase" class="api" target="_blank">LayoutStageBase</a>.
+          <a href="https://docs.yworks.com/yfileshtml/api/ILayoutStage" class="api" target="_blank">ILayoutStage</a>. If a specific use case is not covered by existing stages, it
+          is easy to write own custom stages by extending class <a href="https://docs.yworks.com/yfileshtml/api/LayoutStageBase" class="api" target="_blank">LayoutStageBase</a>.
           When writing custom stages it is necessary to work with the
-          <a href="https://docs.yworks.com/yfileshtml/#/dguide/layout_graph_model" class="dguide" target="_blank">Layout Graph Model</a>.
+          <a href="https://docs.yworks.com/yfileshtml/dguide/layout_graph_model" class="dguide" target="_blank">Layout Graph Model</a>.
         </p>
         <p>
           This demo application shows three simple custom layout stages, which demonstrate different
@@ -146,8 +146,8 @@
         </button>
         <p class="button-description">
           Inserts temporary edges, along with certain constraints to help the core
-          <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> align the green nodes. The nodes are selected via an
-          <a href="https://docs.yworks.com/yfileshtml/#/api/IMapper" class="api" target="_blank">IMapper</a> registered with the graph under a certain key.
+          <a href="https://docs.yworks.com/yfileshtml/api/HierarchicalLayout" class="api" target="_blank">HierarchicalLayout</a> align the green nodes. The nodes are selected via an
+          <a href="https://docs.yworks.com/yfileshtml/api/IMapper" class="api" target="_blank">IMapper</a> registered with the graph under a certain key.
         </p>
         <button data-action="RunStage3" class="run-stage">
           <span class="icon"></span> <code>ZigZagEdgesStage</code>

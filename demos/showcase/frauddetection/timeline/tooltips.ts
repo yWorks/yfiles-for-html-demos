@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -41,10 +41,12 @@ type ToolTipItemType = INode | IEdge
  *
  * @param graphInputMode The graph component.
  * @param getToolTip Provides the tooltip content for a graph item.
+ * @param tooltipParentElement The element to which the tooltips should be added. Defaults to body.
  */
 export function initializeToolTips(
   graphInputMode: GraphInputMode,
-  getToolTip: (item: ToolTipItemType) => HTMLElement | string | null
+  getToolTip: (item: ToolTipItemType) => HTMLElement | string | null,
+  tooltipParentElement?: HTMLElement | null
 ): void {
   graphInputMode.toolTipItems = toolTipItems
 
@@ -60,4 +62,8 @@ export function initializeToolTips(
   // show the tooltip faster and for a longer time
   graphInputMode.toolTipInputMode.duration = '10s'
   graphInputMode.toolTipInputMode.delay = '0.5s'
+
+  if (tooltipParentElement) {
+    graphInputMode.toolTipInputMode.toolTipParentElement = tooltipParentElement
+  }
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -122,7 +122,8 @@ async function run() {
     allowCreateEdge: false,
     allowCreateNode: false,
     allowClipboardOperations: false,
-    movableSelectedItems: GraphItemTypes.NONE
+    movableSelectedItems: GraphItemTypes.NONE,
+    movableUnselectedItems: GraphItemTypes.NONE
   })
 
   applicationState = new ApplicationState(graphEditorInputMode, graph, true)

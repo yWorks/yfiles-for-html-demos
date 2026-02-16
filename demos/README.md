@@ -4,18 +4,18 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
 -->
 # yFiles for HTML Demo Applications
 
-The [yFiles for HTML 3.0.0.4](https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html) demos and tutorials are extensive sample applications that present the features of the yFiles for HTML diagramming library.
+The demos and tutorials are extensive sample applications that present the features of the [yFiles for HTML](https://www.yfiles.com/the-yfiles-sdk/web/yfiles-for-html) diagramming library.
 
 The complete source code of all of these samples is part of the yFiles for HTML package and available at [Github](https://github.com/yWorks/yfiles-for-html-demos)
 
-To execute a specific sample, click on its card below. All of these demos are also hosted at the [yWorks homepage](https://www.yfiles.com/demos/).
+To execute a specific sample, click on its card below. All of these demos are also hosted at the [yFiles homepage](https://www.yfiles.com/demos/).
 
 # [Analysis](analysis)
 
@@ -68,6 +68,7 @@ This folder and its subfolders contain demo applications which illustrate featur
 <img src="../doc/demo-thumbnails/overview.webp" alt="Overview Component screenshot" width="128" height="96" /> | [Overview Component](application-features/overview/) | Shows how to add an overview component to the application.
 <img src="../doc/demo-thumbnails/timeline.webp" alt="Timeline screenshot" width="128" height="96" /> | [Timeline](application-features/timeline/) | Shows how to add a timeline component to the graph.
 <img src="../doc/demo-thumbnails/viewport-limiter.webp" alt="Viewport Limiter screenshot" width="128" height="96" /> | [Viewport Limiter](application-features/viewportlimiter/) | Shows how to use the viewport limiter to constrain the graph navigation.
+<img src="../doc/demo-thumbnails/flow-filtering.webp" alt="Flow Filtering screenshot" width="128" height="96" /> | [Flow Filtering](application-features/flow-filtering/) | Shows how to hide/show items within the connecting upstream/downstream flow.
 # [Data Binding](data-binding)
 
 This folder and its subfolders contain demo applications which make use of the different features of the viewer component of yFiles for HTML.
@@ -150,20 +151,6 @@ This folder and its subfolders contain demo applications which make use of the d
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Demo | Description
 --- | --- | ---
-<img src="../doc/demo-thumbnails/layout-styles-hierarchical.webp" alt="Layout Styles: Hierarchical screenshot" width="128" height="96" /> | [Layout Styles: Hierarchical](showcase/layoutstyles?layout=hierarchical&sample=hierarchical) | Presents yFiles' hierarchical layout algorithm and its other layout styles.
-<img src="../doc/demo-thumbnails/layout-styles-organic.webp" alt="Layout Styles: Organic screenshot" width="128" height="96" /> | [Layout Styles: Organic](showcase/layoutstyles?layout=organic&sample=organic) | Presents yFiles' organic layout algorithm and its other layout styles.
-<img src="../doc/demo-thumbnails/layout-styles-edge-router.webp" alt="Layout Styles: Edge Router screenshot" width="128" height="96" /> | [Layout Styles: Edge Router](showcase/layoutstyles?layout=edge-router&sample=edge-router) | Presents yFiles' edge routing algorithm and its other layout styles.
-<img src="../doc/demo-thumbnails/layout-styles-tree.webp" alt="Layout Styles: Tree screenshot" width="128" height="96" /> | [Layout Styles: Tree](showcase/layoutstyles?layout=tree&sample=tree) | Presents yFiles' tree layout algorithm and its other layout styles.
-<img src="../doc/demo-thumbnails/layout-styles-radial-tree.webp" alt="Layout Styles: Radial Tree screenshot" width="128" height="96" /> | [Layout Styles: Radial Tree](showcase/layoutstyles?layout=radial-tree&sample=radial-tree) | Presents yFiles' radial tree layout algorithm and its other layout styles.
-<img src="../doc/demo-thumbnails/layout-styles-orthogonal.webp" alt="Layout Styles: Orthogonal screenshot" width="128" height="96" /> | [Layout Styles: Orthogonal](showcase/layoutstyles?layout=orthogonal&sample=orthogonal) | Presents yFiles' orthogonal layout algorithm and its other layout styles.
-<img src="../doc/demo-thumbnails/layout-styles-circular.webp" alt="Layout Styles: Circular screenshot" width="128" height="96" /> | [Layout Styles: Circular](showcase/layoutstyles?layout=circular&sample=circular) | Presents yFiles' circular layout algorithm and its other layout styles.
-<img src="../doc/demo-thumbnails/layout-styles-radial.webp" alt="Layout Styles: Radial screenshot" width="128" height="96" /> | [Layout Styles: Radial](showcase/layoutstyles?layout=radial&sample=radial) | Presents yFiles' radial layout algorithm and its other layout styles.
-<img src="../doc/demo-thumbnails/layout-styles-disk.webp" alt="Layout Styles: Compact Disk screenshot" width="128" height="96" /> | [Layout Styles: Compact Disk](showcase/layoutstyles?layout=compact-disk&sample=compact-disk-with-edges) | Presents yFiles' compact disk layout algorithm and its other layout styles.
-<img src="../doc/demo-thumbnails/layout-styles-series-parallel.webp" alt="Layout Styles: Series-Parallel screenshot" width="128" height="96" /> | [Layout Styles: Series-Parallel](showcase/layoutstyles?layout=series-parallel&sample=series-parallel) | Presents yFiles' series-parallel layout algorithm and its other layout styles.
-<img src="../doc/demo-thumbnails/layout-styles-components.webp" alt="Layout Styles: Components screenshot" width="128" height="96" /> | [Layout Styles: Components](showcase/layoutstyles?layout=components&sample=components) | Presents yFiles' component layout algorithm and its other layout styles.
-<img src="../doc/demo-thumbnails/layout-styles-tabular.webp" alt="Layout Styles: Tabular screenshot" width="128" height="96" /> | [Layout Styles: Tabular](showcase/layoutstyles?layout=tabular&sample=tabular) | Presents yFiles' tabular layout algorithm and its other layout styles.
-<img src="../doc/demo-thumbnails/layout-styles-labeling.webp" alt="Layout Styles: Labeling screenshot" width="128" height="96" /> | [Layout Styles: Labeling](showcase/layoutstyles?layout=labeling) | Presents yFiles' label placement algorithm and its other layout styles.
-<img src="../doc/demo-thumbnails/layout-styles-partial.webp" alt="Layout Styles: Partial screenshot" width="128" height="96" /> | [Layout Styles: Partial](showcase/layoutstyles?layout=partial) | Presents yFiles' partial layout algorithm and its other layout styles.
 <img src="../doc/demo-thumbnails/sankey-diagram.webp" alt="Sankey Diagram screenshot" width="128" height="96" /> | [Sankey Diagram](layout/sankey/) | A diagram used for visualizing flow information in which the thickness of the edges is proportional to the flow quantity.
 <img src="../doc/demo-thumbnails/tree-map.webp" alt="Tree Map screenshot" width="128" height="96" /> | [Tree Map](layout/treemap/) | Shows disk usage of a directory tree with the Tree Map layout.
 <img src="../doc/demo-thumbnails/hierarchical-nesting.webp" alt="Hierarchical Nesting screenshot" width="128" height="96" /> | [Hierarchical Nesting](layout/hierarchical-nesting/) | The hierarchical layout nicely expands and collapses sub-graphs organized in groups.
@@ -269,6 +256,7 @@ This folder and its subfolders contain demo applications which make use of the d
 <img src="../doc/demo-thumbnails/fraud-detection.webp" alt="Fraud Detection screenshot" width="128" height="96" /> | [Fraud Detection](showcase/frauddetection/) | Example of a fraud detection application for time-dependent data.
 <img src="../doc/demo-thumbnails/isometric-drawing.webp" alt="Isometric Drawing screenshot" width="128" height="96" /> | [Isometric Drawing](showcase/isometricdrawing/) | Displays graphs in 3D using an freely adjustable projection and WebGL rendering.
 <img src="../doc/demo-thumbnails/network-monitoring.webp" alt="Network Monitoring screenshot" width="128" height="96" /> | [Network Monitoring](showcase/networkmonitoring/) | Example of a monitoring tool for computer networks.
+<img src="../doc/demo-thumbnails/knowledge-graphs.webp" alt="Interactive Knowledge Graph screenshot" width="128" height="96" /> | [Interactive Knowledge Graph](showcase/knowledge-graphs/) | Shows how to identify potential data issues in a knowledge graph.
 <img src="../doc/demo-thumbnails/metaball-groups.webp" alt="Metaball Groups screenshot" width="128" height="96" /> | [Metaball Groups](showcase/metaballgroups/) | Shows how to render metaball-like background visualizations.
 <img src="../doc/demo-thumbnails/map.webp" alt="Map screenshot" width="128" height="96" /> | [Map](showcase/map/) | Displays a graph on top of an interactive map.
 <img src="../doc/demo-thumbnails/graph-wizard-flowchart.webp" alt="GraphWizard for Flowchart screenshot" width="128" height="96" /> | [GraphWizard for Flowchart](showcase/graph-wizard-for-flowchart/) | Customizes defaults and input gestures to support fast creation of flowcharts.
@@ -487,7 +475,6 @@ This folder and its subfolders contain demo applications which make use of the d
 <img src="../doc/demo-thumbnails/file-operations.webp" alt="File Operations screenshot" width="128" height="96" /> | [File Operations](application-features/file-operations/) | Shows different ways to open and save a graph.
 <img src="../doc/demo-thumbnails/events-viewer.webp" alt="Events Viewer screenshot" width="128" height="96" /> | [Events Viewer](view/events/) | Shows the multitude of events provided by the classes <code>IGraph</code>, <code>GraphComponent</code>, and the <em>Input Modes</em>.
 <img src="../doc/demo-thumbnails/webgl-precompilation.webp" alt="WebGL Precompilation screenshot" width="128" height="96" /> | [WebGL Precompilation](view/webgl-precompilation/) | Shows how to precompile the WebGL styles you want to use
-<img src="../doc/demo-thumbnails/application-under-test.webp" alt="Application Under Test screenshot" width="128" height="96" /> | [Application Under Test](testing/application-under-test/) | A simple app that is used as the test candidate in some of the testing demos.
 <img src="../doc/demo-thumbnails/clipboard.webp" alt="Clipboard screenshot" width="128" height="96" /> | [Clipboard](view/clipboard/) | Shows different ways of using the class GraphClipboard for Copy & Paste operations.
 <img src="../doc/demo-thumbnails/clipboard-deferred-cut.webp" alt="Deferred Cut Clipboard screenshot" width="128" height="96" /> | [Deferred Cut Clipboard](view/clipboard-deferred-cut/) | Shows a clipboard which grays elements out upon cut and only removes them when they are finally pasted.
 <img src="../doc/demo-thumbnails/graphml.webp" alt="GraphML screenshot" width="128" height="96" /> | [GraphML](view/graphml/) | Provides a live view of the graph's GraphML representation.

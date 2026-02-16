@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 Styles not only provide a visual representation for graph items. They also offer crucial parts for interacting with said items. Hit-testing determines whether a particular item is at a given point in the canvas. It happens all the time during interaction, e.g., when selecting items, moving nodes, or creating edges.
 
-The default implementation in the `PortStyleBase` class only considers the bounds returned by `getBounds` when hit-testing. When ports have shapes that deviate from the rectangular bounds, hit-testing has to be adjusted by providing a different implementation for the `isHit` method.
+The default implementation in the [PortStyleBase](https://docs.yworks.com/yfileshtml/api/PortStyleBase) class only considers the bounds returned by [getBounds](https://docs.yworks.com/yfileshtml/api/PortStyleBase#getBounds) when hit-testing. When ports have shapes that deviate from the rectangular bounds, hit-testing has to be adjusted by providing a different implementation for the [isHit](https://docs.yworks.com/yfileshtml/api/PortStyleBase#isHit) method.
 
 In this example, we have to adjust the hit-test to the circular port shape. We also take the hit-test radius into account. This radius enables a bit of fuzziness when hit-testing the item, so you can still hit it when you’re slightly outside.
 

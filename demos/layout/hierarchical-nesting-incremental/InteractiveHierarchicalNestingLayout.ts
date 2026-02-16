@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -115,7 +115,7 @@ export function initializeInteractiveHierarchicalNestingLayout(
  * uses that information to apply an incremental layout after the group node is expanded/collapsed.
  */
 export class InteractiveHierarchicalNestingLayout {
-    private readonly graphComponent: GraphComponent;
+  private readonly graphComponent: GraphComponent
   /**
    * The last group node that was collapsed/expanded.
    */
@@ -143,7 +143,7 @@ export class InteractiveHierarchicalNestingLayout {
    * @param graphComponent the current graph component
    */
   constructor(graphComponent: GraphComponent) {
-      this.graphComponent = graphComponent;
+    this.graphComponent = graphComponent
     this.alternativeGroupBounds = new Mapper()
     this.alternativeEdgePaths = new Mapper()
     this._expandedGroups = new Set<INode>()

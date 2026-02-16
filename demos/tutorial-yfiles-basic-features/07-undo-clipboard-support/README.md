@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,11 +17,11 @@
 
 ## How to activate undo and clipboard.
 
-This step shows how to use the [undo](https://docs.yworks.com/yfileshtml/#/dguide/interaction-support#interaction-undo) and [clipboard](https://docs.yworks.com/yfileshtml/#/dguide/customizing_interaction_clipboard) features.
+This step shows how to use the [undo](https://docs.yworks.com/yfileshtml/dguide/interaction-support#interaction-undo) and [clipboard](https://docs.yworks.com/yfileshtml/dguide/customizing_interaction_clipboard) features.
 
 ### Undo
 
-You can enable undo functionality for a [graph](https://docs.yworks.com/yfileshtml/#/api/IGraph) as follows:
+You can enable undo functionality for a [graph](https://docs.yworks.com/yfileshtml/api/IGraph) as follows:
 
 ```
 graph.undoEngineEnabled = true
@@ -65,7 +65,7 @@ Undo Redo Clear Undo Queue
 
 ### Clipboard
 
-Clipboard functionality is enabled by default. It is available interactively with short-cuts via [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) if [allowClipboardOperations](https://docs.yworks.com/yfileshtml/#/api/GraphInputMode#allowClipboardOperations) is enabled.
+Clipboard functionality is enabled by default. It is available interactively with short-cuts via [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode) if [allowClipboardOperations](https://docs.yworks.com/yfileshtml/api/GraphInputMode#allowClipboardOperations) is enabled.
 
 This means that the following functionality is available by default:
 

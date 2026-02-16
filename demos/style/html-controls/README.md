@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ This demo shows how a custom HTML-based node style can be used to create interac
 
 Adapting the contents of the node visualization to varying node sizes can often be achieved much easier when using an HTML-based style instead of an SVG visualization.
 
-See [HTML Rendering](https://docs.yworks.com/yfileshtml/#/dguide/advanced-html_rendering) for details about when to prefer HTML- or SVG-based visuals.
+See [HTML Rendering](https://docs.yworks.com/yfileshtml/dguide/advanced-html_rendering) for details about when to prefer HTML- or SVG-based visuals.
 
 For rich components and data binding support, you can consider using a framework instead of plain HTML/JS. See the framework-specific demos linked below for examples.
 

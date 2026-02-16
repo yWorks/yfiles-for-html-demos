@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -691,7 +691,7 @@ export default [
     businessUnit: 'Production',
     status: 'busy',
     icon: 'usericon_male5',
-    subordinates: ['cshortened@yoyodyne.com', 'tstark@yoyodyne.com']
+    subordinates: ['cshort@yoyodyne.com', 'tstark@yoyodyne.com']
   },
   {
     position: 'Janitor',
@@ -705,8 +705,8 @@ export default [
   },
   {
     position: 'Maintenance Supervisor',
-    name: 'Carmen Shortened',
-    email: 'cshortened@yoyodyne.com',
+    name: 'Carmen Short',
+    email: 'cshort@yoyodyne.com',
     phone: '555-0142',
     fax: '555-0143',
     businessUnit: 'Production',

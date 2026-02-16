@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@
 
 A demo that shows how to interactively move graph elements within a marquee rectangle in a given graph layout so that the modifications in the graph are minimal.
 
-Every time the marquee rectangle is dragged interactively, [ClearAreaLayout](https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout) will push away the other elements so there is a free area for the rectangle.
+Every time the marquee rectangle is dragged interactively, [ClearAreaLayout](https://docs.yworks.com/yfileshtml/api/ClearAreaLayout) will push away the other elements so there is a free area for the rectangle.
 
-The **Clear Rectangle Area** demo offers more options for playing around with the [ClearAreaLayout](https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout).
+The **Clear Rectangle Area** demo offers more options for playing around with the [ClearAreaLayout](https://docs.yworks.com/yfileshtml/api/ClearAreaLayout).
 
 You can choose between different strategies for clearing the area:
 

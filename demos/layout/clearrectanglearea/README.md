@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 A demo that shows how to interactively move graph elements around a rectangle in a given graph so that the modifications in the graph are minimal. The rectangle can be freely moved or resized.
 
-Every time the rectangular area is moved or resized interactively, [ClearAreaLayout](https://docs.yworks.com/yfileshtml/#/api/ClearAreaLayout) will push away the other elements so there is a free area for the rectangle.
+Every time the rectangular area is moved or resized interactively, [ClearAreaLayout](https://docs.yworks.com/yfileshtml/api/ClearAreaLayout) will push away the other elements so there is a free area for the rectangle.
 
 You can choose between different strategies for clearing the area:
 

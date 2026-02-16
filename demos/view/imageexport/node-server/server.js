@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,28 +29,31 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const exportPNG = require('./export')
+const { Buffer } = require('buffer')
 
 const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.post('/', async (req, res) => {
-  const { svgString, width, height, margin } = req.body
-  if (!svgString) {
+  if (req.body?.check === 'isAlive') {
     // isAlive check
     res.status(200).send('true')
-  } else {
-    const pngBuffer = await exportPNG(svgString, width, height, margin)
-
-    res.writeHead(200, {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'X-Requested-With',
-      Cache: 'no-cache',
-      'Content-Length': pngBuffer.length,
-      'Content-Disposition': 'attachment; filename=graph.png',
-      'Content-Type': 'image/png'
-    })
-    res.end(pngBuffer)
+    return
   }
+
+  const { svgString, width, height, margin } = req.body
+  const pngArrayBuffer = (await exportPNG(svgString, width, height, margin)).buffer
+  const pngBuffer = Buffer.from(pngArrayBuffer)
+
+  res.writeHead(200, {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'X-Requested-With',
+    Cache: 'no-cache',
+    'Content-Length': pngBuffer.byteLength,
+    'Content-Disposition': 'attachment; filename=graph.png',
+    'Content-Type': 'image/png'
+  })
+  res.end(pngBuffer)
 })
 
 app.listen(process.env.PORT || 3000)

@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -36,8 +36,8 @@ After establishing a connection, a small set of data from the database will be d
 
 This demo uses the [Neo4j driver for JavaScript](https://neo4j.com/docs/javascript-manual/current/) to connect to a Neo4j database and query it for data.
 
-The query results are then used by a [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) with a custom configuration to construct a graph from the data, while assigning different node styles to nodes with different labels.
+The query results are then used by a [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) with a custom configuration to construct a graph from the data, while assigning different node styles to nodes with different labels.
 
 The maximum node count setting limits the number of nodes that are queried from the database, while the label diversity setting determines the length of the distinct node label sequences that is searched for.
 
-The graph layout is achieved by using [OrganicLayout](https://docs.yworks.com/yfileshtml/#/api/OrganicLayout) with substructures enabled.
+The graph layout is achieved by using [OrganicLayout](https://docs.yworks.com/yfileshtml/api/OrganicLayout) with substructures enabled.

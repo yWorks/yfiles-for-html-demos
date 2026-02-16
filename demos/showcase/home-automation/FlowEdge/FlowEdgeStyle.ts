@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -45,7 +45,7 @@ import {
  * behind plotting cubic Beziér curves based on point data.
  */
 export class FlowEdgeStyle extends DelegatingEdgeStyle {
-    private delegatingStyle: IEdgeStyle;
+  private delegatingStyle: IEdgeStyle
   private static cssClass = {
     container: 'flow-edge',
     basePath: 'flow-edge__main',
@@ -56,12 +56,9 @@ export class FlowEdgeStyle extends DelegatingEdgeStyle {
   private readonly isDummyNewEdge: boolean
   private readonly isReconnecting: boolean
 
-  constructor(
-    delegatingStyle: IEdgeStyle,
-    mode?: 'newEdge' | 'edgeReconnection'
-  ) {
+  constructor(delegatingStyle: IEdgeStyle, mode?: 'newEdge' | 'edgeReconnection') {
     super()
-      this.delegatingStyle = delegatingStyle;
+    this.delegatingStyle = delegatingStyle
     this.isDummyNewEdge = mode === 'newEdge'
     this.isReconnecting = mode === 'edgeReconnection'
   }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,7 +30,9 @@ import { toggleExportRectangle } from '../export-rectangle/export-rectangle'
 import type { PaperSize } from '../PaperSize'
 import type { PdfExportOptions } from '../PdfExportOptions'
 
-export function initializeOptionPanel(exportCallback: (options: PdfExportOptions) => void): void {
+export function initializeOptionPanel(
+  exportCallback: (options: PdfExportOptions) => Promise<void>
+): void {
   const useRectInput = document.querySelector<HTMLInputElement>('#use-rect')!
   const scaleInput = document.querySelector<HTMLInputElement>('#scale')!
   const marginInput = document.querySelector<HTMLInputElement>('#margin')!
@@ -62,7 +64,12 @@ export function initializeOptionPanel(exportCallback: (options: PdfExportOptions
       return
     }
 
-    exportCallback(options)
+    try {
+      await exportCallback(options)
+    } catch (e) {
+      exportButton.disabled = false
+      alert(e)
+    }
   })
 }
 

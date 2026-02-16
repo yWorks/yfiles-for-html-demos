@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -78,11 +78,11 @@ type PreactComponentNodeStyleVisual<TTag> = TaggedSvgVisual<
 export class PreactComponentNodeStyle<TTag> extends NodeStyleBase<
   PreactComponentNodeStyleVisual<TTag>
 > {
-    private readonly type: RenderType<TTag>;
+  private readonly type: RenderType<TTag>
 
   constructor(type: RenderType<TTag>) {
     super()
-      this.type = type;
+    this.type = type
   }
 
   createProps(node: INode): PreactComponentNodeStyleProps<TTag> {

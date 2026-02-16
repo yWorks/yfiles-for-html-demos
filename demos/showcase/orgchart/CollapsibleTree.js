@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  AssistantSubtreePlacer,
   BaseClass,
   Command,
   CompactSubtreePlacer,
@@ -40,6 +41,7 @@ import {
   LayoutAnchoringStage,
   LayoutAnchoringStageData,
   LayoutExecutor,
+  LeftRightSubtreePlacer,
   Mapper,
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
@@ -102,6 +104,7 @@ export class CollapsibleTree {
     const nodeFilter = (node) => !this.hiddenNodesSet.has(node)
     this.filteredGraph = new FilteredGraphWrapper(completeGraph, nodeFilter)
     this.graphComponent.viewportLimiter.policy = ViewportLimitingPolicy.TOWARDS_LIMIT
+    this.graphComponent.viewportLimiter.viewportContentMargins = 100
   }
 
   /**
@@ -324,8 +327,8 @@ export class CollapsibleTree {
       this.createConfiguredLayout(),
       this.createConfiguredLayoutData(this.filteredGraph)
     )
-    void this.graphComponent.fitGraphBounds()
     this.graphComponent.updateContentBounds(100)
+    void this.graphComponent.fitContent()
   }
 
   /**
@@ -458,6 +461,20 @@ export class CollapsibleTree {
     return new TreeLayoutData({
       assistantNodes: (node) =>
         this.isAssistantNode(node) && graph.inDegree(node) > 0 && !hasIncrementalParent(node),
+      subtreePlacers: (localRoot) => {
+        // place leaf nodes using LeftRightSubtreePlacer
+        if (graph.outEdgesAt(localRoot).every((edge) => graph.outDegree(edge.targetNode) === 0)) {
+          return new AssistantSubtreePlacer({
+            childSubtreePlacer: new LeftRightSubtreePlacer({ placeLastOnBottom: false })
+          })
+        }
+        // place all other nodes using CompactSubtreePlacer
+        return new CompactSubtreePlacer({
+          preferredAspectRatio: 3,
+          horizontalDistance: 60,
+          verticalDistance: 50
+        })
+      },
       nodeTypes: this.nodeTypesMapping,
       compactSubtreePlacerStrategyMementos: this.compactSubtreePlacerStrategyMementos,
       childOrder: {
@@ -485,8 +502,6 @@ export class CollapsibleTree {
       }
     })()
 
-    // we let the CompactSubtreePlacer arrange the nodes
-    treeLayout.defaultSubtreePlacer = new CompactSubtreePlacer()
     // layout stages used to place nodes at barycenter for smoother layout animations
     treeLayout.layoutStages.append(new PlaceNodesAtBarycenterStage())
 

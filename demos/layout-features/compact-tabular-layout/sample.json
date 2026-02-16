@@ -1,205 +1,45 @@
 {
   "nodes": [
-    {
-      "id": 0,
-      "layout": { "x": 0, "y": 0, "width": 110, "height": 60 },
-      "labels": "1"
-    },
-    {
-      "id": 1,
-      "layout": { "x": 0, "y": 0, "width": 50, "height": 30 },
-      "labels": "2"
-    },
-    {
-      "id": 2,
-      "layout": { "x": 0, "y": 0, "width": 80, "height": 30 },
-      "labels": "3"
-    },
-    {
-      "id": 3,
-      "layout": { "x": 0, "y": 0, "width": 90, "height": 30 },
-      "labels": "4"
-    },
-    {
-      "id": 4,
-      "layout": { "x": 0, "y": 0, "width": 80, "height": 60 },
-      "labels": "5"
-    },
-    {
-      "id": 5,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 30 },
-      "labels": "6"
-    },
-    {
-      "id": 6,
-      "layout": { "x": 0, "y": 0, "width": 60, "height": 30 },
-      "labels": "7"
-    },
-    {
-      "id": 7,
-      "layout": { "x": 0, "y": 0, "width": 40, "height": 30 },
-      "labels": "8"
-    },
-    {
-      "id": 8,
-      "layout": { "x": 0, "y": 0, "width": 50, "height": 30 },
-      "labels": "9"
-    },
-    {
-      "id": 9,
-      "layout": { "x": 0, "y": 0, "width": 80, "height": 60 },
-      "labels": "10"
-    },
-    {
-      "id": 10,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 60 },
-      "labels": "11"
-    },
-    {
-      "id": 11,
-      "layout": { "x": 0, "y": 0, "width": 40, "height": 30 },
-      "labels": "12"
-    },
-    {
-      "id": 12,
-      "layout": { "x": 0, "y": 0, "width": 80, "height": 60 },
-      "labels": "13"
-    },
-    {
-      "id": 13,
-      "layout": { "x": 0, "y": 0, "width": 40, "height": 30 },
-      "labels": "14"
-    },
-    {
-      "id": 14,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 30 },
-      "labels": "15"
-    },
-    {
-      "id": 15,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 30 },
-      "labels": "16"
-    },
-    {
-      "id": 16,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 30 },
-      "labels": "17"
-    },
-    {
-      "id": 17,
-      "layout": { "x": 0, "y": 0, "width": 80, "height": 30 },
-      "labels": "18"
-    },
-    {
-      "id": 18,
-      "layout": { "x": 0, "y": 0, "width": 50, "height": 30 },
-      "labels": "19"
-    },
-    {
-      "id": 19,
-      "layout": { "x": 0, "y": 0, "width": 90, "height": 30 },
-      "labels": "20"
-    },
-    {
-      "id": 20,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 60 },
-      "labels": "21"
-    },
-    {
-      "id": 21,
-      "layout": { "x": 0, "y": 0, "width": 50, "height": 30 },
-      "labels": "22"
-    },
-    {
-      "id": 22,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 30 },
-      "labels": "23"
-    },
-    {
-      "id": 23,
-      "layout": { "x": 0, "y": 0, "width": 40, "height": 30 },
-      "labels": "24"
-    },
-    {
-      "id": 24,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 60 },
-      "labels": "25"
-    },
-    {
-      "id": 25,
-      "layout": { "x": 0, "y": 0, "width": 60, "height": 30 },
-      "labels": "26"
-    },
-    {
-      "id": 26,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 60 },
-      "labels": "27"
-    },
-    {
-      "id": 27,
-      "layout": { "x": 0, "y": 0, "width": 80, "height": 60 },
-      "labels": "28"
-    },
-    {
-      "id": 28,
-      "layout": { "x": 0, "y": 0, "width": 80, "height": 50 },
-      "labels": "29"
-    },
-    {
-      "id": 29,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 60 },
-      "labels": "30"
-    },
-    {
-      "id": 30,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 30 },
-      "labels": "31"
-    },
-    {
-      "id": 31,
-      "layout": { "x": 0, "y": 0, "width": 90, "height": 30 },
-      "labels": "32"
-    },
-    {
-      "id": 32,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 30 },
-      "labels": "33"
-    },
-    {
-      "id": 33,
-      "layout": { "x": 0, "y": 0, "width": 50, "height": 30 },
-      "labels": "34"
-    },
-    {
-      "id": 34,
-      "layout": { "x": 0, "y": 0, "width": 80, "height": 60 },
-      "labels": "35"
-    },
-    {
-      "id": 35,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 60 },
-      "labels": "36"
-    },
-    {
-      "id": 36,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 30 },
-      "labels": "37"
-    },
-    {
-      "id": 37,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 60 },
-      "labels": "38"
-    },
-    {
-      "id": 38,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 30 },
-      "labels": "39"
-    },
-    {
-      "id": 39,
-      "layout": { "x": 0, "y": 0, "width": 70, "height": 30 },
-      "labels": "40"
-    }
+    { "id": 0, "layout": { "x": 0, "y": 0, "width": 110, "height": 60 }, "labels": "1" },
+    { "id": 1, "layout": { "x": 0, "y": 0, "width": 50, "height": 30 }, "labels": "2" },
+    { "id": 2, "layout": { "x": 0, "y": 0, "width": 80, "height": 30 }, "labels": "3" },
+    { "id": 3, "layout": { "x": 0, "y": 0, "width": 90, "height": 30 }, "labels": "4" },
+    { "id": 4, "layout": { "x": 0, "y": 0, "width": 80, "height": 60 }, "labels": "5" },
+    { "id": 5, "layout": { "x": 0, "y": 0, "width": 70, "height": 30 }, "labels": "6" },
+    { "id": 6, "layout": { "x": 0, "y": 0, "width": 60, "height": 30 }, "labels": "7" },
+    { "id": 7, "layout": { "x": 0, "y": 0, "width": 40, "height": 30 }, "labels": "8" },
+    { "id": 8, "layout": { "x": 0, "y": 0, "width": 50, "height": 30 }, "labels": "9" },
+    { "id": 9, "layout": { "x": 0, "y": 0, "width": 80, "height": 60 }, "labels": "10" },
+    { "id": 10, "layout": { "x": 0, "y": 0, "width": 70, "height": 60 }, "labels": "11" },
+    { "id": 11, "layout": { "x": 0, "y": 0, "width": 40, "height": 30 }, "labels": "12" },
+    { "id": 12, "layout": { "x": 0, "y": 0, "width": 80, "height": 60 }, "labels": "13" },
+    { "id": 13, "layout": { "x": 0, "y": 0, "width": 40, "height": 30 }, "labels": "14" },
+    { "id": 14, "layout": { "x": 0, "y": 0, "width": 70, "height": 30 }, "labels": "15" },
+    { "id": 15, "layout": { "x": 0, "y": 0, "width": 70, "height": 30 }, "labels": "16" },
+    { "id": 16, "layout": { "x": 0, "y": 0, "width": 70, "height": 30 }, "labels": "17" },
+    { "id": 17, "layout": { "x": 0, "y": 0, "width": 80, "height": 30 }, "labels": "18" },
+    { "id": 18, "layout": { "x": 0, "y": 0, "width": 50, "height": 30 }, "labels": "19" },
+    { "id": 19, "layout": { "x": 0, "y": 0, "width": 90, "height": 30 }, "labels": "20" },
+    { "id": 20, "layout": { "x": 0, "y": 0, "width": 70, "height": 60 }, "labels": "21" },
+    { "id": 21, "layout": { "x": 0, "y": 0, "width": 50, "height": 30 }, "labels": "22" },
+    { "id": 22, "layout": { "x": 0, "y": 0, "width": 70, "height": 30 }, "labels": "23" },
+    { "id": 23, "layout": { "x": 0, "y": 0, "width": 40, "height": 30 }, "labels": "24" },
+    { "id": 24, "layout": { "x": 0, "y": 0, "width": 70, "height": 60 }, "labels": "25" },
+    { "id": 25, "layout": { "x": 0, "y": 0, "width": 60, "height": 30 }, "labels": "26" },
+    { "id": 26, "layout": { "x": 0, "y": 0, "width": 70, "height": 60 }, "labels": "27" },
+    { "id": 27, "layout": { "x": 0, "y": 0, "width": 80, "height": 60 }, "labels": "28" },
+    { "id": 28, "layout": { "x": 0, "y": 0, "width": 80, "height": 50 }, "labels": "29" },
+    { "id": 29, "layout": { "x": 0, "y": 0, "width": 70, "height": 60 }, "labels": "30" },
+    { "id": 30, "layout": { "x": 0, "y": 0, "width": 70, "height": 30 }, "labels": "31" },
+    { "id": 31, "layout": { "x": 0, "y": 0, "width": 90, "height": 30 }, "labels": "32" },
+    { "id": 32, "layout": { "x": 0, "y": 0, "width": 70, "height": 30 }, "labels": "33" },
+    { "id": 33, "layout": { "x": 0, "y": 0, "width": 50, "height": 30 }, "labels": "34" },
+    { "id": 34, "layout": { "x": 0, "y": 0, "width": 80, "height": 60 }, "labels": "35" },
+    { "id": 35, "layout": { "x": 0, "y": 0, "width": 70, "height": 60 }, "labels": "36" },
+    { "id": 36, "layout": { "x": 0, "y": 0, "width": 70, "height": 30 }, "labels": "37" },
+    { "id": 37, "layout": { "x": 0, "y": 0, "width": 70, "height": 60 }, "labels": "38" },
+    { "id": 38, "layout": { "x": 0, "y": 0, "width": 70, "height": 30 }, "labels": "39" },
+    { "id": 39, "layout": { "x": 0, "y": 0, "width": 70, "height": 30 }, "labels": "40" }
   ],
   "edges": [
     { "source": 0, "target": 19 },

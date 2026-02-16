@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -556,10 +556,10 @@ export class UMLNodeStyle extends NodeStyleBase {
     editorInputMode.editLabelInputMode.textEditorInputMode.upVector = new Point(0, -1)
     const leftPadding = index < 0 ? 0 : LEFT_SPACING
     editorInputMode.editLabelInputMode.textEditorInputMode.location = new Point(
-      layout.x + node.layout.x + leftPadding,
-      layout.y + node.layout.y + layout.height
+      node.layout.x + layout.x + leftPadding,
+      node.layout.y + layout.centerY
     )
-    editorInputMode.editLabelInputMode.textEditorInputMode.anchor = new Point(0, 1)
+    editorInputMode.editLabelInputMode.textEditorInputMode.anchor = new Point(0, 0.5)
 
     // actually edit the text and update the UML data model
     const res = await editorInputMode.editLabelInputMode.textEditorInputMode.edit()

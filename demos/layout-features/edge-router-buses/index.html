@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -79,17 +79,17 @@
       <div class="demo-description__content">
         <h1>Bus-Style Edge Routing</h1>
         <p>
-          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a> to generate orthogonal
+          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a> to generate orthogonal
           bus-style routes. A bus is a shared segment among multiple edges, with nodes connecting to
           it via shorter segments.
         </p>
         <p>
           Buses are defined using the <code>add</code> method of the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData#buses" class="api" target="_blank">buses</a> property, which returns a
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ItemCollection" class="api" target="_blank">configurable object</a> for edge assignment.
+          <a href="https://docs.yworks.com/yfileshtml/api/EdgeRouterData#buses" class="api" target="_blank">buses</a> property, which returns a
+          <a href="https://docs.yworks.com/yfileshtml/api/ItemCollection" class="api" target="_blank">configurable object</a> for edge assignment.
         </p>
         <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterBusDescriptor" class="api" target="_blank">EdgeRouterBusDescriptor</a> used in the <code>add</code> method offers
+          The <a href="https://docs.yworks.com/yfileshtml/api/EdgeRouterBusDescriptor" class="api" target="_blank">EdgeRouterBusDescriptor</a> used in the <code>add</code> method offers
           customizable bus parameters.
         </p>
         <h2>Automatic Backbone Computation</h2>
@@ -105,10 +105,10 @@
         </ul>
         <h2>Documentation</h2>
         <ul>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/polyline_router_bus_routing" class="dguide" target="_blank">Bus-style routing</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterData" class="api" target="_blank">EdgeRouterData</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeRouterBusDescriptor" class="api" target="_blank">EdgeRouterBusDescriptor</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/dguide/polyline_router_bus_routing" class="dguide" target="_blank">Bus-style routing</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/EdgeRouter" class="api" target="_blank">EdgeRouter</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/EdgeRouterData" class="api" target="_blank">EdgeRouterData</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/EdgeRouterBusDescriptor" class="api" target="_blank">EdgeRouterBusDescriptor</a></li>
         </ul>
       </div>
     </aside>
@@ -116,7 +116,7 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-      <div id="demo-message" class="demo-message"></div>
+      <div class="yplay__message-host"></div>
     </div>
     <script type="module" crossorigin="anonymous" src="./EdgeRouterBusesDemo.ts" async></script>
   </body>

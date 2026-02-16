@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -30,4 +30,4 @@ This demo shows how to implement resizing handles for a selection of nodes. When
 - Turn on _snapping_ in the toolbar to let the selected nodes snap to other items in the graph.
 - Make the selection rectangle very small or very large to see how resizing respects _size constraints_.
 
-This feature is implemented as custom [IInputMode](https://docs.yworks.com/yfileshtml/#/api/IInputMode) that can be added to a [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode).
+This feature is implemented as custom [IInputMode](https://docs.yworks.com/yfileshtml/api/IInputMode) that can be added to a [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode).

@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 This demo shows how HTML can be used for rendering labels with a custom label style.
 
-The custom style uses an embedded HTML element using the [HtmlVisual](https://docs.yworks.com/yfileshtml/#/api/HtmlVisual).
+The custom style uses an embedded HTML element using the [HtmlVisual](https://docs.yworks.com/yfileshtml/api/HtmlVisual).
 
 ## HTML Label Editor
 
@@ -35,4 +35,4 @@ The stylesheet for labels _html-label.css_ shows how the label texts are styled.
 - [Label Style Demo](../../style/label-style/)
 - [Markdown Label Demo](../../style/markdownlabel/)
 - [Rich Text Label Demo](../../style/richtextlabel/)
-- [Step 01 Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/)
+- [Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/)

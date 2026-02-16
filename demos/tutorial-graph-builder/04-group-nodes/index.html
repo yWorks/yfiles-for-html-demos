@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -145,7 +145,7 @@
                 <td class="content">
                   <div class="paragraph">
                     <p>
-                      This step is optional when building a graph with <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>.
+                      This step is optional when building a graph with <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>.
                       If you do not have hierarchy information in your data, you can proceed with
                       the next step.
                     </p>
@@ -156,7 +156,7 @@
           </div>
           <div class="paragraph">
             <p>
-              To have the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> build the hierarchy, we need to add
+              To have the <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> build the hierarchy, we need to add
               information about which item belongs to which group.
             </p>
           </div>
@@ -167,7 +167,7 @@
               values point to a group item. Group items are the same as node items, and they can
               also have a parent. So it is possible to create nested hierarchies. You can store them
               in separate data collections or separate them when creating the
-              <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a>.
+              <a href="https://docs.yworks.com/yfileshtml/api/NodesSource" class="api" target="_blank">NodesSource</a>.
             </p>
           </div>
           <div class="listingblock">
@@ -193,8 +193,9 @@
           </div>
           <div class="paragraph">
             <p>
-              You can use <code>GraphBuilder.createGroupNodes</code> to import the group nodes data.
-              Then, these nodes are automatically visualized with the default group node style.
+              You can use the <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder#createGroupNodesSource" class="api" target="_blank">GraphBuilder.createGroupNodesSource</a> method to
+              import the group nodes data. Then, these nodes are automatically visualized with the
+              default group node style.
             </p>
           </div>
           <div class="listingblock">
@@ -224,7 +225,7 @@ graphBuilder.<span class="hljs-title function_">createGroupNodesSource</span>({
             <p>
               Edges work the same way for group nodes as for other nodes. They can connect to the
               group node if its <code>id</code> is referenced in the source or target
-              <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider" class="api" target="_blank">id provider</a>.
+              <a href="https://docs.yworks.com/yfileshtml/api/NodesSource#idProvider" class="api" target="_blank">idProvider</a>.
             </p>
           </div>
           <div class="admonitionblock note">

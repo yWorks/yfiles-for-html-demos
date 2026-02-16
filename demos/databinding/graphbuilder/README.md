@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,15 +15,15 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/databinding/graphbuilder/).
 
-This demo interactively builds and modifies a graph from **JSON** business data using class [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder).
+This demo interactively builds and modifies a graph from **JSON** business data using class [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder).
 
-See the Developer's Guide section on the [GraphBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-GraphBuilder) for an in-depth explanation of the relevant concepts.
+See the Developer's Guide section on the [GraphBuilder](https://docs.yworks.com/yfileshtml/dguide/graph_builder-GraphBuilder) for an in-depth explanation of the relevant concepts.
 
-See also the [Step Tutorial: Graph Builder](../../tutorial-graph-builder/01-create-graph/) for a step-by-step guide on configuring the [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) class, loading data, and customizing graph visualizations.
+See also the [Tutorial: Graph Builder](../../tutorial-graph-builder/01-create-graph/) for a step-by-step guide on configuring the [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) class, loading data, and customizing graph visualizations.
 
 The demo allows to define multiple nodes and edges sources from different data and with different data bindings and styles.
 
-Per default, [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) stores the business data object of each node in the node's [ITagOwner.tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag) property. Using the LitNodeStyle, the properties can be bound and visualized.
+Per default, [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) stores the business data object of each node in the node's [tag](https://docs.yworks.com/yfileshtml/api/ITagOwner#tag) property. Using the LitNodeStyle, the properties can be bound and visualized.
 
 ## Things to Try
 
@@ -40,4 +40,4 @@ Per default, [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilde
   The nodes visual appearance is configured in the template field and realized using the Lit template node style. See the [Lit Template Node Style Demo](../../style/lit-template-node-style/) for further information.
 - _Edges Sources_ contains the data that specifies the graph's edges sources. You can edit and remove existing edges sources as well as add new ones.
 
-Since this demo evaluates the complete data source texts every time a source is edited, _Update Graph_ works as expected only for node data items of primitive type or if the node id binding resolves to primitive ids. Note that this restriction applies only to the demo, not the class [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder).
+Since this demo evaluates the complete data source texts every time a source is edited, _Update Graph_ works as expected only for node data items of primitive type or if the node id binding resolves to primitive ids. Note that this restriction applies only to the demo, not the class [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder).

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -59,7 +59,7 @@ export class InteractiveOrganicFastNodeStyle extends NodeStyleBase {
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class NodeRenderVisual extends HtmlCanvasVisual {
-    private readonly layout: IRectangle;
+  private readonly layout: IRectangle
 
   /**
    * Creates a new instance of NodeRenderVisual.
@@ -67,7 +67,7 @@ class NodeRenderVisual extends HtmlCanvasVisual {
    */
   constructor(layout: IRectangle) {
     super()
-      this.layout = layout;
+    this.layout = layout
   }
 
   /**
@@ -118,9 +118,9 @@ export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeRenderVisual extends HtmlCanvasVisual {
-    private readonly targetPortLocation: IPoint;
-    private readonly sourcePortLocation: IPoint;
-    private readonly bends: IListEnumerable<IBend>;
+  private readonly targetPortLocation: IPoint
+  private readonly sourcePortLocation: IPoint
+  private readonly bends: IListEnumerable<IBend>
 
   constructor(
     bends: IListEnumerable<IBend>,
@@ -128,9 +128,9 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
     targetPortLocation: IPoint
   ) {
     super()
-      this.bends = bends;
-      this.sourcePortLocation = sourcePortLocation;
-      this.targetPortLocation = targetPortLocation;
+    this.bends = bends
+    this.sourcePortLocation = sourcePortLocation
+    this.targetPortLocation = targetPortLocation
   }
 
   render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {

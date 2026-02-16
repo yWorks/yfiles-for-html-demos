@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -64,7 +64,7 @@ export abstract class OrientedRectangleRendererBase<TRenderTag> extends BaseClas
   IVisibilityTestable,
   IVisualCreator
 ) {
-    protected useViewCoordinates: boolean;
+  protected useViewCoordinates: boolean
 
   /**
    * Creates a new instance.
@@ -73,7 +73,7 @@ export abstract class OrientedRectangleRendererBase<TRenderTag> extends BaseClas
    */
   constructor(useViewCoordinates = true) {
     super()
-      this.useViewCoordinates = useViewCoordinates;
+    this.useViewCoordinates = useViewCoordinates
   }
 
   private $renderTag: TRenderTag | null = null

@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ The buttons can be individually styled and placed and trigger an action on click
 - Click or drag from a button to trigger the action associated with the button.
 - Switch the _button trigger_ in the toolbar to change the trigger when buttons should be added to an item.
   - _Hover_ is the default behavior that displays the buttons for an item when hovering over it.
-  - _Current item_ displays the buttons for the [current item](https://docs.yworks.com/yfileshtml/#/api/GraphComponent#currentItem) of the _GraphComponent_.
+  - _Current item_ displays the buttons for the [current item](https://docs.yworks.com/yfileshtml/api/GraphComponent#currentItem) of the _GraphComponent_.
   - _RightClick_ displays the buttons on right-clicking a model item.
 - Press the Tab key while the _GraphComponent_ is focused to set a focus to the first button and cycle through all buttons.  
   A focused button can be triggered using the Enter or Space key.

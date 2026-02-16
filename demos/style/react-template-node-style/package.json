@@ -4,25 +4,25 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','src/license.json')\"",
+    "postinstall": "node -e \"require('node:fs').cpSync('../../../lib/license.json','src/license.json')\"",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@babel/standalone": "^7.28.0",
+    "@babel/standalone": "^7.28.5",
     "@yfiles/demo-app": "../../demo-app",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.4+dev.tgz"
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.5+dev.tgz"
   },
   "devDependencies": {
     "@types/babel__standalone": "^7.1.9",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "@vitejs/plugin-react": "^5.0.4",
-    "@yworks/optimizer": "^1.8.6",
-    "typescript": "~5.9.0",
-    "vite": "^7.1.0"
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "@yworks/optimizer": "^1.8.8",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.0"
   }
 }

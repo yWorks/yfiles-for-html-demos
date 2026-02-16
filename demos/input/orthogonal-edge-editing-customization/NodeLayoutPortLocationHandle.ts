@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ConstrainedHandle, type IHandle, type IInputModeContext, type INode, type Point } from '@yfiles/yfiles'
+import {
+  ConstrainedHandle,
+  type IHandle,
+  type IInputModeContext,
+  type INode,
+  type Point
+} from '@yfiles/yfiles'
 
 /**
  * A port location handle that is constrained to the layout rectangle of

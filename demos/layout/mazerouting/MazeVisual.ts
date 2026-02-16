@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,14 +39,14 @@ import {
  * This class implements the maze visualization based on the nodes that form the maze.
  */
 export class MazeVisual extends BaseClass(IVisualCreator) {
-    private readonly nodes: Iterable<INode>;
+  private readonly nodes: Iterable<INode>
 
   /**
    * Creates a new instance of MazeVisual.
    */
   constructor(nodes: Iterable<INode>) {
     super()
-      this.nodes = nodes;
+    this.nodes = nodes
   }
 
   /**

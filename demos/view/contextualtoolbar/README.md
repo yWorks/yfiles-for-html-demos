@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 This demo presents a contextual toolbar that provides easy to reach controls for selected graph items.
 
-Similar to the [HTML Popup Demo](../../view/htmlpopup/), the toolbar is displayed in the [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) above the graph items and rendered zoom-invariant with a fixed size. It moves alongside the graph items but is limited to the Graph Component container, such that it will be visible at all times.
+Similar to the [HTML Popup Demo](../../view/htmlpopup/), the toolbar is displayed in the [GraphComponent](https://docs.yworks.com/yfileshtml/api/GraphComponent) above the graph items and rendered zoom-invariant with a fixed size. It moves alongside the graph items but is limited to the Graph Component container, such that it will be visible at all times.
 
 ## Things to Try
 

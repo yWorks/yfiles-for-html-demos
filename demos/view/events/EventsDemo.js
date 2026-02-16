@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -72,7 +72,7 @@ import graphData from './graph-data.json'
 
 /**
  * This demo shows how to register to the various events provided by the {@link IGraph graph},
- * the graph component} and the input modes.
+ * {@link GraphComponent the graph component} and the input modes.
  */
 async function run() {
   License.value = licenseData
@@ -1326,7 +1326,7 @@ function unregisterMoveViewportInputModeEvents() {
 }
 
 /**
- * Registers events to the create edge input mode.
+ * Registers events to create edge input mode.
  */
 function registerCreateEdgeInputModeEvents() {
   editorMode.createEdgeInputMode.addEventListener('edge-created', createEdgeInputModeOnEdgeCreated)
@@ -1364,7 +1364,7 @@ function registerCreateEdgeInputModeEvents() {
 }
 
 /**
- * Unregisters events from the create edge input mode.
+ * Unregisters events from create edge input mode.
  */
 function unregisterCreateEdgeInputModeEvents() {
   editorMode.createEdgeInputMode.removeEventListener(
@@ -1506,92 +1506,92 @@ const eventRegistration = {
 /**
  * Invoked when the display has to be invalidated.
  */
-function onDisplaysInvalidated(args, sender) {
+function onDisplaysInvalidated(_, sender) {
   log(sender, 'Displays Invalidated')
 }
 
 /**
  * Invoked when the port of an edge changes.
  */
-function onEdgePortsChanged(args, sender) {
-  logWithType(sender, `Edge Ports Changed: ${args.item}`, 'EdgePortsChanged')
+function onEdgePortsChanged(evt, sender) {
+  logWithType(sender, `Edge Ports Changed: ${evt.item}`, 'EdgePortsChanged')
 }
 
 /**
  * Invoked when the style of an edge changes.
  */
-function onEdgeStyleChanged(args, sender) {
-  logWithType(sender, `Edge Style Changed: ${args.item}`, 'EdgeStyleChanged')
+function onEdgeStyleChanged(evt, sender) {
+  logWithType(sender, `Edge Style Changed: ${evt.item}`, 'EdgeStyleChanged')
 }
 
 /**
  * Invoked when the tag of an edge changes.
  */
-function onEdgeTagChanged(args, sender) {
-  logWithType(sender, `Edge Tag Changed: ${args.item}`, 'EdgeTagChanged')
+function onEdgeTagChanged(evt, sender) {
+  logWithType(sender, `Edge Tag Changed: ${evt.item}`, 'EdgeTagChanged')
 }
 
 /**
  * Invoked when an edge has been created.
  */
-function onEdgeCreated(args, sender) {
-  logWithType(sender, `Edge Created: ${args.item}`, 'EdgeCreated')
+function onEdgeCreated(evt, sender) {
+  logWithType(sender, `Edge Created: ${evt.item}`, 'EdgeCreated')
 }
 
 /**
  * Invoked when an edge has been removed.
  */
-function onEdgeRemoved(args, sender) {
-  logWithType(sender, `Edge Removed: ${args.item}`, 'EdgeRemoved')
+function onEdgeRemoved(evt, sender) {
+  logWithType(sender, `Edge Removed: ${evt.item}`, 'EdgeRemoved')
 }
 
 /**
  * Invoked when a label has been added.
  */
-function onLabelAdded(args, sender) {
-  logWithType(sender, `Label Added: ${args.item}`, 'LabelAdded')
+function onLabelAdded(evt, sender) {
+  logWithType(sender, `Label Added: ${evt.item}`, 'LabelAdded')
 }
 
 /**
  * Invoked when a label has been added.
  */
-function onLabelPreferredSizeChanged(args, sender) {
-  logWithType(sender, `Label Preferred Size Changed: ${args.item}`, 'LabelPreferredSizeChanged')
+function onLabelPreferredSizeChanged(evt, sender) {
+  logWithType(sender, `Label Preferred Size Changed: ${evt.item}`, 'LabelPreferredSizeChanged')
 }
 
 /**
  * Invoked when the parameter of a label has changed.
  */
-function onLabelLayoutParameterChanged(args, sender) {
-  logWithType(sender, `Label Layout Parameter Changed: ${args.item}`, 'LabelLayoutParameterChanged')
+function onLabelLayoutParameterChanged(evt, sender) {
+  logWithType(sender, `Label Layout Parameter Changed: ${evt.item}`, 'LabelLayoutParameterChanged')
 }
 
 /**
  * Invoked when the style of a label has changed.
  */
-function onLabelStyleChanged(args, sender) {
-  logWithType(sender, `Label Style Changed: ${args.item}`, 'LabelStyleChanged')
+function onLabelStyleChanged(evt, sender) {
+  logWithType(sender, `Label Style Changed: ${evt.item}`, 'LabelStyleChanged')
 }
 
 /**
  * Invoked when the tag of a label has changed.
  */
-function onLabelTagChanged(args, sender) {
-  logWithType(sender, `Label Tag Changed: ${args.item}`, 'LabelTagChanged')
+function onLabelTagChanged(evt, sender) {
+  logWithType(sender, `Label Tag Changed: ${evt.item}`, 'LabelTagChanged')
 }
 
 /**
  * Invoked when the text of a label has changed.
  */
-function onLabelTextChanged(args, sender) {
-  logWithType(sender, `Label Text Changed: ${args.item}`, 'LabelTextChanged')
+function onLabelTextChanged(evt, sender) {
+  logWithType(sender, `Label Text Changed: ${evt.item}`, 'LabelTextChanged')
 }
 
 /**
  * Invoked when the text of a label has been removed.
  */
-function onLabelRemoved(args, sender) {
-  logWithType(sender, `Label Removed: ${args.item}`, 'LabelRemoved')
+function onLabelRemoved(evt, sender) {
+  logWithType(sender, `Label Removed: ${evt.item}`, 'LabelRemoved')
 }
 
 /**
@@ -1604,45 +1604,45 @@ function onNodeLayoutChanged(node, oldLayout, sender) {
 /**
  * Invoked when the style of a node has changed.
  */
-function onNodeStyleChanged(args, sender) {
-  logWithType(sender, `Node Style Changed: ${args.item}`, 'NodeStyleChanged')
+function onNodeStyleChanged(evt, sender) {
+  logWithType(sender, `Node Style Changed: ${evt.item}`, 'NodeStyleChanged')
 }
 
 /**
  * Invoked when the tag of a node has changed.
  */
-function onNodeTagChanged(args, sender) {
-  logWithType(sender, `Node Tag Changed: ${args.item}`, 'NodeTagChanged')
+function onNodeTagChanged(evt, sender) {
+  logWithType(sender, `Node Tag Changed: ${evt.item}`, 'NodeTagChanged')
 }
 
 /**
  * Invoked when a node has been created.
  */
-function onNodeCreated(args, sender) {
-  logWithType(sender, `Node Created: ${args.item}`, 'NodeCreated')
+function onNodeCreated(evt, sender) {
+  logWithType(sender, `Node Created: ${evt.item}`, 'NodeCreated')
 }
 
 /**
  * Invoked when a node has been removed.
  */
-function onNodeRemoved(args, sender) {
-  logWithType(sender, `Node Removed: ${args.item}`, 'NodeRemoved')
+function onNodeRemoved(evt, sender) {
+  logWithType(sender, `Node Removed: ${evt.item}`, 'NodeRemoved')
 }
 
 /**
  * Invoked when a port has been added.
  */
-function onPortAdded(args, sender) {
-  logWithType(sender, `Port Added: ${args.item}`, 'PortAdded')
+function onPortAdded(evt, sender) {
+  logWithType(sender, `Port Added: ${evt.item}`, 'PortAdded')
 }
 
 /**
  * Invoked when the location parameter of a port has changed.
  */
-function onPortLocationParameterChanged(args, sender) {
+function onPortLocationParameterChanged(evt, sender) {
   logWithType(
     sender,
-    `Port Location Parameter Changed: ${args.item}`,
+    `Port Location Parameter Changed: ${evt.item}`,
     'PortLocationParameterChanged'
   )
 }
@@ -1650,29 +1650,29 @@ function onPortLocationParameterChanged(args, sender) {
 /**
  * Invoked when the style of a port has changed.
  */
-function onPortStyleChanged(args, sender) {
-  logWithType(sender, `Port Style Changed: ${args.item}`, 'PortStyleChanged')
+function onPortStyleChanged(evt, sender) {
+  logWithType(sender, `Port Style Changed: ${evt.item}`, 'PortStyleChanged')
 }
 
 /**
  * Invoked when the tag of a port has changed.
  */
-function onPortTagChanged(args, sender) {
-  logWithType(sender, `Port Tag Changed: ${args.item}`, 'PortTagChanged')
+function onPortTagChanged(evt, sender) {
+  logWithType(sender, `Port Tag Changed: ${evt.item}`, 'PortTagChanged')
 }
 
 /**
  * Invoked when a port has been removed.
  */
-function onPortRemoved(args, sender) {
-  logWithType(sender, `Port Removed: ${args.item}`, 'PortRemoved')
+function onPortRemoved(evt, sender) {
+  logWithType(sender, `Port Removed: ${evt.item}`, 'PortRemoved')
 }
 
 /**
  * Invoked when a bend has been added.
  */
-function onBendAdded(args, sender) {
-  logWithType(sender, `Bend Added: ${args.item}`, 'BendAdded')
+function onBendAdded(evt, sender) {
+  logWithType(sender, `Bend Added: ${evt.item}`, 'BendAdded')
 }
 
 /**
@@ -1685,24 +1685,24 @@ function onBendLocationChanged(bend, oldLocation, sender) {
 /**
  * Invoked when the tag of a bend has changed.
  */
-function onBendTagChanged(args, sender) {
-  logWithType(sender, `Bend Tag Changed: ${args.item}`, 'BendTagChanged')
+function onBendTagChanged(evt, sender) {
+  logWithType(sender, `Bend Tag Changed: ${evt.item}`, 'BendTagChanged')
 }
 
 /**
  * Invoked when a bend has been removed.
  */
-function onBendRemoved(args, sender) {
-  logWithType(sender, `Bend Removed: ${args.item}`, 'BendRemoved')
+function onBendRemoved(evt, sender) {
+  logWithType(sender, `Bend Removed: ${evt.item}`, 'BendRemoved')
 }
 
 /**
  * Invoked when the parent of a node has changed.
  */
-function onParentChanged(args, sender) {
+function onParentChanged(evt, sender) {
   logWithType(
     sender,
-    `Parent Changed: ${args.parent} -> ${graphComponent.graph.getParent(args.item)}`,
+    `Parent Changed: ${evt.parent} -> ${graphComponent.graph.getParent(evt.item)}`,
     'ParentChanged'
   )
 }
@@ -1710,230 +1710,230 @@ function onParentChanged(args, sender) {
 /**
  * Invoked when the group node status of a node has changed.
  */
-function onIsGroupNodeChanged(args, sender) {
-  logWithType(sender, `Group State Changed: ${args.isGroupNode}`, 'IsGroupNodeChanged')
+function onIsGroupNodeChanged(evt, sender) {
+  logWithType(sender, `Group State Changed: ${evt.isGroupNode}`, 'IsGroupNodeChanged')
 }
 
 /**
  * Invoked when a group has been collapsed.
  */
-function onGroupCollapsed(args, sender) {
-  logWithType(sender, `Group Collapsed: ${args.item}`, 'GroupCollapsed')
+function onGroupCollapsed(evt, sender) {
+  logWithType(sender, `Group Collapsed: ${evt.item}`, 'GroupCollapsed')
 }
 
 /**
  * Invoked when a group has been expanded.
  */
-function onGroupExpanded(args, sender) {
-  logWithType(sender, `Group Expanded: ${args.item}`, 'GroupExpanded')
+function onGroupExpanded(evt, sender) {
+  logWithType(sender, `Group Expanded: ${evt.item}`, 'GroupExpanded')
 }
 
 /**
  * Invoked when a property has changed.
- * @param args An object that contains the event data
+ * @param evt An object that contains the event data
  * @param view The source of the event
  */
-function onPropertyChanged(args, view) {
-  logWithType(view, `Property Changed: ${args.propertyName}`, 'PropertyChanged')
+function onPropertyChanged(evt, view) {
+  logWithType(view, `Property Changed: ${evt.propertyName}`, 'PropertyChanged')
 }
 
 /**
  * Invoked when the entire graph has been copied to clipboard.
  */
-function clipboardOnGraphCopiedToClipboard(args, sender) {
+function clipboardOnGraphCopiedToClipboard(_, sender) {
   log(sender, 'Graph Copied to Clipboard')
 }
 
 /**
  * Invoked when a node has been copied to clipboard.
  */
-function clipboardOnNodeCopiedToClipboard(args, sender) {
+function clipboardOnNodeCopiedToClipboard(_, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
  * Invoked when an edge has been copied to clipboard.
  */
-function clipboardOnEdgeCopiedToClipboard(args, sender) {
+function clipboardOnEdgeCopiedToClipboard(_, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
  * Invoked when a port has been copied to clipboard.
  */
-function clipboardOnPortCopiedToClipboard(args, sender) {
+function clipboardOnPortCopiedToClipboard(_, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
  * Invoked when a label has been copied to clipboard.
  */
-function clipboardOnLabelCopiedToClipboard(args, sender) {
+function clipboardOnLabelCopiedToClipboard(_, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
  * Invoked when a style has been copied to clipboard.
  */
-function clipboardOnObjectCopiedToClipboard(args, sender) {
+function clipboardOnObjectCopiedToClipboard(_, sender) {
   log(sender, 'Object Copied to Clipboard')
 }
 
 /**
  * Invoked when the entire graph has been copied from the clipboard.
  */
-function clipboardOnGraphCopiedFromClipboard(args, sender) {
+function clipboardOnGraphCopiedFromClipboard(_, sender) {
   log(sender, 'Graph Copied From Clipboard')
 }
 
 /**
  * Invoked when a node has been copied from the clipboard.
  */
-function clipboardOnNodeCopiedFromClipboard(args, sender) {
+function clipboardOnNodeCopiedFromClipboard(_, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
  * Invoked when an edge has been copied from the clipboard.
  */
-function clipboardOnEdgeCopiedFromClipboard(args, sender) {
+function clipboardOnEdgeCopiedFromClipboard(_, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
  * Invoked when a port has been copied from the clipboard.
  */
-function clipboardOnPortCopiedFromClipboard(args, sender) {
+function clipboardOnPortCopiedFromClipboard(_, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
  * Invoked when a label has been copied from the clipboard.
  */
-function clipboardOnLabelCopiedFromClipboard(args, sender) {
+function clipboardOnLabelCopiedFromClipboard(_, sender) {
   log(sender, 'Graph Item Copied to Clipboard')
 }
 
 /**
  * Invoked when a style has been copied from the clipboard.
  */
-function clipboardOnObjectCopiedFromClipboard(args, sender) {
+function clipboardOnObjectCopiedFromClipboard(_, sender) {
   log(sender, 'Object Copied From Clipboard')
 }
 
 /**
  * Invoked when the entire graph has been duplicated.
  */
-function clipboardOnGraphDuplicated(args, sender) {
+function clipboardOnGraphDuplicated(_, sender) {
   log(sender, 'Graph Duplicated')
 }
 
 /**
  * Invoked when a node has been duplicated.
  */
-function clipboardOnNodeDuplicated(args, sender) {
+function clipboardOnNodeDuplicated(_, sender) {
   log(sender, 'Graph Item Duplicated')
 }
 
 /**
  * Invoked when an edge has been duplicated.
  */
-function clipboardOnEdgeDuplicated(args, sender) {
+function clipboardOnEdgeDuplicated(_, sender) {
   log(sender, 'Graph Item Duplicated')
 }
 
 /**
  * Invoked when a port has been duplicated.
  */
-function clipboardOnPortDuplicated(args, sender) {
+function clipboardOnPortDuplicated(_, sender) {
   log(sender, 'Graph Item Duplicated')
 }
 
 /**
  * Invoked when a label has been duplicated.
  */
-function clipboardOnLabelDuplicated(args, sender) {
+function clipboardOnLabelDuplicated(_, sender) {
   log(sender, 'Graph Item Duplicated')
 }
 
 /**
  * Invoked when a style has been duplicated.
  */
-function clipboardOnObjectDuplicated(args, sender) {
+function clipboardOnObjectDuplicated(_, sender) {
   log(sender, 'Object Duplicated')
 }
 
 /**
  * Invoked before a clipboard copy operation starts.
  */
-function clipboardOnItemsCopying(args, sender) {
+function clipboardOnItemsCopying(_, sender) {
   log(sender, 'Items Copying')
 }
 
 /**
  * Invoked after a clipboard copy operation has finished.
  */
-function clipboardOnItemsCopied(args, sender) {
+function clipboardOnItemsCopied(_, sender) {
   log(sender, 'Items Copied')
 }
 
 /**
  * Invoked before a clipboard cut operation starts.
  */
-function clipboardOnItemsCutting(args, sender) {
+function clipboardOnItemsCutting(_, sender) {
   log(sender, 'Items Cutting')
 }
 
 /**
  * Invoked after a clipboard cut operation has finished.
  */
-function clipboardOnItemsCut(args, sender) {
+function clipboardOnItemsCut(_, sender) {
   log(sender, 'Items Cut')
 }
 
 /**
  * Invoked before a clipboard paste operation starts.
  */
-function clipboardOnItemsPasting(args, sender) {
+function clipboardOnItemsPasting(_, sender) {
   log(sender, 'Items Pasting')
 }
 
 /**
  * Invoked after a clipboard paste operation has finished.
  */
-function clipboardOnItemsPasted(args, sender) {
+function clipboardOnItemsPasted(_, sender) {
   log(sender, 'Items Pasted')
 }
 
 /**
  * Invoked before a clipboard duplicate operation starts.
  */
-function clipboardOnItemsDuplicating(args, sender) {
+function clipboardOnItemsDuplicating(_, sender) {
   log(sender, 'Items Duplicating')
 }
 
 /**
  * Invoked after a clipboard duplicate operation has finished.
  */
-function clipboardOnItemsDuplicated(args, sender) {
+function clipboardOnItemsDuplicated(_, sender) {
   log(sender, 'Items Duplicated')
 }
 
 /**
  * Invoked when the currentItem property has changed its value
  */
-function componentOnCurrentItemChanged(args, sender) {
+function componentOnCurrentItemChanged(_, sender) {
   log(sender, 'GraphComponent CurrentItemChanged')
 }
 
 /**
  * Invoked when keys are being pressed, i.e. keydown.
  */
-function componentOnKeyDown(args, sender) {
-  const modifierText = getModifierText(args)
+function componentOnKeyDown(evt, sender) {
+  const modifierText = getModifierText(evt)
   logWithType(
     sender,
-    `GraphComponent KeyDown: ${args.key}${modifierText.length > 0 ? ` (modifiers: ${modifierText})` : ''}`,
+    `GraphComponent KeyDown: ${evt.key}${modifierText.length > 0 ? ` (modifiers: ${modifierText})` : ''}`,
     'GraphComponentKeyDown'
   )
 }
@@ -1941,11 +1941,11 @@ function componentOnKeyDown(args, sender) {
 /**
  * Invoked when keys are being released, i.e. keyup.
  */
-function componentOnKeyUp(args, sender) {
-  const modifierText = getModifierText(args)
+function componentOnKeyUp(evt, sender) {
+  const modifierText = getModifierText(evt)
   logWithType(
     sender,
-    `GraphComponent KeyUp: ${args.key}${modifierText.length > 0 ? ` (modifiers: ${modifierText})` : ''}`,
+    `GraphComponent KeyUp: ${evt.key}${modifierText.length > 0 ? ` (modifiers: ${modifierText})` : ''}`,
     'GraphComponentKeyUp'
   )
 }
@@ -1953,133 +1953,133 @@ function componentOnKeyUp(args, sender) {
 /**
  * Invoked when the user clicked the pointer.
  */
-function componentOnPointerClick(args, sender) {
-  log(sender, `GraphComponent PointerClick, clicks: ${args.clickCount}`)
+function componentOnPointerClick(_, sender) {
+  log(sender, `GraphComponent PointerClick, clicks: ${_.clickCount}`)
 }
 
 /**
  * Invoked when the pointer is being moved while at least one of the pointer buttons is pressed.
  */
-function componentOnPointerDrag(args, sender) {
+function componentOnPointerDrag(_, sender) {
   log(sender, 'GraphComponent PointerDrag')
 }
 
 /**
  * Invoked when the pointer has entered the canvas.
  */
-function componentOnPointerEnter(args, sender) {
+function componentOnPointerEnter(_, sender) {
   log(sender, 'GraphComponent PointerEnter')
 }
 
 /**
  * Invoked when the pointer has exited the canvas.
  */
-function componentOnPointerLeave(args, sender) {
+function componentOnPointerLeave(_, sender) {
   log(sender, 'GraphComponent PointerLeave')
 }
 
 /**
  * Invoked when the pointer capture has been lost.
  */
-function componentOnPointerLostCapture(args, sender) {
+function componentOnPointerLostCapture(_, sender) {
   log(sender, 'GraphComponent PointerLostCapture')
 }
 
 /**
  * Invoked when the pointer has been moved in world coordinates.
  */
-function componentOnPointerMove(args, sender) {
+function componentOnPointerMove(_, sender) {
   log(sender, 'GraphComponent PointerMove')
 }
 
 /**
  * Invoked when a pointer button has been pressed.
  */
-function componentOnPointerDown(args, sender) {
+function componentOnPointerDown(_, sender) {
   log(sender, 'GraphComponent PointerDown')
 }
 
 /**
  * Invoked when the pointer button has been released.
  */
-function componentOnPointerUp(args, sender) {
+function componentOnPointerUp(_, sender) {
   log(sender, 'GraphComponent PointerUp')
 }
 
 /**
  * Invoked when the pointer input has been canceled.
  */
-function componentOnPointerCancel(args, sender) {
+function componentOnPointerCancel(_, sender) {
   log(sender, 'GraphComponent PointerCancel')
 }
 
 /**
  * Invoked when the mouse wheel has turned.
  */
-function componentOnMouseWheelTurned(args, sender) {
+function componentOnMouseWheelTurned(_, sender) {
   log(sender, 'GraphComponent MouseWheelTurned')
 }
 
 /**
  * Invoked when a long press gesture has been performed with a touch pointer.
  */
-function componentOnPointerLongPress(args, sender) {
+function componentOnPointerLongPress(_, sender) {
   log(sender, 'GraphComponent LongPress')
 }
 
 /**
  * Invoked when a long press gesture has been performed with a touch pointer.
  */
-function componentOnPointerLongRest(args, sender) {
+function componentOnPointerLongRest(_, sender) {
   log(sender, 'GraphComponent LongRest')
 }
 
 /**
  * Invoked before the visual tree is painted.
  */
-function componentOnPrepareRenderContext(args, sender) {
+function componentOnPrepareRenderContext(_, sender) {
   log(sender, 'GraphComponent PrepareRenderContext')
 }
 
 /**
  * Invoked after the visual tree has been updated.
  */
-function componentOnUpdatedVisual(args, sender) {
+function componentOnUpdatedVisual(_, sender) {
   log(sender, 'GraphComponent UpdatedVisual')
 }
 
 /**
  * Invoked before the visual tree is updated.
  */
-function componentOnUpdatingVisual(args, sender) {
+function componentOnUpdatingVisual(_, sender) {
   log(sender, 'GraphComponent UpdatingVisual')
 }
 
 /**
  * Invoked when the viewport property has been changed.
  */
-function componentOnViewportChanged(args, sender) {
+function componentOnViewportChanged(_, sender) {
   log(sender, 'GraphComponent ViewportChanged')
 }
 
 /**
  * Invoked when the value of the zoom property has been changed.
  */
-function componentOnZoomChanged(args, sender) {
+function componentOnZoomChanged(_, sender) {
   log(sender, 'GraphComponent ZoomChanged')
 }
 
 /**
  * Invoked when the empty canvas area has been clicked.
  */
-function geimOnCanvasClicked(args, sender) {
+function geimOnCanvasClicked(_, sender) {
   log(sender, 'GraphEditorInputMode CanvasClicked')
 }
 
 /**
  * Invoked when an item has been deleted interactively by this mode.
  */
-function geimOnDeletedItem(args, sender) {
+function geimOnDeletedItem(_, sender) {
   log(sender, 'GraphEditorInputMode DeletedItem')
 }
 
@@ -2087,7 +2087,7 @@ function geimOnDeletedItem(args, sender) {
  * Invoked just before the deleteSelection method has deleted the selection after all selected items have been
  * removed.
  */
-function geimOnDeletedSelection(args, sender) {
+function geimOnDeletedSelection(_, sender) {
   log(sender, 'GraphEditorInputMode DeletedSelection')
 }
 
@@ -2095,105 +2095,105 @@ function geimOnDeletedSelection(args, sender) {
  * Invoked just before the deleteSelection method starts its work and will be followed by any number of DeletedItem
  * events and finalized by a DeletedSelection event.
  */
-function geimOnDeletingSelection(args, sender) {
+function geimOnDeletingSelection(_, sender) {
   log(sender, 'GraphEditorInputMode DeletingSelection')
 }
 
 /**
  * Invoked when an item has been clicked.
  */
-function geimOnItemClicked(args, sender) {
-  log(sender, `GraphEditorInputMode ItemClicked ${args.handled ? '(Handled)' : '(Unhandled)'}`)
+function geimOnItemClicked(evt, sender) {
+  log(sender, `GraphEditorInputMode ItemClicked ${evt.handled ? '(Handled)' : '(Unhandled)'}`)
 }
 
 /**
- * Invoked when an item has been double clicked.
+ * Invoked when an item has been double-clicked.
  */
-function geimOnItemDoubleClicked(args, sender) {
-  log(sender, `GraphEditorInputMode ItemDoubleClicked${args.handled ? '(Handled)' : '(Unhandled)'}`)
+function geimOnItemDoubleClicked(evt, sender) {
+  log(sender, `GraphEditorInputMode ItemDoubleClicked${evt.handled ? '(Handled)' : '(Unhandled)'}`)
 }
 
 /**
  * Invoked when an item has been left-clicked.
  */
-function geimOnItemLeftClicked(args, sender) {
-  log(sender, `GraphEditorInputMode ItemLeftClicked${args.handled ? '(Handled)' : '(Unhandled)'}`)
+function geimOnItemLeftClicked(evt, sender) {
+  log(sender, `GraphEditorInputMode ItemLeftClicked${evt.handled ? '(Handled)' : '(Unhandled)'}`)
 }
 
 /**
  * Invoked when an item has been left double-clicked.
  */
-function geimOnItemLeftDoubleClicked(args, sender) {
+function geimOnItemLeftDoubleClicked(evt, sender) {
   log(
     sender,
-    `GraphEditorInputMode ItemLeftDoubleClicked${args.handled ? '(Handled)' : '(Unhandled)'}`
+    `GraphEditorInputMode ItemLeftDoubleClicked${evt.handled ? '(Handled)' : '(Unhandled)'}`
   )
 }
 
 /**
- * Invoked when an item has been right clicked.
+ * Invoked when an item has been right-clicked.
  */
-function geimOnItemRightClicked(args, sender) {
-  log(sender, `GraphEditorInputMode ItemRightClicked${args.handled ? '(Handled)' : '(Unhandled)'}`)
+function geimOnItemRightClicked(evt, sender) {
+  log(sender, `GraphEditorInputMode ItemRightClicked${evt.handled ? '(Handled)' : '(Unhandled)'}`)
 }
 
 /**
  * Invoked when an item has been right double-clicked.
  */
-function geimOnItemRightDoubleClicked(args, sender) {
+function geimOnItemRightDoubleClicked(evt, sender) {
   log(
     sender,
-    `GraphEditorInputMode ItemRightDoubleClicked${args.handled ? '(Handled)' : '(Unhandled)'}`
+    `GraphEditorInputMode ItemRightDoubleClicked${evt.handled ? '(Handled)' : '(Unhandled)'}`
   )
 }
 
 /**
  * Invoked when a label has been added.
  */
-function geimOnLabelAdded(args, sender) {
+function geimOnLabelAdded(_, sender) {
   log(sender, 'GraphEditorInputMode LabelAdded')
 }
 
 /**
  * Invoked when the label text has been changed.
  */
-function geimOnLabelEdited(args, sender) {
+function geimOnLabelEdited(_, sender) {
   log(sender, 'GraphEditorInputMode LabelEdited')
 }
 
 /**
  * Invoked when a single or multi select operation has been finished.
  */
-function geimOnMultiSelectionFinished(args, sender) {
+function geimOnMultiSelectionFinished(_, sender) {
   log(sender, 'GraphEditorInputMode MultiSelectionFinished')
 }
 
 /**
  * Invoked when a single or multi select operation has been started.
  */
-function geimOnMultiSelectionStarted(args, sender) {
+function geimOnMultiSelectionStarted(_, sender) {
   log(sender, 'GraphEditorInputMode MultiSelectionStarted')
 }
 
 /**
  * Invoked when this mode has created a node in response to user interaction.
  */
-function geimOnNodeCreated(args, sender) {
+function geimOnNodeCreated(_, sender) {
   log(sender, 'GraphEditorInputMode NodeCreated')
 }
 
 /**
  * Invoked when a node has been reparented interactively.
  */
-function geimOnNodeReparented(args, sender) {
+function geimOnNodeReparented(_, sender) {
   log(sender, 'GraphEditorInputMode NodeReparented')
 }
 
 /**
  * Invoked after an edge's source and/or target ports have been changed as the result of an input gesture.
  */
-function geimOnEdgePortsChanged(args, sender) {
-  const edge = args.item
+function geimOnEdgePortsChanged(evt, sender) {
+  const edge = evt.item
   log(
     sender,
     `GraphEditorInputMode Edge ${edge} Ports Changed to ${edge.sourcePort}->${edge.targetPort}`
@@ -2203,192 +2203,192 @@ function geimOnEdgePortsChanged(args, sender) {
 /**
  * Invoked when the context menu over an item is about to be opened to determine the contents of the Menu.
  */
-function geimOnPopulateItemContextMenu(args, sender) {
+function geimOnPopulateItemContextMenu(evt, sender) {
   log(
     sender,
-    `GraphEditorInputMode PopulateItemContextMenu${args.handled ? '(Handled)' : '(Unhandled)'}`
+    `GraphEditorInputMode PopulateItemContextMenu${evt.handled ? '(Handled)' : '(Unhandled)'}`
   )
 }
 
 /**
  * Invoked when the pointer is hovering over an item to determine the tool tip to display.
  */
-function geimOnQueryItemToolTip(args, sender) {
-  log(sender, `GraphEditorInputMode QueryItemToolTip${args.handled ? '(Handled)' : '(Unhandled)'}`)
+function geimOnQueryItemToolTip(evt, sender) {
+  log(sender, `GraphEditorInputMode QueryItemToolTip${evt.handled ? '(Handled)' : '(Unhandled)'}`)
 }
 
 /**
  * Invoked when the empty canvas area has been clicked.
  */
-function gvimOnCanvasClicked(args, sender) {
+function gvimOnCanvasClicked(_, sender) {
   log(sender, 'GraphViewerInputMode CanvasClicked')
 }
 
 /**
  * Invoked when an item has been clicked.
  */
-function gvimOnItemClicked(args, sender) {
+function gvimOnItemClicked(_, sender) {
   log(sender, 'GraphViewerInputMode ItemClicked')
 }
 
 /**
  * Invoked when an item has been double-clicked.
  */
-function gvimOnItemDoubleClicked(args, sender) {
+function gvimOnItemDoubleClicked(_, sender) {
   log(sender, 'GraphViewerInputMode ItemDoubleClicked')
 }
 
 /**
  * Invoked when an item has been left-clicked.
  */
-function gvimOnItemLeftClicked(args, sender) {
+function gvimOnItemLeftClicked(_, sender) {
   log(sender, 'GraphViewerInputMode ItemLeftClicked')
 }
 
 /**
  * Invoked when an item has been left double-clicked.
  */
-function gvimOnItemLeftDoubleClicked(args, sender) {
+function gvimOnItemLeftDoubleClicked(_, sender) {
   log(sender, 'GraphViewerInputMode ItemLeftDoubleClicked')
 }
 
 /**
  * Invoked when an item has been right-clicked.
  */
-function gvimOnItemRightClicked(args, sender) {
+function gvimOnItemRightClicked(_, sender) {
   log(sender, 'GraphViewerInputMode ItemRightClicked')
 }
 
 /**
  * Invoked when an item has been right double-clicked.
  */
-function gvimOnItemRightDoubleClicked(args, sender) {
+function gvimOnItemRightDoubleClicked(_, sender) {
   log(sender, 'GraphViewerInputMode ItemRightDoubleClicked')
 }
 
 /**
  * Invoked when a single or multi select operation has been finished.
  */
-function gvimOnMultiSelectionFinished(args, sender) {
+function gvimOnMultiSelectionFinished(_, sender) {
   log(sender, 'GraphViewerInputMode MultiSelectionFinished')
 }
 
 /**
  * Invoked when a single or multi select operation has been started.
  */
-function gvimOnMultiSelectionStarted(args, sender) {
+function gvimOnMultiSelectionStarted(_, sender) {
   log(sender, 'GraphViewerInputMode MultiSelectionStarted')
 }
 
 /**
  * Invoked when the context menu over an item is about to be opened to determine the contents of the Menu.
  */
-function gvimOnPopulateItemContextMenu(args, sender) {
+function gvimOnPopulateItemContextMenu(_, sender) {
   log(sender, 'GraphViewerInputMode PopulateItemContextMenu')
 }
 
 /**
  * Invoked when the pointer is hovering over an item to determine the tool tip to display.
  */
-function gvimOnQueryItemToolTip(args, sender) {
+function gvimOnQueryItemToolTip(_, sender) {
   log(sender, 'GraphViewerInputMode QueryItemToolTip')
 }
 
 /**
  * Invoked when the drag has been canceled.
  */
-function moveInputModeOnDragCanceled(args, sender) {
+function moveInputModeOnDragCanceled(_, sender) {
   logWithType(sender, 'MoveInputMode DragCanceled', 'DragCanceled')
 }
 
 /**
  * Invoked before the drag will be canceled.
  */
-function moveInputModeOnDragCanceling(args, sender) {
+function moveInputModeOnDragCanceling(_, sender) {
   logWithType(sender, 'MoveInputMode DragCanceling', 'DragCanceling')
 }
 
 /**
  * Invoked once the drag has been finished.
  */
-function moveInputModeOnDragFinished(args, sender) {
+function moveInputModeOnDragFinished(_, sender) {
   logWithType(sender, 'MoveInputMode DragFinished', 'DragFinished')
 }
 
 /**
  * Invoked before the drag will be finished.
  */
-function moveInputModeOnDragFinishing(args, sender) {
+function moveInputModeOnDragFinishing(_, sender) {
   logWithType(sender, `MoveInputMode DragFinishing${getAffectedItems(sender)}`, 'DragFinishing')
 }
 
 /**
  * Invoked at the end of every drag.
  */
-function moveInputModeOnDragged(args, sender) {
+function moveInputModeOnDragged(_, sender) {
   logWithType(sender, 'MoveInputMode Dragged', 'Dragged')
 }
 
 /**
  * Invoked once the drag is starting.
  */
-function moveInputModeOnDragging(args, sender) {
+function moveInputModeOnDragging(_, sender) {
   logWithType(sender, 'MoveInputMode Dragging', 'Dragging')
 }
 
 /**
  * Invoked once the drag is initialized and has started.
  */
-function moveInputModeOnDragStarted(args, sender) {
+function moveInputModeOnDragStarted(_, sender) {
   logWithType(sender, `MoveInputMode DragStarted${getAffectedItems(sender)}`, 'DragStarted')
 }
 
 /**
  * Invoked once the drag is starting.
  */
-function moveInputModeOnDragStarting(args, sender) {
+function moveInputModeOnDragStarting(_, sender) {
   logWithType(sender, 'MoveInputMode DragStarting', 'DragStarting')
 }
 
 /**
  * Invoked when a drag is recognized for MoveInputMode.
  */
-function moveInputModeOnQueryPositionHandler(args, sender) {
+function moveInputModeOnQueryPositionHandler(_, sender) {
   log(sender, 'MoveInputMode QueryPositionHandler')
 }
 
 /**
  * Invoked when the drag operation is dropped.
  */
-function itemInputModeOnDragDropped(args, sender) {
+function itemInputModeOnDragDropped(_, sender) {
   logWithType(sender, `${getDropInputModeName(sender)} DragDropped`, 'DragDropped')
 }
 
 /**
  * Invoked when the drag operation enters the CanvasComponent.
  */
-function itemInputModeOnDragEntered(args, sender) {
+function itemInputModeOnDragEntered(_, sender) {
   logWithType(sender, `${getDropInputModeName(sender)} DragEntered`, 'DragEntered')
 }
 
 /**
  * Invoked when the drag operation leaves the CanvasComponent.
  */
-function itemInputModeOnDragLeft(args, sender) {
+function itemInputModeOnDragLeft(_, sender) {
   logWithType(sender, `${getDropInputModeName(sender)} DragLeft`, 'DragLeft')
 }
 
 /**
  * Invoked when the drag operation drags over the CanvasComponent.
  */
-function itemInputModeOnDragOver(args, sender) {
+function itemInputModeOnDragOver(_, sender) {
   logWithType(sender, `${getDropInputModeName(sender)} DragOver`, 'DragOver')
 }
 
 /**
  * Invoked when a new item gets created by the drag operation.
  */
-function itemInputModeOnItemCreated(args, sender) {
+function itemInputModeOnItemCreated(_, sender) {
   logWithType(sender, `${getDropInputModeName(sender)} ItemCreated`, 'ItemCreated')
 }
 
@@ -2402,10 +2402,10 @@ function getDropInputModeName(sender) {
 /**
  * Invoked when the item that is being hovered over with the pointer changes.
  */
-function itemHoverInputModeOnHoveredItemChanged(args, sender) {
+function itemHoverInputModeOnHoveredItemChanged(evt, sender) {
   logWithType(
     sender,
-    `HoverInputMode Item changed from ${args.oldItem} to ${args.item !== null ? args.item.toString() : 'null'}`,
+    `HoverInputMode Item changed from ${evt.oldItem} to ${evt.item !== null ? evt.item.toString() : 'null'}`,
     'HoveredItemChanged'
   )
 }
@@ -2413,387 +2413,387 @@ function itemHoverInputModeOnHoveredItemChanged(args, sender) {
 /**
  * Invoked once a bend creation gesture has been recognized.
  */
-function createBendInputModeOnBendCreated(args, sender) {
+function createBendInputModeOnBendCreated(_, sender) {
   log(sender, 'CreateBendInputMode Bend Created')
 }
 
 /**
  * Invoked when the drag on a bend has been canceled.
  */
-function createBendInputModeOnDragCanceled(args, sender) {
+function createBendInputModeOnDragCanceled(_, sender) {
   logWithType(sender, 'CreateBendInputMode DragCanceled', 'DragCanceled')
 }
 
 /**
  * Invoked at the end of every drag on a bend.
  */
-function createBendInputModeOnDragged(args, sender) {
+function createBendInputModeOnDragged(_, sender) {
   logWithType(sender, 'CreateBendInputMode Dragged', 'Dragged')
 }
 
 /**
  * Invoked once the drag on a bend is starting.
  */
-function createBendInputModeOnDragging(args, sender) {
+function createBendInputModeOnDragging(_, sender) {
   logWithType(sender, 'CreateBendInputMode Dragging', 'Dragging')
 }
 
 /**
  * Invoked when the context menu is about to be shown.
  */
-function contextMenuInputModeOnPopulateMenu(args, sender) {
+function contextMenuInputModeOnPopulateMenu(_, sender) {
   log(sender, 'ContextMenuInputMode Populate Context Menu')
 }
 
 /**
  * Invoked if the editing has not been finished.
  */
-function textEditorInputModeOnEditingCanceled(args, sender) {
+function textEditorInputModeOnEditingCanceled(_, sender) {
   log(sender, 'TextEditorInputMode Editing Canceled')
 }
 
 /**
  * Invoked if the editing when text editing is started.
  */
-function textEditorInputModeOnEditingStarted(args, sender) {
+function textEditorInputModeOnEditingStarted(_, sender) {
   log(sender, 'TextEditorInputMode Editing Started')
 }
 
 /**
  * Invoked once the text has been edited.
  */
-function textEditorInputModeOnTextEdited(args, sender) {
+function textEditorInputModeOnTextEdited(_, sender) {
   log(sender, 'TextEditorInputMode Text Edited')
 }
 
 /**
  * Invoked when this mode queries the tool tip for a certain query location.
  */
-function toolTipInputModeOnQueryToolTip(args, sender) {
+function toolTipInputModeOnQueryToolTip(_, sender) {
   log(sender, 'TooltipInputMode QueryToolTip')
 }
 
 /**
  * Invoked once a click has been detected.
  */
-function clickInputModeOnClicked(args, sender) {
-  const modifierText = getModifierText(args)
-  const details = `buttons: ${PointerButtons[args.pointerButtons]}, clicks: ${args.clickCount}${modifierText.length > 0 ? `, modifiers: ${modifierText})` : ''}`
+function clickInputModeOnClicked(evt, sender) {
+  const modifierText = getModifierText(evt)
+  const details = `buttons: ${PointerButtons[evt.pointerButtons]}, clicks: ${evt.clickCount}${modifierText.length > 0 ? `, modifiers: ${modifierText})` : ''}`
   log(sender, `ClickInputMode Clicked (${details})`)
 }
 
 /**
  * Invoked when the drag has been canceled.
  */
-function handleInputModeOnDragCanceled(args, sender) {
+function handleInputModeOnDragCanceled(_, sender) {
   logWithType(sender, 'HandleInputMode DragCanceled', 'DragCanceled')
 }
 
 /**
  * Invoked before the drag will be canceled.
  */
-function handleInputModeOnDragCanceling(args, sender) {
+function handleInputModeOnDragCanceling(_, sender) {
   logWithType(sender, 'HandleInputMode DragCanceling', 'DragCanceling')
 }
 
 /**
  * Invoked once the drag has been finished.
  */
-function handleInputModeOnDragFinished(args, sender) {
+function handleInputModeOnDragFinished(_, sender) {
   logWithType(sender, 'HandleInputMode DragFinished', 'DragFinished')
 }
 
 /**
  * Invoked before the drag will be finished.
  */
-function handleInputModeOnDragFinishing(args, sender) {
+function handleInputModeOnDragFinishing(_, sender) {
   logWithType(sender, `HandleInputMode DragFinishing${getAffectedItems(sender)}`, 'DragFinishing')
 }
 
 /**
  * Invoked at the end of every drag.
  */
-function handleInputModeOnDragged(args, sender) {
+function handleInputModeOnDragged(_, sender) {
   logWithType(sender, 'HandleInputMode Dragged', 'Dragged')
 }
 
 /**
  * Invoked once the drag is starting.
  */
-function handleInputModeOnDragging(args, sender) {
+function handleInputModeOnDragging(_, sender) {
   logWithType(sender, 'HandleInputMode Dragging', 'Dragging')
 }
 
 /**
  * Invoked once the drag is initialized and has started.
  */
-function handleInputModeOnDragStarted(args, sender) {
+function handleInputModeOnDragStarted(_, sender) {
   logWithType(sender, `HandleInputMode DragStarted${getAffectedItems(sender)}`, 'DragStarted')
 }
 
 /**
  * Invoked once the drag is starting.
  */
-function handleInputModeOnDragStarting(args, sender) {
+function handleInputModeOnDragStarting(_, sender) {
   logWithType(sender, 'HandleInputMode DragStarting', 'DragStarting')
 }
 
 /**
  * Invoked when the drag has been canceled.
  */
-function moveViewportInputModeOnDragCanceled(args, sender) {
+function moveViewportInputModeOnDragCanceled(_, sender) {
   logWithType(sender, 'MoveViewportInputMode DragCanceled', 'DragCanceled')
 }
 
 /**
  * Invoked before the drag will be canceled.
  */
-function moveViewportInputModeOnDragCanceling(args, sender) {
+function moveViewportInputModeOnDragCanceling(_, sender) {
   logWithType(sender, 'MoveViewportInputMode DragCanceling', 'DragCanceling')
 }
 
 /**
  * Invoked once the drag has been finished.
  */
-function moveViewportInputModeOnDragFinished(args, sender) {
+function moveViewportInputModeOnDragFinished(_, sender) {
   logWithType(sender, 'MoveViewportInputMode DragFinished', 'DragFinished')
 }
 
 /**
  * Invoked before the drag will be finished.
  */
-function moveViewportInputModeOnDragFinishing(args, sender) {
+function moveViewportInputModeOnDragFinishing(_, sender) {
   logWithType(sender, `MoveViewportInputMode DragFinishing`, 'DragFinishing')
 }
 
 /**
  * Invoked at the end of every drag.
  */
-function moveViewportInputModeOnDragged(args, sender) {
+function moveViewportInputModeOnDragged(_, sender) {
   logWithType(sender, 'MoveViewportInputMode Dragged', 'Dragged')
 }
 
 /**
  * Invoked once the drag is starting.
  */
-function moveViewportInputModeOnDragging(args, sender) {
+function moveViewportInputModeOnDragging(_, sender) {
   logWithType(sender, 'MoveViewportInputMode Dragging', 'Dragging')
 }
 
 /**
  * Invoked once the drag is initialized and has started.
  */
-function moveViewportInputModeOnDragStarted(args, sender) {
+function moveViewportInputModeOnDragStarted(_, sender) {
   logWithType(sender, `MoveViewportInputMode DragStarted`, 'DragStarted')
 }
 
 /**
  * Invoked once the drag is starting.
  */
-function moveViewportInputModeOnDragStarting(args, sender) {
+function moveViewportInputModeOnDragStarting(_, sender) {
   logWithType(sender, 'MoveViewportInputMode DragStarting', 'DragStarting')
 }
 
 /**
  * Invoked whenever a group has been collapsed.
  */
-function navigationInputModeOnGroupCollapsed(args, sender) {
-  logWithType(sender, `NavigationInputMode Group Collapsed: ${args.item}`, 'GroupCollapsed')
+function navigationInputModeOnGroupCollapsed(evt, sender) {
+  logWithType(sender, `NavigationInputMode Group Collapsed: ${evt.item}`, 'GroupCollapsed')
 }
 
 /**
  * Invoked before a group will be collapsed.
  */
-function navigationInputModeOnGroupCollapsing(args, sender) {
-  logWithType(sender, `NavigationInputMode Group Collapsing: ${args.item}`, 'Group Collapsing')
+function navigationInputModeOnGroupCollapsing(evt, sender) {
+  logWithType(sender, `NavigationInputMode Group Collapsing: ${evt.item}`, 'Group Collapsing')
 }
 
 /**
  * Invoked whenever a group has been entered.
  */
-function navigationInputModeOnGroupEntered(args, sender) {
-  logWithType(sender, `NavigationInputMode Group Entered: ${args.item}`, 'Group Entered')
+function navigationInputModeOnGroupEntered(evt, sender) {
+  logWithType(sender, `NavigationInputMode Group Entered: ${evt.item}`, 'Group Entered')
 }
 
 /**
  * Invoked before a group will be entered.
  */
-function navigationInputModeOnGroupEntering(args, sender) {
-  logWithType(sender, `NavigationInputMode Group Entering: ${args.item}`, 'Group Entering')
+function navigationInputModeOnGroupEntering(evt, sender) {
+  logWithType(sender, `NavigationInputMode Group Entering: ${evt.item}`, 'Group Entering')
 }
 
 /**
  * Invoked whenever a group has been exited.
  */
-function navigationInputModeOnGroupExited(args, sender) {
-  logWithType(sender, `NavigationInputMode Group Exited: ${args.item}`, 'Group Exited')
+function navigationInputModeOnGroupExited(evt, sender) {
+  logWithType(sender, `NavigationInputMode Group Exited: ${evt.item}`, 'Group Exited')
 }
 
 /**
  * Invoked before a group will be exited.
  */
-function navigationInputModeOnGroupExiting(args, sender) {
-  logWithType(sender, `NavigationInputMode Group Exiting: ${args.item}`, 'Group Exiting')
+function navigationInputModeOnGroupExiting(evt, sender) {
+  logWithType(sender, `NavigationInputMode Group Exiting: ${evt.item}`, 'Group Exiting')
 }
 
 /**
  * Invoked when a group has been expanded.
  */
-function navigationInputModeOnGroupExpanded(args, sender) {
-  logWithType(sender, `NavigationInputMode Group Expanded: ${args.item}`, 'Group Expanded')
+function navigationInputModeOnGroupExpanded(evt, sender) {
+  logWithType(sender, `NavigationInputMode Group Expanded: ${evt.item}`, 'Group Expanded')
 }
 
 /**
  * Invoked before a group has been expanded.
  */
-function navigationInputModeOnGroupExpanding(args, sender) {
-  logWithType(sender, `NavigationInputMode Group Expanding: ${args.item}`, 'Group Expanding')
+function navigationInputModeOnGroupExpanding(evt, sender) {
+  logWithType(sender, `NavigationInputMode Group Expanding: ${evt.item}`, 'Group Expanding')
 }
 
 /**
  * Invoked after an edge has been created by this mode.
  */
-function createEdgeInputModeOnEdgeCreated(args, sender) {
+function createEdgeInputModeOnEdgeCreated(_, sender) {
   log(sender, 'CreateEdgeInputMode Edge Created')
 }
 
 /**
  * Invoked when the edge creation has started.
  */
-function createEdgeInputModeOnEdgeCreationStarted(args, sender) {
+function createEdgeInputModeOnEdgeCreationStarted(_, sender) {
   log(sender, 'CreateEdgeInputMode Edge Creation Started')
 }
 
 /**
  * Invoked when the edge creation gesture has been canceled.
  */
-function createEdgeInputModeOnGestureCanceled(args, sender) {
+function createEdgeInputModeOnGestureCanceled(_, sender) {
   log(sender, 'CreateEdgeInputMode Gesture Canceled')
 }
 
 /**
  * Invoked before the gesture will be canceled.
  */
-function createEdgeInputModeOnGestureCanceling(args, sender) {
+function createEdgeInputModeOnGestureCanceling(_, sender) {
   log(sender, 'CreateEdgeInputMode Gesture Canceling')
 }
 
 /**
  * Invoked once the gesture has been finished.
  */
-function createEdgeInputModeOnGestureFinished(args, sender) {
+function createEdgeInputModeOnGestureFinished(_, sender) {
   log(sender, 'CreateEdgeInputMode Gesture Finished')
 }
 
 /**
  * Invoked before the gesture will be finished.
  */
-function createEdgeInputModeOnGestureFinishing(args, sender) {
+function createEdgeInputModeOnGestureFinishing(_, sender) {
   log(sender, 'CreateEdgeInputMode Gesture Finishing')
 }
 
 /**
  * Invoked once the gesture is initialized and has started.
  */
-function createEdgeInputModeOnGestureStarted(args, sender) {
+function createEdgeInputModeOnGestureStarted(_, sender) {
   log(sender, 'CreateEdgeInputMode Gesture Started')
 }
 
 /**
  * Invoked once the gesture is starting.
  */
-function createEdgeInputModeOnGestureStarting(args, sender) {
+function createEdgeInputModeOnGestureStarting(_, sender) {
   log(sender, 'CreateEdgeInputMode Gesture Starting')
 }
 
 /**
  * Invoked at the end of every drag or move.
  */
-function createEdgeInputModeOnMoved(args, sender) {
+function createEdgeInputModeOnMoved(_, sender) {
   log(sender, 'CreateEdgeInputMode Moved')
 }
 
 /**
  * Invoked at the start of every drag or move.
  */
-function createEdgeInputModeOnMoving(args, sender) {
+function createEdgeInputModeOnMoving(_, sender) {
   log(sender, 'CreateEdgeInputMode Moving')
 }
 
 /**
  * Invoked when this instance adds a port to the source or target node during completion of the edge creation gesture.
  */
-function createEdgeInputModeOnPortAdded(args, sender) {
+function createEdgeInputModeOnPortAdded(_, sender) {
   log(sender, 'CreateEdgeInputMode Port Added')
 }
 
 /**
  * Invoked when an item changed its selection state from selected to unselected or vice versa.
  */
-function onItemSelectionAdded(args, sender) {
+function onItemSelectionAdded(_, sender) {
   log(sender, 'GraphComponent Item Selection Added')
 }
 
 /**
  * Invoked when an item changed its selection state from selected to unselected or vice versa.
  */
-function onItemSelectionRemoved(args, sender) {
+function onItemSelectionRemoved(_, sender) {
   log(sender, 'GraphComponent Item Selection Removed')
 }
 
 /**
- * Invoked when a adding a new label is finished.
+ * Invoked when adding a new label is finished.
  */
-function editLabelInputModeLabelAdded(args, sender) {
+function editLabelInputModeLabelAdded(_, sender) {
   log(sender, 'Label Added')
 }
 
 /**
  * Invoked when a removing a label is finished.
  */
-function editLabelInputModeLabelDeleted(args, sender) {
+function editLabelInputModeLabelDeleted(_, sender) {
   log(sender, 'Label Deleted')
 }
 
 /**
  * Invoked when the label editing process is finished.
  */
-function editLabelInputModeLabelEdited(args, sender) {
+function editLabelInputModeLabelEdited(_, sender) {
   log(sender, 'Label Edited')
 }
 
 /**
  * Invoked when the label editing process is canceled.
  */
-function editLabelInputModeLabelEditingCanceled(args, sender) {
+function editLabelInputModeLabelEditingCanceled(_, sender) {
   log(sender, 'Label Text Editing Canceled')
 }
 
 /**
  * Invoked when the label editing process is started.
  */
-function editLabelInputModeLabelEditingStarted(args, sender) {
+function editLabelInputModeLabelEditingStarted(_, sender) {
   log(sender, 'Label Text Editing Started')
 }
 
 /**
  * Invoked when a label is about to be added.
  */
-function editLabelInputModeOnQueryLabelAdding(args, sender) {
+function editLabelInputModeOnQueryLabelAdding(_, sender) {
   log(sender, 'Query Label Adding')
 }
 
 /**
  * Invoked when the label editing process is about to be started.
  */
-function editLabelInputModeOnQueryLabelEditing(args, sender) {
+function editLabelInputModeOnQueryLabelEditing(_, sender) {
   log(sender, 'Query Label Editing')
 }
 
 /**
  * Invoked when a label that is about to be added or edited.
  */
-function editLabelInputModeOnQueryValidateLabelText(args, sender) {
+function editLabelInputModeOnQueryValidateLabelText(_, sender) {
   log(sender, 'Validate Label Text')
 }
 
@@ -2802,27 +2802,27 @@ function editLabelInputModeOnQueryValidateLabelText(args, sender) {
  * {@link UndoEngine.undoName}, {@link UndoEngine.redoName}, or {@link UndoEngine.token}
  * property changes.
  */
-function undoEngineOnPropertyChanged(args, sender) {
-  log(sender, `UndoEngine Property Changed: ${args.propertyName}`)
+function undoEngineOnPropertyChanged(evt, sender) {
+  log(sender, `UndoEngine Property Changed: ${evt.propertyName}`)
 }
 
 /**
  * Invoked when the undo engine undoes an edit in its queue.
  */
-function undoEngineOnUnitUndone(args, sender) {
+function undoEngineOnUnitUndone(_, sender) {
   log(sender, 'Undo performed')
 }
 
 /**
  * Invoked when the undo engine redoes a previously undone edit.
  */
-function undoEngineOnUnitRedone(args, sender) {
+function undoEngineOnUnitRedone(_, sender) {
   log(sender, 'Redo performed')
 }
 
-function getModifierText(args) {
-  return args.modifiers !== 0
-    ? `${args.shiftKey ? ' Shift' : ''}${args.ctrlKey ? ' Control' : ''}${args.altKey ? ' Alt' : ''}${args.metaKey ? ' Meta' : ''}`
+function getModifierText(evt) {
+  return evt.modifiers !== 0
+    ? `${evt.shiftKey ? ' Shift' : ''}${evt.ctrlKey ? ' Control' : ''}${evt.altKey ? ' Alt' : ''}${evt.metaKey ? ' Meta' : ''}`
     : ''
 }
 
@@ -3072,21 +3072,20 @@ function enableUndo() {
  */
 function bindEventCheckBoxes() {
   const elements = document.querySelectorAll("input[data-action='ToggleEvents']")
-  for (let i = 0; i < elements.length; i++) {
-    const element = elements[i]
-
+  for (const element of elements) {
     element.addEventListener('click', (_) => {
       const eventKind = element.getAttribute('data-event-kind')
-      if (eventKind) {
-        const enable = element.checked
-        const fn = enable
-          ? eventRegistration[`register${eventKind}Events`]
-          : eventRegistration[`unregister${eventKind}Events`]
-        if (typeof fn === 'function') {
-          fn()
-        } else if (typeof window.console !== 'undefined') {
-          console.log(`NOT FOUND: ${eventKind}`)
-        }
+      if (!eventKind) {
+        return
+      }
+
+      const fn = element.checked
+        ? eventRegistration[`register${eventKind}Events`]
+        : eventRegistration[`unregister${eventKind}Events`]
+      if (typeof fn === 'function') {
+        fn()
+      } else if (typeof window.console !== 'undefined') {
+        console.log(`NOT FOUND: ${eventKind}`)
       }
     })
   }

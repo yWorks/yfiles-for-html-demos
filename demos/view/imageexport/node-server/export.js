@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,7 @@
  ***************************************************************************/
 const puppeteer = require('puppeteer')
 const path = require('path')
-const uriToBuffer = require('data-uri-to-buffer')
+const { dataUriToBuffer } = require('data-uri-to-buffer')
 
 async function exportPng(svg, w, h, margin) {
   const browser = await puppeteer.launch({ headless: 'new' })
@@ -52,7 +52,7 @@ async function exportPng(svg, w, h, margin) {
   }
   await browser.close()
   if (dataUrl) {
-    return uriToBuffer(dataUrl)
+    return dataUriToBuffer(dataUrl)
   }
   return null
 }

@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,13 +15,13 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-yfiles-basic-features/08-grouping/).
 
-This step shows how to configure [support for grouped or hierarchically organized graphs](https://docs.yworks.com/yfileshtml/#/dguide/interaction-support#interaction-grouping).
+This step shows how to configure [support for grouped or hierarchically organized graphs](https://docs.yworks.com/yfileshtml/dguide/interaction-support#interaction-grouping).
 
 Note
 
 Collapse/expand functionality is demonstrated in the [folding demo](./../../application-features/folding/index.html).
 
-[GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) already provides default gestures for grouping/ungrouping.
+[GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode) already provides default gestures for grouping/ungrouping.
 
 - Press Ctrl+G to group the currently selected nodes.
 
@@ -34,7 +34,7 @@ Ungroup Selected Nodes
 - Press Shift+Ctrl+G to shrink a selected group node to its minimum size.
 - Hold Ctrl when dragging nodes into or out of groups to change the graph hierarchy.
 
-Group nodes can use special styles that are optimized to visualize a group with content. However, a group node can also use a normal node style like [ShapeNodeStyle](https://docs.yworks.com/yfileshtml/#/api/ShapeNodeStyle). In this example, we use [GroupNodeStyle](https://docs.yworks.com/yfileshtml/#/api/GroupNodeStyle).
+Group nodes can use special styles that are optimized to visualize a group with content. However, a group node can also use a normal node style like [ShapeNodeStyle](https://docs.yworks.com/yfileshtml/api/ShapeNodeStyle). In this example, we use [GroupNodeStyle](https://docs.yworks.com/yfileshtml/api/GroupNodeStyle).
 
 ```
 graph.groupNodeDefaults.style = new GroupNodeStyle({ tabFill: '#0b7189' })
@@ -69,7 +69,7 @@ graph.addLabel(groupNode, 'Group Node')
 const edgeFromGroup = graph.createEdge(groupNode, graph.nodes.at(1)!)
 ```
 
-If the group content is changed in code, i.e. a child node is added or removed programmatically, the group node size is not adjusted automatically. Instead, we have to call [adjustGroupNodeLayout](https://docs.yworks.com/yfileshtml/#/api/IGraph#adjustGroupNodeLayout).
+If the group content is changed in code, i.e. a child node is added or removed programmatically, the group node size is not adjusted automatically. Instead, we have to call [adjustGroupNodeLayout](https://docs.yworks.com/yfileshtml/api/IGraph#adjustGroupNodeLayout).
 
 ```
 // Get a group node

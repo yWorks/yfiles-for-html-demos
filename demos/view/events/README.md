@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/events/).
 
-This demo shows the multitude of events provided by the classes [IGraph](https://docs.yworks.com/yfileshtml/#/api/IGraph) and [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) and the _Input Modes_.
+This demo shows the multitude of events provided by the classes [IGraph](https://docs.yworks.com/yfileshtml/api/IGraph) and [GraphComponent](https://docs.yworks.com/yfileshtml/api/GraphComponent) and the _Input Modes_.
 
 The events are logged to the _Event Log_ panel. Logging can be switched on and off for each _kind of events_ in the respective panel.
 

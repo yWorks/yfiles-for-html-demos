@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -122,19 +122,19 @@
         <p>
           To transfer the graph structure and layout between the <em>Node.js</em>
           <em><a target="_blank" href="https://expressjs.com/">Express</a></em> server and the main
-          page, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" class="api" target="_blank">LayoutExecutorAsync</a> creates a serializable data object on the
+          page, the <a href="https://docs.yworks.com/yfileshtml/api/LayoutExecutorAsync" class="api" target="_blank">LayoutExecutorAsync</a> creates a serializable data object on the
           client-side and sends it to the <em>Node.js</em> server.
         </p>
         <p>
-          On the server-side, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" class="api" target="_blank">LayoutExecutorAsyncWorker</a> parses this data object
+          On the server-side, the <a href="https://docs.yworks.com/yfileshtml/api/LayoutExecutorAsyncWorker" class="api" target="_blank">LayoutExecutorAsyncWorker</a> parses this data object
           and provides a callback which allows to apply a layout on the parsed graph. This callback
           is executed by calling <code>process(data)</code> on the worker which resolves with a
           serializable result data object that is supposed to be sent back to the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" class="api" target="_blank">LayoutExecutorAsync</a>.
+          <a href="https://docs.yworks.com/yfileshtml/api/LayoutExecutorAsync" class="api" target="_blank">LayoutExecutorAsync</a>.
         </p>
         <p>
-          On the client-side, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" class="api" target="_blank">LayoutExecutorAsync</a> waits for the response of the
-          <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" class="api" target="_blank">LayoutExecutorAsyncWorker</a>
+          On the client-side, the <a href="https://docs.yworks.com/yfileshtml/api/LayoutExecutorAsync" class="api" target="_blank">LayoutExecutorAsync</a> waits for the response of the
+          <a href="https://docs.yworks.com/yfileshtml/api/LayoutExecutorAsyncWorker" class="api" target="_blank">LayoutExecutorAsyncWorker</a>
           and eventually applies the result to the graph.
         </p>
 
@@ -155,7 +155,7 @@
 
         <h2>Running the Node.js Layout Server</h2>
         <ol>
-          <li>Navigate to the <code>server</code> subdirectory of this demo's directory</li>
+          <li>Navigate to the <code>layout-server</code> subdirectory of this demo's directory</li>
           <li>
             Install the required node modules:
             <pre>&gt; npm install</pre>

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -42,16 +42,13 @@ type CollapseState = { collapsed: boolean }
 type CollapseExpandVisual = TaggedSvgVisual<SVGGElement, CollapseState>
 
 export class CollapseExpandPortStyle extends PortStyleBase<CollapseExpandVisual> {
-    isCollapsed: (port: IPort) => boolean;
-    renderSize: Size;
+  isCollapsed: (port: IPort) => boolean
+  renderSize: Size
 
-  constructor(
-    renderSize: Size,
-    isCollapsed: (port: IPort) => boolean
-  ) {
+  constructor(renderSize: Size, isCollapsed: (port: IPort) => boolean) {
     super()
-      this.renderSize = renderSize;
-      this.isCollapsed = isCollapsed;
+    this.renderSize = renderSize
+    this.isCollapsed = isCollapsed
   }
 
   protected createVisual(_context: IRenderContext, port: IPort): CollapseExpandVisual | null {

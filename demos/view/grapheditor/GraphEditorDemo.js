@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -142,7 +142,7 @@ function createEditorMode() {
   })
   mode.editLabelInputMode.textEditorInputMode.textBoxPlacementPolicy =
     TextBoxPlacementPolicy.MOVE_TEXT_BOX
-  // Fix the top left location of a group node when toggling collapse/expand
+  // Fix the top right location of a group node when toggling collapse/expand
   mode.navigationInputMode.autoGroupNodeAlignmentPolicy = NodeAlignmentPolicy.TOP_RIGHT
 
   // Make bend creation more important than moving of selected edges.

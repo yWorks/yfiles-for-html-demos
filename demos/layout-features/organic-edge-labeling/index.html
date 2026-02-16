@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -79,29 +79,29 @@
       <div class="demo-description__content">
         <h1>Organic Layout with Edge Labeling</h1>
         <p>
-          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/#/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a> for automatic edge
+          This demo shows how to configure the <a href="https://docs.yworks.com/yfileshtml/api/OrganicLayout" class="api" target="_blank">OrganicLayout</a> for automatic edge
           label placement.
         </p>
         <h2>Label Placement</h2>
         <p>
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModel" class="api" target="_blank">Label models</a> and their
-          <a href="https://docs.yworks.com/yfileshtml/#/api/ILabelModelParameter" class="api" target="_blank">parameters</a> control where labels appear. For manuel
+          <a href="https://docs.yworks.com/yfileshtml/api/ILabelModel" class="api" target="_blank">Label models</a> and their
+          <a href="https://docs.yworks.com/yfileshtml/api/ILabelModelParameter" class="api" target="_blank">parameters</a> control where labels appear. For manuel
           placements, it&#39;s common to use models that limit possible positions. However, for
           automatic layout, it&#39;s best to use unrestricted models like
-          <a href="https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel" class="api" target="_blank">FreeEdgeLabelModel</a> for maximum flexibility.
+          <a href="https://docs.yworks.com/yfileshtml/api/FreeEdgeLabelModel" class="api" target="_blank">FreeEdgeLabelModel</a> for maximum flexibility.
         </p>
         <p>
           You can further guide label placement using
-          <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeLabelPreferredPlacement" class="api" target="_blank">EdgeLabelPreferredPlacement</a>, which specifies preferences such as
+          <a href="https://docs.yworks.com/yfileshtml/api/EdgeLabelPreferredPlacement" class="api" target="_blank">EdgeLabelPreferredPlacement</a>, which specifies preferences such as
           placing labels near the edge&#39;s source or target, on a particular side, or with a
           specific rotation. For better results when using organic layout, both the side and angle
           of the labels relative to the edge path should be specified.
         </p>
         <p>
           Note that self-loops and parallel edges are handled by
-          <a href="https://docs.yworks.com/yfileshtml/#/api/SelfLoopRouter" class="api" target="_blank">SelfLoopRouter</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/ParallelEdgeRouter" class="api" target="_blank">ParallelEdgeRouter</a> respectively.
+          <a href="https://docs.yworks.com/yfileshtml/api/SelfLoopRouter" class="api" target="_blank">SelfLoopRouter</a> and <a href="https://docs.yworks.com/yfileshtml/api/ParallelEdgeRouter" class="api" target="_blank">ParallelEdgeRouter</a> respectively.
           Thus, labels of such edges are not considered by the organic layout algorithm. To place
-          the labels of these edges, a <a href="https://docs.yworks.com/yfileshtml/#/api/GenericLabeling" class="api" target="_blank">GenericLabeling</a> algorithm has to be
+          the labels of these edges, a <a href="https://docs.yworks.com/yfileshtml/api/GenericLabeling" class="api" target="_blank">GenericLabeling</a> algorithm has to be
           applied as a post-processing step.
         </p>
         <h2>Things to Try</h2>
@@ -124,11 +124,11 @@
         </ul>
         <h2>Documentation</h2>
         <ul>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/organic_layout#_labeling_3" class="dguide" target="_blank">Labeling</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/dguide/label_placement" class="dguide" target="_blank">Automatic Label Placement</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/EdgeLabelPreferredPlacement" class="api" target="_blank">EdgeLabelPreferredPlacement</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/GenericLabeling" class="api" target="_blank">GenericLabeling</a></li>
-          <li><a href="https://docs.yworks.com/yfileshtml/#/api/FreeEdgeLabelModel" class="api" target="_blank">FreeEdgeLabelModel</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/dguide/organic_layout#_labeling_3" class="dguide" target="_blank">Labeling</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/dguide/label_placement" class="dguide" target="_blank">Automatic Label Placement</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/EdgeLabelPreferredPlacement" class="api" target="_blank">EdgeLabelPreferredPlacement</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/GenericLabeling" class="api" target="_blank">GenericLabeling</a></li>
+          <li><a href="https://docs.yworks.com/yfileshtml/api/FreeEdgeLabelModel" class="api" target="_blank">FreeEdgeLabelModel</a></li>
         </ul>
       </div>
     </aside>
@@ -136,7 +136,7 @@
       <div class="demo-main__graph-component">
         <div id="graphComponent"></div>
       </div>
-      <div id="demo-message" class="demo-message"></div>
+      <div class="yplay__message-host"></div>
     </div>
     <script type="module" crossorigin="anonymous" src="./OrganicEdgeLabelingDemo.ts" async></script>
   </body>

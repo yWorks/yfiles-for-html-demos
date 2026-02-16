@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -65,7 +65,7 @@ export class InteractiveOrganicLayoutInputHelper {
    * Configures the layout to react to the user dragging a node.
    */
   drag(draggedNode: INode, draggedComponent: Iterable<INode>, delta = 0.5): void {
-    this.updateStressAndInertiaForOtherNodes(draggedNode, draggedComponent, delta)
+    this.updateStressAndInertiaForOtherNodes([draggedNode], draggedComponent, delta)
     this.layoutHelper.fixNode(draggedNode, 1)
   }
 
@@ -74,7 +74,19 @@ export class InteractiveOrganicLayoutInputHelper {
    */
   finishDrag(draggedNode: INode, draggedComponent: Iterable<INode>): void {
     this.layoutHelper.fixNode(draggedNode, 1, 0)
-    this.updateStressAndInertiaForOtherNodes(draggedNode, draggedComponent, -1)
+    this.updateStressAndInertiaForOtherNodes([draggedNode], draggedComponent, -1)
+  }
+
+  /**
+   * Configures the layout to respond when a node or edge is created or deleted.
+   * Handling node and edge changes helps prevent excessive node movement
+   * when isolated nodes are added.
+   */
+  updateLayoutAfterStructuralChange(affectedNodes: INode[], affectedComponent: Iterable<INode>) {
+    this.graph.nodes.forEach((node) => {
+      this.layoutHelper.setStressAndInertia(node, 1, affectedNodes.includes(node) ? 0.1 : 0)
+    })
+    this.updateStressAndInertiaForOtherNodes(affectedNodes, affectedComponent)
   }
 
   /**
@@ -108,18 +120,18 @@ export class InteractiveOrganicLayoutInputHelper {
   }
 
   /**
-   * Allow the nodes of the moved component to move close to the dragged node.
-   * @param draggedNode the node that will be dragged.
-   * @param draggedComponent the nodes that belong to the dragged component
+   * Allow the nodes of the affected component to move close to the affected node.
+   * @param affectedNodes the node that will be affected.
+   * @param affectedComponent the nodes that belong to the affected component
    * @param delta defines what stress to add to the nodes and what inertia to *remove* from the node.
    */
   private updateStressAndInertiaForOtherNodes(
-    draggedNode: INode,
-    draggedComponent: Iterable<INode>,
+    affectedNodes: INode[],
+    affectedComponent: Iterable<INode>,
     delta = 0.1
   ): void {
-    for (const node of draggedComponent) {
-      if (node !== draggedNode) {
+    for (const node of affectedComponent) {
+      if (!affectedNodes.includes(node)) {
         // allow the nodes of the moved component to move close to the dragged node
         this.layoutHelper.changeStress(node, delta)
         this.layoutHelper.changeInertia(node, -delta)

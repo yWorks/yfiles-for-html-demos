@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,14 +15,14 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/moveunselectednodes/).
 
-This demo shows how the [GraphEditorInputMode.moveUnselectedItemsInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode#moveUnselectedItemsInputMode) can be constrained, e.g. with keys or custom hit testing.
+This demo shows how the [GraphEditorInputMode.moveUnselectedItemsInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode#moveUnselectedItemsInputMode) can be constrained, e.g., with keys or custom hit testing.
 
 ## Things to Try
 
 - Move a node around by dragging the top without selecting the node first. Note that the cursor indicates that the node can be moved.
 - Try the different modes provided by the _Move Unselected Nodes_ combo box.
 - Try setting the _Edge Creation Mode_ to _At Port Candidates_ and see how it works in conjunction with moving unselected nodes.
-- Disable _Move Selected Nodes_ which is the out of the box [MoveInputMode](https://docs.yworks.com/yfileshtml/#/api/MoveInputMode) to move selected nodes. When disabled, only the current _Move Unselected Nodes_ setting is considered, therefore selected nodes may not be draggable.  
+- Disable _Move Selected Nodes_ which is the out of the box [MoveInputMode](https://docs.yworks.com/yfileshtml/api/MoveInputMode) to move selected nodes. When disabled, only the current _Move Unselected Nodes_ setting is considered, therefore selected nodes may not be draggable.  
   Note that both, the standard and the special move input mode, can be enabled at the same time.
 
 ## Move Unselected Settings

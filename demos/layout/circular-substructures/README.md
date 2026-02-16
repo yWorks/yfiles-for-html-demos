@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/circular-substructures/).
 
-This demo showcases how the [CircularLayout](https://docs.yworks.com/yfileshtml/#/api/CircularLayout) algorithm handles substructures and node types.
+This demo showcases how the [CircularLayout](https://docs.yworks.com/yfileshtml/api/CircularLayout) algorithm handles substructures and node types.
 
 The circular layout algorithm is able to identify star substructures in a graph and arrange these stars in an optimized manner. This makes them easily recognizable in the resulting layout. Furthermore, specified node types may influence both substructure detection and placement of elements within the structure.
 

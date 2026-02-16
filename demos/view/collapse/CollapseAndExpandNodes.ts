@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -53,12 +53,13 @@ import {
  * algorithms.
  */
 export class CollapseAndExpandNodes {
-    private graphComponent: GraphComponent;
+  private graphComponent: GraphComponent
   private nodeCollapsedMap: HashMap<INode, boolean> = new HashMap()
   private nodeVisibility: HashMap<INode, boolean> = new HashMap()
 
   constructor(graphComponent: GraphComponent) {
-      this.graphComponent = graphComponent;}
+    this.graphComponent = graphComponent
+  }
 
   /**
    * Sets the given node's collapsed state.

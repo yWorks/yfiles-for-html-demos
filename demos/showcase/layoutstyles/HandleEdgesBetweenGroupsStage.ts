@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -58,8 +58,8 @@ import {
  * {@link markedEdgeRouter edge routing algorithm} for those edges.
  */
 export class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
-    markedEdgeRouter: ILayoutAlgorithm | null;
-    considerEdgeLabels: boolean;
+  markedEdgeRouter: ILayoutAlgorithm | null
+  considerEdgeLabels: boolean
 
   /**
    * Creates an instance of HandleEdgesBetweenGroupsStage.
@@ -67,13 +67,10 @@ export class HandleEdgesBetweenGroupsStage extends LayoutStageBase {
    * have been temporarily hidden, when these edges will be restored back.
    * @param markedEdgeRouter the edge routing algorithm that is applied to the set of marked edges
    */
-  constructor(
-    considerEdgeLabels: boolean,
-    markedEdgeRouter: ILayoutAlgorithm | null = null
-  ) {
+  constructor(considerEdgeLabels: boolean, markedEdgeRouter: ILayoutAlgorithm | null = null) {
     super()
-      this.considerEdgeLabels = considerEdgeLabels;
-      this.markedEdgeRouter = markedEdgeRouter;
+    this.considerEdgeLabels = considerEdgeLabels
+    this.markedEdgeRouter = markedEdgeRouter
   }
 
   /**

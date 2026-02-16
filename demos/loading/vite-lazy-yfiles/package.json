@@ -6,7 +6,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json', 'src/license.json')\" || echo To run this demo, please add a license.json to the src/ folder.",
+    "postinstall": "node -e \"require('node:fs').cpSync('../../../lib/license.json', 'src/license.json')\" || echo To run this demo, please add a license.json to the src/ folder.",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
@@ -14,11 +14,11 @@
   "dependencies": {
     "@yfiles/demo-app": "../../demo-app",
     "@yfiles/demo-utils": "../../utils",
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.4+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.5+dev.tgz"
   },
   "devDependencies": {
-    "@yworks/optimizer": "^1.8.6",
-    "typescript": "~5.9.0",
-    "vite": "^7.1.0"
+    "@yworks/optimizer": "^1.8.8",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.0"
   }
 }

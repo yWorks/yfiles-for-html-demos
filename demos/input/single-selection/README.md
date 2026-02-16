@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/single-selection/).
 
-This demo shows how to configure [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) for single selection mode. In this mode, only one graph item can be selected at a time.
+This demo shows how to configure [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode) for single selection mode. In this mode, only one graph item can be selected at a time.
 
 ## Things to Try
 

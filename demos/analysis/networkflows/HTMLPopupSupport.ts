@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -46,9 +46,9 @@ import {
  * parameter} to determine the position of the pop-up.
  */
 export class HTMLPopupSupport {
-    private readonly labelModelParameter: ILabelModelParameter;
-    private readonly div: HTMLElement;
-    private readonly graphComponent: GraphComponent;
+  private readonly labelModelParameter: ILabelModelParameter
+  private readonly div: HTMLElement
+  private readonly graphComponent: GraphComponent
   private _currentItem: IModelItem | null
   private dirty: boolean
 
@@ -61,9 +61,9 @@ export class HTMLPopupSupport {
     div: HTMLElement,
     labelModelParameter: ILabelModelParameter
   ) {
-      this.graphComponent = graphComponent;
-      this.div = div;
-      this.labelModelParameter = labelModelParameter;
+    this.graphComponent = graphComponent
+    this.div = div
+    this.labelModelParameter = labelModelParameter
     this._currentItem = null
     this.dirty = false
 

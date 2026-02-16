@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ Each node has specific ports: incoming edges connect only to the left side of th
 
 ## Graph Creation
 
-A specialized [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) from the [Port-aware Graph Builder Demo](../../databinding/port-aware-graph-builder/) is used to create the graph, connecting the edges with specific ports defined in the business data.
+A specialized [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) from the [Port-aware Graph Builder Demo](../../databinding/port-aware-graph-builder/) is used to create the graph, connecting the edges with specific ports defined in the business data.
 
 ## Things to Try
 

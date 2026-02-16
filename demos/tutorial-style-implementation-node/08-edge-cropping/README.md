@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 So far there have been no edges in the graph, but if we add one, we notice that the edge won’t start/end at the custom outline, but rather at the boundaries of the node itself.
 
-To crop edges correctly at the node outline, we override `getOutline`, which returns a suitable [GeneralPath](https://docs.yworks.com/yfileshtml/#/api/GeneralPath) representing the node outline.
+To crop edges correctly at the node outline, we override [getOutline](https://docs.yworks.com/yfileshtml/api/NodeStyleBase#getOutline), which returns a suitable [GeneralPath](https://docs.yworks.com/yfileshtml/api/GeneralPath) representing the node outline.
 
 ```
 protected getOutline(node: INode): GeneralPath | null {
@@ -39,9 +39,9 @@ protected getOutline(node: INode): GeneralPath | null {
 
 ## Performance improvements
 
-Note that this outline path is not cached and instead re-created multiple times for every single edge, which can be wasteful. If the node shape is simple enough so that it’s easy to check whether a point is inside or outside the shape, consider overriding `isInside` and `getIntersection` as an optimization. For this shape an implementation could look as follows.
+Note that this outline path is not cached and instead re-created multiple times for every single edge, which can be wasteful. If the node shape is simple enough so that it’s easy to check whether a point is inside or outside the shape, consider overriding [isInside](https://docs.yworks.com/yfileshtml/api/NodeStyleBase#isInside) and [getIntersection](https://docs.yworks.com/yfileshtml/api/NodeStyleBase#getIntersection) as an optimization. For this shape an implementation could look as follows.
 
-`isInside` determines whether a given point lies inside the node shape. This is used for finding an edge segment that crosses the node outline.
+[isInside](https://docs.yworks.com/yfileshtml/api/NodeStyleBase#isInside) determines whether a given point lies inside the node shape. This is used for finding an edge segment that crosses the node outline.
 
 ```
 protected isInside(node: INode, location: Point): boolean {
@@ -62,7 +62,7 @@ protected isInside(node: INode, location: Point): boolean {
 }
 ```
 
-`getIntersection` calculates the intersection point between the node and the given line segment. This method is used to crop edges at the node outline.
+[getIntersection](https://docs.yworks.com/yfileshtml/api/NodeStyleBase#getIntersection) calculates the intersection point between the node and the given line segment. This method is used to crop edges at the node outline.
 
 ```
 protected getIntersection(

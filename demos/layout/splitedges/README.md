@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,9 +15,9 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/splitedges/).
 
-This demo shows how to use split ids to align edges outside with edges inside a group nodes in [RecursiveGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout). In [RecursiveGroupLayout](https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout) the routing for inter-edges is sometimes not satisfactory. Inter-edges are edges that connect nodes outside of a group with nodes inside of this group. Since RecursiveGroupLayout routes these edges after the rest of the graph is arranged, they sometimes don't fit into the overall layout style.
+This demo shows how to use split ids to align edges outside with edges inside a group nodes in [RecursiveGroupLayout](https://docs.yworks.com/yfileshtml/api/RecursiveGroupLayout). In [RecursiveGroupLayout](https://docs.yworks.com/yfileshtml/api/RecursiveGroupLayout) the routing for inter-edges is sometimes not satisfactory. Inter-edges are edges that connect nodes outside of a group with nodes inside of this group. Since RecursiveGroupLayout routes these edges after the rest of the graph is arranged, they sometimes don't fit into the overall layout style.
 
-In combination with [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout), inter-edges can be replaced with two edges that are aligned at the group node. [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) provides the option that an edge is routed directly from the border of a group nodes to a node inside of this group node instead of leaving the group node first.
+In combination with [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout), inter-edges can be replaced with two edges that are aligned at the group node. [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout) provides the option that an edge is routed directly from the border of a group nodes to a node inside of this group node instead of leaving the group node first.
 
 ## Things to Try
 

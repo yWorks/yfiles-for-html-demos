@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -49,7 +49,7 @@ export class CustomArrow extends BaseClass(
   IVisualCreator,
   IBoundsProvider
 ) {
-    distance: number;
+  distance: number
   private anchor: Point
   private direction: Point
   private arrowPath: GeneralPath | null
@@ -59,7 +59,7 @@ export class CustomArrow extends BaseClass(
    */
   constructor(distance = 1) {
     super()
-      this.distance = distance;
+    this.distance = distance
     this.anchor = Point.ORIGIN
     this.direction = Point.ORIGIN
     this.arrowPath = null

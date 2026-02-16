@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ On the client-side, the LayoutExecutorAsync waits for the response of the Layout
 
 ## Running the demo
 
-First, install the required npm modules in the demo's `server` directory:
+First, install the required npm modules in the demo's `layout-server` directory:
 
 `> npm install`
 

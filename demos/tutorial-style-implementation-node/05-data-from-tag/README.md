@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -19,9 +19,9 @@ In the last step, we added a property to the style to change the visualization. 
 
 Note
 
-yFiles for HTML provides a `tag` property for all graph items, which is frequently used to bind business objects to nodes and edges. The style can make use of this data and translate it to a visual representation.
+yFiles for HTML provides a [tag](https://docs.yworks.com/yfileshtml/api/ITagOwner#tag) property for all graph items, which is frequently used to bind business objects to nodes and edges. The style can make use of this data and translate it to a visual representation.
 
-In this example, we adjust the style implementation to use the `color` stored in the node’s `tag` instead of using the color from a style property. First, we add two nodes with different `tag` objects.
+In this example, we adjust the style implementation to use the `color` stored in the node’s [tag](https://docs.yworks.com/yfileshtml/api/ITagOwner#tag) instead of using the color from a style property. First, we add two nodes with different [tag](https://docs.yworks.com/yfileshtml/api/ITagOwner#tag) objects.
 
 ```
 graph.createNode({
@@ -45,7 +45,7 @@ pathElement.setAttribute('fill', fillColor)
 
 Of course, you are not limited to only changing colors in this manner. Earlier, one node’s tag includes a `showBadge` property, which we can use to add another element to the visualization.
 
-Since there are now two SVG elements, we can no longer just return the path. Instead, we have to wrap both the path and the badge in a `<g>` element to group them together. We will also move the `setTranslate` call to translate the group instead of just the path:
+Since there are now two SVG elements, we can no longer just return the path. Instead, we have to wrap both the path and the badge in a `<g>` element to group them together. We will also move the [setTranslate](https://docs.yworks.com/yfileshtml/api/SvgVisual#setTranslate) call to translate the group instead of just the path:
 
 ```
 const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')

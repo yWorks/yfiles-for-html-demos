@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/label-style/).
 
-This demo shows the most important configuration options for the built-in [LabelStyle](https://docs.yworks.com/yfileshtml/#/api/LabelStyle) class.
+This demo shows the most important configuration options for the built-in [LabelStyle](https://docs.yworks.com/yfileshtml/api/LabelStyle) class.
 
 ## Things to Try
 
@@ -29,4 +29,4 @@ This demo shows the most important configuration options for the built-in [Label
 - [HTML Label Style Demo](../../style/html-label-style/)
 - [Markdown Label Demo](../../style/markdownlabel/)
 - [Rich Text Label Demo](../../style/richtextlabel/)
-- [Step 01 Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/)
+- [Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/)

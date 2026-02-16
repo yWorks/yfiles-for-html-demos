@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,7 +39,7 @@ import {
  * An {@link IPositionHandler} that manages the position of a given {@link MutableRectangle}.
  */
 export class PositionHandler extends BaseClass(IPositionHandler) {
-    private rectangle: MutableRectangle;
+  private rectangle: MutableRectangle
   /**
    * Stores the offset from the mouse event location to the handled rectangle's upper left corner.
    */
@@ -47,7 +47,7 @@ export class PositionHandler extends BaseClass(IPositionHandler) {
 
   constructor(rectangle: MutableRectangle) {
     super()
-      this.rectangle = rectangle;
+    this.rectangle = rectangle
   }
 
   /**

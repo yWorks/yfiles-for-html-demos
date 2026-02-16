@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 This demo shows how the reconnection of edge ports can be customized and restricted.
 
-This is done with custom implementations of [IEdgeReconnectionPortCandidateProvider](https://docs.yworks.com/yfileshtml/#/api/IEdgeReconnectionPortCandidateProvider) that are added to the lookup of the edges.
+This is done with custom implementations of [IEdgeReconnectionPortCandidateProvider](https://docs.yworks.com/yfileshtml/api/IEdgeReconnectionPortCandidateProvider) that are added to the lookup of the edges.
 
 ## Things to Try
 

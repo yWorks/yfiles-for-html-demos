@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -158,9 +158,9 @@
           </div>
           <div class="paragraph">
             <p>
-              In this step, we want to give our edge style the ability to render arrows. To do this,
-              we add two properties to define the arrows: one property for the arrow at the source
-              node and another for the arrow at the target node.
+              In this step, we want to allow our edge style to render arrows. To do this, we add two
+              properties to define the arrows: one property for the arrow at the source node and
+              another for the arrow at the target node.
             </p>
           </div>
           <div class="listingblock">
@@ -183,7 +183,7 @@
             <p>
               Now, we can specify the desired arrows when creating an edge style. For this we can
               use the predefined arrows which are shipped with yFiles for HTML. See also
-              <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-arrows" class="dguide" target="_blank">Decorations: Arrows</a>.
+              <a href="https://docs.yworks.com/yfileshtml/dguide/styles-arrows" class="dguide" target="_blank">Decorations: Arrows</a>.
             </p>
           </div>
           <div class="listingblock">
@@ -196,11 +196,12 @@ style.<span class="hljs-property">sourceArrow</span> = <span class="hljs-keyword
           </div>
           <div class="paragraph">
             <p>
-              In <code>createVisual</code>, we add the arrows to our visualization using the method
-              <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#addArrows" class="api" target="_blank">addArrows</a> from the base class EdgeStyleBase.
-              For this purpose, we create an own SVG group <code>arrows</code>. The addArrows method
-              adds the arrows to this group. Finally, this group is added to the group with the
-              other edge visualization elements.
+              In <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#createVisual" class="api" target="_blank">createVisual</a>, we add the arrows to our visualization
+              using the <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#addArrows" class="api" target="_blank">addArrows</a> method from the base class
+              <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase" class="api" target="_blank">EdgeStyleBase</a>. For this purpose, we create an own SVG group
+              <code>arrows</code>. The <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#addArrows" class="api" target="_blank">addArrows</a> method adds the
+              arrows to this group. Finally, this group is added to the group with the other edge
+              visualization elements.
             </p>
           </div>
           <div class="listingblock">
@@ -221,10 +222,10 @@ group.<span class="hljs-title function_">append</span>(arrows)</code></pre>
           </div>
           <div class="paragraph">
             <p>
-              Additionally, we need to update the visualization of arrows in
-              <code>updateVisual</code> with the
-              <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#updateArrows" class="api" target="_blank">updateArrows</a> method, if the arrows or
-              edge path have changed since the last call.
+              Additionally, we need to update the visualization of arrows in the
+              <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#updateVisual" class="api" target="_blank">updateVisual</a> method with the
+              <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#updateArrows" class="api" target="_blank">updateArrows</a> method, if the arrows or edge path have
+              changed since the last call.
             </p>
           </div>
           <div class="listingblock">

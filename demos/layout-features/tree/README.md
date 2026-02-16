@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,14 +15,14 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/tree/).
 
-This demo showcases basic configuration options for the [TreeLayout](https://docs.yworks.com/yfileshtml/#/api/TreeLayout) algorithm.
+This demo showcases basic configuration options for the [TreeLayout](https://docs.yworks.com/yfileshtml/api/TreeLayout) algorithm.
 
 It highlights the configuration of various aspects, including:
 
-- Layout [orientation](https://docs.yworks.com/yfileshtml/#/api/TreeLayout#layoutOrientation) changed to left-to-right for horizontal flow
-- [Subtree placer](https://docs.yworks.com/yfileshtml/#/api/TreeLayout#defaultSubtreePlacer) configuration for wide spacing between elements
-- [Port assignment](https://docs.yworks.com/yfileshtml/#/api/TreeLayout#defaultPortAssigner) configured to distribute edges at node borders
-- Edge ordering based on child node label text using [edge comparers](https://docs.yworks.com/yfileshtml/#/api/TreeLayoutData#childOrder)
+- Layout [orientation](https://docs.yworks.com/yfileshtml/api/TreeLayout#layoutOrientation) changed to left-to-right for horizontal flow
+- [Subtree placer](https://docs.yworks.com/yfileshtml/api/TreeLayout#defaultSubtreePlacer) configuration for wide spacing between elements
+- [Port assignment](https://docs.yworks.com/yfileshtml/api/TreeLayout#defaultPortAssigner) configured to distribute edges at node borders
+- Edge ordering based on child node label text using [edge comparers](https://docs.yworks.com/yfileshtml/api/TreeLayoutData#childOrder)
 
 ## Demos
 
@@ -31,6 +31,6 @@ It highlights the configuration of various aspects, including:
 
 ## Documentation
 
-- [Tree layout algorithm](https://docs.yworks.com/yfileshtml/#/dguide/tree_layout)
-- [TreeLayout](https://docs.yworks.com/yfileshtml/#/api/TreeLayout)
-- [TreeLayoutData](https://docs.yworks.com/yfileshtml/#/api/TreeLayoutData)
+- [Tree layout algorithm](https://docs.yworks.com/yfileshtml/dguide/tree_layout)
+- [TreeLayout](https://docs.yworks.com/yfileshtml/api/TreeLayout)
+- [TreeLayoutData](https://docs.yworks.com/yfileshtml/api/TreeLayoutData)

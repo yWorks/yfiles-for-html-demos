@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,27 +29,9 @@
 import { defineConfig, type Plugin } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import optimizer from '@yworks/optimizer/rollup-plugin'
-import * as fs from 'node:fs'
-import path from 'node:path'
 
 export default defineConfig(({ mode }) => {
-  const plugins: Plugin[] = [
-    vue(),
-    {
-      name: 'resource-copy',
-      writeBundle(options) {
-        const resourcesDir = path.join(__dirname, 'resources')
-        for (const svgFileName of fs
-          .readdirSync(resourcesDir)
-          .filter((name) => name.endsWith('.svg'))) {
-          fs.cpSync(
-            path.join(resourcesDir, svgFileName),
-            path.join(options.dir!, 'resources', svgFileName)
-          )
-        }
-      }
-    }
-  ]
+  const plugins: Plugin[] = [vue()]
   if (mode === 'production') {
     plugins.push(
       optimizer({

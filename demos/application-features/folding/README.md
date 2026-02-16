@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,14 +15,16 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/folding/).
 
-This demo shows how to enable collapsing and expanding of group nodes, the so-called [Folding](https://docs.yworks.com/yfileshtml/#/dguide/folding) feature. This is provided through the [FoldingManager](https://docs.yworks.com/yfileshtml/#/api/FoldingManager) class and its support classes.
+This demo shows how to enable collapsing and expanding of group nodes, the so-called [Folding](https://docs.yworks.com/yfileshtml/dguide/folding) feature. This is provided through the [FoldingManager](https://docs.yworks.com/yfileshtml/api/FoldingManager) class and its support classes.
 
-The [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode) class provides the following interactive gestures for collapsing and expanding groups:
+The [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode) class provides the following interactive gestures for collapsing and expanding groups:
 
 - Close (collapse) a selected open group node by pressing Alt + ← or clicking the expand icon in the group's top left corner.
 - Open (expand) a selected closed group node by pressing Alt + → or clicking the collapse icon in the node's top left corner.
 - Enter (navigate into) a selected group node by pressing Alt + ↓.
 - Exit (navigate out of) a selected group node by pressing Alt + ↑.
+
+The [autoGroupNodeAlignmentPolicy](https://docs.yworks.com/yfileshtml/api/NavigationInputMode#autoGroupNodeAlignmentPolicy) property specifies whether and which point of a group node remains fixed during expand/collapse actions. Use the toggle button in the toolbar to enable or disable it.
 
 ## Demos
 
@@ -34,5 +36,6 @@ The [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorI
 
 ## Documentation
 
-- [Folding](https://docs.yworks.com/yfileshtml/#/dguide/folding)
-- [FoldingManager](https://docs.yworks.com/yfileshtml/#/api/FoldingManager) class
+- [Folding](https://docs.yworks.com/yfileshtml/dguide/folding)
+- [FoldingManager](https://docs.yworks.com/yfileshtml/api/FoldingManager) class
+- [autoGroupNodeAlignmentPolicy](https://docs.yworks.com/yfileshtml/api/NavigationInputMode#autoGroupNodeAlignmentPolicy)

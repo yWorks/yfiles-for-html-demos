@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -153,11 +153,12 @@
           </div>
           <div class="paragraph">
             <p>
-              Bridge rendering is handled by the <a href="https://docs.yworks.com/yfileshtml/#/api/BridgeManager" class="api" target="_blank">BridgeManager</a> class. It can be
-              enabled by assigning the GraphComponent to BridgeManager’s canvasComponent property.
-              To determine obstacles, the BridgeManager instance uses an implementation of the
-              <a href="https://docs.yworks.com/yfileshtml/#/api/IObstacleProvider" class="api" target="_blank">IObstacleProvider</a> interface. We use the
-              <a href="https://docs.yworks.com/yfileshtml/#/api/GraphObstacleProvider" class="api" target="_blank">GraphObstacleProvider</a> that by default incorporates the obstacle
+              Bridge rendering is handled by the <a href="https://docs.yworks.com/yfileshtml/api/BridgeManager" class="api" target="_blank">BridgeManager</a> class. It can be
+              enabled by assigning the GraphComponent to
+              <a href="https://docs.yworks.com/yfileshtml/api/BridgeManager#canvasComponent" class="api" target="_blank">BridgeManager.canvasComponent</a> property. To determine obstacles,
+              the BridgeManager instance uses an implementation of the
+              <a href="https://docs.yworks.com/yfileshtml/api/IObstacleProvider" class="api" target="_blank">IObstacleProvider</a> interface. We use the
+              <a href="https://docs.yworks.com/yfileshtml/api/GraphObstacleProvider" class="api" target="_blank">GraphObstacleProvider</a> that by default incorporates the obstacle
               definitions returned by all edges from the current graph.
             </p>
           </div>
@@ -217,9 +218,8 @@ bridgeManager.<span class="hljs-title function_">addObstacleProvider</span>(<spa
           </div>
           <div class="paragraph">
             <p>
-              The BridgeManager provides a
-              <a href="https://docs.yworks.com/yfileshtml/#/api/BridgeManager#getObstacleHash" class="api" target="_blank">hash code</a> that describes the current
-              obstacle locations.
+              The <a href="https://docs.yworks.com/yfileshtml/api/BridgeManager#getObstacleHash" class="api" target="_blank">BridgeManager.getObstacleHash</a> provides a hash code that
+              describes the current obstacle locations.
             </p>
           </div>
           <div class="listingblock">
@@ -234,9 +234,9 @@ bridgeManager.<span class="hljs-title function_">addObstacleProvider</span>(<spa
           </div>
           <div class="paragraph">
             <p>
-              We cache that hash code in <code>createVisual</code> and use it in
-              <code>updateVisual</code> to check for changes, and if so we update the data of the
-              paths.
+              We cache that hash code in the <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#createVisual" class="api" target="_blank">createVisual</a> method and
+              use it in the <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#updateVisual" class="api" target="_blank">updateVisual</a> method to check for changes,
+              and if so we update the data of the paths.
             </p>
           </div>
           <div class="listingblock">

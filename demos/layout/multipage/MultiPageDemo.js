@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,7 +31,6 @@ import {
   CompactSubtreePlacer,
   GraphComponent,
   GraphItemTypes,
-  GraphMLIOHandler,
   GraphViewerInputMode,
   HierarchicalLayout,
   ILabel,
@@ -57,6 +56,10 @@ import { MultiPageIGraphBuilder } from './MultiPageIGraphBuilder'
 import { PageBoundsVisualCreator } from './PageBoundsVisualCreator'
 import licenseData from '../../../lib/license.json'
 import { finishLoading, showLoadingIndicator } from '@yfiles/demo-app/demo-page'
+import { buildGraph } from '@yfiles/demo-utils/build-graph'
+import { buildAdjacencyGraph } from './build-adjacency-graph'
+import popArtistData from './resources/pop-artist-small.json'
+import layoutNamespacesData from './resources/yfiles-layout-namespaces.json'
 
 /**
  * This demo demonstrates how the result of a multi-page layout calculation
@@ -431,12 +434,17 @@ async function loadModelGraph(graphId) {
   // show a notification because the multi-page layout takes some time
   await showLoadingIndicator(true)
 
-  const filename =
-    graphId === 'Pop Artists'
-      ? 'resources/pop-artists-small.graphml'
-      : 'resources/yfiles-layout-namespaces.graphml'
+  if (graphId === 'Pop Artists') {
+    buildGraph(modelGraphComponent.graph, popArtistData)
+  } else {
+    buildAdjacencyGraph(modelGraphComponent.graph, layoutNamespacesData)
+    await modelGraphComponent.applyLayoutAnimated(
+      new TreeLayout({
+        defaultSubtreePlacer: new CompactSubtreePlacer({ preferredAspectRatio: 0.3 })
+      })
+    )
+  }
 
-  await new GraphMLIOHandler().readFromURL(modelGraphComponent.graph, filename)
   // fit model graph to the component
   void modelGraphComponent.fitGraphBounds()
 

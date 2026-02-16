@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -49,10 +49,10 @@ import {
  * For convenience, this implementation inherits from the predefined {@link EditLabelHelper} class.
  */
 export class CustomEditLabelHelper extends EditLabelHelper {
-    private readonly firstLabelStyle: ILabelStyle;
-    private readonly firstLabelParam: ILabelModelParameter;
-    private readonly label: ILabel | null;
-    private readonly owner: ILabelOwner | null;
+  private readonly firstLabelStyle: ILabelStyle
+  private readonly firstLabelParam: ILabelModelParameter
+  private readonly label: ILabel | null
+  private readonly owner: ILabelOwner | null
 
   /**
    * Creates an instance of CustomEditLabelHelper.
@@ -64,10 +64,10 @@ export class CustomEditLabelHelper extends EditLabelHelper {
     firstLabelStyle: ILabelStyle
   ) {
     super()
-      this.owner = owner;
-      this.label = label;
-      this.firstLabelParam = firstLabelParam;
-      this.firstLabelStyle = firstLabelStyle;
+    this.owner = owner
+    this.label = label
+    this.firstLabelParam = firstLabelParam
+    this.firstLabelStyle = firstLabelStyle
   }
 
   /**

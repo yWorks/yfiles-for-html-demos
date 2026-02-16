@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -65,10 +65,16 @@
           </ol>
 
           <p>
-            The demo starts with an empty graph, but graph items can be created interactively. The
-            integration tests test this functionality by simulating node, edge and port creation
-            gestures and verifying that the graph instance actually contains the newly created graph
-            items.
+            The application under test is the
+            <a href="../application-under-test/index.html">Simple Testable App</a>. To access yFiles
+            via WebdriverIO, the <a data-api>GraphComponent</a> is set as a global variable in that
+            application.
+          </p>
+          <p>
+            The application starts with a graph with two nodes, but graph items can be created
+            interactively. The integration tests check this functionality by simulating node, edge
+            and port creation gestures and verifying that the graph instance actually contains the
+            newly created graph items.
           </p>
           <p>
             Tests are run in both Firefox and Chrome in headless mode. Please note that the tests
@@ -78,12 +84,6 @@
             <code>wdio.conf.js</code> and add an <code>await browser.debug()</code>
             <a target="_blank" href="https://webdriver.io/docs/api/browser/debug.html">statement</a>
             at the end of a test in the spec file.
-          </p>
-          <p>
-            In order to obtain access to the yFiles API, in particular for access to the
-            <a data-api>GraphComponent</a> instance through
-            <a data-api>CanvasComponent.getComponent</a>, the yFiles API is exposed globally when
-            the application runs in the test environment.
           </p>
         </div>
         <!-- populated by readme-style.js -->

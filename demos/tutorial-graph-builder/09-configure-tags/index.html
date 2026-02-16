@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -134,18 +134,17 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  By default, <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> stores each business data item in the
-                  corresponding graph element&#8217;s <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" class="api" target="_blank">tag</a>.
+                  By default, <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a> stores each business data item in the
+                  corresponding graph element&#8217;s <a href="https://docs.yworks.com/yfileshtml/api/ITagOwner#tag" class="api" target="_blank">tag</a>.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   In this tutorial step, you will learn how to use a
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator#tagProvider" class="api" target="_blank">tag provider</a> to customize the data
-                  available on the <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" class="api" target="_blank">tag</a>. This can come in handy when
-                  you want to augment your data with additional information or when you want to
-                  strip parts of the original business data to lower the memory load of the built
-                  graph, for instance.
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodeCreator#tagProvider" class="api" target="_blank">tagProvider</a> to customize the data available on the
+                  <a href="https://docs.yworks.com/yfileshtml/api/ITagOwner#tag" class="api" target="_blank">tag</a>. This can come in handy when you want to augment
+                  your data with additional information or when you want to strip parts of the
+                  original business data to lower the memory load of the built graph, for instance.
                 </p>
               </div>
               <div class="admonitionblock note">
@@ -158,7 +157,7 @@
                       <div class="paragraph">
                         <p>
                           This step is optional when building a graph with
-                          <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. If you do not want to augment the data in
+                          <a href="https://docs.yworks.com/yfileshtml/api/GraphBuilder" class="api" target="_blank">GraphBuilder</a>. If you do not want to augment the data in
                           the node&#8217;s tag, you can proceed with the next step.
                         </p>
                       </div>
@@ -203,9 +202,7 @@
                 </p>
               </div>
               <div class="paragraph">
-                <p>
-                  The desired <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" class="api" target="_blank">tag</a> types should then look like this:
-                </p>
+                <p>The desired <a href="https://docs.yworks.com/yfileshtml/api/ITagOwner#tag" class="api" target="_blank">tag</a> types should then look like this:</p>
               </div>
               <div class="listingblock">
                 <div class="content">
@@ -221,11 +218,10 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  For the custom <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" class="api" target="_blank">tag</a> creation, a
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeCreator#tagProvider" class="api" target="_blank">tag provider</a> is required that will
-                  return an object with the values of the <code>name</code> and
-                  <code>type</code> property of the nodes created by the specific
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodesSource" class="api" target="_blank">NodesSource</a>.
+                  For the custom <a href="https://docs.yworks.com/yfileshtml/api/ITagOwner#tag" class="api" target="_blank">tag</a> creation, a
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodeCreator#tagProvider" class="api" target="_blank">tagProvider</a> is required that will return an object
+                  with the values of the <code>name</code> and <code>type</code> property of the
+                  nodes created by the specific <a href="https://docs.yworks.com/yfileshtml/api/NodesSource" class="api" target="_blank">NodesSource</a>.
                 </p>
               </div>
               <div class="listingblock">

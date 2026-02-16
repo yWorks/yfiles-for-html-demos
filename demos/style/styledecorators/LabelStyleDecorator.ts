@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -49,7 +49,7 @@ const SVG_NS = 'http://www.w3.org/2000/svg'
  * This label style decorator shows how to decorate another label style.
  */
 export class LabelStyleDecorator extends LabelStyleBase {
-    private readonly baseStyle: ILabelStyle;
+  private readonly baseStyle: ILabelStyle
 
   /**
    * Initializes a new instance of this class.
@@ -57,7 +57,7 @@ export class LabelStyleDecorator extends LabelStyleBase {
    */
   constructor(baseStyle: ILabelStyle) {
     super()
-      this.baseStyle = baseStyle;
+    this.baseStyle = baseStyle
   }
 
   /**

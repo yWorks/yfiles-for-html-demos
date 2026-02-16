@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/grapheditor/).
 
-The Simple Editor demo exhibits a [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) which enables graph editing via the default [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode).
+The Simple Editor demo exhibits a [GraphComponent](https://docs.yworks.com/yfileshtml/api/GraphComponent) which enables graph editing via the default [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode).
 
 #### Creating Elements (Nodes / Vertices)
 

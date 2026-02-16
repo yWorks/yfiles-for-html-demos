@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,7 @@ import type { GraphMLProperty } from './GraphMLProperty'
  * Properties Panel.
  */
 export class PropertiesPanelUI {
-    private div: HTMLElement;
+  private div: HTMLElement
   private graphPropertiesDiv: HTMLDivElement
   private itemPropertiesDiv: HTMLDivElement
   private itemPropertiesPanel: HTMLDivElement
@@ -44,7 +44,7 @@ export class PropertiesPanelUI {
   graphValueChangedCallback: (property: GraphMLProperty, value: string) => void = () => {}
 
   constructor(div: HTMLElement) {
-      this.div = div;
+    this.div = div
     this.graphPropertiesDiv = getDiv(div, '#graphPropertiesDiv')
     this.itemPropertiesDiv = getDiv(div, '#itemPropertiesDiv')
     this.itemPropertiesPanel = getDiv(div, '.custom-data-panel.item-data')

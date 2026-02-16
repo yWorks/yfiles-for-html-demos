@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -19,19 +19,19 @@ In this tutorial step, you will learn an alternative approach to create group no
 
 Note
 
-This step is optional when building a graph with [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder). If you do not have hierarchy information in your data, you can proceed with the next step.
+This step is optional when building a graph with [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder). If you do not have hierarchy information in your data, you can proceed with the next step.
 
-In a previous step, we have demonstrated how to use [createGroupNodesSource](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder#createGroupNodesSource) to build the hierarchy.
+In a previous step, we have demonstrated how to use the [createGroupNodesSource](https://docs.yworks.com/yfileshtml/api/GraphBuilder#createGroupNodesSource) method to build the hierarchy.
 
-The downside of this approach is that the objects representing the group nodes need to be known in advance. While this is fine for many scenarios, sometimes the information is only provided implicitly in the data, and it can be difficult or very inefficient to extract all objects representing the group nodes. This is especially true for dynamic scenarios where a lot of information is just provided as part of a query.
+The downside of this approach is that the objects representing the group nodes need to be known in advance. While this is fine for many scenarios, sometimes the information is only provided implicitly in the data, and it can be challenging or very inefficient to extract all objects representing the group nodes. This is especially true for dynamic scenarios where a lot of information is just provided as part of a query.
 
 A related problem can occur when you want to navigate from group nodes to their contents. If the business data is already present as a hierarchical data structure, it is often much easier just to query an entity for their content than to extract descendants in advance, especially if there are many hierarchy levels involved.
 
-To address these use cases, the [NodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource) provides two closely related APIs that allow you to [Create group nodes from implicit node data](#graph-builder-tutorial-05-createParentNodesSource) or [Create group node contents from implicit node data](#graph-builder-tutorial-05-createChildNodesSource) without the need for an explicit group node source.
+To address these use cases, the [NodesSource](https://docs.yworks.com/yfileshtml/api/NodesSource) provides two closely related APIs that allow you to [Create group nodes from implicit node data](#graph-builder-tutorial-05-createParentNodesSource) or [Create group node contents from implicit node data](#graph-builder-tutorial-05-createChildNodesSource) without the need for an explicit group node source.
 
 ## The data
 
-In the example data, we start from an initial set of entities. Each one has a property `children` that can contain a (potentially empty) list of child entities and a `path` property that describes a hierarchical path structure how this entity can be reached, similar to a file system path.
+In the example data, we start from an initial set of entities. Each one has a `children` property that can contain a (potentially empty) list of child entities and a `path` property that describes a hierarchical path structure how this entity can be reached, similar to a file system path.
 
 ```
 export type ItemData = { id: string; path: string; children?: ChildData[] }
@@ -66,13 +66,13 @@ The initial items as well as the child entities carry an additional `id` attribu
 
 ## Create group nodes from implicit node data
 
-If you want to create group nodes automatically from data that is present in the items in your node source, you can use [NodesSource.createParentNodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource#createParentNodesSource). This method uses the existing NodesSource to group its items from scratch. The mandatory `parentDataProvider` parameter describes how to retrieve a parent object for each item in the NodesSource. The optional `idProvider` parameter can be used to uniquely identify parent objects even if they are not referentially equal.
+If you want to create group nodes automatically from data that is present in the items in your node source, you can use the [createParentNodesSource](https://docs.yworks.com/yfileshtml/api/NodesSource#createParentNodesSource) method. This method uses the existing NodesSource to group its items from scratch. The mandatory `parentDataProvider` parameter describes how to retrieve a parent object for each item in the NodesSource. The optional `idProvider` parameter can be used to uniquely identify parent objects even if they are not referentially equal.
 
-This method creates a new [NodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource) which can then be configured as usual, e.g., by providing label bindings or custom styles.
+This method creates a new [NodesSource](https://docs.yworks.com/yfileshtml/api/NodesSource) which can then be configured as usual, e.g., by providing label bindings or custom styles.
 
-You can additionally **augment** the newly created parent node source with additional data with [NodesSource.addParentNodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource#addParentNodesSource), e.g., to recursively process parent data for that same source and thereby building a whole hierarchy.
+You can additionally **augment** the newly created parent node source with additional data with the [addParentNodesSource](https://docs.yworks.com/yfileshtml/api/NodesSource#addParentNodesSource) method, e.g., to recursively process parent data for that same source and thereby building a whole hierarchy.
 
-We start by defining the initial set of nodes via a [NodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource):
+We start by defining the initial set of nodes via a [NodesSource](https://docs.yworks.com/yfileshtml/api/NodesSource):
 
 ```
 const idProvider = (item: ChildData | ItemData): string => item.id
@@ -103,11 +103,11 @@ ancestorSource.addParentNodesSource(parentDataProvider, ancestorSource)
 
 ## Create group node contents from implicit node data
 
-If you want to create the content of group nodes automatically from data that is present in the items in your node source, you can use [NodesSource.createChildNodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource#createChildNodesSource). This method uses the existing NodesSource to populate its nodes. The mandatory `childDataProvider` parameter describes how to retrieve a collection of child objects for each item in the NodesSource. The optional `idProvider` parameter can be used to uniquely identify child objects even if they are not referentially equal.
+If you want to create the content of group nodes automatically from data that is present in the items in your node source, you can use the [createChildNodesSource](https://docs.yworks.com/yfileshtml/api/NodesSource#createChildNodesSource) method. This method uses the existing [NodesSource](https://docs.yworks.com/yfileshtml/api/NodesSource) to populate its nodes. The mandatory `childDataProvider` parameter describes how to retrieve a collection of child objects for each item in the NodesSource. The optional `idProvider` parameter can be used to uniquely identify child objects even if they are not referentially equal.
 
-This method creates a new [NodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource) which can then be configured as usual, e.g., by providing label bindings or custom styles.
+This method creates a new [NodesSource](https://docs.yworks.com/yfileshtml/api/NodesSource) which can then be configured as usual, e.g., by providing label bindings or custom styles.
 
-You can additionally **augment** the newly created child node source with additional data with [NodesSource.addChildNodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource#addChildNodesSource), e.g., to recursively process descendant data for that same source and thereby building a whole hierarchy.
+You can additionally **augment** the newly created child node source with additional data with the [addChildNodesSource](https://docs.yworks.com/yfileshtml/api/NodesSource#addChildNodesSource) method, e.g., to recursively process descendant data for that same source and thereby building a whole hierarchy.
 
 Note
 
@@ -132,7 +132,7 @@ const descendantsSource = childNodesSource.createChildNodesSource(
 descendantsSource.addChildNodesSource(childDataProvider, descendantsSource)
 ```
 
-Edges can connect to any of the nodes, whether they are in the "core" nodes source or any of the derived ones, as long as their `id` is referenced in the source or target [id provider](https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider).
+Edges can connect to any of the nodes, whether they are in the "core" nodes source or any of the derived ones, as long as their `id` is referenced in the source or target [idProvider](https://docs.yworks.com/yfileshtml/api/NodesSource#idProvider).
 
 Note
 

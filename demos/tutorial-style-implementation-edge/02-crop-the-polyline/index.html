@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -152,7 +152,7 @@
                   To fix this issue, it is necessary to adjust the path so that it ends precisely at
                   the outline of the nodes. This requires computing the intersection point of the
                   path and the node&#8217;s outline, which may be complex depending on the shape of
-                  the node. Thankfully, the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase" class="api" target="_blank">EdgeStyleBase</a> offers useful methods
+                  the node. Thankfully, the <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase" class="api" target="_blank">EdgeStyleBase</a> offers useful methods
                   which not only calculate the intersection points but also shorten the path
                   accordingly.
                 </p>
@@ -165,9 +165,8 @@
               <div class="paragraph">
                 <p>
                   To create or modify paths in yFiles for HTML, we commonly use the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GeneralPath" class="api" target="_blank">GeneralPath</a> class. To get an instance of this class from an edge,
-                  we can use the method
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#getPath" class="api" target="_blank">EdgeStyleBase.getPath</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/api/GeneralPath" class="api" target="_blank">GeneralPath</a> class. To get an instance of this class from an edge,
+                  we can use the <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#getPath" class="api" target="_blank">EdgeStyleBase.getPath</a> method.
                 </p>
               </div>
               <div class="listingblock">
@@ -179,10 +178,10 @@
               </div>
               <div class="paragraph">
                 <p>
-                  Using the <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#cropPath" class="api" target="_blank">EdgeStyleBase.cropPath</a> method,
-                  we can now trim the path to end at the outline of the nodes. This method requires
-                  us to specify the arrows at the beginning and end of the edge. Since we
-                  haven&#8217;t added any arrows yet, we&#8217;ll use <code>IArrow.NONE</code>.
+                  Using the <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#cropPath" class="api" target="_blank">EdgeStyleBase.cropPath</a> method, we can now trim the
+                  path to end at the outline of the nodes. This method requires us to specify the
+                  arrows at the beginning and end of the edge. Since we haven&#8217;t added any
+                  arrows yet, we&#8217;ll use <a href="https://docs.yworks.com/yfileshtml/api/IArrow#NONE" class="api" target="_blank">IArrow.NONE</a>.
                 </p>
               </div>
               <div class="listingblock">
@@ -199,8 +198,8 @@
               </div>
               <div class="paragraph">
                 <p>
-                  Finally, we create a SVGPathElement instance from the corrected path using the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GeneralPath#createSvgPath" class="api" target="_blank">GeneralPath.createSvgPath</a> method.
+                  Finally, we create a <a href="https://developer.mozilla.org/docs/Web/api/SVGPathElement" target="_blank">SVGPathElement</a> instance from the
+                  corrected path using the <a href="https://docs.yworks.com/yfileshtml/api/GeneralPath#createSvgPath" class="api" target="_blank">GeneralPath.createSvgPath</a> method.
                 </p>
               </div>
               <div class="listingblock">
@@ -217,8 +216,8 @@
             <div class="sectionbody">
               <div class="paragraph">
                 <p>
-                  Now we can use the above parts to create an SVG visual from the edge in
-                  <code>createVisual</code>:
+                  Now we can use the above parts to create an SVG visual from the edge in the
+                  <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#createVisual" class="api" target="_blank">createVisual</a> method:
                 </p>
               </div>
               <div class="listingblock">

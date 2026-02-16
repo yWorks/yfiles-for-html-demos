@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,15 +15,15 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/databinding/simple-graph-builder-implicit-groups/).
 
-This demo automatically builds a graph from business data using [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder). The business data is stored in **JSON** format.
+This demo automatically builds a graph from business data using [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder). The business data is stored in **JSON** format.
 
-The objects representing nodes reference implicit groups that are not explicitly defined in a [NodesSource](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder#createGroupNodesSource).
+The objects representing nodes reference implicit groups that are not explicitly defined in a [NodesSource](https://docs.yworks.com/yfileshtml/api/GraphBuilder#createGroupNodesSource).
 
-See the Developer's Guide section on [creating a Graph from Business Data](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder) and especially [GraphBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-GraphBuilder) for an in-depth explanation of the relevant concepts.
+See the Developer's Guide section on [creating a Graph from Business Data](https://docs.yworks.com/yfileshtml/dguide/graph_builder) and especially [GraphBuilder](https://docs.yworks.com/yfileshtml/dguide/graph_builder-GraphBuilder) for an in-depth explanation of the relevant concepts.
 
-See also the [GraphBuilder Tutorial](../../tutorial-graph-builder/01-create-graph/) for a step-by-step guide on configuring the [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) class, loading data, and customizing graph visualizations.
+See also the [GraphBuilder Tutorial](../../tutorial-graph-builder/01-create-graph/) for a step-by-step guide on configuring the [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) class, loading data, and customizing graph visualizations.
 
-[GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) provides a specific set of methods that allow to configure the builder on the given data source.
+[GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) provides a specific set of methods that allow to configure the builder on the given data source.
 
 `createNodesSource`
 

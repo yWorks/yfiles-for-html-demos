@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -67,7 +67,7 @@ export class FastNodeStyle extends NodeStyleBase {
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class NodeCanvasVisual extends HtmlCanvasVisual {
-    layout: IRectangle;
+  layout: IRectangle
 
   /**
    * Initializes a new NodeCanvasVisual instance with the given property value.
@@ -75,7 +75,7 @@ class NodeCanvasVisual extends HtmlCanvasVisual {
    */
   constructor(layout: IRectangle) {
     super()
-      this.layout = layout;
+    this.layout = layout
   }
 
   /**
@@ -128,9 +128,9 @@ export class FastEdgeStyle extends EdgeStyleBase {
  * For HTML Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
  */
 class EdgeCanvasVisual extends HtmlCanvasVisual {
-    targetPortLocation: Point;
-    sourcePortLocation: Point;
-    bends: IListEnumerable<IBend>;
+  targetPortLocation: Point
+  sourcePortLocation: Point
+  bends: IListEnumerable<IBend>
 
   /**
    * Initializes a new EdgeCanvasVisual instance with the given property values.
@@ -138,15 +138,11 @@ class EdgeCanvasVisual extends HtmlCanvasVisual {
    * @param sourcePortLocation The start point of the edge's path.
    * @param targetPortLocation The end point of the edge's path.
    */
-  constructor(
-    bends: IListEnumerable<IBend>,
-    sourcePortLocation: Point,
-    targetPortLocation: Point
-  ) {
+  constructor(bends: IListEnumerable<IBend>, sourcePortLocation: Point, targetPortLocation: Point) {
     super()
-      this.bends = bends;
-      this.sourcePortLocation = sourcePortLocation;
-      this.targetPortLocation = targetPortLocation;
+    this.bends = bends
+    this.sourcePortLocation = sourcePortLocation
+    this.targetPortLocation = targetPortLocation
   }
 
   render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D): void {
@@ -244,10 +240,10 @@ export class FastLabelStyle extends LabelStyleBase {
  * The CanvasVisual for label rendering
  */
 class LabelCanvasVisual extends HtmlCanvasVisual {
-    zoomThreshold: number;
-    font: Font;
-    layout: IOrientedRectangle;
-    text: string;
+  zoomThreshold: number
+  font: Font
+  layout: IOrientedRectangle
+  text: string
 
   /**
    * Initializes a new LabelCanvasVisual with the given property values.
@@ -257,17 +253,12 @@ class LabelCanvasVisual extends HtmlCanvasVisual {
    * @param zoomThreshold Text is rendered only if the zoom property of the component in which
    * this visual is displayed is greater than the given value.
    */
-  constructor(
-    text: string,
-    layout: IOrientedRectangle,
-    font: Font,
-    zoomThreshold: number
-  ) {
+  constructor(text: string, layout: IOrientedRectangle, font: Font, zoomThreshold: number) {
     super()
-      this.text = text;
-      this.layout = layout;
-      this.font = font;
-      this.zoomThreshold = zoomThreshold;
+    this.text = text
+    this.layout = layout
+    this.font = font
+    this.zoomThreshold = zoomThreshold
   }
 
   render(renderContext: IRenderContext, ctx: CanvasRenderingContext2D) {

@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ When both scrolling and zooming is enabled, switch from scrolling to zooming usi
 
 The _Modifiers_ dropdown lets you switch between the default and an alternative modifier scheme. In code, the modifiers, as well as other conditions, can be configured freely.
 
-When the _Scroll, Zoom and Resize_ option is selected, a custom listener to the `Wheel` event of the [CanvasComponent](https://docs.yworks.com/yfileshtml/#/api/CanvasComponent) allows to resize the selected nodes by pressing both, Shift and Ctrl.
+When the _Scroll, Zoom and Resize_ option is selected, a custom listener to the `Wheel` event of the [CanvasComponent](https://docs.yworks.com/yfileshtml/api/CanvasComponent) allows to resize the selected nodes by pressing both, Shift and Ctrl.
 
 The settings _Wheel Zoom Factor_ and _Wheel Scroll Factor_ allow to adjust the amount that's zoomed or scrolled on each turn of the mouse wheel. Additionally, the system's mouse settings determine how far the graph is zoomed or scrolled.
 

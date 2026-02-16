@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/node-labeling/).
 
-This demo shows how to use the [GenericLabeling](https://docs.yworks.com/yfileshtml/#/api/GenericLabeling) algorithm (see also [Generic Labeling](https://docs.yworks.com/yfileshtml/#/dguide/label_placement-generic_labeling) in the Developer's Guide) to set the positions of labels. Additionally, we show how to set rules which define preferred placement positions of specific label positions using [NodeLabelCandidates](https://docs.yworks.com/yfileshtml/#/api/NodeLabelCandidates).
+This demo shows how to use the [GenericLabeling](https://docs.yworks.com/yfileshtml/api/GenericLabeling) algorithm (see also [Generic Labeling](https://docs.yworks.com/yfileshtml/dguide/label_placement-generic_labeling) in the Developer's Guide) to set the positions of labels. Additionally, we show how to set rules which define preferred placement positions of specific label positions using [NodeLabelCandidates](https://docs.yworks.com/yfileshtml/api/NodeLabelCandidates).
 
 ## Things to Try
 

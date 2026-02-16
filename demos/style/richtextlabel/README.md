@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ Note how the editor is hooked up with yFiles such that users don't need to write
 
 #### The MarkupLabelStyle
 
-Internally, the HTML markup that is created from the Quill editor is added as an [ILabel](https://docs.yworks.com/yfileshtml/#/api/ILabel) with the [MarkupLabelStyle](https://docs.yworks.com/yfileshtml/#/api/MarkupLabelStyle) to the graph.
+Internally, the HTML markup that is created from the Quill editor is added as an [ILabel](https://docs.yworks.com/yfileshtml/api/ILabel) with the [MarkupLabelStyle](https://docs.yworks.com/yfileshtml/api/MarkupLabelStyle) to the graph.
 
 In general, the `MarkupLabelStyle` could also be used without a WYSIWYG editor. It supports the following tags:
 
@@ -62,4 +62,4 @@ Markup labels can use line wrapping. In this demo application, the labels use wo
 - [Label Style Demo](../../style/label-style/)
 - [HTML Label Style Demo](../../style/html-label-style/)
 - [Markdown Label Demo](../../style/markdownlabel/)
-- [Step 01 Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/)
+- [Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/)

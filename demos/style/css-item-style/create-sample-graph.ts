@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,14 +28,16 @@
  ***************************************************************************/
 // eslint-disable @typescript-eslint/explicit-function-return-type
 
-import { GroupNodeStyle, type IGraph, type ILabelStyle, type INode } from '@yfiles/yfiles'
 import {
   Arrow,
   EdgePathLabelModel,
   ExteriorNodeLabelModel,
   GraphBuilder,
+  GroupNodeStyle,
   HierarchicalLayout,
   HierarchicalLayoutData,
+  type IGraph,
+  type INode,
   LabelStyle,
   PolylineEdgeStyle,
   PortAdjustmentPolicy,

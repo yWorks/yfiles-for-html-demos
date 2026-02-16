@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/large-tree/).
 
-The Large Tree Demo uses [WebGL](https://docs.yworks.com/yfileshtml/#/dguide/webgl2) as the rendering technique to display a large tree graph in order to optimize performance.
+The Large Tree Demo uses [WebGL](https://docs.yworks.com/yfileshtml/dguide/webgl2) as the rendering technique to display a large tree graph in order to optimize performance.
 
 The graph can be manipulated by adding or removing layers. The child count of new layers can be changed with the slider control.
 

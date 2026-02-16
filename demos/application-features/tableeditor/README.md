@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/tableeditor/).
 
-The Table Editor demo shows the support for diagrams that are organized in a tabular way, for example in a grid or a swimlane layout. Besides model items and styles for [Table](https://docs.yworks.com/yfileshtml/#/api/Table), yFiles provides dedicated editing features to add, remove, resize, and reparent rows, columns, and the table contents.
+The Table Editor demo shows the support for diagrams that are organized in a tabular way, for example in a grid or a swimlane layout. Besides model items and styles for [Table](https://docs.yworks.com/yfileshtml/api/Table), yFiles provides dedicated editing features to add, remove, resize, and reparent rows, columns, and the table contents.
 
 ## Basic Gestures
 

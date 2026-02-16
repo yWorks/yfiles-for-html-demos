@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -46,9 +46,9 @@ import {
  * position of the pop-up.
  */
 export class HTMLPopupSupport<TItem extends INode | IEdge> {
-    private labelModelParameter: ILabelModelParameter;
-    div: HTMLElement;
-    private graphComponent: GraphComponent;
+  private labelModelParameter: ILabelModelParameter
+  div: HTMLElement
+  private graphComponent: GraphComponent
   private _currentItem: TItem | null = null
   private dirty = false
 
@@ -65,9 +65,9 @@ export class HTMLPopupSupport<TItem extends INode | IEdge> {
     div: HTMLElement,
     labelModelParameter: ILabelModelParameter
   ) {
-      this.graphComponent = graphComponent;
-      this.div = div;
-      this.labelModelParameter = labelModelParameter;
+    this.graphComponent = graphComponent
+    this.div = div
+    this.labelModelParameter = labelModelParameter
     // make the popup invisible
     div.style.opacity = '0'
     div.style.display = 'none'

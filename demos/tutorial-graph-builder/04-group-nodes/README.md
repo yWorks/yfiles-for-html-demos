@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -19,11 +19,11 @@ In this tutorial step, you will learn how to create group nodes to show hierarch
 
 Note
 
-This step is optional when building a graph with [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder). If you do not have hierarchy information in your data, you can proceed with the next step.
+This step is optional when building a graph with [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder). If you do not have hierarchy information in your data, you can proceed with the next step.
 
-To have the [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) build the hierarchy, we need to add information about which item belongs to which group.
+To have the [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) build the hierarchy, we need to add information about which item belongs to which group.
 
-In the example data, we added a property named `parentId` to specify the parent of a node. However, you can also use other existing properties as long as their values point to a group item. Group items are the same as node items, and they can also have a parent. So it is possible to create nested hierarchies. You can store them in separate data collections or separate them when creating the [NodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource).
+In the example data, we added a property named `parentId` to specify the parent of a node. However, you can also use other existing properties as long as their values point to a group item. Group items are the same as node items, and they can also have a parent. So it is possible to create nested hierarchies. You can store them in separate data collections or separate them when creating the [NodesSource](https://docs.yworks.com/yfileshtml/api/NodesSource).
 
 ```
 const nodeData = [
@@ -37,7 +37,7 @@ const nodeData = [
 
 As an alternative to having the type encoded in the `id`, you can also add another property which identifies the group items. In both cases, it is not necessary to mark the group items unless you want to treat them differently from other items, e.g., visualize them differently.
 
-You can use `GraphBuilder.createGroupNodes` to import the group nodes data. Then, these nodes are automatically visualized with the default group node style.
+You can use the [GraphBuilder.createGroupNodesSource](https://docs.yworks.com/yfileshtml/api/GraphBuilder#createGroupNodesSource) method to import the group nodes data. Then, these nodes are automatically visualized with the default group node style.
 
 ```
 graphBuilder.createNodesSource({
@@ -55,7 +55,7 @@ graphBuilder.createGroupNodesSource({
 
 If no parent `id` is assigned to a node, it will appear top-level on the graph component.
 
-Edges work the same way for group nodes as for other nodes. They can connect to the group node if its `id` is referenced in the source or target [id provider](https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider).
+Edges work the same way for group nodes as for other nodes. They can connect to the group node if its `id` is referenced in the source or target [idProvider](https://docs.yworks.com/yfileshtml/api/NodesSource#idProvider).
 
 Note
 

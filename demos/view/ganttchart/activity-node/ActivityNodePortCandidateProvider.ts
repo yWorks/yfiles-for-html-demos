@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -41,11 +41,11 @@ import {
  * A port candidate provider for defining two ports on the left and right side of the activity nodes.
  */
 export class ActivityNodePortCandidateProvider extends BaseClass(IPortCandidateProvider) {
-    private node: INode;
+  private node: INode
 
   constructor(node: INode) {
     super()
-      this.node = node;
+    this.node = node
   }
 
   /**

@@ -11,8 +11,7 @@
     { "id": 8, "layout": { "x": -52.125, "y": 320, "width": 50, "height": 50 } },
     { "id": 9, "layout": { "x": 142.375, "y": 320, "width": 50, "height": 50 } },
     { "id": 10, "layout": { "x": -196.85, "y": 200, "width": 326.7, "height": 50 } },
-    { "id": 11, "layout": { "x": 142.375, "y": 200, "width": 50, "height": 50 }
-    }
+    { "id": 11, "layout": { "x": 142.375, "y": 200, "width": 50, "height": 50 } }
   ],
   "edges": [
     { "id": 0, "source": 0, "target": 1 },

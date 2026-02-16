@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ constructor(fillColor?: string) {
 }
 ```
 
-The property can now be used in `createVisual` to set the fill color.
+The property can now be used in [createVisual](https://docs.yworks.com/yfileshtml/api/NodeStyleBase#createVisual) to set the fill color.
 
 ```
 const fillColor = this.fillColor ?? '#0b7189'

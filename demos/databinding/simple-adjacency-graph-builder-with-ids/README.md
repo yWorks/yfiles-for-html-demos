@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,13 +15,13 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/databinding/simple-adjacency-graph-builder-with-ids/).
 
-This demo automatically builds a graph from business data using [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder). The business data is stored in **JSON** format. Each object that represents a node has a unique id.
+This demo automatically builds a graph from business data using [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder). The business data is stored in **JSON** format. Each object that represents a node has a unique id.
 
-See the Developer's Guide section on [creating a Graph from Business Data](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder) and especially [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-AdjacencyGraphBuilder) for an in-depth explanation of the relevant concepts.
+See the Developer's Guide section on [creating a Graph from Business Data](https://docs.yworks.com/yfileshtml/dguide/graph_builder) and especially [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/dguide/graph_builder-AdjacencyGraphBuilder) for an in-depth explanation of the relevant concepts.
 
-See also the [GraphBuilder Tutorial](../../tutorial-graph-builder/01-create-graph/) for a step-by-step guide on configuring the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) class, loading data, and customizing graph visualizations.
+See also the [GraphBuilder Tutorial](../../tutorial-graph-builder/01-create-graph/) for a step-by-step guide on configuring the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder) class, loading data, and customizing graph visualizations.
 
-[AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) provides a specific set of methods that allow to configure the builder on the given data source.
+[AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder) provides a specific set of methods that allow to configure the builder on the given data source.
 
 `createNodesSource`
 

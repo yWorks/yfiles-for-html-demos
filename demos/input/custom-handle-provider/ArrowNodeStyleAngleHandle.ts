@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -52,8 +52,8 @@ import {
  * {@link ArrowNodeStyle.angle} interactively.
  */
 export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisualCreator) {
-    private readonly angleChanged: () => void;
-    private readonly node: INode;
+  private readonly angleChanged: () => void
+  private readonly node: INode
   private readonly handleOffset = 15.0
   private readonly style: ArrowNodeStyle
 
@@ -77,13 +77,10 @@ export class ArrowNodeStyleAngleHandle extends BaseClass(IHandle, IPoint, IVisua
    * @param node The node whose style shall be changed.
    * @param angleChanged An action that is called when the handle has been moved.
    */
-  constructor(
-    node: INode,
-    angleChanged: () => void
-  ) {
+  constructor(node: INode, angleChanged: () => void) {
     super()
-      this.node = node;
-      this.angleChanged = angleChanged;
+    this.node = node
+    this.angleChanged = angleChanged
     this.style = node.style as ArrowNodeStyle
   }
 

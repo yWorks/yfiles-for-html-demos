@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ Some functions of yFiles for HTML require the exact boundaries of the node visua
 
 In most cases, the node layout suffices, but some styles may extend past their node boundaries. Remember the badge we have shown earlier, which lies partly outside the original node layout. The red rectangle around the node below highlights the default visualization boundaries of the node. As you can see, the badge exceeds the boundaries.
 
-To include the badge in the boundaries, we have to override `getBounds` and enlarge the bounds accordingly, if the badge is rendered.
+To include the badge in the boundaries, we have to override [getBounds](https://docs.yworks.com/yfileshtml/api/NodeStyleBase#getBounds) and enlarge the bounds accordingly, if the badge is rendered.
 
 ```
 protected getBounds(context: ICanvasContext, node: INode): Rect {

@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -23,11 +23,11 @@ This tutorial will guide you through creating your own label visualizations for 
 
 Note
 
-Implementing a custom label style from scratch is an advanced concept. In a lot of cases, other approaches like template styles or decorating built-in styles with custom elements are enough. For more information on the topic of styling graph items, please have a look at [Label Styles](https://docs.yworks.com/yfileshtml/#/dguide/styles-label_styles).
+Implementing a custom label style from scratch is an advanced concept. In a lot of cases, other approaches like template styles or decorating built-in styles with custom elements are enough. For more information on the topic of styling graph items, please have a look at [Label Styles](https://docs.yworks.com/yfileshtml/dguide/styles-label_styles).
 
 ## Subclassing LabelStyleBase
 
-yFiles for HTML provides an abstract base class which provides the basic functionality to create a custom label style. We start with a custom subclass of [LabelStyleBase](https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase).
+yFiles for HTML provides an abstract base class which provides the basic functionality to create a custom label style. We start with a custom subclass of [LabelStyleBase](https://docs.yworks.com/yfileshtml/api/LabelStyleBase).
 
 ```
 export class CustomLabelStyle extends LabelStyleBase {
@@ -44,7 +44,7 @@ export class CustomLabelStyle extends LabelStyleBase {
 }
 ```
 
-This code will not produce anything visible, yet. We first have to implement the `createVisual` method. This method returns an SVG element, wrapped into an [SvgVisual](https://docs.yworks.com/yfileshtml/#/api/SvgVisual). Let’s start with only a text for now to keep things simple. We will switch to a more complex visualization later on.
+This code will not produce anything visible, yet. We first have to implement the [createVisual](https://docs.yworks.com/yfileshtml/api/LabelStyleBase#createVisual) method. This method returns an SVG element, wrapped into an [SvgVisual](https://docs.yworks.com/yfileshtml/api/SvgVisual). Let’s start with only a text for now to keep things simple. We will switch to a more complex visualization later on.
 
 ```
 protected createVisual(
@@ -75,9 +75,9 @@ protected createVisual(
 
 Note
 
-The SVG element returned in `createVisual` does not necessarily have to be created using the JavaScript DOM API. You could also create it using any JavaScript UI framework or API like React, Vue, etc.
+The SVG element returned in [createVisual](https://docs.yworks.com/yfileshtml/api/LabelStyleBase#createVisual) does not necessarily have to be created using the JavaScript DOM API. You could also create it using any JavaScript UI framework or API like React, Vue, etc.
 
-As you can see in the sample graph, the label style works for both, node and edge labels. It also supports rotation without any further adjustment. This is handled by the layout transform that is created and assigned in the following two lines. The last parameter in `createLayoutTransform` specifies whether the label should be flipped if it is upside-down.
+As you can see in the sample graph, the label style works for both, node and edge labels. It also supports rotation without any further adjustment. This is handled by the layout transform that is created and assigned in the following two lines. The last parameter in [createLayoutTransform](https://docs.yworks.com/yfileshtml/api/LabelStyleBase#createLayoutTransform) specifies whether the label should be flipped if it is upside-down.
 
 ```
 const transform = LabelStyleBase.createLayoutTransform(

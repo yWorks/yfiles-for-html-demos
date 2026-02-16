@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 This demo shows how yFiles for HTML can be used with Web Components.
 
-[Web Components](https://developer.mozilla.org/docs/Web/Web_components) are supported by all modern browsers.
+[Web_Components](https://developer.mozilla.org/docs/Web/api/Web_Components) are supported by all modern browsers.
 
 ## Things to See
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,6 +38,7 @@ import {
   type TaggedSvgVisual
 } from '@yfiles/yfiles'
 import { nothing, render, svg } from 'lit-html'
+import { LitSvgText } from './LitSvgText'
 
 /**
  * The interface of the props passed to the lit render function for rendering the node's SVG contents.
@@ -165,9 +166,10 @@ export class LitNodeStyle<T = any> extends NodeStyleBase<LitNodeStyleVisual<T>> 
  */
 export function createLitNodeStyleFromSource(renderFunctionSource: string): INodeStyle {
   const renderFunction = new Function(
-    'const svg = arguments[0]; const nothing = arguments[1]; const renderFunction = ' +
+    'const svg = arguments[0]; const nothing = arguments[1]; const LitSvgText = arguments[2];' +
+      'const renderFunction = ' +
       renderFunctionSource +
       '\n return renderFunction'
-  )(svg, nothing)
+  )(svg, nothing, LitSvgText)
   return new LitNodeStyle(renderFunction)
 }

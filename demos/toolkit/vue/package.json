@@ -6,26 +6,25 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "postinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','src/license.json');\"",
+    "postinstall": "node -e \"require('node:fs').cpSync('../../../lib/license.json','src/license.json');\"",
     "dev": "vite",
     "preview": "vite preview",
     "build": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false"
   },
   "dependencies": {
-    "core-js": "^3.41.0",
-    "vue": "^3.5.22",
+    "vue": "^3.5.26",
     "@yfiles/demo-utils": "../../utils",
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.4+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.5+dev.tgz"
   },
   "devDependencies": {
-    "@tsconfig/node22": "^22.0.2",
-    "@types/node": "^22.18.11",
-    "@vitejs/plugin-vue": "^6.0.1",
+    "@tsconfig/node22": "^22.0.5",
+    "@types/node": "^22.19.3",
+    "@vitejs/plugin-vue": "^6.0.3",
     "@vue/tsconfig": "^0.8.1",
-    "@yworks/optimizer": "^1.8.6",
-    "typescript": "~5.9.0",
-    "vite": "^7.1.0",
-    "vue-tsc": "^3.1.1"
+    "@yworks/optimizer": "^1.8.8",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.0",
+    "vue-tsc": "^3.1.8"
   }
 }

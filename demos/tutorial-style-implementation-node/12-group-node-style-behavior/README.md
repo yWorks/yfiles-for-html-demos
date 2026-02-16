@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-style-implementation-node/12-group-node-style-behavior/).
 
-In this step, we will set a minimum size for the node style and customize how the group size is calculated when adjusting to its content. Similar to `IGroupPaddingProvider` in the previous step, we return implementations for both customizations in the `lookup` method.
+In this step, we will set a minimum size for the node style and customize how the group size is calculated when adjusting to its content. Similar to [IGroupPaddingProvider](https://docs.yworks.com/yfileshtml/api/IGroupPaddingProvider) in the previous step, we return implementations for both customizations in the [lookup](https://docs.yworks.com/yfileshtml/api/NodeStyleBase#lookup) method.
 
-If you reduce the size of _Group 1_, you will notice that it shrinks past the tab size, which is not desired. We will define a minimum size for the style by implementing the interface [INodeSizeConstraintProvider](https://docs.yworks.com/yfileshtml/#/api/INodeSizeConstraintProvider).
+If you reduce the size of _Group 1_, you will notice that it shrinks past the tab size, which is not desired. We will define a minimum size for the style by implementing the interface [INodeSizeConstraintProvider](https://docs.yworks.com/yfileshtml/api/INodeSizeConstraintProvider).
 
 ```
 if (type === INodeSizeConstraintProvider) {
@@ -37,7 +37,7 @@ if (type === INodeSizeConstraintProvider) {
 
 Try to resize _Group 2_, and you will notice that the node size is limited to the tab size.
 
-Next, we will add an [IGroupBoundsCalculator](https://docs.yworks.com/yfileshtml/#/api/IGroupBoundsCalculator) implementation, which is shown with _Group 3_. Implementations of this interface are used for customizing the way the group node layout is calculated when adjusting to the group content. By default, only the child node boundaries and the group node padding are considered. In this example, we also include the child node labels.
+Next, we will add an [IGroupBoundsCalculator](https://docs.yworks.com/yfileshtml/api/IGroupBoundsCalculator) implementation, which is shown with _Group 3_. Implementations of this interface are used for customizing the way the group node layout is calculated when adjusting to the group content. By default, only the child node boundaries and the group node padding are considered. In this example, we also include the child node labels.
 
 ```
 if (type === IGroupBoundsCalculator) {

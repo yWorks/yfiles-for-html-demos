@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,11 +15,11 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/databinding/adjacencygraphbuilder/).
 
-This demo interactively builds and modifies a graph from **JSON** business data using class [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder).
+This demo interactively builds and modifies a graph from **JSON** business data using class [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder).
 
-See the Developer's Guide section on the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-AdjacencyGraphBuilder) for an in-depth explanation of the relevant concepts.
+See the Developer's Guide section on the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/dguide/graph_builder-AdjacencyGraphBuilder) for an in-depth explanation of the relevant concepts.
 
-See also the [Step Tutorial: Graph Builder](../../tutorial-graph-builder/01-create-graph/) for a step-by-step guide on configuring the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) class, loading data, and customizing graph visualizations.
+See also the [Tutorial: Graph Builder](../../tutorial-graph-builder/01-create-graph/) for a step-by-step guide on configuring the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder) class, loading data, and customizing graph visualizations.
 
 The demo allows to define nodes sources and edges bindings using the schema graph component on the right. The schema nodes represent nodes sources. The schema edges represent the edge bindings between the nodes sources. The edge arrows indicate the type of the edge. An arrow pointing away from a node indicates outgoing edges to successor nodes. An arrow pointing towards a node indicates incoming edges from predecessor nodes.
 
@@ -38,6 +38,6 @@ The demo allows to define nodes sources and edges bindings using the schema grap
 - Connect existing schema graph nodes by dragging and dropping between them.
 - Build a graph from your own data and bindings.
 
-**Note:** This demo shows only parts of the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) API. In addition to the functionality available in this demo, the AdjacencyGraphBuilder allows to reference nodes by their ids and edges may be defined by their own edge data items.
+**Note:** This demo shows only parts of the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder) API. In addition to the functionality available in this demo, the AdjacencyGraphBuilder allows to reference nodes by their ids and edges may be defined by their own edge data items.
 
-Since this demo evaluates the complete data source texts every time a source is edited, _Update Graph_ works as expected only for node data items of primitive type or if the node id binding resolves to primitive ids. Note that this restriction applies only to the demo, not the class [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder).
+Since this demo evaluates the complete data source texts every time a source is edited, _Update Graph_ works as expected only for node data items of primitive type or if the node id binding resolves to primitive ids. Note that this restriction applies only to the demo, not the class [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder).

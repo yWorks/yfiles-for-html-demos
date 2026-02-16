@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,13 +15,13 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/tutorial-graph-builder/09-configure-tags/).
 
-By default, [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) stores each business data item in the corresponding graph element’s [tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag).
+By default, [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder) stores each business data item in the corresponding graph element’s [tag](https://docs.yworks.com/yfileshtml/api/ITagOwner#tag).
 
-In this tutorial step, you will learn how to use a [tag provider](https://docs.yworks.com/yfileshtml/#/api/NodeCreator#tagProvider) to customize the data available on the [tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag). This can come in handy when you want to augment your data with additional information or when you want to strip parts of the original business data to lower the memory load of the built graph, for instance.
+In this tutorial step, you will learn how to use a [tagProvider](https://docs.yworks.com/yfileshtml/api/NodeCreator#tagProvider) to customize the data available on the [tag](https://docs.yworks.com/yfileshtml/api/ITagOwner#tag). This can come in handy when you want to augment your data with additional information or when you want to strip parts of the original business data to lower the memory load of the built graph, for instance.
 
 Note
 
-This step is optional when building a graph with [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder). If you do not want to augment the data in the node’s tag, you can proceed with the next step.
+This step is optional when building a graph with [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder). If you do not want to augment the data in the node’s tag, you can proceed with the next step.
 
 ## Original business data
 
@@ -41,7 +41,7 @@ type EntityData = {
 
 Assume now that for each node, we need to store only the information about the name and the type of each business entity and for each edge only the ownership.
 
-The desired [tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag) types should then look like this:
+The desired [tag](https://docs.yworks.com/yfileshtml/api/ITagOwner#tag) types should then look like this:
 
 ```
 type OwnerData = { name: string; type: string }
@@ -49,7 +49,7 @@ type OwnerData = { name: string; type: string }
 
 ## Configuring the tag provider
 
-For the custom [tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag) creation, a [tag provider](https://docs.yworks.com/yfileshtml/#/api/NodeCreator#tagProvider) is required that will return an object with the values of the `name` and `type` property of the nodes created by the specific [NodesSource](https://docs.yworks.com/yfileshtml/#/api/NodesSource).
+For the custom [tag](https://docs.yworks.com/yfileshtml/api/ITagOwner#tag) creation, a [tagProvider](https://docs.yworks.com/yfileshtml/api/NodeCreator#tagProvider) is required that will return an object with the values of the `name` and `type` property of the nodes created by the specific [NodesSource](https://docs.yworks.com/yfileshtml/api/NodesSource).
 
 ```
 // configure the provider that returns an object with the name and the type property of the nodes

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,7 +38,7 @@ function applyLocalStorageVariables() {
 
   // Restore description size if draggable
   const description = document.querySelector('.demo-page__description')
-  if (description.classList.contains('demo-description--draggable')) {
+  if (description && description.classList.contains('demo-description--draggable')) {
     // disable grid-area transition
     document.body.style.transition = 'none'
     restoreDescriptionSize(true)

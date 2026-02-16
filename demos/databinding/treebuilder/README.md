@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,11 +15,11 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/databinding/treebuilder/).
 
-This demo interactively builds and modifies a graph from **JSON** business data using class [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder).
+This demo interactively builds and modifies a graph from **JSON** business data using class [TreeBuilder](https://docs.yworks.com/yfileshtml/api/TreeBuilder).
 
-See the Developer's Guide section on the [TreeBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-TreeBuilder) for an in-depth explanation of the involved concepts.
+See the Developer's Guide section on the [TreeBuilder](https://docs.yworks.com/yfileshtml/dguide/graph_builder-TreeBuilder) for an in-depth explanation of the involved concepts.
 
-See also the [Step Tutorial: Graph Builder](../../tutorial-graph-builder/01-create-graph/) for a step-by-step guide on configuring the [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) class, loading data, and customizing graph visualizations.
+See also the [Tutorial: Graph Builder](../../tutorial-graph-builder/01-create-graph/) for a step-by-step guide on configuring the [TreeBuilder](https://docs.yworks.com/yfileshtml/api/TreeBuilder) class, loading data, and customizing graph visualizations.
 
 The demo allows to define nodes sources and edges bindings using the schema graph component on the right.
 
@@ -37,4 +37,4 @@ The demo allows to define nodes sources and edges bindings using the schema grap
 - Connect existing schema graph nodes by dragging and dropping between them.
 - Build a graph from your own data and bindings.
 
-Since this demo evaluates the complete data source texts every time a source is edited, _Update Graph_ works as expected only for node data items of primitive type or if the node id binding resolves to primitive ids. Note that this restriction applies only to the demo, not the class [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder).
+Since this demo evaluates the complete data source texts every time a source is edited, _Update Graph_ works as expected only for node data items of primitive type or if the node id binding resolves to primitive ids. Note that this restriction applies only to the demo, not the class [TreeBuilder](https://docs.yworks.com/yfileshtml/api/TreeBuilder).

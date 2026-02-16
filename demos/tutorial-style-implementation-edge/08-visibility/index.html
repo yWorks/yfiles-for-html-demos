@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -178,9 +178,9 @@ group.<span class="hljs-title function_">append</span>(circleElement)</code></pr
           <div class="paragraph">
             <p>
               Observe the animation of the red edges, which flicker when they reach the right or
-              left border of the viewport. To prevent this, we have to implement
-              <code>isVisible</code>. The blue edges use an adjusted style and leave/enter the
-              viewport smoothly.
+              left border of the viewport. To prevent this, we have to override the
+              <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#isVisible" class="api" target="_blank">isVisible</a> method. The blue edges use an adjusted style
+              and leave/enter the viewport smoothly.
             </p>
           </div>
           <div class="listingblock">
@@ -212,9 +212,9 @@ group.<span class="hljs-title function_">append</span>(circleElement)</code></pr
           </div>
           <div class="paragraph">
             <p>
-              Implementations for <code>isVisible</code> often delegate to
-              <code>getBounds</code> since both concepts are related in that they act on the visible
-              boundaries of the item.
+              Implementations of <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#isVisible" class="api" target="_blank">isVisible</a> often delegate to the
+              <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#getBounds" class="api" target="_blank">getBounds</a> method since both concepts are related in that
+              they act on the visible boundaries of the item.
             </p>
           </div>
           <div class="admonitionblock note">
@@ -224,9 +224,9 @@ group.<span class="hljs-title function_">append</span>(circleElement)</code></pr
                   <div class="title">Note</div>
                 </td>
                 <td class="content">
-                  Since <code>isVisible</code> is called once for each item on every rendered frame,
-                  the implementation should be fast, even if this means to be inexact. If in doubt,
-                  prefer making the item visible.
+                  Since <a href="https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#isVisible" class="api" target="_blank">isVisible</a> is called once for each item on
+                  every rendered frame, the implementation should be fast, even if this means to be
+                  inexact. If in doubt, prefer making the item visible.
                 </td>
               </tr>
             </table>

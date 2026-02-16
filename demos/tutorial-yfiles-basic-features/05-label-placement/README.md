@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@
 
 ## How to influence the placement of labels.
 
-This step shows how to control label placement with the help of [layout parameters](https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-placing_labels).
+This step shows how to control label placement with the help of [layout parameters](https://docs.yworks.com/yfileshtml/dguide/getting_started-application#getting_started-placing_labels).
 
-The default label layout parameters can be configured in the graph’s [nodeDefaults](https://docs.yworks.com/yfileshtml/#/api/IGraph#nodeDefaults) and [edgeDefaults](https://docs.yworks.com/yfileshtml/#/api/IGraph#edgeDefaults).
+The default label layout parameters can be configured in the graph’s [nodeDefaults](https://docs.yworks.com/yfileshtml/api/IGraph#nodeDefaults) and [edgeDefaults](https://docs.yworks.com/yfileshtml/api/IGraph#edgeDefaults).
 
 ```
 // Place node labels in the node center

@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -129,8 +129,7 @@
             <p>
               We introduce two methods that get the port color from the tag, or calculate the hue
               based on the port&#8217;s degree. For this purpose, we get the
-              <a href="https://docs.yworks.com/yfileshtml/#/api/IGraph" class="api" target="_blank">graph</a> from the
-              <a href="https://docs.yworks.com/yfileshtml/#/api/IRenderContext" class="api" target="_blank">render context</a>.
+              <a href="https://docs.yworks.com/yfileshtml/api/IGraph" class="api" target="_blank">IGraph</a> from the <a href="https://docs.yworks.com/yfileshtml/api/IRenderContext" class="api" target="_blank">IRenderContext</a>.
             </p>
           </div>
           <div class="listingblock">
@@ -156,7 +155,10 @@
             </div>
           </div>
           <div class="paragraph">
-            <p>Now, we can assign the color to the ellipse element in <code>createVisual</code>.</p>
+            <p>
+              Now, we can assign the color to the ellipse element in
+              <a href="https://docs.yworks.com/yfileshtml/api/PortStyleBase#createVisual" class="api" target="_blank">createVisual</a>.
+            </p>
           </div>
           <div class="listingblock">
             <div class="content">
@@ -182,8 +184,9 @@ ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span clas
           </div>
           <div class="paragraph">
             <p>
-              The color also has to be considered in <code>updateVisual</code>. We add the color in
-              the cache and update the <code>fill</code> property if the color has changed.
+              The color also has to be considered in <a href="https://docs.yworks.com/yfileshtml/api/PortStyleBase#updateVisual" class="api" target="_blank">updateVisual</a>. We
+              add the color in the cache and update the <code>fill</code> property if the color has
+              changed.
             </p>
           </div>
           <div class="listingblock">
@@ -207,9 +210,8 @@ ellipseElement.<span class="hljs-title function_">setAttribute</span>(<span clas
                 </td>
                 <td class="content">
                   You can also use business data that&#8217;s stored in the port&#8217;s
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" class="api" target="_blank">tag</a> for conditional styling. This way, a single
-                  style instance that&#8217;s shared between all ports can produce varying
-                  visualizations.
+                  <a href="https://docs.yworks.com/yfileshtml/api/ITagOwner#tag" class="api" target="_blank">tag</a> for conditional styling. This way, a single style
+                  instance that&#8217;s shared between all ports can produce varying visualizations.
                 </td>
               </tr>
             </table>

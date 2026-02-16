@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,13 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Reachability } from '@yfiles/yfiles'
+import { IEdge, INode, Reachability } from '@yfiles/yfiles'
 import { GraphSynchronizer } from './GraphSynchronizer'
 
 /**
  * Initializes the web worker for the interactive layout and configures it for the input gestures.
  */
-export async function initializeWorkerLayout(graphComponent, moveInputMode) {
+export async function initializeWorkerLayout(graphComponent, graphEditorInputMode) {
   // load worker immediately on startup
   const worker = new Worker(new URL('./WorkerLayout', import.meta.url), { type: 'module' })
 
@@ -63,17 +63,18 @@ export async function initializeWorkerLayout(graphComponent, moveInputMode) {
   function startLayout() {
     sendMessage({ type: 'start-layout' })
 
-    prepareInteraction(moveInputMode, graphSynchronizer)
+    prepareInteraction(graphEditorInputMode, graphSynchronizer)
   }
 
   /**
    * Registers the necessary drag listeners to the input mode to configure the interactive layout
    * to respect the drag position.
    */
-  function prepareInteraction(moveInputMode, graphSynchronizer) {
+  function prepareInteraction(graphEditorInputMode, graphSynchronizer) {
     let draggedNodeId
     let draggedComponentIds
 
+    const moveInputMode = graphEditorInputMode.moveSelectedItemsInputMode
     function getDraggedNode(moveInputMode) {
       return moveInputMode.affectedItems.at(0)
     }
@@ -118,6 +119,63 @@ export async function initializeWorkerLayout(graphComponent, moveInputMode) {
       draggedNodeId = undefined
       draggedComponentIds = undefined
     })
+
+    graphEditorInputMode.addEventListener('node-created', (evt) => {
+      createNodeChangedMessage(evt.item)
+    })
+
+    graphEditorInputMode.createEdgeInputMode.addEventListener('edge-created', (evt) => {
+      createEdgeChangedMessage(evt.item)
+    })
+
+    graphEditorInputMode.addEventListener('deleting-selection', (evt) => {
+      evt.selection.forEach((item) => {
+        if (item instanceof INode) {
+          createNodeChangedMessage(item)
+        } else if (item instanceof IEdge) {
+          createEdgeChangedMessage(item)
+        }
+      })
+    })
+  }
+
+  /**
+   * Sends a message to the worker when a node has been created/deleted.
+   */
+  function createNodeChangedMessage(node) {
+    const neighborsIds = getClosestNodesIds(node)
+    sendMessage({
+      type: 'node-changed',
+      nodeId: graphSynchronizer.getId(node),
+      neighborsIds: neighborsIds
+    })
+  }
+
+  /**
+   * Sends a message to the worker when an edge has been created/deleted.
+   */
+  function createEdgeChangedMessage(edge) {
+    const source = edge.sourceNode
+    const target = edge.targetNode
+    if (source && target) {
+      sendMessage({
+        type: 'edge-changed',
+        edgeId: graphSynchronizer.getId(edge),
+        sourceId: graphSynchronizer.getId(source),
+        targetId: graphSynchronizer.getId(target),
+        neighborsIds: getClosestNodesIds(source).concat(getClosestNodesIds(target))
+      })
+    }
+  }
+
+  /**
+   * Returns the IDs of nodes whose centers lie within the specified distance of the given node.
+   */
+  function getClosestNodesIds(node, distance = 150) {
+    const closestNodes = graphComponent.graph.nodes
+      .filter((n) => n !== node && n.layout.center.distanceTo(node.layout.center) < distance)
+      .toArray()
+    return closestNodes.map((neighbor) => graphSynchronizer.getId(neighbor))
   }
 
   function sendMessage(message) {

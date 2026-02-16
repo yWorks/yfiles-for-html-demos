@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -51,9 +51,9 @@ import {
  * that interactively determines the port candidate.
  */
 export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisualCreator) {
-    private readonly portCandidates: Mapper<IEdge, EdgePortCandidates>;
-    private readonly bend: IBend;
-    private readonly sourceEnd: boolean;
+  private readonly portCandidates: Mapper<IEdge, EdgePortCandidates>
+  private readonly bend: IBend
+  private readonly sourceEnd: boolean
   private renderTreeElement: IRenderTreeElement = null!
 
   /**
@@ -66,9 +66,9 @@ export class PortCandidateBendHandle extends BaseClass(ConstrainedHandle, IVisua
     portCandidates: Mapper<IEdge, EdgePortCandidates>
   ) {
     super(baseHandle)
-      this.sourceEnd = sourceEnd;
-      this.bend = bend;
-      this.portCandidates = portCandidates;
+    this.sourceEnd = sourceEnd
+    this.bend = bend
+    this.portCandidates = portCandidates
     this.sourceEnd = sourceEnd
     this.bend = bend
     this.portCandidates = portCandidates

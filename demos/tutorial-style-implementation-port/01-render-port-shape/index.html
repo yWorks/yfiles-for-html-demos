@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -117,7 +117,7 @@
                 <p>
                   yFiles for HTML comes with a lot of predefined item visualizations and lots of different
                   shapes for nodes, which can also be used to visualize ports using
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStylePortStyleAdapter" class="api" target="_blank">NodeStylePortStyleAdapter</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/ShapePortStyle" class="api" target="_blank">ShapePortStyle</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/api/NodeStylePortStyleAdapter" class="api" target="_blank">NodeStylePortStyleAdapter</a> and <a href="https://docs.yworks.com/yfileshtml/api/ShapePortStyle" class="api" target="_blank">ShapePortStyle</a>.
                   However, in some cases, it is required to create fully custom visualizations based
                   on SVG. This might be the case if you need shapes that are not available
                   out-of-the-box because they are domain-specific. Also, the rendering of custom
@@ -141,7 +141,7 @@
                       of cases, other approaches like template styles or decorating built-in styles
                       with custom elements are enough. For more information on the topic of styling
                       graph items, please have a look at
-                      <a href="https://docs.yworks.com/yfileshtml/#/dguide/styles-port_styles" class="dguide" target="_blank">Port Styles</a>.
+                      <a href="https://docs.yworks.com/yfileshtml/dguide/styles-port_styles" class="dguide" target="_blank">Port Styles</a>.
                     </td>
                   </tr>
                 </table>
@@ -155,7 +155,7 @@
                 <p>
                   yFiles for HTML comes with an abstract base class which provides the basic functionality
                   to create a custom port style. We start with a custom subclass of
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/PortStyleBase" class="api" target="_blank">PortStyleBase</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/api/PortStyleBase" class="api" target="_blank">PortStyleBase</a>.
                 </p>
               </div>
               <div class="listingblock">
@@ -176,10 +176,10 @@
               <div class="paragraph">
                 <p>
                   This code will not produce anything visible, yet. We first have to implement the
-                  <code>createVisual</code> method. This method returns an SVG element, wrapped into
-                  an <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" class="api" target="_blank">SvgVisual</a>. Let&#8217;s render a circle with radius 3 to keep
-                  things simple. In your own implementation, you can create more complex SVG
-                  elements, of course.
+                  <a href="https://docs.yworks.com/yfileshtml/api/PortStyleBase#createVisual" class="api" target="_blank">createVisual</a> method. This method returns an SVG
+                  element, wrapped into an <a href="https://docs.yworks.com/yfileshtml/api/SvgVisual" class="api" target="_blank">SvgVisual</a>. Let&#8217;s render a circle
+                  with radius 3 to keep things simple. In your own implementation, you can create
+                  more complex SVG elements, of course.
                 </p>
               </div>
               <div class="listingblock">
@@ -210,26 +210,26 @@
                       <div class="title">Note</div>
                     </td>
                     <td class="content">
-                      The SVG element returned in <code>createVisual</code> does not necessarily
-                      have to be created using the JavaScript DOM API. You could also create it
-                      using any JavaScript UI framework or API like React, Vue, etc.
+                      The SVG element returned in <a href="https://docs.yworks.com/yfileshtml/api/PortStyleBase#createVisual" class="api" target="_blank">createVisual</a> does
+                      not necessarily have to be created using the JavaScript DOM API. You could
+                      also create it using any JavaScript UI framework or API like React, Vue, etc.
                     </td>
                   </tr>
                 </table>
               </div>
               <div class="paragraph">
                 <p>
-                  Besides <a href="https://docs.yworks.com/yfileshtml/#/api/SvgVisual" class="api" target="_blank">SvgVisual</a>, which can contain only an SVG element, there
-                  are other visuals as well, for example <a href="https://docs.yworks.com/yfileshtml/#/api/HtmlVisual" class="api" target="_blank">HtmlVisual</a> for HTML
+                  Besides <a href="https://docs.yworks.com/yfileshtml/api/SvgVisual" class="api" target="_blank">SvgVisual</a>, which can contain only an SVG element, there
+                  are other visuals as well, for example <a href="https://docs.yworks.com/yfileshtml/api/HtmlVisual" class="api" target="_blank">HtmlVisual</a> for HTML
                   elements.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
-                  In <code>getBounds</code>, we return a rectangle that defines the area in which
-                  the port visualization is rendered. This information is crucial for various
-                  functionalities related to the viewport, such as calculating the bounds of a graph
-                  during content fitting or displaying scrollbars.
+                  In <a href="https://docs.yworks.com/yfileshtml/api/PortStyleBase#getBounds" class="api" target="_blank">getBounds</a>, we return a rectangle that defines the
+                  area in which the port visualization is rendered. This information is crucial for
+                  various functionalities related to the viewport, such as calculating the bounds of
+                  a graph during content fitting or displaying scrollbars.
                 </p>
               </div>
               <div class="listingblock">

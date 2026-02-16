@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,14 +32,14 @@ import type { Company, OwnershipEdge, RelationshipEdge } from './data-types'
  * Creates the properties view panel to display the properties of the clicked elements.
  */
 export class PropertiesView {
-    private element: Element;
+  private element: Element
 
   /**
    * Creates the PropertiesView.
    * @param element The DOM element that will be filled with the properties.
    */
   constructor(element: Element) {
-      this.element = element;
+    this.element = element
     this.element = element
   }
 

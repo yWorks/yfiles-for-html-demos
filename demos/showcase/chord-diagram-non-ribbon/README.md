@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ This demo shows how to create a non-ribbon chord diagram. In contrast to the nor
 
 This demo illustrates email communication between employees of a fictitious company.
 
-The layout of the graph is calculated with the [circular layout](https://docs.yworks.com/yfileshtml/#/dguide/circular_layout#circular_layout). The color of the nodes represents the department to which each employee belongs. Each edge has the two colors of its source and target. The thickness of the edge is proportional to the number of e-mails exchanged between the two nodes.
+The layout of the graph is calculated with the [circular layout](https://docs.yworks.com/yfileshtml/dguide/circular_layout#circular_layout). The color of the nodes represents the department to which each employee belongs. Each edge has the two colors of its source and target. The thickness of the edge is proportional to the number of e-mails exchanged between the two nodes.
 
 ## Things to try
 

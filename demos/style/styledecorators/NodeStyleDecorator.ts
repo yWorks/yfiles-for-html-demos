@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -60,8 +60,8 @@ import {
  * {@link NodeStyleDecorator.isVisible}.
  */
 export class NodeStyleDecorator extends NodeStyleBase {
-    private readonly imageUrl: string;
-    private readonly baseStyle: INodeStyle;
+  private readonly imageUrl: string
+  private readonly baseStyle: INodeStyle
   private readonly imageStyle = new ImageNodeStyle()
   // This dummy node is passed to the image node style to render the decoration image.
   // Its size is the size of the decoration. Its location is adjusted during each createVisual
@@ -73,13 +73,10 @@ export class NodeStyleDecorator extends NodeStyleBase {
    * @param baseStyle The base style.
    * @param imageUrl The URL of the image to use for the decoration.
    */
-  constructor(
-    baseStyle: INodeStyle,
-    imageUrl: string
-  ) {
+  constructor(baseStyle: INodeStyle, imageUrl: string) {
     super()
-      this.baseStyle = baseStyle;
-      this.imageUrl = imageUrl;
+    this.baseStyle = baseStyle
+    this.imageUrl = imageUrl
     this.dummyDecorationNode.layout = new Rect(0, 0, 32, 32)
   }
 

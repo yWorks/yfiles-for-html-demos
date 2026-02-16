@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -24,4 +24,4 @@ This demo shows how to create a simple custom arrow for edges.
 
 ## Related Demos
 
-- [Step 12 Custom Arrow](../../tutorial-style-implementation-edge/12-custom-arrow/)
+- [Custom Arrow](../../tutorial-style-implementation-edge/12-custom-arrow/)

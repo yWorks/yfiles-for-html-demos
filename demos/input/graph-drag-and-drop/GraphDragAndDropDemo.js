@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -40,6 +40,7 @@ import {
   GraphSnapContext,
   GridSnapTypes,
   License,
+  NodeAlignmentPolicy,
   SnappableItems,
   SvgExport
 } from '@yfiles/yfiles'
@@ -89,6 +90,10 @@ function initializeInputModes() {
       gridSnapType: GridSnapTypes.ALL
     })
   })
+
+  // Fix the top right location of a group node when toggling collapse/expand
+  graphEditorInputMode.navigationInputMode.autoGroupNodeAlignmentPolicy =
+    NodeAlignmentPolicy.TOP_RIGHT
 
   // add the input mode to drop graphs
   graphDropInputMode = new GraphDropInputMode()

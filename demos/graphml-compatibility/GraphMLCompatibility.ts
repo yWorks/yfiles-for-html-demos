@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -114,7 +114,7 @@ export function configureGraphMLCompatibility(graphMLIOHandler: GraphMLIOHandler
       if (newName instanceof XmlName) {
         const nameMapper = evt.context.lookup(IXamlNameMapper)
         //requery with the mapped Xml name
-        const type = nameMapper!.getClassForName(evt.context, (newName) as XmlName)
+        const type = nameMapper!.getClassForName(evt.context, newName as XmlName)
         if (type) {
           evt.result = type
         }

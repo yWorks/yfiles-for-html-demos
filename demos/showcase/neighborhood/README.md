@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -32,6 +32,11 @@ The following neighborhood types are available:
 - Change the max-depth parameter to limit the neighborhood computation up to a certain depth.
 - Navigate the graph by clicking nodes in the neighborhood view.
 
+## Demos
+
+- [Neighborhood Circles Demo](../../showcase/neighborhood-circles/)
+- [Flow Filtering Demo](../../application-features/flow-filtering/)
+
 ## Remarks
 
-- The neighborhood view is using a [HierarchicalLayout](https://docs.yworks.com/yfileshtml/#/api/HierarchicalLayout) on the filtered graph.
+- The neighborhood view is using a [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout) on the filtered graph.

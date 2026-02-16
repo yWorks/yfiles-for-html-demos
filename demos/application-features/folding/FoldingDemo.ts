@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,7 +31,8 @@ import {
   FoldingManager,
   GraphEditorInputMode,
   GroupNodeStyle,
-  HierarchicalLayout
+  HierarchicalLayout,
+  NodeAlignmentPolicy
 } from '@yfiles/yfiles'
 import graphData from './graph-data.json'
 
@@ -54,7 +55,15 @@ graphComponent.graph = foldingManager.createFoldingView().graph
 await graphComponent.applyLayoutAnimated(new HierarchicalLayout({ minimumLayerDistance: 35 }), 0)
 
 // Enable graph editing
-graphComponent.inputMode = new GraphEditorInputMode()
+const graphEditorInputMode = new GraphEditorInputMode()
+graphComponent.inputMode = graphEditorInputMode
+
+// Toggle whether to fix the group node location when collapsing/expanding groups
+demoApp.toolbar.addToggleButton('Automatic Group Node Alignment', (pressed) => {
+  graphEditorInputMode.navigationInputMode.autoGroupNodeAlignmentPolicy = pressed
+    ? NodeAlignmentPolicy.TOP_RIGHT // Fix the top right location of a group node when toggling collapse/expand
+    : NodeAlignmentPolicy.NONE // Do not fix any specific point
+})
 
 // Enable undo only after the initial graph was created and laid out
 // since we don't want to allow undoing that

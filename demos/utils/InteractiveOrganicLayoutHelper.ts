@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -119,7 +119,7 @@ export class InteractiveOrganicLayoutHelper {
    * Creates a new {@link InteractiveOrganicLayout} instance and starts it.
    */
   startLayout(): void {
-    if (!this.layoutGraphAdapter || this.config.needsGraphAdapterUpdate) {
+    if (!this.layoutGraphAdapter || this.needsStructureUpdate) {
       this.layoutGraphAdapter = this.createAdapter()
     }
 
@@ -172,9 +172,9 @@ export class InteractiveOrganicLayoutHelper {
     return animator.animate((): void => {
       // we might have to recreate the layout instance when the graph structure changes.
       if (this.needsStructureUpdate) {
-        this.needsStructureUpdate = false
         this.stopLayout()
         this.startLayout()
+        this.needsStructureUpdate = false
       }
 
       // progresses the layout calculation
@@ -206,9 +206,9 @@ export class InteractiveOrganicLayoutHelper {
     this.currentInterval = setInterval(() => {
       // we might have to recreate the layout instance when the graph structure changes.
       if (this.needsStructureUpdate) {
-        this.needsStructureUpdate = false
         this.stopLayout()
         this.startLayout()
+        this.needsStructureUpdate = false
       }
 
       // progresses the layout calculation
@@ -313,15 +313,30 @@ export class InteractiveOrganicLayoutHelper {
     }
     nodeHandle.setCenter(node.layout.centerX, node.layout.centerY)
     // Actually, the node itself is fixed at the start of a drag gesture
+    this.setStressAndInertia(node, inertia, stress)
+    // Increasing has the effect that the layout will consider this node as not completely placed...
+    // In this case, the node itself is fixed, but its neighbors will wake up
+    this.increaseNeighborStress(node, 0.5)
+  }
+
+  /**
+   * Updates the inertia and the stress of the given node.
+   * @param node - The node to update.
+   * @param inertia - The inertia value to set for the node.
+   * @param stress - The stress value to set for the node.
+   */
+  setStressAndInertia(node: INode, inertia = -1, stress = -1): void {
+    const nodeHandle = this.getNodeHandle(node)
+    if (!nodeHandle) {
+      return
+    }
+
     if (inertia >= 0) {
       nodeHandle.inertia = inertia
     }
     if (stress >= 0) {
       nodeHandle.stress = stress
     }
-    // Increasing has the effect that the layout will consider this node as not completely placed...
-    // In this case, the node itself is fixed, but its neighbors will wake up
-    this.increaseNeighborStress(node, 0.5)
   }
 
   /**

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -52,14 +52,14 @@ const MAX_ZOOM_CHANGE_THRESHOLD = 3
  * The contents are scaled and rendered within the bounds of the node.
  */
 export class DeepZoomGroupNodeStyle extends NodeStyleBase<SvgVisual> {
-    backgroundStyle: INodeStyle;
+  backgroundStyle: INodeStyle
 
   /**
    * Creates a new group node style with the given backgroundStyle.
    */
   constructor(backgroundStyle: INodeStyle = new ShapeNodeStyle()) {
     super()
-      this.backgroundStyle = backgroundStyle;
+    this.backgroundStyle = backgroundStyle
   }
 
   /**

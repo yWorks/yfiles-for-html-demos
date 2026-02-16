@@ -13,6 +13,6 @@
     "typescript": "~5.9.0"
   },
   "dependencies": {
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.4+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-30.0.5+dev.tgz"
   }
 }

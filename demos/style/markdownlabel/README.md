@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -56,4 +56,4 @@ Markdown labels can use line wrapping. In this demo application, the labels use 
 - [Label Style Demo](../../style/label-style/)
 - [HTML Label Style Demo](../../style/html-label-style/)
 - [Rich Text Label Demo](../../style/richtextlabel/)
-- [Step 01 Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/)
+- [Rendering the Label Text](../../tutorial-style-implementation-label/01-render-label-text/)

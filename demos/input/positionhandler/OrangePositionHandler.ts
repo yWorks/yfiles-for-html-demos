@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -42,8 +42,8 @@ import {
  * another (the original) handler.
  */
 export class OrangePositionHandler extends ConstrainedPositionHandler {
-    private readonly node: INode;
-    private readonly boundaryRectangle: MutableRectangle;
+  private readonly node: INode
+  private readonly boundaryRectangle: MutableRectangle
   private boundaryPositionRectangle: Rect = null!
 
   /**
@@ -52,14 +52,10 @@ export class OrangePositionHandler extends ConstrainedPositionHandler {
    * @param node The given node
    * @param delegateHandler The default handler
    */
-  constructor(
-    boundaryRectangle: MutableRectangle,
-    node: INode,
-    delegateHandler: IPositionHandler
-  ) {
+  constructor(boundaryRectangle: MutableRectangle, node: INode, delegateHandler: IPositionHandler) {
     super(delegateHandler)
-      this.boundaryRectangle = boundaryRectangle;
-      this.node = node;
+    this.boundaryRectangle = boundaryRectangle
+    this.node = node
   }
 
   /**

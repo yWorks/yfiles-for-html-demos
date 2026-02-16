@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ constructor(distance = 1) {
 }
 ```
 
-The property can now be used in `createVisual` to calculate and set the stroke width of the paths.
+The property can now be used in [createVisual](https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#createVisual) to calculate and set the stroke width of the paths.
 
 ```
 const distance = this.distance
@@ -50,7 +50,7 @@ style2.distance = 3
 const style3 = new CustomEdgeStyle()
 ```
 
-Furthermore, it is important to store the distance in the cache in `createVisual` and check in `updateVisual` whether its value has been changed in the meantime. And if so, you should update the `stroke-width` attribute of the paths.
+Furthermore, it is important to store the distance in the cache in [createVisual](https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#createVisual) and check in [updateVisual](https://docs.yworks.com/yfileshtml/api/EdgeStyleBase#updateVisual) whether its value has been changed in the meantime. And if so, you should update the `stroke-width` attribute of the paths.
 
 ```
 if (this.distance !== cache.distance) {

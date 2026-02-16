@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -130,21 +130,17 @@ export class IsometricNodeStyle extends NodeStyleBase<MyVisual> {
  * Stores the geometry data necessary to update the visual representation of a node.
  */
 class RenderDataCache {
-    readonly color: MyColor;
-    readonly upVector: Point;
-    readonly height: number;
-    readonly layout: Rect;
+  readonly color: MyColor
+  readonly upVector: Point
+  readonly height: number
+  readonly layout: Rect
 
-  constructor(
-    layout: Rect,
-    height: number,
-    upVector: Point,
-    color: MyColor
-  ) {
-      this.layout = layout;
-      this.height = height;
-      this.upVector = upVector;
-      this.color = color;}
+  constructor(layout: Rect, height: number, upVector: Point, color: MyColor) {
+    this.layout = layout
+    this.height = height
+    this.upVector = upVector
+    this.color = color
+  }
 
   equalGeometries(other: RenderDataCache): boolean {
     const height = this.height

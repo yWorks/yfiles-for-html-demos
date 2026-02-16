@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -58,7 +58,7 @@ import {
  * constructor, is used to render the edge's bend, a
  */
 export class EdgeStyleDecorator extends EdgeStyleBase {
-    private readonly bendStyle: IPortStyle;
+  private readonly bendStyle: IPortStyle
   private readonly baseStyle: PolylineEdgeStyle
 
   /**
@@ -67,7 +67,7 @@ export class EdgeStyleDecorator extends EdgeStyleBase {
    */
   constructor(bendStyle: IPortStyle) {
     super()
-      this.bendStyle = bendStyle;
+    this.bendStyle = bendStyle
     const baseStyle = new PolylineEdgeStyle()
     baseStyle.smoothingLength = 5.0
     this.baseStyle = baseStyle

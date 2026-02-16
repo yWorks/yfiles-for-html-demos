@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/drag-and-drop/).
 
-This demo shows how to use [NodeDropInputMode](https://docs.yworks.com/yfileshtml/#/api/NodeDropInputMode) for dragging nodes from a separate panel to drop them into the graph component.
+This demo shows how to use [NodeDropInputMode](https://docs.yworks.com/yfileshtml/api/NodeDropInputMode) for dragging nodes from a separate panel to drop them into the graph component.
 
 - Drag nodes and group nodes into the graph.
 - Drop nodes and group nodes on other group nodes to add them as their children.

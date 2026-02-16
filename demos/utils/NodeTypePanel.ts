@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -44,9 +44,9 @@ import {
  * an {@link ILabelModelParameter} to determine the position of the pop-up.
  */
 export class NodeTypePanel {
-    private readonly colorSets: Record<string, { fill: string }>;
-    private readonly typeColors: string[];
-    private readonly graphComponent: GraphComponent;
+  private readonly colorSets: Record<string, { fill: string }>
+  private readonly typeColors: string[]
+  private readonly graphComponent: GraphComponent
   private readonly div: HTMLElement
   private dirty = false
   private _currentItems: INode[] | null = null
@@ -59,9 +59,9 @@ export class NodeTypePanel {
     typeColors: string[],
     colorSets: Record<string, { fill: string }>
   ) {
-      this.graphComponent = graphComponent;
-      this.typeColors = typeColors;
-      this.colorSets = colorSets;
+    this.graphComponent = graphComponent
+    this.typeColors = typeColors
+    this.colorSets = colorSets
     this.div = document.getElementById('node-type-panel')!
 
     // make the popup invisible

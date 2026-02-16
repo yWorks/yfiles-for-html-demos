@@ -5,7 +5,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML.
-     // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -138,15 +138,15 @@
               <div class="paragraph">
                 <p>
                   This step shows how to work with
-                  <a href="https://docs.yworks.com/yfileshtml/#/dguide/view_graphcontrol#view_graphcontrol_managing-the-view" class="dguide" target="_blank">the viewport of a GraphComponent</a>.
+                  <a href="https://docs.yworks.com/yfileshtml/dguide/view_graphcontrol#view_graphcontrol_managing-the-view" class="dguide" target="_blank">the viewport of a GraphComponent</a>.
                 </p>
               </div>
               <div class="paragraph">
                 <p>
                   The graph in this example consists of four nodes, only three of which are visible
                   in the initial viewport. The fourth node is initially outside the viewport.
-                  Calling <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#fitGraphBounds" class="api" target="_blank">fitGraphBounds</a> adjusts the
-                  viewport of the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a> to contain the complete graph.
+                  Calling the <a href="https://docs.yworks.com/yfileshtml/api/GraphComponent#fitGraphBounds" class="api" target="_blank">fitGraphBounds</a> method adjusts the
+                  viewport of the <a href="https://docs.yworks.com/yfileshtml/api/GraphComponent" class="api" target="_blank">GraphComponent</a> to contain the complete graph.
                 </p>
               </div>
               <div class="listingblock">
@@ -165,8 +165,8 @@
               </div>
               <div class="paragraph">
                 <p>
-                  The <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#zoom" class="api" target="_blank">zoom</a> and
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#viewPoint" class="api" target="_blank">viewPoint</a> can also be set manually. In
+                  The <a href="https://docs.yworks.com/yfileshtml/api/CanvasComponent#zoom" class="api" target="_blank">zoom</a> and
+                  <a href="https://docs.yworks.com/yfileshtml/api/CanvasComponent#viewPoint" class="api" target="_blank">viewPoint</a> can also be set manually. In
                   this sample, we use both to reset the viewport to the initial state.
                 </p>
               </div>
@@ -186,12 +186,12 @@ graphComponent.<span class="hljs-property">viewPoint</span> = <span class="hljs-
               <div class="paragraph">
                 <p>
                   Fitting the graph bounds actually consists of two operations, which are combined
-                  in <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#fitGraphBounds" class="api" target="_blank">fitGraphBounds</a>. First, the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#contentBounds" class="api" target="_blank">contentBounds</a> of the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" class="api" target="_blank">GraphComponent</a> is adjusted to the current graph size. Then, the
+                  in <a href="https://docs.yworks.com/yfileshtml/api/GraphComponent#fitGraphBounds" class="api" target="_blank">fitGraphBounds</a>. First, the
+                  <a href="https://docs.yworks.com/yfileshtml/api/CanvasComponent#contentBounds" class="api" target="_blank">contentBounds</a> of the
+                  <a href="https://docs.yworks.com/yfileshtml/api/GraphComponent" class="api" target="_blank">GraphComponent</a> is adjusted to the current graph size. Then, the
                   content rect is fitted into the view using
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#fitContent" class="api" target="_blank">fitContent</a>. Calling
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#fitGraphBounds" class="api" target="_blank">fitGraphBounds</a> has the same result
+                  <a href="https://docs.yworks.com/yfileshtml/api/CanvasComponent#fitContent" class="api" target="_blank">fitContent</a>. Calling
+                  <a href="https://docs.yworks.com/yfileshtml/api/GraphComponent#fitGraphBounds" class="api" target="_blank">fitGraphBounds</a> has the same result
                   as the following code:
                 </p>
               </div>
@@ -206,7 +206,7 @@ graphComponent.<span class="hljs-property">viewPoint</span> = <span class="hljs-
               <div class="paragraph">
                 <p>
                   Fitting the graph bounds can also be animated using the optional parameters of the
-                  <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent#fitGraphBounds" class="api" target="_blank">fitGraphBounds</a> method.
+                  <a href="https://docs.yworks.com/yfileshtml/api/GraphComponent#fitGraphBounds" class="api" target="_blank">fitGraphBounds</a> method.
                 </p>
               </div>
               <div class="listingblock">
@@ -232,7 +232,7 @@ graphComponent.<span class="hljs-property">viewPoint</span> = <span class="hljs-
                     <td class="content">
                       Whether some of the default (keyboard) commands are animated can be configured
                       with
-                      <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#animatedViewportChanges" class="api" target="_blank">animatedViewportChanges</a>.
+                      <a href="https://docs.yworks.com/yfileshtml/api/CanvasComponent#animatedViewportChanges" class="api" target="_blank">animatedViewportChanges</a>.
                     </td>
                   </tr>
                 </table>

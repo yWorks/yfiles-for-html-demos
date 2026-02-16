@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,15 +17,15 @@
 
 This demo shows how to create an interactive organization chart from JSON data.
 
-The source data is easily converted to a yFiles graph using class [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder).
+The source data is easily converted to a yFiles graph using class [TreeBuilder](https://docs.yworks.com/yfileshtml/api/TreeBuilder).
 
 The visualization of the employee is defined by an svg-template which is interpreted by the node style using the [Vue 2 framework](https://vuejs.org/v2/guide/index.html).
 
-The demo also shows how a [FilteredGraphWrapper](https://docs.yworks.com/yfileshtml/#/api/FilteredGraphWrapper) can be used to display a subgraph of the model graph.
+The demo also shows how a [FilteredGraphWrapper](https://docs.yworks.com/yfileshtml/api/FilteredGraphWrapper) can be used to display a subgraph of the model graph.
 
 ## Automatic Layout
 
-The organization chart is arranged automatically with the [TreeLayout](https://docs.yworks.com/yfileshtml/#/api/TreeLayout) and the [CompactSubtreePlacer](https://docs.yworks.com/yfileshtml/#/api/CompactSubtreePlacer) which determines the best arrangement strategy for each node in order to achieve a compact and clear layout.
+The organization chart is arranged automatically with the [TreeLayout](https://docs.yworks.com/yfileshtml/api/TreeLayout) and the [CompactSubtreePlacer](https://docs.yworks.com/yfileshtml/api/CompactSubtreePlacer) which determines the best arrangement strategy for each node in order to achieve a compact and clear layout.
 
 ## Organization Chart View
 
@@ -43,14 +43,15 @@ Click on a superior, subordinate, or colleague link to select and zoom to the co
 
 ## Things to Try
 
-- Click on the port to hide and show the children, you can **hide children** by clicking on ![hide children](resources/minus.svg) and you can **show children** by clicking on ![show children](resources/plus.svg).
-- Right click on the node to see the **context menu**. For the selected node you can:
+- Click on the port in the bottom center of a node to hide and show the children. **Hide children** by clicking on ![hide children](resources/minus.svg). **Show children** by clicking on ![show children](resources/plus.svg).
+- Right click on the node to open the **context menu**. For the selected node, you have the following options:
 - - Hide parent: hides the parent of the currently selected employee.
   - Show parent: shows the parent of the currently selected employee.
   - Hide children: hides the children of the currently selected employee.
   - Show children: Shows the children of the currently selected employee.
   - Show all: show all employees
-- In the Toolbar, you can **Show All** nodes by clicking on ![show all](../../demo-app/icons/star-16.svg).
+- In the toolbar, you can **Show All** nodes by clicking on ![show all](../../demo-app/icons/star-16.svg).
+- Change the zoom level to switch between three different levels of detail for node visualization.
 
 ## Developer Information
 

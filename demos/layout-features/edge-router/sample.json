@@ -116,125 +116,25 @@
     }
   ],
   "edges": [
-    {
-      "id": 0,
-      "source": 0,
-      "target": 1,
-      "tag": "octilinear",
-      "cssClass": "blue"
-    },
-    {
-      "id": 1,
-      "source": 1,
-      "target": 2
-    },
-    {
-      "id": 2,
-      "source": 4,
-      "target": 12
-    },
-    {
-      "id": 3,
-      "source": 7,
-      "target": 8
-    },
-    {
-      "id": 4,
-      "source": 11,
-      "target": 9
-    },
-    {
-      "id": 5,
-      "source": 11,
-      "target": 4
-    },
-    {
-      "id": 6,
-      "source": 4,
-      "target": 5
-    },
-    {
-      "id": 7,
-      "source": 3,
-      "target": 6,
-      "tag": "groupAtTarget",
-      "cssClass": "pink"
-    },
-    {
-      "id": 8,
-      "source": 9,
-      "target": 13
-    },
-    {
-      "id": 9,
-      "source": 9,
-      "target": 2
-    },
-    {
-      "id": 10,
-      "source": 4,
-      "target": 6,
-      "tag": "groupAtTarget",
-      "cssClass": "pink"
-    },
-    {
-      "id": 11,
-      "source": 0,
-      "target": 5,
-      "tag": "octilinear",
-      "cssClass": "blue"
-    },
-    {
-      "id": 12,
-      "source": 10,
-      "target": 1,
-      "tag": "octilinear",
-      "cssClass": "blue"
-    },
-    {
-      "id": 13,
-      "source": 8,
-      "target": 12
-    },
-    {
-      "id": 14,
-      "source": 5,
-      "target": 7
-    },
-    {
-      "id": 15,
-      "source": 1,
-      "target": 14,
-      "tag": "skipEdgeRouting",
-      "cssClass": "orange"
-    },
-    {
-      "id": 16,
-      "source": 1,
-      "target": 15,
-      "tag": "skipEdgeRouting",
-      "cssClass": "orange"
-    },
-    {
-      "id": 17,
-      "source": 1,
-      "target": 16,
-      "tag": "skipEdgeRouting",
-      "cssClass": "orange"
-    },
-    {
-      "id": 18,
-      "source": 1,
-      "target": 17,
-      "tag": "skipEdgeRouting",
-      "cssClass": "orange"
-    },
-    {
-      "id": 19,
-      "source": 1,
-      "target": 18,
-      "tag": "skipEdgeRouting",
-      "cssClass": "orange"
-    }
+    { "id": 0, "source": 0, "target": 1, "tag": "octilinear", "cssClass": "blue" },
+    { "id": 1, "source": 1, "target": 2 },
+    { "id": 2, "source": 4, "target": 12 },
+    { "id": 3, "source": 7, "target": 8 },
+    { "id": 4, "source": 11, "target": 9 },
+    { "id": 5, "source": 11, "target": 4 },
+    { "id": 6, "source": 4, "target": 5 },
+    { "id": 7, "source": 3, "target": 6, "tag": "groupAtTarget", "cssClass": "pink" },
+    { "id": 8, "source": 9, "target": 13 },
+    { "id": 9, "source": 9, "target": 2 },
+    { "id": 10, "source": 4, "target": 6, "tag": "groupAtTarget", "cssClass": "pink" },
+    { "id": 11, "source": 0, "target": 5, "tag": "octilinear", "cssClass": "blue" },
+    { "id": 12, "source": 10, "target": 1, "tag": "octilinear", "cssClass": "blue" },
+    { "id": 13, "source": 8, "target": 12 },
+    { "id": 14, "source": 5, "target": 7 },
+    { "id": 15, "source": 1, "target": 14, "tag": "skipEdgeRouting", "cssClass": "orange" },
+    { "id": 16, "source": 1, "target": 15, "tag": "skipEdgeRouting", "cssClass": "orange" },
+    { "id": 17, "source": 1, "target": 16, "tag": "skipEdgeRouting", "cssClass": "orange" },
+    { "id": 18, "source": 1, "target": 17, "tag": "skipEdgeRouting", "cssClass": "orange" },
+    { "id": 19, "source": 1, "target": 18, "tag": "skipEdgeRouting", "cssClass": "orange" }
   ]
 }

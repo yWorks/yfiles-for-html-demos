@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 ## How to create a basic view.
 
-This step introduces class [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent), which is the [central UI element for working with graphs](https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application#getting_started-application). The app does not provide any interactive features except basic navigation and selection, which is enabled by default. It is merely meant as a very basic example of how to display a [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) within a web page.
+This step introduces class [GraphComponent](https://docs.yworks.com/yfileshtml/api/GraphComponent), which is the [central UI element for working with graphs](https://docs.yworks.com/yfileshtml/dguide/getting_started-application#getting_started-application). The app does not provide any interactive features except basic navigation and selection, which is enabled by default. It is merely meant as a very basic example of how to display a [GraphComponent](https://docs.yworks.com/yfileshtml/api/GraphComponent) within a web page.
 
 This is the minimal code that’s needed to display a graph on a web page using yFiles for HTML.
 
@@ -37,7 +37,7 @@ We should also make sure that the `div` actually has a reasonable size, as the d
 }
 ```
 
-Now, in the code we can initialize the [GraphComponent](https://docs.yworks.com/yfileshtml/#/api/GraphComponent) and wire it up with the existing `div`.
+Now, in the code we can initialize the [GraphComponent](https://docs.yworks.com/yfileshtml/api/GraphComponent) and wire it up with the existing `div`.
 
 ```
 // create a new graph component in the div element specified via the CSS selector

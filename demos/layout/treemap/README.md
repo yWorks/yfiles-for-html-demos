@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 Tree maps allow to visualize hierarchical data using nested rectangles, which in this case are represented by graph nodes. The size of leaf nodes in a tree map is proportional to a certain data value (i.e. weight).
 
-The [TreeMapLayout](https://docs.yworks.com/yfileshtml/#/api/TreeMapLayout) algorithm arranges the nodes according to their weights and relations inside groups.
+The [TreeMapLayout](https://docs.yworks.com/yfileshtml/api/TreeMapLayout) algorithm arranges the nodes according to their weights and relations inside groups.
 
 ## Application
 

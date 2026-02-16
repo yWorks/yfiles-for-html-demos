@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML.
- ** Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,14 +27,11 @@
  **
  ***************************************************************************/
 import { Page } from './page.js'
-import type { CanvasComponent, GraphComponent } from '@yfiles/yfiles'
-
-// provide types for the global yFiles object
-declare const yfiles: { CanvasComponent: typeof CanvasComponent }
+import type { GraphComponent } from '@yfiles/yfiles'
 
 class WdioDemoPage extends Page {
   get zoomInButton() {
-    return $("button[data-command='INCREASE_ZOOM']")
+    return $('#zoom-in')
   }
 
   get graphComponentElement() {
@@ -43,20 +40,13 @@ class WdioDemoPage extends Page {
 
   get nodeCount() {
     return browser.execute(
-      async () =>
-        (
-          yfiles.CanvasComponent.getComponent(
-            document.getElementById('graphComponent')
-          ) as GraphComponent
-        ).graph.nodes.size
+      async () => ((window as any).graphComponent as GraphComponent).graph.nodes.size
     )
   }
 
   async nodeCountAt(location) {
     return browser.execute((location) => {
-      const graphComponent = yfiles.CanvasComponent.getComponent(
-        document.getElementById('graphComponent')
-      ) as GraphComponent
+      const graphComponent = (window as any).graphComponent as GraphComponent
       const worldLocation = graphComponent.pageToWorldCoordinates(location)
       return graphComponent.graph.nodes.filter((node) => node.layout.contains(worldLocation)).size
     }, location)
@@ -64,9 +54,7 @@ class WdioDemoPage extends Page {
 
   async bendCountAt(location) {
     return browser.execute(async (location) => {
-      const graphComponent = yfiles.CanvasComponent.getComponent(
-        document.getElementById('graphComponent')
-      ) as GraphComponent
+      const graphComponent = (window as any).graphComponent as GraphComponent
       const worldLocation = graphComponent.pageToWorldCoordinates(location)
 
       return graphComponent.graph.bends.filter((bend) =>
@@ -77,28 +65,16 @@ class WdioDemoPage extends Page {
 
   get edgeCount() {
     return browser.execute(
-      async () =>
-        (
-          yfiles.CanvasComponent.getComponent(
-            document.getElementById('graphComponent')
-          ) as GraphComponent
-        ).graph.edges.size
+      async () => ((window as any).graphComponent as GraphComponent).graph.edges.size
     )
   }
 
   get zoom() {
-    return browser.execute(
-      async () =>
-        (
-          yfiles.CanvasComponent.getComponent(
-            document.getElementById('graphComponent')
-          ) as GraphComponent
-        ).zoom
-    )
+    return browser.execute(async () => ((window as any).graphComponent as GraphComponent).zoom)
   }
 
   public open() {
-    return super.open('testing/wdio/index.html')
+    return super.open('testing/application-under-test/index.html')
   }
 }
 

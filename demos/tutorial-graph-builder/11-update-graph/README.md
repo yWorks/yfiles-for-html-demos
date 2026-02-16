@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@ This is usually necessary after the app received or queried new data from a data
 
 ## Assigning new data and updating the graph structure
 
-After the business data has changed, you can assign the new data to one or more nodes and/or edges sources. Then, it’s only a matter of calling [updateGraph](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder#updateGraph) to update the graph structure to the new data.
+After the business data has changed, you can assign the new data to one or more nodes and/or edges sources. Then, it’s only a matter of calling the [updateGraph](https://docs.yworks.com/yfileshtml/api/GraphBuilder#updateGraph) method to update the graph structure to the new data.
 
 ```
 // assign the new data to the nodesSource
@@ -32,11 +32,11 @@ graphBuilder.updateGraph()
 
 Note
 
-When a new data item has the same `id` as an existing item as defined by the [id provider](https://docs.yworks.com/yfileshtml/#/api/NodesSource#idProvider), it is interpreted as being the same and the node or edge in the graph is re-used. Only the visualization and the data in the [tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag) are updated.
+When a new data item has the same `id` as an existing item as defined by the [idProvider](https://docs.yworks.com/yfileshtml/api/NodesSource#idProvider), it is interpreted as being the same and the node or edge in the graph is re-used. Only the visualization and the data in the [tag](https://docs.yworks.com/yfileshtml/api/ITagOwner#tag) are updated.
 
 ## Updating the graph with dynamic data
 
-In [Step 2](../02-create-nodes-sources/) of this tutorial, we’ve already learned how to create a graph using a dynamic generator function. In this example, we select the nodes to display in the graph using a set of node types.
+In [step 2](../../tutorial-graph-builder/02-create-nodes-sources/) of this tutorial, we’ve already learned how to create a graph using a dynamic generator function. In this example, we select the nodes to display in the graph using a set of node types.
 
 ```
 nodeTypes = new Set(['Corporation', 'Trust'])

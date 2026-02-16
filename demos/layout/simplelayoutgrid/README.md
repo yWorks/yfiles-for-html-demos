@@ -4,7 +4,7 @@
  // This file is part of yFiles for HTML.
  // Use is subject to license terms.
  //
- // Copyright (c) by yWorks GmbH, Vor dem Kreuzberg 28,
+ // Copyright (c) 2026 by yWorks GmbH, Vor dem Kreuzberg 28,
  // 72070 Tuebingen, Germany. All rights reserved.
  //
  //////////////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/simplelayoutgrid/).
 
-This demo shows how to create a simple [LayoutGrid](https://docs.yworks.com/yfileshtml/#/api/LayoutGrid) that will be used by the hierarchical layout algorithm.
+This demo shows how to create a simple [LayoutGrid](https://docs.yworks.com/yfileshtml/api/LayoutGrid) that will be used by the hierarchical layout algorithm.
 
 The information about the desired position of a node in the layout grid is stored in its tag and also appears in its label. The first digit represents the row index and the second the column index.
 
