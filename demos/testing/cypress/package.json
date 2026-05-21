@@ -9,7 +9,7 @@
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "devDependencies": {
-    "cypress": "^14.2.0",
+    "cypress": "^15.15.0",
     "typescript": "~5.9.0"
   },
   "dependencies": {
