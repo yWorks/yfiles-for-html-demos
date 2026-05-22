@@ -23,7 +23,7 @@
     "html-webpack-plugin": "5.6.5",
     "mini-css-extract-plugin": "2.9.4",
     "style-loader": "4.0.0",
-    "terser-webpack-plugin": "5.3.16",
+    "terser-webpack-plugin": "5.6.0",
     "ts-loader": "^9.5.4",
     "typescript": "~6.0.2",
     "webpack": "5.104.1",
