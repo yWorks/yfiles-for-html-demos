@@ -8,12 +8,12 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "^21.2.1",
-    "@angular/compiler": "^21.2.1",
-    "@angular/core": "^21.2.1",
-    "@angular/forms": "^21.2.1",
+    "@angular/common": "^22.0.1",
+    "@angular/compiler": "^22.0.1",
+    "@angular/core": "^22.0.1",
+    "@angular/forms": "^22.0.1",
     "@angular/material": "^21.2.1",
-    "@angular/platform-browser": "^21.2.1",
+    "@angular/platform-browser": "^22.0.1",
     "@fontsource/material-symbols-outlined": "^5.2.1",
     "@fontsource/poppins": "^5.2.7",
     "rxjs": "~7.8.2",
@@ -21,9 +21,9 @@
     "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.1+dev.tgz"
   },
   "devDependencies": {
-    "@angular/build": "^21.2.1",
+    "@angular/build": "^22.0.1",
     "@angular/cli": "^21.2.1",
-    "@angular/compiler-cli": "^21.2.1",
+    "@angular/compiler-cli": "^22.0.1",
     "typescript": "~5.9.0"
   }
 }
