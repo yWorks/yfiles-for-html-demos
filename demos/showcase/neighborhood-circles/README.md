@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/neighborhood-circles/).
 
-Demo
-
 The Neighborhood Circles demo shows the neighborhood of selected nodes arranged on concentric circles. The concentric arrangement highlights how close the connection between a selected node and a neighbor node is.
 
 The following neighborhood types are available:

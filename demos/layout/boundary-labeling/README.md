@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/boundary-labeling/).
 
-Demo
-
 This demo shows how to configure the [OrganicLayout](https://docs.yworks.com/yfileshtml/api/OrganicLayout) algorithm for annotating a set of points on a diagram (map, technical drawing, etc.).
 
 The labeling approach followed in this demo is known as "boundary labeling" and the goal is to place the labels outside the boundary of the drawing.

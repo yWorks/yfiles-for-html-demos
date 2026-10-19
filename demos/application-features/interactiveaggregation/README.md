@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/interactiveaggregation/).
 
-Demo
-
 This demo shows how to analyze a graph by aggregating groups of nodes.
 
 Via the context menu, groups of nodes of the same color or shape can be aggregated giving different insights about the graph.

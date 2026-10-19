@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/webgl-precompilation/).
 
-Demo
-
 This demo shows how to precompile the WebGL styles you want to use. By doing this, you can avoid seeing the fallback styles that are used to render the graph while the more elaborate and more expensive to compile styles are being loaded. Instead, a loading indicator is shown while the compilation takes place.
 
 Initially, the standard SVG rendering is enabled on both graphs. When the "Enable WebGL" button in the toolbar is clicked, WebGL rendering is enabled immediately for the left graph. For the right graph, a loading screen is shown instead while the WebGL styles are precompiled. Once the compilation finishes, the loading screen is removed and WebGL rendering is enabled.

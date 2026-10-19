@@ -16,7 +16,7 @@
     "@yfiles/demo-app": "../../demo-app",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.3+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.4+dev.tgz"
   },
   "devDependencies": {
     "@types/babel__standalone": "^7.1.9",

@@ -9,7 +9,7 @@
   "dependencies": {
     "@yfiles/demo-app": "../../demo-app",
     "@yfiles/demo-utils": "../../utils",
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.3+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.4+dev.tgz"
   },
   "scripts": {
     "postinstall": "node -e \"require('node:fs').cpSync('../../../lib/license.json', './src/license.json')\" || echo To run this demo, please add a license.json to the src folder.",

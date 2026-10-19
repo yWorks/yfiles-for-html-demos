@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/biofabrics/).
 
-Demo
-
 A simple demonstration of and introduction to biofabric visualizations. A biofabric visualization of some graph, G \= ( V , E ) , represents each node v ∈ V as a row and each edge e ∈ E as a column. An edge is visually represented as a vertical line connecting the horizontal lines of its source and target nodes.
 
 The simple (complete) example graph below consists of three nodes, i.e., A , B , C , and three edges, i.e., { A , B } , { A , C } , { B , C } .

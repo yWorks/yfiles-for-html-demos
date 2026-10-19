@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/flow-filtering/).
 
-Demo
-
 This demo demonstrates how to dynamically show or hide items within the connecting upstream or downstream flows of a given node.
 
 It uses the [Neighborhood](https://docs.yworks.com/yfileshtml/api/Neighborhood) algorithm to find the successors or predecessors of the given node.

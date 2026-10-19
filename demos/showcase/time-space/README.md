@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/time-space/).
 
-Demo
-
 This interactive demo visualizes the spread of contaminants across different locations over time. It allows you to trace how a single incident - a train derailment - can lead to a widespread contamination event.
 
 Each circle on the map represents a specific event, connecting to relevant events in the past and future. The heatmap overlay on the map visualizes the concentration of the contamination, hotter colors signifying higher severity.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/knowledge-graphs/).
 
-Demo
-
 This demo visualizes a knowledge graph and highlights potential data quality issues, providing interactive tools to inspect and resolve them.
 
 Knowledge graphs are typically represented as triples (subject–predicate–object). Since triples often come from diverse sources and formats, common issues include duplicate nodes, edges connected to incorrect endpoints, and isolated nodes.

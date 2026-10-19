@@ -69,29 +69,6 @@ import {
   TypeAttribute
 } from '@yfiles/demo-app/demo-option-editor'
 
-/// <summary>
-///   Enum constants that specify the scope for the <see cref="OrganicLayout"/>.
-/// </summary>
-const OrganicLayoutScope = {
-  /// <summary>Scope mode indicating that the algorithm should place <em>all</em> nodes of the graph.</summary>
-  ALL: 0,
-
-  /// Scope mode indicating that the algorithm should place the node.
-  AFFECTED: OrganicScope.AFFECTED,
-
-  /// <summary>
-  ///   Scope mode indicating that the algorithm should place a node but may to a certain degree
-  //    also move nodes that are geometrically close to a node from the subset.
-  /// </summary>
-  INCLUDE_CLOSE_NODES: OrganicScope.INCLUDE_CLOSE_NODES,
-
-  /// <summary>
-  ///   Scope mode indicating that the algorithm should place a node but may to a certain degree
-  //    also move nodes that are structurally close to the node.
-  /// </summary>
-  INCLUDE_EXTENDED_NEIGHBORHOOD: OrganicScope.INCLUDE_EXTENDED_NEIGHBORHOOD
-}
-
 export const OutputRestrictions = {
   NONE: 0,
   OUTPUT_CAGE: 1,

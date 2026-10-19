@@ -1841,7 +1841,8 @@ export function getAllEntries() {
         'fade-out',
         'padding',
         'margin',
-        'fade'
+        'fade',
+        'item style'
       ],
       linkedDemos: { type: 'related-demos', demos: ['css-styling'] }
     },
@@ -1852,7 +1853,7 @@ export function getAllEntries() {
       summary: 'Shows the features of the LabelStyle class.',
       category: 'style',
       tags: ['style', 'labels'],
-      keywords: ['v2.5.0.0', 'library style', 'style options', 'padding'],
+      keywords: ['v2.5.0.0', 'library style', 'style options', 'padding', 'item style'],
       linkedDemos: {
         type: 'related-demos',
         demos: [
@@ -1881,7 +1882,8 @@ export function getAllEntries() {
         'hexagons',
         'octagons',
         'library style',
-        'style options'
+        'style options',
+        'item style'
       ],
       linkedDemos: {
         type: 'related-demos',
@@ -1915,7 +1917,8 @@ export function getAllEntries() {
         'hexagon',
         'triangle',
         'star',
-        'squircle'
+        'squircle',
+        'item style'
       ],
       linkedDemos: {
         type: 'related-demos',
@@ -1953,7 +1956,8 @@ export function getAllEntries() {
         'hexagon',
         'triangle',
         'star',
-        'squircle'
+        'squircle',
+        'item style'
       ]
     },
     {
@@ -1964,7 +1968,15 @@ export function getAllEntries() {
         'Shows the group and folder node visualization options offered by the GroupNodeStyle class.',
       category: 'style',
       tags: ['style', 'nodes', 'webgl'],
-      keywords: ['v2.5.0.0', 'library style', 'style options', 'webgl2', 'padding', 'margin'],
+      keywords: [
+        'v2.5.0.0',
+        'library style',
+        'style options',
+        'webgl2',
+        'padding',
+        'margin',
+        'item style'
+      ],
       linkedDemos: {
         type: 'related-demos',
         demos: [
@@ -1997,7 +2009,8 @@ export function getAllEntries() {
         'ellipse',
         'kite',
         'stealth',
-        'triangle'
+        'triangle',
+        'item style'
       ]
     },
     {
@@ -2007,7 +2020,7 @@ export function getAllEntries() {
       summary: 'Shows the features of the ArrowNodeStyle class.',
       category: 'style',
       tags: ['style', 'nodes', 'arrows'],
-      keywords: ['v2.5.0.0', 'library style', 'style options'],
+      keywords: ['v2.5.0.0', 'library style', 'style options', 'item style'],
       linkedDemos: {
         type: 'related-demos',
         demos: [
@@ -2025,7 +2038,7 @@ export function getAllEntries() {
       summary: 'Shows the features of the ArrowEdgeStyle class.',
       category: 'style',
       tags: ['style', 'edges', 'arrows'],
-      keywords: ['v2.5.0.0', 'library style', 'style options']
+      keywords: ['v2.5.0.0', 'library style', 'style options', 'item style']
     },
     {
       id: 'webgl-animations',
@@ -2305,7 +2318,7 @@ export function getAllEntries() {
         'Shows how to create custom styles for nodes, edges, labels, ports, and edge arrows.',
       category: 'style',
       tags: ['style', 'grouping'],
-      keywords: ['folding', 'labels', 'ports', 'padding', 'margin']
+      keywords: ['folding', 'labels', 'ports', 'padding', 'margin', 'item style']
     },
     {
       id: 'template-styles',
@@ -2340,7 +2353,7 @@ export function getAllEntries() {
        creation of rich, responsive node style visualizations.`,
       category: 'style',
       tags: ['style', 'template'],
-      keywords: ['v3.0.0.0', 'data bindings', 'data panel'],
+      keywords: ['v3.0.0.0', 'data bindings', 'data panel', 'item style'],
       linkedDemos: {
         type: 'related-demos',
         demos: [
@@ -2360,7 +2373,7 @@ export function getAllEntries() {
       category: 'style',
       languageType: 'ts-only',
       tags: ['style', 'template', 'react', 'jsx'],
-      keywords: ['v2.5.0.2', 'data bindings', 'data panel', 'tree', 'htmlvisual'],
+      keywords: ['v2.5.0.2', 'data bindings', 'data panel', 'tree', 'htmlvisual', 'item style'],
       linkedDemos: {
         type: 'related-demos',
         demos: [
@@ -2379,7 +2392,7 @@ export function getAllEntries() {
       category: 'style',
       languageType: 'ts-only',
       tags: ['style', 'template', 'vuejs'],
-      keywords: ['v2.1.0.0', 'data bindings', 'data panel', 'tree'],
+      keywords: ['v2.1.0.0', 'data bindings', 'data panel', 'tree', 'item style'],
       linkedDemos: {
         type: 'related-demos',
         demos: [
@@ -2398,7 +2411,14 @@ export function getAllEntries() {
         'Presents a versatile and easily customizable template node style based on the Lit templating framework.',
       category: 'style',
       tags: ['style', 'template', 'lit'],
-      keywords: ['v2.5.0.2', 'data bindings', 'data panel', 'conditional', 'rendering'],
+      keywords: [
+        'v2.5.0.2',
+        'data bindings',
+        'data panel',
+        'conditional',
+        'rendering',
+        'item style'
+      ],
       linkedDemos: {
         type: 'related-demos',
         demos: [
@@ -2421,7 +2441,7 @@ export function getAllEntries() {
        different from SVG, where you can use any SVG feature and snippet for visualization.`,
       category: 'style',
       tags: ['style', 'webgl'],
-      keywords: ['v2.4.0.0', 'v2.5.0.0', 'v3.1', 'styles', 'notable style', 'webgl2']
+      keywords: ['v2.4.0.0', 'v2.5.0.0', 'v3.1', 'styles', 'notable style', 'webgl2', 'item style']
     },
     {
       id: 'webgl-selection-styles',
@@ -2430,7 +2450,7 @@ export function getAllEntries() {
       summary: 'Shows the possible styling configurations for selections in WebGL rendering.',
       category: 'style',
       tags: ['style', 'webgl', 'selection'],
-      keywords: ['v2.5.0.0', 'styles', 'webgl2']
+      keywords: ['v2.5.0.0', 'styles', 'webgl2', 'item style']
     },
     {
       id: 'css-styling',
@@ -2440,7 +2460,7 @@ export function getAllEntries() {
       category: 'style',
       distributionType: 'needs-layout',
       tags: ['css', 'indicators', 'themes'],
-      keywords: ['stylesheets', 'v2.2.0.0', 'labels', 'notable style', 'padding']
+      keywords: ['stylesheets', 'v2.2.0.0', 'labels', 'notable style', 'padding', 'item style']
     },
     {
       id: 'theme-variants',
@@ -2458,7 +2478,16 @@ export function getAllEntries() {
       summary: 'Shows how a node style can be augmented with isometric bars.',
       category: 'style',
       tags: ['styles', 'projection', 'bars'],
-      keywords: ['v2.4.0.4', 'organic', 'labels', '3D', 'isometric', 'bars', 'notable style']
+      keywords: [
+        'v2.4.0.4',
+        'organic',
+        'labels',
+        '3D',
+        'isometric',
+        'bars',
+        'notable style',
+        'item style'
+      ]
     },
     {
       id: 'd3-chart-nodes',
@@ -2467,7 +2496,7 @@ export function getAllEntries() {
       summary: 'Presents a node style that visualizes dynamic data with d3.js.',
       category: 'style',
       tags: ['style', 'sparklines', 'bars'],
-      keywords: ['v2.2.0.0', 'd3js', 'd3.js']
+      keywords: ['v2.2.0.0', 'd3js', 'd3.js', 'item style']
     },
     {
       id: 'editable-path-style',
@@ -2476,7 +2505,7 @@ export function getAllEntries() {
       summary: 'Shows a path-based node style whose control points can be moved by users.',
       category: 'style',
       tags: ['style', 'path', 'editing'],
-      keywords: ['v2.3.0.2', 'handles', 'general paths', 'interaction', 'editing']
+      keywords: ['v2.3.0.2', 'handles', 'general paths', 'interaction', 'editing', 'item style']
     },
     {
       id: 'webgl-icon-node',
@@ -2485,7 +2514,7 @@ export function getAllEntries() {
       summary: 'Shows how to render image nodes with WebGL.',
       category: 'style',
       tags: ['style', 'webgl'],
-      keywords: ['v2.4.0.0', 'notable style', 'webgl2']
+      keywords: ['v2.4.0.0', 'notable style', 'webgl2', 'item style']
     },
     {
       id: 'clickable-style-decorator',
@@ -2512,7 +2541,7 @@ export function getAllEntries() {
       demoPath: 'style/composite-node-style/',
       category: 'style',
       tags: ['style', 'icon'],
-      keywords: ['v2.4.0.4', 'composite']
+      keywords: ['v2.4.0.4', 'composite', 'item style']
     },
     {
       id: 'level-of-detail-style',
@@ -2521,7 +2550,15 @@ export function getAllEntries() {
       demoPath: 'style/level-of-detail-style/',
       category: 'style',
       tags: ['style', 'performance'],
-      keywords: ['v2.2.0.0', 'data binding', 'readability', 'hide', 'rendering', 'sketch']
+      keywords: [
+        'v2.2.0.0',
+        'data binding',
+        'readability',
+        'hide',
+        'rendering',
+        'sketch',
+        'item style'
+      ]
     },
     {
       id: 'list-node',
@@ -2557,7 +2594,8 @@ export function getAllEntries() {
         'selection',
         'labels',
         'curves',
-        'bezier'
+        'bezier',
+        'item style'
       ]
     },
     {
@@ -2568,7 +2606,7 @@ export function getAllEntries() {
         'Shows label styles displaying arrows that always point to the source or target port.',
       category: 'style',
       tags: ['style', 'label', 'edge'],
-      keywords: ['v2.4.0.4', 'edges', 'directed', 'labels']
+      keywords: ['v2.4.0.4', 'edges', 'directed', 'labels', 'item style']
     },
     {
       id: 'markup-labels',
@@ -2579,7 +2617,17 @@ export function getAllEntries() {
       distributionType: 'needs-layout',
       category: 'style',
       tags: ['style', 'label', 'markup'],
-      keywords: ['v2.3.0.0', 'rich texts', 'styling', 'html', 'xml', 'color', 'padding', 'margin']
+      keywords: [
+        'v2.3.0.0',
+        'rich texts',
+        'styling',
+        'html',
+        'xml',
+        'color',
+        'padding',
+        'margin',
+        'item style'
+      ]
     },
     {
       id: 'markdown-label',
@@ -2589,7 +2637,7 @@ export function getAllEntries() {
       category: 'style',
       distributionType: 'needs-layout',
       tags: ['style', 'label', 'markdown'],
-      keywords: ['v2.3.0.0', 'rich text', 'styling', 'html', 'markdown'],
+      keywords: ['v2.3.0.0', 'rich text', 'styling', 'html', 'markdown', 'item style'],
       linkedDemos: {
         type: 'related-demos',
         demos: [
@@ -2608,7 +2656,17 @@ export function getAllEntries() {
       category: 'style',
       distributionType: 'needs-layout',
       tags: ['style', 'label', 'rich text'],
-      keywords: ['v2.3.0.0', 'styling', 'html', 'xml', 'markdown', 'markup', 'colors', 'wysiwyg'],
+      keywords: [
+        'v2.3.0.0',
+        'styling',
+        'html',
+        'xml',
+        'markdown',
+        'markup',
+        'colors',
+        'wysiwyg',
+        'item style'
+      ],
       linkedDemos: {
         type: 'related-demos',
         demos: [
@@ -2657,7 +2715,7 @@ export function getAllEntries() {
       category: 'style',
       distributionType: 'needs-layout',
       tags: ['style', 'label', 'htmlvisual'],
-      keywords: ['v2.6.0.0'],
+      keywords: ['v2.6.0.0', 'item style'],
       linkedDemos: {
         type: 'related-demos',
         demos: [
@@ -2685,7 +2743,7 @@ export function getAllEntries() {
       summary: 'Shows how to create a simple custom arrow for edges.',
       category: 'style',
       tags: ['style', 'arrow'],
-      keywords: ['v2.5.0.2', 'styling', 'arrow', 'edge', 'custom'],
+      keywords: ['v2.5.0.2', 'styling', 'arrow', 'edge', 'custom', 'item style'],
       linkedDemos: {
         type: 'related-demos',
         demos: ['tutorial-style-implementation-edge-custom-arrow']
@@ -2710,7 +2768,7 @@ export function getAllEntries() {
       category: 'style',
       distributionType: 'needs-layout',
       tags: ['style', 'decorators'],
-      keywords: ['ports']
+      keywords: ['ports', 'item style']
     },
     {
       id: 'general-path-node-style',
@@ -2729,7 +2787,8 @@ export function getAllEntries() {
         'airplane',
         'computer',
         'person',
-        'path'
+        'path',
+        'item style'
       ]
     },
     {
@@ -3614,7 +3673,7 @@ export function getAllEntries() {
       category: 'style',
       languageType: 'ts-only',
       tags: ['angular', 'component', 'style'],
-      keywords: ['v2.6.0.0', 'material', 'htmlvisual', 'framework', 'data binding']
+      keywords: ['v2.6.0.0', 'material', 'htmlvisual', 'framework', 'data binding', 'item style']
     },
     {
       id: 'react',
@@ -3646,7 +3705,7 @@ export function getAllEntries() {
       category: 'style',
       languageType: 'ts-only',
       tags: ['react', 'component', 'style'],
-      keywords: ['v2.6.0.0', 'material', 'mui', 'htmlvisual', 'framework']
+      keywords: ['v2.6.0.0', 'material', 'mui', 'htmlvisual', 'framework', 'item style']
     },
     {
       id: 'preact',
@@ -3686,7 +3745,15 @@ export function getAllEntries() {
       category: 'style',
       languageType: 'ts-only',
       tags: ['vue', 'component', 'style'],
-      keywords: ['v2.6.0.0', 'material', 'vuetify', 'vuejs', 'htmlvisual', 'framework']
+      keywords: [
+        'v2.6.0.0',
+        'material',
+        'vuetify',
+        'vuejs',
+        'htmlvisual',
+        'framework',
+        'item style'
+      ]
     },
     {
       id: 'svelte',

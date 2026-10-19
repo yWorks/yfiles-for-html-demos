@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/drag-from-component/).
 
-Demo
-
 This demo shows how to use the HTML Drag and Drop support to drag graph items from the component to other HTML elements.
 
 ## Things to Try

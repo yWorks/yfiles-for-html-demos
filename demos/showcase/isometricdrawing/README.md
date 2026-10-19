@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/isometricdrawing/).
 
-Demo
-
 This demo uses advanced features of yFiles to render complex SVG node and edge styles in a [projected](https://docs.yworks.com/yfileshtml/dguide/projections-main) perspective, adding a third dimension.
 
 This view uses a compact isometric projection with simple node styles and a dedicated z-order comparator, making the implementation easy to study and reuse.

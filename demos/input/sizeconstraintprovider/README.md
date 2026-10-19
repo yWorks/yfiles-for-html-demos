@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/sizeconstraintprovider/).
 
-Demo
-
 This demo shows how resizing of nodes can be restricted.
 
 This is done with custom implementations of the interface [INodeSizeConstraintProvider](https://docs.yworks.com/yfileshtml/api/INodeSizeConstraintProvider) that are added to the lookup of the nodes.

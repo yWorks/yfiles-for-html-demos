@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/decisiontree/).
 
-Demo
-
 This demo shows how to create an interactive decision tree from a graph.
 
 The decision tree contains different types of nodes.

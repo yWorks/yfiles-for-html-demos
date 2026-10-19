@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/ganttchart/).
 
-Demo
-
 The Gantt Chart demo shows how to create a Gantt component from JSON data.
 
 The data consists of tasks which define the horizontal lanes and activities, each of which is assigned to a task.

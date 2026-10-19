@@ -31,6 +31,7 @@ import {
   FreeNodeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
+  GraphModelManager,
   HorizontalTextAlignment,
   Insets,
   LabelShape,
@@ -38,10 +39,10 @@ import {
   License,
   SmartEdgeLabelModel,
   TextWrapping,
-  VerticalTextAlignment
+  VerticalTextAlignment,
+  WebGLGraphModelManager
 } from '@yfiles/yfiles'
 
-import { configureToolTips } from './ToolTipHelper'
 import {
   colorSets,
   createDemoEdgeStyle,
@@ -50,6 +51,9 @@ import {
 } from '@yfiles/demo-app/demo-styles'
 import licenseData from '../../../lib/license.json'
 import { finishLoading } from '@yfiles/demo-app/modern/finish-loading'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
+import { configureToolTips } from './ToolTipHelper'
+import { initializeSvgWebGlSwitchButton } from '@yfiles/demo-app/modern/svg-webgl-switch'
 
 /**
  * Runs the demo.
@@ -58,18 +62,24 @@ async function run() {
   License.value = licenseData
 
   const graphComponent = new GraphComponent('#graphComponent')
-  const graph = graphComponent.graph
-  initDemoStyles(graph)
+  graphComponent.graphModelManager = BrowserDetection.webGL2
+    ? new WebGLGraphModelManager({ renderMode: 'svg' })
+    : new GraphModelManager()
+
+  graphComponent.contentMargins = [90, 10, 40, 10]
+
+  initDemoStyles(graphComponent.graph)
 
   // Create node and edge labels using different label style settings
-  createSampleNodeLabels(graph)
-  createSampleEdgeLabels(graph)
+  createSampleNodeLabels(graphComponent.graph)
+  createSampleEdgeLabels(graphComponent.graph)
 
   // Configure the interaction features and tool tips
   configureInteraction(graphComponent)
 
-  // Initialize the UI and show the demo
   void graphComponent.fitGraphBounds()
+
+  initializeUI(graphComponent)
 }
 
 /**
@@ -433,6 +443,13 @@ function configureInteraction(graphComponent) {
   configureToolTips(inputMode)
 
   graphComponent.inputMode = inputMode
+}
+
+/**
+ * Registers event listeners to the demo's UI elements.
+ */
+function initializeUI(graphComponent) {
+  initializeSvgWebGlSwitchButton('#styleTypeChooser', graphComponent)
 }
 
 run().then(finishLoading)

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/marquee-node-creation/).
 
-Demo
-
 This demo shows how to use [MarqueeSelectionInputMode](https://docs.yworks.com/yfileshtml/api/MarqueeSelectionInputMode) to create new nodes.
 
 This is done by adding a listener that creates a node the size of the marquee rectangle when a selection is finished.

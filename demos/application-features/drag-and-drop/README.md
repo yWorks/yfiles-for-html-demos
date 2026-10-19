@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/drag-and-drop/).
 
-Demo
-
 This demo shows how to use [NodeDropInputMode](https://docs.yworks.com/yfileshtml/api/NodeDropInputMode) for dragging nodes from a separate panel to drop them into the graph component.
 
 - Drag nodes and group nodes into the graph.

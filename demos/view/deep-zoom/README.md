@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/deep-zoom/).
 
-Demo
-
 This demo allows you to seamlessly zoom into the contents of deeply nested group nodes, similar to what is known as "deep zoom" for images and maps.
 
 The graph component does not display the complete graph but only the nesting level that fits the current zoom level. That means that graph items at a higher nesting level are not rendered at all, and the contents of group nodes that are too small to provide meaningful interaction is displayed as a static image. When zooming in on such a group node, this image is eventually replaced with real graph elements.

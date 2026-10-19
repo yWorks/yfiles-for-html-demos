@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/arrow-edge-style/).
 
-Demo
-
 The [ArrowEdgeStyle](https://docs.yworks.com/yfileshtml/api/ArrowEdgeStyle) provides several properties to customize its shape. There are five basic [shapes](https://docs.yworks.com/yfileshtml/api/ArrowEdgeStyle#shape) provided.
 
 For the [ARROW](https://docs.yworks.com/yfileshtml/api/ArrowStyleShape#ARROW), [DOUBLE\_ARROW](https://docs.yworks.com/yfileshtml/api/ArrowStyleShape#DOUBLE_ARROW) and [NOTCHED\_ARROW](https://docs.yworks.com/yfileshtml/api/ArrowStyleShape#NOTCHED_ARROW) shapes, the thickness of the arrow shaft can be defined as a [shaft ratio](https://docs.yworks.com/yfileshtml/api/ArrowEdgeStyle#shaftRatio) of the edge size.

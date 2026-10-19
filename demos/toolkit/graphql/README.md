@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/toolkit/graphql/).
 
-Demo
-
 This demo shows how to load data from a [GraphQL](https://www.graphql.org/) endpoint. You can navigate through a social network while lazily fetching new data.
 
 ## Things to Try

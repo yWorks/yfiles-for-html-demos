@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/analysis/intersection-detection/).
 
-Demo
-
 This demo showcases how to find and highlight intersections and overlaps between graph items.
 
 The [Intersections](https://docs.yworks.com/yfileshtml/api/Intersections) algorithm calculates all geometric intersections between nodes, edges, and labels in a diagram. Checking whether items overlap can be helpful in various scenarios. For example, you could check if a newly inserted or moved graph item intersects other items. Or, more generally, if there are overlaps, a layout algorithm could be applied to re-arrange the graph and resolve the overlaps.

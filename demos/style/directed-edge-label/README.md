@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/directed-edge-label/).
 
-Demo
-
 This demo shows a custom label style which visualizes an edge label with an additional arrow which points in the direction of the edge label flow.
 
 ## Things to Try

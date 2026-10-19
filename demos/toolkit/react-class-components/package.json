@@ -17,7 +17,7 @@
     "@fontsource/poppins": "^5.3.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.3+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.4+dev.tgz"
   },
   "devDependencies": {
     "@types/react": "~19.3.0",

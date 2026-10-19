@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/reshapehandleconfiguration/).
 
-Demo
-
 This demo shows how resizing of nodes can be customized.
 
 This is done with custom configurations of the default [IReshapeHandleProvider](https://docs.yworks.com/yfileshtml/api/IReshapeHandleProvider) that are added to the lookup of the nodes.

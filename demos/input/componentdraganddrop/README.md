@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/componentdraganddrop/).
 
-Demo
-
 A demo that shows how to make space for components that you can drag from a palette onto the canvas.
 
 If a component is dragged from the palette onto the canvas, the _ClearAreaLayout_ algorithm will push away the other elements so there is a free area for the component. This is also the case when dragging a component that is already part of the graph.

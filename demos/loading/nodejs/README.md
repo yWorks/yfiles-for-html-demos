@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/loading/nodejs/).
 
-Demo
-
 This demo shows how to run a yFiles layout algorithm in _[Node.js](https://nodejs.org/)_. This makes it possible to run the layout calculation asynchronously, preventing it from blocking the UI.
 
 To transfer the graph structure and layout between the _Node.js_ _[Express](https://expressjs.com/)_ server and the main page, the [LayoutExecutorAsync](https://docs.yworks.com/yfileshtml/api/LayoutExecutorAsync) creates a serializable data object on the client-side and sends it to the _Node.js_ server.

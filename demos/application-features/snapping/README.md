@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/snapping/).
 
-Demo
-
 This demo shows how to enable [snapping](https://docs.yworks.com/yfileshtml/dguide/interaction-snapping) (guide lines) for graph elements. This is provided through class [GraphSnapContext](https://docs.yworks.com/yfileshtml/api/GraphSnapContext).
 
 Snapping helps you to arrange graph items interactively without running an automatic layout by providing useful lines and position hints that elements snap to.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/theme-variants/).
 
-Demo
-
 This demo shows various interaction visualization [themes](https://docs.yworks.com/yfileshtml/dguide/customizing_view_theming) simultaneously.
 
 Each graph component uses a different  

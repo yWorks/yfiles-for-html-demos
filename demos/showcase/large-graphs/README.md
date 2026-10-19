@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/large-graphs/).
 
-Demo
-
 This demo shows how to display large graphs with both good performance and high quality. For this, the demo uses _[WebGL](https://docs.yworks.com/yfileshtml/dguide/webgl2)_ rendering on small zoom levels and switches to high quality _SVG_ rendering when the user zoomed-in above a certain threshold.
 
 Due to its vector graphics, SVG is very well suited for high-quality rendering with lots of details and crisp text. If a large number of graphical elements needs to be displayed at the same time, the browser's rendering engine reaches its limits and the rendering starts to lag.

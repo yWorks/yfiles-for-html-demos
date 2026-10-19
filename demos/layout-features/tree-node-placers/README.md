@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/tree-node-placers/).
 
-Demo
-
 This demo shows how to use [subtree placers](https://docs.yworks.com/yfileshtml/api/ISubtreePlacer) with the [TreeLayout](https://docs.yworks.com/yfileshtml/api/TreeLayout). A subtree placer is responsible for the arrangement of a local root node and all of its subtrees.
 
 yFiles comes with predefined subtree placers that provide a variety of subtree arrangement schemes. This example uses three of them:

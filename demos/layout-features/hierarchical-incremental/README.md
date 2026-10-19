@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-incremental/).
 
-Demo
-
 This demo shows how to run the [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout) algorithm such that a predefined subset of nodes (called "incremental" nodes) is integrated into an existing drawing. While the existing elements may change their positions, their relative order is maintained.
 
 To achieve this, two setup steps are necessary:

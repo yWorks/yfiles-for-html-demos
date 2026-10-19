@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/rectangle-node-style/).
 
-Demo
-
 The [RectangleNodeStyle](https://docs.yworks.com/yfileshtml/api/RectangleNodeStyle) class can display a variety of shapes including rectangles with rounded and cut corners, hexagons, octagons, pills, half-circles, and more.
 
 This is made possible by numerous configuration options for the representation of the node corners. This demo allows you to interactively explore those options. The current configuration of each node is shown as label.

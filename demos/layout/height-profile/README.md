@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/height-profile/).
 
-Demo
-
 This demo shows how to configure the [OrganicLayout](https://docs.yworks.com/yfileshtml/api/OrganicLayout) algorithm to create a height profile visualization.
 
 The dataset consists of points that form a trekking trail (i.e., the blue curve) and some points of interest, namely the waypoints (i.e., the orange-colored nodes). For each of these waypoints a label node is created that displays the information associated with the waypoint.

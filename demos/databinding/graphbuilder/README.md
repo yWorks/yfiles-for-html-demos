@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/databinding/graphbuilder/).
 
-Demo
-
 This demo interactively builds and modifies a graph from **JSON** business data using class [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder).
 
 See the Developer's Guide section on the [GraphBuilder](https://docs.yworks.com/yfileshtml/dguide/graph_builder-GraphBuilder) for an in-depth explanation of the relevant concepts.

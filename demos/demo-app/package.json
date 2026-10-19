@@ -1,6 +1,6 @@
 {
   "name": "@yfiles/demo-app",
-  "version": "31.0.3",
+  "version": "31.0.4",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
@@ -26,7 +26,7 @@
     "@codemirror/lang-json": "^6.0.0",
     "@codemirror/lang-xml": "^6.1.0",
     "@fontsource/poppins": "^5.2.0",
-    "@yfiles/yfiles": "^31.0.3+dev",
+    "@yfiles/yfiles": "^31.0.4+dev",
     "codemirror": "^6.0.2",
     "fast-xml-parser": "^5.2.0",
     "postcss": "^8.5.0"

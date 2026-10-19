@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/drag-and-drop-html/).
 
-Demo
-
 This demo shows how to use [NodeDropInputMode](https://docs.yworks.com/yfileshtml/api/NodeDropInputMode) in combination with native HTML `draggable` elements that can be dragged and dropped into the graph.
 
 - Drag nodes and group nodes into the graph.

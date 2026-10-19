@@ -109,6 +109,5 @@
 }
 #description {
   position: absolute;
-  top: 0;
   width: calc(100% - calc(2 * var(--dialog-padding)));
 }

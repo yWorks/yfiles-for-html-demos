@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/simple-highlight-decorator/).
 
-Demo
-
 This demo shows how to highlight a node or an edge when the mouse hovers over the said node or edge.
 
 ## Highlight Decoration

@@ -14,7 +14,7 @@
   "dependencies": {
     "@yfiles/demo-app": "../../demo-app",
     "@yfiles/demo-utils": "../../utils",
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.3+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.4+dev.tgz"
   },
   "devDependencies": {
     "@yworks/optimizer": "^1.9.0",

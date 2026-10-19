@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/markdownlabel/).
 
-Demo
-
 This demo shows how to create labels using Markdown syntax.
 
 The label style implementation `MarkdownLabelStyle` uses [markdown-it](https://github.com/markdown-it/markdown-it) to transpile Markdown syntax into HTML. The actual rendering of the HTML text is done by `MarkupLabelStyle`.

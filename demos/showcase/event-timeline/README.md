@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/event-timeline/).
 
-Demo
-
 An event timeline is a tabular representation of a dynamic, i.e., time-dependent, graph: each node (entity) is represented as a (labeled) parallel horizontal line-segment spanning the width of the canvas; each edge (event), is visualized as a (labeled) parallel vertical line segment connecting its source and target nodes' line-segments.
 
 Event timelines determine their edges' x-coordinates as a function of their timestamp, i.e., when exactly the event described by the edge takes place. This means that edges that are closer to one another (in x-space) occur closer in time to each other, whereas edges further apart from one another occur further in time from one another.

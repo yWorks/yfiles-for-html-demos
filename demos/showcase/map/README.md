@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/map/).
 
-Demo
-
 This demo shows how to integrate a [GraphComponent](https://docs.yworks.com/yfileshtml/api/GraphComponent) with [Leaflet](https://leafletjs.com/).
 
 The `GraphComponent` is included in a custom Leaflet Layer. The placement of the nodes uses geo-coordinates to get the correct locations on the map.

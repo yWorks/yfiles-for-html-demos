@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/node-alignment/).
 
-Demo
-
 This demo shows how to automatically align nodes in rows and columns using the [AlignmentStage](https://docs.yworks.com/yfileshtml/api/AlignmentStage) layout algorithm.
 
 The [AlignmentStage](https://docs.yworks.com/yfileshtml/api/AlignmentStage) assigns nodes to rows and columns and places all nodes in a column/row centered on a vertical/horizontal line. Two nodes belong to the same column/row, if the horizontal/vertical distance between the centers of said nodes is less than or equal to the value of the [snapDistance](https://docs.yworks.com/yfileshtml/api/AlignmentStage#snapDistance) property.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/port-alignment/).
 
-Demo
-
 This demo shows how to implement port alignment in [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout).
 
 The sample data contains edges that belong to different path groups, indicated by the different edge color. The demo code aligns all source and target ports with the edge paths by configuring the [sourcePortAlignmentIds](https://docs.yworks.com/yfileshtml/api/PortData#sourcePortAlignmentIds) and [targetPortAlignmentIds](https://docs.yworks.com/yfileshtml/api/PortData#targetPortAlignmentIds) properties of the [PortData](https://docs.yworks.com/yfileshtml/api/PortData).

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/complex-highlight-decorator/).
 
-Demo
-
 Shows how to highlight a node when the mouse hovers over it. The shape of the highlight effect differs depending on the data stored in the node's tag.
 
 ## Things to Try

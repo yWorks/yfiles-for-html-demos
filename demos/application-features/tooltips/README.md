@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/tooltips/).
 
-Demo
-
 This demo shows how to enable tooltips and popovers for graph items, how to customize them using CSS styling, and how to configure different tooltip and popover behaviors.
 
 ## Behaviors

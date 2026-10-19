@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-constraints/).
 
-Demo
-
 This demo shows how to customize the assignment of the nodes to the layers (layering) and the order of the nodes in a layer (sequencing) when using [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout).
 
 ## Layer Constraints

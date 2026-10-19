@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/layoutstyles/).
 
-Demo
-
 This demo showcases the most used layout algorithms of yFiles, including hierarchical, organic, orthogonal, tree, circular, radial tree, and several edge routing styles.
 
 The configuration panel provides access to the settings of each algorithm. Typically, an algorithm allows even more options in code.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/background-image/).
 
-Demo
-
 This demo shows how to add a background to a graph. The background can be an image or a colored rectangle.
 
 ## Things to Try

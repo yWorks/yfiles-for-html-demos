@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/styledecorators/).
 
-Demo
-
 This demo shows how to create styles for nodes, edges, and labels that wrap existing styles and add visual decorations.
 
 ## Things to Try

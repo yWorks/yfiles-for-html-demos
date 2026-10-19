@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/viewportlimiter/).
 
-Demo
-
 The [ViewportLimiter](https://docs.yworks.com/yfileshtml/api/ViewportLimiter) limits the interactive movement of the viewport. This helps to navigate the canvas without losing the content.
 
 The effective viewport limiter area, or [bounds](https://docs.yworks.com/yfileshtml/api/ViewportLimiter#bounds), are calculated from the [viewportContentMargins](https://docs.yworks.com/yfileshtml/api/ViewportLimiter#viewportContentMargins) and the [minimumViewportContentRatio](https://docs.yworks.com/yfileshtml/api/ViewportLimiter#minimumViewportContentRatio) properties.

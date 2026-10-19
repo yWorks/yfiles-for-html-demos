@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/shape-node-style/).
 
-Demo
-
 This demo shows the main features of the [ShapeNodeStyle](https://docs.yworks.com/yfileshtml/api/ShapeNodeStyle) class, most notably its supported shapes and the shape-specific effects of its [keepIntrinsicAspectRatio](https://docs.yworks.com/yfileshtml/api/ShapeNodeStyle#keepIntrinsicAspectRatio) property.
 
 To illustrate the effects of the latter feature, three nodes with different aspect ratios are shown for each shape: green (1:1), blue (2:1) and yellow (1:2).

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/timeline/).
 
-Demo
-
 This demo shows how to add a timeline component to the graph.
 
 The height of the bars in the timeline is determined by the number of node creation/removal events at each time point.

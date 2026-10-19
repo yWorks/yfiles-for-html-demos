@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/largegraphaggregation/).
 
-Demo
-
 This demo shows how to use the smart [NodeAggregation](https://docs.yworks.com/yfileshtml/api/NodeAggregation) algorithm for drill-down exploration of a large graph.
 
 The [NodeAggregation](https://docs.yworks.com/yfileshtml/api/NodeAggregation) algorithm consolidates nodes of a graph and thus creates clusters of nodes based on user-specified constraints.

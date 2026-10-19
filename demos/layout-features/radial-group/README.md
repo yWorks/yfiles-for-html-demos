@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/radial-group/).
 
-Demo
-
 This demo demonstrates the [RadialGroupLayout](https://docs.yworks.com/yfileshtml/api/RadialGroupLayout) algorithm for arranging grouped graphs.
 
 Child nodes are positioned around their parent group's border, visually representing group hierarchy.

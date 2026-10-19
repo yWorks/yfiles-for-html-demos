@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/hierarchical-grid-components/).
 
-Demo
-
 This demo shows how [grid components](https://docs.yworks.com/yfileshtml/api/HierarchicalLayoutData#gridComponents) in the hierarchical layout can result in much more compact arrangements.
 
 So-called grid components are related to edge grouping. A grid component consists of a root node and bus nodes that are directly connected to the root node. All edges connecting bus nodes of the same grid component have the same edge direction.

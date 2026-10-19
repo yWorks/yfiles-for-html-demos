@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/list-node/).
 
-Demo
-
 This demo shows how to display a node with sections arranged in rows. The sections can be re-arranged interactively. When a section is moved, its edges are moved as well.
 
 ## Things to Try

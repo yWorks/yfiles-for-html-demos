@@ -77,7 +77,7 @@ export function initializeSidePanel(panel: Element | null, title: string) {
   collapsePanel.classList.add('collapse-anchor')
   const collapseButton = document.createElement('button')
   collapseButton.classList.add('collapse', 'icon')
-  collapseButton.title = `Collapse ${title} panel`
+  collapseButton.title = `Collapse ${title.toLowerCase()} panel`
   collapseButton.innerText = 'collapse_content'
   collapseButton.addEventListener('click', () => {
     maybeStartViewTransition(() => {

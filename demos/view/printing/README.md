@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/printing/).
 
-Demo
-
 This demo shows how to export the whole diagram or a part of it to an SVG on the client and how to print this graphic.
 
 ## Things to Try

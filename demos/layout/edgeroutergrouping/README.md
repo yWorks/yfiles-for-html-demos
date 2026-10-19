@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/edgeroutergrouping/).
 
-Demo
-
 This demo shows the possibilities of edge and port grouping using the [EdgeRouter](https://docs.yworks.com/yfileshtml/api/EdgeRouter). Edge groups lead to edges sharing some segments while port groups will combine the edges only in their first segment.
 
 ## Things to Try

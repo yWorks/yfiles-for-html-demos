@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/reparenthandler/).
 
-Demo
-
 This demo shows how reparenting of nodes can be customized.
 
 This is done with a custom implementation of the interface [IReparentNodeHandler](https://docs.yworks.com/yfileshtml/api/IReparentNodeHandler) that is set as default reparent handler of the input mode of the graph component.

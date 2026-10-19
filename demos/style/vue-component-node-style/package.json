@@ -17,7 +17,7 @@
     "vue": "^3.5.42",
     "vue-router": "^5.3.1",
     "vuetify": "^4.2.1",
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.3+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.4+dev.tgz"
   },
   "devDependencies": {
     "@mdi/font": "^7.4.47",

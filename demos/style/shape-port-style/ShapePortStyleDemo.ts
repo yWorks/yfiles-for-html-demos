@@ -54,8 +54,8 @@ import {
 } from '@yfiles/yfiles'
 
 import {
-  type ColorSetName,
   colorSets,
+  type ColorSetName,
   createDemoEdgeLabelStyle
 } from '@yfiles/demo-app/demo-styles'
 import licenseData from '../../../lib/license.json'
@@ -73,10 +73,13 @@ async function run(): Promise<void> {
     ? new WebGLGraphModelManager({ renderMode: 'svg' })
     : new GraphModelManager()
 
-  // Create and configure ports using shape port style
-  initializeGraph(graphComponent.graph)
+  graphComponent.contentMargins = [90, 10, 40, 10]
+  initializeStyleDefaults(graphComponent.graph)
 
-  initializeInteraction(graphComponent)
+  // Create and configure ports using shape port style
+  createSampleNodes(graphComponent.graph)
+
+  configureInteraction(graphComponent)
 
   await graphComponent.fitGraphBounds()
 
@@ -99,10 +102,9 @@ function createShapePortStyle(
 }
 
 /**
- * Creates nodes, ports, and edges to demonstrate all port shapes.
- * @param graph The graph in which to create nodes.
+ * Initializes the style defaults for labels and edges.
  */
-function initializeGraph(graph: IGraph): void {
+function initializeStyleDefaults(graph: IGraph): void {
   graph.nodeDefaults.style = new ShapeNodeStyle({
     fill: colorSets['demo-blue'].edgeLabelFill,
     stroke: null
@@ -110,7 +112,13 @@ function initializeGraph(graph: IGraph): void {
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: new Stroke(colorSets['demo-blue'].edgeLabelFill, 3)
   })
+}
 
+/**
+ * Creates several nodes for each {@link ShapeNodeShape} value.
+ * @param graph The graph to add the nodes to.
+ */
+function createSampleNodes(graph: IGraph): void {
   // available port shapes
   const shapes: ShapeNodeShapeStringValues[] = [
     'star5',
@@ -208,9 +216,9 @@ function initializeGraph(graph: IGraph): void {
 }
 
 /**
- * Initializes the interactive behavior for this demo.
+ * Configures the interactive behavior for this demo.
  */
-function initializeInteraction(graphComponent: GraphComponent): void {
+function configureInteraction(graphComponent: GraphComponent): void {
   graphComponent.inputMode = new GraphEditorInputMode({
     allowCreateNode: false,
     allowAddLabel: false,

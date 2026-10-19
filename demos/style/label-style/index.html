@@ -145,12 +145,9 @@
 
     <style>
       .yfiles-tooltip {
-        background-color: #e0edf0;
-      }
-
-      .tooltip-container {
-        margin-left: 5px;
-        margin-right: 5px;
+        background: var(--background);
+        border-radius: 8px;
+        padding: 12px;
       }
 
       .tooltip-container .color {
@@ -162,9 +159,11 @@
         display: grid;
         grid-template-columns: 3fr 4fr;
         align-items: center;
-        column-gap: 20px;
-        row-gap: 2px;
-        margin-bottom: 10px;
+        column-gap: 1ex;
+        row-gap: 0.25ex;
+        &:not(:last-child) {
+          margin-bottom: 1ex;
+        }
       }
       /*.yfiles-popover__container {*/
       /*  color: var(--color-casper-blue-black);*/
@@ -421,6 +420,10 @@
           </button>
 
           <span class="separator"></span>
+          <select title="Select the type of node style to use" id="styleTypeChooser">
+            <option value="svg">SVG Rendering</option>
+            <option value="webgl">WebGL Rendering</option>
+          </select>
         </div>
         <div id="graphComponent"></div>
       </div>
@@ -429,7 +432,7 @@
         <h1>Label Style</h1>
 
         <p>
-          This demo shows the most important configuration options for the built-in
+          This demo shows the most important configuration options of the
           <a href="https://docs.yworks.com/yfileshtml/api/LabelStyle" class="api" target="_blank">LabelStyle</a> class.
         </p>
 

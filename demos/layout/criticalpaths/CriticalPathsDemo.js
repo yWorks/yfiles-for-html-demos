@@ -87,6 +87,7 @@ async function run() {
  * Loads the sample graph which initially provides some priorities.
  */
 function loadGraph(sample) {
+  priorityPanel.currentItems = []
   const graph = graphComponent.graph
   graph.clear()
   graph.nodeDefaults.style = createDemoNodeStyle('demo-palette-44')

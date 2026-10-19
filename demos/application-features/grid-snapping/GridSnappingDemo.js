@@ -180,7 +180,7 @@ function initializeGrid() {
   // Adds the grid render modes to a dictionary
   const gridRenderModes = { Canvas: RenderMode.CANVAS, Svg: RenderMode.SVG }
   if (BrowserDetection.webGL2) {
-    gridRenderModes['WebGL2'] = RenderMode.WEBGL
+    gridRenderModes['WebGL'] = RenderMode.WEBGL
   }
 
   // Creates a radio group for the snap types

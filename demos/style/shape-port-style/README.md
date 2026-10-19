@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/shape-port-style/).
 
-Demo
-
 This demo shows the main features of the [ShapePortStyle](https://docs.yworks.com/yfileshtml/api/ShapePortStyle) class, most notably its supported [shapes](https://docs.yworks.com/yfileshtml/api/ShapeNodeShape). The exact shape of each node port is displayed in the node label.
 
 Besides shapes, the _color_, _size_, _outline_, _offset_ and _aspect ratio_ of ports can also be customized with ShapePortStyle.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/css-item-style/).
 
-Demo
-
 This demo styles and animates all graph items via CSS and the `cssClass` property on the library styles.
 
 CSS classes allow for easy transitions and animations to animate state changes on the graph items.

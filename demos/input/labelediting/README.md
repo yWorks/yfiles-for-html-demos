@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/labelediting/).
 
-Demo
-
 This demo shows customizations of the interactive label editing. In particular, it shows:
 
 - The related properties of [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode).

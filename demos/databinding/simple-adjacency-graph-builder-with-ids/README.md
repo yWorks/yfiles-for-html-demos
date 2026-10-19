@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/databinding/simple-adjacency-graph-builder-with-ids/).
 
-Demo
-
 This demo automatically builds a graph from business data using [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/api/AdjacencyGraphBuilder). The business data is stored in **JSON** format. Each object that represents a node has a unique id.
 
 See the Developer's Guide section on [creating a Graph from Business Data](https://docs.yworks.com/yfileshtml/dguide/graph_builder) and especially [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/dguide/graph_builder-AdjacencyGraphBuilder) for an in-depth explanation of the relevant concepts.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/offset-wrapper-label-model/).
 
-Demo
-
 This demo shows how to implement a custom label model to add an adjustable offset to labels created by another label model.
 
 ## Things to Try

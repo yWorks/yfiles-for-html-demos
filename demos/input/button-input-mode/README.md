@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/button-input-mode/).
 
-Demo
-
 This demo shows how to use a custom input mode to add temporary buttons to model items.  
 The buttons can be individually styled and placed and trigger an action on click or drag.
 

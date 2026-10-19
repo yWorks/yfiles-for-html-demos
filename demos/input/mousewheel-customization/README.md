@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/mousewheel-customization/).
 
-Demo
-
 This demo shows how to customize and enhance the default mouse wheel behavior.
 
 The mouse wheel behavior can be configured to zoom or scroll the graph, or do both, with additional modifiers being pressed.

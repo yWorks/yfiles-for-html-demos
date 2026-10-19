@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/webgl-label-fading/).
 
-Demo
-
 This demo shows how to achieve a simple _level of detail (LOD)_ display in [WebGL](https://docs.yworks.com/yfileshtml/dguide/webgl2) rendering by fading out labels, nodes, and edges at certain zoom levels.
 
 ## Things to try

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/clickable-style-decorator/).
 
-Demo
-
 This demo illustrates an approach on how to handle clicks on specific areas of the style.
 
 In this case, clicks on the style decorator are handled even in the area that extends over the rectangular node bounds.

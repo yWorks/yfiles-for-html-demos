@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-edge-grouping/).
 
-Demo
-
 This demo shows how to customize the [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout) to group edges at their source or target nodes.
 
 An alternative: [automaticEdgeGrouping](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout#automaticEdgeGrouping).

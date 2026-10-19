@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/draganddrop/).
 
-Demo
-
 This demo shows how to enable drag and drop functionality for nodes using the classes [NodeDropInputMode](https://docs.yworks.com/yfileshtml/api/NodeDropInputMode), [LabelDropInputMode](https://docs.yworks.com/yfileshtml/api/LabelDropInputMode) and [PortDropInputMode](https://docs.yworks.com/yfileshtml/api/PortDropInputMode).
 
 For dragging and dropping edges, the demo uses the custom class `EdgeDropInputMode`.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/html-label-style/).
 
-Demo
-
 This demo shows how HTML can be used for rendering labels with a custom label style.
 
 The custom style uses an embedded HTML element using the [HtmlVisual](https://docs.yworks.com/yfileshtml/api/HtmlVisual).

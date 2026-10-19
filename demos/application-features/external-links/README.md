@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/external-links/).
 
-Demo
-
 This demo shows how to add labels that act like external links and open in a new window.
 
 It is configured to only follow the external link on a Ctrl click.

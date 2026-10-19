@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/tabular-groups/).
 
-Demo
-
 This demo shows how to configure the [tabular groups](https://docs.yworks.com/yfileshtml/api/HierarchicalLayoutData#tabularGroups) feature of the [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout) class.
 
 Children of a _tabular group_ are placed in a compact tabular fashion, on the same hierarchical layer next to each other. A left-to-right layout orientation like in this demo results in child nodes being placed in a column-like way, one above the other.

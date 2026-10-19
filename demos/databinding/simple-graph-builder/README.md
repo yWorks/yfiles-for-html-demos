@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/databinding/simple-graph-builder/).
 
-Demo
-
 This demo automatically builds a graph from business data using [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder). The business data is stored in **JSON** format.
 
 See the Developer's Guide section on [creating a Graph from Business Data](https://docs.yworks.com/yfileshtml/dguide/graph_builder) and especially [GraphBuilder](https://docs.yworks.com/yfileshtml/dguide/graph_builder-GraphBuilder) for an in-depth explanation of the relevant concepts.

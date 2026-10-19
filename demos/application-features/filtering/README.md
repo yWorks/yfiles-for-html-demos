@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/filtering/).
 
-Demo
-
 This demo shows how to dynamically **hide and show graph items** (nodes and edges) without modifying the underlying graph data structure. It uses the [FilteredGraphWrapper](https://docs.yworks.com/yfileshtml/api/FilteredGraphWrapper) to provide a temporary, filtered view of your graph.
 
 ## Things to Try

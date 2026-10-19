@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/group-node-style/).
 
-Demo
-
 [GroupNodeStyle](https://docs.yworks.com/yfileshtml/api/GroupNodeStyle) is a style primarily intended for groups and folders, i.e., collapsed groups.
 
 This style offers many configuration options for customizing its look. Please see chapter [GroupNodeStyle](https://docs.yworks.com/yfileshtml/dguide/styles-node_styles#styles-GroupNodeStyle) in the Developer's Guide and the [GroupNodeStyle](https://docs.yworks.com/yfileshtml/api/GroupNodeStyle) API documentation for more detailed information.

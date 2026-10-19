@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/flowchart/).
 
-Demo
-
 This demo provides a number of [INodeStyle](https://docs.yworks.com/yfileshtml/api/INodeStyle) s which are shaped as common flowchart symbols. To use those different styles, drag them from the palette to the main graph component.
 
 ## Flowchart Layout

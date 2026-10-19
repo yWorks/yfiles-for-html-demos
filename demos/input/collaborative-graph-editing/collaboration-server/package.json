@@ -13,8 +13,7 @@
     "ws": "^8.21.3",
     "y-websocket": "^3.1.0",
     "yjs": "^13.6.33",
-    "tsx": "^4.23.15",
-    "@yfiles/yfiles": "../../../../lib-dev/yfiles-31.0.3+dev.tgz"
+    "tsx": "^4.23.15"
   },
   "devDependencies": {
     "@types/node": "^26.3.0",

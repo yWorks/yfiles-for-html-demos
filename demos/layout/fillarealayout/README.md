@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/fillarealayout/).
 
-Demo
-
 A demo that shows how to fill free space after deleting nodes.
 
 When nodes are deleted interactively, the _FillAreaLayout_ algorithm tries to fill free space with graph elements by moving nearby elements towards it, with the goal to make the existing layout more compact and not changing it too much.

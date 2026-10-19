@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/subdivide-edges/).
 
-Demo
-
 This demo shows how to use a custom [NodeDropInputMode](https://docs.yworks.com/yfileshtml/api/NodeDropInputMode) for dragging nodes from a separate panel onto an edge.
 
 More precisely, when a node is dropped onto an edge, a new node is created and the edge is split in two edges such that:

@@ -88,6 +88,7 @@ async function run(): Promise<void> {
  * Loads the sample graph which initially provides some priorities.
  */
 function loadGraph(sample: 'hierarchical' | 'tree'): void {
+  priorityPanel.currentItems = []
   const graph = graphComponent.graph
   graph.clear()
   graph.nodeDefaults.style = createDemoNodeStyle('demo-palette-44')

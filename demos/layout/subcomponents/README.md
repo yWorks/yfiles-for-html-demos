@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/subcomponents/).
 
-Demo
-
 This demo shows how hierarchical layout can arrange selected subcomponents of a graph with different layout styles.
 
 Available styles are tree, organic, or orthogonal style, or a hierarchical style with different settings than the main layout.

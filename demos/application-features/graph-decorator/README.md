@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/graph-decorator/).
 
-Demo
-
 This demo shows how to use the graph decorator concept to customize the behavior and the visualization of graph items.
 
 As an example, this demo decorates the nodes with a port candidate provider that is a combination of the following existing port candidate providers:

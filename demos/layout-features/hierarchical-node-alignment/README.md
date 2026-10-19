@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-node-alignment/).
 
-Demo
-
 This demo shows how to configure the [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout) to align nodes connected by critical paths.
 
 The priorities are passed to the layout algorithm through the [criticalEdgePriorities](https://docs.yworks.com/yfileshtml/api/HierarchicalLayoutData#criticalEdgePriorities) property, causing the connected nodes to be aligned.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/positionhandler/).
 
-Demo
-
 This demo shows how to customize and restrict the movement behavior of nodes.
 
 This is done with custom implementations of the interface [IPositionHandler](https://docs.yworks.com/yfileshtml/api/IPositionHandler) that are added to the lookup of the nodes.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/orthogonal-edges/).
 
-Demo
-
 This demo shows how to enable [interactive orthogonal edge editing](https://docs.yworks.com/yfileshtml/dguide/interaction-orthogonal_edge_editing) by enabling [orthogonal editing](https://docs.yworks.com/yfileshtml/api/PolylineEdgeStyle#orthogonalEditing) on the edge style.
 
 - Drag the mouse starting on an unselected node to start the creation of an edge. The edge stays orthogonal.

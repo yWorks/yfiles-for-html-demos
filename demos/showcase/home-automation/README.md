@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/home-automation/).
 
-Demo
-
 This demo simulates a tool for visually programming a home automation network. The nodes represent various stages of data flow within the system. The graph features basic validation: output ports can only be connected to input ports, no edges can be duplicated, and nodes with required properties display an error indicator if some of those properties are missing.
 
 ### Things to Try

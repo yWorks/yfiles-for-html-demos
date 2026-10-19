@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/customsnapping/).
 
-Demo
-
 This demo shows how the snapping feature can be customized.
 
 In addition to the default snapping features, it adds extra snap lines to the bounds of labels, lets the outline of the star shaped nodes snap to grid points, and uses free additional snap lines nodes can snap to.

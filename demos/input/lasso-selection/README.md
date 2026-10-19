@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/lasso-selection/).
 
-Demo
-
 This demo shows how to use [LassoSelectionInputMode](https://docs.yworks.com/yfileshtml/api/LassoSelectionInputMode) to select graph elements by drawing a lasso around them.
 
 ## Things to Try

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/processmining/).
 
-Demo
-
 This demo shows how to extract a graph from an event log and create an animated visualization of a process flow. The diagram shows the various steps in a processing pipeline (e.g., stages in a user story life cycle) and how entities (e.g., user stories) move through the pipeline.
 
 The heat map shows which elements in the graph are nearing their capacity limit. A custom node style for each process step shows the name of the process as well as the current load.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/interactive-hierarchical/).
 
-Demo
-
 This demo shows the [from-sketch mode](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout#fromSketchMode) of the hierarchical layout. Each user action triggers a run of this layout style to ensure that the current state of the graph is always well-organized but remains still similar to the previous arrangement.
 
 The layers of the layout are visualized in the background of the graph.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/arrange-objects/).
 
-Demo
-
 This demo presents simple operations for aligning and distributing nodes.
 
 ## Things to Try

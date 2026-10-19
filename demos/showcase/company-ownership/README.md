@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/company-ownership/).
 
-Demo
-
 This demo implements an interactive viewer for exploring company ownership hierarchies.
 
 The diagram illustrates both the ownership (shareholders, investors, etc) and the management relationships among business entities.

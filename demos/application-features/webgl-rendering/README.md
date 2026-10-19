@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/webgl-rendering/).
 
-Demo
-
 This demo shows how to enable the [WebGL](https://docs.yworks.com/yfileshtml/dguide/webgl2) rendering mode using [WebGLGraphModelManager](https://docs.yworks.com/yfileshtml/api/WebGLGraphModelManager).
 
 In this mode, the graph component provides smooth animations and interactions even for diagrams with thousands of elements.

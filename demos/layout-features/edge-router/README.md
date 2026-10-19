@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/edge-router/).
 
-Demo
-
 This demo shows common configuration options for the [EdgeRouter](https://docs.yworks.com/yfileshtml/api/EdgeRouter) algorithm.
 
 It highlights the configuration of various aspects, including:

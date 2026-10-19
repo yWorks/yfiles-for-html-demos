@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/bundled-edge-router/).
 
-Demo
-
 This demo shows common configuration options for the [BundledEdgeRouter](https://docs.yworks.com/yfileshtml/api/BundledEdgeRouter) algorithm.
 
 Edge bundling merges the common parts of multiple edges to increase the readability of dense graph drawings.

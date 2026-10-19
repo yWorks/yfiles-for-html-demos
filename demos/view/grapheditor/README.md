@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/grapheditor/).
 
-Demo
-
 The Simple Editor demo exhibits a [GraphComponent](https://docs.yworks.com/yfileshtml/api/GraphComponent) which enables graph editing via the default [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode).
 
 #### Creating Elements (Nodes / Vertices)

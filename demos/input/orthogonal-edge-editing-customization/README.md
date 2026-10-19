@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/orthogonal-edge-editing-customization/).
 
-Demo
-
 This demo shows how to customize orthogonal edge editing.
 
 Using the [GraphDecorator](https://docs.yworks.com/yfileshtml/api/GraphDecorator), the edge is decorated with custom implementations of the [IOrthogonalEdgeHelper](https://docs.yworks.com/yfileshtml/api/IOrthogonalEdgeHelper) interface.

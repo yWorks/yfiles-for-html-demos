@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/bpmn/).
 
-Demo
-
 An editor for Business Process Diagrams (BPMN).
 
 You can interactively modify the diagram and automatically arrange it with the specialized BPMN layout algorithm.

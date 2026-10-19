@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/tree/).
 
-Demo
-
 Demonstrates the tree layout style and the different ways in which this layout can arrange a node and its children.
 
 With tree layout, each node can have a separate [ISubtreePlacer](https://docs.yworks.com/yfileshtml/api/ISubtreePlacer) which is responsible for the arrangement of its children in a certain style.

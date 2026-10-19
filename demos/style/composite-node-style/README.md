@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/composite-node-style/).
 
-Demo
-
 This demo shows how to combine node visualizations from several styles into one.
 
 This is achieved with a composite node style, i.e., a custom node style implementation that combines the visualizations from several other node style instances into a composite visual.

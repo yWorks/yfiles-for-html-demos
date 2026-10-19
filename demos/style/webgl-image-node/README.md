@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/webgl-image-node/).
 
-Demo
-
 This demo shows how to display images in nodes rendered with [WebGL](https://docs.yworks.com/yfileshtml/dguide/webgl2) using [WebGLImageNodeStyle](https://docs.yworks.com/yfileshtml/api/WebGLImageNodeStyle).
 
 The images are pre-rendered and passed to the node style as [ImageData](https://developer.mozilla.org/docs/Web/api/ImageData) objects. This enables the developer to load images from arbitrary sources.

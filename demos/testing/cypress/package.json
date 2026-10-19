@@ -16,6 +16,6 @@
     "cypress@16.1.0": true
   },
   "dependencies": {
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.3+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.4+dev.tgz"
   }
 }

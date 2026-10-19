@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/custom-graphml/).
 
-Demo
-
 This step shows how to [read and write data](https://docs.yworks.com/yfileshtml/dguide/customizing_io_serialization-basics) that is bound to graph elements to and from a GraphML file.
 
 This is demonstrated with Date objects that are bound to the node by an [IMapper](https://docs.yworks.com/yfileshtml/api/IMapper). Place the cursor over a node to view the bound object in a tooltip.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/richtextlabel/).
 
-Demo
-
 This demo shows how to create labels with rich text features using `MarkupLabelStyle`.
 
 The demo also utilizes [Quill](https://quilljs.com/), an open source WYSIWYG text editor that lets you easily edit labels in the graph.

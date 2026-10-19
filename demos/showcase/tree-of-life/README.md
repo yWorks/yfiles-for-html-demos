@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/tree-of-life/).
 
-Demo
-
 This demo shows an interactive radial dendrogram visualization for the so-called _Tree of Life_.
 
 In biology, this is a tree structure used to describe the relationships (i.e., ancestors and descendants) between known extant and extinct species, ranging from the first organisms on Earth to the most complex creatures.

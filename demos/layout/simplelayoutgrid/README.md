@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/simplelayoutgrid/).
 
-Demo
-
 This demo shows how to create a simple [LayoutGrid](https://docs.yworks.com/yfileshtml/api/LayoutGrid) that will be used by the hierarchical layout algorithm.
 
 The information about the desired position of a node in the layout grid is stored in its tag and also appears in its label. The first digit represents the row index and the second the column index.

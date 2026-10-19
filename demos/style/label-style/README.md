@@ -15,9 +15,7 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/label-style/).
 
-Demo
-
-This demo shows the most important configuration options for the built-in [LabelStyle](https://docs.yworks.com/yfileshtml/api/LabelStyle) class.
+This demo shows the most important configuration options of the [LabelStyle](https://docs.yworks.com/yfileshtml/api/LabelStyle) class.
 
 ## Things to Try
 

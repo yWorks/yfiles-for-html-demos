@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/heat-map/).
 
-Demo
-
 This demo shows how to display a heat map on a graph using the [HeatMapRenderer](https://docs.yworks.com/yfileshtml/api/HeatMapRenderer) class.
 
 The demo simulates heat values for nodes and edges that change randomly over time. In real-world applications, those values would come from actual metrics such as CPU load, network throughput, request latency, error rates, risk scores, or other properties.

@@ -42,7 +42,7 @@ button.disabled {
   position: relative;
   display: flex;
   width: 100%;
-  min-height: 400px;
+  min-height: 0;
 }
 
 .ontology-container > .collapse.icon {
@@ -50,6 +50,10 @@ button.disabled {
   top: 8px;
   right: 8px;
   z-index: 10;
+  background-color: transparent;
+  &:hover {
+    background-color: var(--color-bg-hover);
+  }
 }
 
 .popup-button {

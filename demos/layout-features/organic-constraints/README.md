@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/organic-constraints/).
 
-Demo
-
 This demo shows how to use supplemental layout data to enforce placement constraints when using the [OrganicLayout](https://docs.yworks.com/yfileshtml/api/OrganicLayout) algorithm.
 
 ## Placement Constraints

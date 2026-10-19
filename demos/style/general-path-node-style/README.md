@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/general-path-node-style/).
 
-Demo
-
 This demo shows how to create a variety of star, polygon, and other custom node styles with [GeneralPathNodeStyle](https://docs.yworks.com/yfileshtml/api/GeneralPathNodeStyle).
 
 - The star shapes are customized by configuring their number of points, outer-inner ratio, rotation angle, and whether they should be stretched horizontally and/or vertically.

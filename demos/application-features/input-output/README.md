@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/input-output/).
 
-Demo
-
 This demo shows how to use [GraphML input and output](https://docs.yworks.com/yfileshtml/dguide/io-loading_saving).
 
 GraphML is the standard file format for yFiles for HTML. It is an XML format that provides great flexibility when storing custom data. However, note that these attributes (such as styles or even node locations) are not standardized, so you probably will not be able to exchange all of them between different graph libraries, for example.

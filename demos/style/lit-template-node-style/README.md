@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/lit-template-node-style/).
 
-Demo
-
 This demo presents the LitNodeStyle that leverages the powerful data binding and conditional rendering features of the [Lit templating framework](https://lit.dev/).
 
 With this style, node visualizations are defined by SVG snippet rendering functions. These rendering functions are powered by the Lit template string technology, which makes it easy to componentize, create, and efficiently update SVG DOM snippets.

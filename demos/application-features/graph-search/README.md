@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/graph-search/).
 
-Demo
-
 This demo shows an implementation of the search functionality on the nodes of a graph.
 
 The search is performed on the labels of the nodes and those that match the queried term are being highlighted.

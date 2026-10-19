@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-given-layering/).
 
-Demo
-
 This demo shows how to customize the [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout) to place nodes in a predefined layer.
 
 ## Given Layering

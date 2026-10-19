@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/folding-with-merged-edges/).
 
-Demo
-
 This demo shows how to enable [collapsing and expanding of group nodes](https://docs.yworks.com/yfileshtml/dguide/folding). This is provided through class [FoldingManager](https://docs.yworks.com/yfileshtml/api/FoldingManager) and its support classes. Additionally, a [MergingFoldingEdgeConverter](https://docs.yworks.com/yfileshtml/api/MergingFoldingEdgeConverter) is used to merge edges between group nodes.
 
 ### Things to Try

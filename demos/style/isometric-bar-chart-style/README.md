@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/isometric-bar-chart-style/).
 
-Demo
-
 ## Isometric Bar-Chart Augmentation
 
 This demo shows how a diagram can be augmented with isometric bars providing additional information about the nodes.

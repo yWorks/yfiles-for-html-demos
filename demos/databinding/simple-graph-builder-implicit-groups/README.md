@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/databinding/simple-graph-builder-implicit-groups/).
 
-Demo
-
 This demo automatically builds a graph from business data using [GraphBuilder](https://docs.yworks.com/yfileshtml/api/GraphBuilder). The business data is stored in **JSON** format.
 
 The objects representing nodes reference implicit groups that are not explicitly defined in a [NodesSource](https://docs.yworks.com/yfileshtml/api/GraphBuilder#createGroupNodesSource).

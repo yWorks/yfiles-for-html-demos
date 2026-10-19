@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/organic-incremental/).
 
-Demo
-
 This demo shows how to run the [OrganicLayout](https://docs.yworks.com/yfileshtml/api/OrganicLayout) algorithm on a predefined subset of nodes in a graph.
 
 To achieve this, two setup steps are necessary:

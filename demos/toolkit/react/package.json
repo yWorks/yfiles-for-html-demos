@@ -18,7 +18,7 @@
     "@yfiles/demo-utils": "../../utils",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.3+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.4+dev.tgz"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

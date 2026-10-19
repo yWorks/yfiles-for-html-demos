@@ -31,9 +31,11 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  GraphModelManager,
   License,
   ShapeNodeShape,
-  ShapeNodeStyle
+  ShapeNodeStyle,
+  WebGLGraphModelManager
 } from '@yfiles/yfiles'
 
 import {
@@ -44,6 +46,8 @@ import {
 } from '@yfiles/demo-app/demo-styles'
 import licenseData from '../../../lib/license.json'
 import { finishLoading } from '@yfiles/demo-app/modern/finish-loading'
+import { initializeSvgWebGlSwitchButton } from '@yfiles/demo-app/modern/svg-webgl-switch'
+import { BrowserDetection } from '@yfiles/demo-utils/BrowserDetection'
 
 /**
  * Runs the demo.
@@ -51,6 +55,10 @@ import { finishLoading } from '@yfiles/demo-app/modern/finish-loading'
 async function run() {
   License.value = licenseData
   const graphComponent = new GraphComponent('#graphComponent')
+  graphComponent.graphModelManager = BrowserDetection.webGL2
+    ? new WebGLGraphModelManager({ renderMode: 'svg' })
+    : new GraphModelManager()
+
   graphComponent.contentMargins = [90, 10, 40, 10]
   initializeStyleDefaults(graphComponent.graph)
 
@@ -58,8 +66,30 @@ async function run() {
   createSampleNodes(graphComponent.graph)
 
   configureInteraction(graphComponent)
+
   await graphComponent.fitGraphBounds()
+
   initializeUI(graphComponent)
+}
+
+/**
+ * Initializes the style defaults for labels and edges.
+ */
+function initializeStyleDefaults(graph) {
+  initDemoStyles(graph)
+
+  // All node labels share the same style and label model parameter
+  const labelStyle = createDemoNodeLabelStyle('demo-palette-58')
+  labelStyle.font = '24px Arial'
+  graph.nodeDefaults.labels.style = labelStyle
+  graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createParameter({
+    layoutRatio: [0.5, 0],
+    layoutOffset: [0, -50],
+    labelRatio: [0.5, 0.5]
+  })
+
+  // Edges share the same style as well, they are not important in this demo
+  graph.edgeDefaults.style = createDemoEdgeStyle({ colorSetName: 'demo-palette-56' })
 }
 
 /**
@@ -139,26 +169,6 @@ function createShapeSamples(shapes, column, graph) {
 }
 
 /**
- * Initializes the style defaults for labels and edges.
- */
-function initializeStyleDefaults(graph) {
-  initDemoStyles(graph)
-
-  // All node labels share the same style and label model parameter
-  const labelStyle = createDemoNodeLabelStyle('demo-palette-58')
-  labelStyle.font = '24px Arial'
-  graph.nodeDefaults.labels.style = labelStyle
-  graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createParameter({
-    layoutRatio: [0.5, 0],
-    layoutOffset: [0, -50],
-    labelRatio: [0.5, 0.5]
-  })
-
-  // Edges share the same style as well, they are not important in this demo
-  graph.edgeDefaults.style = createDemoEdgeStyle({ colorSetName: 'demo-palette-56' })
-}
-
-/**
  * Configures the interactive behavior for this demo.
  */
 function configureInteraction(graphComponent) {
@@ -176,9 +186,11 @@ function configureInteraction(graphComponent) {
 }
 
 /**
- * Binds actions to the demo's UI controls.
+ * Registers event listeners to the demo's UI elements.
  */
 function initializeUI(graphComponent) {
+  initializeSvgWebGlSwitchButton('#styleTypeChooser', graphComponent)
+
   const aspectRatioToggle = document.querySelector('#intrinsic-aspect-ratio-button')
   aspectRatioToggle.addEventListener('change', () => {
     // Change the keep-intrinsic-aspect-ratio behavior of the nodes depending on the state of the

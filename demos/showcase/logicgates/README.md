@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/logicgates/).
 
-Demo
-
 This demo shows how to use yFiles for HTML to visualize a digital system with logic gates.
 
 Each node has specific ports: incoming edges connect only to the left side of the target node, while outgoing edges originate only from the right side of the source node.

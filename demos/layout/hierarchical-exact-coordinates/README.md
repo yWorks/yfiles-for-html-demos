@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/hierarchical-exact-coordinates/).
 
-Demo
-
 This demo shows how to run the [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout) such that a predefined subset of elements (called _incremental_ elements) is integrated into an existing drawing. The existing elements (called _fixed_ elements) should keep their current coordinates as much as possible.
 
 Note that unlike for the [PartialLayout](https://docs.yworks.com/yfileshtml/api/PartialLayout) it is not guaranteed that the fixed elements keep their exact coordinates. However, if the underlying drawing was already produced by a run of the hierarchical layout, the resulting quality is almost always much better compared to a partial layout run.

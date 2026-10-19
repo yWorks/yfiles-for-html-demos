@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/renderingorder/).
 
-Demo
-
 ## Rendering Order
 
 Sometimes it is necessary to change the render order of graph, e.g. when labels should be rendered in front of their owner but behind another item. This demo shows how to use [GraphModelManager](https://docs.yworks.com/yfileshtml/api/GraphModelManager) to configure the rendering order for grouped graphs as well as layer policies for labels and ports.

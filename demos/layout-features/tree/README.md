@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/tree/).
 
-Demo
-
 This demo showcases basic configuration options for the [TreeLayout](https://docs.yworks.com/yfileshtml/api/TreeLayout) algorithm.
 
 It highlights the configuration of various aspects, including:

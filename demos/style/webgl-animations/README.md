@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/webgl-animations/).
 
-Demo
-
 In this demo you can try out the different WebGL animations and their settings. Animations can be used, for example, to highlight an interesting element or whole part of a graph.
 
 In particular, this demo highlights the currently hovered or selected connected component with an animation of the chosen type and settings. Recall that a connected component consists of all nodes that can reach each other.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/border-aligned-label-model/).
 
-Demo
-
 This demo shows how to implement a custom node label model to position labels around the circumference of a node.
 
 ## Things to Try

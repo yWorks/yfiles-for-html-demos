@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/circle-snapping/).
 
-Demo
-
 This demo shows how to use the **snapping feature** to support editing a radial tree layout.
 
 The snapping feature provides snap circles for all children around their parent and snap lines for the most important angles. There are also some snap lines to align sibling nodes on a circle.

@@ -53,7 +53,7 @@ import {
   AggregationGraphWrapper,
   EdgeReplacementPolicy
 } from '@yfiles/demo-utils/AggregationGraphWrapper'
-import { initDemoStyles } from '@yfiles/demo-app/demo-styles'
+import { createDemoShapeNodeStyle, initDemoStyles } from '@yfiles/demo-app/demo-styles'
 import licenseData from '../../../lib/license.json'
 import graphData from './graph-data.json'
 import { finishLoading } from '@yfiles/demo-app/modern/finish-loading'
@@ -290,7 +290,7 @@ function buildGraph(graph, graphData) {
     data: graphData.nodeList,
     id: (item) => item.id,
     parentId: (item) => item.parent
-  }).nodeCreator.styleProvider = (item) => nodeStyles[item.tag]
+  }).nodeCreator.styleProvider = (item) => getNodeStyle(item.tag)
 
   graphBuilder.createEdgesSource({
     data: graphData.edgeList,
@@ -301,52 +301,21 @@ function buildGraph(graph, graphData) {
   graphBuilder.buildGraph()
 }
 
-const nodeStyles = {
-  blueRectangle: new ShapeNodeStyle({
-    fill: '#67b7dc',
-    stroke: '#617984',
-    shape: ShapeNodeShape.RECTANGLE
-  }),
-  blueOctagon: new ShapeNodeStyle({
-    fill: '#67b7dc',
-    stroke: '#617984',
-    shape: ShapeNodeShape.OCTAGON
-  }),
-  blueDiamond: new ShapeNodeStyle({
-    fill: '#67b7dc',
-    stroke: '#617984',
-    shape: ShapeNodeShape.DIAMOND
-  }),
-  greenRectangle: new ShapeNodeStyle({
-    fill: '#177E89',
-    stroke: '#304F52',
-    shape: ShapeNodeShape.RECTANGLE
-  }),
-  greenOctagon: new ShapeNodeStyle({
-    fill: '#177E89',
-    stroke: '#304F52',
-    shape: ShapeNodeShape.OCTAGON
-  }),
-  greenDiamond: new ShapeNodeStyle({
-    fill: '#177E89',
-    stroke: '#304F52',
-    shape: ShapeNodeShape.DIAMOND
-  }),
-  purpleRectangle: new ShapeNodeStyle({
-    fill: '#aa4586',
-    stroke: '#66485B',
-    shape: ShapeNodeShape.RECTANGLE
-  }),
-  purpleOctagon: new ShapeNodeStyle({
-    fill: '#aa4586',
-    stroke: '#66485B',
-    shape: ShapeNodeShape.OCTAGON
-  }),
-  purpleDiamond: new ShapeNodeStyle({
-    fill: '#aa4586',
-    stroke: '#66485B',
-    shape: ShapeNodeShape.DIAMOND
-  })
+function getNodeStyle(tag) {
+  const [theme, borderColor] = tag.startsWith('blue')
+    ? ['demo-palette-31', '#617984']
+    : tag.startsWith('green')
+      ? ['demo-palette-48', '#304F52']
+      : ['demo-palette-47', '#66485B']
+  const shape = tag.endsWith('Rectangle')
+    ? ShapeNodeShape.RECTANGLE
+    : tag.endsWith('Octagon')
+      ? ShapeNodeShape.OCTAGON
+      : ShapeNodeShape.DIAMOND
+
+  const style = createDemoShapeNodeStyle(shape, theme)
+  style.stroke = new Stroke(borderColor, 1)
+  return style
 }
 
 /**

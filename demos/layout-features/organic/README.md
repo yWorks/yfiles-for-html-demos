@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/organic/).
 
-Demo
-
 This demo shows basic configuration options for the [OrganicLayout](https://docs.yworks.com/yfileshtml/api/OrganicLayout). The default behavior is modified in various ways, some of which are described below:
 
 - The layout is configured to be [deterministic](https://docs.yworks.com/yfileshtml/api/OrganicLayout#deterministic), which causes the layout algorithm to produce identical results for identical input graph and settings.

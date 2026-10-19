@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/magnifying-glass/).
 
-Demo
-
 This demo shows a floating magnifying glass that magnifies the cursor's surroundings. It is implemented as a specialized input mode that can be added to any of yFiles's default interactions.
 
 The magnifying lens is visible only at low zoom levels `(< 0.7)` since otherwise the graph is large enough and details of the elements can be distinguished even without magnification.

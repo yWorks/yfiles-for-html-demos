@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/orthogonal/).
 
-Demo
-
 This demo shows basic configuration options for the [OrthogonalLayout](https://docs.yworks.com/yfileshtml/api/OrthogonalLayout) algorithm.
 
 It highlights the configuration of various aspects, including:

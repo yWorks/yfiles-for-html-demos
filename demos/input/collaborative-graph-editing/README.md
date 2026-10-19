@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/collaborative-graph-editing/).
 
-Demo
-
 This demo builds on yFiles' [Graph Editor Demo](../../view/grapheditor/). See it for a complete guide to the editing gestures and features provided by [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode).
 
 ## Try it out

@@ -1,7 +1,7 @@
 {
   "name": "@yfiles/yfiles-for-html",
   "description": "yFiles for HTML demos",
-  "version": "31.0.3",
+  "version": "31.0.4",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,

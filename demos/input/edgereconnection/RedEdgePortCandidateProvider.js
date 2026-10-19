@@ -35,9 +35,8 @@ import {
 } from '@yfiles/yfiles'
 
 /**
- * An {@link IEdgeReconnectionPortCandidateProvider} that uses candidates with a
- * dynamic NodeScaled port location model. It allows moving ports to any
- * location inside a green node.
+ * An {@link IEdgeReconnectionPortCandidateProvider} that only allows the current source
+ * port and therefore disables port relocation.
  */
 export class RedEdgePortCandidateProvider extends BaseClass(
   IEdgeReconnectionPortCandidateProvider

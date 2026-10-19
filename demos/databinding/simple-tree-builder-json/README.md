@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/databinding/simple-tree-builder-json/).
 
-Demo
-
 This demo automatically builds a graph from business data using [TreeBuilder](https://docs.yworks.com/yfileshtml/api/TreeBuilder). The business data is stored in an Object in **JSON** format.
 
 See the Developer's Guide section on [creating a Graph from Business Data](https://docs.yworks.com/yfileshtml/dguide/graph_builder) and especially [TreeBuilder](https://docs.yworks.com/yfileshtml/dguide/graph_builder-TreeBuilder) for an in-depth explanation of the relevant concepts.

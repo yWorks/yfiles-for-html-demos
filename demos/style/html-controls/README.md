@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/html-controls/).
 
-Demo
-
 This demo shows how a custom HTML-based node style can be used to create interactive nodes that use HTML input elements and benefit from CSS responsiveness.
 
 Adapting the contents of the node visualization to varying node sizes can often be achieved much easier when using an HTML-based style instead of an SVG visualization.

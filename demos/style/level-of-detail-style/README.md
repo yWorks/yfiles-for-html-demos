@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/level-of-detail-style/).
 
-Demo
-
 This demo shows how to display different styles depending on the current zoom level in order to implement a level of detail rendering.
 
 In this demo three levels of zooming are implemented: **detail level**, **intermediate level** and **overview level**

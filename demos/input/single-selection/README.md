@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/single-selection/).
 
-Demo
-
 This demo shows how to configure [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode) for single selection mode. In this mode, only one graph item can be selected at a time.
 
 ## Things to Try

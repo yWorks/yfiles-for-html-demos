@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/graphanalysis/).
 
-Demo
-
 This demo showcases a selection of algorithms to analyse the structure of a graph.
 
 The toolbar provides access to the most important settings of the algorithms.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/edge-router-buses/).
 
-Demo
-
 This demo shows how to configure the [EdgeRouter](https://docs.yworks.com/yfileshtml/api/EdgeRouter) to generate orthogonal bus-style routes. A bus is a shared segment among multiple edges, with nodes connecting to it via shorter segments.
 
 Buses are defined using the `add` method of the [buses](https://docs.yworks.com/yfileshtml/api/EdgeRouterData#buses) property, which returns a [configurable object](https://docs.yworks.com/yfileshtml/api/ItemCollection) for edge assignment.

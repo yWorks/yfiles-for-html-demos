@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/rotatablenodes/).
 
-Demo
-
 This demo shows how support for rotated node visualizations can be implemented on top of the yFiles library. A custom [INodeStyle](https://docs.yworks.com/yfileshtml/api/INodeStyle) implementation is used to encapsulate most of the added functionality.
 
 ## Things to Try

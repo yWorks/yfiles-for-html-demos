@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/compact-tabular-layout/).
 
-Demo
-
 This demo shows how to configure the [TabularLayout](https://docs.yworks.com/yfileshtml/api/TabularLayout) to create compact drawings.
 
 The algorithm tries to calculate an arrangement that minimizes edge lengths. Since tabular layout only supports straight-line edges, [EdgeRouter](https://docs.yworks.com/yfileshtml/api/EdgeRouter) is used to calculate the final edge paths.

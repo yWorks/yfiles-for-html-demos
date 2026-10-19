@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/custom-copy-and-paste/).
 
-Demo
-
 This demo shows how to implement functionality that lets you copy the style of graph items and paste it onto other graph items. The copy operation itself remains unchanged — only the paste operation is customized.
 
 ## Things to Try

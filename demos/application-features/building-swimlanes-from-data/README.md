@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/building-swimlanes-from-data/).
 
-Demo
-
 This demo shows how to build a graph with swimlanes using the data stored in JSON-format.
 
 - Note that some nodes have individual colors or sizes.

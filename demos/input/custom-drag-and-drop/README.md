@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/custom-drag-and-drop/).
 
-Demo
-
 This demo shows how to change the color of nodes and edges using drag and drop operations.
 
 yFiles for HTML comes with predefined drag and drop support to create [nodes](https://docs.yworks.com/yfileshtml/api/NodeDropInputMode), [labels](https://docs.yworks.com/yfileshtml/api/LabelDropInputMode) and [ports](https://docs.yworks.com/yfileshtml/api/PortDropInputMode). Instead of creating new elements, this demo shows how you can modify existing elements using a drag and drop operation.

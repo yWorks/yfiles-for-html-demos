@@ -396,7 +396,7 @@ export class GrayTileLayer extends TileLayer {
       return
     }
 
-    img.crossOrigin = ''
+    img.crossOrigin = null
     const canvas = document.createElement('canvas')
     canvas.width = img.width
     canvas.height = img.height

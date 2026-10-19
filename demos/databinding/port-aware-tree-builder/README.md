@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/databinding/port-aware-tree-builder/).
 
-Demo
-
 This demo automatically builds a graph from business data using [TreeBuilder](https://docs.yworks.com/yfileshtml/api/TreeBuilder).  
 The business data is stored in **JSON** format.
 

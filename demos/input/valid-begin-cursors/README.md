@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/valid-begin-cursors/).
 
-Demo
-
 This demo illustrates how the mouse cursor dynamically changes within a [GraphComponent](https://docs.yworks.com/yfileshtml/api/GraphComponent) to signal which interactive action (e.g., move, select, create) can be initiated at the current pointer location.
 
 ## Things to Try

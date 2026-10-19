@@ -354,40 +354,41 @@ function initializeInteraction(supportsWebGL2: boolean): void {
     }
 
     // Calculate popover position based on the layout item
-    const layoutItem = (event.item instanceof IEdge ? event.item.labels.at(0) : event.item) as
-      INode | ILabel
-    const layout = layoutItem.layout
+    const layoutItem = event.item instanceof IEdge ? event.item.labels.at(0) : event.item
+    if (layoutItem instanceof INode || layoutItem instanceof ILabel) {
+      const layout = layoutItem.layout
 
-    const popoverDescriptor = new PopoverDescriptor({
-      anchor: new Point(layout.center.x + layout.width * 0.5, layout.center.y),
-      offset: new Point(10, 0),
-      behavior: PopoverBehavior.AUTO
-    })
+      const popoverDescriptor = new PopoverDescriptor({
+        anchor: new Point(layout.center.x + layout.width * 0.5, layout.center.y),
+        offset: new Point(10, 0),
+        behavior: PopoverBehavior.AUTO
+      })
 
-    popoverDescriptor.content = createPopoverContent(refItem, popoverDescriptor)
-    void sender.popoverManager.open(popoverDescriptor)
+      popoverDescriptor.content = createPopoverContent(refItem, popoverDescriptor)
+      void sender.popoverManager.open(popoverDescriptor)
 
-    if (!currentTriplet) {
-      return
-    }
-
-    // Prevent highlighting the same item twice
-    if (lastItemClicked === item) {
-      return
-    }
-
-    selectClickedItem(item)
-    await runOperation(async () => {
-      if (supportsWebGL2) {
-        await highlightTypes(
-          originalGC,
-          currentTriplet!.subject,
-          currentTriplet!.predicate,
-          currentTriplet!.object
-        )
+      if (!currentTriplet) {
+        return
       }
-      lastItemClicked = item
-    })
+
+      // Prevent highlighting the same item twice
+      if (lastItemClicked === item) {
+        return
+      }
+
+      selectClickedItem(item)
+      await runOperation(async () => {
+        if (supportsWebGL2) {
+          await highlightTypes(
+            originalGC,
+            currentTriplet!.subject,
+            currentTriplet!.predicate,
+            currentTriplet!.object
+          )
+        }
+        lastItemClicked = item
+      })
+    }
   })
 
   // Hover: show highlights for the hovered item
@@ -818,7 +819,7 @@ function initializeComponentUI(): void {
   ontologyCollapseButton.addEventListener('click', () => {
     const expanded = interactionPanel.classList.toggle('expanded')
     ontologyCollapseButton.setAttribute('aria-expanded', String(expanded))
-    ontologyCollapseButton.title = expanded ? 'Restore Interaction panel' : 'Expand Ontology View'
+    ontologyCollapseButton.title = expanded ? 'Shrink view' : 'Enlarge View'
     ontologyCollapseButton.textContent = expanded ? 'collapse_content' : 'expand_content'
   })
 

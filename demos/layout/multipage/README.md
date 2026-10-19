@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/multipage/).
 
-Demo
-
 This demo shows the multi-page layout that divides a large graph into several smaller page graphs.
 
 ## About Multi-page Layout

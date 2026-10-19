@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/loading/basic-demo/).
 
-Demo
-
 A simple demo that you can use as a starting point for your own project.
 
 For other options, see the [Getting Started](https://docs.yworks.com/yfileshtml/dguide/getting_started) section in the documentation.

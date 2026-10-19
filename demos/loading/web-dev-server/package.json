@@ -13,6 +13,6 @@
     "@web/dev-server": "^1.0.0"
   },
   "dependencies": {
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.3+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.4+dev.tgz"
   }
 }

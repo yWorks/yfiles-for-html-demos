@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/recursive-group-layout/).
 
-Demo
-
 This demo shows how to use the [RecursiveGroupLayout](https://docs.yworks.com/yfileshtml/api/RecursiveGroupLayout) algorithm to apply a specific layout algorithm to the contents (direct children) of each group node.
 
 In this demo, [a different layout algorithm](https://docs.yworks.com/yfileshtml/api/RecursiveGroupLayoutData#groupNodeLayouts) is used for each group node:

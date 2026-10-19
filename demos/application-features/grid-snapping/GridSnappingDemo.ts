@@ -185,7 +185,7 @@ function initializeGrid(): void {
     Svg: RenderMode.SVG
   }
   if (BrowserDetection.webGL2) {
-    gridRenderModes['WebGL2'] = RenderMode.WEBGL
+    gridRenderModes['WebGL'] = RenderMode.WEBGL
   }
 
   // Creates a radio group for the snap types

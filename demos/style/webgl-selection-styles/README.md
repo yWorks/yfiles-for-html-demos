@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/webgl-selection-styles/).
 
-Demo
-
 This demo shows the available _selection_ styles for nodes, edges, and labels in WebGL rendering.
 
 In WebGL, selections can be configured in various ways: There are multiple patterns to choose from, and colors, thickness, and margins are configurable. Additionally, selections can be activated and deactivated using animated transitions, and for the appropriate selection styles, a "marching ants" animation is available, too.

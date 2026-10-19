@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/frauddetection/).
 
-Demo
-
 This demo shows how _yFiles for HTML_ can be used for detecting _fraud cases_ in time-dependent data. Fraud affects many companies worldwide causing economic loss and liability issues. Fraud detection relies on the analysis of a huge amount of data-sets and thus, visualizations can be valuable for the quick detection of fraud schemes.
 
 ## Main Graph Component

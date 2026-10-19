@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/arrow/).
 
-Demo
-
 The [Arrow](https://docs.yworks.com/yfileshtml/api/Arrow) class provides several properties to customize arrows. It can render [ArrowType](https://docs.yworks.com/yfileshtml/api/ArrowType)s and visualize different arrow shapes. This demo demonstrates edges with all arrow types specified in the edge labels.
 
 Besides shapes, arrows can also be customized by changing its [fill](https://docs.yworks.com/yfileshtml/api/Arrow#fill), [stroke](https://docs.yworks.com/yfileshtml/api/Arrow#stroke) and [length](https://docs.yworks.com/yfileshtml/api/Arrow#length). The [widthScale](https://docs.yworks.com/yfileshtml/api/Arrow#widthScale) and [lengthScale](https://docs.yworks.com/yfileshtml/api/Arrow#lengthScale) of arrows can also be adjusted to change its aspect ratio.

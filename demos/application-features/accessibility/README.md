@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/accessibility/).
 
-Demo
-
 This demo shows how to improve accessibility with ARIA attributes and a [live region](https://developer.mozilla.org/docs/Web/Accessibility/ARIA/ARIA_Live_Regions) for the graph component. Switching an element in this demo, updates the live region of the graph component with the currently selected label.
 
 ## Things to Try

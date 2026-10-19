@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/folding/).
 
-Demo
-
 This demo shows how to enable collapsing and expanding of group nodes, the so-called [Folding](https://docs.yworks.com/yfileshtml/dguide/folding) feature. This is provided through the [FoldingManager](https://docs.yworks.com/yfileshtml/api/FoldingManager) class and its support classes.
 
 The [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode) class provides the following interactive gestures for collapsing and expanding groups:

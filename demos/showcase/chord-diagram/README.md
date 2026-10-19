@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/chord-diagram/).
 
-Demo
-
 This demo shows how to arrange and visualize a graph as a chord diagram.
 
 In a chord diagram, the nodes are arranged on a circle and the edges are drawn as arcs. In this demo, nodes are visualized as circle segments, and both the size of the nodes and thickness of the edges reflects their weight or value.

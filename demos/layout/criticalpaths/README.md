@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/criticalpaths/).
 
-Demo
-
 This demo shows how the hierarchical and tree layout styles emphasise important, or 'critical', paths.
 
 To make these critical paths more striking, the nodes and edges in each path are aligned if possible.

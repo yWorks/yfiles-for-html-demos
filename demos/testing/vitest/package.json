@@ -14,6 +14,6 @@
     "vitest": "^5.0.1"
   },
   "dependencies": {
-    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.3+dev.tgz"
+    "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.4+dev.tgz"
   }
 }

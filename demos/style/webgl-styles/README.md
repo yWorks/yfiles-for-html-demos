@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/webgl-styles/).
 
-Demo
-
 This demo shows the available styles for nodes, edges and labels in WebGL rendering.
 
 The initial graph displays the various node shapes in the columns and the node effects, edge and arrow types in the rows.

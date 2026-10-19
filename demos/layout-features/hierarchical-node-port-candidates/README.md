@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/hierarchical-node-port-candidates/).
 
-Demo
-
 This demo shows how to use [NodePortCandidates](https://docs.yworks.com/yfileshtml/api/NodePortCandidates) to define the port locations and limit the number of edges per port in [HierarchicalLayout](https://docs.yworks.com/yfileshtml/api/HierarchicalLayout).
 
 **Node 5** uses four port candidates, one for each side of the node.

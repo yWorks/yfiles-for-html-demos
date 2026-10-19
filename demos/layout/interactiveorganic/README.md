@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/interactiveorganic/).
 
-Demo
-
 This demo shows the Interactive Organic layout algorithm. This variant of the general Organic layout algorithm calculates continuous updates for a changing diagram. The Organic layout is a force-directed layout style for multiple purposes.
 
 The layout calculations run in a separate web worker thread so the UI remains reactive.

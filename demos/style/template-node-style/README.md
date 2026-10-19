@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/style/template-node-style/).
 
-Demo
-
 This demo presents a node style implementation that leverages a simple data binding and templating engine to declaratively render SVG as node style.
 
 The templating engine is based on an implementation that was previously available in yFiles for HTML versions 1.x and 2.x, but which has since been removed and is provided here as a source code demo implementation.

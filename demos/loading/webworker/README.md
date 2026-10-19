@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/loading/webworker/).
 
-Demo
-
 This demo shows how to run a layout algorithm in a Web Worker thread without blocking the UI or main thread.
 
 Calculating the layout in a Web Worker keeps the UI responsive. Hence, the loading animation is able to continue while the layout algorithm is working.

@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/mindmap/).
 
-Demo
-
 This demo shows an interactive mind map application used for organizing information and showing relations between items.
 
 The layout is calculated by the tree layout algorithm, and makes use of port candidates and special subtree placers.

@@ -1119,8 +1119,18 @@ h6 {
 .toolbar div:has(> label):has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.yIcon) > input[type='checkbox']:checked + label.material-symbols-outlined,
 .toolbar label:has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.material-symbols-outlined) > input[type='checkbox']:checked + label.material-symbols-outlined,
 .toolbar div:has(> label):has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.material-symbols-outlined) > input[type='checkbox']:checked + label.material-symbols-outlined {
-  background-color: var(--toolbar-bg-hover);
+  background-color: var(--toolbar-button);
   font-variation-settings: 'FILL' 1;
+}
+.toolbar label:has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.yIcon) > input[type='checkbox']:checked + label.yIcon:hover,
+.toolbar div:has(> label):has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.yIcon) > input[type='checkbox']:checked + label.yIcon:hover,
+.toolbar label:has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.material-symbols-outlined) > input[type='checkbox']:checked + label.yIcon:hover,
+.toolbar div:has(> label):has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.material-symbols-outlined) > input[type='checkbox']:checked + label.yIcon:hover,
+.toolbar label:has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.yIcon) > input[type='checkbox']:checked + label.material-symbols-outlined:hover,
+.toolbar div:has(> label):has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.yIcon) > input[type='checkbox']:checked + label.material-symbols-outlined:hover,
+.toolbar label:has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.material-symbols-outlined) > input[type='checkbox']:checked + label.material-symbols-outlined:hover,
+.toolbar div:has(> label):has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.material-symbols-outlined) > input[type='checkbox']:checked + label.material-symbols-outlined:hover {
+  background-color: var(--toolbar-bg-hover);
 }
 .toolbar label:has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.yIcon) > label.yIcon,
 .toolbar div:has(> label):has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.yIcon) > label.yIcon,
@@ -2235,8 +2245,18 @@ body.demo-tutorial {
 .tutorial-toolbar div:has(> label):has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.yIcon) > input[type='checkbox']:checked + label.material-symbols-outlined,
 .tutorial-toolbar label:has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.material-symbols-outlined) > input[type='checkbox']:checked + label.material-symbols-outlined,
 .tutorial-toolbar div:has(> label):has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.material-symbols-outlined) > input[type='checkbox']:checked + label.material-symbols-outlined {
-  background-color: var(--toolbar-bg-hover);
+  background-color: var(--toolbar-button);
   font-variation-settings: 'FILL' 1;
+}
+.tutorial-toolbar label:has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.yIcon) > input[type='checkbox']:checked + label.yIcon:hover,
+.tutorial-toolbar div:has(> label):has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.yIcon) > input[type='checkbox']:checked + label.yIcon:hover,
+.tutorial-toolbar label:has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.material-symbols-outlined) > input[type='checkbox']:checked + label.yIcon:hover,
+.tutorial-toolbar div:has(> label):has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.material-symbols-outlined) > input[type='checkbox']:checked + label.yIcon:hover,
+.tutorial-toolbar label:has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.yIcon) > input[type='checkbox']:checked + label.material-symbols-outlined:hover,
+.tutorial-toolbar div:has(> label):has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.yIcon) > input[type='checkbox']:checked + label.material-symbols-outlined:hover,
+.tutorial-toolbar label:has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.material-symbols-outlined) > input[type='checkbox']:checked + label.material-symbols-outlined:hover,
+.tutorial-toolbar div:has(> label):has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.material-symbols-outlined) > input[type='checkbox']:checked + label.material-symbols-outlined:hover {
+  background-color: var(--toolbar-bg-hover);
 }
 .tutorial-toolbar label:has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.yIcon) > label.yIcon,
 .tutorial-toolbar div:has(> label):has(> input[type='checkbox']):has(> input[type='checkbox']):has(> label.yIcon) > label.yIcon,

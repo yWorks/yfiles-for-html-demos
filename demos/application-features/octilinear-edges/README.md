@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/application-features/octilinear-edges/).
 
-Demo
-
 This demo shows how to implement interactive editing of octilinear edges. [OCTILINEAR](https://docs.yworks.com/yfileshtml/api/EdgeRouterRoutingStyle#OCTILINEAR) is a routing style where each edge consists of vertical, horizontal, and diagonal segments. This edge routing style is preserved throughout all interactive editing operations.
 
 The demo combines several techniques:

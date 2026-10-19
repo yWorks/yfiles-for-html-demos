@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/legend/).
 
-Demo
-
 This demo shows different ways to visualize a legend. The graph contains different types of nodes, each represented with a distinct style. The legend explains what each node type represents.
 
 ## Legend Types

@@ -142,12 +142,6 @@
     <script type="module" async>
       import '@yfiles/demo-app/initialize-ui'
     </script>
-
-    <style>
-      select {
-        font-size: 12px;
-      }
-    </style>
   </head>
   <body class="demo-modern">
     <div id="splash-screen">
@@ -399,6 +393,10 @@
           </button>
 
           <span class="separator"></span>
+          <select title="Select the type of node style to use" id="styleTypeChooser">
+            <option value="svg">SVG Rendering</option>
+            <option value="webgl">WebGL Rendering</option>
+          </select>
           <div>
             <input
               type="checkbox"

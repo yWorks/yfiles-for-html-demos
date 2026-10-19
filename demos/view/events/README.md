@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/view/events/).
 
-Demo
-
 This demo shows the multitude of events provided by the classes [IGraph](https://docs.yworks.com/yfileshtml/api/IGraph) and [GraphComponent](https://docs.yworks.com/yfileshtml/api/GraphComponent) and the _Input Modes_. Feel free to switch event logging on and off for the kinds of events below, while interacting with the graph and its elements. You might want to try toggling the input mode using the "Edit Mode" checkbox.
 
 Generally, when looking for an event that fits your needs, you should start looking at the top of the list and work your way down. In most cases, it is preferable to use input mode events instead of subscribing to the low-level graph events, which should be reserved for rare cases where the layers above won't suffice.

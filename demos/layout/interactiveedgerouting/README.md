@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout/interactiveedgerouting/).
 
-Demo
-
 The Interactive Edge Routing demo showcases [EdgeRouter](https://docs.yworks.com/yfileshtml/api/EdgeRouter) 's ability to find and re-layout edge paths which are not yet ‘good’.
 
 After each user interaction the edge router is applied with [EdgeRouterScope](https://docs.yworks.com/yfileshtml/api/EdgeRouterScope) set to either re-route entire edges or only necessary segments of edges. The edge router itself determines automatically which edges need a re-routing based on various criteria like intersections with other elements or routing style violations.

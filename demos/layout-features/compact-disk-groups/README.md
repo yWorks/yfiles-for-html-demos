@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/layout-features/compact-disk-groups/).
 
-Demo
-
 This demo shows how to use the [CompactDiskLayout](https://docs.yworks.com/yfileshtml/api/CompactDiskLayout) to arrange the content of (circular) group nodes.
 
 This layout is suitable when the group content should be arranged in a compact way and the child nodes have few or no edges between them.

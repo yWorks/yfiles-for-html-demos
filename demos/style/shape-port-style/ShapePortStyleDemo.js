@@ -63,10 +63,13 @@ async function run() {
     ? new WebGLGraphModelManager({ renderMode: 'svg' })
     : new GraphModelManager()
 
-  // Create and configure ports using shape port style
-  initializeGraph(graphComponent.graph)
+  graphComponent.contentMargins = [90, 10, 40, 10]
+  initializeStyleDefaults(graphComponent.graph)
 
-  initializeInteraction(graphComponent)
+  // Create and configure ports using shape port style
+  createSampleNodes(graphComponent.graph)
+
+  configureInteraction(graphComponent)
 
   await graphComponent.fitGraphBounds()
 
@@ -86,10 +89,9 @@ function createShapePortStyle(portShape, colorSet) {
 }
 
 /**
- * Creates nodes, ports, and edges to demonstrate all port shapes.
- * @param graph The graph in which to create nodes.
+ * Initializes the style defaults for labels and edges.
  */
-function initializeGraph(graph) {
+function initializeStyleDefaults(graph) {
   graph.nodeDefaults.style = new ShapeNodeStyle({
     fill: colorSets['demo-blue'].edgeLabelFill,
     stroke: null
@@ -97,7 +99,13 @@ function initializeGraph(graph) {
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: new Stroke(colorSets['demo-blue'].edgeLabelFill, 3)
   })
+}
 
+/**
+ * Creates several nodes for each {@link ShapeNodeShape} value.
+ * @param graph The graph to add the nodes to.
+ */
+function createSampleNodes(graph) {
   // available port shapes
   const shapes = [
     'star5',
@@ -195,9 +203,9 @@ function initializeGraph(graph) {
 }
 
 /**
- * Initializes the interactive behavior for this demo.
+ * Configures the interactive behavior for this demo.
  */
-function initializeInteraction(graphComponent) {
+function configureInteraction(graphComponent) {
   graphComponent.inputMode = new GraphEditorInputMode({
     allowCreateNode: false,
     allowAddLabel: false,

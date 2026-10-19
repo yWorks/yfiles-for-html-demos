@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/restricted-editing/).
 
-Demo
-
 This demos shows how to restrict interactive editing while still using [GraphEditorInputMode](https://docs.yworks.com/yfileshtml/api/GraphEditorInputMode) for its non-editing features like, e.g., click-selecting items.
 
 More precisely, this demo shows how to

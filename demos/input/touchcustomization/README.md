@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/touchcustomization/).
 
-Demo
-
 This demo shows how a graph editor application can be optimized for touch devices.
 
 ## Things to Try

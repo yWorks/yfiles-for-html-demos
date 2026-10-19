@@ -28,25 +28,89 @@
  ***************************************************************************/
 :root {
   --context-menu-button-radius: 5px;
-  --expanded-breakpoint: 60vh;
+  --interaction-width: 500px;
+  --expanded-panel-width: min(60vw, 700px);
+  --expanded-panel-height: min(60dvh, 600px);
 }
 
 .main-container .interaction-panel {
-  flex: 0 1 500px;
-  width: 500px;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  flex: 0 1 100%;
 }
 
 .main-container .interaction-panel.expanded {
-  width: var(--expanded-breakpoint);
-  flex-basis: var(--expanded-breakpoint);
+  box-sizing: border-box;
+  width: calc(var(--interaction-width) + 100px);
+  min-width: calc(var(--interaction-width) + 100px);
+  flex: 0 0 calc(var(--interaction-width) + 100px);
+  flex-basis: calc(var(--interaction-width) + 100px);
 }
 
-.main-container .interaction-panel.expanded .ontology-container {
-  min-height: var(--expanded-breakpoint);
-}
-
+.main-container .interaction-panel.expanded .ontology-container,
 .main-container .interaction-panel.expanded #ontology-graphComponent {
-  min-height: var(--expanded-breakpoint);
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--interaction-width);
+  min-height: var(--interaction-width);
+}
+
+@media screen and (min-width: 40rem) {
+  .main-container .interaction-panel {
+    width: var(--interaction-width);
+    min-width: 0;
+    flex: 0 1 var(--interaction-width);
+  }
+
+  .main-container .interaction-panel.expanded {
+    width: var(--expanded-panel-width);
+    min-width: var(--expanded-panel-width);
+    flex: 0 0 var(--expanded-panel-width);
+    flex-basis: var(--expanded-panel-width);
+  }
+
+  .main-container .interaction-panel.expanded .ontology-container,
+  .main-container .interaction-panel.expanded #ontology-graphComponent {
+    height: var(--expanded-panel-height);
+    min-height: var(--expanded-panel-height);
+  }
+}
+
+@media screen and (min-width: 64rem) {
+  .main-container .interaction-panel {
+    width: 500px;
+    min-width: 0;
+    flex: 0 1 500px;
+  }
+
+  .main-container .interaction-panel.expanded {
+    width: var(--expanded-panel-width);
+    min-width: var(--expanded-panel-width);
+    flex: 0 0 var(--expanded-panel-width);
+    flex-basis: var(--expanded-panel-width);
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .main-container .interaction-panel {
+    width: 100%;
+    min-width: 0;
+    flex: 0 1 100%;
+  }
+
+  .main-container .interaction-panel.expanded {
+    width: calc(var(--interaction-width) + 120px);
+    min-width: calc(var(--interaction-width) + 120px);
+    flex: 0 0 calc(var(--interaction-width) + 120px);
+    flex-basis: calc(var(--interaction-width) + 120px);
+  }
+
+  .main-container .interaction-panel.expanded .ontology-container,
+  .main-container .interaction-panel.expanded #ontology-graphComponent {
+    height: var(--interaction-width);
+    min-height: var(--interaction-width);
+  }
 }
 
 .graph-overlay {

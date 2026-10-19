@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/showcase/chord-diagram-non-ribbon/).
 
-Demo
-
 This demo shows how to create a non-ribbon chord diagram. In contrast to the normal [Chord Diagram Demo](../../showcase/chord-diagram/), these diagrams use clearly separated nodes and edges, so it can be easier to see the individual connections.
 
 This demo illustrates email communication between employees of a fictitious company.

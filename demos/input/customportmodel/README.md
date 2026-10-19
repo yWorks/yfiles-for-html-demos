@@ -15,8 +15,6 @@
 
 [You can also run this demo online](https://www.yfiles.com/demos/input/customportmodel/).
 
-Demo
-
 This demo demonstrates how to create and use a custom [IPortLocationModel](https://docs.yworks.com/yfileshtml/api/IPortLocationModel).
 
 ## Things to Try
