@@ -15,7 +15,7 @@
   "dependencies": {
     "@fontsource/material-symbols-outlined": "^5.3.6",
     "@fontsource/poppins": "^5.3.0",
-    "solid-js": "^1.9.14",
+    "solid-js": "^1.9.17",
     "@yfiles/yfiles": "../../../lib-dev/yfiles-31.0.4+dev.tgz"
   },
   "devDependencies": {
