@@ -22,7 +22,7 @@
     "@yworks/optimizer": "^1.9.0",
     "solid-devtools": "^0.34.5",
     "typescript": "~7.0.2",
-    "vite": "^7.3.6",
+    "vite": "^7.3.7",
     "vite-plugin-solid": "~2.11.14"
   },
   "allowScripts": {
