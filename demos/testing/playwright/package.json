@@ -13,6 +13,6 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "devDependencies": {
     "@playwright/test": "^1.63.0",
-    "vite": "^8.3.0"
+    "vite": "^8.3.3"
   }
 }
