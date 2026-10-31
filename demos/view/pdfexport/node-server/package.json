@@ -6,7 +6,7 @@
     "start": "node server.js"
   },
   "dependencies": {
-    "body-parser": "^2.2.1",
+    "body-parser": "^2.4.0",
     "express": "^5.2.1",
     "puppeteer": "^24.34.0"
   },
